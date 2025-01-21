@@ -1,0 +1,171 @@
+\documentclass[aps,onecolumn,nofootinbib,pra]{article}
+
+\usepackage{arxiv}
+\usepackage{amsmath,amsfonts,amssymb,amsthm,bbm,graphicx,enumerate,times}
+\usepackage{mathtools}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{hyperref}
+\hypersetup{
+	breaklinks,
+	colorlinks,
+	linkcolor=gray,
+	citecolor=gray,
+	urlcolor=gray,
+	pdftitle={The Tensor Network Approach to Efficient and Explainable AI},
+	pdfauthor={Alex Goessmann}
+}
+
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{comment}
+\usepackage{csquotes}
+
+\newtheorem{remark}{Remark}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{etoolbox}
+\usepackage{braket}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{titlesec}
+\usepackage{tikz}
+\usepackage{mathtools}
+\usepackage{fancyhdr}
+\usepackage{bbm}
+\usepackage{bm}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{lipsum}
+
+\input{./macros/general_macros.tex}
+\input{./macros/tc_macros.tex}
+\input{./macros/tikz_macros.tex}
+
+\pretolerance=500
+\tolerance=100 
+\emergencystretch=10pt
+
+% Bibliography
+\DeclareUnicodeCharacter{FB01}{fi}
+\usepackage[round]{natbib}
+
+
+\begin{document}
+
+
+
+\title{The Tensor Network Approach to Efficient and Explainable AI}
+\author{Alex Goessmann, DATEV eG}
+
+
+\maketitle
+\date{\today}
+
+\begin{abstract}
+	Tensor spaces appear naturally in factored representations of systems, when storing information about a systems state.
+	Since the curse of dimensionality prevents feasible generic representations and reasoning, logical and probabilistic reasoning focuses on tradeoffs between the sparsity and the generality of reasoning.
+	In this work we present these tradeoffs based on the tensor network formalism and formulate feasible reasoning algorithms based on tensor network contractions.
+	We review the classical logical and probabilistic approaches to reasoning using and show applications in neuro-symbolic AI.
+\end{abstract}	
+
+\tableofcontents
+
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+\input{OtherContent/introduction.tex}
+
+
+% Tensor-Network Based Reasoning
+\part{Decomposition and Inference of Factored Representations}
+
+The computational automation of reasoning is rooted both in the probabilistic and the logical reasoning tradition.
+Both draw on the same ontological commitment that systems have a factored structure, that is their states are described by assignments to a set of variables.
+Based on this commitment both approaches bear a natural tensor representation of their states and a formalism of the respective reasoning algorithms based on multilinear methods.
+%We discuss them in this part separated from each other, and unify them in the next part by Markov Logic Networks.
+
+\input{PartI/notation.tex}
+
+% Parametrization of Probability Distributions
+\input{PartI/probability_decomposition.tex}
+\input{PartI/probabilistic_reasoning.tex}
+
+% Parametrization of Hard Logic 
+\input{PartI/logic_representation.tex}
+\input{PartI/logical_reasoning.tex}
+
+
+
+% Reasoning on MLN using Tensor Network Decompositions
+\part{Neuro-Symbolic Learning}
+
+We now employ tensor networks to define architectures and algorithms for neuro-symbolic reasoning based on the logical and probabilistic foundations.
+Markov Logic Networks will be taken as generative models to be learned from data, using formula selecting tensor networks and likelihood optimization algorithms.
+
+\input{PartII/logic_batch.tex}
+
+% Representation
+\input{PartII/mln.tex}
+\input{PartII/logic_networks.tex}
+
+% Training
+\input{PartII/parameter_estimation.tex}
+\input{PartII/structure_learning.tex}
+
+% Success Guarantees
+\input{PartII/mln_concentration.tex}
+
+% Structured Extensions
+\input{PartII/fol_models.tex}
+
+
+
+\part{Analysis of the Contraction Calculus}
+
+Based on the logical interpretation we often handle tensor calculus with specific tensors.
+Often, they are binary (that is their coordinates are in $\{0,1\}$ corresponding with a Boolean), and sparse (that is having a decomposition with less storage demand).
+We investigate it in this part in more depth the properties of such tensors, which where exploited in the previous parts.
+
+\input{PartIII/coordinate_calculus.tex}
+
+% Properties of Calculus
+\input{PartIII/directed_tensor_calculus.tex}
+%\input{PartIII/binary_tensor_calculus.tex}
+\input{PartIII/contraction_equations.tex}
+
+% Encoding 
+\input{PartIII/tensor_encoding.tex} % Before sparse tensor calculus!
+
+\input{PartIII/local_contractions.tex}
+
+% CP sparsity
+\input{PartIII/sparse_tensor_calculus.tex}
+\input{PartIII/binary_optimization.tex}
+
+% Solution Algorithms
+\input{PartIII/alternating_least_squares.tex}
+
+% Statistical Analysis
+\input{PartIII/contraction_concentration.tex}
+
+
+
+\appendix
+\input{OtherContent/implementation.tex}
+
+\bibliographystyle{plainnat}
+\bibliography{literature/tensor_logic}
+
+
+\end{document}

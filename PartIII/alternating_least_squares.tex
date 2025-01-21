@@ -1,0 +1,212 @@
+\section{Reasoning by Tensor Approximation}\label{cha:tensorApproximation}
+
+Often reasoning requires the execution of demanding contractions of tensors networks, or combinatorical search of maximum coordinates.
+We in this chapter investigate methods, to replace hard to be sampled tensor networks by approximating tensor networks, which then serve as a proxy in inference tasks.
+
+
+\subsection{Approximation of Energy tensors}
+
+
+
+
+\subsubsection{Direct Approximation}
+
+Direct approximation would be
+	\[ \argmin_{\canparam\in\Gamma^{\graph}} \|\energytensorat{\shortcatvariables} - \canparamat{\shortcatvariables}\|^2 \]
+
+
+\subsubsection{Approximation involving Selection Architectures}
+
+Direct approximation would be
+	\[ \argmin_{\canparam\in\Gamma^{\graph}} \|\energytensor - \contractionof{\sencodingof{\sstat},\canparam}{\shortcatvariables}\|^2 \]
+
+\red{
+For example: Approximate based on a slice sparsity selecting architecture.
+Use a term selecting neural network (conjunction neuron on $\atomorder$ unary neurons selecting a variable and $\mathrm{Id},\lnot,\mathrm{True}$ as connective selector.
+Demand the parameter tensor $\canparam$ to be in a basis CP format, then each slice of the parameter tensor corresponds with the slice of the energy.
+The use the approximation for MAP search.
+Same construction possible for probability tensors, but often more involved to 
+}
+
+
+
+
+\subsection{Transformation of Maximum Search to Risk Minimization}
+
+\red{By the squares risk trick, maximum coordinate searches involving contractions with boolean tensors can be turned into squares risk minimization problems.}
+One can use this for MAP inference of MLN and the proposal distribution.
+
+
+\subsubsection{Squares Risk Trick}
+
+\begin{lemma}
+	Let $\gentensor$ be a Boolean tensor, that is $\imageof{\gentensor}\subset\{0,1\}$.
+	Then
+		\[ \gentensor = \ones - \left( \gentensor - \ones \right)^2  \]
+	where $\ones$ is a tensor with same shape as $\gentensor$ and all coordinates being $1$.
+\end{lemma}
+\begin{proof}
+	Since for each $\shortcatindices\in\facstates$ we have $\gentensor[\shortcatvariables=\shortcatindices]\in\{0,1\}$, it holds that
+		\[ \gentensor[\shortcatvariables=\shortcatindices] = 1 - (\gentensor[\shortcatvariables=\shortcatindices]-1)^2 \]
+	and thus
+		\[ \gentensor[\shortcatvariables] = \onesat{\shortcatvariables} - \left( \gentensor - \ones \right)^2  \]
+	Applying this to all coordinates shows the claim.
+\end{proof}
+
+% OLD?
+%Thus, in combination with the slicing theorem \ref{the:CoordinateTransform} we have 
+%	\[ \argmax_{\basisslices} \gentensor\basisslices = \argmin_{\basisslices} \left ( \gentensor\basisslices - \ones \right)^2 \, . \]
+%\red{ALS reformulation thus only works under the constraint of basis slices, i.e. single active formulas and datapoint contraction.}
+
+
+
+\begin{theorem}\label{the:reweightedLeastSquares}
+	Let $\Theta$ be a set of binary tensors in $\facspace$ and $\importancetensor\in\facspace$ arbitrary.
+	Then we have
+	\begin{align}
+		\argmax_{\hypercore\in\Theta} \contraction{\importancetensor,\hypercore} 
+		= \argmin_{\hypercore\in\Theta} \contraction{\importancetensor, (\hypercoreat{\shortcatvariables}-\onesat{\shortcatvariables})^2}
+		%\sum_{\catindices} \left(\theta_{\catindices} -1 \right)^2 \hypercore_{\catindices} \, . 
+	\end{align} 
+\end{theorem}
+\begin{proof}
+	Using the Lemma above, $\hypercore$ is identical to $\onesat{\shortcatvariables}-(\hypercoreat{\shortcatvariables}-\onesat{\shortcatvariables})^2$ and we get
+	\begin{align*}
+		 \contraction{\importancetensor,\hypercore} 
+		 &=  \contraction{\importancetensor,\onesat{\shortcatvariables}}-\contraction{\importancetensor,(\hypercoreat{\shortcatvariables}-\onesat{\shortcatvariables})^2} 
+	\end{align*}
+	Since the first term does not depend on $\hypercore$, it can be dropped in the maximization problem.
+	The $(-1)$ factor then turns the maximization into a minimization problem.
+\end{proof}
+
+% Interpretation and Importance Tensor
+Corollary~\ref{cor:reweightedLeastSquares} reformulates maximation of binary tensors with respect to an angle to another tensor into minimization of a squares risk.
+This squares risk trick is especially useful when combining it with a relaxation of $\Theta$ to differentiably parametrizable sets, since then common squares risk solvers can be applied.
+We will call $\hypercore$ in the Corollary~\ref{cor:reweightedLeastSquares} importance tensor, since it manipulates the relevance of each coordinate in the squares loss.
+
+\begin{example}[Proposal distribution maxima]
+	The Problem~\ref{prob:steepestAscent} of finding the maximal coordinate can thus be turned into
+	\begin{align*}
+		\argmax_{\shortselindices} \contractionof{(\empdistribution-\currentdistribution),\fselectionmap}{\shortselvariables=\shortselindices}  
+		= \argmin_{\shortselindices} \sbcontraction{(\empdistribution-\currentdistribution),
+		\left(\contractionof{\fselectionmap,\onehotmapofat{\shortselindices}{\shortselvariables}}{\shortcatvariables}-\onesat{\shortcatvariables}\right)^2} \, . 
+	\end{align*}
+\end{example}
+
+
+
+%\subsubsection{Squares Loss Reformulation of Contracted Binary Tensors}
+%
+%% Motivation
+%We here make use of the fact, that $\rencodingof{\formulaset}$ is a binary tensor, which is also true for all contractions with elementary selection tensors.
+%When, like it is the case here, the set $\Gamma$ of hypothesis directions consists of binary tensors, we can apply the squares risk trick (Corollary~\ref{cor:reweightedLeastSquares}) to reformulate Problem~\ref{prob:steepestAscent} to a least squares problem.
+%
+%\begin{theorem}
+%	When $\Gamma$ consists of binary tensors, %that is
+%%		\[ \Gamma \subset \facspace \]
+%	then %Problem~\ref{prob:steepestAscent} 
+%	\begin{align}
+%		\argmax_{\theta\in\Gamma} \braket{\theta, \frac{\partial \lossof{\mlntensor}}{\partial \mlntensor}} =
+%		\argmin_{\theta\in\Gamma} \sum_{\catindices} \left(\theta_{\catindices} -1 \right)^2  \left(\frac{\partial \lossof{\mlntensor}}{\partial \mlntensor_{\catindices}}\right) \, . 
+%	\end{align}
+%\end{theorem}
+%\begin{proof}
+%	Direct application of Corollary~\ref{the:reweightedLeastSquares}.
+%\end{proof}
+
+
+%Since any formula tensor $\ftensorof{\exformula}$ contains only binary coordinates, we can reformulate the loss as:
+%\begin{align}
+%	\lossof{\mlnparameters} = &
+%		\log\partitionfunctionof{\formulasum\weightof{\exformula}\ftensorof{\exformula}} 
+%		+ \formulasum\weightof{\exformula}
+%		+ \formulasum\weightof{\exformula}\variablesum  \left( 1 - \braket{\ftensorof{\exformula}, \tensordataof{\variableindex}} \right) \\
+%		= & 
+%		\log\partitionfunctionof{\formulasum\weightof{\exformula}\ftensorof{\exformula}} 
+%		+ \formulasum\weightof{\exformula}
+%		+ \formulasum\weightof{\exformula}\variablesum  \left( 1 - \braket{\ftensorof{\exformula}, \tensordataof{\variableindex}} \right)^2
+%\end{align}
+
+
+%\begin{remark}{Interpretation of Datapoints}
+%	The datapoints are exactly the nonzero entries of the importance core $\importancetensor$.%, i.e. corresponding with individuals in e.g. an \rdf Knowledge Graph.
+%\end{remark}
+
+
+
+
+
+
+
+\subsection{Parametercores}
+
+\red{Parameter cores as tradeoff between expressivity and complexity in sampling.
+When not hidden variables, their maximum can be found by }
+
+
+Parametercores need also an efficient representation.
+
+In case of skeleton expressions with many placeholders further decomposition for algorithmic efficiency are required.
+\begin{itemize}
+	\item Elementary Format ($\elformat$-Format): 
+	\item $\cpformat$-Format: Closest to sum of formula tensors (when all vectors are basis, then have a sum).
+	\item $\ttformat$-Format: Showed better heuristic performance in optimization
+\end{itemize}
+
+For any tensor network decomposition into cores $\parametercoreof{\parenumerator}$ have the derivative $\frac{\partial}{\partial \parametercoreof{\parenumerator}} \parametertensor$ as the tensor network with out the core $\parametercoreof{\parenumerator}$.
+
+\begin{remark}[Parametercores being basis tensors]
+	When the parameter core is a basis tensor, the contraction with the parametercore coincides with the respective formula tensor.
+	Thus, we will search for basis tensors optimizing in contractions objectives to specific reasoning tasks, and add them iteratively to the network at hand.
+\end{remark}
+
+%% Bayesian Neural Network Perspective
+When the parametercores are a tensor network representing a probability tensor by there contraction, we can interpret them as a probability distribution over formulas.
+
+
+
+
+
+
+\subsection{Alternating Solution of Least Squares Problems}
+
+
+\begin{remark}{Least Squares Loss by Tensor Fitting}
+	\red{Alternative approach to least squares problems: Tensor Fitting}
+	And, if the target is another formula $y$, such that $\exformula$ conincides with $\tilde{f} \iff y $ we have
+		\[ \left(\polynomialof{\exformula}(\datamap)-1\right)^2 = \left(  \polynomialof{\tilde{f}}(\datamap) - y(\datamap) \right)^2  \]
+	This is exactly the least squares loss, which would appear in a supervised interpretation of the learning.
+
+
+\end{remark}
+
+
+\begin{figure}[h]
+\begin{center}
+    \input{tikz_pics/optimization_variablecores.tex}
+\end{center}
+\caption{\red{Tensor Fitting!} Tensor Network Representation of the optimization.}
+\end{figure}
+
+
+The resulting algorithm is called Alternating Least Squares (ALS) (see Algorithm \ref{alg:ALS}).
+
+\begin{algorithm}[hbt!]
+\caption{Alternating Least Squares (ALS)}\label{alg:ALS}
+\begin{algorithmic}
+\For{$\atomenumeratorin$}
+	\State Set $\varcore{\atomenumerator}$ to a random element in $\rr^{\atomlegdimof{\atomenumerator}}$ 
+\EndFor
+\While{Stopping criterion is not met}
+\For{$\atomenumeratorin$}
+	\State Set $\varcore{\atomenumerator}$ to a to a solution of $ \argmin_{\varcore{\atomenumerator}}  \left\|  \importancetensor \chadamard ( \groundingof{\parametrization(\varcore{1},\ldots,\varcore{\atomorder})} - \targettensor ) \right\|^2$
+\EndFor
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+
+
+%\subsection{Projection onto Basis Tensors}
+%\red{This is sampling!}
+%We project onto basis tensors to achieve single formulas.

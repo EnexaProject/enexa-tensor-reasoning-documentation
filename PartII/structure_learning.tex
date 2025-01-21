@@ -1,0 +1,417 @@
+\section{Structure Learning}
+
+\red{Change loss to be function of distribution, not of canparam.}
+
+After having investigated how to parameterize exponentially many formulas by formula selecting networks, let us now develop objectives to be optimized.
+
+% Optimization methods
+%Naively choosing all formulas will not succeed in effective methods or interpretable models, due to the massive overparametrization and therefore redundancy in the representation of probability distributions. 
+%Instead, we in this section investigate approaches to  identify formulas to be activated, given a set of data and a neuro-symbolic architecture.
+
+We will use the effective selection tensor network representation of exponentially many formulas described in Chapter~\ref{cha:formulaBatches}.
+
+%Since the number of possible formulas to activate is large, we need an effective representation.
+%We show such this through a parametrization of superposed formula tensors.
+
+
+
+\subsection{Overparametrization}
+
+\red{Another exponent in the number of possible subsets of formulas!}
+
+Taking $\formulaset$ to consist of all propositional formulas, we get a massive overparametrization: 
+The essential statistics maps to a $2^{\left(2^\atomorder \right)}$ dimensional real vector space.
+All possible distributions of the $\atomorder$ atomic variables are mapped to an $2^\atomorder-1$ dimensional submanifold, where also the essential statistics maps to.
+
+Thus, to identify probabilistic knowledge bases, we need to drastically restrict the shape of formulas allowed.
+It is in principle impossible to decide which formulas to be activated, based only on statistics and not on prior assumptions.
+
+%The nodes of a Markov Propositional Network are all formulas in a propositional theory and the hyperedges all possible decompositons.
+When having $\atomorder$ atoms, there are $2^{\atomorder}$ states in the factored system.
+Since each state can either be a model of a formula or not, there are
+	\[ \cardof{\formulaset} = 2^{\big(2^\atomorder \big)} \]
+formulas.
+Having, for example, $\atomorder=10$, then $\cardof{\formulaset}>10^{308}$.
+
+
+% Regularization by sparsity
+One regularization is by allowing only a small number of formulas to be active.
+We add active formulas in a greedy manner.
+
+% Regularization by formula size
+A further regularization strategy is the restriction of the size of the possible formulas to maintain interpretability. 
+Thus, we choose small formula selection networks.
+
+
+
+
+
+%\subsection{Constrained parameter estimation}
+\subsection{Learning in the minterm family}
+
+% Naive exponential family
+We approach structure learning as constrained parameter estimation in the naive exponential family (see Example~\ref{exa:naiveExpFamily}), \red{which coincides with the minterm family $\formulasetof{\mlnmintermsymbol}$} 
+and has statistic $\sstat = \identityat{\shortcatvariables, \selvariableof{[\catorder]}}$.
+
+By Theorem~\ref{the:mintermExpressivityMLN} all positive distributions are member of the minterm markov logic network.
+This expressivity result was generalized to arbitrary distributions, when allowing for formulas as basemeasures by Theorem~\ref{the:mintermExpressivityHLN}.
+
+Finding the distribution maximizing the likelihood of data would then be the empirical distribution.
+In this case we would have $\datameanat{\selvariableof{[\catorder]}=\shortcatindices} = \empdistributionat{\shortcatvariables=\shortcatindices}$ and the maximum likelihood distribution is found by the problem
+\begin{align*}
+	\argmax_{\canparam\in\facspace}  \sbcontraction{\canparam,\empdistribution} - \cumfunctionof{\canparam} \, 
+\end{align*}
+which is solved at $\canparam=\lnof{\empdistribution}$ with $\probtensorof{(\identity,\lnof{\empdistribution})}= \empdistribution$.
+This follows from $\lossof{\probtensorof{(\identity,\canparam)}}=\kldivof{\empdistribution}{\probtensorof{(\identity,\canparam)}}$, which is by Gibbs inequality minimized at $\probtensorof{(\identity,\canparam)}=\empdistribution$, which is the case for $\canparam = \lnof{\empdistribution}$.
+
+We here allow for $\lnof{0}=-\infty$, with the convention of $\expof{-\infty}=0$, to handle datasets where specific worlds are not represented. 
+\red{Better: Use Theorem~\ref{the:mintermExpressivityHLN} with basemeasure dropping non appearing data.}
+
+
+% Regularization
+To avoid this overfitting situation, we regularize by restricting the parameter to be a set $\energyhypothesis\subset\facspace$ and state
+\begin{align}\tag{$\mathrm{P}_{\energyhypothesis, \empdistribution}$}\label{prob:restrictedNaiveMLE}
+	\argmax_{\canparam\in\energyhypothesis}  \sbcontraction{\canparam,\empdistribution} - \cumfunctionof{\canparam} \, . 
+\end{align}
+
+% Parameter Estimation
+When the $\formulaset$ is known we take $\energyhypothesis$ as the linear hull 
+	\[ \energyhypothesisof{\formulaset} = \mathrm{span}(\{\formula : \formula\in\formulaset \}) \, . \]
+Then, the problem is the parameter estimation problem studied in Chapter~\ref{cha:parameterEstimation}.
+To see this, we reparametrize by the coefficient vectors of the elements in the span, which are then understood as the canonical parameter of a 
+
+% Structure Learning
+The problem of structure learning arises, when the set of formulas is to be learned, i.e. 
+	\[ \energyhypothesisof{\formulasuperset}= \bigcup_{\formulaset\in\formulasuperset} \energyhypothesisof{\formulaset}\, .  \]
+In this case, the problem in general fails to be convex.
+
+
+\subsection{Greedy Learning}
+
+
+%Three main approaches:
+%\begin{itemize}
+%	\item Ignore the partition term (i.e. the rest of the network).
+%		We can rewrite the problem into a least squares problem and efficiently use any tensor network format to fit a parameter tensor in combination with a projection operation to get a $\exformula$.
+%	\item Take the partition function into account.
+%		This requires computations of the log of the partition function over candidates. 
+%		Gibbs Sampling is still efficiently doable, performing an optimization over basis parameter tensors.
+%	\item Use Gradient Approaches instead.
+%		Gradient is much simpler, can choose best direction to update. 
+%\end{itemize}
+%
+%All three approaches require choosing the largest coordinate of a (sum of possibly nonlinearly transformed) tensor networks.
+%The task is hard, since it is not feasible to contract the tensor network to a tensor, we can only do contractions with other small tensor networks.
+
+
+%Motivation 
+It can be impracticle to learn all formulas at once, since the set $\formulasuperset$ often grows combinatorically, for example when choosing as a powerset of formulas.
+To avoid intractabilities, one can choose a greedy approach and learn in addition formulas $\exformula$ when already having learned a set $\formulaset$ of formulas.
+We in this section assume a current model $\currentdistribution$, which is a generic positive distribution not necessarily a Markov Logic Network. % or Hybrid Logic Network.
+
+\red{Alternative discussion: Can use current distribution as base measure and apply moment matching as first order condition.}
+
+
+
+\subsubsection{Gradient heuristic and the proposal distribution}
+
+We now derive a heuristic of choosing features based on a variation of parameter vectors in naive exponential families.
+
+For the naive exponential family 
+\begin{align*}
+	\lossof{\expdistof{(\naivestat, \naivecanparam)}} 
+	= \frac{1}{\datanum} \sum_{\dataindexin}\lnof{\expdistofat{(\naivestat, \naivecanparam)}{\shortcatvariables=\datamapof{\dataindex}}}
+	= \contraction{\empdistribution, \sencodingof{\naivestat}, \naivecanparam} - \lnof{\contraction{\expof{\contractionof{\sencodingof{\naivestat}, \naivecanparam}{\shortcatvariables}}}} 
+\end{align*}
+we have the gradient
+\begin{align*}
+	\frac{\partial \lossof{\expdistof{(\naivestat, \naivecanparam)}}}{\partial\naivecanparam} 
+	= \empdistribution - \expdistof{(\naivestat, \naivecanparam)} \, . 
+\end{align*}
+
+%% Single feature
+Given a feature $\exfunction[\shortcatvariables]$ we vary the naive parameters by a function on $\canparam\in\rr$ by
+\begin{align*}
+	 \naivestat(\canparam) %=  \mlntensor + \weight_{\parindices} \ftensorof{\exformula_{\parindices}}
+	= \naivestat(0) + \canparam\cdot\exfunction
+\end{align*}
+and get a likelihood gradient of
+\begin{align*}
+	 \frac{\partial \lossof{\expdistof{(\naivestat(\canparam), \naivecanparam)}}}{\partial\canparam} 
+	 &= \sbcontraction{
+	 	\frac{\partial\lossof{\expdistof{(\naivestat, \naivecanparam)}}}{\partial\naivecanparam}|_{\naivecanparam(0)},
+		\frac{\partial\naivecanparam(\canparam)}{\partial\canparam} 
+	 }  \\
+	 &= \contraction{\empdistribution,\exfunction} -   \contraction{\expdistof{(\naivestat, \naivecanparam)},\exfunction} \, .
+\end{align*}
+
+
+%% Positive and Negative Search
+The gradient shows the typical decomposition into a positive and a negative phase.
+While the positive phase comes from the data term and prefers directions of large data support, the negative phase originates in the partition function and draws the gradient away from directions already supported by the current model $\expdistof{(\naivestat, \naivecanparam)}$.
+%% Regularization functionality
+The negative phase is a regularization, by comparing with what has already been learned.
+When nothing has been learned so far, we can take the current model to be the uniform distribution, which is the naive exponential family with vanishing canonical parameters. 
+
+
+
+%% Collection of features by selection
+We can calulate all these feature gradients with the usage of a selection network.
+Given a set $\fselectionmap$ of features we vary $\naivestat$ as
+\begin{align*}
+	 \naivestat(\canparam) %=  \mlntensor + \weight_{\parindices} \ftensorof{\exformula_{\parindices}}
+	= \naivestat(0) + \sbcontractionof{\canparam,\sencodingof{\fselectionmap}}{\shortcatvariables} \, . 
+\end{align*}
+Now the gradient of the loss along the variation is
+\begin{align*}
+	 \frac{\partial \lossof{\expdistof{(\naivestat(\canparam), \naivecanparam)}}}{\partial\canparam} 
+	 &= \sbcontraction{
+	 	\frac{\partial\lossof{\expdistof{(\naivestat, \naivecanparam)}}}{\partial\naivecanparam}|_{\naivecanparam(0)},
+		\frac{\partial\naivecanparam(\canparam)}{\partial\canparam} 
+	 }  \\
+	 &= \sbcontraction{\empdistribution,\sencodingof{\sstat}}{\selvariable} -   \sbcontraction{\expdistof{(\naivestat, \naivecanparam)},\sencodingof{\sstat}}{\selvariable} \, . 
+\end{align*}
+
+
+
+%% Grafting
+We want to choose the formula, which is best aligned with the gradient of the log-likelihood, that is using a formula selecting map $\fselectionmap$
+\begin{align*}
+	\argmax_{\selindex\in[\seldim]} \sbcontraction{\empdistribution,\sencodingof{\fselectionmap}}{\selvariable=\selindex} - \sbcontraction{\expdistof{(\naivestat, \naivecanparam)},\sencodingof{\fselectionmap}}{\selvariable=\selindex} \, . 
+\end{align*}
+This method is known as grafting.
+
+
+%We call this method the search for the steepest ascent in a parametrized set.
+
+
+% Gradient
+%We build the gradient of the loss at a tensor $\mlntensor$
+%\begin{align}
+%	\frac{\partial \lossof{\mlntensor}}{\partial \mlntensor} = \variablesum\datapointof{\variableindex} - \frac{\expof{\mlntensor}}{\partitionfunctionof{\mlntensor}} 
+%	= \empdistribution - \currentdistribution \, .
+%\end{align}
+
+
+%% Search for best alignment, demand $\Gamma\subset\subsphere$?
+When learning Markov Logic Networks, our features are propositional formulas.
+Given a set $\formulaset$ of formulas we search for the best alignment 
+\begin{align}\label{prob:steepestAscent}\tag{$\mathrm{P}_{\formulaset,\empdistribution,\currentdistribution}$}
+	\argmax_{\formula\in\formulaset} \sbcontraction{\formula,\empdistribution-\currentdistribution}
+\end{align}
+We can choose selection architectures to efficiently parametrize 
+
+%% Special case in MLN: $\Gamma$ by formulas
+%Given a model tensor and a formula selecting map $\formulaset$ we vary $\mlntensor$ by the superposition with the parameter core $\parametercore$ 
+%	\[ \tilde{\theta}(\parametercore) %=  \mlntensor + \weight_{\parindices} \ftensorof{\exformula_{\parindices}}
+%	= \mlntensor + \contractionof{\{\parametercore,{\formulaset}\}}{\varnothing} \, . \]
+%The gradient of this map is
+%	\[ \frac{\partial \tilde{\theta}(\parametercore)}{\partial \parametercore}|_{\parametercore=0}  
+%	= \contractionof{\{\formulaset\}}{\selectionvariables} \, . \]
+
+%Differentiating by the parameter core we get with the chain rule
+%\begin{align}
+%	\frac{\partial \lossof{\tilde{\theta}(\parametercore) }}{\partial \parametercore}|_{\parametercore=0} 
+%	& = \contractionof{ \frac{\partial \tilde{\theta}}{\partial \weight}|_{\weight=0} , \frac{\partial \loss(\tilde{\theta})}{\partial \tilde{\theta}}|_{\tilde{\theta} = \mlntensor}}{\selectionvariables} \\
+%	& = \contractionof{\{{\formulaset} ,\empdistribution \}}{\selectionvariables}
+%	-  \contractionof{\{ {\formulaset} ,\distof{\tilde{\theta}} \}}{\selectionvariables} \, . 
+%\end{align}
+
+
+%
+To take the steepest ascent formula among the formulas selectable by $\formulaset$ we thus search for the maximal coordinate in the tensor network $\frac{\partial \lossof{\theta}}{\partial \parametercore}|_{\parametercore=0}$, that is solve
+\begin{align}
+	\argmax_{\parindices} \contractionof{
+	\{ \frac{\partial \lossof{\theta}}{\partial \parametercore}|_{\parametercore=0} , \onehotmapof{\parindices} \}
+	}{\varnothing}
+\end{align}
+This is thus equivalent to the problem \ref{prob:steepestAscent}, when taking all formulas selectable by $\formulaset$ as the hypothesis $\Gamma$.
+
+
+%\subsection{Proposal distribution}
+
+% Proposal distribution
+Let us now understand the likelihood gradient as the energy tensor of a probability distribution, which we call the proposal distribution.
+
+\begin{definition}[Proposal Distribution]
+	Let there be a base distribution $\currentdistribution$, a targeted distribution $\empdistribution$ and a formula selecting map $\fselectionmap[\shortcatvariables, \selvariable]$.
+	The proposal distribution at inverse temperature $\invtemp>0$ is the distribution of $\selvariable$ defined by
+	\begin{align*}
+		\normationof{\expof{\contractionof{\{\invtemp\cdot(\empdistribution-\currentdistribution),\fselectionmap\}}{\selvariable}} }{\selvariable} \, . 
+	\end{align*}
+	The proposal distribution is the member of the exponential family with statistics $\fselectionmap$ and parameter $\invtemp\cdot(\empdistribution-\currentdistribution)$.
+\end{definition}
+
+
+%. Exponential family
+The proposal distribution is in the exponential family with sufficient statistic by the formula selecting map $\fselectionmap$, namely the member with the canonical parameters $\canparam=\empdistribution-\currentdistribution$.
+Of further interest are tempered proposal distributions, which are in the same exponential family with canonical parameters $\invtemp\cdot(\empdistribution-\currentdistribution)$ where $\invtemp>0$ is the inverse temperature parameter.
+
+% MLN
+As Markov Logic Networks, the proposal distributions are in exponential families with the sufficient statistic defined in terms of formula selecting maps.
+While Markov Logic Networks contract the maps on the selection variables $\selvariable$, the proposal distributions contract them along the categorical variables $\catvariable$ to define energy tensors.
+
+
+
+
+
+% Mode search
+We can then understand finding the largest coordinate as a search for the mode of this proposal distribution.
+\begin{theorem}
+	Grafting is the MAP query on the proposal distribution to any $\invtemp>0$.
+\end{theorem}
+
+% Methods to solve mode search
+To solve grafting, we thus need to answer a MAP query, for which we can apply the methods introduced in Chapter~\ref{cha:probReasoning}, such as Gibbs Sampling or Mean Field Approximations in combination with annealing.
+
+
+
+
+
+
+
+
+%\subsubsection{KL Divergence minimization}
+%When just optimizing the weight of the added formula, we want to solve the problem
+%\begin{align}
+%	\argmin_{\exformula\in\formulaset, \weightof{\exformula}\in \rr} \kldivof{\normationof{\{\currentdistribution,\expof{\weightof{\exformula}\cdot\exformula}\}} }{\empdistribution}  \, . 
+%\end{align}
+%In the next theorem we give the solution in terms of mean parameters.
+
+\subsubsection{Gain Heuristic}
+
+In the gain heuristic, only the parameters of the new formula are optimized and the others left unchanged.
+This is providing upper bounds on the likelihood increase.
+
+More precisely this is Problem~\ref{prob:restrictedNaiveMLE} in the case
+\begin{align*}
+	\energyhypothesis = \lnof{\currentdistribution} + \cup_{\formula\in\formulaset} \mathrm{span}(\formula) \, . 
+\end{align*}
+
+
+% For single formula
+Let us choose a formula $\formula\in\formulaset$ and consider Problem~\ref{prob:restrictedNaiveMLE}  in the case
+\begin{align*}
+	\energyhypothesisof{\formula} = \lnof{\currentdistribution} + \mathrm{span}(\formula) \, . 
+\end{align*}
+This is parameter estimation on the exponential family with the single feature $\formula$ and the base measure $\currentdistribution$.
+Therefore we can apply the theory of Chapter~\ref{cha:probReasoning} and characterize the solution by the $\weight$ satisfying the moment matching condition
+\begin{align*}
+	\contraction{\currentdistribution, \normationof{\expof{\weight}}{\shortcatvariables} } = \contraction{\empdistribution, \formula} \, . 
+\end{align*}
+We state the solution of this condition in the next theorem.
+
+
+% Redundant? Repetition of Lemma~\ref{ref:lemMMinMLN}.
+\begin{lemma}
+	Problem~\ref{prob:restrictedNaiveMLE}  in the case
+	\begin{align*}
+		\energyhypothesisof{\formula} = \lnof{\currentdistribution} + \mathrm{span}(\formula) \,  
+	\end{align*}
+	is solved at
+	\begin{align*}
+		\hat{\weightof{\exformula}} = \lnof{ \frac{Z_1}{Z_0} \frac{\meanparam^{\datamap}_{\formula} }{1-\meanparam^{\datamap}_{\formula} } } 
+	\end{align*}
+	where
+	\begin{align*}
+		Z_0 = \sbcontractionof{\currentdistribution, \rencodingof{\formula}}{\catvariableof{\formula}=0}  \quad , \quad
+		Z_1 = \sbcontractionof{\currentdistribution, \rencodingof{\formula}}{\catvariableof{\formula}=1}  \quad \text{and} \quad
+		\meanparam^{\datamap}_{\formula} = \contraction{\empdistribution, \formula} \, .
+	\end{align*}
+\end{lemma}
+\begin{proof}
+	Follows from Lemma~\ref{ref:lemMMinMLN}.
+\end{proof}
+
+We can apply this 
+
+\begin{lemma}
+	Problem~\ref{prob:restrictedNaiveMLE} in the case 
+	\begin{align*}
+		\energyhypothesis = \lnof{\currentdistribution} + \cup_{\formula\in\formulaset} \mathrm{span}(\formula) 
+	\end{align*}
+	is solved at any
+	\begin{align*}
+		\hat{\canparam} = \currentdistribution + \weightof{\hat{\formula}} \cdot \hat{\formula}
+	\end{align*}
+	where the formula $\hat{\formula}$ is in
+	\begin{align*}
+		\hat{\formula} \in \argmax_{\formula\in\formulaset} \kldivof{\sbcontraction{\empdistribution,\formula}}{\sbcontraction{\currentdistribution,\formula}}
+	\end{align*}
+	and $\weightof{\hat{\formula}}$ is the weight of $\hat{\formula}$ in the solution of Problem~\ref{prob:restrictedNaiveMLE} with $\Gamma = \currentdistribution + \mathrm{span}(\exformula)$.
+	Here we denote by $\kldivof{p_1}{p_2}$ the Kullback-Leibler divergence between Bernoulli distributions with parameters $p_1,p_2\in[0,1]$, that is
+		\[ \kldivof{p_1}{p_2} = p_1 \cdot \lnof{\frac{p_1}{p_2}} + (1-p_1) \cdot \lnof{\frac{(1-p_1)}{(1-p_2)}}  \]
+\end{lemma}	
+\begin{proof}
+	By plugging in the above Lemma we get, that the KL divergence is the improvement of the objective to each $\formula$.
+	The Problem is solved at the best improvement, where the KL divergence is maximal.
+\end{proof}
+
+%\begin{theorem}
+%	When only optimizing the additional weight (i.e. the problem above), the KL divergence improves by the KL divergence of the Bernoulli distributions with the mean parameters to empirical and current, denoted as
+%		\[ \kldivof{\meanparam^D}{\meanparam^t} \, . \]
+%\end{theorem}
+
+
+
+
+% Interpretation
+One therefore takes the formula, which marginal distribution in the current model and the targeted distribution are differing at most, measured in the KL divergence.
+
+% Optimization method
+One optimization method would thus be the computation of the mean parameters to both distribution, building the coordinatewise KL divergence and choosing the maximum. 
+Since we need to evaluate each coordinate, this can be intractable for large sets of formulas.
+
+
+% Further weight optimization
+Further improvement of the model can be achieved by iteratively optimizing the other weights as well, since their corresponding moment matching conditions might be violated after the integration of a new formula.
+This would require the computation of backward mappings for each candidate formula, for which we only have an alternating approach in general.
+
+%% OLD:  Iterative application
+%The optimization problem is hard, even in the unconstrained factors  (CITE: Koller Friedman).
+
+
+
+
+
+
+
+
+
+\subsubsection{Iterations}
+
+Let us now iterate the search for a best formula at a current model with the optimization of weights after each step.
+The result is Algorithm~\ref{alg:greedyStructureLearning}, which is a greedy algorithm adding iteratively the currently best feature.
+
+\begin{algorithm}[hbt!]
+\caption{Greedy Structure Learning}\label{alg:greedyStructureLearning}
+\begin{algorithmic}
+	\State Initialize
+		\[ \currentdistribution \leftarrow \onesat{\shortcatvariables} \quad, \quad \formulaset = \varnothing \]
+	\While{Stopping criterion is not met}
+		\State Structure Learning: Compute a (approximative) solution $\hat{\formula}$ to Problem~\ref{prob:restrictedNaiveMLE} and add the formula to $\formulasetof{t}$, i.e.
+				\[ \formulasetof{t} \leftarrow \formulasetof{t-1} \cup \{\hat{\formula}\} \]
+		\State Weight Estimation: Estimate the best weights for the added formula and recalibrate the weights of the previous formulas, by calling Algorithm~\ref{alg:AWO}.
+			\[ \currentdistribution \leftarrow \expdistof{\formulasetof{t}, \canparam^{t}} \]
+\EndWhile
+%We further apply in the next section a greedy perspective on learning $\formulaset$, by iteratively adding a formula $\exformula$ to a given set.
+%After each addition step, we can adjust the weights to all formulas.
+\end{algorithmic}
+\end{algorithm}
+
+
+
+%% Energy Storage -> Useful after learning for energy-based inference
+When having used the same learning architecture multiple times, the energy of the corresponding formulas are all representable by a formula selecting architecture.
+Their energy term is therefore a contraction of the selecting tensor with a parameter tensor $\canparam$ in a basis CP decomposition with rank by the number of learned formulas.
+When mutiple selection architectures have been used, the energy is a sum of such contractions.
+% 
+Let us note, that this representation is useful after learning, when performing energy-based inference algorithms on the result.
+During learning, one needs to instantiate the proposal distribution, which requires instantiation of the probability tensor.
+\red{However, one could alternate data energy-based and use this as a particle-based proxy for the probability tensor.}
+
+
+
+
+
+

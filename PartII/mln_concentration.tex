@@ -1,0 +1,523 @@
+\section{Probabilistic Success Guarantees}\label{cha:mlnConcentration}
+
+When drawing data independently from a random distribution, we in this chapter derive guarantees, that the 
+
+%Uniform concentration bounds require concentration bounds on 
+%	\[ \sbcontraction{\theta,\fluctuationtensor} \]
+%for tensors $\theta\in\Gamma$.
+%
+%To show such bounds we use the formula decomposition of any $\theta$ into a set
+%	\[ \sum_{\mlnformulain} \weightof{\exformula}\exformula \, .\]	
+	
+	
+\subsection{Fluctuations}
+
+A random tensor is a random element of a tensor space $\facspace$, drawn from a probability distribution on $\facspace.$
+In contrast to the discrete distributions investigated previously in this work, the random tensors are in most generality continuous distributions. % However, when drawing data they are 
+
+\subsubsection{Fluctuation of the empirical distribution}
+
+% Random one hot encodings
+When drawing random states $\datamapof{\dataindex}\in\facstates$ by a distribution $\gendistribution$, we use the one-hot encoding to forward each random state to the random tensor
+	\[ \onehotmapofat{\datamapof{\dataindex}}{\shortcatvariables} \, . \]
+The expectation of this random tensor is
+\begin{align*}
+	\expectationof{\onehotmapof{\datamapof{\dataindex}}} 
+	= \sum_{\catindices\in\facstates} \gendistribution[\indexedcatvariableof{[\atomorder]}] \onehotmapofat{\catindices}{\shortcatvariables} 
+	= \gendistribution[\shortcatvariables] \, . 
+\end{align*}
+	
+The empirical distribution is then the average of independent random one-hot encodings, namely the random tensor
+	\[ \empdistribution = \frac{1}{\datanum} \sum_{\dataindexin}  \onehotmapof{\datamapof{\dataindex}} \, . \]
+To avoid confusion let us strengthen, that in this chapter we interpret $\empdistribution$ as a random tensor taking values in $\facspace$, whereas each supported value of $\empdistribution$ is an empirical distribution taking values in $\facstates$.
+
+
+% Expectation -> Does not make use of independence here!
+When the marginal of each datapoint is $\gendistribution$, the expectation of the empirical distribution is
+\begin{align*}
+	\expectationof{\empdistribution} 
+	= \frac{1}{\datanum} \sum_{\dataindexin}  \expectationof{\onehotmapof{\datamapof{\dataindex}}}
+	= \gendistribution \, . 
+\end{align*}
+
+% Law of large numbers
+From the law of large numbers it follows, that in the limit of $\datanum\rightarrow\infty$ at any coordinate $\catindex\in\facstates$ almost everywhere
+	\[ \empdistribution[\indexedcatvariableof{[\atomorder]}] \rightarrow \expectationof{\empdistribution[\indexedcatvariableof{[\atomorder]}]} =  \gendistribution[\indexedcatvariableof{[\atomorder]}] \, . \]
+
+% Fluctuation
+At finite $\datanum$ the empirical distribution differs from the by the difference
+	\[ \empdistribution - \gendistribution \]
+which we call a fluctuation tensor.
+
+
+\subsubsection{Fluctuation tensors and their widths}
+
+Let us now investigate random tensors, which result from the forwarding of the fluctuation of the empirical distribution by sufficient statistics.
+
+\begin{definition}
+	Given a statistic $\sstat$, $\datanum\in\nn$ and and a dataset we define the fluctuation tensor as the random tensor
+		\[ \expfamfluctuation = \contractionof{\{\empdistribution-\gendistribution,\sstat\}}{\selvariable} \]
+	where $\datamap$ is a collection of $\datanum$ independent samples of $\gendistribution$.
+\end{definition}
+
+% Naive Ex
+The fluctuation of the empirical distribution around the generating distribution corresponds in this notation with the naive exponential family, taking the identity as statistics.
+% Appearances
+Besides this, fluctuation tensors appears in Markov Logic Networks as fluctuations of random mean parameters and in proposal distributions as fluctuation of random energy tensor.
+We will discuss these examples in the following sections.
+
+
+\subsubsection{Naive Exponential Family}
+
+\red{This is the minterm exponential family!}
+
+In case of the naive exponential family, we have $\sstat=\identityat{\shortcatvariables,\selvariable}$ and the fluctuation tensor is
+	\[ \naivefluctuation = \empdistribution - \gendistribution \, .  \]
+
+% Multinomial
+This fluctuation tensor is related to tensor encodings of multinomial distributions, which we now define as multinomial random tensors.
+
+\begin{definition}
+	A multinomial random tensor is the sum of the one-hot encodings of independent random variables $Z_\dataindex$ each distributed by $\probtensor$
+		\[ Z^{\probtensor, \datanum} = \sum_{\dataindexin} \onehotmapof{Z_\dataindex} \, . \] 
+\end{definition}
+
+\begin{lemma}\label{lem:multinomialEmpdistFluctuation}
+	The fluctuation $\empdistribution - \gendistribution$ is a by $\frac{1}{\datanum}$ rescaled centered multinomial random tensor with parameters $\gendistribution$ and $\datanum$. % Needs some more explanation based on one-hot encodings?
+\end{lemma}
+\begin{proof}
+	By the above construction we have
+		\[  \empdistribution - \gendistribution = \frac{1}{\datanum} \left( \onehotmapofat{\datamapof{\dataindex}}{\shortcatvariables} - \expectationof{\onehotmapofat{\datamapof{\dataindex}}{\shortcatvariables}} \right) \, .  \]
+\end{proof}
+
+
+\subsubsection{Mean parameter in Markov Logic Networks}
+
+The mean parameter of the M-projection of the empirical distribution on the family of Markov Logic Networks with statistic $\fselectionmap$ is the random tensor
+\begin{align*}
+	\meanparam^\datamap =  \sbcontractionof{\mlnstat,\empdistribution}{\selvariable} \, . 
+\end{align*}
+
+The expectation of this random tensor is
+\begin{align*}
+	\expectationof{\meanparam^\datamap} 
+	=  \sbcontractionof{\mlnstat,\expectationof{\empdistribution}}{\selvariable} 
+	=  \sbcontractionof{\mlnstat,\gendistribution}{\selvariable} 
+	=  \meanparam^* \, ,  
+\end{align*}
+where we used that the expectation and contraction operation can be commuted due to the multilinearity of contractions.
+
+% Fluctuation of mean parameter
+The fluctuation of this mean parameter is
+\begin{align*}
+	\meanparam^\datamap - \expectationof{\meanparam^\datamap} =  \sbcontractionof{\mlnstat,\empdistribution-\gendistribution}{\selvariable} \, . 
+\end{align*}
+We notice, that this is the fluctuation tensor $\mlnfluctuation$.
+
+
+%\begin{example}[Proposal distribution]
+\subsubsection{Energy tensor in proposal distributions}
+
+The fluctuation tensor appears as a fluctuation of the energy of the proposal distribution.
+For the expected energy it holds that
+\begin{align*}
+	\expectationof{\energytensorof{\proposalstat,\empdistribution-\currentdistribution}} 
+	= \expectationof{\sbcontractionof{\proposalstat,\empdistribution-\currentdistribution}{\selvariable}} 
+	= \sbcontractionof{\proposalstat,\expectationof{\empdistribution-\currentdistribution}}{\selvariable}
+	= \sbcontractionof{\proposalstat,\gendistribution-\currentdistribution}{\selvariable} 
+	= \expectationof{\energytensorof{\proposalstat,\gendistribution-\currentdistribution}} \, . 
+\end{align*}
+
+% Fluctuation
+The fluctuation of this random tensor is
+\begin{align*}
+	\expectationof{\energytensorof{\proposalstat,\empdistribution-\currentdistribution}}  - \expectationof{\energytensorof{\proposalstat,\gendistribution-\currentdistribution}} 
+	= \expectationof{\energytensorof{\proposalstat,\empdistribution-\gendistribution}}
+\end{align*}
+and coincides with $\proposalfluctuation$.
+	
+
+
+
+
+\subsubsection{Binary Features}
+
+In all the above example we have statistics consistent of binary features.
+In this case the marginal distributions of the coordinates of $\expfamfluctuation$ are scaled and centered binomials, which we investigate now.
+
+\begin{lemma}
+	Let $\sstat$ be a statistic and let for $\statenumeratorin$ $\sstat_\statenumerator$ be a binary feature, i.e. let $\imageof{\sstat_\statenumerator}\subset \{0,1\}$.
+	Then, the marginal distribution of the coordinate $\expfamfluctuation[\selvariable=\statenumerator]$ is 
+		\[\frac{1}{\datanum}\left(\bidistof{\fprobof{\statenumerator},\datanum}- \fprobof{\statenumerator}\right)  \, , \] 
+	where by $\bidistof{\fprobof{\statenumerator},\datanum}$ we denote the binomial distribution with mean parameter
+		\[ \fprobof{\statenumerator} = \sbcontraction{\sstat_\statenumerator, \gendistribution} \, . \]
+\end{lemma}
+\begin{proof}
+	We notice that when forwarding a random sample $\datamapof{\dataindex}$ of $\gendistribution$ is the random tensor
+		\[ \onehotmapofat{\datamapof{\dataindex}}{\shortcatvariables} \, \]
+	and since $\imageof{\sstat_\statenumerator}\subset \{0,1\}$ the contraction
+		\[ \sbcontraction{\sstat_\statenumerator, \onehotmapofat{\datamapof{\dataindex}}{\shortcatvariables}} \]
+	is a random variable taking values in $\{0,1\}$.
+	The variable therefore follows a Bernoulli distribution with mean parameter
+		\[ \fprobof{\statenumerator} = \expectationof{\sbcontraction{\sstat_\statenumerator, \onehotmapofat{\datamapof{\dataindex}}{\shortcatvariables}}} = \sbcontraction{\sstat_\statenumerator, \gendistribution}  \, . \]
+\end{proof}
+
+
+%\begin{lemma}	
+%	Let $\exformula$ be a tensor with coordinates in $\{0,1\}$.
+%	The random variable $\sbcontraction{\exformula,\fluctuationtensor}$ is distributed by 
+%		\[ \frac{1}{\datanum}\left(\bidistof{\fprobof{\exformula},\datanum}- \fprobof{\exformula}\right)  \]
+%	where $\bidistof{\fprobof{\exformula},\datanum}$ is the binomial distribution with $\fprobof{\exformula}$ being the probability of $\exformula$ satisfied.
+%\end{lemma}
+%\begin{proof}
+%	For a $\datapoint$ the contraction
+%		\[ \braket{\exformula,\datapoint} \]
+%	follows a Bernoulli distribution with 
+%		\[  \probof{\braket{\exformula,\datapoint}=1} = \probof{\exformula = \mathrm{true}} \, . \]	
+%	With the assumption of independent data, these scalar products sum up to a Binomial, which is then centered and averaged.
+%\end{proof}
+%
+%If the data is generated by $\mlnprobof{\cdot}{\expsolution}$ we have
+%	\[ \fprobof{\exformula} = \frac{1}{\partitionfunctionof{\expsolution}}  \braket{\exformula,\expof{\expsolution}} \, . \]
+
+
+\subsubsection{Widths of random tensors}
+
+% Widths
+In the following we will use the supremum of contractions with random tensors in the derivation of success guarantees for learning problems.
+Such quantities are called widths.
+
+\begin{definition}
+	Given a set $\Gamma\subset\facspace$ and $\fluctuationtensor$ a random tensor taking values in $\facspace$ we define the width as the random variable
+		\[ \widthwrtof{\Gamma}{\fluctuationtensor} = \sup_{\theta\in\Gamma} \absof{\sbcontraction{\theta,\fluctuationtensor}} \, . \]	
+\end{definition}
+
+
+
+\subsection{Expected and Empirical Risk Minimization}
+
+\red{We take a frequentist approach here and study the distributions of estimated parameters depending on random data.}
+
+\subsubsection{Maximum Likelihood Estimation on random data}
+
+% Aim: Recovery Guarantees
+We here investigate the statistical errors of the maximum likelihood estimators.
+The empirical distribution is understood as an estimation of an underlying distribution.
+When sampling by independent copies of the underlying distribution, its mean is the underlying distribution.
+However, due to fluctuations around this mean the solution of estimation problems with respect to the empirical distribution does in general not coincide with the solution given the underlying distribution.
+
+%
+To be more precise, when generating data $\data$ by independent copies of a distribution $\gendistribution$ we define the minimization problems
+\begin{align}\tag{$P_{\data,\Gamma}$}\label{prob:empEstimation}
+	\empsolution = \argmin_{\theta\in\Gamma} \centropyof{\empdistribution}{\expdistof{\theta}}
+\end{align}
+and
+\begin{align}\tag{$P_{\mathbb{E},\Gamma}$}\label{prob:expEstimation}
+	\expsolution = \argmin_{\theta\in\Gamma} \centropyof{\gendistribution}{\expdistof{\theta}}
+\end{align}
+where by $\expdistof{\theta}$ we denote the element of an exponential family with sufficient statistics $\sstat$ and parameter $\theta$.
+
+
+%% Examples
+%In feature calibration $\sstat$ is the concatenation of all formulas and $\Gamma$ is the vector space $\rr^{\cardof{\formulaset}}$ of possible weigths.
+%In feature selection we would choose $\sstat$ by a formula selecting tensor network and $\Gamma$ as the set of basis tensors representing the selection of a specific formula. %% TRUE ?? Doing Gradient 
+%We then optimize 
+
+
+% Concentration
+We have at each hypothesis $\theta\in\Gamma$
+\begin{align}
+	\expectationof{\centropyof{\empdistribution}{\expdistof{\theta}}} = \centropyof{\gendistribution}{\expdistof{\theta}}
+\end{align}
+and thus, the objective in Problem~\ref{prob:empEstimation} converges in the limit $\datanum\rightarrow\infty$ by the law of large numbers at each hypothesis $\theta\in\Gamma$ to the objective in Problem~\ref{prob:expEstimation}.
+
+To use this insight in the derivation of bounds of the distance of $\empsolution$ and $\expsolution$, we need to quantifying this convergence 
+\begin{itemize}
+	\item Non-asymptotically: Since we typically have access to limited amounts of data, that is finite $m$, we need to quantify the concentration in non-asymptotic cases.
+	\item Uniform: Since the problems are optimized at extreme situations, the convergence of the objective has to happen uniformally at multiply $\theta\in\Gamma$.
+\end{itemize}
+
+%% Formalization 
+%To be more precise let $\expsolution$ be the tensor representing the MLN $\mlntrueparameters$ and $\Gamma$ a hypothesis tensors.
+%We then seek to get the tensor $\mlntrueparameters$ maximizing the likelihood function by solving
+%\begin{align}\tag{$P_{\loss,\Gamma}$}\label{prob:empMLNrecovery}
+%	\argmin_{\theta\in\Gamma} - \variablesum\log\mlnprobof{\datapointof{\variableindex}}{\theta}
+%\end{align}
+
+%This is an empirical risk minimization problem given the loss function 
+%	\[ \lossof{\theta} = - \probof{\cdot | \theta}\]
+%and the empirical risk
+%	\[ \loss_{\data}\left( \theta \right) = - \variablesum\log\mlnprobof{\datapointof{\variableindex}}{\theta} \, . \]
+%
+%In our probabilistic analysis we assume, that the datapoints are drawn independently from a Markov logic network with parameters $\mlntrueparameters$.
+%Then we derive recovery guarantees based on nonasymptotic convergence bounds of $\loss_{\data} $ to its expectation.
+
+
+\subsubsection{Solution of the Expected Problem}
+
+% Motivation
+Let us first investigate the solution of Problem~\ref{prob:expEstimation}, to get a reference for Problem~\ref{prob:empEstimation}.
+
+%The expectation of the loss is then
+%\begin{align}
+%	\expectationof{\variablesum\log\mlnprobof{\datapointof{\variableindex}}{\mlnparameters}} 
+%	= \expectationof{\log\mlnprobof{\datapointof{}}{\mlnparameters}}
+%\end{align}
+%where the expectation is performed over $\datapointof{}$ distributed by $\mlnprobof{\datapointof{}}{\mlntrueparameters}$.
+%This is the cross entropy between the generative distribution by $\mlntrueparameters$ and the hypothesis $\mlnparameters$.
+%
+%The expected loss analogon to Problem \ref{prob:empMLNrecovery} is
+%\begin{align}\tag{$P_{\expectationof{\loss},\Gamma}$}\label{prob:expMLNrecovery}
+%	\argmin_{\theta\in\Gamma} \expectationof{\log\mlnprobof{\datapointof{}}{\theta}}
+%\end{align}
+
+The solution does not change when manipulating the objective as
+\begin{align}
+		\argmin_{\theta\in\Gamma} \centropyof{\gendistribution}{\expdistof{\theta}}
+		= \argmin_{\theta\in\Gamma} \centropyof{\gendistribution}{\expdistof{\theta}} -  \centropyof{\gendistribution}{\gendistribution}
+\end{align}
+
+We notice that the objective of the right side problem is the Kullback-Leibler divergence
+	\begin{align}
+		 \kldivof{\gendistribution}{\expdistof{\theta}}
+%		\kldivof{\expdistof{\expsolution}}{\expdistof{\theta}} = \expectationof{\log
+%		\left[
+%		\frac{
+%		\mlnprobof{\datapointof{}}{\expsolution} 
+%		}{
+%		\mlnprobof{\datapointof{}}{\theta}
+%		}
+%		\right]} \, .
+	\end{align}
+Thus, Problem~\ref{prob:expEstimation} coincides with the approximation of $\gendistribution$ by an element $\expdistof{\theta}$ with $\theta\in\Gamma$ in the Kullback-Leibler divergence.
+
+We decompose:
+\begin{align}
+	\kldivof{\expdistof{\expsolution}}{\expdistof{\theta}} 
+	= \log\left[\frac{\partitionfunctionof{\theta}}{\partitionfunctionof{\expsolution}}\right] 
+	+ \frac{1}{\partitionfunctionof{\expsolution}} \braket{\expsolution-\theta,\expof{\expsolution}}
+\end{align}
+Some insights can be drawn based on this decomposition:
+\begin{itemize}
+	\item The first term vanishes, when both partition functions are the same.
+		We can always adjust $\theta$ by constant offsets on all coordinates (of course without changing the distribution), such that the partition functions are equal.
+		This is done by the map
+			\[ \theta \rightarrow \theta + \lambda \cdot \ones \]
+		where we choose $\lambda\in\rr$ by
+			\[ \lambda = \frac{\partitionfunctionof{\expsolution}}{\partitionfunctionof{\theta}} \]
+		to ensure a vanishing first term.		
+	\item In the second term the differences in coordinates are weighted by exponentiated solution $\expsolution$.
+		Where the probability mass is small errors in $\theta$ have a small influence on the Kullback-Leibler divergence.
+\end{itemize}
+
+
+\begin{theorem}
+	Let us assume $\gendistribution = \expdistof{\expsolution}$ for some $\expsolution\in\Gamma$. 
+	Then one solution of Problem \ref{prob:expEstimation} coincides with $\expsolution$ up to constant offsets.
+\end{theorem}
+\begin{proof}
+	This follows directly from the Gibbs inequality, since 
+	\begin{align}
+		\kldivof{\expdistof{\expsolution}}{\expdistof{\theta}} \leq 0
+	\end{align}
+	with equality if only if $\expdistof{\expsolution}$ and $\expdistof{\theta}$ are equal.
+	The uniqueness follows from Theorem \ref{the:tensorRepUniqueness}
+\end{proof}
+
+
+
+
+
+
+
+
+
+\subsubsection{Recovery Guarantee based on Widths}
+
+\begin{theorem}
+	Let us assume $\expsolution\in\Gamma$ and that $\partitionfunctionof{\theta}$ is constant among $\theta\in\Gamma$.
+%	We define
+%	\begin{align}
+%		\omega_{\Gamma} = \sup_{\theta\in\Gamma} \braket{\theta-\expsolution, \expectationof{\datapointof{}} - \variablesum\datapointof{\variableindex}}
+%	\end{align}
+	Then for any solution $\hat{\theta}$ of the empirical problem we have
+	\begin{align}
+		\kldivof{\expdistof{\theta^*}}{\expdistof{\hat{\theta}}} \leq \widthwrtof{\Gamma}{\fluctuationtensor} \, .
+	\end{align}
+\end{theorem}
+\begin{proof}
+	First we notice
+	\begin{align}
+		\argmin_{\theta\in\Gamma} \loss\theta = \argmin_{\theta\in\Gamma} \loss\theta - \loss\expsolution 
+	\end{align}
+	When $\expsolution\in\Gamma$ the minimum of the empirical loss with respect to $\expsolution$ is negative since
+	\begin{align}
+		\loss\empsolution - \loss\expsolution \leq \loss\expsolution-\loss\expsolution \leq 0
+	\end{align}
+	We separate expectations and fluctuations and get
+	\begin{align}
+		\kllossof{\empsolution} \leq \kllossof{\empsolution} - (\loss\empsolution - \loss\expsolution) \leq \omega_{\Gamma} \, .
+	\end{align}
+\end{proof}
+
+
+%We recognize $\omega_\Gamma$ to be a width of the random tensor
+%	\[ \fluctuationtensor  = \expectationof{\datapointof{}}-\variablesum\datapointof{\variableindex}  \, . \]
+
+
+
+% Width 
+The supremum of the differences between expected and empirical risks is the width of the fluctuation tensor, as we state next.
+
+\begin{lemma}
+	For any $\Gamma$ and $\datamap$ we have
+	\begin{align*}
+		\widthwrtof{\Gamma}{\fluctuationtensor^{\identity, \gendistribution, \datamap}} 
+		= \sup_{\theta\in\Gamma} \centropyof{\empdistribution}{\expdistof{\theta}} - \centropyof{\gendistribution}{\expdistof{\theta}} 
+	\end{align*}
+\end{lemma}
+\begin{proof}
+	Using the decomposition of cross entropy in the naive exponential family 
+	 	\[ \centropyof{\empdistribution}{\expdistof{\theta}}=\contractionof{\probtensor,\lnof{\gendistribution}} - \cumfunctionof{\lnof{\gendistribution}} \, . \]
+\end{proof}
+
+
+\begin{corollary}
+	At the solution $\hat{\theta}$ of Problem~\ref{prob:empEstimation} we have
+		\[ \centropyof{\empdistribution}{\expdistof{\hat{\theta}}} - \centropyof{\gendistribution}{\expdistof{\hat{\theta}}} \leq  \widthwrtof{\Gamma}{\fluctuationtensor^{\identity, \gendistribution, \datamap}} \, . \] 
+\end{corollary}
+
+
+
+
+
+
+\subsection{Guarantees for Mode of the Proposal Distribution}
+
+Let us now derive probabilistic guarantees, that the mode of the proposal distribution at the empirical and the generating distribution are equal.
+
+\begin{definition}
+	The max gap of a tensor $V$ is the quantity
+		\[ \maxgap(V) = \min_{i\neq i^{max}} V[X = i^{max}] - V[X=i] \]
+	where
+		\[ i^{max} \in \argmax_{i} V[X = i] \, . \]
+\end{definition}
+
+If multiple maxima exist, the
+
+
+
+\begin{theorem}\label{the:probGuaranteeProposalDist}
+	Whenever the energy tensor of the expected proposal distribution has a gap of $\maxgap$, then for every $\failprob>0$ the mode of the expected proposal distribution coincides with the empirical proposal distribution with probability at least $1-\expof{-\frac{1}{\failprob^2}}$, provided that
+		\[ \datanum > C\frac{\left(\sum_{\atomenumeratorin}\lnof{\catdimof{\atomenumerator}}\right)}{\maxgap^2} \]
+	where $C$ is a universal constant.
+\end{theorem}
+
+To proof the theorem we first use a deterministic recovery guarantee involving the width of the fluctuation tensor and then apply the width bound of Theorem~\ref{the:basisTensorWidthBound}.
+
+\begin{lemma}\label{lem:detGuaranteeProposalDist}
+	Whenever 
+	\begin{align*}
+		\maxgap(\contractionof{\{\gendistribution,\fselectionmap\}}{\selvariable}) 
+		> 2 \cdot  \widthatof{\{\onehotmapof{\catindices} :\catindices\in\facstates\}}{\fluctuationtensor^{\fselectionmap,\gendistribution,\datamap}} \, , 
+	\end{align*}
+	then the mode of the proposal distribution to the empirical distribution coincides with the mode of the proposal distribution to the generating distribution.
+\end{lemma}
+\begin{proof}
+	If different, then the expected objective at the solutions of the empirical and expected is at least $\maxgap$.
+	But at the empirical, the difference it as most twice the width different, so that is a contradiction to the assumption.
+\end{proof}
+
+
+\begin{proof}[Proof of Theorem~\ref{the:probGuaranteeProposalDist}]
+	Given the assumed bound, the sub-gaussian norm of the width is upper bounded by $C_2\cdot \maxgap$, thus for any $\failprob>0$ we have
+		\[  \widthatof{\{\onehotmapof{\catindices} :\catindices\in\facstates\}}{\fluctuationtensor^{\fselectionmap,\gendistribution,\datamap}}  < 2 \maxgap \]
+	with probability at least $1-\expof{-\frac{1}{\failprob^2}}$.
+	The claim thus follows with Lemma~\ref{lem:detGuaranteeProposalDist}.
+\end{proof}
+
+
+
+
+\begin{example}[Gap of a MLNs with single formulas]
+	Let there be the MLN of a maxterm $\formula$ with $\atomorder$ variables, and let $\formulaset$ be the maxterm selecting tensor, then 
+		\[ \maxgap(
+		%\energytensorof{(\{\formula\},\weightof{\formula})}
+		\energytensorof{(\formulaset, \expdistof{(\{\formula\},\weightof{\formula})} - \normationof{\ones}{\shortcatvariables} )}
+		) = \frac{1}{2^{\atomorder}-1 + \expof{-\weightof{\formula}}}  \]
+	If $\weightof{\formula}>0$ we have an exponentially small gap.
+	Thus, for the above Lemma to apply, the width needs to be exponentially in $\atomorder$ small.
+	
+	
+	Let there be the MLN of a minterm $\formula$ with $\atomorder$ variables, then 
+		\[ \maxgap(
+%		\energytensorof{(\{\formula\},\weightof{\formula})}
+		\energytensorof{(\formulaset, \expdistof{(\{\formula\},\weightof{\formula})} - \normationof{\ones}{\shortcatvariables} )}
+		) = \frac{1}{1+(2^{\atomorder}-1)\cdot\expof{-\weightof{\formula}}}  \]
+	For large $\weightof{\formula}$ and $\atomorder$, the gap tends to $1$.
+\end{example}
+
+
+
+
+
+
+%%% OLD
+%\begin{theorem}
+%	When the expected sufficient statistics of $\gendistribution$ is gapped by $\maxgap>0$ we  have
+%		\[ \expsolution = \empsolution \]
+%	with probability at least
+%		\[ 1- XXXX \, . \]
+%\end{theorem}
+%\begin{proof}
+%	We show the theorem by proofing that within the stated probabilistic bounds we have
+%		\[ \maxgap > 2 \widthatof{\Gamma}{\fluctuationtensor} \, . \]
+%	In case of this event, it follows that $\expsolution = \empsolution$.
+%	The probabilistic bound can be shown based on the sub-Gaussian norm of $\widthatof{\Gamma}{\fluctuationtensor}$ bounded in Chapter~\ref{cha:widthBounds}.
+%\end{proof}
+
+
+
+
+
+
+\subsection{Guarantees for Parameter Estimation}
+
+\red{This is mean parameter fluctuation interpretation of the random tensor.}
+
+
+\begin{lemma}\label{lem:meanParamDistance}
+	For any $\fselectionmap$ and $\datamap$ drawn from $\gendistribution$ we have
+	\begin{align*}
+		\normof{\meanparam^\datamap - \meanparam^*} 
+		= \widthwrtof{\subsphere}{\fluctuationtensor^{\fselectionmap,\gendistribution,\datamap}} \, ,
+	\end{align*}
+	where $\meanparam^\datamap=\sbcontractionof{\fselectionmap,\empdistribution}{\selvariable}$ and $\meanparam^*=\sbcontractionof{\fselectionmap,\gendistribution}{\selvariable}$.
+\end{lemma}
+
+%
+We can thus apply the sphere bounds.
+
+
+\begin{theorem}
+	For any $\failprob\in(0,1)$ we have the following with probability at least $1-\failprob$.
+	Let $\hat{\canparam}$ and $\precision>0$, then
+		\[ \absof{\centropyof{\gendistribution}{\expdistof{\empsolution}} - \centropyof{\empdistribution}{\expdistof{\empsolution}}} \leq \tau \cdot \normof{\empsolution} \]
+	provided that
+		\[ \datanum \geq \frac{\sbcontraction{\meanparam^*}-\sbcontraction{(\meanparam^*)^2}}{\failprob \precision^2} \, . \]
+\end{theorem}
+\begin{proof}
+	We have by Cauchy Schwartz 
+		\[ \absof{\sbcontraction{\meanparam^\datamap - \meanparam^*,\empsolution}} \leq \normof{\meanparam^\datamap - \meanparam^*} \cdot \normof{\empsolution}\]
+	and with Lemma~\ref{lem:meanParamDistance}
+		\[ \absof{\sbcontraction{\meanparam^\datamap - \meanparam^*,\empsolution}} \leq \widthwrtof{\subsphere}{\fluctuationtensor^{\fselectionmap,\gendistribution,\datamap}} \cdot \normof{\empsolution} \, . \]
+	We show in Part III that in Theorem~\ref{the:sphereBoundVariance} that
+		\[  \widthwrtof{\subsphere}{\fluctuationtensor^{\fselectionmap,\gendistribution,\datamap}} \leq \tau \]
+	when $\datanum$ satisfies the assumed lower bound, from which the claim follows.
+\end{proof}
+
+
+
+
+
+

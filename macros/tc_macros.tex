@@ -1,0 +1,245 @@
+% Relational encoding
+
+
+\newcommand{\tensorof}[1]{#1}
+\newcommand{\rencodingof}[1]{\rho^{#1}}
+\newcommand{\rencodingofat}[2]{\rencodingof{#1}\left[#2\right]}
+
+\newcommand{\sencodingof}[1]{\gamma^{#1}}
+\newcommand{\sencodingofat}[2]{\sencodingof{#1}\left[#2\right]}  
+
+\newcommand{\bencodingof}[1]{\beta^{#1}}
+\newcommand{\bencodingofat}[2]{\bencodingof{#1}\left[#2\right]}  
+
+
+\newcommand{\linmap}{F}
+\newcommand{\linmapof}[1]{\linmap^{#1}}
+\newcommand{\linmapspace}{\mathbb{L}}
+
+\newcommand{\concore}{\rho} 
+
+
+
+%% Directed Tensor Calculus
+\newcommand{\exrelation}{\mathcal{R}}
+\newcommand{\exrelationof}[1]{\exrelation^{#1}}
+\newcommand{\arbset}{\mathcal{M}}
+\newcommand{\arbsetof}[1]{\arbset^{#1}}
+\newcommand{\arbsubset}{\mathcal{V}} % Conflicts with nodes!
+
+\newcommand{\insymbol}{\mathrm{in}}
+\newcommand{\outsymbol}{\mathrm{out}}
+\newcommand{\inset}{\arbset^{\insymbol}}
+\newcommand{\outset}{\arbset^{\outsymbol}}
+
+\newcommand{\incatindex}{\catindexof{\insymbol}}
+\newcommand{\outcatindex}{\catindexof{\outsymbol}}
+
+%\newcommand{\catindexin}{\catindexof{\mathrm{in}}}
+%\newcommand{\catindexout}{\catindexof{\mathrm{out}}}
+
+
+%% Sparse Tensor Calculus
+\newcommand{\sparsityof}[1]{\ell_0\left(#1\right)}
+
+
+
+%\newcommand{\variableset}{M}
+
+
+
+
+%% Main Variables: Term, Selection, Categorical
+
+%% Symbols
+\newcommand{\indvariable}{O} 
+\newcommand{\inddim}{r}
+\newcommand{\indindex}{o} % was s
+\newcommand{\indenumerator}{l}
+\newcommand{\indorder}{n} % number of variables 
+
+\newcommand{\selvariable}{L} 
+\newcommand{\seldim}{p}
+\newcommand{\selindex}{l}
+\newcommand{\selenumerator}{s}
+\newcommand{\selorder}{n}
+
+\newcommand{\catvariable}{X} 
+\newcommand{\catdim}{m}
+\newcommand{\catindex}{x} % was i
+\newcommand{\catenumerator}{\atomenumerator}
+\newcommand{\catorder}{\atomorder}
+
+\newcommand{\datvariable}{J} % Can be understood as selvariable selecting a datapoint, catvariable as a random datapoint, indvariable as a abstract object representing the sample, also used at indexvariable!
+\newcommand{\datdim}{m}
+\newcommand{\datindex}{j}
+
+
+%% Syntactic Sugar
+\newcommand{\indvariableof}[1]{\indvariable_{#1}}
+\newcommand{\selvariableof}[1]{\selvariable_{#1}}
+\newcommand{\catvariableof}[1]{\catvariable_{#1}}
+
+\newcommand{\indvariablelist}{\indvariableof{0},\ldots,\indvariableof{\individualorder-1}}
+\newcommand{\catvariablelist}{\catvariableof{0},\ldots,\catvariableof{\atomorder-1}}
+\newcommand{\selvariablelist}{\selvariableof{0},\ldots,\selvariableof{\selorder-1}}
+
+\newcommand{\shortindvariablelist}{\indvariableof{[\individualorder]}}
+\newcommand{\shortcatvariablelist}{\catvariableof{[\atomorder]}}
+\newcommand{\shortselvariablelist}{\selvariableof{[\selorder]}}
+
+\newcommand{\shortcatindices}{\catindexof{[\catorder]}}
+\newcommand{\shortselindices}{\selindexof{[\selorder]}}
+
+\newcommand{\inddimof}[1]{\inddim_{#1}}
+\newcommand{\seldimof}[1]{\seldim_{#1}}
+\newcommand{\catdimof}[1]{\catdim_{#1}}
+
+\newcommand{\indindexof}[1]{\indindex_{#1}}
+\newcommand{\selindexof}[1]{\selindex_{#1}}
+\newcommand{\catindexof}[1]{\catindex_{#1}} 
+
+\newcommand{\indindexin}{\indindex\in[\inddim]}
+\newcommand{\selindexin}{\selindex\in[\seldim]}
+\newcommand{\catindexin}{\catindex\in[\catdim]}
+\newcommand{\datindexin}{\datindex\in[\datdim]}
+
+\newcommand{\indindexofin}[1]{\indindexof{#1}\in[\inddimof{#1}]}
+\newcommand{\catindexofin}[1]{\catindexof{#1}\in[\catdimof{#1}]}
+\newcommand{\selindexofin}[1]{\selindexof{#1}\in[\seldimof{#1}]}
+
+\newcommand{\indindexlist}{\indindexof{0},\ldots,\indindexof{\indorder-1}}
+\newcommand{\catindexlist}{\catindexof{0},\ldots,\catindexof{\atomorder-1}}
+\newcommand{\selindexlist}{\selindexof{0},\ldots,\selindexof{\selorder-1}}
+
+\newcommand{\indenumeratorin}{\indenumerator\in[\indorder]}
+\newcommand{\selenumeratorin}{\selenumerator\in[\selorder]}
+\newcommand{\catenumeratorin}{\catenumerator\in[\catorder]}
+
+\newcommand{\indexedindvariableof}[1]{\indvariableof{#1}=\indindexof{#1}}
+\newcommand{\indexedcatvariableof}[1]{\catvariableof{#1}=\catindexof{#1}}
+\newcommand{\indexedselvariableof}[1]{\selvariableof{#1}=\selindexof{#1}}
+
+\newcommand{\indexedselvariable}{\indexedselvariableof{}}
+
+\newcommand{\indspace}{\bigotimes_{\indenumeratorin}\rr^{\inddim}}
+\newcommand{\catspace}{\bigotimes_{\atomenumeratorin} \rr^{\catdimof{\atomenumerator}}}
+
+\newcommand{\selstates}{\bigtimes_{\selenumeratorin}\seldimof{\selenumerator}}
+%%
+
+\newcommand{\dataindex}{\datindex}
+\newcommand{\secdataindex}{\tilde{\datindex}}
+\newcommand{\datavariable}{\datvariable}
+\newcommand{\datanum}{\datdim}
+\newcommand{\dataindexin}{\dataindex\in[\datanum]}
+\newcommand{\datain}{\dataindex\in[\datanum]}
+\newcommand{\data}{\{\datapointof{\dataindex}\}_{\dataindexin}}
+
+\newcommand{\catvariables}{\catvariablelist}
+\newcommand{\shortcatvariables}{\shortcatvariablelist}
+
+
+
+
+\newcommand{\indexedcatvariables}{\indexedcatvariableof{0},\ldots,\indexedcatvariableof{\atomorder-1}} 
+\newcommand{\tildeindexedcatvariables}{\catvariableof{0}=\tilde{\catindex}_0,\ldots,\catvariableof{\atomorder-1}=\tilde{\catindex}_{\atomorder-1}} 
+
+\newcommand{\seccatvariable}{Y}
+\newcommand{\seccatindex}{y}
+
+\newcommand{\seccatvariableof}[1]{\seccatvariable_{#1}}
+\newcommand{\indexedseccatvariableof}[1]{\seccatvariableof{#1}=\seccatindexof{#1}}
+\newcommand{\seccatvariables}{\seccatvariableof{0},\ldots,\seccatvariableof{p-1}}
+\newcommand{\indexedseccatvariables}{\indexedseccatvariableof{0}\ldots,\indexedseccatvariableof{\secatomorder-1}} 
+
+\newcommand{\catvariablesinset}[1]{\catvariableof{\node} \, : \, \node \in #1}
+\newcommand{\seccatindexof}[1]{\seccatindex_{#1}}
+
+\newcommand{\catindices}{\catindexlist}
+\newcommand{\tildecatindices}{\tilde{\catindex}_{0},\ldots,\tilde{\catindex}_{\atomorder-1}}
+\newcommand{\seccatindices}{{\seccatindexof{0},\ldots,\seccatindexof{\secatomorder-1}}}
+
+\newcommand{\catindicesof}[1]{{\catindexof{0}^{#1},\ldots,\catindexof{\atomorder-1}^{#1}}}
+
+\newcommand{\facstates}{\bigtimes_{\atomenumeratorin}[\catdimof{\atomenumerator}]}
+\newcommand{\facdim}{\prod_{\atomenumeratorin}\catdimof{\atomenumerator}}
+\newcommand{\secfacstates}{\bigtimes_{\secatomenumerator\in[\secatomorder]}[\catdimof{\secatomenumerator}]}
+
+\newcommand{\facspace}{\catspace}
+\newcommand{\secfacspace}{\bigotimes_{\secatomenumerator\in[\secatomorder]} \rr^{\catdimof{\secatomenumerator}}}
+
+
+
+
+%% Cores
+\newcommand{\categoricalmap}{Z}
+\newcommand{\categoricalcore}{\rencodingof{\categoricalmap}}
+\newcommand{\categoricalcoreof}[1]{\rencodingof{\categoricalmap_{#1}}}
+
+
+\newcommand{\datamap}{D}
+\newcommand{\datamapof}[1]{\datamap(#1)}
+\newcommand{\datapointof}[1]{\datamapof{#1}}%{\datamap_{#1}}
+
+\newcommand{\secdatamap}{\tilde{\datamap}}
+\newcommand{\datacore}{\rencodingof{\datamap}}
+\newcommand{\datacoreof}[1]{\rencodingof{\datamap_{#1}}}
+\newcommand{\datacoreofat}[2]{\rencodingof{\datamap_{#1}}[#2]}
+
+\newcommand{\secdatacoreof}[1]{\rencodingof{\secdatamap_{#1}}}
+\newcommand{\empdistribution}{\probtensor^{\datamap}}
+\newcommand{\empdistributionat}[1]{\empdistribution\left[#1\right]}
+
+
+
+\newcommand{\varcore}[1]{U^{#1}} % For optimization of tensor network
+\newcommand{\varspace}[1]{\rr^{p_{#1}}}
+\newcommand{\varcollection}{\big\{\varcore{\atomenumerator}\, :\, \atomenumeratorin \big\}}
+
+
+
+\newcommand{\headcore}{W} % activation of a formula, typical exp
+\newcommand{\headcoreof}[1]{\headcore^{#1}}
+\newcommand{\headcoreofat}[2]{\headcore^{#1}[#2]}
+
+
+
+%% CP Decomposition
+
+\newcommand{\legcore}{V}
+\newcommand{\legcoreof}[1]{\legcore^{#1}}
+\newcommand{\legcoreofat}[2]{\legcoreof{#1}[#2]}
+
+\newcommand{\scalarcore}{\sigma}
+\newcommand{\scalarcoreof}[1]{\scalarcore[#1]}
+\newcommand{\scalarcoreat}[1]{\scalarcore[#1]}
+
+% DecompositionIndex -> Use Datavariable for that
+\newcommand{\decvariable}{\datvariable} 
+
+\newcommand{\decindex}{\parindex} % INCONSISTENT!
+\newcommand{\decdim}{\parlegdim}
+\newcommand{\decindexin}{\decindex\in[\decdim]}
+\newcommand{\inddecvar}{\datavariable=\decindex}
+
+% Used in poly sparsity
+\newcommand{\indexvariable}{\datvariable} % for datacores used
+\newcommand{\indexset}{J}
+\newcommand{\indexsetof}[1]{\indexset^{#1}}
+
+\newcommand{\slackvariable}{z}
+
+\newcommand{\cprankof}[1]{\mathrm{rank}\left(#1\right)}
+\newcommand{\bincprankof}[1]{\mathrm{rank}^{\mathrm{bin}}\left(#1\right)}
+\newcommand{\slicesparsityof}[1]{\tilde{\ell} \left(#1\right)}
+
+\newcommand{\bascprankof}[1]{\mathrm{rank}^{\mathrm{bas}}\left(#1\right)}
+\newcommand{\baspluscprankof}[1]{\mathrm{rank}^{\mathrm{bas+}}\left(#1\right)}
+\newcommand{\quacprankof}[1]{\mathrm{rank}^{\mathrm{qua}}\left(#1\right)}
+
+\newcommand{\sliceset}{\mathcal{M}}
+\newcommand{\slicescalar}{\lambda}
+\newcommand{\slicetupleof}[1]{(\slicescalar^{#1}, \variableset^{#1}, \catindexof{\variableset^{#1}}^{#1})}
+\newcommand{\enumeratedslices}{\{\slicetupleof{\decindex} \, : \, \decindexin\}}
+

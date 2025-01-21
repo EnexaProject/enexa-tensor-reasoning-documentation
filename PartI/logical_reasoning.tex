@@ -1,0 +1,704 @@
+\section{Logical Inference} \label{sec:tensorKB}
+
+We approach logical inference by defining probability distributions based on propositional formulas and then apply the methodology introduced in the more generic situation of probabilistic inference.
+Logical approaches pay here special attention to situations of certainty, where a state of a variable has probability $1$.
+In this situation, we say that the corresponding formula is entailed.
+%Such situations are called entailment, and we will investigate how we can find these by contractions.
+
+
+% From Probabilistic 
+We start the discussion by showing how formulas can be interpreted by distributions and define logical entailment based on corresponding probabilistic queries.
+This enables us to define logical entailment based on the resulting conditional distributions.
+
+
+%% Where to put?
+\begin{remark}[Interpretation of Contractions in Logical Reasoning]
+	The coordinates of contracted binary tensor networks describe whether the by the coordinate indexed world is a model of the Knowledge Base at hand.
+	Contractions, which only leave a part variables open, store the counts of the world respecting conditions given by the choice of slices. 
+	When contracting without open variables, we thus get the total worldcount.
+	
+	This is consistent with the probabilistic interpretation of contractions, when applying the frequentist interpretation of probability and defining normed worldcounts as probabilities.
+\end{remark}
+
+
+\subsection{Entailment in Propositional Logics}
+
+\begin{definition}[Entailment of propositional formulas]\label{def:logicalEntailment}
+	Given two propositional formulas $\kb$ and $\exformula$ we say that $\kb$ entails $\exformula$, denoted by $\kb\models\exformula$, if any model of $\kb$ is also a model of $\exformula$, that is
+		\[ \forall_{\shortcatindices\in\atomstates} \big(\kbat{\indexedcatvariableof{[\catorder]}}=1\big) \rightarrow \big(\formulaat{\indexedcatvariableof{[\catorder]}}=1\big) \, . \]
+	If $\kb\models\lnot\exformula$ holds, we say that $\kb$ contradicts $\exformula$.
+\end{definition}
+
+%
+\red{Entailment can be understood by subset relations of the models of formulas.
+This perspective can be applied with subset encodings in Chapter~\ref{cha:tensorEncodings}.
+}
+
+
+
+
+
+\subsubsection{Deciding Entailment by contractions}
+
+\begin{theorem}[Contraction Criterion of Entailment]\label{the:contCriterionLogEntailment}
+	We habe $\kb\models\exformula$ if and only if 
+		\[ \sbcontraction{\kb,\lnot\exformula} = 0 \, . \]
+\end{theorem}
+\begin{proof}
+	% <= 
+	If for a $\atomindices$ we have $\kbat{\indexedcatvariableof{[\catorder]}}=1$ but not $\big(\exformula(\atomindices)=1\big)$, the contraction would be at least $1$.
+	% =>
+	Conversely, if the contraction is at least one, we would find $\atomindices$ with $\kbat{\indexedcatvariableof{[\catorder]}}=1$ and $\lnot\formulaat{\indexedcatvariableof{[\catorder]}}=1$, therefore $\formulaat{\indexedcatvariableof{[\catorder]}}=0$. 
+	It follows that $\kb\models\exformula$ does not hold.
+\end{proof}
+
+% Can use relational encoding
+To decide whether a formula is entailed, or its negation is entailed (in which case one says that the formula is contradicted) by a single contraction, one can perform the contraction
+\begin{align*}
+	\hypercore = \sbcontractionof{\kbat{\shortcatvariables},\formulaat{\shortcatvariables,\catvariableof{\exformula}}}{\catvariableof{\exformula}}
+\end{align*}
+and use that
+\begin{align*}
+	 \sbcontraction{\kb,\lnot\exformula} = \hypercoreat{\catvariableof{\exformula}=0} 
+\end{align*}
+and 
+\begin{align*}
+	 \sbcontraction{\kb,\exformula} = \hypercoreat{\catvariableof{\exformula}=1} \, .  
+\end{align*}
+
+
+
+
+
+
+\subsubsection{Contraction Knowledge Base}
+
+%\red{To do: Knowledge Base as Markov Network}
+
+We now show how to implement a propositional Knowledge Base with the TELL and ASK operations based on Theorem~\ref{cor:parallelCriterion}.
+
+% Works also for Markov Networks!
+\begin{algorithm}[hbt!]
+\caption{Contraction Knowledge Base}\label{alg:TensorKB}
+ASK(formula $\exformula$)
+\begin{algorithmic}
+	\State{$\hypercoreat{\formulavar} \leftarrow \sbcontractionof{\kb,\rencodingof{\exformula}}{\formulavar}$}
+	\If{$\hypercoreat{\formulavar=0}=0$} 
+		\State{return Entailed}
+	\EndIf
+	\If{$\hypercoreat{\formulavar=1}=0$} 
+		\State{return Contradicted}
+	\EndIf
+	\State{return Contingent}
+\end{algorithmic}
+TELL(formula $\exformula$)
+\begin{algorithmic}
+	\If{ASK($\exformula$) returns Contingent:}
+%	\If{$\sbcontractionof{\kb,\exformula}>0$ and $\sbcontraction{\kb,\lnot\exformula}>0$} %Consistency + Redundancy check
+	\State $\kb \leftarrow \kb\land\exformula$%Add cores of formula tensor $\exformula$ to $\ftensorof{\kb}$ in order to represent $\ftensorof{\kb\cup\{\exformula\}}$
+	\EndIf
+\end{algorithmic}
+
+\end{algorithm}
+
+\red{
+Comment: TELL checks whether the formula to be added is entailed, in which case it is redundant to add, and whether the formula to be added is contradicted, in which case the knowledge base would become unsatisfiable.
+}
+
+
+
+\subsubsection{Sparse Representation of a Knowledge Base}
+
+Let us now investigate how to sparsely represent a Knowledge Base.
+Towards getting insights on this we first show that entailed formulas can be dropped from the Knowledge Base.
+
+\begin{theorem}\label{the:ReduncancyOfEntailed}
+	If and only if $\kb \models \exformula$ we have
+		\[ \kbat{\shortcatvariables}= \sbcontractionof{\kb,\exformula}{\shortcatvariables}  \, . \]
+\end{theorem}
+\begin{proof}
+	For any world indexed by a coordinate $\atomindices$, $\kbat{\indexedcatvariableof{[\catorder]}}$ indicates whether the world is a model of $\kb$.
+	We have entailment, when the models of $\kb\cup\exformula$ coincide with those of $\kb$.
+\end{proof}
+
+
+\begin{remark}[Sparsest Description of a Knowledge Base]
+	Given a set of worlds indexed by $\hypercore$, find the sparsest set of formulas $\kb$ such that
+		\[ \hypercore = {\kb} \]
+	would be benefitial for small computational complexity.
+	Since the formula tensors are invariant under entailment, we can drop entailed formulas.
+\end{remark}	
+
+
+
+
+
+\subsection{Formulas as Random Variables}
+
+\red{Aim here: Relate with the probabilistic reasoning concepts of marginal and conditional distributions.}
+
+\red{Given a probability distribution $\probtensor$ of atoms we add a variable by building the Markov Network of $\probtensor$ and $\rencodingof{\exformula}$ to get a joint distribution of the atoms and a query formula $\exformula$}
+
+There are two ways of interpreting formula tensors as conditional probabilities.
+The standard one, which we also used above, understands the atomic legs as conditions and calculates the truth of the formula.
+Another understands a formula as a condition.
+
+\subsubsection{Conditioning on the atoms}
+
+%% Conditional interpretation -> Formulas as conditional probability ("local")
+Our main interpretation understands each tuple of indices $\atomindices$ as conditions of a probability tensor.
+Given a truth assignment to the atomic variables $\atomicformulaof{\atomenumerator}$, that is a choice of indices $\atomlegindexof{\atomenumerator}$, determines the truth of the formula.
+We thus interpret the formula tensors as defining a conditional probability of $\exformula$ given the atoms $\atomicformulaof{\atomenumerator}$ indexed by $\atomlegindexof{\atomenumerator}$.
+
+\begin{theorem}\label{the:conditionByAtoms}
+	The relational encoding of any propositional formula $\exformula$ coincides with the conditional probability of that formula conditioned on the identity on the atoms, that is
+		\[ \rencodingof{\exformula} = \condprobof{\formulavar}{\atomicformulas} \, . \]
+	We depict this by
+	\begin{center}
+		\input{./PartI/tikz_pics/logic_representation/atoms_as_condition.tex}
+	\end{center}
+\end{theorem}
+\begin{proof}
+	The distribution $\probtensor$ does not influence the conditional query, since the normation acts on any state.
+\end{proof}
+
+
+% Interpretation of directionality as 
+The conditional query $\condprobof{\formulavar}{\enumeratedatoms}$ provides an interpretation of $\rencodingof{\exformula}$ as a conditional probability. 
+This is also reflected in the fact that both $\condprobof{\exformula}{\shortcatvariables}$ and $\rencodingof{\exformula}$ are directed, since the first is a normation by Defintion~\ref{def:queries} and the second a encoding of a function.
+
+%The direction of the legs in the formula tensor diagram in Figure~\ref{fig:FormulaTensor} is chosen to highlight the conditional probability interpretation.
+
+
+This directly implies using Theorem~\ref{the:conditionalMarginalization}  the trivialization of the formula tensor when contracting its head axis indexed by $\atomlegindexof{\exformula}$ with the trivial vector $\ones$, depicted as
+\begin{center}
+	\input{./PartI/tikz_pics/logic_representation/ones_property_ft.tex}
+\end{center}
+
+
+
+\subsubsection{Conditioning on the formula}
+
+% Defining probability distribution by formulas
+Let us now converse the order of conditioning from $\condprobof{\exformula}{\atomicformulas}$ to $\condprobof{\atomicformulas}{\exformula}$.
+In this way, we have propositonal formulas defining probability distributions on the factored system of atoms.
+
+Given a Markov Network $\probtensor$ with a single core $\rencodingof{\exformula}$ for a propositional formula $\exformula$.
+By definition we have
+\begin{align*}
+	\condprobof{\enumeratedatoms}{\formulavar} 
+	= \sbnormationofwrt{\rencodingof{\exformula}}{\enumeratedatoms}{\formulavar} \, .  
+\end{align*}
+\begin{center}
+	\input{./PartI/tikz_pics/logical_reasoning/kb_as_condition.tex}
+\end{center}
+
+% Conditioning on the formula being true
+Let us further investigate the slices of $\condprobof{\shortcatvariables}{\exformula}$ with respect to $\exformula$, which define distributions of the states of the factored system.
+To this end, let us condition on the event of $\exformula=1$, for which we have the distribution
+\begin{align}\label{eq:eventFormulaProb}
+	\condprobof{\shortcatvariables}{\exformula=1} = \frac{1}{\sbcontraction{\exformula}} \sum_{\atomindices \in \atomstates \, : \, \formulaat{\indexedcatvariableof{[\catorder]}}=1} \onehotmapof{\atomindices} \, .
+\end{align}
+With $\sbcontraction{\exformula}$ being the number of models of $\exformula$,  this is the uniform distribution among the models of $\exformula$.
+Conversely, when conditioning on the event $\exformula=0$ we get a uniform distribution of the models of $\lnot\exformula$.
+
+% 
+The probability distribution in Equation~\eqref{eq:eventFormulaProb} is well defined except for the case that $\sbcontraction{\exformula}=0$.
+In this case we have $\exformula=0$ and call $\exformula$ unsatisfiable, since it has no models.
+
+%The probability tensor is well-defined except for the case that $\ftensor_{1,:}$ contains just $0$ coordinates (respectively for $\ftensor_{0,:}$).
+%This is an exceptionous situation in logics and called unsatisfiability of the knowledge base.
+%\begin{definition}
+%	A propositional formula $\exformula$ with $\sbcontraction{\exformula}=0$ is called unsatisfiable.
+%\end{definition}
+%If the Knowledge Base is inconsistent, the probabilistic interpretation breaks down.
+%Thus we will always assume a consistent Knowledge Base when doing probabilistic reasoning.
+%An alternative interpretation of formula tensors is the conditional probability of the atomic formulas given the formula at hand.
+%To derive the conditional probability tensor we apply the Bayes Theorem
+%\begin{align}
+%	\condprobof{\{\atomicformulaof{\atomenumerator} = \atomlegindexof{\atomenumerator}\}}{\exformula=\atomlegindexof{\exformula}} 
+%	=\frac{
+%	\condprobof{\exformula}{\{\atomicformulaof{\atomenumerator} = \atomlegindexof{\atomenumerator}\}}
+%	}
+%	{
+%	\sum_{\atomindices}\condprobof{\exformula}{\{\atomicformulaof{\atomenumerator} = \atomlegindexof{\atomenumerator}\}} \, .
+%	}
+%\end{align}
+
+
+
+%% Uniform interpretation -> KB as probability distribution over its models ("global")
+From an epistemological point of view, probability theory is a generalization of logics, since we allow for probability values in the interval $[0,1]$.
+The set of distributions being constructed by conditioning on propositional formulas as in Equation~\eqref{eq:eventFormulaProb} correspond within the set of probability distributions with those having constant coordinates on their support.
+% More specific
+While the probability tensors with nonvanishing coordinates build a $2^\atomorder-1$-dimensional manifold, where the formulas parametrize $2^{2^\atomorder}$ probability tensors, most of which having vanishing coordinates.
+
+
+
+
+\subsubsection{Probability of a function given a Knowledge Base}
+
+% Both directions for entailment
+We can now combine the ideas of the previous two subsections and define probabilities of formulas $\exformula$ given the satisfaction of another formula $\kb$, which we call a Knowledge Base.
+We have by Theorem~\ref{the:conditionByAtoms} % Again, Markov Network with rencoding of \exformula, \kb build the precise \probtensor
+\begin{align*}
+	\condprobof{\formulavar}{\kbvar} 
+	& = \sbcontractionof{
+	\condprobof{\formulavar}{\atomicformulas}, \condprobof{\atomicformulas}{\kbvar}
+	}{\formulavar,\kbvar} \\
+	& = \sbnormationofwrt{\rencodingof{\exformula} , \rencodingof{\kb}}{\formulavar}{\kbvar}
+\end{align*}
+
+% 
+Of special interest is the marginal probability of $\formulavar$ given that $\kbvar$ is satisfied, that is
+\begin{align*}
+	\condprobof{\formulavar}{\kbvar=1} 
+	& = \normationof{\{\rencodingof{\exformula} ,\kb\}}{\formulavar}\\
+	& = \frac{\contractionof{\{\rencodingof{\exformula},\kb\}}{\formulavar}}{\contraction{\{\kb\}}} \, . 
+\end{align*}
+
+
+% Knowledge Base as Probability
+\begin{remark}[Case of Unsatisfiable Knowledge Bases]
+	When the Knowledge Base is not satisfiable, one cannot normate it and the probability distribution is not dedfined.
+%	We notice, that by the criterion provided by Theorem~\ref{cor:parallelCriterion} we can decide entailment also in the cases where $\kb$ is unsatisfiable.
+%	In that case the contraction is the zero tensor, which is parallel to $\tbasis$ and $\fbasis$ and thus entailed and contradicting at the same time.
+\end{remark}
+
+%We will now define entailment based on this quantity. 
+%\begin{definition}[Entailment]
+%	We say that a not unsatisfiable Knowledge Base $\kb$ entails a formula $\exformula$, denoted by $\kb\models\exformula$, if $\condprobof{\formulavar=1}{\kbvar=1}=1$. 
+%	If $\kb$ entails $\lnot\exformula$ we say that $\kb$ contradicts $\exformula$.
+%	If the Knowledge Base $\kb$ is unsatisfiable, it entails any formula.
+%	%
+%	More generally, we say that a probability distribution $\probtensor$ entails a formula $\exformula$ if $\probof{\exformula=1}=1$.
+%\end{definition}
+
+
+
+% 
+\begin{theorem}\label{the:probEntailment}
+	Given a satisfiable formula $\kb$, we have $\kb\models\exformula$, if and only if 
+		\[ \condprobof{\formulavar=0}{\kbvar=1} = 0 \, .  \]
+\end{theorem}
+\begin{proof}
+	Since $\kb$ is satisfiable, we have $\sbcontraction{\kb}>0$ and
+		\[ \condprobof{\formulavar=0}{\kbvar=1} = \frac{\sbcontraction{\lnot\exformula, \kb}}{\sbcontraction{\kb}} \, .  \]
+	This term vanishes if and only if $\sbcontraction{\lnot\exformula, \kb}$ vanish.
+	Thus, the condition is equivalent to the condition in Theorem~\ref{the:contCriterionLogEntailment}.
+\end{proof}
+
+Given that $\kb$ is satisfiable, we therefore have $\kb\models\exformula$ if and only if
+\begin{align}
+	\condprobof{\formulavar}{\kbvar=1} = %\begin{cases}
+	\tbasis \, .  %& \text{if }\kb \models \lnot\exformula \\
+	%\tbasis & \text{if }\kb \models \exformula \\
+	%\notin \{\fbasis,\tbasis\} & \text{else}
+	%\end{cases} \, .
+\end{align}
+We depict this condition by the contraction diagram
+%It suffices to check, whether the contraction with the normed Knowledge Base is the basis vector $\tbasis$, respectively $\fbasis$, that is
+\begin{center}
+	\input{./PartI/tikz_pics/logical_reasoning/entailment_check.tex}
+\end{center}
+
+
+We can omit the normation by $\sbcontraction{\kb}$ when deciding entailment, as we state next.
+
+\begin{corollary}\label{cor:parallelCriterion}
+	Given a satisfiable formula $\kb$, we have $\kb\models\exformula$ (respectively $\kb\models\lnot\exformula$), if and only if 
+		\[ \sbcontractionof{\kb,\rencodingof{\exformula}}{\formulavar=0} = 0 
+		 \quad \text{( respectively }
+		 \sbcontractionof{\kb,\rencodingof{\exformula}}{\formulavar=1} = 0 \, . \]
+\end{corollary}
+
+
+
+
+%We will draw on this interpretation in the following, when investigating contraction equation equivalent to entailment.
+
+
+%
+Relating entailment to probability distributions motivates an extension of Definition\ref{def:logicalEntailment} of entailment to arbitrary probability distributions.
+
+
+\begin{definition}\label{def:probEntailment}
+	For any propositional formula $\exformula$ and a probability distribution $\probtensor$ we say that $\probtensor$ probabilistically entails $\exformula$, denoted as $\probtensor\models\exformula$, if
+		\[ \sbcontractionof{\probtensor,\rencodingof{\exformula}}{\formulavar=0} = 0 . \]
+	If $\probtensor\models\lnot\exformula$ we say that $\probtensor$ probabilistically contradicts $\exformula$.
+%	Conversely, we 
+%		\[ \sbcontractionof{\probtensor,\rencodingof{\exformula}}{\formulavar=1} = 0 . \]
+\end{definition}
+
+%
+By Theorem~\ref{the:probEntailment} the definition of entailment reduces to propositional formulas by choosing $\probtensor=\sbnormationof{\kb}{\shortcatvariables}$
+
+
+
+
+
+
+
+
+
+\subsubsection{Deciding entailment on Markov Networks}
+
+
+
+% Generic Probability Tensors
+Let us now relate the probabilistic entailment definition \ref{def:probEntailment} with the logical entailment.
+Given a generic probability distribution $\probtensor$ we can build a Knowledge Base by the indicator function of the support as 
+	\[ \kb^{\probtensor} = \nonzerofunction \circ \probtensor \]
+where $\nonzerofunction:\rr\rightarrow \rr$ is defined as $\nonzeroof{x}=1$ if $x\neq0$ and $\nonzeroof{x}=0$ else.
+
+% Generic case of distributions
+\begin{theorem}\label{the:entailmentMarkovToKB}
+	Any probability distribution $\probtensor$ probabilistically entails a formula $\exformula$, if and only if the Knowledge Base $\kb^{\probtensor}$ logically entails $\exformula$.
+\end{theorem}
+\begin{proof}
+	Whenever $\probtensor$ does not entail $\exformula$ probabilistically we find a state $\shortcatindices\in\atomstates$ such that
+		\[ \probof{\shortcatvariables=\shortcatindices} >0 \quad\text{and} \quad \formulaat{\shortcatvariables=\shortcatindices} = 0 \, . \]
+	We further have $\probof{\shortcatvariables=\shortcatindices} >0$ if and only if $\kb^{\probtensor}[\shortcatvariables=\shortcatindices]=1$ and
+		\[ \big((\kb^{\probtensor}[\indexedcatvariableof{[\catorder]}]=1\big) \rightarrow \big(\formulaat{\indexedcatvariableof{[\catorder]}}=1\big) \, . \]
+	is not satisfied.
+	Together, $\probtensor\models\exformula$ does not holds if and only if
+		\[ \forall \shortcatvariables (\kb^{\probtensor}[\shortcatvariables=\shortcatindices]=1) \rightarrow \big(\formulaat{\indexedcatvariableof{[\catorder]}}=1\big) \,  \]
+	is not satisfied. 
+	Therefore, probabilistic entailment of $\exformula$ by $\probtensor$ is equivalent to logical entailment of $\exformula$ by $\kb^{\probtensor}$.
+\end{proof}
+
+
+
+
+\begin{theorem}\label{the:factorReduction}
+	Let $\extnet=\extnetasset$ be a non-negative Tensor Network on a hypergraph $\graph=(\nodes,\edges)$, $\secnodes\subset\nodes$ be a subset and
+		\[ \probtensor[\catvariableof{\secnodes}] = \normationof{\{\hypercoreat{\edge} \, : \, \edge\in\edges \}}{\catvariableof{\secnodes}} \]
+	and
+		\[ \tilde{\probtensor}[\catvariableof{\secnodes}] = \normationof{\{\nonzerofunction \circ \hypercoreat{\edge} \, : \, \edge\in\edges \}}{\catvariableof{\secnodes}} \]
+	Then we have for any $\exformula$ that $\probtensor\models\exformula$ if and only if $\tilde{\probtensor}\models\exformula$.
+\end{theorem}
+\begin{proof}
+	We first show
+	\begin{align}\label{eq:proofFacReduction}
+		 \nonzerofunction\circ\probtensor = \nonzerofunction\circ\tilde{\probtensor} \, . 
+	\end{align}
+	The claim follows then from Theorem~\ref{the:entailmentMarkovToKB}.
+	To show \eqref{eq:proofFacReduction} let there be $\indexedcatvariableof{\secnodes}$ such that $\probtensor[\indexedcatvariableof{\secnodes}]=0$.
+	Then for any $\indexedcatvariableof{\nodes}$ extending  $\indexedcatvariableof{\secnodes}$ we have $\contractionof{\{\hypercoreat{\edge} \, : \, \edge\in\edges \}}{\indexedcatvariableof{\nodes}} = 0$ and thus also $\contractionof{\{\nonzerofunction\circ\hypercoreat{\edge} \, : \, \edge\in\edges \}}{\indexedcatvariableof{\nodes}} = 0$ and $\tilde{\probtensor}[\indexedcatvariableof{\secnodes}]=0$.
+	One can similarly show, that when $\tilde{\probtensor}[\indexedcatvariableof{\secnodes}]=0$ then also ${\probtensor}[\indexedcatvariableof{\secnodes}]=0$. 
+	The support of the distributions $\probtensor$ and $\tilde{\probtensor}$ is thus identical and \eqref{eq:proofFacReduction} holds.
+\end{proof}
+
+% Consequence: Reduction of probabilitic entailment to logical entailment.
+For any positive tensor $\hypercore$ we have
+	\[ \nonzerofunction\circ\hypercoreat{\catvariableof{\edge}} = \onesat{\catvariableof{\edge}} \, , \]
+which does not influence the distribution and can be omitted from the Markov Network.
+By Theorem~\ref{the:factorReduction}, when deciding eintailment, we can reduce all tensors of a Markov Network to their support and omit those with full support.
+Since the support indicating tensors $\nonzerofunction\circ\hypercoreat{\catvariableof{\edge}}$ are Boolean, each is a propositional formula and the Markov Network is turned into a Knowledge Base of their conjunctions.
+Deciding probabilstic entailment is thus traced back to logical entailment.
+
+%\subsubsection{Queries by Formulas}
+%We have investigated a specific type of query for the definition of entailment.
+%More generally, the semantic of logics thus offer a method to state generic queries on arbitrary probability distributions in an interpretable way.
+
+%%  TO DO: Give examples, e.g. correlations by formulas
+%
+%% Probabilistic Queries
+%Deciding entailment is a specific form of a query:
+%\begin{itemize}
+%	\item Query function is a formula, the one-hot encoding the formula tensor
+%	\item Expectations, which are the output of the query, are interpreted whether they are parallel to $\fbasis$ (contradiction), $\tbasis$ (entailment), both (inconsistent KB) or neither (contingent)
+%\end{itemize}
+%
+%
+%%We now apply the developed formalism of formula tensors to design a knowledge base.
+%Deciding entailment can be done by efficient tensor network contractions of the knowledge base sentences and the query formula in tensor network representation.
+
+
+
+
+
+
+
+
+%\subsection{Deciding Entailment by Contractions}
+%
+%In the next Theorem we show how the normations required in the computation of $\condprobof{\exformula}{\kb=1}$ can be avoided when deciding entailment.
+%
+
+%\begin{proof}
+%	The claim holds in case of unsatisfiable $\kb$, since any $\exformula$ is entailed and $\sbcontractionof{\kb,\rencodingof{\exformula}}{\formulavar}$ is parallel to both $\tbasis$ and $\fbasis$.
+%	Let us thus assume, that $\kb$ is satisfiable, in which case we have
+%	\begin{align*}
+%		 \sbcontractionof{\kb,\rencodingof{\exformula}}{\formulavar}  
+%		 & = \onehotmapof{0} \otimes \sbcontractionof{\kb,{\lnot\exformula}}{\formulavar} 
+%		 + \onehotmapof{1} \otimes \sbcontractionof{\kb,{\exformula}}{\formulavar} \\
+%		 & = \contractionof{\{\kb\}}{\varnothing} \cdot \left(  
+%		 \onehotmapof{0} \otimes \frac{\sbcontractionof{\kb,{\lnot\exformula}}{\formulavar}}{\contractionof{\{\kb\}}{\varnothing}}
+%		 + \onehotmapof{1} \otimes \frac{
+%		 \sbcontractionof{\kb,{\exformula}}{\formulavar}
+%		 }{\contractionof{\{\kb\}}{\varnothing}}
+%		 \right) \\
+%		 & = \contractionof{\{\kb\}}{\varnothing} \cdot \left(  
+%		 	\onehotmapof{0} \otimes \condprobof{\exformula=0}{\kb=1}
+%		 	+ \onehotmapof{1} \otimes \condprobof{\exformula=1}{\kb=1}
+%		 \right) \\
+%	\end{align*}
+%	Now, if and only if $\kb\models\exformula$ we have $\condprobof{\exformula=1}{\kb=1}=1$ and
+%		\[ \condprobof{\exformula=0}{\kb=1} = 1 - \condprobof{\exformula=1}{\kb=1}=0\]
+%	and the term $\onehotmapof{0} \otimes \condprobof{\exformula=0}{\kb=1}$.
+%	Exactly in this case, we then have $ \sbcontractionof{\kb,\rencodingof{\exformula}}{\formulavar}  \parallel \tbasis$.
+%	By the same argument concerning the term $\onehotmapof{1} \otimes \condprobof{\exformula=1}{\kb=1}$, we get  $\sbcontractionof{\kb,\rencodingof{\exformula}}{\formulavar}\parallel\fbasis$ if and only if $\kb\models\lnot\exformula$.
+%\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+%\subsection{Deciding Entailment by Contractions}
+%
+%\begin{theorem}
+%	Given a Knowledge Base $\kb$ and a formula $\exformula$, we have $\kb\models\exformula$ if and only if
+%		\[ \contractionof{\{\kb,\rencodingof{\exformula}\}}{\randomxof{\exformula}}  \parallel \tbasis \, . \]
+%\end{theorem}
+%\begin{proof}
+%	We note that  $\contractionof{\{\kb,\rencodingof{\exformula}\}}{\randomxof{\exformula}}  \parallel \tbasis $ is equal to
+%		\[ \contractionof{\{\kb,{\lnot\exformula}\}}{\varnothing}  = 0  \, . \]
+%	This is equal to $\kb\land\not\exformula$ being inconsistent and therefore equal to $\kb\models\exformula$.
+%\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Deciding Entailment by partial ordering}
+
+% Classical definition of entailment
+Classically entailment in propositional logics is defined by a model-theoretic approach.
+According to that approach, the entailment statement $\kb\models\exformula$ holds, whenever any model of $\kb$ is also a model of $\exformula$.
+We will in the following show, that this is equal to our definition based on probabilistic queries.
+
+
+% Here for general tensors, not just propositional formulas!
+\begin{definition}[Partial ordering of tensors]\label{def:partialFTOrder}
+	We say that two tensors $\exformula$ and $\secexformula$ in a tensor space $\facspace$ are partially ordered, denoted by
+		\[ {\exformula}\prec{\secexformula} \, , \]
+	if for all $\catindices\in\facstates$
+		\[ {\exformula}(\catindices) \leq {\secexformula}(\catindices) \, .\]
+\end{definition}
+
+We notice, that whenever ${\exformula} \prec{\secexformula}$ holds, for any model $\atomindices$ of $\exformula$ we have
+\begin{align*}
+	1 = \exformula(\atomindices) \leq \secexformula(\atomindices)
+\end{align*}
+and thus $\secexformula(\atomindices)=1$.
+Therefore any model of $\exformula$ is also a model of $\secexformula$.
+We show in the next theorem, that this is equivalent to the entailment statement $\exformula\models\secexformula$.
+
+\begin{theorem}[Partial Ordering Criterion] \label{the:orderingEntailmentCriterion}
+	We have $\kb\models\exformula$ if and only if $\kb\prec\exformula$.
+\end{theorem}
+\begin{proof}
+	Directly by definition, since both $\kb$ and $\exformula$ are Boolean and therefore for any $\shortcatindices\in\atomstates$ we have that
+		\[ \kbat{\indexedcatvariableof{[\catorder]}} \leq \formulaat{\indexedcatvariableof{[\catorder]}} \]
+	is equivalent to 
+		\[ \big(\kbat{\indexedcatvariableof{[\catorder]}}=1\big) \rightarrow \big(\formulaat{\indexedcatvariableof{[\catorder]}}=1\big) \, .  \]
+	Therefore, $\kb\prec\exformula$ is equivalent to
+		\[ \forall_{\shortcatindices\in\atomstates} \big(\kbat{\indexedcatvariableof{[\catorder]}}=1\big) \rightarrow \big(\formulaat{\indexedcatvariableof{[\catorder]}}=1\big) \, , \]
+	which is equal to $\kb\models\exformula$.
+%\red{Relate to other Theorem!}
+%	By Theorem~\ref{cor:parallelCriterion} suffices to show that $\contractionof{\{\kb,\rencodingof{\exformula}\}}{\formulavar}  \parallel \tbasis$ is equivalent to $\kb\prec\exformula$.
+%	To show this equivalence we observe
+%		\[ \sbcontractionof{\kb,\rencodingof{\exformula}}{\formulavar}(0) = 
+%		\contractionof{\{\kb,{\lnot\exformula}\}}{\varnothing} =
+%		\# \left\{ i \in\facstates : \kb(i)= 1 \land \exformula(i) = 0 \right\} \, . \]
+%	If and only if $\contractionof{\{\kb,\rencodingof{\exformula}\}}{\formulavar}  \parallel \tbasis$ we have $\sbcontraction{\kb,\exformula}=0$, which is equivalent to 
+%		\[ \forall i \in\facstates : \lnot\kb(i)= 1 \land \exformula(i) = 0)  \, . \]
+%	This is further equivalent to 
+%		\[ \forall i \in\facstates : \kb(i) = 1 \rightarrow \exformula(i) = 1)  \]
+%	and 
+%		\[ \kb \prec \exformula \, . \]
+\end{proof}
+
+% Semantic Interpretation
+%The partial ordering criterion offers a model-theoretic proof of entailment, since partial ordering is defined through comparison of all models:
+%We have
+%	\[ \exformula \prec \secexformula \]
+%if and only if 
+%	\[ \forall i\in \facstates : \exformula_i=1 \rightarrow \secexformula_i = 1 \, , \]
+%that is any model of $\exformula$ is also a model of $\secexformula$.
+
+
+
+% Partial Ordering
+%We can therefore understand partial ordering as a generalization of entailment?
+
+
+
+
+
+\subsubsection{Monotonicity of Entailment}
+
+
+%\red{When defining entailment based on Markov Networks, would have clearer statement!}
+Vanishing local contractions provide sufficient but not necessary criterion to decide entailment, as we show in the next theorem.
+
+\begin{theorem}[Monotonicity of Entailment]\label{the:monotonEntailment}
+	For any Markov Network on the decorated hypergraph $\graph$ and any subgraph $\secgraph$, we have for any formula that $\probtensor^{\graph}\models\exformula$ if $\probtensor^{\secgraph}\models\exformula$.
+\end{theorem}	
+\begin{proof}
+	Based on the reduction to Knowledge Bases by Theorem~\ref{the:entailmentMarkovToKB} and the monotonocity of binary contractions as shown in Theorem~\ref{the:monotonicityBinaryContractions}.
+\end{proof}
+
+
+
+\begin{remark}
+	To make use of Theorem~\ref{the:monotonEntailment} we can exploit any entailment criterion.
+	However, there is no claim about entailment being false, when the entailment 
+	Theorem~\ref{the:monotonEntailment} therefore just provides a sufficient but not necessary criterion of entailment with respect to $\probtensor^{\graph}$.
+\end{remark}
+
+
+
+\subsection{Deciding Entailment by local contractions}\label{subsec:LocalEntailment}
+
+
+Global entailment can become inefficient, when
+\begin{itemize}
+	\item we are interested in batches of entailment checks. Here we can make use of dynamic programming (store partial contraction results in the Knowledge Cores).
+	\item the network is large. Although efficient tensor network contraction often work, they might get infeasible when the tensor network has a large connectivity. For many 
+\end{itemize}
+An alternative to deciding entailment by global operations is the use of local operations.
+Here we interpret a part of the network (for example a single core) as an own knowledge base (with atomic formulas being the roots of the directed subgraph, that is potentially differing with the atoms in the global perspective) and perform entailment with respect to that.
+
+\begin{remark}{Tradeoff between generality and efficiency}
+	While generic entailment decision algorithms (those by the full network) can decide any entailment, local algorithms as presented here can only perform some, but therefore more effectively as operating batchwise (dynamically deciding entailment for many leg variables).
+	This is a typical phenomenon in logical reasoning and related to decidability.
+\end{remark}
+
+
+\subsubsection{Knowledge Propagation}
+
+Let us now draw on these insights and store partial entailment results in Knowledge Cores, which is a use of the dynamic programming paradigm.
+We then iterate over local entailment checks, where we recursively add further entailment checks to be redone due to additional knowledge.
+We then call the local checks until convergence Entailment Propagation, since different stadia of knowledge are propagated through the network.
+We describe local Knowledge Propagation in a generic way in Algorithm~\ref{alg:KP}.
+
+\begin{algorithm}[hbt!]
+\caption{Knowledge Propagation (KP)}\label{alg:KP}
+\begin{algorithmic}
+\State Tensor Network $\extnet$, $\kcoreof{\edge}=\onesat{\catvariableof{\edge}}$
+\While{Stopping Criterion is not met}
+	\State Choose $\edge$, subset $M$ of $\extnet$ and of $\{\kcoreof{\edge} : \edge\in\edges \}$ containing $\kcoreof{\edge}$
+	\State Update 
+		\[ \kcoreof{\edge} \leftarrow \nonzerofunction\circ\contractionof{M}{\catvariableof{\edge}} \]
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+% Interpretation
+Each chosen subset $M$ is understood as a local knowledge base, which is then applied for local entailment.
+
+%
+%The Knowledge Cores 
+
+%Implementation
+There are different ways of implementing Algorithm~\ref{alg:KP}, by choosing an order of local knowledge bases $M$ and a stopping criterion.
+
+\begin{theorem}
+	In Entailment Propagation Algorithm~\ref{alg:KP}, $\kcoreof{\edge}$ is monotonically decreasing with respect to the partial ordering and greater than $\tilde{\kcoreof{\edge}}$ defined as
+			\[ \tilde{\kcoreof{\edge}} = \nonzeroof{\contractionof{\extnet}{\edge}} \, . \]
+\end{theorem}
+\begin{proof}
+	We deduce the theorem from generic properties of the support of contractions, see Section~\ref{sec:supportContractionEquations}.
+	Monotonic decreasing follows from montonocity of tensor contractions, see Theorem~\ref{the:monotonicityBinaryContractions}.
+	By Theorem~\ref{the:invarianceAddingSubcontractions} we have during any state of the algorithm 
+		\[ \nonzerofunction\circ\contractionof{\extnet}{\catvariableof{\nodes}}  =  
+		\nonzerofunction\circ\contractionof{\extnet\cup\{\kcoreof{\edge} : \edge\in\edges\}}{\catvariableof{\nodes}}  \, . 
+		\]
+	If follows that
+		\[ \tilde{\kcoreof{\edge}} =  \nonzerofunction\circ\contractionof{\extnet\cup\{\kcoreof{\edge} : \edge\in\edges\}}{\catvariableof{\edge}} \]
+	and by Theorem~\ref{the:monotonicityBinaryContractions}
+		\[  \tilde{\kcoreof{\edge}}  \prec \kcoreof{\edge} \, . \]
+\end{proof}
+
+
+\begin{corollary}
+	Whenever for a formula $\formulaat{\catvariableof{\secnodes}}$ and a $\kcoreof{\edge}$ we have
+		\[ \contractionof{\kcoreof{\edge},\rencodingof{\exformula}}{\catvariableof{\exformula}=0} =0  \]
+	then the Markov Network $\extnet$ probabilistically entails $\exformula$.
+\end{corollary}
+
+
+%% Interpretation for leg dimension two
+Another way to use Algorithm~\ref{alg:KP} to decide entailement of formulas $\exformula$ is adding each $\rencodingof{\exformula}$ to $\extnet$ and defining Knowledge Cores $\kcoreof{\exformula}[\catvariableof{\exformula}]$.
+Since then the Knowledge Core has only two dimensions, there are only four possible cores with the interpretation
+\begin{itemize}
+	\item $\tbasis$: the formula is known to be true
+	\item $\fbasis$: the formula is known to be false
+	\item $\ones$: the formula is not known
+	\item $0$: the knowledge base is inconsistent
+\end{itemize}
+
+
+%% OLD Criteria 
+
+%\subsection{Deciding entailment by Global Operations}
+%
+%\begin{corollary}\label{cor:SatisfiabilityCheck}
+%	A Knowledge Base $\kb$ is satisfiable, if and only if
+%		\[ \contractionof{\ftensorof{\kb}\cup\tbasis^{\kb}}{[]} \geq 0 \, .\]
+%	Here $\tbasis^{\kb}$ denotes the tensor with values $\tbasis$ and leg variable $\kb$.
+%\end{corollary}
+%\begin{proof}
+%	It would not be satisfiable if and only if $\formulaset\models\nothing$ and $\ftensorof{\nothing}=0$.
+%\end{proof}
+%
+%More precisely, $\contractionof{\ftensorof{\kb}}{[]} $ is the count of models.
+%
+%
+%%% Satisfaction Check
+%
+%\begin{theorem}\label{the:EntailmentCheck}
+%	We have $\kb\models\exformula$ if and only if
+%		\[ \contractionof{\ftensorof{\kb}\cup\tbasis^{\kb} \cup \ftensorof{\exformula} \cup \fbasis^{\exformula}}{[]} = 0 \, .\]
+%\end{theorem}
+%\begin{proof}
+%	It is known that $\kb\models\exformula$ if and only if $\kb\cup\{\lnot\exformula\}$ unsatisfiable (proof by contradiction).
+%	Using Corollary \ref{cor:SatisfiabilityCheck} we have $\kb\cup\{\lnot\exformula\}$ unsatisfiable if and only if
+%		\[  \contractionof{\ftensorof{\kb\cup\{\lnot\exformula\}}\cup\tbasis^{\kb\cup\{\lnot\exformula\}}}{[]} = 0 \, .\]
+%	The claim thus follows from noticing 
+%		\[ \contractionof{\ftensorof{\kb\cup\{\lnot\exformula\}}\cup\tbasis^{\kb\cup\{\lnot\exformula\}}}{[]}  = 
+%		\contractionof{\ftensorof{\kb}\cup\tbasis^{\kb} \cup \ftensorof{\exformula} \cup \fbasis^{\exformula}}{[]} \, . 
+%		\]
+%\end{proof}
+
+
+%% Contraction based criterion % But obvious from Monotonocity!! % Best when having a Markov Network definition of entailment.
+%\begin{theorem}[Local Contraction Criterion]\label{the:localEntailmentCriterion}
+%	For any subset $\seckb$ of the binary tensor cores of $\kb$, we have $\kb\models\exformula$ (respectively $\kb\models\lnot\exformula$), if the contraction of $\seckb$ with leaving $\atomlegindexof{\exformula}$ open is parallel to $\fbasis$ (respectively parallel to $\fbasis)$, denoted by 
+%		\[ \contractionof{\ftensorof{\seckb}}{[\atomlegindexof{\exformula}]}  \parallel \tbasis \quad \text{( respectively }\contractionof{\ftensorof{\seckb}}{[\atomlegindexof{\exformula}]}  \parallel \fbasis \text{)} \, . \]	
+%%	 whenever the contraction of the subset with leaving $\atomlegindexof{\exformula}$ open is parallel to $\fbasis$ (respectively parallel to $\fbasis)$, then $\kb\models\exformula$ (respectively $\kb\models\lnot\exformula)$.
+%\end{theorem}
+%\begin{proof}
+%	From the monotonicity of binary tensor contractions with respect to the partial ordering it follows with Theorem~\ref{the:monotonicityBinaryContractions} that
+%		\[ \ftensorof{\kb} \prec \ftensorof{\seckb} \, . \]
+%	By Theorem~\ref{the:orderingEntailmentCriterion} we further have $\kb\models\seckb$. 
+%	Theorem~\ref{cor:parallelCriterion} now implies, that $\seckb\models\exformula$ (respectively $\seckb\models\lnot\exformula$), when the in the claim assumed contraction criterion is satisfied.
+%	By monotonicity of entailment we in that case further have $\kb\models\exformula$ (respectively $\seckb\models\lnot\exformula$).
+%%	For any knowledge base $\seckb$ such that $\kb\models\seckb$ (seen as sublist of its formulas represented by knowledge cores).
+%%	Follows from the monotonicity of propositional logic: When entailment by subset, then also entailment by the full, but not the other way around.
+%\end{proof}

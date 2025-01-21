@@ -1,0 +1,179 @@
+\section{Coordinate Calculus} 
+
+In the previous chapters, information to states has been stored in coordinates of a tensor.
+To distinguish from other schemes of calculus, we call this scheme of storing and retrieving information the coordinate calculus.
+We in this chapter investigate in more depth, which operations can be performed based on such tensors and proof the applied properties.
+
+\red{Add summations and further operations?}
+
+\subsection{One-hot encodings as basis}
+
+\begin{lemma}[Basis of tensor spaces]\label{lem:tensorBasisDecomposition}
+	The image of the one-hot encoding map is a linear basis of the tensor space $\facspace$.
+	Any element $\exformula\in\facspace$ has a decomposition 
+		\[ \exformula[\catvariables] = \sum_{\catindices} \exformula[\indexedcatvariables] \cdot \onehotmapof{\catindices}[\catvariables] \, . \]
+	We notice that the coordinates are the weights to the basis elements in the one-hot decomposition.
+\end{lemma}
+\begin{proof}
+	For any $\tildecatindices\in\facstates$ we have
+		\[ \formulaat{\shortcatvariables=\tilde{\catindex}_{[\catorder]}}
+		= \sum_{\catindices} \exformula[\indexedcatvariables] \cdot \onehotmapofat{\catindices}{\shortcatvariables=\tilde{\catindex}_{[\catorder]}} 
+		= \formulaat{\shortcatvariables=\tilde{\catindex}_{[\catorder]}} \cdot \onehotmapofat{\catindices}{\shortcatvariables=\tilde{\catindex}_{[\catorder]}}   \]
+\end{proof}
+
+
+\begin{definition}
+	Given any real-valued function 
+		\[ \exfunction : \facstates \rightarrow \rr \]
+	we define the coordinate encoding by
+		\[ \hypercoreof{\exfunction} = \sum_{\catindices\in\facstates} \exfunction(\catindices) \cdot \onehotmapof{\catindices} \, . \]
+\end{definition}
+
+
+\begin{theorem}[Coordinate Calculus]\label{the:coordinateCalculus}
+	Given any tensor $\hypercoreat{\catvariables}$ can retrieve its coordinate indexed by $\catindices$ as
+		\[ \hypercoreat{\indexedcatvariables} = \sbcontraction{\hypercore, \onehotmapof{\catindices}} \, . \]
+\end{theorem}
+\begin{proof}
+	We use the decomposition in Lemma~\ref{lem:tensorBasisDecomposition} and have
+	\begin{align*}
+		\contractionof{\{\hypercore, \onehotmapof{\catindices}\}}{\varnothing} 
+		& = \sum_{\tildecatindices} \hypercoreat{\tildeindexedcatvariables} \cdot \contractionof{\{\onehotmapof{\tildecatindices} ,\onehotmapof{\catindices} \}}{\catvariables} \\
+		& =  \sum_{\tildecatindices} \hypercoreat{\tildeindexedcatvariables} \cdot \delta_{(\tildecatindices),(\catindices)} \\
+		& = \hypercoreat{\indexedcatvariables} \, ,
+	\end{align*}
+	where we used that one-hot encodings are orthonormal.
+\end{proof}
+
+% Coordinate Calculus
+Coordinate calculus is the representation of real-valued functions as tensors, from which its evaluations can be retrieved by the scheme of Theorem~\ref{the:coordinateCalculus}
+
+
+
+
+\subsection{Selection Encodings}
+
+Selection encodings as introduced in Definition~\ref{def:selectionEncoding} are best understood in terms of linear mapping interpretations of tensors.
+We will first provide by basis encodings a generic relation between the coordinatewise tensor definitions in this work and linear maps.
+
+We then show the utility of this perspective in the representation of composed linear functions.
+The results are applicable in the exponential family theory, in the tensor represnetation of energies and means.
+
+\subsubsection{Tensors as linear maps}
+
+The state sets $\facstates$ can be interpreted as an enumeration of basis elements $\onehotmapof{\catindex}$ of the tensor space $\facspace$.
+
+Along this interpretation, tensors have an interpretation as maps between tensor spaces.
+
+\red{Any tensor and any partition of its variables into two sets can be interpreted as the basis elements of a linear map between the tensor spaces of the respective variables.}
+
+Tensor valued functions on state sets $\facstates$ are an intermediate representation.
+
+\begin{definition}
+	Let there be two tensor spaces $V_1$ and $V_2$ with basis by sets $\mathcal{M}_1\subset V_1$ and $\mathcal{M}_2\subset V_2$ of cardinality $\catdimof{1}$ and $\catdimof{2}$, which are enumerated by variables $\individualvariableof{1}$ and $\individualvariableof{2}$.
+	The basis encoding of a linear map $\exfunction\in\linmapspace(V_1,V_2)$ is the tensor
+		\[ \bencodingof{\exfunction}[\individualvariableof{1},\individualvariableof{2}] \in \rr^{\catdimof{1}} \otimes \rr^{\catdimof{2}} \, . \] 
+\end{definition}
+
+% Matrices
+Basis encodings are standard linear algebra tools, where matrices are understood as linear maps between vector spaces.
+
+\begin{theorem}\label{the:linearCompositionBasisEncoding}
+	If $\linmapof{1}$ is a linear function between $V_1$ and $V_2$  and $\linmapof{2}$ between $V_2$ and $V_3$, and let $\individualvariableof{1},\,\individualvariableof{2}$ and $\individualvariableof{3}$ be enumerations of chosen bases in the spaces.
+	We have
+	\begin{align*}
+		\bencodingofat{\linmapof{2}\circ\linmapof{1}}{\individualvariableof{1},\individualvariableof{3}} 
+		= \sbcontractionof{
+		\bencodingofat{\linmapof{2}}{\individualvariableof{2},\individualvariableof{3}}, \bencodingofat{\linmapof{1}}{\individualvariableof{1},\individualvariableof{2}}
+		}{\individualvariableof{1},\individualvariableof{3}}  \, . 
+	\end{align*}
+\end{theorem}
+\begin{proof}
+	By basis decompositions and representations of linear maps as contractions.
+\end{proof}
+
+% Matrix Multiplication
+A typical instance is matrix multiplication, where matrices understood as representations of linear maps.
+
+
+\subsubsection{Selection encodings}
+
+Selection encodings (see Definition~\ref{def:selectionEncoding}) are related to basis encodings of linear maps as we show in the next theorem.
+
+\begin{theorem}\label{the:selectionToBasisEncoding}
+	Given a function 
+		\[ \exfunction : \facstates \rightarrow \parspace \]
+	we define a linear map $\linmapof{\exfunction}\in\linmapspace(\facspace,\parspace)$ by the basis elements to $\catindexof{1} \in\facstates$ and $\catindexof{2}\in\parstates$ by
+	\begin{align*}
+	 	\linmapof{\exfunction}(\onehotmapof{\catindexof{1}},\onehotmapof{\catindexof{2}}) 
+		= \sbcontraction{\exfunction(\onehotmapof{\catindexof{1}}),\onehotmapof{\catindexof{2}}} \, .  
+	\end{align*}
+	We then have
+	\begin{align*}
+		\sencodingof{\exfunction} = \bencodingof{\linmapof{\exfunction}} \, . 
+	\end{align*}
+\end{theorem}
+
+
+
+%\red{Selection encodings are interpretations of matrifications.
+%Along that, maps between factored systems are understood as basis decompositions of linear maps between the tensor spaces.}
+
+
+% Comparison with relational encodings - definition
+While relational encoding works for maps from $\facstates$ to arbitrary sets (which are enumerated), selection encodings as introduced in Definition~\ref{def:selectionEncoding} require and exploit that their image is embedded in a tensor space.
+
+% Slicing
+Given a selection encoding of a function, the function is retrieved by slicing with respect to the 
+	\[ \exfunction(\catindex) = \sencodingofat{\exfunction}{\indexedcatvariableof{},\selvariable} \, . \]
+More generally, we show in the next Lemma how to construct to any tensor and any partition of its variables functions by slicing operations, such that the tensor is the selection encoding of the function.
+
+\begin{lemma}\label{lem:inverseSelectionEncoding} % To be used for MLN - proposal distribution
+	Let $\hypercoreat{\catvariableof{\nodes}}$ be a tensor in $\bigotimes_{\nodein}\rr^{\catdimof{\node}}$ and let $\nodesa$, $\nodesb$ be a disjoint partition of $\nodes$, that is $\nodesa\dot{\cup}\nodesb=\nodes$.
+	Then the function
+		\[ \exfunction : \bigtimes_{\node\in\nodesa}[\catdimof{\node}] \rightarrow \bigotimes_{\node\in\nodesb} \rr^{\catdimof{\node}}  \]
+	with coordinates
+		\[ \exfunction(\catindexof{\nodesa}) = \hypercoreat{\indexedcatvariableof{\nodesa},\catvariableof{\nodesb}}  \]
+	obeys
+		\[ \sencodingofat{\exfunction}{\catvariableof{\nodes}} = \hypercoreat{\catvariableof{\nodes}} \, . \]
+	Here we have renamed the selection variables $\selvariableof{\nodesa}$ by the categorical variables $\catvariableof{\nodesa}$. 
+\end{lemma}
+\begin{proof}
+	From Theorem~\ref{the:linearCompositionBasisEncoding} using the basis encoding equivalence of Theorem~\ref{the:selectionToBasisEncoding}.
+\end{proof}
+
+
+\begin{example}[Markov Logic Networks and Proposal Distributions]
+	% Via inverse selection encodings
+	While the statistic of MLN (namely $\fselectionmap$) and the proposal distribution (namely $\tranfselectionmap$) have a common selection encoding, both result from the inverse selection encoding described in Lemma~\ref{lem:inverseSelectionEncoding}.
+	We can construct $\tranfselectionmap$ by first building the selection encoding to $\fselectionmap$ and then applying the construction of Lemma~\ref{lem:inverseSelectionEncoding} with $\nodesa=\selvariable$ and $\nodesb=\shortcatvariables$.
+\end{example}
+
+
+% Composition
+We use selection encodings to express compositions of functions, based on the next theorem.
+
+\begin{theorem}[Selection Encoding for Linear Compositions]\label{the:linCompSelEncoding}
+	Let $\sstat$ be a tensor valued function from $\facstates$ to $\simpleparspace$ with image coordinates $\sstat_\statenumerator$ and let $\exfunction$ be a tensor 
+	Then
+		\[ \left(\sum_{\statenumeratorin}\exfunction[\selvariableof{\sstat}=\statenumerator]\cdot \sstat_\statenumerator \right) [\shortcatvariables] : \facstates \rightarrow \rr \]
+	is represented as
+		\[ \left(\sum_{\statenumeratorin}\exfunction[\selvariableof{\sstat}=\statenumerator]\cdot \sstat_\statenumerator \right) [\shortcatvariables] 
+		 = \sbcontractionof{\sencodingofat{\sstat}{\shortcatvariables,\selvariableof{\sstat}} , \exfunction[\selvariableof{\sstat}]}{\shortcatvariables} \, . \]
+\end{theorem}
+\begin{proof}
+	The representation holds, since for any $\catindexof{[\atomorder]}\in\facstates$ we have
+	\begin{align*}
+		\sbcontractionof{\sencodingofat{\sstat}{\shortcatvariables,\selvariableof{\sstat}} , \exfunction[\selvariableof{\sstat}]}{\indexedcatvariableof{[\atomorder]}}  
+		= \sum_{\statenumeratorin}\exfunction[\selvariableof{\sstat}=\statenumerator]\cdot\sstat_\statenumerator(\catindexof{[\atomorder]}) \, . 
+	\end{align*} 
+\end{proof}
+
+% Linear 
+This theorem shows, that while relation encodings can represent any composition with another function by a contractions, selection encodings can be used to represent linear transforms.
+To see this, we interpret $\sstat$ and $\exfunction$ in Theorem~\ref{the:linCompSelEncoding} as basis decompositions of linear maps.
+
+
+\subsection{Discussion}
+
+Representations of linear maps is the typical application of tensors, reason for refering to tensor networks as multilinear algebra.

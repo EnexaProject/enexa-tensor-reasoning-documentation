@@ -1,0 +1,253 @@
+\section{Directed Tensor Calculus}\label{cha:directedTC}
+
+
+
+We in this chapter investigate the properties of tensors, which where arising in probabilistic and logical reasoning.
+We observed already before, that
+\begin{itemize}
+	\item Conditional probability tensors are directed tensors.
+	\item Logical formulas are binary tensors.
+\end{itemize}
+
+Thus, the set of tensors, which are both directed and binary is of much interest. 
+We will show, that they are equal to the set of relational encodings of functions.
+
+
+
+
+\subsection{Directed Tensors}
+
+Directionality as defined in Definition~\ref{def:directedTensor} represents the constraints on the structure of tensors:
+Summing over outgoing trivializes the tensor.
+%We will use this property to find efficient algorithms.
+
+
+\begin{definition}[Directed Hypergraph]
+	A directed hyperedge is a hyperedge, which node set is split into disjoint sets of incoming and outgoing nodes.
+	We say a hypercore $\hypercoreof{\edge}$ decorating a directed hyperedge respects the direction, when it is a conditional probability tensor with respect to the direction of the hyperedge. 
+	The hypergraph is acyclic, when there is no nonempty cycle of node tuples $(\node_1,\node_2)$, such that $\node_1$ is an incoming node and $\node_2$ an outgoing node of the same hyperedge.
+\end{definition}
+
+%\begin{definition}
+%	A directed Tensor Network is a directed hypergraph, which is decorated by tensors respecting the directionality of the respective edges.
+%\end{definition}
+
+
+% Multiple Directions possible
+There can be multiple ways to direct a tensor, which an extreme example being the Dirac Delta Tensors.
+Further example are relational encodings of invertible functions.
+
+\begin{example}[Dirac Delta Tensors]
+	Given a node set $\edge$ colored with a constant dimension $\catdim$ Diracs Delta Tensors are the tensors
+		\[ \dirdeltaof{\edge,\catdim} \in \bigotimes_{\node\in\edge} \rr^{\catdim} \]
+	with coordinates
+	\begin{align}
+		\dirdeltaof{\edge,\catdim}_{\catindices} = 
+		\begin{cases}
+			1 \quad & \text{if} \quad \catindexof{0} = \ldots = \catindexof{\atomorder-1} \\
+			0 & \text{else}
+		\end{cases} \, . 
+	\end{align}
+	The contractions with respect to subsets $\secnodes \subset \edge$ are
+	\begin{align}
+		\contractionof{\{\dirdeltaof{\edge,\catdim}\}}{\catvariableof{\secnodes}} = 
+		\begin{cases}
+			\catdim & \text{if} \quad \nodes = \varnothing \\ 
+			\ones & \text{if} \quad \cardof{\secnodes} = 1\\ 
+			\dirdeltaof{\secnodes,\catdim} & \text{else}
+		\end{cases} \, .
+	\end{align}
+	Thus are directed for any orientation of the respective edge with exactly one incoming variable.
+\end{example}
+
+
+
+
+% TRUE?
+%% Hypernetworks
+% We can use Diracs Delta Tensors to represent a tensor network on a hypergraph by a tensor network on a graph (that is edges contain at most two nodes).
+
+
+\begin{lemma}\label{lem:deltification}
+%	Let $\graph$ be a directed hypergraph, such that each node is at most in one hyperedge appearing in the outgoing nodes.
+	Let $\graph=(\nodes,\edges)$ be a hypergraph and $\extnet$ a tensor network on $\graph$.
+	We build a graph $\secgraph=(\secnodes,\secedges\cup\Delta^{\graph})$ and a tensor network $\tnetof{\secgraph}$ by % ! See Bethe Cluster Graph definition !
+	\begin{itemize}
+		\item Recolored Edges $\secedges = \{\tilde{\edge} \, : \, \edge\in \edges\}$ where $\tilde{\edge} = \{\node^{\edge} \, : \, \node\in\edge\}$, which decoration tensor $\hypercoreof{\tilde{\edge}}$ has same coordinates as $\hypercoreof{\edge}$
+		\item Nodes $\secnodes = \bigcup_{\edge\in\edges}\tilde{\edge}$ %$\secnodes = \bigcup_{\edge\in\edges}\{\node^{\edge} \, : \, \node\in\edge \}$ 
+		\item Delta Edges $\Delta^{\graph} =  \big\{ \{\node\} \cup \{\node^{\edge} \, : \, \edge\ni\node \} \, : \, \node\in\nodes \big\} $ each of which decorated by a delta tensor $\delta^{\{\node^{\edge} \, : \, \edge\ni\node \}}$
+	\end{itemize}
+	 Then we have
+	 	\[ \contractionof{\extnet}{\catvariableof{\nodes}} =  \contractionof{\tnetof{\secgraph}}{\catvariableof{\nodes}}  \, . \]
+\end{lemma}
+\begin{proof}
+	For any $\catindexof{\nodes}$ we have 
+	\begin{align*}
+		 \contractionof{\tnetof{\secgraph}}{\indexedcatvariableof{\nodes}} 
+		 & = \contractionof{\{\hypercoreof{\tilde{\edge}}[\catvariableof{\{\node^{\edge} : \node\in\edge\}}] : \edge \in \edges \}\cup 
+		 	\{\delta^{\{\node\} \cup \{\node^{\edge} \, : \, \edge\ni\node \}}[\catvariableof{\{\node^{\edge} : \edge\ni\node \}}, \indexedcatvariableof{\node} ]  : \node\in\nodes \}
+		 }{\varnothing} \\
+		 & =  \contractionof{\{\hypercoreof{\tilde{\edge}}[\catvariableof{\{\node^{\edge} : \node\in\edge\}} = \catindexof{\{\node : \node\in\edge\}} ] : \edge \in \edges \}
+		 }{\varnothing} \\
+		 & = \contractionof{\extnet}{\indexedcatvariableof{\nodes}} \, ,
+	\end{align*}
+	which establishes the claim.
+\end{proof}
+
+
+
+\subsubsection{Normation}
+
+
+Normed tensors (see Definition~\ref{def:normation}) are directed and directed tensors invariant under normation wrt their incoming and outgoing variable, as we show next.
+
+\begin{theorem}\label{the:normationDirected}
+	For any tensor network $\extnet$ on variables $\nodes$ that can be normed with respect to $\innodes$ and $\outnodes$, the normation is directed with $\innodes$ incoming and $\outnodes$ outgoing.
+\end{theorem}
+\begin{proof}
+	We have for any incoming state ${\atomlegindexof{\innodes}\in\bigtimes_{\node\in\innodes}\catdimof{\node}}$ that
+	\begin{align*}
+		\contractionof{\{\normationofwrt{\extnet}{\innodes}{\outnodes}, \onehotmapof{\atomlegindexof{\innodes}} \}}{\varnothing} 
+		& =  \frac{
+		\contractionof{\extnet\cup\{\onehotmapof{\atomlegindexof{\innodes}}\}}{\varnothing}
+		}{
+		\contractionof{\extnet\cup\{\onehotmapof{\atomlegindexof{\innodes}}\}}{\varnothing}
+		} \, .
+	\end{align*}
+	By Definition~\ref{def:directedTensor}, $\normationofwrt{\extnet}{\outnodes}{\innodes}$ is thus directed.
+%
+%	We have for any basis tensor $\onehotmapof{\atomlegindexof{\secnodes}}$
+%	\begin{align}
+%		\contractionof{
+%			\{ \normationof{\hypercore}{\secnodes}, \onehotmapof{\atomlegindexof{\secnodes}} \}
+%		}{
+%			\varnothing
+%		}
+%		= \frac{
+%			\contractionof{\{\hypercore, \onehotmapof{\atomlegindexof{\secnodes}} \}}{\varnothing}
+%		}{
+%			\contractionof{\{\hypercore, \onehotmapof{\atomlegindexof{\secnodes}} \}}{\varnothing}
+%		} 
+%		= 1 \, . 
+%	\end{align}
+%	Thus 
+%	\begin{align}
+%		\contractionof{
+%			\{ \normationof{\hypercore}{\secnodes} \}
+%		}{
+%			\secnodes 
+%		}
+%		= \ones
+%	\end{align}
+%	and by Definition~\ref{def:directedTensor}, $\normationof{\hypercore}{\secnodes}$ is directed with the variables $\secnodes$ incoming.
+\end{proof}
+
+
+The normation operation coincides in cases of non-negative tensors with the conditioning of a Markov Network representing a probability distribution.
+
+
+\subsubsection{Contraction of Directed Tensors}
+
+Let us now investigate, which contractions inherit the directionality of the tensors.
+
+%Next we state that specific contraction of conditional probability tensors are still conditional probability tensors.
+
+%\red{Can be extended to single outgoing legs, by using delta tensors at hyperedges.}
+
+%\begin{theorem}
+%	Given a directed acyclic hypergraph, which hyperdedges are decorated by tensor cores respecting the direction.
+%	Then the contractions, where all closed nodes appear exactly once as an incoming node and exactly once as an outgoing node, and where all open nodes appear in single hyperedges, are conditional probability tensors
+%\end{theorem}
+%\begin{proof}
+%	It is enough to show this property on the contraction of two hypercores.
+%	Since the hypergraph is acyclic, the coinciding nodes are all outgoing on the one and incoming to the other hyperedge.
+%	Let the hyperedge with the incoming nodes $\edge_1$ and the one with the outgoing nodes $\edge_2$
+%	We need to show that when further contracting the contraction with trivial tensors on the outgoing and basis tensors on the incoming legs we get $1$.
+%	For any $\catindex$ and $\seccatindex$ this holds since
+
+%	Here we used in the first equality, that $\hypercoreof{\edge_1}$ is a conditional probability tensor and in the second the same property for $\hypercoreof{\edge_2}$.
+%\end{proof}
+
+% Hadamard does not preserve probabilities
+%We need to ass as assumption in Theorem~\ref{the:conditionalContractionPreservation}, that each node is to at most one hyperedge and to at most one hyperedge outgoing.
+%This is due to the failure of Hadamard products of probability tensors to be probability tensors themself.
+
+
+%\begin{lemma}\label{lem:twoDirectedContracted}
+%	Given two 
+%\end{lemma}
+
+
+
+
+
+\begin{theorem}\label{the:conditionalContractionPreservation}
+	Let $\graph=(\nodes,\edges)$ be a directed acyclic hypergraph, such that each node $\node\in\edge$ appears at most in one hyperedge as an outgoing variable and denote $\innodes$ as those nodes, which do not appear as outgoing variables.
+	For any tensor network $\extnet$ respecting the direction of $\graph$ we have that
+		\[ \contractionof{\extnet}{\catvariableof{\innodes}} = \onesat{\catvariableof{\innodes}} \, , \]
+	that is $\contractionof{\extnet}{\catvariableof{\nodes}}$ is a directed tensor with $\innodes$ incoming and $\nodes/\innodes$ outgoing.
+\end{theorem}
+\begin{proof}
+	We show the theorem only for the case of hypergraphs, where variables are appearing at most in two hyperedges.
+	If a hypergraph fails to satisfy this assumption, we apply Lemma~\ref{lem:deltification} and add delta tensors copying the variables, which are appearing in multiple tensors, and arrive at a tensor network with nodes appearing in at most two hyperedges.
+	When orienting each edge 
+	
+	% Approach: Contracting with ones
+	We show the theorem over induction on the number $n$ of cores.
+	\paragraph{$n=1$:} It holds trivially, when $\extnet$ consists of a single core
+	\paragraph{$n\rightarrow n-1$:} Let us assume, that the claim holds for graphs with $n-1$ hyperedges and let $\tnetof{\graph}$ be a tensor network with $n$ hyperedges.
+	Since the hypergraph is acyclic, we find an edge $\edge\in\edges$ such that all outgoing nodes of $\edge$ are not appearing as an incoming node in any edge. 
+	We then apply Theorem~\ref{the:splittingContractions} and get
+	\begin{align*}
+		\contractionof{\extnet}{\catvariableof{\innodes}} 
+		&= \contractionof{
+			\tnetof{(\nodes,\edges/\{\edge\})} \cup \{\hypercoreofat{\edge}{\catvariableof{\incomingnodes},\catvariableof{\outgoingnodes}}\}
+			}{\catvariableof{\innodes}} \\
+		& = \contractionof{
+			\tnetof{(\nodes,\edges/\{\edge\})} \cup \{\sbcontractionof{\hypercoreof{\edge}}{\catvariableof{\incomingnodes}} \}
+			}{\catvariableof{\innodes}} \\
+		& = \contractionof{
+			\tnetof{(\nodes,\edges/\{\edge\})} \cup \{\onesat{\catvariableof{\incomingnodes}} \}
+			}{\catvariableof{\innodes}} \\
+		& \contractionof{
+			\tnetof{(\nodes,\edges/\{\edge\})} \}
+			}{\catvariableof{\innodes}} \, . 
+	\end{align*}
+	We then notice that the hypergraph $(\nodes,\edges/\{\edge\})$ has $n-1$ hyperedges and each node appears at most once as an incoming and at most once as an outgoing node.
+	Thus, we apply the assumption of the induction and get
+	\begin{align*}
+		\contractionof{\extnet}{\catvariableof{\innodes}} = \contractionof{
+			\tnetof{(\nodes,\edges/\{\edge\})} \}
+			}{\catvariableof{\innodes}} = \onesat{\catvariableof{\innodes}} \, . 
+	\end{align*}
+	
+%	% ALTERNATIVE APPROACH	
+%	We then iteratively choose two neighbored tensors and replace them by their contraction, which is by Lemma~\ref{lem:twoDirectedContracted} itself directed and not changing the contraction by  Theorem~\ref{the:splittingContractions}.
+%	When no such neighbored tensors are left, we have an tensor product of directed tensors, which are not sharing variables.
+%	This outer product is trivially directed.
+\end{proof}
+
+
+% Overwork!
+Schematically, the direction conservation property argument is depicted as:
+\begin{center}
+	\input{PartIII/tikz_pics/cond_contraction_property.tex}
+\end{center}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
