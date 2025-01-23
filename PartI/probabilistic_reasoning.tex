@@ -28,12 +28,20 @@ We exploit basis calculus in defining categorical variables $\catvariableof{\exf
 More details on this scheme are provided in Chapter~\ref{cha:basisCalculus}, see Definition~\ref{def:functionRelationEncoding} therein.
 
 \begin{definition}\label{def:queries}
-	The query of a probability distribution $\probof{\shortcatvariables}$ by a query tensor 
+	The marginal query of a probability distribution $\probof{\shortcatvariables}$ by a tensor 
 		\[ \exfunction : \facstates \rightarrow \rr \]
 	is the vector $\probof{\catvariableof{\exfunction}} \in \rr^{\cardof{\imageof{\exfunction}}}$ defined as the contraction
 	\begin{align*}
 		\probof{\catvariableof{\exfunction}} = \contractionof{\probof{\shortcatvariables},\rencodingofat{\exfunction}{\shortcatvariables,\catvariableof{\exfunction}}}{\catvariableof{\exfunction}} \, . 
 	\end{align*}
+	
+	% Used in connection to mean parameters
+	The expectation query of $\probtensor$ by $\exfunction$ is 
+	\begin{align*}
+		\expectationof{\exfunction} = \sbcontraction{\exfunction, \probtensor} \, . 
+	\end{align*}
+	
+	% Used for sampling
 	Given another tensor $\secexfunction: \facstates \rightarrow \rr $ the conditional query of the probability distribution $\probof{\shortcatvariables}$ by the tensor $\exfunction$ conditioned on the tensor $\secexfunction$ is the matrix $\condprobof{\catvariableof{\exfunction}}{\catvariableof{\secexfunction}}\in\rr^{\cardof{\imageof{\exfunction}}}\otimes \rr^{\cardof{\imageof{\secexfunction}}}$ defined as the normation
 	\begin{align*}
 		\condprobof{\catvariableof{\exfunction}}{\catvariableof{\secexfunction}} 
@@ -45,19 +53,24 @@ More details on this scheme are provided in Chapter~\ref{cha:basisCalculus}, see
 	\end{align*}
 \end{definition}
 
+%% Relation of queries and expectation queries
+Expectation queries are contractions of marginal queries with identities, that is
+	\[ \expectationof{\exfunction} = \sbcontraction{\probof{\catvariableof{\exfunction}} \idrestrictedto{\imageof{\exfunction}}{\catvariableof{\exfunction}} } \, . \]
+This will be shown in more detail in Chapter~\ref{cha:basisCalculus} in Corollary~\ref{cor:rhoToNormal}.
+
 %% Conditional Probabilities and conditional queries
 Conditional probabilities are queries, where the tensors $\exfunction$ and $\secexfunction$ are identity mappings in the respective variable state spaces.
 Conversely, we can understand the conditional query $\condprobof{\exfunction}{\secexfunction}$ as the conditional probability of $\exfunction$ conditioned on $\secexfunction$, of the underlying Markov Network with cores $\{\probtensor, \rencodingof{\exfunction}, \rencodingof{\secexfunction} \}$ and variables $\catvariableof{\exfunction},\catvariableof{\secexfunction}$ besides the variables distributed by $\probtensor$.
 
 %% Expectations as event queries -> Consistency with $\probof{X=i}$?
 We further denote event queries by
-	\[  \expectationof{\exfunction=z} = \sbcontractionof{\probtensor,\rencodingof{\exfunction},\onehotmapof{z}}{\varnothing} \]
+	\[  \expectationof{\exfunction=z} = \sbcontraction{\probtensor,\rencodingof{\exfunction},\onehotmapof{z}}\]
 where by $\onehotmapof{z}$ be denote the one hot encoding of the state $z$ with respect to some enumeration.
 Let us note that they are further contraction of the queries in Definition~\ref{def:queries} since by Theorem~\ref{the:splittingContractions}
 \begin{align*}
 	 \expectationof{\exfunction=z} 
-	& =  \sbcontractionof{ \sbcontractionof{\probtensor,\rencodingof{\exfunction}}{\catvariableof{\exfunction}} ,\onehotmapof{z}}{\varnothing} \\
-	& =  \sbcontractionof{ \probof{\exfunction} ,\onehotmapof{z}}{\varnothing} \, . 
+	& =  \sbcontraction{ \sbcontractionof{\probtensor,\rencodingof{\exfunction}}{\catvariableof{\exfunction}} ,\onehotmapof{z}}\\
+	& =  \sbcontraction{ \probof{\exfunction} ,\onehotmapof{z}} \, . 
 \end{align*}
 
 %% OLD: Defining queries by 
@@ -249,7 +262,7 @@ Gibbs can be implemented based on the energy tensor $\energytensor$ of the proba
 
 
 
-\subsection{Simulated Annealing}
+\subsubsection{Simulated Annealing}
 
 \red{MAP queries are approximated by sampling from annealed distributions: Use $\hypercore$ as the energy tensor, e.g. as parameter tensor to the naive exponential family.}
 
@@ -257,7 +270,7 @@ Gibbs can be implemented based on the energy tensor $\energytensor$ of the proba
 % Simulated annealing
 	\red{Here by the naive exponential family!}
 	Simulated annealing manipulates the probability used to sample $\catindexof{\catenumerator}$ in terms of an inverse temperature parameter $\invtemp$, by
-		\[ \probtensor \rightarrow \frac{\expof{\invtemp\cdot\lnof{\probtensor}}}{\contractionof{\expof{\invtemp\cdot\lnof{\probtensor}}}{\varnothing} } \, . \]
+		\[ \probtensor \rightarrow \frac{\expof{\invtemp\cdot\lnof{\probtensor}}}{\contraction{\expof{\invtemp\cdot\lnof{\probtensor}}} } \, . \]
 	When the temperature is larger than $1$, the probability of states with low probability increases while the probability of states with large probability decreases and for low temperatures the opposite.
 	Simulated annealing, that is the decrease of the temperature to $0$ during Gibbs sampling biases the algorithm towards states with large probability.
 %	Tuning this parameter can improve the convergence of Gibbs Sampling.
@@ -281,27 +294,31 @@ Let us now turn to inductive reasoning tasks, where a probabilistic model is tra
 
 \subsubsection{Likelihood and Cross Entropy}
 
-Given a datapoint $\datapointof{\dataindex}$ consisting of the images of the data selecting map $\datamap$ (see Definition~\ref{def:dataMap}), the likelihood given a Markov Logic Network is denoted as
-	\[ \probof{\shortcatvariables = \datamapof{\dataindex}} \, . \]
+Given a datapoint $\datamapof{\dataindex}$ consisting of the images of the data selecting map $\datamap$ (see Definition~\ref{def:dataMap}), the likelihood given a Markov Logic Network is denoted as
+	\[ \probat{\shortcatvariables = \datamapof{\dataindex}} \, . \]
 	
 % Independent assumption
-When all $\datamapof{\dataindex}$ are drawn independently from $\mlnprobat{\shortcatvariablelist}$, we can factorize into
-	\[ \probof{\data}  = \prod_{\dataindexin} \probof{\shortcatvariables=\datamapof{\dataindex}} \, . \]
-
+When all $\datamapof{\dataindex}$ are drawn independently from $\probat{\shortcatvariablelist}$, we can factorize into
+	\[ \probat{\data}  = \prod_{\dataindexin} \probof{\shortcatvariables=\datamapof{\dataindex}} \, . \]
 
 % Logarithm
-It is convenient to apply a logarithm on the objective, which does not influence the optimum.
+It is convenient to apply a logarithm on the objective, which does not influence the optimum when optimizing this quantity.
 This is especially useful, when investigating the convergence of the objective for $\datanum\rightarrow\infty$ (see Chapter~\ref{cha:mlnConcentration}).
-We define the loss of a distribution $\probtensor$ as
-\begin{align}\label{eq:defLikelihoodLossPL}
-	\lossof{\probtensor} 
-	= \frac{1}{\datanum} \lnof{\probof{\data}} 
-\end{align}
+
+\begin{definition}
+	We define the loss of a distribution $\probtensor$ as
+	\begin{align*}%\label{eq:defLikelihoodLossPL}
+		\lossof{\probtensor} 
+		= \frac{1}{\datanum} \lnof{\probof{\data}} 
+	\end{align*}
+\end{definition}
+
+
 
 \begin{lemma}
-	The loss has the form 
+	Given a data selecting map $\datamap$ and a positive distribution $\probtensor$, we have
 	\begin{align}
-		\lossof{\probtensor} = \contractionof{\{\empdistribution,\lnof{\probtensor}\}}{\varnothing}
+		\lossof{\probtensor} = \sbcontraction{\empdistribution,\lnof{\probtensor}} \, . 
 	\end{align}
 \end{lemma}
 \begin{proof}
@@ -310,24 +327,20 @@ We define the loss of a distribution $\probtensor$ as
 		\lossof{\probtensor} 
 		& = \frac{1}{\datanum} \lnof{\probof{\data}} 
 		= \frac{1}{\datanum} \sum_{\datain} \lnof{\probof{\shortcatvariables =\datamap(\dataindex)}} 
-		= \frac{1}{\datanum} \sum_{\datain} \contractionof{\{\lnof{\probtensor},\onehotmapof{\datamap(\dataindex)}\}}{\varnothing} \\ 
-		& = \contractionof{\{\empdistribution,\lnof{\probtensor}\}}{\varnothing} \, .
+		= \frac{1}{\datanum} \sum_{\datain} \contraction{\{\lnof{\probtensor},\onehotmapof{\datamap(\dataindex)}\}} \\ 
+		& = \sbcontraction{\empdistribution,\lnof{\probtensor}} \, .
 	\end{align*}
 \end{proof}
 
-We thus state the Maximum Likelihood Problem in the form
-\begin{align}\tag{$\mathrm{P}_{\lossof{}, \empdistribution}$}\label{prob:parameterMaxLikelihood}
+
+We now state the Maximum Likelihood Problem in the form
+\begin{align}\tag{$\mathrm{P}_{\Gamma, \empdistribution}$}\label{prob:parameterMaxLikelihood}
 	\argmin_{\probtensor\in\Gamma} \lossof{\probtensor} \, . % Naive Exponential Family perspective!
 \end{align}
 
 
 
-% M-Projection -> A projection since P^2 = P, i.e. P applied on the image is id
-Most general, the Maximum Likelihood Problem is the M-Projection of a distribution $\gendistribution$ onto a set $\Gamma$ of probability tensors is
-\begin{align}
-	\argmax_{\probtensor\in\Gamma}  \centropyof{\gendistribution}{\probtensor} 
-\end{align}
-where the Maximum Likelihood Estimation is the special case $\gendistribution=\empdistribution$.
+
 
 
 
@@ -337,10 +350,12 @@ where the Maximum Likelihood Estimation is the special case $\gendistribution=\e
 
 \begin{definition}[Shannon entropy]
 	The information content or the Shannon entropy of a distribution is defined as
-		\[ \sentropyof{\probtensor} := \expectationofwrt{-\lnof{\probof{\randomx}}}{\randomx\sim\probtensor} = - \sum_{\catindices} \probof{\indexedcatvariables} \cdot \lnof{\probof{\indexedcatvariables}} \, . \]
-	We depict this in a tensor network diagram with an ellipsis denoting a coordinatewise transform (here the $\ln$) as:
+		\[ \sentropyof{\probtensor} 
+		:= \expectationofwrt{-\lnof{\probof{\shortcatvariables}}}{\shortcatvariables\sim\probtensor} 
+		= - \sum_{\shortcatindices} \probof{\indexedshortcatvariables} \cdot \lnof{\probof{\indexedshortcatvariables}} \, . \]
+	We depict this in a tensor network diagram with an ellipsis denoting a coordinatewise transform (see Chapter~\ref{cha:coordinateCalculus}) with a natural logarithm $\ln$ as:
 	\begin{center}
-		\input{PartI/tikz_pics/shannon_entropy.tex}
+		\input{PartI/tikz_pics/probabilistic_reasoning/shannon_entropy.tex}
 	\end{center}
 \end{definition}
 
@@ -350,11 +365,11 @@ where the Maximum Likelihood Estimation is the special case $\gendistribution=\e
 \begin{definition}[Cross entropy]\label{def:crossEntropy}
 	The cross entropy between two distributions is defined as 
 		\[ \centropyof{\probtensor}{\tilde{\probtensor}} 
-		=  \expectationofwrt{-\lnof{\probof{\randomx}}}{\randomx\sim\probtensor} 
-		= - \sum_{\catindices}  \probof{\indexedcatvariables} \cdot \lnof{\tilde{\probtensor}[\indexedcatvariables]}  \, . \]
+		:=  \expectationofwrt{-\lnof{\tilde{\probtensor}[\shortcatvariables]}}{\shortcatvariables\sim\probtensor} 
+		= - \sum_{\catindices}  \probof{\indexedcatvariables} \cdot \lnof{\tilde{\probtensor}[\indexedshortcatvariables]}  \, . \]
 	We depict this in a tensor network diagram with an ellipsis denoting a coordinatewise transform (here the $\ln$) as :
 	\begin{center}
-		\input{PartI/tikz_pics/cross_entropy.tex}
+		\input{PartI/tikz_pics/probabilistic_reasoning/cross_entropy.tex}
 	\end{center}
 \end{definition}
 
@@ -369,12 +384,7 @@ The difference between both sides is called the Kullback Leibler Divergence and 
 \begin{definition}[Kullback Leibler Divergence]\label{def:KLDivergence}
 	The KL divergence between two distributions is defined as 
 		\[ \kldivof{\probtensor}{\tilde{\probtensor}} = \centropyof{\probtensor}{\tilde{\probtensor}} - \sentropyof{\probtensor}  \, . \]
-%	We depict this in a tensor network diagram with an ellipsis denoting a coordinatewise transform (here the $\ln$) as :
-%	\begin{center}
-%		\input{PartI/tikz_pics/cross_entropy.tex}
-%	\end{center}
 \end{definition}
-
 
 
 % Interpretation of MLE as Cross-Entropy Minimization
@@ -389,7 +399,12 @@ We can therefore rewrite Problem~\ref{prob:parameterMaxLikelihood} as minimizati
 	
 
 
-
+% M-Projection -> A projection since P^2 = P, i.e. P applied on the image is id
+Most general, the Maximum Likelihood Problem is the M-Projection of a distribution $\gendistribution$ onto a set $\Gamma$ of probability tensors is
+\begin{align}
+	\argmax_{\probtensor\in\Gamma} \centropyof{\gendistribution}{\probtensor} 
+\end{align}
+where the Maximum Likelihood Estimation is the special case $\gendistribution=\empdistribution$.
 
 
 
@@ -397,9 +412,20 @@ We can therefore rewrite Problem~\ref{prob:parameterMaxLikelihood} as minimizati
 
 \subsection{Forward Mapping in Exponential Families} 
 
-\red{Integrate: Selection encodings suffice for variational methods, relational encodings of statistics are required for markov network instantiations of exponential families.}
 
-Following \cite{wainwright_graphical_2008}, we can characterize the forward mapping as a variational problem.
+\red{Integrate: 
+Selection encodings suffice for variational methods, relational encodings of statistics are required for markov network instantiations of exponential families.}
+
+
+%% Mean parameters are expectation queries
+Mean parameter coordinates are expectation queries to $\sstatcoordinateof{\selindex}$, by 
+	\[ \meanparamat{\indexedselvariable} = \expectationof{\sstatcoordinateof{\selindex}} \, . \]
+	
+%% Forward mappings are contractions, variational formulation as an alternative to avoid inefficiencies
+Forward mappings have a closed form representation by
+	\[ \forwardmap(\canparam)  
+	= \sbcontractionof{\sencodingof{\sstat},\normationof{\basemeasure,\expof{\contraction{\sencodingof{\sstat},\canparam}}}{\shortcatvariables}}{\selvariable} \, . \]
+Following \cite{wainwright_graphical_2008}, we can characterize the forward mapping to exponential families as a variational problem and provide an alternative characterization to this contraction.
 
 
 
@@ -410,15 +436,17 @@ This is especially useful, when the contraction is intractable, for example beca
 
 We have
 \begin{align*}
-	\forwardmap(\canparam)  = \argmax_{\meanparam\in\meanset}  \contractionof{\meanparam,\canparam}{\varnothing} + \sentropyof{\probtensor^{\meanparam}} 
+	\forwardmap(\canparam)  = \argmax_{\meanparam\in\meanset}  \sbcontraction{\meanparam,\canparam} + \sentropyof{\probtensor^{\meanparam}} 
 \end{align*}
 where 
 \begin{align*}
-	 \meanset = \{  \contractionof{\probtensor,\sencodingof{\sstat}}{\selvariable}  :  \probtensor \quad \text{a distribution} \}
+	 \meanset = \{  \sbcontractionof{\probtensor,\sencodingof{\sstat}}{\selvariable} \, :  \,  \probtensor \,\, \text{a distribution} \}
 \end{align*}
+and by $\probtensor^{\meanparam}$ we denote a probability tensor reproducing the mean parameter $\meanparam$.
 
 % Forward mapping as gradient of A
-In \cite{wainwright_graphical_2008}: Forward mapping coincides with gradient, i.e. $\meanparam = \nabla \cumfunction(\canparam)$.
+In \cite{wainwright_graphical_2008}: 
+Forward mapping coincides with gradient, i.e. $\meanparam = \nabla \cumfunction(\canparam)$.
 
 
 \subsubsection{Mean Field Method}
@@ -427,18 +455,18 @@ Restrict the maximum over the mean parameters of efficiently contractable distri
 
 We rewrite 
 \begin{align*}
-	\max_{\meanparam\in\meanset}  \sbcontractionof{\meanparam, \canparam} + \sentropyof{\probtensor^{\meanparam}} 
+	\max_{\meanparam\in\meanset}  \sbcontraction{\meanparam,\canparam} + \sentropyof{\probtensor^{\meanparam}} 
 	=
-	\max_{\probtensor} \sbcontraction{\energytensor, \probtensor} + \sentropyof{\probtensor}
+	\max_{\probtensor} \sbcontraction{\energytensor,\probtensor} + \sentropyof{\probtensor}
 \end{align*}
 where
-	\[ \energytensor = \sbcontractionof{\sstat,\canparam}{\shortcatvariables} \, . \]
+	\[ \energytensor = \sbcontractionof{\sencsstat,\canparam}{\shortcatvariables} \, . \]
 
 We now restrict the distributions in the maximum.
 Typically we use the family of independent distributions, also called naive mean field method.
 The naive mean field is the approximation by distributions of independent random variables $\legcoreof{\catenumerator}$, that is
 \begin{align*}
-	\argmax_{\legcoreof{\catenumerator} \, : \, \catenumeratorin} \contractionof{\{\energytensor\} \cup \{\legcoreof{\catenumerator} \, : \, \catenumeratorin\}}{\varnothing}
+	\argmax_{\legcoreof{\catenumerator} \, : \, \catenumeratorin} \contraction{\{\energytensor\} \cup \{\legcoreof{\catenumerator} \, : \, \catenumeratorin\}}
 	+ \sum_{\catenumeratorin} \sentropyof{\legcoreof{\catenumerator}} \, . 
 \end{align*}
 
@@ -455,9 +483,9 @@ Algorithm~\ref{alg:NMF} is the alternation of legwise updates until a stopping c
 	\For{$\catenumeratorin$}
 		\State 
 			\[ \legcoreofat{\catenumerator}{\catvariableof{\catenumerator}} 
-			= \normationofwrt{ \expof{ \contractionof{ \{\energytensor[\shortcatvariables] \} \cup
-				\{\legcoreofat{\secatomenumerator}{\catvariableof{\secatomenumerator}}\} }{\shortcatvariables} }
-			}{\catvariableof{\catenumerator}}{\varnothing} \]
+			= \normationof{ \expof{ \contractionof{ \{\energytensor[\shortcatvariables] \} \cup
+				\{\legcoreofat{\secatomenumerator}{\catvariableof{\secatomenumerator}} \, : \, \secatomenumerator\neq\catenumerator\} }{\shortcatvariables} }
+			}{\catvariableof{\catenumerator}} \]
 \EndFor
 \EndWhile
 \end{algorithmic}
@@ -468,7 +496,7 @@ Algorithm~\ref{alg:NMF} is the alternation of legwise updates until a stopping c
 More generically, one can use any Markov Network as the approximating family. % Also any exponential family?
 Let $\graph$ be any hypergraph, we define the problem
 \begin{align}\tag{$\mathrm{P}_{\mnexpfamily, \probtensor}$}\label{prob:structuredApproximation}
-	\argmax_{\probtensor\in \mnexpfamily} \contractionof{\{\energytensor, \probtensor\}}{\varnothing} + \sentropyof{\probtensor}
+	\argmax_{\probtensor\in \mnexpfamily} \sbcontraction{\energytensor,\probtensor} + \sentropyof{\probtensor}
 \end{align}
 
 \begin{theorem}
@@ -510,8 +538,8 @@ The mean field method corresponds with minimization of the KL Divergence to the 
 \begin{theorem}
 	For any hypergraph $\graph$ and energy tensor $\energytensor$ we have 
 	\begin{align*}
-		\argmax_{\probtensor\in \mnexpfamily} \contractionof{\{\energytensor, \probtensor\}}{\varnothing} + \sentropyof{\probtensor}
-		= \argmax_{\probtensor\in \mnexpfamily} \kldivof{\expdistof{(\graph,\canparam)}}{\normationofwrt{\expof{\energytensor}}{\shortcatvariables}{\varnothing}}
+		\argmax_{\probtensor\in \mnexpfamily} \sbcontraction{\energytensor, \probtensor}+ \sentropyof{\probtensor}
+		= \argmax_{\probtensor\in \mnexpfamily} \kldivof{\expdistof{(\graph,\canparam)}}{\normationof{\expof{\energytensor}}{\shortcatvariables}}
 	\end{align*}
 	Problem~\ref{prob:structuredApproximation} is thus the I-projection onto the exponential family $\mnexpfamily$.
 \end{theorem}
@@ -528,13 +556,13 @@ Finding the mode of a distribution is related to the forward mapping of $\invtem
 % Annealing effect on the optimization problem
 This is because 
 \begin{align*}
-	\argmax_{\meanparam\in\meanset}  \contractionof{\meanparam,\canparam}{\varnothing} 
+	\argmax_{\meanparam\in\meanset}  \sbcontraction{\meanparam,\canparam}
 \end{align*}
 is taken at an extreme point in $\meanset$ (since linear objective over closed convex set), which is a delta distribution of a set and
 \begin{align*}
-	\argmax_{\meanparam\in\meanset}  \contractionof{\meanparam,\invtemp\cdot\canparam}{\varnothing} + \sentropyof{\probtensor^{\meanparam}} 
+	\argmax_{\meanparam\in\meanset}  \sbcontraction{\meanparam,\invtemp\cdot\canparam}+ \sentropyof{\probtensor^{\meanparam}} 
 	= 
-	\argmax_{\meanparam\in\meanset}  \contractionof{\meanparam,\canparam}{\varnothing} + \frac{1}{\invtemp} \cdot \sentropyof{\probtensor^{\meanparam}} 	
+	\argmax_{\meanparam\in\meanset}  \sbcontraction{\meanparam,\canparam} + \frac{1}{\invtemp} \cdot \sentropyof{\probtensor^{\meanparam}} 	
 \end{align*}
 thus the entropy term is neglectible for large $\invtemp$.
 A more precise argument is using a limit of the maxima and can be found in Theorem~8.1 in \cite{wainwright_graphical_2008}
@@ -553,9 +581,9 @@ The backward mapping to $\datamean = \sbcontractionof{\empdistribution, \sstat}{
 
 \begin{lemma}
 	Let there be a sufficient statistic $\sstat$.
-	The map $\backwardmap: \rr^{\statorder}\rightarrow \rr^{\statorder}$ defined as
+	The map $\backwardmap: \rr^{\seldim}\rightarrow \rr^{\seldim}$ defined as
 	\begin{align*}
-		\backwardmap(\meanparam) = \argmax_{\canparam\in\rr^{\statorder}}  \contractionof{\meanparam,\canparam}{\varnothing} - \cumfunctionof{\canparam} \, . 
+		\backwardmap(\meanparam) = \argmax_{\canparam\in\rr^{\seldim}}  \sbcontraction{\meanparam,\canparam} - \cumfunctionof{\canparam} \, . 
 	\end{align*}
 	is a backward mapping.
 \end{lemma}
@@ -564,7 +592,8 @@ The backward mapping to $\datamean = \sbcontractionof{\empdistribution, \sstat}{
 \end{proof}
 
 % Gradient property
-In \cite{wainwright_graphical_2008}: The objective is the conjugate dual $\dualcumfunction$ of $\cumfunction$, and backward mapping has an expression by the gradient, i.e. $\canparam = \nabla \dualcumfunction(\meanparam)$.
+In \cite{wainwright_graphical_2008}:
+ The objective is the conjugate dual $\dualcumfunction$ of $\cumfunction$, and backward mapping has an expression by the gradient, i.e. $\canparam = \nabla \dualcumfunction(\meanparam)$.
 
 
 \begin{theorem}[Moment Matching Criteria]\label{the:MM}
@@ -586,35 +615,35 @@ Backward mapping coincides with the Maximum Likelihood Estimation as we show nex
 We now take $\Gamma$ to coincide with an exponential family $\expfamily$ for a sufficient statistic $\sstat$.
 
 % Cross entropy
-The objective is the cross entropy between a distribution with $\meanparam$ and the distribution $\expdistof{\sstat,\canparam}$.
+The objective is the cross entropy between a distribution with $\meanparam$ and the distribution $\expdistof{(\sstat,\canparam,\basemeasure)}$.
 
 \begin{lemma}
-	Let $\sstat\in\facspace\otimes\rr^{\statorder}$ be a sufficient statistic and $\gendistribution\in\facspace$ a probability distribution.
+	Let $\sstat\in\facspace\otimes\rr^{\seldim}$ be a sufficient statistic and $\gendistribution\in\facspace$ a probability distribution.
 	For any member $\expdist\in\expfamily$ we have
 		\[ \centropyof{\gendistribution}{\expdist} = \sbcontraction{\canparam,\genmean} - \cumfunctionof{\canparam} \]
 	where 
 		\[ \genmean = \sbcontractionof{\gendistribution,\sstat}{\catvariableof{\sstat}} \,  \]
 	and 
 		\[ \cumfunction(\canparam) = \lnof{\contraction{\expof{\expenergy}}} \, . \]
-	The M-projection of $\gendistribution$ onto $\expfamily$ is  $\expdistof{(\sstat,\estcanparam)}$ for
+	The M-projection of $\gendistribution$ onto $\expfamily$ is  $\expdistof{(\sstat,\estcanparam,\basemeasure)}$ for
 		\[ \estcanparam\in \argmax_{\canparam}  \contraction{\canparam, \genmean} - \cumfunctionof{\canparam} \, .  \]
 \end{lemma}
 \begin{proof}
 	By decomposing 
 	\begin{align*}
-		\expdist 	& = \normationofwrt{\expof{\contractionof{\{\sstat, \canparam\}}{\shortcatvariables}}}{\shortcatvariables}{\varnothing} \\
-				& = \frac{\expof{\expenergy}}{\contractionof{\{\expof{\expenergy}\}}{\varnothing}}
+		\expdist 	& = \normationof{\expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables}}}{\shortcatvariables} \\
+				& = \frac{\expof{\expenergy}}{\sbcontraction{\expof{\expenergy}}}
 	\end{align*}
 	we get
 	\begin{align*}
-		\lnof{\expdist} & = \lnof{\expof{\expenergy}} - \onesat{\shortcatvariables} \cdot \contractionof{\expof{\expenergy}}{\varnothing} \\ 
+		\lnof{\expdist} & = \lnof{\expof{\expenergy}} - \onesat{\shortcatvariables} \cdot \sbcontraction{\expof{\expenergy}} \\ 
 		& = \expenergy - \cumfunction(\canparam) \cdot \onesat{\shortcatvariables}  \, .
 	\end{align*}
 	If follows that
 	\begin{align*}
 		\centropyof{\gendistribution}{\expdist} 
 		&=  \sbcontraction{\gendistribution,\lnof{\expdist}} \\
-		&=  \sbcontraction{\gendistribution,\expenergy} - \cumfunction(\canparam) \cdot \contractionof{\{\gendistribution\}}{\varnothing}   \\
+		&=  \sbcontraction{\gendistribution,\expenergy} - \cumfunction(\canparam) \cdot \sbcontraction{\gendistribution}   \\
 		&= \sbcontraction{\canparam, \genmean} - \cumfunction(\canparam) \, . 
 	\end{align*}
 \end{proof}
@@ -627,7 +656,7 @@ The objective is the cross entropy between a distribution with $\meanparam$ and 
 Parameter Estimation is the M-Projection of a distribution onto the exponential family.
 
 \begin{theorem}[\cite{wainwright_graphical_2008}]\ref{the:parEstToBackwardMap}
-	Given any probability distribution $\probof{\shortcatvariables}$ and a exponential family defined by the sufficient statistic $\sstat$, the M-Projection onto the family is the distribution $\probtensorof{(\sstat,\estcanparam)}$ where
+	Given any probability distribution $\probof{\shortcatvariables}$ and a exponential family defined by the sufficient statistic $\sstat$, the M-Projection onto the family is the distribution $\probtensorof{(\sstat,\estcanparam,\basemeasure)}$ where
 	\begin{align*}
 		\estcanparam = \backwardmap(\contractionof{\probtensor,\sstat}{\catvariableof{\sstat}}) \, .
 	\end{align*}
@@ -646,7 +675,7 @@ Parameter Estimation is the M-Projection of a distribution onto the exponential 
 The Maximum entropy problem with respect to matching expected statistics is
 \begin{align}\tag{$\mathrm{P}_{\sentropyof{}, \genmean}$}\label{prob:maxEntropy}
 	\argmax_{\probtensor} \sentropyof{\probtensor} \quad \text{subject to} \quad 
-	 \sbcontractionof{\probtensor,\sencodingof{\sstat}}{\selvariableof{\sstat}} =  \genmean
+	 \sbcontractionof{\probtensor,\sencodingof{\sstat}}{\selvariable} =  \genmean
 \end{align}
 where the optimization is over all probability distributions $\probtensor$.
 
@@ -674,15 +703,15 @@ Theorem~\ref{the:maxEntMaxLikeDuality} states, that when the maximum entropy pro
 Computation of the Backward map can instead be performed by alternating algorithms.} % Are these fixpoint iterations?
 
 
-Alternate through the coordinates of the statistics and adjust $\canparamat{\selvariable=\statenumerator}$ to a minimum of the likelihood, i.e. where
+Alternate through the coordinates of the statistics and adjust $\canparamat{\indexedselvariable}$ to a minimum of the likelihood, i.e. where
 \begin{align*}
-	0 = \frac{\partial}{\partial \canparamat{\selvariable=\statenumerator}} \lossof{\expdist}
+	0 = \frac{\partial}{\partial \canparamat{\indexedselvariable}} \lossof{\expdist}
 \end{align*}
 
 % Moment matching
 This condition is equal to the collection of moment matching equations (see Theorem~\ref{the:mm})
 \begin{align*}
-	\sbcontractionof{\expdist,\sencodingof{\sstat}}{\selvariable=\statenumerator} = \sbcontraction{\empdistribution,\sencodingof{\sstat}}{\selvariable=\statenumerator} \, . 
+	\sbcontractionof{\expdist,\sencodingof{\sstat}}{\indexedselvariable} = \sbcontraction{\empdistribution,\sencodingof{\sstat}}{\indexedselvariable} \, . 
 \end{align*}
 
 
@@ -690,48 +719,48 @@ This condition is equal to the collection of moment matching equations (see Theo
 	For any sufficient statistic $\sstat$ a parameter vector $\canparam$ and a $\statenumeratorin$ we define
 	\begin{align*}
 	 	\hypercoreat{\catvariableof{\sstat_\statenumerator}} 
-		= \contractionof{\{\rencodingof{\sstat}\}\cup\{\headcoreof{\tilde{\statenumerator}} : \tilde{\statenumerator} \in [\statorder], \tilde{\statenumerator}\neq\statenumerator\}}{\catvariableof{\sstat_\statenumerator}} \, . 
+		= \contractionof{\{\rencodingof{\sstat}\}\cup\{\headcoreof{\tilde{\statenumerator}} : \tilde{\statenumerator} \in [\seldim], \tilde{\statenumerator}\neq\statenumerator\}}{\catvariableof{\sstat_\statenumerator}} \, . 
 	\end{align*}
-	Then the moment matching condition for $\sstat_\statenumerator$ relative to $\canparam$ and $\meanparam_\sstat$ is satisfied for any $\canparamat{\selvariable=\statenumerator}$ with
+	Then the moment matching condition for $\sstat_\statenumerator$ relative to $\canparam$ and $\meanparam_\sstat$ is satisfied for any $\canparamat{\indexedselvariable}$ with
 	\begin{align*}
 		\sbcontraction{\headcoreof{\statenumerator}, \idrestrictedto{\imageof{\sstat_\statenumerator}}, \hypercoreat{\selvariable_\sstat}}
-		= \sbcontraction{\headcoreof{\statenumerator}, \hypercoreat{\selvariable_\sstat}} \cdot \meanparam_\statenumerator \, . 
+		= \sbcontraction{\headcoreof{\statenumerator}, \hypercoreat{\selvariable_\sstat}} \cdot \meanparamat{\indexedselvariable} \, . 
 	\end{align*}
 \end{lemma}
 \begin{proof}
 	We have
 	\begin{align*}
 		\expdist = \frac{
-			\contractionof{\{\headcoreof{\statenumerator}, \hypercore \}}{\shortcatvariables}
+			\sbcontractionof{\headcoreof{\statenumerator}, \hypercore}{\shortcatvariables}
 		}{
 			\sbcontraction{\headcoreof{\statenumerator}, \hypercore}
 		}
 	\end{align*}
 	and 
 	\begin{align*}
-		\contractionof{\{\expdist, \sstat_\statenumerator\}}{\varnothing} 
+		\sbcontraction{\expdist, \sstat_\statenumerator}
 		= \frac{
-			\contractionof{\{\headcoreof{\statenumerator}, \idrestrictedto{\imageof{\sstat_\statenumerator}}, \hypercore \}}{\shortcatvariables}
+			\sbcontractionof{\headcoreof{\statenumerator}, \idrestrictedto{\imageof{\sstat_\statenumerator}}, \hypercore}{\shortcatvariables}
 		}{
-			\contractionof{\{\headcoreof{\statenumerator}, \hypercore\}}{\varnothing}
+			\sbcontraction{\headcoreof{\statenumerator}, \hypercore}
 		} \, . 
 	\end{align*}
 	Here we used
-		\[ \sstat_\statenumerator = \contractionof{\{\headcoreof{\statenumerator}, \idrestrictedto{\imageof{\sstat_\statenumerator}}\}}{\shortcatvariables} \]
+		\[ \sstat_\statenumerator = \sbcontractionof{\headcoreof{\statenumerator}, \idrestrictedto{\imageof{\sstat_\statenumerator}}}{\shortcatvariables} \]
 	and redundancies of copies of relational encodings.
 	It follows that 
 	\begin{align*}
-		\contractionof{\{\expdist,\sstat_\statenumerator\}}{\varnothing} = \contractionof{\{\empdistribution,\sstat_\statenumerator\}}{\varnothing}
+		\sbcontraction{\expdist,\sstat_\statenumerator} = \contraction{\empdistribution,\sstat_\statenumerator}
 	\end{align*}
 	is equal to
 	\begin{align*}
-		\contractionof{\{\headcoreof{\statenumerator}, \idrestrictedto{\imageof{\sstat_\statenumerator}}, \hypercoreat{\selvariable_\sstat}  \}}{\varnothing}
-		= \contractionof{\{\headcoreof{\statenumerator}, \hypercoreat{\selvariable_\sstat}  \}}{\varnothing} \cdot \meanparam_\statenumerator \, . 
+		\sbcontraction{\headcoreof{\statenumerator}, \idrestrictedto{\imageof{\sstat_\statenumerator}}, \hypercoreat{\selvariable_\sstat}}
+		= \sbcontraction{\headcoreof{\statenumerator},\hypercoreat{\selvariable_\sstat}} \cdot \meanparamat{\indexedselvariable} \, . 
 	\end{align*}	
 \end{proof}
 
 % Alternation necessary
-The steps have to be alternated until sufficient convergence, since matching the moment to $\statenumerator$ by modifying $\canparamat{\selvariable=\statenumerator}$ will in general change other moments, which will have to be refit.
+The steps have to be alternated until sufficient convergence, since matching the moment to $\statenumerator$ by modifying $\canparamat{\indexedselvariable}$ will in general change other moments, which will have to be refit.
 
 
 %Coordinate descent
@@ -748,20 +777,20 @@ Since the log likelihood is concave, the algorithm converges to a global minimum
 \State Set $\canparamat{\selvariable}=0$
 \State Compute $\datameanat{\selvariable}= \sbcontractionof{\empdistribution,\sencodingof{\sstat}}{\selvariable}$
 %\For{$\statenumeratorin$}
-%	\State Set $\canparamat{\selvariable=\statenumerator}=0$ 
-%	\State Compute $\meanparam_\statenumerator^{\datamap} = \contractionof{\{\empdistribution,\sstat_\statenumerator\}}{\varnothing} $ % Or give those as input!
+%	\State Set $\canparamat{\indexedselvariable}=0$ 
+%	\State Compute $\meanparamat{\indexedselvariable}^{\datamap} = \contractionof{\{\empdistribution,\sstat_\statenumerator\}}{\varnothing} $ % Or give those as input!
 %\EndFor
 \While{Stopping criterion is not met}
 \For{$\statenumeratorin$}
 	\State Compute 
 		\begin{align*}
 			\hypercoreofat{\statenumerator}{\catvariableof{\sstat_\statenumerator}} 
-			= \contractionof{\{\rencodingof{\sstat}\}\cup\{\headcoreof{\tilde{\statenumerator}} : \tilde{\statenumerator} \in [\statorder], \tilde{\statenumerator}\neq\statenumerator\}}{\catvariableof{\sstat_\statenumerator}} 
+			= \contractionof{\{\rencodingof{\sstat}\}\cup\{\headcoreof{\tilde{\statenumerator}} : \tilde{\statenumerator} \in [\seldim], \tilde{\statenumerator}\neq\statenumerator\}}{\catvariableof{\sstat_\statenumerator}} 
 		\end{align*}
-	\State Set $\canparamat{\selvariable=\statenumerator}$ to a solution of 
+	\State Set $\canparamat{\indexedselvariable}$ to a solution of 
 	\begin{align*}
-		\contraction{\{\headcoreof{\statenumerator}, \idrestrictedto{\imageof{\sstat_\statenumerator}}, \hypercoreof{\statenumerator} \}}
-		= \contraction{\{\headcoreof{\statenumerator},\hypercoreof{\statenumerator} \}} \cdot \meanparam_\statenumerator^{\datamap} \, . 
+		\sbcontraction{\headcoreof{\statenumerator},\idrestrictedto{\imageof{\sstat_\statenumerator}},\hypercoreof{\statenumerator}}
+		= \sbcontraction{\headcoreof{\statenumerator},\hypercoreof{\statenumerator}} \cdot \datameanat{\indexedselvariable} \, . 
 	\end{align*}
 \EndFor
 \EndWhile
