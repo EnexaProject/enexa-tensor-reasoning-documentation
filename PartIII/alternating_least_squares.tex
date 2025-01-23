@@ -18,16 +18,28 @@ Direct approximation would be
 \subsubsection{Approximation involving Selection Architectures}
 
 Direct approximation would be
-	\[ \argmin_{\canparam\in\Gamma^{\graph}} \|\energytensor - \contractionof{\sencodingof{\sstat},\canparam}{\shortcatvariables}\|^2 \]
+	\[ \argmin_{\canparam\in\Gamma^{\graph}} \|\energytensor - \sbcontractionof{\sencodingof{\fselectionmap},\canparam}{\shortcatvariables}\|^2 \]
 
-\red{
-For example: Approximate based on a slice sparsity selecting architecture.
-Use a term selecting neural network (conjunction neuron on $\atomorder$ unary neurons selecting a variable and $\mathrm{Id},\lnot,\mathrm{True}$ as connective selector.
-Demand the parameter tensor $\canparam$ to be in a basis CP format, then each slice of the parameter tensor corresponds with the slice of the energy.
-The use the approximation for MAP search.
-Same construction possible for probability tensors, but often more involved to 
-}
+In a tensor network diagram we depict this as
+\begin{center}
+    \input{PartIII/tikz_pics/approximation/least_squares.tex}
+\end{center}
 
+
+\begin{example}[Approximate based on a slice sparsity selecting architecture]
+	Use a term selecting neural network (conjunction neuron on $\atomorder$ unary neurons selecting a variable and $\mathrm{Id},\lnot,\mathrm{True}$ as connective selector.
+	Demand the parameter tensor $\canparam$ to be in a basis CP format, then each slice of the parameter tensor corresponds with the slice of the energy.
+	The use the approximation for MAP search.
+	Same construction possible for probability tensors, but often more involved to instantiate them as tensor network.
+\end{example}
+
+
+%\begin{figure}[h]
+
+
+
+%\caption{Tensor Network Representation of the optimization.}
+%\end{figure}
 
 
 
@@ -165,30 +177,30 @@ When the parametercores are a tensor network representing a probability tensor b
 
 
 
+\subsection{Fitting a tensor by a formula tensor}
+
+Task: Given a tensor $\hypercore$, find a formula $\exformula\in\formulaset$ such that it coincides with $\hypercore$.
+
+If $\hypercore$ is a binary tensor, we understand it as a formula and want to find an $\exformula$ such that its number of worlds is maximal, that is solve the problem
+	\[ \argmax_{\exformula\in\formulaset}\sbcontraction{\exformula\Leftrightarrow\hypercore}  \, . \]
+
+We can use the squares risk trick and get an equivalent problem
+	\[ \argmin_{\exformula\in\formulaset} \| \sbcontractionof{\exformula\Leftrightarrow\hypercore}{\shortcatvariables}  - \onesat{\shortcatvariables} \|^2 \, . \]
+
+
+%\begin{remark}{Least Squares Loss by Tensor Fitting}
+%	\red{Alternative approach to least squares problems: Tensor Fitting}
+%	And, if the target is another formula $y$, such that $\exformula$ conincides with $\tilde{f} \iff y $ we have
+%		\[ \left(\polynomialof{\exformula}(\datamap)-1\right)^2 = \left(  \polynomialof{\tilde{f}}(\datamap) - y(\datamap) \right)^2  \]
+%	This is exactly the least squares loss, which would appear in a supervised interpretation of the learning.
+%\end{remark}
+
 
 
 
 \subsection{Alternating Solution of Least Squares Problems}
 
-
-\begin{remark}{Least Squares Loss by Tensor Fitting}
-	\red{Alternative approach to least squares problems: Tensor Fitting}
-	And, if the target is another formula $y$, such that $\exformula$ conincides with $\tilde{f} \iff y $ we have
-		\[ \left(\polynomialof{\exformula}(\datamap)-1\right)^2 = \left(  \polynomialof{\tilde{f}}(\datamap) - y(\datamap) \right)^2  \]
-	This is exactly the least squares loss, which would appear in a supervised interpretation of the learning.
-
-
-\end{remark}
-
-
-\begin{figure}[h]
-\begin{center}
-    \input{tikz_pics/optimization_variablecores.tex}
-\end{center}
-\caption{\red{Tensor Fitting!} Tensor Network Representation of the optimization.}
-\end{figure}
-
-
+When the parameter tensor $\canparam$ is only restricted to have a decomposition as a tensor network on $\graph$, we can iteratively update each core.
 The resulting algorithm is called Alternating Least Squares (ALS) (see Algorithm \ref{alg:ALS}).
 
 \begin{algorithm}[hbt!]

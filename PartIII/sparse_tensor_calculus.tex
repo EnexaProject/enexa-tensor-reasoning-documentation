@@ -319,49 +319,55 @@ We first define a slice selecting tensor and then show its decomposition into a 
 		& \fselectionmapat{\shortcatvariables=\shortcatindices,\indexedselvariableof{0,0},\ldots,\indexedselvariableof{\selorder-1,0},\indexedselvariableof{0,1},\ldots,\indexedselvariableof{\selorder-1,1}} \\
 		& \quad = \begin{cases}
 			1 & \text{if} \quad 
-			\forall_{\atomenumerator,\selenumerator} : \big(  \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \big) \rightarrow  \selindexof{\selenumerator,0} = \catindexof{\atomenumerator}  \\
+			\forall_{\atomenumerator,\selenumerator} : \big(  \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \big) \Rightarrow  (\selindexof{\selenumerator,0} = \catindexof{\atomenumerator})  \\
 			0
 		\end{cases} \, . 
 	\end{align*}
 \end{definition}
 
+In the next two Lemmata we first show that the defined slice selecting tensors indeed selects slices and then provide a representation as a formula selecting network.
 
 \begin{lemma}\label{lem:sliceFromSliceSelector}
-	If all input neurons with same selection index are agreeing have the same connective index, the selected formula does not vanish and coincides with a slice to the set
-		\[ \sliceset = \{ \atomenumerator \, : \, \exists_{\selenumeratorin}: \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \} \]
-	and
+	If all input neurons with same selection index are agreeing on the connective index, the selected formula does not vanish and coincides with a slice to the set
+		\[ \variableset = \{ \atomenumerator \, : \, \exists_{\selenumeratorin}: \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \} \]
+	and for $\atomenumerator\in\variableset$
 		\[ \catindexof{\atomenumerator} = \selindexof{\selenumerator,0} \quad \text{if} \quad \selindexof{\selenumerator,1} = \atomenumerator \, . \]
 \end{lemma}
+\begin{proof}
+	We need to show that 
+	\begin{align}\label{eq:sliceFromSliceSelector}
+	  	\fselectionmapat{\shortcatvariables,\indexedselvariableof{0,0},\ldots,\indexedselvariableof{\selorder-1,0},\indexedselvariableof{0,1},\ldots,\indexedselvariableof{\selorder-1,1}} = \onehotmapofat{\catindexof{\variableset}}{\shortcatvariables} \, . 
+	\end{align}
+	If and only if an index $\tilde{\catindex}_{[\atomorder]}$ reduced on $\variableset$ does not coincide with $\catindexof{\variableset}$, we have $\onehotmapofat{\catindexof{\variableset}}{\shortcatvariables=\tilde{\catindex}_{[\atomorder]}}=0$ and otherwise $\onehotmapofat{\catindexof{\variableset}}{\shortcatvariables=\tilde{\catindex}_{[\atomorder]}}=1$ .
+	Let us notice, that this condition is equivalent to 
+		\[ \forall_{\atomenumerator,\selenumerator} : \big(  \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \big) \Rightarrow  (\selindexof{\selenumerator,0} = \catindexof{\atomenumerator}) \]
+	and thus \eqref{eq:sliceFromSliceSelector} holds.
+\end{proof}
 
 
 \begin{lemma}\label{lem:fsnnRepresentingSliceSelector}
-	The slice selection tensor coincides with a formula selecting neural network with neurons
+	The slice selection tensor coincides with a formula selecting neural network with neurons (see Figure~\ref{fig:sliceSelectingNN}):
 	\begin{itemize}
 		\item unary input neuron enumerated by $\selenumerator$, selecting one of the $\shortcatvariables$ with the variable $\selvariableof{\selenumerator,1}$ and selecting a connective in $\{\lnot, \mathrm{Id}, \mathrm{True}\}$ by $\selvariableof{\selenumerator,0}$
 		\item $\selorder$-ary output neuron fixed to the $\land$ connective.
 	\end{itemize}
 \end{lemma}
 \begin{proof}
-	This can be easily checked on each input coordinate.
+	This can be easily checked on each coordinate.
 \end{proof}
 
-
-
-
-
-
-
-
-Let us now show, that the expressivity of the slice selecting neural network coincides with the set of tensors with 
+It follows, that the expressivity of the slice selecting neural network coincides with the set of tensors with a bound on their slice sparsity, when $\selorder\geq\atomorder$.
+For arbitrary $\selorder$, the following theorem holds.
 
 \begin{theorem}
 	Let $\fselectionmap$ be a slice selecting tensor.
 	For any parameter tensor $\canparam$ we have
-		\[ \bascprankof{\canparam} \geq \baspluscprankof{\contractionof{\fselectionmap},\canparam} \, . \]
+		\[ \baspluscprankof{\contractionof{\fselectionmap,\canparam}{\shortcatvariables}} \leq \bascprankof{\canparam} \, . \]
 \end{theorem}
 \begin{proof}
-	\red{Use the above lemma for that on each slice.}
-	Show, how a coordinate of $\canparam$ corresponds with a slice determining tuple: $\sliceset$ determined by the selection indices.
+	Each non-vanishing coordinate of $\canparam$ represents by Lemma~\ref{lem:fsnnRepresentingSliceSelector} a slice and their weighted sum is thus a monomial decomposition.
+%	\red{Use the above lemma for that on each slice.}
+%	Show, how a coordinate of $\canparam$ corresponds with a slice determining tuple: $\sliceset$ determined by the selection indices.
 \end{proof}
 
 
@@ -369,7 +375,7 @@ Let us now show, that the expressivity of the slice selecting neural network coi
 	\begin{center}
 		\input{PartIII/tikz_pics/sparse_tensor_calculus/slice_selecting_nn.tex}
 	\end{center}
-	\caption{Representation of a basis+ Tensor by the contraction of a parameter tensor $\canparam$ with a slice selecting architecture $\fselectionmap$, which has a decomposition as a formula selecting neural network (see Theorem~\ref{lem:fsnnRepresentingSliceSelector}).
+	\caption{Representation of a basis+ Tensor by the contraction of a parameter tensor $\canparam$ with a slice selecting architecture $\fselectionmap$, which has a decomposition as a formula selecting neural network (see Lemma~\ref{lem:fsnnRepresentingSliceSelector}).
 	The nonzero coordinates of $\canparam$ represent the (see Lemma~\ref{lem:sliceFromSliceSelector}).}
 \end{figure}\label{fig:sliceSelectingNN}
 
