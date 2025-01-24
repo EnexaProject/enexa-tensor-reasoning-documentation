@@ -577,7 +577,7 @@ We find one backward mapping as the dual problem to the forward mapping.
 
 \subsubsection{Variational Formulation}
 
-The backward mapping to $\datamean = \sbcontractionof{\empdistribution, \sstat}{\selvariable}$ is Maximum Likelihood estimation and the solution of the maximum entropy problem.
+The backward mapping to $\datameanat{\selvariable} = \sbcontractionof{\empdistribution, \sstat}{\selvariable}$ is Maximum Likelihood estimation and the solution of the maximum entropy problem.
 
 \begin{lemma}
 	Let there be a sufficient statistic $\sstat$.
@@ -598,7 +598,7 @@ In \cite{wainwright_graphical_2008}:
 
 \begin{theorem}[Moment Matching Criteria]\label{the:MM}
 	We have that $\canparam$ is a solution of the backward problem at $\genmean$, if and only if 
-		\[ \sbcontractionof{\expdist,\sstat}{\selvariable} = \genmean[\selvariable] \, . \]
+		\[ \sbcontractionof{\expdist,\sstat}{\selvariable} = \genmeanat{\selvariable} \, . \]
 \end{theorem}
 
 The equation in seeTheorem~\ref{the:mm} are called moment matching, since the moment of the empirical distribution is matched by the moment of the fitting distribution.
@@ -675,15 +675,15 @@ Parameter Estimation is the M-Projection of a distribution onto the exponential 
 The Maximum entropy problem with respect to matching expected statistics is
 \begin{align}\tag{$\mathrm{P}_{\sentropyof{}, \genmean}$}\label{prob:maxEntropy}
 	\argmax_{\probtensor} \sentropyof{\probtensor} \quad \text{subject to} \quad 
-	 \sbcontractionof{\probtensor,\sencodingof{\sstat}}{\selvariable} =  \genmean
+	 \sbcontractionof{\probtensor,\sencodingof{\sstat}}{\selvariable} =  \genmeanat{\selvariable}
 \end{align}
 where the optimization is over all probability distributions $\probtensor$.
 
 
 \begin{theorem}\label{the:maxEntMaxLikeDuality}
 	Let $\sstat$ be a map and $\gendistribution$ be any distribution of $\atomstates$ and define
-		\[ \genmean = \sbcontractionof{\gendistribution,\sencodingof{\sstat}}{\selvariableof{\sstat}} \, .  \]
-	Then the solution of \ref{prob:maxEntropy} coincides with the member $\expdistof{(\sstat,\estcanparam)}$ of the exponential family $\expfamily$ where
+		\[ \genmeanat{\selvariable} = \sbcontractionof{\gendistribution,\sencsstat}{\selvariable} \, .  \]
+	Then the solution of \ref{prob:maxEntropy} coincides with the member $\expdistof{(\sstat,\estcanparam,\basemeasure)}$ of the exponential family $\expfamily$ where
 		\[ \estcanparam = \backwardmap(\genmean)\]
 	for a backward map $\backwardmap$ of $\expfamily$.
 \end{theorem}
@@ -703,7 +703,7 @@ Theorem~\ref{the:maxEntMaxLikeDuality} states, that when the maximum entropy pro
 Computation of the Backward map can instead be performed by alternating algorithms.} % Are these fixpoint iterations?
 
 
-Alternate through the coordinates of the statistics and adjust $\canparamat{\indexedselvariable}$ to a minimum of the likelihood, i.e. where
+Alternate through the coordinates of the statistics and adjust $\canparamat{\indexedselvariable}$ to a minimum of the likelihood, i.e. where for any $\selindexin$
 \begin{align*}
 	0 = \frac{\partial}{\partial \canparamat{\indexedselvariable}} \lossof{\expdist}
 \end{align*}
@@ -711,7 +711,7 @@ Alternate through the coordinates of the statistics and adjust $\canparamat{\ind
 % Moment matching
 This condition is equal to the collection of moment matching equations (see Theorem~\ref{the:mm})
 \begin{align*}
-	\sbcontractionof{\expdist,\sencodingof{\sstat}}{\indexedselvariable} = \sbcontraction{\empdistribution,\sencodingof{\sstat}}{\indexedselvariable} \, . 
+	\sbcontractionof{\expdist,\sencsstat}{\indexedselvariable} = \sbcontraction{\empdistribution,\sencsstat}{\indexedselvariable} \, . 
 \end{align*}
 
 
@@ -754,8 +754,8 @@ This condition is equal to the collection of moment matching equations (see Theo
 	\end{align*}
 	is equal to
 	\begin{align*}
-		\sbcontraction{\headcoreof{\statenumerator}, \idrestrictedto{\imageof{\sstat_\statenumerator}}, \hypercoreat{\selvariable_\sstat}}
-		= \sbcontraction{\headcoreof{\statenumerator},\hypercoreat{\selvariable_\sstat}} \cdot \meanparamat{\indexedselvariable} \, . 
+		\sbcontraction{\headcoreof{\statenumerator}, \idrestrictedto{\imageof{\sstat_\statenumerator}}, \hypercoreat{\catvariableof{\sstat_\statenumerator}}}
+		= \sbcontraction{\headcoreof{\statenumerator},\hypercoreat{\catvariableof{\sstat_\statenumerator}}} \cdot \meanparamat{\indexedselvariable} \, . 
 	\end{align*}	
 \end{proof}
 
@@ -775,7 +775,7 @@ Since the log likelihood is concave, the algorithm converges to a global minimum
 \caption{Alternating Moment Matching}\label{alg:AMM}
 \begin{algorithmic}
 \State Set $\canparamat{\selvariable}=0$
-\State Compute $\datameanat{\selvariable}= \sbcontractionof{\empdistribution,\sencodingof{\sstat}}{\selvariable}$
+\State Compute $\datameanat{\selvariable}= \sbcontractionof{\empdistribution,\sencsstat}{\selvariable}$
 %\For{$\statenumeratorin$}
 %	\State Set $\canparamat{\indexedselvariable}=0$ 
 %	\State Compute $\meanparamat{\indexedselvariable}^{\datamap} = \contractionof{\{\empdistribution,\sstat_\statenumerator\}}{\varnothing} $ % Or give those as input!

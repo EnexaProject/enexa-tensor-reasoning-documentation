@@ -51,7 +51,30 @@ We in this chapter investigate in more depth, which operations can be performed 
 Coordinate calculus is the representation of real-valued functions as tensors, from which its evaluations can be retrieved by the scheme of Theorem~\ref{the:coordinateCalculus}.
 
 
-\red{Incorporate theorem: Contracting tensor network conditioned on indices can be done by contracting the conditioned.}
+%\red{Incorporate theorem: Contracting tensor network conditioned on indices can be done by contracting the conditioned.}
+
+
+% Retrieval of Coorinates from tensor networks
+Tensors of large orders often admit a decomposition by tensor networks.
+We in the next theorem show, how such a decomposition can be exploited for efficient contraction and in particular coordinate retrieval.
+
+
+\begin{theorem}\label{the:slicedContractionToCores}
+	Given a tensor network $\tnetof{\graph}$ on a hypergraph $\graph=(\nodes,\edges)$, disjoint subsets $\nodesa,\nodesb\subset\nodes$ and $\catindexofin{\nodesb}$, we have
+		\[ \contractionof{\tnetof{\graph}}{\catvariableof{\nodesa},\indexedcatvariableof{\nodesb}} 
+		=  \contractionof{\{
+			\sbcontractionof{\hypercoreof{\edge}}{\catvariableof{\edge/\nodesb},\indexedcatvariableof{\nodesb}} \, : \, \edge\in\edges
+		\}}{\catvariableof{\nodesa}} \, .
+		\]
+\end{theorem}
+\begin{proof}
+	Using a delta tensor, which copies basis vector when contracting with one.
+\end{proof}
+
+% Special case of retrieving single coordinates
+If we retrieve a single coordinate of a tensor, we have the situation $\nodesa=\varnothing$, $\nodesb=\nodes$.
+In that case, Theorem~\ref{the:slicedContractionToCores} shows, that the coordinate is the product of the coordinates of the cores. % Thus no contraction required!
+
 
 \subsection{Selection Encodings}
 
@@ -59,7 +82,7 @@ Selection encodings as introduced in Definition~\ref{def:selectionEncoding} are 
 We will first provide by basis encodings a generic relation between the coordinatewise tensor definitions in this work and linear maps.
 
 We then show the utility of this perspective in the representation of composed linear functions.
-The results are applicable in the exponential family theory, in the tensor represnetation of energies and means.
+The results are applicable in the exponential family theory, in the tensor representation of energies and means.
 
 \subsubsection{Tensors as linear maps}
 
