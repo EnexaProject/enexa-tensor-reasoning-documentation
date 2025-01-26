@@ -852,24 +852,16 @@ Bayesian Networks conditioned on evidence are no longer Bayesian Networks on the
 
 \subsection{Exponential Families}\label{sec:exponentialFamilies}
 
-\red{Overwork: Further integration of selection encodings + Cumulative function!}
-
-%We here treat linear exponential Families (log-linear models) defined by sufficient statistics.
-
 % Usage of the selection encoding -> Can also make a theorem out of this
 Exponential families are collections of probability distributions, where each coordinate is determined by a base measure and a set $\sstat$ of features as
-	\[ \probat{\catvariables=\catindex}  \propto \basemeasure(\catindex) \cdot \sum_{\statenumeratorin} \sstat_\statenumerator(\catindex) \cdot \canparam(\catindex) \, . \]
+	\[ \probat{\indexedshortcatvariables}  \propto \basemeasure(\catindex) \cdot \expof{\sum_{\statenumeratorin} \sstatcoordinateofat{\selindex}{\indexedshortcatvariables} \cdot \canparamat{\indexedselvariable}} \, . \]
 We use the selection encoding to represent the weighted summation over the statistics, that is the tensor
-	\[ \sencodingofat{\sstat}{\shortcatvariables,\selvariableof{\sstat}}: \facstates \times [\statorder] \rightarrow \rr \]
+	\[ \sencodingofat{\sstat}{\shortcatvariables,\selvariable}: \facstates \times [\statorder] \rightarrow \rr \]
 with
-	\[ \sencodingofat{\sstat}{\indexedcatvariableof{[\atomorder]},\selvariableof{\sstat}=\statenumerator} = \sstat_\statenumerator(\catindex) \, . \]
-We then understand $\canparam$ as a vector to the categorical variable $\selvariableof{\sstat}$ and use Theorem~\ref{the:linCompSelEncoding} to get
-	\[ \left(\sum_{\statenumeratorin}\canparam[\selvariableof{\sstat}=\statenumerator]\cdot \sstat_\statenumerator \right) [\shortcatvariables] 
-		 = \sbcontractionof{\sencodingofat{\sstat}{\shortcatvariables,\selvariableof{\sstat}} , \canparam[\selvariableof{\sstat}]}{\shortcatvariables} \, . \]
-
-	
-
-
+	\[ \sencodingofat{\sstat}{\indexedshortcatvariables,\indexedselvariable} = \sstatcoordinateofat{\selindex}{\indexedshortcatvariables} \, . \]
+We then understand $\canparam$ as a vector to the categorical variable $\selvariable$ and use Theorem~\ref{the:linCompSelEncoding} to get
+	\[ \left(\sum_{\statenumeratorin}\canparamat{\indexedselvariable}\cdot \sstatcoordinateof{\selindex} \right) [\shortcatvariables] 
+		 = \sbcontractionof{\sencodingofat{\sstat}{\shortcatvariables,\selvariable} , \canparam[\selvariable]}{\shortcatvariables} \, . \]
 
 \begin{definition}
 	Given a sufficient statistics 
@@ -877,33 +869,47 @@ We then understand $\canparam$ as a vector to the categorical variable $\selvari
 %		\[ \sstat : \atomstates \times [\statorder] \rightarrow \rr \]
 	and a non-negative base measure
 		\[ \basemeasure : \facstates \rightarrow \rr \]
-	the set $\expfamily=\{\expdist \, : \, \canparam[\selvariableof{\sstat}] \in \simpleparspace\}$ of probability distributions 
+	the set $\expfamily=\{\expdist \, : \, \canparam[\selvariable] \in \simpleparspace\}$ of probability distributions 
 		\[ \expdist = \normationofwrt{\expof{\sbcontractionof{\sencodingof{\sstat},\canparam}{\shortcatvariables}}}{\shortcatvariables}{\varnothing} \]
 	is called the exponential family to $\sstat$.
 	If the base measure is positive, we define for each member with parameters $\canparam$
 		\[ \expenergy = \sbcontractionof{\sencodingof{\sstat},\canparam,\lnof{\basemeasure}}{\shortcatvariables} \]
 	the associated energy tensor.
+	We further introduce the cumulant function
+		\[ \cumfunctionof{\canparam} = \lnof{\sbcontraction{\basemeasure,\expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables} }} } \, .\]
 \end{definition}
 
 
-
-
-
-
-We have
-	\[ \expenergyat{\indexedcatvariables} = \sum_{\statenumeratorin}\sstatcoordinateof{\statenumerator}(\catindices) \cdot \canparam(\statenumerator) \, . \]
+%We have
+%	\[ \expenergyat{\indexedcatvariables} = \sum_{\statenumeratorin}\sstatcoordinateof{\statenumerator}(\catindices) \cdot \canparam(\statenumerator) \, . \]
 
 % Diverging partition functions avoided here
 Since we here restrict the discussion to finite state spaces, the distribution $\expdist$ is well-defined for any $\canparam\in\rr^{\statorder}$.
 For infinite state space there are sufficient statistics and parameters, such that the partition function $\sbcontraction{\basemeasure,\expof{\contractionof{\{\sstat,\canparam\}}{\shortcatvariables}}}$ diverges and the normation $\expdist$ is not defined.
 In that cases, the canonical parameters need to be chosen from a subset where the partition function is finite. 
 
-
-%% Introducing cumulant function
-Let us now ease the notation by introducing the cumulant function
-	\[ \cumfunctionof{\canparam} = \lnof{\sbcontraction{\basemeasure,\expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables} }} } \, .\]
-We get that
-	\[ \expdist = \expof{ \expenergy - \cumfunctionof{\canparam}\cdot \onesat{\shortcatvariables}} \, . \]
+% Cumulant representation
+\begin{lemma}\label{lem:energyCumulantRepresentation}
+	For any member of an exponential family $\expfamily$ we have
+		\[ \expdist = \expof{ \expenergy - \cumfunctionof{\canparam}\cdot \onesat{\shortcatvariables}} \, . \]
+\end{lemma}
+\begin{proof}
+	By definition we have
+	\begin{align*}
+		\expdist 
+		&= \normationof{
+		\expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables}}
+		}{\shortcatvariables} \\
+		&= \frac{\contractionof{\expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables}}}{\shortcatvariables}
+			}{\contraction{\expof{\sbcontractionof{\sencodingof{\sstat},\canparam	}{\shortcatvariables}}}} \\
+		&=  \frac{
+		\contractionof{\expof{\expenergyat{\shortcatvariables}}}{\shortcatvariables}
+		}{
+		\expof{\cumfunctionof{\canparam}}
+		} \\
+		& = \expof{ \expenergyat{\shortcatvariables} - \cumfunctionof{\canparam}\cdot \onesat{\shortcatvariables}} \, . 
+	\end{align*}
+\end{proof}
 
 
 \subsubsection{Tensor Network Representation} 
@@ -995,18 +1001,18 @@ and both the activation core and the corresponding computation core can be dropp
 \begin{definition}
 	Let there be an exponential family defined by $\sstat$.
 	We call the tensor
-		\[ \meanparam = \sbcontractionof{\expdist,\sencodingof{\sstat}}{\selvariableof{\sstat}} \]
+		\[ \meanparam = \sbcontractionof{\expdist,\sencodingof{\sstat}}{\selvariable} \]
 	the mean parameter tensor to a member $\expdist$ of an exponential family.
 	The map
 		\[ \forwardmap :  \simpleparspace\rightarrow\simpleparspace\]
-	with $\forwardmapof{\canparam} = \sbcontractionof{\expdist,\sencodingof{\sstat}}{\selvariableof{\sstat}}$ is called the forward map of the exponential family and any map
+	with $\forwardmapof{\canparam} = \sbcontractionof{\expdist,\sencodingof{\sstat}}{\selvariable}$ is called the forward map of the exponential family and any map
 		\[ \backwardmap : \imageof{\forwardmap} \rightarrow \simpleparspace\]
 	with $\expdistof{(\sstat,\backwardmapof{\forwardmapof{\canparam}},\basemeasure)} = \expdist$ for any $\canparam\in\rr^{\statorder}$ a backward map.
 \end{definition}
 
 % Polytope
 The image $\meanset$ of the forward map $\imageof{\forwardmap}$ is the interior of the convex polytope $\meanset$.
-It contains any mean parameters $\sbcontractionof{\probtensor,\sstat}{\selvariableof{\sstat}}$ realizable by any probability distribution $\probtensor$ \cite{wainwright_graphical_2008}.
+It contains any mean parameters $\sbcontractionof{\probtensor,\sstat}{\selvariable}$ realizable by any probability distribution $\probtensor$ \cite{wainwright_graphical_2008}.
 
 
 \subsubsection{Examples}

@@ -363,12 +363,12 @@ The difference between both sides is called the Kullback Leibler Divergence and 
 
 We are now ready to provide an entropic interpretation of the loss introduced in Definition~\ref{def:loss}.
 
-\begin{lemma}
+\begin{theorem}\label{the:lossCentropy}
 	Given a data selecting map $\datamap$ and a distribution $\probtensor$ we have
 	\begin{align}
 		\lossof{\probtensor} =  \centropyof{\empdistribution}{\probtensor} \, . % \sbcontraction{\empdistribution,\lnof{\probtensor}} \, . 
 	\end{align}
-\end{lemma}
+\end{theorem}
 \begin{proof}
 	We have
 	\begin{align*}
@@ -396,14 +396,14 @@ We can therefore rewrite Problem~\ref{prob:parameterMaxLikelihood} as minimizati
 
 % M-Projection -> A projection since P^2 = P, i.e. P applied on the image is id
 Most general, the Maximum Likelihood Problem is the M-Projection of a distribution $\gendistribution$ onto a set $\Gamma$ of probability tensors is
-\begin{align}
+\begin{align}\tag{$\mathrm{P}_{\Gamma, \gendistribution}$}\label{prob:mProjection}
 	\argmax_{\probtensor\in\Gamma} \centropyof{\gendistribution}{\probtensor} 
 \end{align}
 where the Maximum Likelihood Estimation is the special case $\gendistribution=\empdistribution$.
 
 
-\begin{example}[Cross entropy with respect to exponential families]
-	If $\secprobtensor$ from an exponential family, have
+\begin{example}[Cross entropy with respect to exponential families]\label{exa:cEntropyExp}
+	If $\secprobtensor$ from an exponential family, have with the representation from Lemma~\ref{lem:energyCumulantRepresentation}
 		\[ \centropyof{\probtensor}{\expdist} 
 		= \sbcontraction{\probtensor,(\expenergy-\cumfunctionof{\canparam}\cdot \ones)}
 		=   \sbcontraction{\probtensor,\expenergy} -\cumfunctionof{\canparam} \, .   \]
@@ -756,7 +756,7 @@ We find one backward mapping as the dual problem to the forward mapping.
 
 The backward mapping to $\datameanat{\selvariable} = \sbcontractionof{\empdistribution,\sencsstat}{\selvariable}$ is Maximum Likelihood estimation and the solution of the maximum entropy problem.
 
-\begin{lemma}
+\begin{theorem}\label{the:varBackward}
 	Let there be a sufficient statistic $\sstat$.
 	The map $\backwardmap: \rr^{\seldim}\rightarrow \rr^{\seldim}$ defined as
 	\begin{align*}
@@ -764,7 +764,7 @@ The backward mapping to $\datameanat{\selvariable} = \sbcontractionof{\empdistri
 		= \argmax_{\canparam\in\rr^{\seldim}}  \sbcontraction{\meanparam,\canparam} - \cumfunctionof{\canparam} \, . 
 	\end{align*}
 	is a backward mapping.
-\end{lemma}
+\end{theorem}
 \begin{proof}
 	%\red{From duality, see Theorem~3.4 in \cite{wainwright_graphical_2008}.}
 	We show the claim can be shown by the first order condition on the objective.	
@@ -788,8 +788,7 @@ The backward mapping to $\datameanat{\selvariable} = \sbcontractionof{\empdistri
 
 % Gradient property
 In \cite{wainwright_graphical_2008}:
- The objective is the conjugate dual $\dualcumfunction$ of $\cumfunction$, and backward mapping has an expression by the gradient, i.e. $\canparam = \nabla \dualcumfunction(\meanparam)$.
-
+The objective is the conjugate dual $\dualcumfunction$ of $\cumfunction$, and backward mapping has an expression by the gradient, i.e. $\canparam = \nabla \dualcumfunction(\meanparam)$.
 
 
 
@@ -804,38 +803,61 @@ Backward mapping coincides with the Maximum Likelihood Estimation Problem \eqref
 The loss is the cross entropy between a distribution with $\meanparam$ and the distribution $\expdistof{(\sstat,\canparam,\basemeasure)}$.
 
 
-
-
-\begin{lemma}
-	Let $\sstat\in\facspace\otimes\rr^{\seldim}$ be a sufficient statistic and $\gendistribution\in\facspace$ a probability distribution.
-	For any member $\expdist\in\expfamily$ we have
-		\[ \centropyof{\gendistribution}{\expdist} = \sbcontraction{\canparam,\genmean} - \cumfunctionof{\canparam} \]
-	where 
-		\[ \genmean = \sbcontractionof{\gendistribution,\sencsstat}{\selvariableof{\sstat}} \,  \]
-	and 
-		\[ \cumfunctionof{\canparam} = \lnof{\contraction{\expof{\expenergy}}} \, . \]
-	The M-projection of $\gendistribution$ onto $\expfamily$ is  $\expdistof{(\sstat,\estcanparam,\basemeasure)}$ for
-		\[ \estcanparam\in \argmax_{\canparam}  \sbcontraction{\canparam,\genmean} - \cumfunctionof{\canparam} \, .  \]
-\end{lemma}
+\begin{theorem}
+	Let there be any exponential family, a mean parameter vector $\genmean\in\imageof{\forwardmap}$ and a backward map $\backwardmap$.
+	Then $\estcanparam=\backwardmapof{\genmean}$ is the parameter of the M-projection (Problem~\ref{prob:mProjection}) of any $\gendistribution$ with $\sbcontractionof{\sencsstat,\gendistribution}{\selvariable}=\genmeanat{\selvariable}$ on to $\expfamily$, that is
+		\[ \expdistof{(\sstat,\estcanparam,\basemeasure)} \in \argmax_{\probtensor\in\expfamily} \centropyof{\gendistribution}{\probtensor}  \, . \]
+	In particular, if $\meanparam=\datamean$ for a data map $\datamap$, the backward map is a maximum likelihood estimator.
+\end{theorem}
 \begin{proof}
-	By decomposing 
+	We exploit the variational characterization of the backward map by Theorem~\ref{the:varBackward}, and first show that the objective coincides with the cross entropy between the distribution $\gendistribution$ and the respective member of the exponential family.
+	For any $\gendistribution$ and $\canparam$ we have with Example~\ref{exa:cEntropyExp}
 	\begin{align*}
-		\expdist 	& = \normationof{\expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables}}}{\shortcatvariables} \\
-				& = \frac{\expof{\expenergy}}{\sbcontraction{\expof{\expenergy}}}
+		\centropyof{\gendistribution}{\expdistof{(\sstat,\canparam,\basemeasure)}} 
+		=   \sbcontraction{\gendistribution,\sencsstat,\canparam} -\cumfunctionof{\canparam} \, .  
 	\end{align*}
-	we get
+	We use that by assumption $\sbcontractionof{\gendistribution,\sencsstat}{\selvariable}=\genmeanat{\selvariable}$ and thus
 	\begin{align*}
-		\lnof{\expdist} & = \lnof{\expof{\expenergy}} - \onesat{\shortcatvariables} \cdot \sbcontraction{\expof{\expenergy}} \\ 
-		& = \expenergy - \cumfunction(\canparam) \cdot \onesat{\shortcatvariables}  \, .
+		\centropyof{\gendistribution}{\expdistof{(\sstat,\canparam,\basemeasure)}} 
+		=   \sbcontraction{\genmean,\canparam} -\cumfunctionof{\canparam} \, .  
 	\end{align*}
-	If follows that
-	\begin{align*}
-		\centropyof{\gendistribution}{\expdist} 
-		&=  \sbcontraction{\gendistribution,\lnof{\expdist}} \\
-		&=  \sbcontraction{\gendistribution,\expenergy} - \cumfunction(\canparam) \cdot \sbcontraction{\gendistribution}   \\
-		&= \sbcontraction{\canparam, \genmean} - \cumfunction(\canparam) \, . 
-	\end{align*}
+	This shows, that the backward map coincides with the M-projection onto $\Gamma=\expfamily$.
+
+	Further, if $\meanparam=\datamean$ for a data map $\datamap$, we have that the corresponding empirical distribution $\empdistribution$ satisfies $\sbcontractionof{\sencsstat,\empdistribution}{\selvariable}=\meanparamat{\selvariable}$.
+	The backward map of $\meanparam$ is therefore the M-projection of $\empdistribution$, which is with Theorem~\ref{the:lossCentropy} the maximum likelihood estimator.
 \end{proof}
+
+
+%\begin{lemma}
+%	Let $\sstat\in\facspace\otimes\rr^{\seldim}$ be a sufficient statistic and $\gendistribution\in\facspace$ a probability distribution.
+%	For any member $\expdist\in\expfamily$ we have
+%		\[ \centropyof{\gendistribution}{\expdist} = \sbcontraction{\canparam,\genmean} - \cumfunctionof{\canparam} \]
+%	where 
+%		\[ \genmean = \sbcontractionof{\gendistribution,\sencsstat}{\selvariableof{\sstat}} \,  \]
+%	and 
+%		\[ \cumfunctionof{\canparam} = \lnof{\contraction{\expof{\expenergy}}} \, . \]
+%	The M-projection of $\gendistribution$ onto $\expfamily$ is  $\expdistof{(\sstat,\estcanparam,\basemeasure)}$ for
+%		\[ \estcanparam\in \argmax_{\canparam}  \sbcontraction{\canparam,\genmean} - \cumfunctionof{\canparam} \, .  \]
+%\end{lemma}
+%\begin{proof}
+%	By decomposing 
+%	\begin{align*}
+%		\expdist 	& = \normationof{\expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables}}}{\shortcatvariables} \\
+%				& = \frac{\expof{\expenergy}}{\sbcontraction{\expof{\expenergy}}}
+%	\end{align*}
+%	we get
+%	\begin{align*}
+%		\lnof{\expdist} & = \lnof{\expof{\expenergy}} - \onesat{\shortcatvariables} \cdot \sbcontraction{\expof{\expenergy}} \\ 
+%		& = \expenergy - \cumfunction(\canparam) \cdot \onesat{\shortcatvariables}  \, .
+%	\end{align*}
+%	If follows that
+%	\begin{align*}
+%		\centropyof{\gendistribution}{\expdist} 
+%		&=  \sbcontraction{\gendistribution,\lnof{\expdist}} \\
+%		&=  \sbcontraction{\gendistribution,\expenergy} - \cumfunction(\canparam) \cdot \sbcontraction{\gendistribution}   \\
+%		&= \sbcontraction{\canparam, \genmean} - \cumfunction(\canparam) \, . 
+%	\end{align*}
+%\end{proof}
 
 
 
