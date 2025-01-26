@@ -766,8 +766,24 @@ The backward mapping to $\datameanat{\selvariable} = \sbcontractionof{\empdistri
 	is a backward mapping.
 \end{lemma}
 \begin{proof}
-	\red{From duality, see Theorem~3.4 in \cite{wainwright_graphical_2008}.}
-	This can be shown by the vanishing gradient reproducing the moment matching condition.
+	%\red{From duality, see Theorem~3.4 in \cite{wainwright_graphical_2008}.}
+	We show the claim can be shown by the first order condition on the objective.	
+	It holds that
+	\begin{align*}
+		\difwrt{\canparamat{\selvariable}}  \cumfunctionof{\canparam}  
+		 & = \difwrt{\canparamat{\selvariable}}  \lnof{\contraction{\expof{\contractionof{\sencsstat,\canparam}{\shortcatvariables}}}} \\
+		 & = \difwrt{\canparamat{\selvariable}} \frac{\contraction{\sencsstat[\selvariable],\expof{\contractionof{\sencsstat,\canparam}{\shortcatvariables}}}}{\contraction{\expof{\contractionof{\sencsstat,\canparam}{\shortcatvariables}}}}   \\
+		 & = \forwardmapof{\canparam}[\selvariable]
+	\end{align*}
+	and thus
+	\begin{align*}
+		\difwrt{\canparamat{\selvariable}} \left( \sbcontraction{\meanparam,\canparam} - \cumfunctionof{\canparam}  \right) 
+		= \meanparamat{\selvariable} -  \forwardmapof{\canparam}[\selvariable] \, . 
+	\end{align*}
+	
+	The first order condition is therefore 
+		\[ \meanparamat{\selvariable} =  \forwardmapof{\canparam}[\selvariable] \]
+	and any $\canparam$ satisfies this condition exactly when $\canparam=\backwardmapof{\meanparam}$ for a backward map.
 \end{proof}
 
 % Gradient property
@@ -779,13 +795,16 @@ In \cite{wainwright_graphical_2008}:
 
 
 
-\subsubsection{Connection with Maximum Likelihood Estimation}
+\subsubsection{Interpretation by Maximum Likelihood Estimation}
 
 % Backward mapping
 Backward mapping coincides with the Maximum Likelihood Estimation Problem \eqref{prob:parameterMaxLikelihood}, when we take $\Gamma$ to the distributions in an exponential family $\expfamily$ for a sufficient statistic $\sstat$.
 
 % Cross entropy
 The loss is the cross entropy between a distribution with $\meanparam$ and the distribution $\expdistof{(\sstat,\canparam,\basemeasure)}$.
+
+
+
 
 \begin{lemma}
 	Let $\sstat\in\facspace\otimes\rr^{\seldim}$ be a sufficient statistic and $\gendistribution\in\facspace$ a probability distribution.
@@ -850,15 +869,36 @@ The Maximum entropy problem with respect to matching expected statistics is
 where the optimization is over all probability distributions $\probtensor$.
 
 
-\begin{theorem}\label{the:maxEntMaxLikeDuality}
-	Let $\sstat$ be a map and $\gendistribution$ be any distribution of $\atomstates$ and define
-		\[ \genmeanat{\selvariable} = \sbcontractionof{\gendistribution,\sencsstat}{\selvariable} \, .  \]
-	Then the solution of \ref{prob:maxEntropy} coincides with the member $\expdistof{(\sstat,\estcanparam,\basemeasure)}$ of the exponential family $\expfamily$ where
-		\[ \estcanparam = \backwardmapof{\genmean} \]
-	for a backward map $\backwardmap$ of $\expfamily$.
+\begin{theorem}\label{the:maxEntMaxLikeDuality} % In Koller Book, Theorem 20.2
+	If $\genmean\in\imageof{\forwardmap}$, we have that any distribution solving Problem~\ref{prob:maxEntropy} has a representation by $\expdistof{(\sstat,\estcanparam,\basemeasure)}$, 
+	where $\estcanparam=\backwardmapof{\genmean}$ for any backward map of the exponential family. 
+	%where $\estcanparam$ is the Maximum Likelihood Estimate with respect to any $\probtensor$ with $\sbcontractionof{\secprobtensor,\sencsstat}{\selvariable} =\genmean$.
+%
+%	Let $\sstat$ be a map and $\gendistribution$ be any distribution of $\atomstates$ and define
+%		\[ \genmeanat{\selvariable} = \sbcontractionof{\gendistribution,\sencsstat}{\selvariable} \, .  \]
+%	Then the solution of \ref{prob:maxEntropy} coincides with the member $\expdistof{(\sstat,\estcanparam,\basemeasure)}$ of the exponential family $\expfamily$ where
+%		\[ \estcanparam = \backwardmapof{\genmean} \]
+%	for a backward map $\backwardmap$ of $\expfamily$.
 \end{theorem}
 \begin{proof}
-	Classical result based on duality of maximum entropy and maximum likelihood, shown e.g. in Koller Book.
+	Since $\genmean\in\imageof{\forwardmap}$, there is a parameter $\estcanparam$ such that 
+		\[ \genmeanat{\selvariable} = \sbcontractionof{\expdistof{(\sstat,\estcanparam,\basemeasure)},\sencsstat}{\selvariable}   \, . \]
+	Let $\secprobtensor$ further be an arbitrary distribution such that
+		\[ \genmeanat{\selvariable} = \sbcontractionof{\secprobtensor,\sencsstat}{\selvariable}  \, . \]
+	We then have
+	\begin{align*}
+		\sentropyof{\expdistof{(\sstat,\estcanparam,\basemeasure)}}
+		= \centropyof{\secprobtensor}{\expdistof{(\sstat,\estcanparam,\basemeasure)}}
+	\end{align*}
+	
+	With the Gibbs inequality we have if $\secprobtensor\neq\expdistof{(\sstat,\estcanparam,\basemeasure)}$
+	\begin{align*}
+		\sentropyof{\expdistof{(\sstat,\estcanparam,\basemeasure)}} - \sentropyof{\secprobtensor}
+		= \centropyof{\secprobtensor}{\expdistof{(\sstat,\estcanparam,\basemeasure)}} - \sentropyof{\secprobtensor} > 0 \, . 
+	\end{align*}	
+	
+	Therefore, if $\secprobtensor$ does not coincide with$\expdistof{(\sstat,\estcanparam,\basemeasure)}$, it is not a solution of Problem~\ref{prob:maxEntropy}.
+	%Classical result based on duality of maximum entropy and maximum likelihood, shown e.g. in Koller Book.
 \end{proof}
 
 %
