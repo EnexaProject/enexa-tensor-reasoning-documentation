@@ -563,7 +563,7 @@ Let $\graph$ be any hypergraph, we define the problem
 
 We approximate the solution of this problem again by an alternating algorithm, which iteratively updates the cores of the approximating Markov Network. 
 
-\begin{theorem}[Update equations for the structured variational approximation]
+\begin{theorem}[Update equations for the structured variational approximation]\label{the:updateEquationStructuredVariational}
 	The Markov Network with hypercores $\extnetasset$ is a stationary point for Problem~\ref{prob:structuredApproximation}, if for all $\edgein$
 	\begin{align*}
 	\hypercoreofat{\edge}{\catvariableof{\edge}}
@@ -592,11 +592,34 @@ We approximate the solution of this problem again by an alternating algorithm, w
 	for any $\lambda>0$ (e.g. by the norm).
 	Here, the quotient denotes the coordinatewise quotient.
 \end{theorem}
+
+
+To proof the theorem, we show in the following lemma a characterization of the derivative of functions
+
+% Could put it into contraction equations?
+\begin{lemma}\label{lem:difMNExpectation}
+	For any function $\exfunction(\hypercoreof{\edge})[\catvariableof{\nodes}]$ we have
+	\begin{align*}
+		 \difwrt{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}} &
+		\sbcontraction{\normationof{\extnet}{\catvariableof{\nodes}},\exfunction(\hypercoreof{\edge})[\catvariableof{\nodes}]} \\
+		= & 
+		\frac{\normationof{\extnet}{\indexedcatvariableof{\edge}}}{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}} 
+		\Big( \sbcontraction{\normationofwrt{\extnet}{\catvariableof{\nodes/\edge}}{\indexedcatvariableof{\edge}}, \exfunction(\hypercoreof{\edge})[\catvariableof{\nodes/\edge},\indexedcatvariableof{\edge}]} \\
+		& \quad \quad \quad \quad \quad - \sbcontraction{\normationof{\extnet}{\catvariableof{\nodes}}, \exfunction(\hypercoreof{\edge})[\catvariableof{\nodes}]}
+		\Big) \\
+		& + \contraction{ \normationof{\extnet}{\catvariableof{\nodes}}
+		\difofwrt{\exfunction(\hypercoreof{\edge})[\catvariableof{\nodes}]}{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}}
+		}
+	\end{align*}
+\end{lemma}
 \begin{proof}
+	See Proposition 11.9 in Koller Book.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{the:updateEquationStructuredVariational}]
 	We proof the theorem by first order condition on the objective $\sbcontraction{\energytensor,\probtensor} + \sentropyof{\probtensor}$.
 	
-	\red{Need Proposition 11.9 in Koller Book.}
-	
+	%% Energy Contraction Term
 	We have for $\probtensor\in\mnexpfamily$
 	\begin{align*}
 		\sbcontraction{\energytensor,\probtensor} 
@@ -606,28 +629,34 @@ We approximate the solution of this problem again by an alternating algorithm, w
 			\contraction{\{\hypercoreof{\secedge} : \secedge\in\edges\}} 			
 		}
 	\end{align*}
-	and thus
+	and with Lemma~\ref{lem:difMNExpectation} 
 	\begin{align*}
-		\difwrt{\hypercoreof{\edge}} \sbcontraction{\energytensor,\probtensor} 
+		\difwrt{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}} \sbcontraction{\energytensor,\probtensor} 
 		= 
+		\frac{\normationof{\extnet}{\indexedcatvariableof{\edge}}}{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}} 
+		\Big( & \sbcontraction{\normationofwrt{\extnet}{\catvariableof{\nodes/\edge}}{\indexedcatvariableof{\edge}}, \energytensorat{\catvariableof{\nodes/\edge},\indexedcatvariableof{\edge}}} \\
+		&  - \sbcontraction{\normationof{\extnet}{\catvariableof{\nodes}}, \energytensorat{\catvariableof{\nodes}}}\Big) \\
 	\end{align*}
 	
-	
+	%% Entropy Term
 	Further we have
 	\begin{align*}
-		\sentropyof{\normationof{\{\hypercoreof{\secedge} : \secedge\in\edges\}}{\shortcatvariables}}
-		= \left(\sum_{\secedge\in\edges} 
-			\frac{ 
-			\contraction{\{-\lnof{\hypercoreof{\secedge}}\} \cup\{\hypercoreof{\secedge} : \secedge\in\edges\}}
-			}{
-			\contraction{\{\hypercoreof{\secedge} : \secedge\in\edges\}}
-			}\right)
-		+ \lnof{\contraction{\{\hypercoreof{\secedge} : \secedge\in\edges\}}}	
+		\sentropyof{\normationof{\extnet}{\shortcatvariables}}
+		= \left(\sum_{\secedge\in\edges} \contraction{-\lnof{\hypercoreof{\secedge}},\normationof{\extnet}{\shortcatvariables}} \right)
+		+ \lnof{\contraction{\extnet}}	
 	\end{align*}
 	and thus
 	\begin{align*}
-		\difwrt{\hypercoreof{\edge}} \sentropyof{\normationof{\{\hypercoreof{\secedge} : \secedge\in\edges\}}{\shortcatvariables}}
-		= 
+		\difwrt{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}} \sentropyof{\normationof{\extnet}{\shortcatvariables}}
+		= & \frac{\normationof{\extnet}{\indexedcatvariableof{\edge}}}{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}} 
+			\sum_{\secedge\in\edges} \Big(
+			 \sbcontraction{\normationofwrt{\extnet}{\catvariableof{\nodes/\edge}}{\indexedcatvariableof{\edge}}, \hypercoreofat{\secedge}{\catvariableof{\secedge/\edge},\indexedcatvariableof{\secedge\cap\edge}}} \\
+		&	 \quad \quad  \quad \quad \quad \quad \quad \quad -  \sbcontraction{\normationof{\extnet}{\catvariableof{\nodes}}, \hypercoreofat{\secedge}{\catvariableof{\secedge}}} 
+		\Big) \\
+		&- \sbcontraction{\normationof{\extnet}{\catvariableof{\nodes}}, \frac{1}{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}}} \\
+		% \frac{\normationof{\extnet}{\indexedcatvariableof{\edge}}}{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}}  \cdot expectation of derivative of -ln \\
+		&+ \frac{\contraction{\{\hypercoreof{\secedge} : \secedge\in\edges, \secedge\neq \edge\}}
+		}{\contraction{\{\hypercoreof{\secedge} : \secedge\in\edges\}}}
 	\end{align*}
 	
 	
