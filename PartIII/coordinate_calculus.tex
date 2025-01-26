@@ -76,6 +76,116 @@ If we retrieve a single coordinate of a tensor, we have the situation $\nodesa=\
 In that case, Theorem~\ref{the:slicedContractionToCores} shows, that the coordinate is the product of the coordinates of the cores. % Thus no contraction required!
 
 
+
+\subsection{Differentiation of Contraction}
+
+We add adiitional variables $\seccatvariable$ selecting a coordinate of a tensor, which is varied in a differentiation.
+
+\begin{lemma}\label{lem:difMNprob}
+	For any tensor network $\extnet$ with positive $\hypercoreof{\edge}$ we have
+	\begin{align*}
+		\difwrt{\hypercoreofat{\edge}{\seccatvariableof{\edge}}} \extnetdist
+		& = \sbcontractionof{
+	 	\identityat{\seccatvariableof{\edge},\edgevariables}, 
+		\frac{\contractionof{\extnet}{\edgevariables}}{\hypercoreofat{\edge}{\edgevariables}}, 
+		\normationofwrt{\extnet}{\catvariableof{\nodes/\edge}}{\edgevariables} }{\seccatvariableof{\edge},\nodevariables} \\
+		& \quad -  \extnetdist \otimes \sbcontractionof{\frac{\contractionof{\extnet}{\seccatvariableof{\edge}}}{\hypercoreofat{\edge}{\seccatvariableof{\edge}}}
+		}{\seccatvariableof{\edge}} \, .
+	\end{align*}
+\end{lemma}
+\begin{proof}
+	By multilinearity of tensor network contractions we have
+	\begin{align*}
+		\difwrt{\hypercoreofat{\edge}{\seccatvariableof{\edge}}} \contractionof{\extnet}{\nodevariables}
+		& = \contractionof{\{\identityat{\seccatvariableof{\edge},\edgevariables}\}\cup\{\hypercoreofat{\secedge}{\catvariableof{\secedge}} \, : \, \secedge\neq\edge \}}{\seccatvariableof{\edge},\nodevariables}
+	\end{align*}
+	and thus	
+	\begin{align*}
+		\difwrt{\hypercoreofat{\edge}{\seccatvariableof{\edge}}} \contraction{\extnet}
+		& = \contractionof{\{\identityat{\seccatvariableof{\edge},\edgevariables}\}\cup\{\hypercoreofat{\secedge}{\catvariableof{\secedge}} \, : \, \secedge\neq\edge \}}{\seccatvariableof{\edge}} \, . 
+	\end{align*}
+		
+	Using both we get
+	\begin{align}
+		\difwrt{\hypercoreofat{\edge}{\seccatvariableof{\edge}}} \extnetdist 
+		& = \difwrt{\hypercoreofat{\edge}{\seccatvariableof{\edge}}}  \frac{\contractionof{\extnet}{\nodevariables}}{\contraction{\extnet}} \nonumber \\
+		& = \frac{ \difwrt{\hypercoreofat{\edge}{\seccatvariableof{\edge}}} \contractionof{\extnet}{\nodevariables}}{\contraction{\extnet}} 
+		- \frac{ \contractionof{\extnet}{\nodevariables} \difwrt{\hypercoreofat{\edge}{\seccatvariableof{\edge}}} \contraction{\extnet} }{(\contraction{\extnet})^2} \nonumber \\
+		& = \frac{ \contractionof{\{\identityat{\seccatvariableof{\edge},\edgevariables}\}\cup\{\hypercoreofat{\secedge}{\catvariableof{\secedge}} \, : \, \secedge\neq\edge \}}{\seccatvariableof{\edge},\nodevariables}}{\contraction{\extnet}} \nonumber \\
+		& \quad\quad - \extnetdist \cdot  \frac{\contractionof{\{\identityat{\seccatvariableof{\edge},\edgevariables}\}\cup\{\hypercoreofat{\secedge}{\catvariableof{\secedge}} \, : \, \secedge\neq\edge \}}{\seccatvariableof{\edge}}}{\contraction{\extnet}} \label{eq:differentiatingMNpreresult}
+		% = \contractionof{\{\identityat{\seccatvariableof{\edge},\edgevariables}\}\cup\{\hypercoreofat{\secedge}{\catvariableof{\secedge}} \, : \, \secedge\neq\edge \}}{\seccatvariableof{\edge},\nodevariables}
+	\end{align}
+		
+	For the first term we get with a normation equation (see Theorem~\ref{the:normationContractionEQ}) that
+	\begin{align*}
+		\frac{ \contractionof{\{\identityat{\seccatvariableof{\edge},\edgevariables}\}\cup\{\hypercoreofat{\secedge}{\catvariableof{\secedge}} \, : \, \secedge\neq\edge \}}{\seccatvariableof{\edge},\nodevariables}}{\contraction{\extnet}} 	
+		&= \frac{\contractionof{\{\identityat{\seccatvariableof{\edge},\edgevariables}\}\cup\{\hypercoreofat{\secedge}{\catvariableof{\secedge}} \, : \, \secedge\in\edges \}}{\seccatvariableof{\edge},\nodevariables}}{\hypercoreofat{\edge}{\edgevariables}  \cdot \contraction{\extnet}} \\
+		&= \frac{
+		\sbcontractionof{\identityat{\seccatvariableof{\edge},\edgevariables},\extnetdist}{\seccatvariableof{\edge},\nodevariables}
+		}{\hypercoreofat{\edge}{\edgevariables}}  \\ 
+		&= \frac{\sbcontractionof{\identityat{\seccatvariableof{\edge},\edgevariables},
+			\normationof{\extnet}{\edgevariables},
+			\normationofwrt{\extnet}{\catvariableof{\nodes/\edge}}{\edgevariables}
+			}{\seccatvariableof{\edge},\nodevariables}
+		}{\hypercoreofat{\edge}{\edgevariables}}  \, . 
+	\end{align*}
+	
+	Analogously, we have 
+	\begin{align*}
+		\frac{ \contractionof{\{\identityat{\seccatvariableof{\edge},\edgevariables}\}\cup\{\hypercoreofat{\secedge}{\catvariableof{\secedge}} \, : \, \secedge\neq\edge \}}{\seccatvariableof{\edge}}}{\contraction{\extnet}} 	
+		&= \frac{\sbcontractionof{\identityat{\seccatvariableof{\edge},\edgevariables},
+			\normationof{\extnet}{\edgevariables}%,
+			%\normationofwrt{\extnet}{\catvariableof{\nodes/\edge}}{\edgevariables}
+			}{\seccatvariableof{\edge}}
+		}{\hypercoreofat{\edge}{\edgevariables}}  \, . 
+	\end{align*}
+		
+	With \eqref{eq:differentiatingMNpreresult}, we arrive at the claim 
+	\begin{align*}
+		\difwrt{\hypercoreofat{\edge}{\seccatvariableof{\edge}}} \extnetdist
+		& = \sbcontractionof{
+	 	\identityat{\seccatvariableof{\edge},\edgevariables}, 
+		\frac{\contractionof{\extnet}{\edgevariables}}{\hypercoreofat{\edge}{\edgevariables}}, 
+		\normationofwrt{\extnet}{\catvariableof{\nodes/\edge}}{\edgevariables} }{\seccatvariableof{\edge},\nodevariables} \\
+		& \quad -  \extnetdist \otimes \sbcontractionof{\frac{\contractionof{\extnet}{\seccatvariableof{\edge}}}{\hypercoreofat{\edge}{\seccatvariableof{\edge}}}
+		}{\seccatvariableof{\edge}} \, .
+	\end{align*}
+	
+\end{proof}
+
+
+% Could put it into contraction equations?
+\begin{lemma}\label{lem:difMNExpectation}
+	%See Proposition 11.9 in Koller Book.
+	For any function $\exfunction(\hypercoreof{\edge})[\nodevariables]$ we have
+	\begin{align*}
+		 \difwrt{\hypercoreofat{\edge}{\seccatvariableof{\edge}}} &
+		\sbcontraction{\extnetdist,\exfunction(\hypercoreof{\edge})[\nodevariables]} \\
+		= & 
+		\frac{\normationof{\extnet}{\indexedcatvariableof{\edge}}}{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}} 
+		\Big( \sbcontraction{\normationofwrt{\extnet}{\catvariableof{\nodes/\edge}}{\indexedcatvariableof{\edge}}, \exfunction(\hypercoreof{\edge})[\nodevariables,\seccatvariableof{\edge}]} \\
+		& \quad \quad \quad \quad \quad - \sbcontraction{\extnetdist, \exfunction(\hypercoreof{\edge})[\nodevariables]}
+		\Big) \\
+		& + \contraction{ \extnetdist
+		\difofwrt{\exfunction(\hypercoreof{\edge})[\nodevariables]}{\hypercoreofat{\edge}{\seccatvariableof{\edge}}}
+		}
+	\end{align*}
+\end{lemma}
+\begin{proof}
+	By product rule of differentiation we have
+	\begin{align*}
+		\difwrt{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}} \sbcontraction{\extnetdist,\exfunction(\hypercoreof{\edge})[\nodevariables]} 
+		& =  \sbcontraction{\difwrt{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}}\extnetdist,\exfunction(\hypercoreof{\edge})[\nodevariables]} \\
+		& \quad +  \sbcontraction{\extnetdist,\difwrt{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}}\exfunction(\hypercoreof{\edge})[\nodevariables]}  \, . 
+	\end{align*}
+	The claim now follows with the application of Lemma~\ref{lem:difMNprob} on the first term.
+\end{proof}
+
+
+
+
+
+
 \subsection{Selection Encodings}
 
 Selection encodings as introduced in Definition~\ref{def:selectionEncoding} are best understood in terms of linear mapping interpretations of tensors.
@@ -154,13 +264,13 @@ Given a selection encoding of a function, the function is retrieved by slicing w
 More generally, we show in the next Lemma how to construct to any tensor and any partition of its variables functions by slicing operations, such that the tensor is the selection encoding of the function.
 
 \begin{lemma}\label{lem:inverseSelectionEncoding} % To be used for MLN - proposal distribution
-	Let $\hypercoreat{\catvariableof{\nodes}}$ be a tensor in $\bigotimes_{\nodein}\rr^{\catdimof{\node}}$ and let $\nodesa$, $\nodesb$ be a disjoint partition of $\nodes$, that is $\nodesa\dot{\cup}\nodesb=\nodes$.
+	Let $\hypercoreat{\nodevariables}$ be a tensor in $\bigotimes_{\nodein}\rr^{\catdimof{\node}}$ and let $\nodesa$, $\nodesb$ be a disjoint partition of $\nodes$, that is $\nodesa\dot{\cup}\nodesb=\nodes$.
 	Then the function
 		\[ \exfunction : \bigtimes_{\node\in\nodesa}[\catdimof{\node}] \rightarrow \bigotimes_{\node\in\nodesb} \rr^{\catdimof{\node}}  \]
 	with coordinates
 		\[ \exfunction(\catindexof{\nodesa}) = \hypercoreat{\indexedcatvariableof{\nodesa},\catvariableof{\nodesb}}  \]
 	obeys
-		\[ \sencodingofat{\exfunction}{\catvariableof{\nodes}} = \hypercoreat{\catvariableof{\nodes}} \, . \]
+		\[ \sencodingofat{\exfunction}{\nodevariables} = \hypercoreat{\nodevariables} \, . \]
 	Here we have renamed the selection variables $\selvariableof{\nodesa}$ by the categorical variables $\catvariableof{\nodesa}$. 
 \end{lemma}
 \begin{proof}

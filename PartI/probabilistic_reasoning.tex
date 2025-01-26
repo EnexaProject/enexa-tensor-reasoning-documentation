@@ -564,103 +564,139 @@ Let $\graph$ be any hypergraph, we define the problem
 We approximate the solution of this problem again by an alternating algorithm, which iteratively updates the cores of the approximating Markov Network. 
 
 \begin{theorem}[Update equations for the structured variational approximation]\label{the:updateEquationStructuredVariational}
-	The Markov Network with hypercores $\extnetasset$ is a stationary point for Problem~\ref{prob:structuredApproximation}, if for all $\edgein$
+	The Markov Network $\extnet$ with hypercores $\extnetasset$ is a stationary point for Problem~\ref{prob:structuredApproximation}, if for all $\edgein$
 	\begin{align*}
-	\hypercoreofat{\edge}{\catvariableof{\edge}}
+	\hypercoreofat{\edge}{\edgevariables}
 	= \lambda\cdot \expof{
 	\frac{
 		\contractionof{\{\energytensor\}\cup\{
 		\hypercoreof{\secedge} : \secedge\neq\edge
-		\}}{\catvariableof{\edge}} 
+		\}}{\edgevariables} 
 	}{
 		\contractionof{\{
 		\hypercoreof{\secedge} : \secedge\neq\edge
-		\}}{\catvariableof{\edge}} 
+		\}}{\edgevariables} 
 	}
-	+ \sum_{\secedge\neq\edge} 
+	- \sum_{\thirdedge\neq\edge} 
 		\frac{
-		\contractionof{\{\lnof{\hypercoreof{\secedge}}\}\cup\{
-		\hypercoreof{\secedge} : \secedge\neq\edge
-		\}}{\catvariableof{\edge}} 
+		\contractionof{\{\lnof{\hypercoreof{\thirdedge}}\}\cup\{
+		\hypercoreof{\secedge} : \secedge\neq\thirdedge
+		\}}{\edgevariables} 
 	}{
 		\contractionof{\{
-		\hypercoreof{\secedge} : \secedge\neq\edge
-		\}}{\catvariableof{\edge}} 
+		\hypercoreof{\secedge} : \secedge\neq\thirdedge
+		\}}{\edgevariables} 
 	}
 	}
 	\end{align*}
 	for any $\lambda>0$ (e.g. by the norm).
 	Here, the quotient denotes the coordinatewise quotient.
 \end{theorem}
-
-
-To proof the theorem, we show in the following lemma a characterization of the derivative of functions
-
-% Could put it into contraction equations?
-\begin{lemma}\label{lem:difMNExpectation}
-	For any function $\exfunction(\hypercoreof{\edge})[\catvariableof{\nodes}]$ we have
-	\begin{align*}
-		 \difwrt{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}} &
-		\sbcontraction{\normationof{\extnet}{\catvariableof{\nodes}},\exfunction(\hypercoreof{\edge})[\catvariableof{\nodes}]} \\
-		= & 
-		\frac{\normationof{\extnet}{\indexedcatvariableof{\edge}}}{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}} 
-		\Big( \sbcontraction{\normationofwrt{\extnet}{\catvariableof{\nodes/\edge}}{\indexedcatvariableof{\edge}}, \exfunction(\hypercoreof{\edge})[\catvariableof{\nodes/\edge},\indexedcatvariableof{\edge}]} \\
-		& \quad \quad \quad \quad \quad - \sbcontraction{\normationof{\extnet}{\catvariableof{\nodes}}, \exfunction(\hypercoreof{\edge})[\catvariableof{\nodes}]}
-		\Big) \\
-		& + \contraction{ \normationof{\extnet}{\catvariableof{\nodes}}
-		\difofwrt{\exfunction(\hypercoreof{\edge})[\catvariableof{\nodes}]}{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}}
-		}
-	\end{align*}
-\end{lemma}
-\begin{proof}
-	See Proposition 11.9 in Koller Book.
-\end{proof}
-
-\begin{proof}[Proof of Theorem~\ref{the:updateEquationStructuredVariational}]
-	We proof the theorem by first order condition on the objective $\sbcontraction{\energytensor,\probtensor} + \sentropyof{\probtensor}$.
+\begin{proof}%[Proof of Theorem~\ref{the:updateEquationStructuredVariational}]
+	We proof the theorem by first order condition on the objective $\objof{\extnet} = \sbcontraction{\energytensor,\extnetdist} + \sentropyof{\extnetdist}$.
+	
+	To proof the theorem, we use Lemma~\ref{lem:difMNExpectation}, which shows a characterization of the derivative of functions
 	
 	%% Energy Contraction Term
-	We have for $\probtensor\in\mnexpfamily$
+	We have %for $\probtensor\in\mnexpfamily$
 	\begin{align*}
-		\sbcontraction{\energytensor,\probtensor} 
+		\sbcontraction{\energytensor,\normationof{\extnet}{\shortcatvariables}} 
 		=  \frac{
-			\contraction{\{\energytensor\}\cup\{\hypercoreof{\secedge} : \secedge\in\edges\}} 
+			\contraction{\{\energytensor\}\cup\extnet} 
 		}{
-			\contraction{\{\hypercoreof{\secedge} : \secedge\in\edges\}} 			
-		}
-	\end{align*}
-	and with Lemma~\ref{lem:difMNExpectation} 
-	\begin{align*}
-		\difwrt{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}} \sbcontraction{\energytensor,\probtensor} 
-		= 
-		\frac{\normationof{\extnet}{\indexedcatvariableof{\edge}}}{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}} 
-		\Big( & \sbcontraction{\normationofwrt{\extnet}{\catvariableof{\nodes/\edge}}{\indexedcatvariableof{\edge}}, \energytensorat{\catvariableof{\nodes/\edge},\indexedcatvariableof{\edge}}} \\
-		&  - \sbcontraction{\normationof{\extnet}{\catvariableof{\nodes}}, \energytensorat{\catvariableof{\nodes}}}\Big) \\
+			\contraction{\extnet} 			
+		} \, . 
 	\end{align*}
 	
-	%% Entropy Term
+	%% Entropy Term Decomposition
 	Further we have
 	\begin{align*}
 		\sentropyof{\normationof{\extnet}{\shortcatvariables}}
 		= \left(\sum_{\secedge\in\edges} \contraction{-\lnof{\hypercoreof{\secedge}},\normationof{\extnet}{\shortcatvariables}} \right)
 		+ \lnof{\contraction{\extnet}}	
 	\end{align*}
-	and thus
+	
+	We define the tensor
+		\[ \sechypercore[\catvariableof{\nodes}] = \energytensorat{\catvariableof{\nodes}} 
+		- \sum_{\secedge\neq\edge} \lnof{\hypercoreofat{\secedge}{\catvariableof{\secedge}}} \otimes \onesat{\catvariableof{\nodes/\secedge}} \]
+	and notice, that $\sechypercore$ does not depend on $\hypercoreof{\edge}$.	
+
+	The objective has then a representation as
 	\begin{align*}
-		\difwrt{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}} \sentropyof{\normationof{\extnet}{\shortcatvariables}}
-		= & \frac{\normationof{\extnet}{\indexedcatvariableof{\edge}}}{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}} 
-			\sum_{\secedge\in\edges} \Big(
-			 \sbcontraction{\normationofwrt{\extnet}{\catvariableof{\nodes/\edge}}{\indexedcatvariableof{\edge}}, \hypercoreofat{\secedge}{\catvariableof{\secedge/\edge},\indexedcatvariableof{\secedge\cap\edge}}} \\
-		&	 \quad \quad  \quad \quad \quad \quad \quad \quad -  \sbcontraction{\normationof{\extnet}{\catvariableof{\nodes}}, \hypercoreofat{\secedge}{\catvariableof{\secedge}}} 
-		\Big) \\
-		&- \sbcontraction{\normationof{\extnet}{\catvariableof{\nodes}}, \frac{1}{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}}} \\
-		% \frac{\normationof{\extnet}{\indexedcatvariableof{\edge}}}{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}}  \cdot expectation of derivative of -ln \\
-		&+ \frac{\contraction{\{\hypercoreof{\secedge} : \secedge\in\edges, \secedge\neq \edge\}}
-		}{\contraction{\{\hypercoreof{\secedge} : \secedge\in\edges\}}}
+		\objof{\extnet} = \sbcontraction{\sechypercore[\catvariableof{\nodes}], \extnetdist} - \sbcontraction{ \lnof{\hypercoreof{\edge}}, \extnetdist} +  \lnof{\contraction{\extnet}}
 	\end{align*}
 	
+	Let us now differentiate all terms.
+	With Lemma~\ref{lem:difMNExpectation} we now get
+	\begin{align*}
+		\difwrt{\hypercoreofat{\edge}{\seccatvariableof{\edge}}} \sbcontraction{\sechypercore[\catvariableof{\nodes}], \extnetdist}
+		& = \sbcontractionof{\sechypercoreat{\nodevariables},
+	 	\identityat{\seccatvariableof{\edge},\edgevariables}, 
+		\frac{\contractionof{\extnet}{\edgevariables}}{\hypercoreofat{\edge}{\edgevariables}}, 
+		\normationofwrt{\extnet}{\catvariableof{\nodes/\edge}}{\edgevariables} }{\seccatvariableof{\edge},\nodevariables} \\
+		& \quad -  \contraction{\sechypercoreat{\nodevariables},\extnetdist}
+		 \otimes \sbcontractionof{\frac{\contractionof{\extnet}{\seccatvariableof{\edge}}}{\hypercoreofat{\edge}{\seccatvariableof{\edge}}}
+		}{\seccatvariableof{\edge}} \, .
+	\end{align*}
 	
+	Further we have
+	\begin{align*}
+		\difwrt{\hypercoreofat{\edge}{\seccatvariableof{\edge}}} \sbcontraction{ \lnof{\hypercoreof{\edge}}, \extnetdist} 
+		& = \sbcontractionof{\lnof{\hypercoreofat{\edge}{\edgevariables}},
+	 	\identityat{\seccatvariableof{\edge},\edgevariables}, 
+		\frac{\contractionof{\extnet}{\edgevariables}}{\hypercoreofat{\edge}{\edgevariables}}, 
+		\normationofwrt{\extnet}{\catvariableof{\nodes/\edge}}{\edgevariables} }{\seccatvariableof{\edge},\nodevariables} \\
+		& \quad -  \contraction{\lnof{\hypercoreofat{\edge}{\edgevariables}},\extnetdist}
+		 \otimes \sbcontractionof{\frac{\contractionof{\extnet}{\seccatvariableof{\edge}}}{\hypercoreofat{\edge}{\seccatvariableof{\edge}}}
+		}{\seccatvariableof{\edge}} \\
+		& \quad\quad - \sbcontraction{ \frac{1}{\hypercoreofat{\edge}{\edgevariables}}, \extnetdist}
+	\end{align*}
+	and (see Proof of \ref{lem:difMNprob})
+	\begin{align*}
+		\difwrt{\hypercoreofat{\edge}{\seccatvariableof{\edge}}} \lnof{\contraction{\extnet}}
+		 = \frac{\difwrt{\hypercoreofat{\edge}{\seccatvariableof{\edge}}} \contraction{\extnet}}{\contraction{\extnet}} 		
+		 = \frac{\contractionof{\extnet}{\seccatvariableof{\edge}}}{\hypercoreofat{\edge}{\seccatvariableof{\edge}}} \, .
+	\end{align*}
 	
+	Together, the first order condition
+	\begin{align*}
+		0 = \difwrt{\hypercoreofat{\edge}{\seccatvariableof{\edge}}} \objof{\extnet}
+	\end{align*}
+	is equal to all $\seccatindexof{\edge}$ satisfying% here drop seccatvariable to catvariable by slicing 
+	\begin{align*}
+		0 & = \frac{\contractionof{\extnet}{\indexedseccatvariableof{\edge}}}{\hypercoreofat{\edge}{\indexedseccatvariableof{\edge}}}
+		 \Big(
+		 	\sbcontraction{\sechypercoreat{\catvariableof{\nodes/\edge},\catvariableof{\edge}=\seccatindexof{\edge}}, \normationofwrt{\extnet}{\catvariableof{\nodes/\edge}}{\catvariableof{\edge}=\seccatindexof{\edge}}} \\
+			&\quad \quad - \sbcontraction{\sechypercoreat{\nodevariables}, \extnetdist}  \\
+			&\quad \quad - \sbcontraction{\lnof{\hypercoreofat{\edge}{\edgevariables=\seccatindexof{\edge}}}, \normationofwrt{\extnet}{\catvariableof{\nodes/\edge}}{\catvariableof{\edge}=\seccatindexof{\edge}}} \\
+			&\quad \quad + \sbcontraction{\lnof{\hypercoreofat{\edge}{\edgevariables}}, \extnetdist} 
+		 \Big) \, . 
+	\end{align*}
+	
+	We notice, that by normation
+		\[ \sbcontraction{\lnof{\hypercoreofat{\edge}{\edgevariables=\seccatindexof{\edge}}}, \normationofwrt{\extnet}{\catvariableof{\nodes/\edge}}{\catvariableof{\edge}=\seccatindexof{\edge}}} =  \lnof{\hypercoreofat{\edge}{\edgevariables=\seccatindexof{\edge}}} \]
+	and that the scalar
+		\[ \lambda_1 = \sbcontraction{\sechypercoreat{\nodevariables},\normationof{\extnet}{\catvariableof{\nodes}}}	
+		- \sbcontraction{\lnof{\hypercoreofat{\edge}{\edgevariables}},\normationof{\extnet}{\catvariableof{\nodes}}}	\]
+	is the constant for all $\seccatindexof{\edge}$.
+	
+	The first order condition is therefore equal to the existence of a $\lambda_1\in\rr$ such that for all $\seccatindexof{\edge}$ 
+	\begin{align*}
+		\lnof{\hypercoreofat{\edge}{\catvariableof{\edge}=\seccatindexof{\edge}}}
+		= 	\sbcontraction{\sechypercoreat{\catvariableof{\nodes/\edge},\catvariableof{\edge}=\seccatindexof{\edge}}, 
+		\normationofwrt{\extnet}{\catvariableof{\nodes/\edge}}{\catvariableof{\edge}=\seccatindexof{\edge}}} + \lambda_1 \, . 
+	\end{align*}
+	The claim follows when applying the exponential on both sides and with the observation, that 
+	\begin{align*}
+	\sbcontraction{\sechypercoreat{\catvariableof{\nodes/\edge},\catvariableof{\edge}=\seccatindexof{\edge}}, 
+		\normationofwrt{\extnet}{\catvariableof{\nodes/\edge}}{\catvariableof{\edge}=\seccatindexof{\edge}}}
+		= 
+		\frac{\contractionof{\{\sechypercore\}\cup\{\hypercoreof{\secedge} \, : \, \secedge\neq \edge\}}{\catvariableof{\edge}=\seccatindexof{\edge}} }{
+		\contractionof{\{\hypercoreof{\secedge} \, : \, \secedge\neq \edge\}}{\catvariableof{\edge}=\seccatindexof{\edge}} 
+		}
+	\end{align*}
+	and reparametrization of $\lambda_1$ to
+		\[ \lambda = \expof{\lambda_1} \, . \]
 \end{proof}
 
 %% KL Divergence
