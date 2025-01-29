@@ -97,50 +97,50 @@ When having a prior $\probof{\mlnparameters}$ over the Markov Logic Networks we 
 
 
 Let us now discuss an implementation of the Alternating Moment Matching Algorithm~\ref{alg:AMM} in case of Markov Logic Networks.
-To solve the moment matching condition at a formula $\formulaof{\statenumerator}$ we refine Lemma~\ref{lem:mmContractionEquation} in the following.
+To solve the moment matching condition at a formula $\enumformula$ we refine Lemma~\ref{lem:mmContractionEquation} in the following.
 
 %\red{Need Lemma~\ref{lem:MM}?}
 
 \begin{lemma}\label{ref:lemMMinMLN}
-	Let there be a base measure $\basemeasure$, a formula selecting map $\formulaset=\{\formulaof{\statenumerator} \, : \, \statenumeratorin\}$ and weights $\canparam$, and choose $\statenumeratorin$ such that $\formulaof{\statenumerator}  \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.	
-	The moment matching condition relative to $\canparam$, $\statenumeratorin$ and $\datameanat{\selvariable=\selindex}\in(0,1)$ is then satisfied, if
+	Let there be a base measure $\basemeasure$, a formula selecting map $\formulaset=\{\enumformula \, : \, \selindexin\}$ and weights $\canparam$, and choose $\selindexin$ such that $\enumformula  \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.	
+	The moment matching condition relative to $\canparam$, $\selindexin$ and $\datameanat{\indexedselvariable}\in(0,1)$ is then satisfied, if
 	\begin{align*}
-	 	\weightat{\selvariable=\selindex} = \lnof{
-		\frac{\datameanat{\selvariable=\selindex}}{(1-\datameanat{\selvariable=\selindex})} 
-		\cdot \frac{\hypercoreat{\catvariableof{\formulaof{\statenumerator} }=0}}{\hypercoreat{\catvariableof{\formulaof{\statenumerator} }=1}} 
+	 	\weightat{\indexedselvariable} = \lnof{
+		\frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})} 
+		\cdot \frac{\hypercoreat{\catvariableof{\enumformula }=0}}{\hypercoreat{\catvariableof{\enumformula }=1}} 
 		} 
 	\end{align*}
-	where by $\hypercoreat{\catvariableof{\formulaof{\statenumerator} }}$ we denote the contraction 
+	where by $\hypercoreat{\catvariableof{\enumformula }}$ we denote the contraction 
 	\begin{align*}
-	 	\hypercoreat{\catvariableof{\formulaof{\statenumerator}}} 
-		= \contractionof{\{\rencodingof{\formulaof{\statenumerator}} \, : \, \statenumeratorin\}
-		\cup\{\headcoreof{\tilde{\statenumerator}} : \tilde{\statenumerator} \in [\statorder], \tilde{\statenumerator}\neq\statenumerator\}
-		\cup\{\basemeasure\}}{\catvariableof{\formulaof{\statenumerator}}} \, . 
+	 	\hypercoreat{\catvariableof{\enumformula}} 
+		= \contractionof{\{\rencodingof{\enumformula} \, : \, \selindexin\}
+		\cup\{\headcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
+		\cup\{\basemeasure\}}{\catvariableof{\enumformula}} \, . 
 	\end{align*}
 \end{lemma}
 \begin{proof}
-	Noticing that since $\imageof{\formulaof{\statenumerator}}\subset[2]$
+	Noticing that since $\imageof{\enumformula}\subset[2]$
 	\begin{align*}
-		\idrestrictedto{\imageof{\formulaof{\statenumerator}}} = \onehotmapofat{1}{\catvariableof{\formulaof{\statenumerator}}}
+		\idrestrictedto{\imageof{\enumformula}} = \onehotmapofat{1}{\catvariableof{\enumformula}}
 	\end{align*}
 	the moment matching condition is by Lemma~\ref{lem:mmContractionEquation} satisfied if
 	\begin{align*}
-		\contraction{\{\headcoreof{\statenumerator}, \onehotmapof{1}, \hypercore\}}
-			= \contraction{\{\headcoreof{\statenumerator},\hypercore\}} \cdot \datameanat{\selvariable=\selindex} \, . 
+		\sbcontraction{\headcoreof{\selindex}, \onehotmapof{1}, \hypercore}
+			= \sbcontraction{\headcoreof{\selindex},\hypercore} \cdot \datameanat{\indexedselvariable} \, . 
 	\end{align*}
 	This is equal to 
 	\begin{align*}
-		\expof{\canparam_\statenumerator} \cdot \hypercoreat{\catvariableof{\formulaof{\statenumerator}}=1}
-		= \left( \expof{\canparam_\statenumerator} \cdot \hypercoreat{\catvariableof{\formulaof{\statenumerator}}=1} + \hypercoreat{\catvariableof{\formulaof{\statenumerator}}=0} \right) \cdot \datameanat{\selvariable=\selindex} \, . 
+		\expof{\canparamat{\indexedselvariable}} \cdot \hypercoreat{\catvariableof{\enumformula}=1}
+		= \left( \expof{\canparamat{\indexedselvariable}} \cdot \hypercoreat{\catvariableof{\enumformula}=1} + \hypercoreat{\catvariableof{\enumformula}=0} \right) \cdot \datameanat{\indexedselvariable} \, . 
 	\end{align*}
 	Rearranging the equations this is equal to 
 	\begin{align*}
-	 	\hypercoreat{\catvariableof{\formulaof{\statenumerator}}} 
-		= \contractionof{\{\rencodingof{\formulaof{\statenumerator}}\}
-		\cup\{\headcoreof{\tilde{\statenumerator}} : \tilde{\statenumerator} \in [\statorder], \tilde{\statenumerator}\neq\statenumerator\}
+	 	\hypercoreat{\catvariableof{\enumformula}} 
+		= \contractionof{\{\rencodingof{\enumformula}\}
+		\cup\{\headcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
 		\cup\{\basemeasure\}}{\selvariable_\sstat} \, . 
 	\end{align*}
-	We notice that the right side is well defined, since we have by assumption $\datameanat{\selvariable=\selindex}, (1- \datameanat{\selvariable=\selindex}) \neq 0$ and $\hypercoreat{\catvariableof{\formulaof{\statenumerator}}=0}, \hypercoreat{\catvariableof{\formulaof{\statenumerator}}=1} \neq 0$ since Markov Logic networks are positive distributions and $\formulaof{\statenumerator} \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
+	We notice that the right side is well defined, since we have by assumption $\datameanat{\indexedselvariable}, (1- \datameanat{\indexedselvariable}) \neq 0$ and $\hypercoreat{\catvariableof{\enumformula}=0}, \hypercoreat{\catvariableof{\enumformula}=1} \neq 0$ since Markov Logic networks are positive distributions and $\enumformula \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
 \end{proof}
 
 
@@ -190,21 +190,21 @@ To solve the moment matching condition at a formula $\formulaof{\statenumerator}
 
 
 %% Hard network reference!
-In the case $\datameanat{\selvariable=\selindex}\in\{0,1\}$ the moment matching conditions are not satisfiable for $\weightof{\exformula}\in\rr$.
-But, we notice, that in the limit $\weightof{\exformula}\rightarrow \infty $ (respectively $-\infty$) we have
-	\[ \meanparam_{\statenumerator} \rightarrow  1 \quad \text{(respectively $0$)}\, ,  \]
+In the case $\datameanat{\indexedselvariable}\in\{0,1\}$ the moment matching conditions are not satisfiable for $\canparamat{\indexedselvariable}\in\rr$.
+But, we notice, that in the limit $\canparamat{\indexedselvariable}\rightarrow \infty $ (respectively $-\infty$) we have
+	\[ \meanparamat{\indexedselvariable} \rightarrow  1 \quad \text{(respectively $0$)}\, ,  \]
 and the moment matching can be satisfied up to arbitrary precision.
 In Chapter~\ref{cha:hardNetworks} we will allow infinite weights and interpret the corresponding factors by logical formulas.
 As a consequence, we will able to fit graphical models, which we will call hybrid networks on arbitrary satisfiable mean parameters.
 
 %
-The cases $\hypercoreat{\catvariableof{\formulaof{\statenumerator}}=1}=0$, respectively $\hypercoreat{\catvariableof{\formulaof{\statenumerator}}=1}=0$ only appear for nontrivial formulas when the distribution is not positive. 
+The cases $\hypercoreat{\catvariableof{\enumformula}=1}=0$, respectively $\hypercoreat{\catvariableof{\enumformula}=1}=0$ only appear for nontrivial formulas when the distribution is not positive. 
 This is not the case for Markov Logic Networks, but will happen when formulas are added as cores of a Markov Network.
 This situation will be investigated in Chapter~\ref{cha:hardNetworks}.
 
 
 % Concave likelihood 
-Since the likelihood is concave (see Koller Book), there are not local maxima the coordinate descent could run into and coordinate descent will give a monotonic improvement of the likelihood. 
+Since the likelihood is concave (see \cite{koller_probabilistic_2009}), there are not local maxima the coordinate descent could run into and coordinate descent will give a monotonic improvement of the likelihood. 
 
 We suggest an alternating optimization by Algorithm~\ref{alg:AWO}, solving the moment matching equation iteratively for all formulas $\exformulain$ and repeat the optimization until a convergence criterion is met.
 
@@ -212,31 +212,36 @@ We suggest an alternating optimization by Algorithm~\ref{alg:AWO}, solving the m
 \begin{algorithm}[hbt!]
 \caption{Alternating Weight Optimization (AWO)}\label{alg:AWO}
 \begin{algorithmic}
-\For{$\exformula\in\formulaset$}
+%% INPUT: Numerated formula set, mean parameter $\datameanat{\selvariable}$
+%\For{$\exformula\in\formulaset$}
+\For{$\selindexin$}
 	\State Compute
-		\[ \hypercoreat{\catvariableof{\exformula}} = \sbcontractionof{\exformula}{\catvariableof{\exformula}} \]
+		\[ \hypercoreat{\catvariableof{\enumformula}}
+		\algdefsymbol \sbcontractionof{\rencodingof{\enumformula}}{\catvariableof{\enumformula}} \]
 	\State Set 
 		\begin{align*}
-	 		\weightat{\selvariable=\selindex} = \lnof{
-			\frac{\datameanat{\selvariable=\selindex}}{(1-\datameanat{\selvariable=\selindex})} 
-			\cdot \frac{\hypercoreat{\catvariableof{\formulaof{\statenumerator}}=0}}{\hypercoreat{\catvariableof{\formulaof{\statenumerator}}=1}} 
+	 		\canparamat{\indexedselvariable} 
+			\algdefsymbol \lnof{
+			\frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})} 
+			\cdot \frac{\hypercoreat{\catvariableof{\enumformula}=0}}{\hypercoreat{\catvariableof{\enumformula}=1}} 
 			} 
 		\end{align*}
 \EndFor
 \While{Stopping criterion is not met}
-\For{$\exformula\in\formulaset$}
+%\For{$\exformula\in\formulaset$}
+\For{$\selindexin$}
 	\State Compute
-		\begin{align*}
-	 	\hypercoreat{\catvariableof{\formulaof{\statenumerator}}} 
-		= \contractionof{\{\rencodingof{\formulaof{\statenumerator}} \, : \, \statenumeratorin\}
-		\cup\{\headcoreof{\tilde{\statenumerator}} : \tilde{\statenumerator} \in [\statorder], \tilde{\statenumerator}\neq\statenumerator\}
-		\cup\{\basemeasure\}}{\catvariableof{\formulaof{\statenumerator}}}
+	\begin{align*}
+	 	\hypercoreat{\catvariableof{\enumformula}} 
+		= \contractionof{\{\rencodingof{\enumformula} \, : \, \selindexin\}
+		\cup\{\headcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
+		\cup\{\basemeasure\}}{\catvariableof{\enumformula}}
 	\end{align*}
 	\State Set 
 	\begin{align*}
-	 	\weightat{\selvariable=\selindex} = \lnof{
-		\frac{\datameanat{\selvariable=\selindex}}{(1-\datameanat{\selvariable=\selindex})} 
-		\cdot \frac{\hypercoreat{\catvariableof{\formulaof{\statenumerator}}=0}}{\hypercoreat{\catvariableof{\formulaof{\statenumerator}}=1}} 
+	 	\canparamat{\indexedselvariable} = \lnof{
+		\frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})} 
+		\cdot \frac{\hypercoreat{\catvariableof{\enumformula}=0}}{\hypercoreat{\catvariableof{\enumformula}=1}} 
 		} 
 	\end{align*}
 	%\State Set $\weightof{\texformula}$ to the optimal weight when keeping $\weightof{\exformula}$ for $\exformula\neq\texformula$ constant, i.e. to the solution of the moment matching by Equation~\ref{sol:momentMatchingExformula}.
@@ -347,7 +352,7 @@ and $\meanparam = \onesat{}-\probtensor$.
 	
 	We notice that for any $\meanparam$ in the image of the forward map we have
 		\[ \forwardmapwrt{\mlnmintermsymbol}(\backwardmapwrt{\mlnmintermsymbol}(\meanparam)) = \meanparam \]
-	%We notice that for any $\canparam\in\rr^{\statorder}$ we have
+	%We notice that for any $\canparam\in\rr^{\seldim}$ we have
 	%	\[ \backwardmapwrt{\mlnmintermsymbol}( \forwardmapwrt{\mlnmintermsymbol}(\canparam) ) = \canparam - \contractionof{\expof{\canparam}}{\varnothing} \cdot \onesat{\shortcatvariables}
 	%	\]
 %	and thus $\canparam$ and $\backwardmapwrt{\mintermformulaset}( \forwardmapwrt{\mintermformulaset}(\canparam) )$ are representing the same member of the exponential family (see Theorem~\ref{the:tensorRepUniqueness}).	
@@ -389,7 +394,7 @@ and $\meanparam = \onesat{}-\probtensor$.
 
 	
 % Fitting arbitrary distributions
-Any positive probability distribution can thus be fitted by minterms when we choose $\weight=\lnof{\probtensor}$, respectively by maxterms when we choose $\weight=\lnof{\probtensor}$.
+Any positive probability distribution can thus be fitted by minterms when we choose $\canparam=\lnof{\probtensor}$, respectively by maxterms when we choose $\canparam=\ones-\lnof{\probtensor}$.
 Thus, we have identified a subset of $2^{\atomorder}$ formulas, which is rich enough to fit any distribution.
 
 
@@ -488,11 +493,11 @@ It that case the formula is entailed or contradicted by the facts, and dropping 
 The max entropy - max likelihood duality still holds for hybrid logic networks as we show next.
 
 \begin{theorem}
-	Given a set of formulas $\tilde{\formulaset}$ and $\tilde{\meanparam}$, with coordinates $\tilde{\meanparam}_\statenumerator\in[0,1]$ in the closed interval $[0,1]$.
+	Given a set of formulas $\tilde{\formulaset}$ and $\tilde{\meanparam}$, with coordinates $\tilde{\meanparam}_\selindex\in[0,1]$ in the closed interval $[0,1]$.
 	If the corresponding maximum entropy problem is feasible, its solution is a hybrid logic network with 
 	\begin{itemize}
-		\item $\hardformulaset= \{\formula_\statenumerator : \statenumerator, \meanparamat{\indexedselvariable} = 1\} \cup  \{\lnot\formula_\statenumerator : \statenumerator, \meanparam_\statenumerator = 0\} $
-		\item $\softformulaset = \{\formula_\statenumerator : \statenumerator, \meanparam_\statenumerator \in (0,1)\}$
+		\item $\hardformulaset= \{\enumformula : \selindexin, \meanparamat{\indexedselvariable} = 1\} \cup  \{\lnot\enumformula : \selindexin, \meanparamat{\indexedselvariable} = 0\} $
+		\item $\softformulaset = \{\enumformula : \selindexin, \meanparamat{\indexedselvariable} \in (0,1)\}$
 		\item $\canparam$ being the backward map evaluated at the vector $\meanparam$ consisting of the coordinates of $\tilde{\meanparam}$ not in $\{0,1\}$
 	\end{itemize}
 \end{theorem}

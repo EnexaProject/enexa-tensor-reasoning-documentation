@@ -36,11 +36,11 @@ which is the sum over the one-hot encodings (see Lemma~\ref{lem:tensorBasisDecom
 		\[ \probof{\catvariables} = \sum_{\catindices\in\facstates} \probof{\indexedcatvariables} \cdot \onehotmapofat{\catindices}{\catvariables} \, . \]
 		
 %%
-The normation condition of probability tensors can be expressed by the contraction equation $1= \contractionof{\{\probtensor\}}{\varnothing}$ since
+The normation condition of probability tensors can be expressed by the contraction equation $1= \sbcontraction{\probtensor}$ since
 \begin{align*}
 	1 = \sum_{\catindices}\probof{\indexedcatvariables}
-	=  \sum_{\catindices}\contractionof{\{\probtensor, \onehotmapof{\catindices}\}}{\varnothing} 
-	= \contractionof{\{\probtensor\}}{\varnothing} \, . 
+	=  \sum_{\catindices}\sbcontraction{\probtensor, \onehotmapof{\catindices}}
+	= \sbcontraction{\probtensor} \, . 
 \end{align*}
 
 %% NOT NEEDED
@@ -51,7 +51,7 @@ The normation condition of probability tensors can be expressed by the contracti
 
 %% Coordinates
 %The probability tensor stores all probabilities on its coordinates, which are by construction
-%	\[ \probtensor_{\catindices} = \probof{\randomxof{\atomenumerator} = \catindexof{\atomenumerator} \, : \, \atomenumeratorin}  \, . \]
+%	\[ \probtensor_{\catindices} = \probof{\catvariableof{\atomenumerator} = \catindexof{\atomenumerator} \, : \, \atomenumeratorin}  \, . \]
 %We here draw on the redundancy of the one-hot encoding of each state of a factored system, which enables us to represent the properties of multiple states in single tensors (see Example~\ref{exa:onehotUncertainty}).
 
 
@@ -94,22 +94,22 @@ Let us notice, that marginal distributions are probability tensors for themself,
 
 %% Contractions
 \begin{theorem}\label{the:marginalContraction}
-	Given a Tensor Network (see Definition~\ref{def:tensorNetwork}) $\{\probtensor\}$ consistent of the variables $\exrandom,\secexrandom$ and hyperedge $\{\randomx,\secexrandom\}$ decorated with the tensor $\probtensor$.
-	Then the marginal distribution of the variable $\randomx$ is the contraction
+	Given a Tensor Network (see Definition~\ref{def:tensorNetwork}) $\{\probtensor\}$ consistent of the variables $\exrandom,\secexrandom$ and hyperedge $\{\catvariable,\secexrandom\}$ decorated with the tensor $\probtensor$.
+	Then the marginal distribution of the variable $\catvariable$ is the contraction
 	\begin{align*}
-		\probof{\exrandom} = \contractionof{\{\probtensor\}}{\exrandom} \, .
+		\probof{\exrandom} = \sbcontractionof{\probtensor}{\exrandom} \, .
 	\end{align*}
 	Further, any marginal distribution is a probability distribution.
 \end{theorem}
 \begin{proof}
 	We have $\probof{\exrandom} = \contractionof{\{\probtensor\}}{\exrandom}$ by definition.
-	To show that $\probof{\exrandom}$ is a probability distribution, we need to show that $\contractionof{\{\probof{\exrandom}\}}{\varnothing}=1$.
+	To show that $\probof{\exrandom}$ is a probability distribution, we need to show that $\sbcontraction{\probof{\exrandom}}=1$.
 	But this follows from the normation of $\probtensor$ and the commutativity of contractions (see Theorem~\ref{the:splittingContractions} in Chapter~\ref{cha:localContractions}) as
-		\[ \contractionof{\{\probof{\exrandom}\}}{\varnothing} = 
-		\contractionof{
-			\{ \contractionof{\{\probtensor\}}{\exrandom} \}
-		}{\varnothing} =
-		 \contractionof{\{\probtensor\}}{\varnothing}
+		\[ \sbcontraction{\probof{\exrandom}} = 
+		\sbcontraction{
+			\sbcontractionof{\probtensor}{\exrandom}
+		} =
+		 \sbcontraction{\probtensor}
 		= 1 \, . 
 		\]
 \end{proof}
@@ -126,7 +126,7 @@ Let us notice, that marginal distributions are probability tensors for themself,
 Conditional Probability Tensors are Probability Tensor with additional legs, where each slice to these additional legs defines a probability tensor.
 
 \begin{definition}[Conditional Probability]\label{def:conditionalProbability}
-	Given a distribution $\probtensor$ of the categorical variables $\exrandom$ and $\secexrandom$, the conditioned distribution of $\randomx$ is defined by
+	Given a distribution $\probtensor$ of the categorical variables $\exrandom$ and $\secexrandom$, the conditioned distribution of $\catvariable$ is defined by
 		\[ \condprobof{\exrandom=\exrandind}{\secexrandom=\secexrandind}  
 		= \frac{\probof{\exrandom = \exrandind,\secexrandom=\secexrandind}}{\probof{\secexrandom=\secexrandind}} \, . \]
 \end{definition}
@@ -216,10 +216,10 @@ We can further show, that exactly the directed tensors with non-negative coordin
 	By Theorem~\ref{the:conditionalContraction} a conditional probability tensor $\condprobof{\exrandom}{\secexrandom}$ is the normation of a tensor and by Theorem~\ref{the:normationDirected} a directed tensor.
 	Since probability tensors have only non-negative coordinates, their contractions with one-hot encodings also have only non-negative coordinates and also their normations.
 	% <=
-	Conversely, let $\hypercoreat{\catvariableof{\nodes}}$ be a directed tensor with $\innodes$ incoming and $\outnodes$ outgoing and non-negative coordinates.
+	Conversely, let $\hypercoreat{\nodevariables}$ be a directed tensor with $\innodes$ incoming and $\outnodes$ outgoing and non-negative coordinates.
 	Then
 	\begin{align}
-		\probof{\catvariableof{\nodes}} = \frac{1}{\prod_{\node\in\innodes}\catdimof{\node}} \cdot \hypercoreat{\catvariableof{\nodes}}
+		\probof{\nodevariables} = \frac{1}{\prod_{\node\in\innodes}\catdimof{\node}} \cdot \hypercoreat{\nodevariables}
 	\end{align}
 	is a probability tensor, since 
 	\begin{align*}
@@ -297,18 +297,18 @@ We will now proceed to show that basic theorems of probability theory translate 
 Probability distributions can be decomposed into conditional probabilities, as we demonstrate in the next theorem.
 
 \begin{theorem}[Chain Rule]\label{the:chainRule}
-	For any joint probability distribution $\probtensor$ of the variables $\probof{\randomxof{0},\ldots,\randomxof{\atomorder-1}}$ we have
+	For any joint probability distribution $\probtensor$ of the variables $\probof{\catvariableof{0},\ldots,\catvariableof{\atomorder-1}}$ we have
 	\begin{align*}
-		\probtensor = \sbcontractionof{\condprobof{\randomxof{\atomenumerator},\ldots,\randomxof{\atomorder-1}}{\randomxof{0},\ldots,\randomxof{\atomenumerator-1}}\, : \, \atomenumeratorin\}}{\enumeratedatoms} 
+		\probtensor = \sbcontractionof{\condprobof{\catvariableof{\atomenumerator},\ldots,\catvariableof{\atomorder-1}}{\catvariableof{0},\ldots,\catvariableof{\atomenumerator-1}}\, : \, \atomenumeratorin\}}{\enumeratedatoms} 
 	\end{align*}
-	where for $\atomenumerator=0$ we denote by $ \condprobof{\randomxof{0}}{\randomxof{0},\ldots,\randomxof{-1}}$ the marginal distribution $\probof{\randomxof{0}}$.
+	where for $\atomenumerator=0$ we denote by $ \condprobof{\catvariableof{0}}{\catvariableof{0},\ldots,\catvariableof{-1}}$ the marginal distribution $\probof{\catvariableof{0}}$.
 \end{theorem}
 \begin{proof}
 	This follows from Theorem~\ref{the:genericChainRule}.
 %	We apply Theorem~\ref{the:bayes} on the distribution
 %	\begin{align*}
 %	\condprobof{
-%	\randomxof{\atomenumerator},\ldots,\randomxof{\atomorder}
+%	\catvariableof{\atomenumerator},\ldots,\catvariableof{\atomorder}
 %	}{
 %	\indexedcatvariableof{1},\ldots,\indexedcatvariableof{\atomenumerator-1}
 %	} \, ,
@@ -317,20 +317,20 @@ Probability distributions can be decomposed into conditional probabilities, as w
 %	For any $\atomenumeratorin$ we get
 %	\begin{align*}
 %		%\contractionof{\{
-%			\condprobof{\randomxof{\atomenumerator},\ldots,\randomxof{\atomorder-1}}{\randomxof{1},\ldots,\randomxof{\atomenumerator-1}}
+%			\condprobof{\catvariableof{\atomenumerator},\ldots,\catvariableof{\atomorder-1}}{\catvariableof{1},\ldots,\catvariableof{\atomenumerator-1}}
 %		%\}}{} 
 %		= \contractionof{\{
-%			\condprobof{\randomxof{\atomenumerator+1},\ldots,\randomxof{\atomorder-1}}{\randomxof{1},\ldots,\randomxof{\atomenumerator-1}},
-%			\condprobof{\randomxof{\atomenumerator}}{\randomxof{1},\ldots,\randomxof{\atomenumerator-1}}	
+%			\condprobof{\catvariableof{\atomenumerator+1},\ldots,\catvariableof{\atomorder-1}}{\catvariableof{1},\ldots,\catvariableof{\atomenumerator-1}},
+%			\condprobof{\catvariableof{\atomenumerator}}{\catvariableof{1},\ldots,\catvariableof{\atomenumerator-1}}	
 %		\}}{
 %			\catvariableof{[\atomorder]} 
 %		} \, .
 %	\end{align*}
 %	Applying this equation iteratively and making use of the commutation of contractions we get for any $\atomenumeratorin$
 %	\begin{align*}
-%		\condprobof{\randomxof{\atomenumerator},\ldots,\randomxof{\atomorder-1}}{\randomxof{1},\ldots,\randomxof{\atomenumerator-1}}
+%		\condprobof{\catvariableof{\atomenumerator},\ldots,\catvariableof{\atomorder-1}}{\catvariableof{1},\ldots,\catvariableof{\atomenumerator-1}}
 %		= \contractionof{\{
-%			\condprobof{\randomxof{\secatomenumerator}}{\randomxof{1},\ldots,\randomxof{\atomenumerator-1}} \, : \, \secatomenumerator = \atomenumerator, \atomenumerator +1 , \ldots \atomorder-1
+%			\condprobof{\catvariableof{\secatomenumerator}}{\catvariableof{1},\ldots,\catvariableof{\atomenumerator-1}} \, : \, \secatomenumerator = \atomenumerator, \atomenumerator +1 , \ldots \atomorder-1
 %		\}}{
 %			\catvariableof{[\atomorder]} 
 %		} \, .
@@ -473,32 +473,32 @@ We can exploit conditional independence to find tensor network decompositions of
 
 % More of an example?
 \begin{theorem}[Markov Chain]\label{the:MarkovChain}
-	Let there be a set of variables $\randomxof{\tenumerator}$ where $\tenumeratorin$.
-	When $\randomxof{\tenumerator}$ is independent of $\randomxof{0:{\tenumerator-2}}$ conditioned on $\randomxof{\tenumerator-1}$ (the Markov Property), then
+	Let there be a set of variables $\catvariableof{\tenumerator}$ where $\tenumeratorin$.
+	When $\catvariableof{\tenumerator}$ is independent of $\catvariableof{0:{\tenumerator-2}}$ conditioned on $\catvariableof{\tenumerator-1}$ (the Markov Property), then
 	\begin{align*}
-		\probtensor = \contractionof{\{ \condprobof{\randomxof{\tenumerator}}{\randomxof{\tenumerator-1}}\, : \, \tenumeratorin \}}{
-		\randomxof{0},\ldots,\randomxof{\tdim-1}
+		\probtensor = \contractionof{\{ \condprobof{\catvariableof{\tenumerator}}{\catvariableof{\tenumerator-1}}\, : \, \tenumeratorin \}}{
+		\catvariableof{0},\ldots,\catvariableof{\tdim-1}
 		} 
 	\end{align*}	
-%		\[ \probof{\randomxof{0},\ldots,\randomxof{\tdim-1}} = %\probof{\randomxof{1}} 
-%		\prod_{\tenumeratorin} \condprobof{\randomxof{\tenumerator}}{\randomxof{\tenumerator-1}} \, . \] 
+%		\[ \probof{\catvariableof{0},\ldots,\catvariableof{\tdim-1}} = %\probof{\catvariableof{1}} 
+%		\prod_{\tenumeratorin} \condprobof{\catvariableof{\tenumerator}}{\catvariableof{\tenumerator-1}} \, . \] 
 	We depict this decomposition in Figure~\ref{fig:MC}.
 \end{theorem}
 \begin{proof}
 	By the chain rule (Theorem~\ref{the:chainRule}) we have
 	\begin{align*}
-	 	\probof{\randomxof{0},\ldots,\randomxof{\tdim-1}}
+	 	\probof{\catvariableof{0},\ldots,\catvariableof{\tdim-1}}
 		= \contractionof{
-		\{ \condprobof{\randomxof{\tenumerator}}{\randomxof{0:\tenumerator}} : \tenumeratorin \}
+		\{ \condprobof{\catvariableof{\tenumerator}}{\catvariableof{0:\tenumerator}} : \tenumeratorin \}
 		}{\catvariableof{[\tdim]}}
-		%= \contractionof{\{\probof{\randomxof{0}} \prod_{\tenumeratorin, \tenumerator>1} \condprobof{\randomxof{\tenumerator}}{\randomxof{0:\tenumerator}}\}{\catvariableof{[\tdim]}} \, . 
+		%= \contractionof{\{\probof{\catvariableof{0}} \prod_{\tenumeratorin, \tenumerator>1} \condprobof{\catvariableof{\tenumerator}}{\catvariableof{0:\tenumerator}}\}{\catvariableof{[\tdim]}} \, . 
 	\end{align*}
-	Using the conditional independence of $\randomxof{\tenumerator}$ and $\randomxof{0:{\tenumerator-2}}$ conditioned on $\randomxof{\tenumerator-1}$ we further have by Corollary~\ref{cor:conditionDropping}
-		\[ \condprobof{\randomxof{\tenumerator}}{\indexedcatvariableof{0:\tenumerator}}  = \condprobof{\randomxof{\tenumerator}}{\indexedcatvariableof{\tenumerator-1}} \, .  \]
+	Using the conditional independence of $\catvariableof{\tenumerator}$ and $\catvariableof{0:{\tenumerator-2}}$ conditioned on $\catvariableof{\tenumerator-1}$ we further have by Corollary~\ref{cor:conditionDropping}
+		\[ \condprobof{\catvariableof{\tenumerator}}{\indexedcatvariableof{0:\tenumerator}}  = \condprobof{\catvariableof{\tenumerator}}{\indexedcatvariableof{\tenumerator-1}} \, .  \]
 	Composing both equalities shows the claim.
 \end{proof}
 
-Here we denoted by $\randomxof{0:\tenumerator}$ the tuple $\randomxof{0},...,\randomxof{\tenumerator}$.
+Here we denoted by $\catvariableof{0:\tenumerator}$ the tuple $\catvariableof{0},...,\catvariableof{\tenumerator}$.
 
 \begin{remark}
 	Let us notice that the dimensionality dropped drastically through applying the independence assumption.
@@ -576,16 +576,16 @@ We introduce Bayesian Networks based on directed hypergraphs (see Definition~\re
 	%Let $\nodes$ be a set of nodes decorated by dimensions and 
 	Let $\graph=(\nodes,\edges)$ be a directed acyclic hypergraph with edges of the form 
 		\[ \edges = \{(\parentsof{\node},\{\node\}) \, : \, \nodein\} \, . \]
-%	and for each node $\node\in\nodes$ a random variable $\randomxof{\node}$.
+%	and for each node $\node\in\nodes$ a random variable $\catvariableof{\node}$.
 	A \emph{Bayesian Network} is a decoration of each edge $(\parentsof{\node},\{\node\})$ by a conditional probability distribution
 	%Further let there be for each node $\node\in\nodes$ with parents $\parentsof{\node}$ a conditional probability distribution
-		\[ \condprobof{\randomxof{\node}}{\randomxof{\parentsof{\node}}} \]
+		\[ \condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \]
 	which represents the probability distribution
 %	Then the \emph{Bayesian Network} with respect to $\graph$ and the conditional probability terms is the distribution
 	\begin{align*}
-		\probof{\catvariableof{\nodes}} = \contractionof{\{\condprobof{\randomxof{\node}}{\randomxof{\parentsof{\node}}} \, : \, \nodein\}}{\catvariableof{\nodes}} \, .
+		\probof{\nodevariables} = \contractionof{\{\condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \, : \, \nodein\}}{\nodevariables} \, .
 	\end{align*}
-%		\[ \probof{\randomxof{\node} \, : \, \node\in\nodes } = \prod_{\node\in\nodes} \condprobof{\randomxof{\node}}{\randomxof{\parentsof{\node}}} \, . \]
+%		\[ \probof{\catvariableof{\node} \, : \, \node\in\nodes } = \prod_{\node\in\nodes} \condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \, . \]
 \end{definition}
 
 %
@@ -596,7 +596,7 @@ This allows us to verify with Theorem~\ref{the:conditionalContractionPreservatio
 % Contraction -> Now in definition!
 %By definition we can represent a Bayesian network by the contraction
 %\begin{align*}
-%	\probtensorof{\graph} = \sbcontractionof{\{ \condprobof{\randomxof{\node}}{\randomxof{\parentsof{\node}}} \, : \, \node\in\nodes\}}{\nodes} \, . 
+%	\probtensorof{\graph} = \sbcontractionof{\{ \condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \, : \, \node\in\nodes\}}{\nodes} \, . 
 %\end{align*}
 
 % Dual
@@ -606,7 +606,7 @@ This allows us to verify with Theorem~\ref{the:conditionalContractionPreservatio
 \begin{center}
 	\input{PartI/tikz_pics/probability_decomposition/bayesian_factor.tex}
 \end{center}
-\caption{Example of a Factor of a Bayesian Network to the node $\randomxof{\node}$ with parents $\randomxof{0},\ldots,\randomxof{\catorder-1}$, as subgraph $a)$ and dual tensor core $b)$.}
+\caption{Example of a Factor of a Bayesian Network to the node $\catvariableof{\node}$ with parents $\catvariableof{0},\ldots,\catvariableof{\catorder-1}$, as subgraph $a)$ and dual tensor core $b)$.}
 \label{fig:BayesianFactor}
 \end{figure}
 
@@ -617,31 +617,31 @@ Conditioned Bayesian Network do not have a simple Bayesian Network representatio
 
 
 \begin{theorem}[Independence Characterization of Bayesian Networks]\label{the:condIndBN}
-	A probability distribution $\probof{\catvariableof{\nodes}}$ has a representation by a Bayesian Network on a directed acyclic graph $\graph=(\nodes,\edges)$, if and only if for any $\nodein$ the variables $\catvariableof{\node}$ are independent on $\nondescendantsof{\node}$ conditioned on $\parentsof{\node}$.
+	A probability distribution $\probof{\nodevariables}$ has a representation by a Bayesian Network on a directed acyclic graph $\graph=(\nodes,\edges)$, if and only if for any $\nodein$ the variables $\catvariableof{\node}$ are independent on $\nondescendantsof{\node}$ conditioned on $\parentsof{\node}$.
 \end{theorem}
 \begin{proof}
 	We choose a topological order $\prec$ on the nodes of $\graph$, which exists since $\graph$ is acyclic.
 	% =>
 	Let us assume, that the conditional independencies are satisfied and apply the chain rule with respect to that ordering to get
 	\begin{align*}
-		\probof{\catvariableof{\nodes}} =
+		\probof{\nodevariables} =
 		\contractionof{
 			\condprobof{\catvariableof{\node}}{\catvariableof{\secnode} : \secnode \prec \node}
 		}
-		{\catvariableof{\nodes}} \, .
+		{\nodevariables} \, .
 	\end{align*}
 	Since $\prec$ is a topological ordering we have
 		\[ \parentsof{\node} \subset \{\secnode : \secnode \prec \node\} \]
 	We apply the assumed conditional independence with Corollary~\ref{cor:conditionDropping} and get
 	\begin{align*}
-		\probof{\catvariableof{\nodes}} =
+		\probof{\nodevariables} =
 		\contractionof{
 			\condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}}
 		}
-		{\catvariableof{\nodes}} \, .
+		{\nodevariables} \, .
 	\end{align*}
 	% <=
-	To show the converse direction, let there be a Bayesian Network $\probof{\catvariableof{\nodes}}$ on $\graph$.
+	To show the converse direction, let there be a Bayesian Network $\probof{\nodevariables}$ on $\graph$.
 	To show for any node $\node$, that $\catvariableof{\node}$ is independent of $\nondescendantsof{\node}$ conditioned on $\parentsof{\node}$, we reorder the tensors in the contraction
 	%with respect to a set $\node_0$ 
 	\begin{align*}
@@ -651,27 +651,23 @@ Conditioned Bayesian Network do not have a simple Bayesian Network representatio
 		}
 		{\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}}
 		{\indexedcatvariableof{\parentsof{\node}}} \\
-		& = \normationofwrt{
+		& = \normationof{
 			\{\condprobof{\catvariableof{\secnode}}{\parentsof{\secnode}} \, : \, \secnode\in\nodes\} \cup \{\onehotmapof{\catindexof{\parentsof{\node}}}\}
 		}
-		{\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}}
-		{\varnothing} \\
-		& = \normationofwrt{
+		{\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}}\\
+		& = \normationof{
 			\{\condprobof{\catvariableof{\secnode}}{\parentsof{\secnode}} \, : \, \secnode\in\nondescendantsof{\node}\} \cup \{\onehotmapof{\catindexof{\parentsof{\node}}}, \condprobof{\catvariableof{\node}}{\parentsof{\node}} \}
 		}
-		{\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}}
-		{\varnothing} \\
+		{\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}} \\
 		& =  %\contractionof{
-		 \normationofwrt{
+		 \normationof{
 			\{\condprobof{\catvariableof{\secnode}}{\parentsof{\secnode}} \, : \, \secnode\in\nondescendantsof{\node}\} \cup \{\onehotmapof{\catindexof{\parentsof{\node}}}\}
 		}
-		{\catvariableof{\nondescendantsof{\node}}}
-		{\varnothing}   \\
-		& \quad  \cdot \normationofwrt{
+		{\catvariableof{\nondescendantsof{\node}}} \\
+		& \quad  \cdot \normationof{
 			\{\condprobof{\catvariableof{\node}}{\parentsof{\node}},\onehotmapof{\catindexof{\parentsof{\node}}}\}
 		}
-		{\catvariableof{\node}}
-		{\varnothing} \\
+		{\catvariableof{\node}} \\
 		& = \contractionof{\{
 		\condprobof{\catvariableof{\nondescendantsof{\node}}}{\indexedcatvariableof{\parentsof{\node}}},
 		\condprobof{\catvariableof{\node}}{\indexedcatvariableof{\parentsof{\node}}}
@@ -688,28 +684,28 @@ Conditioned Bayesian Network do not have a simple Bayesian Network representatio
 \subsubsection{Example of a Bayesian Network: Hidden Markov Models}
 
 We here extend the example of Markov Chains from Theorem \ref{the:MarkovChain} to a limited observation of the variables by observations.
-Let there be the variables $\randomxof{\tenumerator}$ (states) and $\randomeof{\tenumerator}$ (observations) with a discrete and finite time $\tenumeratorin$.
+Let there be the variables $\catvariableof{\tenumerator}$ (states) and $\randomeof{\tenumerator}$ (observations) with a discrete and finite time $\tenumeratorin$.
 
 The conditional assumptions are 
 \begin{itemize}
-	\item $\randomxof{\tenumerator+1}$ is independent of $\randomxof{0:\tenumerator-1}$ and $\randomeof{0:\tenumerator}$ conditioned on $\randomxof{\tenumerator}$
-	\item $\randomeof{\tenumerator}$ is independent of all other variables conditioned on $\randomxof{\tenumerator}$
+	\item $\catvariableof{\tenumerator+1}$ is independent of $\catvariableof{0:\tenumerator-1}$ and $\randomeof{0:\tenumerator}$ conditioned on $\catvariableof{\tenumerator}$
+	\item $\randomeof{\tenumerator}$ is independent of all other variables conditioned on $\catvariableof{\tenumerator}$
 \end{itemize}
 
 Then the probability tensor has the decomposition 
 \begin{align}
-	\probof{\randomxof{0:\tdim},\randomeof{0:\tdim}} 
+	\probof{\catvariableof{0:\tdim},\randomeof{0:\tdim}} 
 	& = \prod_{\tenumeratorin}
-	 \left( \condprobof{\randomxof{\tenumerator}}{\randomxof{0:\tenumerator-1},\randomeof{0:\tenumerator-1}} \cdot \condprobof{\randomeof{\tenumerator}}{\randomxof{0:\tenumerator},\randomeof{0:\tenumerator-1}} \right) \\
-	& = \probof{\randomxof{0}} \cdot \condprobof{\randomeof{0}}{\randomxof{0}} \cdot \prod_{\tenumeratorin, \tenumerator>0} 
-	\left( \condprobof{\randomxof{\tenumerator}}{\randomxof{\tenumerator-1}} \cdot \condprobof{\randomeof{\tenumerator}}{\randomxof{\tenumerator}} \right)
+	 \left( \condprobof{\catvariableof{\tenumerator}}{\catvariableof{0:\tenumerator-1},\randomeof{0:\tenumerator-1}} \cdot \condprobof{\randomeof{\tenumerator}}{\catvariableof{0:\tenumerator},\randomeof{0:\tenumerator-1}} \right) \\
+	& = \probof{\catvariableof{0}} \cdot \condprobof{\randomeof{0}}{\catvariableof{0}} \cdot \prod_{\tenumeratorin, \tenumerator>0} 
+	\left( \condprobof{\catvariableof{\tenumerator}}{\catvariableof{\tenumerator-1}} \cdot \condprobof{\randomeof{\tenumerator}}{\catvariableof{\tenumerator}} \right)
 \end{align}
 Here we used the Chain Rule decomposition of Theorem~\ref{the:chainRule} in the first equation and the conditional independence assumptions in the second.
 
 We notice, that this is a Bayesian Netowork on a directed acyclic hypergraph $\graph$ consistent in nodes to each state and each observation and hyperedges
 \begin{itemize}
-	\item $(\{\randomxof{\tenumerator}\}, \{\randomxof{\tenumerator+1}\})$ for $\tenumerator\in[\tdim-1]$
-	\item $(\{\randomxof{\tenumerator}\}, \{\randomeof{\tenumerator}\})$ for $\tenumeratorin$
+	\item $(\{\catvariableof{\tenumerator}\}, \{\catvariableof{\tenumerator+1}\})$ for $\tenumerator\in[\tdim-1]$
+	\item $(\{\catvariableof{\tenumerator}\}, \{\randomeof{\tenumerator}\})$ for $\tenumeratorin$
 \end{itemize}
 
 
@@ -736,10 +732,10 @@ Along that line, Markov Networks are tensor networks with non-negative tensors (
 		\[ \probtensorof{\graph} = \frac{
 			\contractionof{\{\hypercoreof{\edge} : \edge \in \edges\}}{\nodes} 
 		}{
-			\contractionof{\{\hypercoreof{\edge} : \edge \in \edges\}}{\varnothing}
-		} = \normationofwrt{\{\hypercoreof{\edge} : \edge \in \edges\}}{\nodes}{\varnothing} \, . \] 
+			\contraction{\{\hypercoreof{\edge} : \edge \in \edges\}}
+		} = \normationof{\{\hypercoreof{\edge} : \edge \in \edges\}}{\nodes} \, . \] 
 	We call the denominator
-		\[\partitionfunctionof{\graph} = \contractionof{\{\hypercoreof{\edge} : \edge \in \edges\}}{\varnothing} \]
+		\[\partitionfunctionof{\graph} = \contraction{\{\hypercoreof{\edge} : \edge \in \edges\}} \]
 	the partition function of the Markov Network.
 \end{definition}
 
@@ -755,12 +751,12 @@ Let us now demonstrate how marginalizations and contractions can be done on Mark
 \begin{theorem}[Marginalization by Contractions]
 	The marginalization of a Markov Network to $\tnetof{\graph}$ on the variables of the subset $\secnodes$ is
 	\[
-		\probtensor^{\graph}\left[ \randomxof{\secnodes}\right] 
+		\probtensor^{\graph}\left[ \catvariableof{\secnodes}\right] 
 		= \contractionof{\tnetof{\graph}}{\catvariableof{\secnodes}}
 	\]
 	and the distribution of $\secnodes$ conditioned on $\thirdnodes$ is
 	\[
-		\probtensor^{\graph}\left[ \randomxof{\secnodes} | \randomxof{\thirdnodes}\right] 
+		\probtensor^{\graph}\left[ \catvariableof{\secnodes} | \catvariableof{\thirdnodes}\right] 
 		= \normationofwrt{\tnetof{\graph}}{\catvariableof{\secnodes}}{\catvariableof{\thirdnodes}}
 	\]
 \end{theorem}
@@ -803,9 +799,9 @@ Let us now show a characterization of Markov Networks in terms of conditional in
 	We then have
 	\begin{align*}
 		\normationofwrt{\extnetasset}{\catvariableof{\nodesa},\catvariableof{\nodesb}}{\indexedcatvariableof{\nodesc}} 
-		= & \normationofwrt{\extnetasset\cup\{\onehotmapof{\catindexof{\nodesc}}\}}{\catvariableof{\nodesa},\catvariableof{\nodesb}}{\varnothing} \\
-		= &  \normationofwrt{\{\hypercoreof{\edge}\, : \, \edge\in\edges_0\}\cup\{\onehotmapof{\catindexof{\nodesc}}\}}{\catvariableof{\nodesa}}{\varnothing}
-		\otimes \normationofwrt{\{\hypercoreof{\edge}\, : \, \edge\in\edges_1\}\cup\{\onehotmapof{\catindexof{\nodesc}}\}}{\catvariableof{\nodesb}}{\varnothing} \, .
+		= & \normationof{\extnetasset\cup\{\onehotmapof{\catindexof{\nodesc}}\}}{\catvariableof{\nodesa},\catvariableof{\nodesb}} \\
+		= &  \normationof{\{\hypercoreof{\edge}\, : \, \edge\in\edges_0\}\cup\{\onehotmapof{\catindexof{\nodesc}}\}}{\catvariableof{\nodesa}}
+		\otimes \normationof{\{\hypercoreof{\edge}\, : \, \edge\in\edges_1\}\cup\{\onehotmapof{\catindexof{\nodesc}}\}}{\catvariableof{\nodesb}} \, .
 	\end{align*}
 	By Theorem~\ref{the:condIndependenceProductCriterion}, it now follows that $\catvariableof{\nodesa}$ is independent of $\catvariableof{\nodesb}$ conditioned on $\catvariableof{\nodesc}$.
 	%<= HARDER! Hammersley Clifford needed
@@ -816,7 +812,7 @@ Let us now show a characterization of Markov Networks in terms of conditional in
 
 % Positivity
 From the proof of Theorem~\ref{the:condIndMN} Markov Networks with zero coordinates still satisfy the conditional independence assumption.
-However, the reverse is not true, that is there are distributions with vanishing coordinates, which satisfy the conditional independence assumptions, but cannot be represented as a Markov Network (see Example~4.4 in KOLLER).
+However, the reverse is not true, that is there are distributions with vanishing coordinates, which satisfy the conditional independence assumptions, but cannot be represented as a Markov Network (see Example~4.4 in \cite{koller_probabilistic_2009}).
 
 \subsubsection{Bayesian Networks as Markov Networks}
 
@@ -856,12 +852,12 @@ Bayesian Networks conditioned on evidence are no longer Bayesian Networks on the
 Exponential families are collections of probability distributions, where each coordinate is determined by a base measure and a set $\sstat$ of features as
 	\[ \probat{\indexedshortcatvariables}  \propto \basemeasure(\catindex) \cdot \expof{\sum_{\statenumeratorin} \sstatcoordinateofat{\selindex}{\indexedshortcatvariables} \cdot \canparamat{\indexedselvariable}} \, . \]
 We use the selection encoding to represent the weighted summation over the statistics, that is the tensor
-	\[ \sencodingofat{\sstat}{\shortcatvariables,\selvariable}: \facstates \times [\statorder] \rightarrow \rr \]
+	\[ \sencsstatat{\shortcatvariables,\selvariable}: \facstates \times [\statorder] \rightarrow \rr \]
 with
-	\[ \sencodingofat{\sstat}{\indexedshortcatvariables,\indexedselvariable} = \sstatcoordinateofat{\selindex}{\indexedshortcatvariables} \, . \]
+	\[ \sencsstatat{\indexedshortcatvariables,\indexedselvariable} = \sstatcoordinateofat{\selindex}{\indexedshortcatvariables} \, . \]
 We then understand $\canparam$ as a vector to the categorical variable $\selvariable$ and use Theorem~\ref{the:linCompSelEncoding} to get
-	\[ \left(\sum_{\statenumeratorin}\canparamat{\indexedselvariable}\cdot \sstatcoordinateof{\selindex} \right) [\shortcatvariables] 
-		 = \sbcontractionof{\sencodingofat{\sstat}{\shortcatvariables,\selvariable} , \canparam[\selvariable]}{\shortcatvariables} \, . \]
+	\[ \sum_{\statenumeratorin}\canparamat{\indexedselvariable}\cdot \sstatcoordinateofat{\selindex}{\shortcatvariables}
+		 = \sbcontractionof{\sencsstatat{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables} \, . \]
 
 \begin{definition}
 	Given a sufficient statistics 
@@ -870,10 +866,10 @@ We then understand $\canparam$ as a vector to the categorical variable $\selvari
 	and a non-negative base measure
 		\[ \basemeasure : \facstates \rightarrow \rr \]
 	the set $\expfamily=\{\expdist \, : \, \canparam[\selvariable] \in \simpleparspace\}$ of probability distributions 
-		\[ \expdist = \normationofwrt{\expof{\sbcontractionof{\sencodingof{\sstat},\canparam}{\shortcatvariables}}}{\shortcatvariables}{\varnothing} \]
+		\[ \expdist = \normationof{\expof{\sbcontractionof{\sencodingof{\sstat},\canparam}{\shortcatvariables}}}{\shortcatvariables} \]
 	is called the exponential family to $\sstat$.
 	If the base measure is positive, we define for each member with parameters $\canparam$
-		\[ \expenergy = \sbcontractionof{\sencodingof{\sstat},\canparam,\lnof{\basemeasure}}{\shortcatvariables} \]
+		\[ \expenergy = \sbcontractionof{\sencsstat,\canparam,\lnof{\basemeasure}}{\shortcatvariables} \]
 	the associated energy tensor.
 	We further introduce the cumulant function
 		\[ \cumfunctionof{\canparam} = \lnof{\sbcontraction{\basemeasure,\expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables} }} } \, .\]
@@ -885,12 +881,12 @@ We then understand $\canparam$ as a vector to the categorical variable $\selvari
 
 % Diverging partition functions avoided here
 Since we here restrict the discussion to finite state spaces, the distribution $\expdist$ is well-defined for any $\canparam\in\rr^{\statorder}$.
-For infinite state space there are sufficient statistics and parameters, such that the partition function $\sbcontraction{\basemeasure,\expof{\contractionof{\{\sstat,\canparam\}}{\shortcatvariables}}}$ diverges and the normation $\expdist$ is not defined.
+For infinite state space there are sufficient statistics and parameters, such that the partition function $\sbcontraction{\basemeasure,\expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables}}}$ diverges and the normation $\expdist$ is not defined.
 In that cases, the canonical parameters need to be chosen from a subset where the partition function is finite. 
 
 % Cumulant representation
 \begin{lemma}\label{lem:energyCumulantRepresentation}
-	For any member of an exponential family $\expfamily$ we have
+	For any member of an exponential family $\expfamily$ with positive base measure we have
 		\[ \expdist = \expof{ \expenergy - \cumfunctionof{\canparam}\cdot \onesat{\shortcatvariables}} \, . \]
 \end{lemma}
 \begin{proof}
@@ -924,7 +920,7 @@ The central insight here is a relational encoding of the sufficient statistics, 
 	
 	For any parameter vector $\canparamat{\selvariable}:[\seldim]\rightarrow\rr$ we build the activation cores
 		\[ \headcoreofat{\statenumerator}{\sstatcatof{\selindex}=\sstatindof{\selindex}} 
-		= \expof{\canparam(\statenumerator) \cdot \indexinterpretationofat{\selindex}{\sstatcatof{\selindex}} } \,   \]
+		= \expof{\canparamat{\indexedselvariable} \cdot \indexinterpretationofat{\selindex}{\sstatcatof{\selindex}} } \,   \]
 	and have
 		\[ \expdist = 
 		\normationof{\{\basemeasure,\rencodingof{\sstat}\}\cup\{\headcoreof{\statenumerator} \, : \, \statenumeratorin\}}{\shortcatvariables} \, . 
@@ -1044,19 +1040,19 @@ Given a hypergraph with fixed node decoration, the different decorations of the 
 \begin{proof}
 	We have for any $\catindexof{\nodes}$
 	\begin{align}
-	\prod_{\edge\in\edges} \hypercoreof{\edge} (\catindexof{\edge}) 
-		= \expof{\sum_{\edge\in\edges} \canparam_{\edge}(\catindexof{\edge})}
-		= \expof{\sum_{\edge\in\edges} \braket{\canparam_{\edge},\sstatcoordinateof{\edge}(\catindexof{\nodes})}}  \, .
+	\prod_{\edge\in\edges} \hypercoreofat{\edge}{\indexedcatvariableof{\edge}}
+		= \expof{\sum_{\edge\in\edges} \canparamwrtat{\edge}{\indexedcatvariableof{\edge}}}
+		= \expof{\sum_{\edge\in\edges} \sbcontraction{\canparamwrtat{\edge}{\catvariableof{\edge}},\sstatcoordinateof{\edge}(\catindexof{\nodes})}}  \, .
 	\end{align}
 	Using that
-		\[ \contractionof{\sstat,\canparam}{\catvariableof{\nodes}} = \sum_{\edge\in\edges} \contractionof{\sstatcoordinateof{\edge},\canparam_{\edge}}{\catvariableof{\nodes}} \]
+		\[ \contractionof{\sstat,\canparam}{\nodevariables} = \sum_{\edge\in\edges} \contractionof{\sstatcoordinateof{\edge},\canparam_{\edge}}{\nodevariables} \]
 	we get
 	\begin{align}
-		\contractionof{\{\hypercoreof{\edge}: \edge\in\edges\}}{\catvariableof{\nodes}} = \expof{\contractionof{\canparam,\sstat}{\catvariableof{\nodes}}} \, .
+		\contractionof{\{\hypercoreof{\edge}: \edge\in\edges\}}{\nodevariables} = \expof{\contractionof{\canparam,\sstat}{\nodevariables}} \, .
 	\end{align}
 	This implies 
 	\begin{align}
-		\normationofwrt{\{\hypercoreof{\edge}: \edge\in\edges\}}{\catvariableof{\nodes}}{\varnothing} = \normationofwrt{\expof{\contractionof{\canparam,\sstat}{\catvariableof{\nodes}}}}{\catvariableof{\nodes}}{\varnothing} \, .
+		\normationof{\{\hypercoreof{\edge}: \edge\in\edges\}}{\nodevariables} = \normationof{\expof{\contractionof{\canparam,\sstat}{\nodevariables}}}{\nodevariables} \, .
 	\end{align}
 \end{proof}
 
@@ -1123,13 +1119,13 @@ defined by
 
 %% Conditional Probability interpretation
 The Data Tensor a conditional probability tensor, which retrieves the respective sample distribution when selecting a sample.
-We can represent this probability distribution by a random variable $\randomxof{\dataindex}$ selecting a specific datapoint on which the atoms depend.
+We can represent this probability distribution by a random variable $\catvariableof{\dataindex}$ selecting a specific datapoint on which the atoms depend.
 
 %% Empirical Distribution
 We define the empirical distribution by the normation of the relational encoding of the datamap as
 \begin{align*}
 	\empdistribution 
-	\coloneqq \normationofwrt{\{\datacore\}}{\shortcatvariables}{\varnothing} \, . 
+	\coloneqq \sbnormationof{\datacore}{\shortcatvariables} \, . 
 \end{align*}
 Each coordinate of the empirical distribution is the frequency of the by the index specified word in the data.
 
@@ -1154,7 +1150,7 @@ Each coordinate of the empirical distribution is the frequency of the by the ind
 	With the first claim it follows that
 	\begin{align*}
 		\empdistribution 
-		 = \normationofwrt{\{\datacore\}}{\shortcatvariables}{\varnothing}
+		 = \sbnormationof{\datacore}{\shortcatvariables}
 		 = \frac{\sbcontractionof{\datacore}{\shortcatvariables}}{\sbcontraction{\datacore}} 
 		 =  \contractionof{
 		\{\rencodingofat{\datamap^{\atomenumerator}}{\datvariable,\catvariableof{\atomenumerator}} : \atomenumeratorin \} \cup \{ \frac{1}{\datanum} \onesat{\datvariable} \}
