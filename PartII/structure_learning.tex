@@ -1,6 +1,8 @@
 \section{Structure Learning}
 
-\red{Change loss to be function of distribution, not of canparam.}
+\red{To Do:
+Change loss to be function of distribution, not of canparam,
+Current distribution as base measure $\basemeasure=\currentdistribution$, alternative to midterm family approach.}
 
 After having investigated how to parameterize exponentially many formulas by formula selecting networks, let us now develop objectives to be optimized.
 
@@ -125,8 +127,10 @@ For the naive exponential family
 \end{align*}
 we have the gradient
 \begin{align*}
-	\frac{\partial \lossof{\expdistof{(\naivestat, \naivecanparam)}}}{\partial\naivecanparam} 
-	= \empdistribution - \expdistof{(\naivestat, \naivecanparam)} \, . 
+	\gradwrt{\naivecanparamat{\selvariable}} \lossof{\expdistof{(\naivestat, \naivecanparam)}}
+	%\frac{\partial \lossof{\expdistof{(\naivestat, \naivecanparam)}}}{\partial\naivecanparam} 
+	&= \contractionof{\sencodingof{\naivestat},\empdistribution}{\selvariable} - \contractionof{\sencodingof{\naivestat},\expdistof{(\naivestat, \naivecanparam)}}{\selvariable} \\
+	&= \empdistribution - \expdistof{(\naivestat, \naivecanparam)} \, . 
 \end{align*}
 
 %% Single feature
@@ -156,7 +160,7 @@ When nothing has been learned so far, we can take the current model to be the un
 
 
 %% Collection of features by selection
-We can calulate all these feature gradients with the usage of a selection network.
+We can calculate all feature gradients with the usage of a selection network.
 Given a set $\fselectionmap$ of features we vary $\naivestat$ as
 \begin{align*}
 	 \naivestat(\canparam) %=  \mlntensor + \weight_{\parindices} \ftensorof{\exformula_{\parindices}}
@@ -164,7 +168,7 @@ Given a set $\fselectionmap$ of features we vary $\naivestat$ as
 \end{align*}
 Now the gradient of the loss along the variation is
 \begin{align*}
-	 \frac{\partial \lossof{\expdistof{(\naivestat(\canparam), \naivecanparam)}}}{\partial\canparam} 
+	 \gradwrt{\canparam} \lossof{\expdistof{(\naivestat(\canparam), \naivecanparam)}}
 	 &= \sbcontraction{
 	 	\frac{\partial\lossof{\expdistof{(\naivestat, \naivecanparam)}}}{\partial\naivecanparam}|_{\naivecanparam(0)},
 		\frac{\partial\naivecanparam(\canparam)}{\partial\canparam} 
@@ -221,9 +225,9 @@ We can choose selection architectures to efficiently parametrize
 %
 To take the steepest ascent formula among the formulas selectable by $\formulaset$ we thus search for the maximal coordinate in the tensor network $\frac{\partial \lossof{\theta}}{\partial \parametercore}|_{\parametercore=0}$, that is solve
 \begin{align}
-	\argmax_{\parindices} \contractionof{
-	\{ \frac{\partial \lossof{\theta}}{\partial \parametercore}|_{\parametercore=0} , \onehotmapof{\parindices} \}
-	}{\varnothing}
+	\argmax_{\selindexin} \contractionof{ \gradwrtat{\canparam}{\canparam=0} \lossof{\expdist}
+	%\{ \frac{\partial \lossof{\theta}}{\partial \parametercore}|_{\parametercore=0} , \onehotmapof{\parindices} \}
+	}{\indexedselvariable}
 \end{align}
 This is thus equivalent to the problem \ref{prob:steepestAscent}, when taking all formulas selectable by $\formulaset$ as the hypothesis $\Gamma$.
 
@@ -302,37 +306,40 @@ Therefore we can apply the theory of Chapter~\ref{cha:probReasoning} and charact
 We state the solution of this condition in the next theorem.
 
 
-% Redundant? Repetition of Lemma~\ref{ref:lemMMinMLN}.
-\begin{lemma}
-	Problem~\ref{prob:restrictedNaiveMLE}  in the case
-	\begin{align*}
-		\energyhypothesisof{\formula} = \lnof{\currentdistribution} + \mathrm{span}(\formula) \,  
-	\end{align*}
-	is solved at
-	\begin{align*}
-		\hat{\weightof{\exformula}} = \lnof{ \frac{Z_1}{Z_0} \frac{\meanparam^{\datamap}_{\formula} }{1-\meanparam^{\datamap}_{\formula} } } 
-	\end{align*}
-	where
-	\begin{align*}
-		Z_0 = \sbcontractionof{\currentdistribution, \rencodingof{\formula}}{\catvariableof{\formula}=0}  \quad , \quad
-		Z_1 = \sbcontractionof{\currentdistribution, \rencodingof{\formula}}{\catvariableof{\formula}=1}  \quad \text{and} \quad
-		\meanparam^{\datamap}_{\formula} = \contraction{\empdistribution, \formula} \, .
-	\end{align*}
-\end{lemma}
-\begin{proof}
-	Follows from Lemma~\ref{ref:lemMMinMLN}.
-\end{proof}
+%% Redundant? Repetition of Lemma~\ref{ref:lemMMinMLN}.
+%\begin{lemma}
+%	Problem~\ref{prob:restrictedNaiveMLE}  in the case
+%	\begin{align*}
+%		\energyhypothesisof{\formula} = \lnof{\currentdistribution} + \mathrm{span}(\formula) \,  
+%	\end{align*}
+%	is solved at
+%	\begin{align*}
+%		\hat{\weightof{\exformula}} = \lnof{ \frac{Z_1}{Z_0} \frac{\meanparam^{\datamap}_{\formula} }{1-\meanparam^{\datamap}_{\formula} } } 
+%	\end{align*}
+%	where
+%	\begin{align*}
+%		Z_0 = \sbcontractionof{\currentdistribution, \rencodingof{\formula}}{\catvariableof{\formula}=0}  \quad , \quad
+%		Z_1 = \sbcontractionof{\currentdistribution, \rencodingof{\formula}}{\catvariableof{\formula}=1}  \quad \text{and} \quad
+%		\meanparam^{\datamap}_{\formula} = \contraction{\empdistribution, \formula} \, .
+%	\end{align*}
+%\end{lemma}
+%\begin{proof}
+%	Follows from Lemma~\ref{ref:lemMMinMLN}.
+%\end{proof}
 
-We can apply this 
+\red{Taking the current distribution as a base measure and choosing the canonical parameters of the by this base measure manipulated naive family, we state the problem}
+\begin{align}\label{prob:restrictedNaiveCE}\tag{$\mathrm{P}_{\data,\currentdistribution,\energyhypothesis}$}
+	\argmin_{\canparamat{\selvariableof{[\catorder]}}\in\energyhypothesis} \centropyof{\empdistribution}{\expdistof{(\naivestat,\canparam,\currentdistribution)}}
+\end{align}
 
-\begin{lemma}
-	Problem~\ref{prob:restrictedNaiveMLE} in the case 
+\begin{theorem}
+	Problem~\ref{prob:restrictedNaiveCE} in the case 
 	\begin{align*}
-		\energyhypothesis = \lnof{\currentdistribution} + \cup_{\formula\in\formulaset} \mathrm{span}(\formula) 
+		\energyhypothesis = \bigcup_{\formula\in\formulaset} \mathrm{span}(\formula) 
 	\end{align*}
 	is solved at any
 	\begin{align*}
-		\hat{\canparam} = \currentdistribution + \weightof{\hat{\formula}} \cdot \hat{\formula}
+		\hat{\canparam} = \weightof{\hat{\formula}} \cdot \hat{\formula}
 	\end{align*}
 	where the formula $\hat{\formula}$ is in
 	\begin{align*}
@@ -341,10 +348,59 @@ We can apply this
 	and $\weightof{\hat{\formula}}$ is the weight of $\hat{\formula}$ in the solution of Problem~\ref{prob:restrictedNaiveMLE} with $\Gamma = \currentdistribution + \mathrm{span}(\exformula)$.
 	Here we denote by $\kldivof{p_1}{p_2}$ the Kullback-Leibler divergence between Bernoulli distributions with parameters $p_1,p_2\in[0,1]$, that is
 		\[ \kldivof{p_1}{p_2} = p_1 \cdot \lnof{\frac{p_1}{p_2}} + (1-p_1) \cdot \lnof{\frac{(1-p_1)}{(1-p_2)}}  \]
-\end{lemma}	
+\end{theorem}	
 \begin{proof}
-	By plugging in the above Lemma we get, that the KL divergence is the improvement of the objective to each $\formula$.
-	The Problem is solved at the best improvement, where the KL divergence is maximal.
+	% Solution of the problem restricted to 
+	For any formula $\formula$, Problem~\ref{prob:restrictedNaiveCE}  in the case $\energyhypothesis = \mathrm{span}(\formula) $ is by Lemma~\ref{ref:lemMMinMLN} solved at
+		\[ \weightof{\formula} = \lnof{\frac{\datamean}{(1-\datamean)}\cdot \frac{(1-\currentmean)}{\currentmean}}  \]
+	where
+		\[ \currentmean = \sbcontraction{\currentdistribution,\formula} \]
+		%\[ \sechypercoreat{\catvariableof{\formula}} = \sbcontractionof{\currentdistribution,\rencodingof{\formula}}{\catvariableof{\formula}} \]
+	and
+		\[ \datamean = \sbcontraction{\empdistribution,\formula} \, . \]
+	
+	The difference of the likelihood at the current distribution and the optimum is
+	\begin{align*}
+		\centropyof{\empdistribution}{\currentdistribution}
+		- \centropyof{\empdistribution}{\expdistof{(\exformula,\weightof{\formula},\currentdistribution)}}
+		= \datamean \cdot \weightof{\formula} - \cumfunctionwrt{\exformula,\currentdistribution}(\weightof{\formula}) \, .
+	\end{align*}
+	
+	% Loss gain at optimum
+	We use the representation scheme of Theorem~\ref{the:hybridNetworkRepresentation} and get
+	\begin{align*}
+		\sbcontraction{\currentdistribution, \expof{\weightof{\formula} \cdot \formula}}
+		& = \sbcontraction{\currentdistribution, \rencodingofat{\formula}{\catvariableof{\formula}}, \headcoreofat{\formula}{\catvariableof{\formula}}} \\
+		& = (1-\currentmean) + \currentmean\cdot \expof{\weightof{\formula}} \\
+		& = (1 - \currentmean) + \frac{\datamean \cdot (1-\currentmean)}{(1-\datamean)} \\
+		& = (1-\currentmean) \cdot \frac{1}{(1-\datamean)} \, . 
+	\end{align*}
+	% Refining the cumulant term
+	It follows, that
+	\begin{align*}
+		\cumfunctionwrt{\exformula,\currentdistribution}(\weightof{\formula}) 
+		& = \lnof{\sbcontraction{\currentdistribution, \expof{\weightof{\formula} \cdot \formula}}} \\
+		& = \lnof{1-\currentmean} - \lnof{1-\datamean} \, . 
+	\end{align*}
+	% Refining the mean product term
+	We further have
+	\begin{align*}
+		\datamean \cdot \weightof{\formula}
+		= \datamean \cdot \left[ \lnof{\frac{\datamean}{(1-\datamean)}\cdot \frac{(1-\currentmean)}{\currentmean}}  \right]	
+		= \datamean \lnof{\datamean} - \datamean \lnof{1-\datamean} + \datamean \lnof{1-\currentmean} - \datamean \lnof{\currentmean}
+	\end{align*}
+	and arrive at
+	\begin{align*}
+		\centropyof{\empdistribution}{\currentdistribution}
+		- \centropyof{\empdistribution}{\expdistof{(\exformula,\weightof{\formula},\currentdistribution)}}
+		& =  \datamean \lnof{\datamean} - \datamean \lnof{1-\datamean} + \datamean \lnof{1-\currentmean} - \datamean \lnof{\currentmean}
+		-  \lnof{1-\currentmean} - \lnof{1-\datamean} \\
+		& = \left( -\datamean \lnof{\currentmean} - (1-\datamean) \lnof{1-\currentmean} \right)  - \left( -\datamean \lnof{\datamean} - (1-\datamean) \lnof{1-\datamean} \right) \, . 
+	\end{align*}
+	By definition, this is the Kullback-Leibler divergence between Bernoulli distributions with parameters $\datamean$ and $\currentmean$.
+	%
+	Since the gain in the likelihood loss when restricting to $\energyhypothesis = \mathrm{span}(\formula)$ is thus given by $\kldivof{\sbcontraction{\empdistribution,\formula}}{\sbcontraction{\currentdistribution,\formula}}$, we have that Problem~\ref{prob:restrictedNaiveCE}  in the case $\energyhypothesis = \bigcup_{\formula\in\formulaset}\mathrm{span}(\formula)$ is solved at $\estcanparam = \weightof{\hat{\formula}}\cdot \hat{\formula}$ where
+		\[ \hat{\formula} = \kldivof{\sbcontraction{\empdistribution,\formula}}{\sbcontraction{\currentdistribution,\formula}} \, . \]
 \end{proof}
 
 %\begin{theorem}
@@ -353,6 +409,7 @@ We can apply this
 %\end{theorem}
 
 
+\red{Thus, we solve the grain heuristic with a coordinatewise transform of the mean parameter tensors to $\empdistribution$ and $\currentdistribution$, using the bernoulli Kullback-Leibler divergence as transform function.}
 
 
 % Interpretation
