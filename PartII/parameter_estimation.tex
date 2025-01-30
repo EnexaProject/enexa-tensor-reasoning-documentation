@@ -1,4 +1,7 @@
-\section{Parameter Estimation}\label{cha:parameterEstimation}
+\section{Unconstrained Parameter Estimation}\label{cha:parameterEstimation}
+
+\red{In this chapter we investigate unconstrained parameter estimated for Markov Logic Networks and Hybrid Logic Networks, which are special cases of the backward maps introduced in Chapter~\ref{cha:probDecomposition}.
+In the next chapter we impose sparsity constrains on the parameters.}
 
 We estimate the canonical parameters $\canparam$ in an exponential family.
 We first discuss parameter estimation in the more generic situation of exponential families and then discuss the more specific situation of Markov Logic Networks.
@@ -12,48 +15,47 @@ We therefore investigate methods to compute the backward mapping, in most genera
 
 \subsection{Learning Markov Logic Networks} % Check for redundancy with the mln introduction chapter!
 
+
+
 % Repetition and result transfering
 Markov Logic Networks are exponential families with statistics by a set $\formulaset$ of propositional formulas.
-We furthermore allow for base measures, to also include the discussion of Hybrid Logic Networks.
-Based on this fact, we can apply the theory of probabilistic inference, developed in Chapter~\ref{cha:probReasoning}.
+We furthermore allow for propositional formulas as base measures, to also include the discussion of Hybrid Logic Networks.
+
+%Based on this fact, we can apply the theory of probabilistic inference, developed in Chapter~\ref{cha:probReasoning}.
 
 % Special example: MLE
-The Maximum Likelihood Problem on MLNs is the estimation
+The Maximum Likelihood Problem on MLNs is the M-projection
 \begin{align*}
-	\argmax_{\canparam} 
-	\sbcontraction{\canparam,\datamean} - \cumfunctionof{\canparam} \, . 
+	\argmax_{\canparamat{\selvariable}\in\rr^{\seldim}} \quad 
+	\centropyof{\probtensor}{\expdistof{(\sstat,\basemeasure,\canparam)}}	
+\end{align*}
+in the base $\probtensor=\empdistribution$ for a data map $\datamap$.
+
+% Backward map
+The M-projection coincides, after dropping constant terms in case of non-trivial base measure, with the backward map
+\begin{align*}
+	\argmax_{\canparamat{\selvariable}\in\rr^{\seldim}} \quad 
+	\sbcontraction{\canparamat{\selvariable},\meanparamat{\selvariable}} - \cumfunctionof{\canparamat{\selvariable}} 
 \end{align*}
 where
 \begin{align*}
-	\datamean = \sbcontractionof{\sencodingof{\formulaset},\empdistribution}{\selvariable} 
+	\meanparam{\selvariable} = \sbcontractionof{\sencodingof{\formulaset},\probtensor}{\selvariable} 
 	\quad \text{and} \quad
-	\cumfunctionof{\canparam} = \sbcontraction{\expof{ \sbcontractionof{\sencodingof{\formulaset},\canparam}{\shortcatvariables} }, \basemeasure} \, . 
+	\cumfunctionof{\canparamat{\selvariable}} = \sbcontraction{\expof{ \sbcontractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables} }, \basemeasure} \, . 
 \end{align*}
-
-
-%Given an MLN we have
-%\begin{align}
-%	\lossof{\mlnparameters} = 
-%	 \log\partitionfunctionof{\mlnparameters}
-%	- \variablesum\formulasum\exformula(\datapointof{\variableindex})\cdot\weightof{\exformula}
-%\end{align}
-%and the Maximum Likelihood Problem
-%\begin{align}
-%	\argmin_{\mlnparameters} \lossof{\mlnparameters} \, .
-%\end{align}
-
 
 % Special example: MaxEnt
 The Maximum Entropy Problem for Markov Logic Networks is
 \begin{align}
-	\argmax_{\probtensor} \sentropyof{\probtensor} 
+	\argmax_{\probtensor} \quad \sentropyof{\probtensor} 
 	\quad \text{subject to} \quad  
 	\sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable}
-	 =  \datameanat{\selvariable} % \sbcontractionof{\empdistribution,\sencodingof{\formulaset}}{\selvariable}    
+	 =  \meanparamat{\selvariable} 
 \end{align}
 
 
 \begin{corollary}[of Theorem~\ref{the:maxEntMaxLikeDuality}]
+	\red{Works only for $\meanparamat{\indexedselvariable}\in(0,1)$}
 	Among all distributions $\probtensor$ of $\atomstates$ satisfying $\sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable}
 	 = \sbcontractionof{\empdistribution,\sencodingof{\formulaset}}{\selvariable}$ the Markov Logic Network with formulas $\formulaset$ and weights $\canparam$ being the solution of the maximum likelihood problem has minimal entropy.
 \end{corollary}
@@ -63,16 +65,85 @@ We notice, that the solution of the maximum entropy problem is thus a Markov Log
 This is remarkable, because this motivates our restriction to Markov Logic Networks as those distributions with maximal entropy given satisfaction rates of formulas in $\formulaset$.
 
 
-% MAP
-When having a prior $\probof{\mlnparameters}$ over the Markov Logic Networks we alternatively want to find the parameters $\mlnparameters$ solving the maximum a posteriori problem
-\begin{align}
-	\argmax_{\mlnparameters} \mlnprobat{\data}\cdot \probof{\mlnparameters}\, . 
-\end{align}
+\begin{remark}[Bayesian approach]
+	% MAP
+	\red{When treating $\canparam$ as a random tensor, which prior distribution is given and posteriori distribution wanted, we have a more involved Bayesian approach.}
+	When having a prior $\probof{\mlnparameters}$ over the Markov Logic Networks we alternatively want to find the parameters $\mlnparameters$ solving the maximum a posteriori problem
+	\begin{align}
+		\argmax_{\mlnparameters} \mlnprobat{\data}\cdot \probof{\mlnparameters}\, . 
+	\end{align}
+\end{remark}
 
 
 
+\subsection{Mean parameters}
+
+The convex polytope of realizable mean parameters (see Definition~\ref{def:meanForwardBackward}) is for a statistic $\formulaset$ of propositional formulas
+	\[ \meansetof{\formulaset} = \left\{ \sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable} \, : \, \probtensor\in\probtensorset \right\} \, ,\]
+where by $\probtensorset$ we denote the set of all probability distributions.
+
+For any $\meanparam\in\meansetof{\formulaset}$ we have one of the following:
+\begin{itemize}
+	\item All $\meanparamat{\indexedselvariable}\notin\{0,1\}$: Then reproducible by a Markov Logic Network, $\meanparam\in\meanset$
+	\item At least one $\meanparamat{\indexedselvariable}\notin\{0,1\}$ and one $\meanparamat{\indexedselvariable}\in\{0,1\}$: Then reproducible by aHybrid Logic Network
+	\item All $\meanparamat{\indexedselvariable}\in\{0,1\}$: Then reproducible by a Hard Logic Network
+\end{itemize}
 
 
+
+\begin{lemma}\label{lem:meanHLNrealizabilityCondition}
+	Let $\meanparam$ be in the boundary of $\meansetof{\formulaset}$, that is $\meanparam\in\closureof{\meanset}_{\formulaset}/\interiorof{\meanset}_{\formulaset}$.
+	%Then for at least one $\selindexin$ we have $\meanparamat{\indexedselvariable}\in\{0,1\}$. %True?
+	If $\meanparam\in\meansetof{\formulaset}$ then the formula
+		\[ \basemeasureofat{\formulaset,\meanparam}{\shortcatvariables} \coloneqq \bigwedge_{\selindexin \, : \, \meanparamat{\indexedselvariable}\in\{0,1\}}
+		\lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables} \]
+	is satisfiable, that is $\sbcontraction{\basemeasureof{\formulaset,\meanparam}}>0$. % Can also use probabilistic entailment for that: $\probtensor\models\basemeasure$
+\end{lemma}
+\begin{proof}
+	For any $\probtensor$ reproducing $\meanparam$ satisfies $\probtensor\models\enumformula$ if $\meanparamat{\indexedselvariable}=1$ and $\probtensor\models\lnot\enumformula$ if $\meanparamat{\indexedselvariable}=0$ and thus $\probtensor\models\basemeasureof{\formulaset,\meanparam}$.
+	If $\basemeasureof{\formulaset,\meanparam}$ is not satisfiable, this would imply $\sbcontraction{\probtensor}=0$ which is a contradiction to $\probtensor$ being a probability distribution.
+\end{proof}
+
+
+
+\begin{figure}[h]\label{fig:}
+\begin{center}
+	\input{PartII/tikz_pics/parameter_estimation/meanset_sketch.tex}
+\end{center}
+\caption{Sketch of the convex polytope ${\meansetof{\formulaset}}$ as a subset of the $\seldim$-dimensional cube $[0,1]^\seldim$ (here as a 2-dimensional projection) with example mean parameters $\meanparam_1,\meanparam_2,\meanparam_3$.
+The boundary points $\meanparam_1,\meanparam_2\in\closureof{\meanset}_{\formulaset}/\interiorof{\meanset}_{\formulaset}$ are examples of mean parameters, which can be realized by a Hard Logic Networks (respectively Hybrid Logic Network).%, if the criterion of Lemma~\ref{lem:meanHLNrealizabilityCondition} is satisfied.
+$\meanparam_3\in\interiorof{\meansetof{\formulaset}}$ is realizable by a Markov Logic Network.
+}
+\label{fig:DataDecomposition}
+\end{figure}
+
+
+
+\subsection{Parameter Estimation in Hybrid Networks}
+
+\red{
+Modify alternating weight optimization to deal with situations $\meanparamat{\indexedselvariable}\in\{0,1\}$: Add those as facts as base measures.
+}
+
+When there are facts, also situations $\hypercoreat{\catvariable=1}\in\{0,1\}$ can appear.
+It that case the formula is entailed or contradicted by the facts, and dropping should be considered in both cases.
+
+The max entropy - max likelihood duality still holds for hybrid logic networks as we show next.
+
+\begin{theorem}
+	Given a set of formulas $\tilde{\formulaset}$ and $\tilde{\meanparam}$, with coordinates $\tilde{\meanparam}_\selindex\in[0,1]$ in the closed interval $[0,1]$.
+	If the corresponding maximum entropy problem is feasible, its solution is a hybrid logic network with 
+	\begin{itemize}
+		\item $\hardformulaset= \{\enumformula : \selindexin, \meanparamat{\indexedselvariable} = 1\} \cup  \{\lnot\enumformula : \selindexin, \meanparamat{\indexedselvariable} = 0\} $
+		\item $\softformulaset = \{\enumformula : \selindexin, \meanparamat{\indexedselvariable} \in (0,1)\}$
+		\item $\canparam$ being the backward map evaluated at the vector $\meanparam$ consisting of the coordinates of $\tilde{\meanparam}$ not in $\{0,1\}$
+	\end{itemize}
+\end{theorem}
+\begin{proof}
+	Feasible distributions have a density with base measure by $\hardformulaset$, we therefore reduce the set of distributions in the argmax to those with density to the base measure.
+	The max entropy is a max entropy problem with respect to that base measure, where we only keep the constraints to the mean parameters different from $\{0,1\}$ (those are trivially satisfied).
+	The statement then follows from the generic property (see Sec3.1 in \cite{wainwright_graphical_2008}).
+\end{proof}
 
 
 
@@ -93,23 +164,18 @@ When having a prior $\probof{\mlnparameters}$ over the Markov Logic Networks we 
 
 \subsection{Alternating Algorithms to Approximate the Backward Map}\label{sec:alternatingParEstMLN}
 
-\red{Here we develop the algorithms of Section~\ref{sec:alternatingBackwardMap} in the special case of MLNs.}
-
-
-Let us now discuss an implementation of the Alternating Moment Matching Algorithm~\ref{alg:AMM} in case of Markov Logic Networks.
+Let us now introduce an implementation of the Alternating Moment Matching Algorithm~\ref{alg:AMM} in case of Markov Logic Networks.
 To solve the moment matching condition at a formula $\enumformula$ we refine Lemma~\ref{lem:mmContractionEquation} in the following.
-
-%\red{Need Lemma~\ref{lem:MM}?}
 
 \begin{lemma}\label{ref:lemMMinMLN}
 	Let there be a base measure $\basemeasure$, a formula selecting map $\formulaset=\{\enumformula \, : \, \selindexin\}$ and weights $\canparam$, and choose $\selindexin$ such that $\enumformula  \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.	
 	The moment matching condition relative to $\canparam$, $\selindexin$ and $\datameanat{\indexedselvariable}\in(0,1)$ is then satisfied, if
-	\begin{align*}
+	\begin{align} \label{sol:momentMatchingExformula}
 	 	\weightat{\indexedselvariable} = \lnof{
 		\frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})} 
 		\cdot \frac{\hypercoreat{\catvariableof{\enumformula }=0}}{\hypercoreat{\catvariableof{\enumformula }=1}} 
 		} 
-	\end{align*}
+	\end{align}
 	where by $\hypercoreat{\catvariableof{\enumformula }}$ we denote the contraction 
 	\begin{align*}
 	 	\hypercoreat{\catvariableof{\enumformula}} 
@@ -119,11 +185,11 @@ To solve the moment matching condition at a formula $\enumformula$ we refine Lem
 	\end{align*}
 \end{lemma}
 \begin{proof}
-	Noticing that since $\imageof{\enumformula}\subset[2]$
+	Since $\imageof{\enumformula}\subset[2]$ we have
 	\begin{align*}
 		\idrestrictedto{\imageof{\enumformula}} = \onehotmapofat{1}{\catvariableof{\enumformula}}
 	\end{align*}
-	the moment matching condition is by Lemma~\ref{lem:mmContractionEquation} satisfied if
+	and the moment matching condition is by Lemma~\ref{lem:mmContractionEquation} satisfied if
 	\begin{align*}
 		\sbcontraction{\headcoreof{\selindex}, \onehotmapof{1}, \hypercore}
 			= \sbcontraction{\headcoreof{\selindex},\hypercore} \cdot \datameanat{\indexedselvariable} \, . 
@@ -138,7 +204,7 @@ To solve the moment matching condition at a formula $\enumformula$ we refine Lem
 	 	\hypercoreat{\catvariableof{\enumformula}} 
 		= \contractionof{\{\rencodingof{\enumformula}\}
 		\cup\{\headcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
-		\cup\{\basemeasure\}}{\selvariable_\sstat} \, . 
+		\cup\{\basemeasure\}}{\selvariable} \, . 
 	\end{align*}
 	We notice that the right side is well defined, since we have by assumption $\datameanat{\indexedselvariable}, (1- \datameanat{\indexedselvariable}) \neq 0$ and $\hypercoreat{\catvariableof{\enumformula}=0}, \hypercoreat{\catvariableof{\enumformula}=1} \neq 0$ since Markov Logic networks are positive distributions and $\enumformula \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
 \end{proof}
@@ -214,11 +280,19 @@ We suggest an alternating optimization by Algorithm~\ref{alg:AWO}, solving the m
 \begin{algorithmic}
 %% INPUT: Numerated formula set, mean parameter $\datameanat{\selvariable}$
 %\For{$\exformula\in\formulaset$}
+\State $\kb = \ones$, $\secnodes=\varnothing$
 \For{$\selindexin$}
-	\State Compute
+	\If{$\meanparamat{\indexedselvariable}=1$}
+		\[ \hardformulaset \algdefsymbol \hardformulaset \cup \{\enumformula\}\]
+	%\EndIf
+	\ElsIf{$\meanparamat{\indexedselvariable}=1$}
+		\[ \hardformulaset \algdefsymbol \hardformulaset \cup \{\enumformula\}\]
+	\Else
+		\State $\secnodes\algdefsymbol \secnodes \cup \{\selindex\}$
+		\State Compute
 		\[ \hypercoreat{\catvariableof{\enumformula}}
 		\algdefsymbol \sbcontractionof{\rencodingof{\enumformula}}{\catvariableof{\enumformula}} \]
-	\State Set 
+		\State Set 
 		\begin{align*}
 	 		\canparamat{\indexedselvariable} 
 			\algdefsymbol \lnof{
@@ -226,10 +300,27 @@ We suggest an alternating optimization by Algorithm~\ref{alg:AWO}, solving the m
 			\cdot \frac{\hypercoreat{\catvariableof{\enumformula}=0}}{\hypercoreat{\catvariableof{\enumformula}=1}} 
 			} 
 		\end{align*}
+	\EndIf
 \EndFor
-\While{Stopping criterion is not met}
+\If {$\sbcontraction{\kb}=0$}
+	 \State \textbf{raise} "Inconsistent Knowledge Base"
+\EndIf
+%\For{$\selindexin$}
+%	\State Compute
+%		\[ \hypercoreat{\catvariableof{\enumformula}}
+%		\algdefsymbol \sbcontractionof{\rencodingof{\enumformula}}{\catvariableof{\enumformula}} \]
+%	\State Set 
+%		\begin{align*}
+%	 		\canparamat{\indexedselvariable} 
+%			\algdefsymbol \lnof{
+%			\frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})} 
+%			\cdot \frac{\hypercoreat{\catvariableof{\enumformula}=0}}{\hypercoreat{\catvariableof{\enumformula}=1}} 
+%			} 
+%		\end{align*}
+%\EndFor
+\While{Convergence criterion is not met}
 %\For{$\exformula\in\formulaset$}
-\For{$\selindexin$}
+\For{$\selindex\in\secnodes$}
 	\State Compute
 	\begin{align*}
 	 	\hypercoreat{\catvariableof{\enumformula}} 
@@ -262,7 +353,7 @@ This situation corresponds with couplings of the weights by a partition contract
 
 % Inference
 Solving Equation~\ref{sol:momentMatchingExformula} requires inference of a current model by answering the query to the formula $\texformula$.
-This can be a bottleneck and circumvented by approximative inference, see e.g. CAMEL [Ganapati et al.].
+This can be a bottleneck and circumvented by approximative inference, see e.g. CAMEL \cite{ganapathi_constrained_2008}.
 
 
 
@@ -298,26 +389,18 @@ We have already studied in Section~\ref{sec:MLNMaxMintermRep} how to represent a
 
 We use the tuple enumeration of the maxterms and minterms by $\atomstates$ introduced in Section~\ref{sec:termClauseDecomposition}.
 With respect to this enumeration the canonical parameters and mean parameters are tensors in $\bigotimes_{\atomenumeratorin}\rr^2$. 
-
 %% Interpretation of the mean parameters
-\red{This is since the sufficient statistics is the identity!}
-
-The mean parameters for the minterm and the maxterm exponential family have interpretations
+Since the statistic of the minterm family is the identity, the mean parameters for the minterm family are
 	\[ \meanparamat{\selvariableof{[\atomorder]}=\catindexof{[\atomorder]}} 
 	= \probat{\catindexof{[\atomorder]}} 
 	\]
-and therefore after a relabeling of categorical variables to selection variables$\meanparam=\probtensor$.
-
+and therefore after a relabeling of categorical variables to selection variables $\meanparam=\probtensor$.
 For maxterms we have analogously
 	\[ \meanparamat{\selvariableof{[\atomorder]}=\catindexof{[\atomorder]}} 
 	= 1-\probat{\catindexof{[\atomorder]}} 
 	\]
 and $\meanparam = \onesat{}-\probtensor$.
-
-%For minterms:
-%Mean parameters are the probability distribution itself.
-%For maxterms:
-%Mean parameters are $\onesat{\catvariableof{[\atomorder]}}-\probof{\catvariableof{[\atomorder]}}$
+We can use these insights to provide a characterization of the forward and backward maps of the minterm and maxterm family.
 
 \begin{theorem}
 	Given the Markov Logic Networks to the formula sets
@@ -336,7 +419,6 @@ and $\meanparam = \onesat{}-\probtensor$.
 			\quad \text{and} \quad 
 			\backwardmapwrt{\maxtermformulaset}(\meanparam) = -\lnof{\meanparam} \, .
 		 \]
-	
 \end{theorem}
 \begin{proof}
 	For the minterms we use that
@@ -384,14 +466,6 @@ and $\meanparam = \onesat{}-\probtensor$.
 	and $\backwardmapwrt{\mlnmintermsymbol}$ is thus a backward map for the exponential family of maxterms.
 \end{proof}
 
-
-
-%and has, when restricting to the normed weights $\sum \expof{\weight} = 1$  an inverse 
-%	\[ \weight \rightarrow \ln \weight \, . \]
-	
-
-	
-
 	
 % Fitting arbitrary distributions
 Any positive probability distribution can thus be fitted by minterms when we choose $\canparam=\lnof{\probtensor}$, respectively by maxterms when we choose $\canparam=\ones-\lnof{\probtensor}$.
@@ -414,7 +488,6 @@ The mean parameters coincide with the queries on the atomic formulas, that is th
 	Given a Markov Logic Network with the statistic $\atomformulaset$ of atomic formulas, the forward mapping from canonical parameters to mean parameters is the coordinatewise sigmoid, that is
 		\[ \forwardmapwrtof{\mlnatomsymbol}{\canparamat{\selvariable}} = \frac{\expof{\canparamat{\selvariable}}}{\onesat{\selvariable}+\expof{\canparamat{\selvariable}}}   \]
 	where the quotient is performed coordinatewise.
-%		\[  \forwardmapwrt{\mlnatomsymbol}(\canparam_0,\ldots,\canparam_{\atomorder-1}) = \left(\frac{\canparam_0}{1+\canparam_0},\ldots,\frac{\canparam_{\atomorder-1}}{1+\canparam_{\atomorder-1}}\right) \, . \]  %! 
 
 	A backward mapping is the coordinatewise logit, that is
 		\[ \backwardmapwrt{\mlnatomsymbol}(\meanparamat{\selvariable}) 
@@ -423,7 +496,6 @@ The mean parameters coincide with the queries on the atomic formulas, that is th
 			}{
 			\onesat{\selvariable}-\meanparamat{\selvariable}
 			}}  \, . \]
-%		\[  \backwardmapwrt{\mlnatomsymbol}(\meanparam_0,\ldots,\meanparam_{\atomorder-1}) = \left(\lnof{\frac{\meanparam_0}{1-\meanparam_0}},\ldots,\lnof{\frac{\meanparam_0}{1-\meanparam_0}}\right) \, . \] 
 \end{theorem}
 \begin{proof}
 	We have for any $\canparamat{\selvariable}\in\rr^{\atomorder}$
@@ -438,20 +510,7 @@ The mean parameters coincide with the queries on the atomic formulas, that is th
 		&=\sbcontraction{\atomicformulaof{\atomenumerator},  \normationof{\expof{\canparamat{\selvariable=\atomenumerator}\cdot \atomicformulaof{\atomenumerator}}}{\catvariableof{\atomenumerator}}} \\
 		& = \frac{\expof{\canparamat{\selvariable=\atomenumerator}}}{1+\expof{\canparamat{\selvariable=\atomenumerator}}} \, .
 	\end{align*}
-	
-%	\begin{align*}
-%	 	 \forwardmapwrt{\mlnatomsymbol}(\canparam) 
-%		&= \normationofwrt{
-%		\expof{\contractionof{\{\formulaof{[\atomorder]},\canparam\}}{\catvariableof{\formulaof{[\atomorder]} }}}
-%		}{\catvariableof{\formulaof{[\atomorder]}}}{\varnothing}  \\
-%%		&= \bigtimes_{\atomenumeratorin}  \normationofwrt{
-%%		\{\expof{\contractionof{\{\canparam_{\atomenumerator} \cdot \formulaof{\atomenumerator}\}}{\shortcatvariables}} \}
-%%		}{\shortcatvariables}{\varnothing} \\
-%		& = \bigtimes_{\atomenumeratorin} \normationofwrt{
-%		\expof{\contractionof{\{\formulaof{[\atomorder]},\canparam\}}{\catvariableof{\formulaof{[\atomorder]} }}}
-%		}{\catvariableof{\formulaof{[\atomorder]}}=\atomenumerator}{\varnothing} \\
-%		& = \bigtimes_{\atomenumeratorin} \frac{\canparam_\atomenumerator}{1+\canparam_\atomenumerator} \, .
-%	\end{align*}
+
 	Since the coordinatewise logit is the inverse function of the coordinatewise sigmoid the map
 	\begin{align*}
 		\backwardmapwrtof{\mlnatomsymbol}{\meanparamat{\selvariable}}[\selvariable=\atomenumerator] 
@@ -480,32 +539,6 @@ The maximum likelihood estimator of a positive probability distribution by the M
 %	We set the weights of $\weightof{\lnot\atomicformulaof{\atomenumerator}}=0$ (corresponding with a gauge normation of the energy offset symmetry). % Not needed!
 \end{remark}
 
-
-\subsection{Parameter Estimation in Hybrid Networks}
-
-
-
-Modify alternating weight optimization to deal with situations $\meanparamat{\indexedselvariable}\in\{0,1\}$: Add those as facts as base measures.
-
-When there are facts, also situations $\hypercoreat{\catvariable=1}\in\{0,1\}$ can appear.
-It that case the formula is entailed or contradicted by the facts, and dropping should be considered in both cases.
-
-The max entropy - max likelihood duality still holds for hybrid logic networks as we show next.
-
-\begin{theorem}
-	Given a set of formulas $\tilde{\formulaset}$ and $\tilde{\meanparam}$, with coordinates $\tilde{\meanparam}_\selindex\in[0,1]$ in the closed interval $[0,1]$.
-	If the corresponding maximum entropy problem is feasible, its solution is a hybrid logic network with 
-	\begin{itemize}
-		\item $\hardformulaset= \{\enumformula : \selindexin, \meanparamat{\indexedselvariable} = 1\} \cup  \{\lnot\enumformula : \selindexin, \meanparamat{\indexedselvariable} = 0\} $
-		\item $\softformulaset = \{\enumformula : \selindexin, \meanparamat{\indexedselvariable} \in (0,1)\}$
-		\item $\canparam$ being the backward map evaluated at the vector $\meanparam$ consisting of the coordinates of $\tilde{\meanparam}$ not in $\{0,1\}$
-	\end{itemize}
-\end{theorem}
-\begin{proof}
-	Feasible distributions have a density with base measure by $\hardformulaset$, we therefore reduce the set of distributions in the argmax to those with density to the base measure.
-	The max entropy is a max entropy problem with respect to that base measure, where we only keep the constraints to the mean parameters different from $\{0,1\}$ (those are trivially satisfied).
-	The statement then follows from the generic property (see Sec3.1 in \cite{wainwright_graphical_2008}).
-\end{proof}
 
 
 
