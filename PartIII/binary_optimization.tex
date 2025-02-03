@@ -1,89 +1,89 @@
-%\section{Reasoning by Binary Optimization}
-
-\section{Optimization of Sparse Tensors}
+\section{Binary Optimization of Sparse Tensors}
 
 Let us now study the problem of searching for the maximal coordinate in a tensor, when the tensor is represented in a basis+ CP Format. 
-
-
-% Appearance of 
-The search for maximal coordinates appears in various reasoning tasks:
-\begin{itemize}
-	\item MAP query: $\hypercore$ is the contraction of evidence with the distribution, leaving the query variables open.
-	\item Grafting: $\hypercore$ is the contraction of the gradient of the likelihood with the relational encoding of the hypothesis.
-\end{itemize}
-Both tasks have been formulated as mode search problems in exponential families.
 
 
 %\red{Search for the maximal coordinate in a tensor network is a binary optimization problem, given leg dimensions of 2.
 %We explain this perspective in this chapter and connect it to the HUBO/QUBO formalism.}
 
 
-%We here draw on the definition of formulas by binary polynomials.
-%Markov Logic Networks are also by definition polynomials (when placing the weighted exponentiation to the head core).
-%Thus, many reasoning tasks can be formulated as the maximation of binary polynomials, which are well-studied problems of higher-order binary optimization.
+\subsection{Mode search in exponential families}
 
-%\red{Here binary refers to the leg dimensions $\catdimof{\atomenumerator}$ being 2, not to binary coordinates!}
+Mode search 
+\begin{align*}
+	\max_{\shortcatindices\in\atomstates} \sbcontraction{\sencsstatat{\indexedshortcatvariables,\selvariable},\canparam} 
+	= \max_{\meanparam\in\meanset} \sbcontraction{\meanparamat{\selvariable},\canparamat{\selvariable}}
+\end{align*}
 
+
+% Appearance of mode search
+The search for maximal coordinates appears in various reasoning tasks:
+\begin{itemize}
+	\item MAP query as mode search of MLN: $\hypercore$ is the contraction of evidence with the distribution, leaving the query variables open.
+	\item Grafting as mode search of proposal distribution: $\hypercore$ is the contraction of the gradient of the likelihood with the relational encoding of the hypothesis.
+\end{itemize}
+Both tasks have been formulated as mode search problems in exponential families.
 
 
 
 \subsection{Higher-Order Unconstrained Binary Optimization (HUBO)}
 
+\red{
 Here binary refers to the leg dimensions $\catdimof{\atomenumerator}$ being 2, not to binary coordinates as often refered to in this work.
+}
+
 
 \begin{definition}
-	The binary optimization of a tensor $\hypercore\in\bigotimes_{\atomenumeratorin}\rr^2$ is the problem
+	The binary optimization of a tensor $\hypercoreat{\shortcatvariables}\in\atomstates$ is the problem
 	\begin{align}\tag{$\mathrm{P}_{\hypercore}$}\label{prob:HUBO}
-		\argmax_{\atomindices\in[2]} \hypercore(\atomindices) %\contractionof{\{\hypercore,\onehotmapof{\atomindices}\}}{\varnothing}  \, .
+		\argmax_{\shortcatindices\in\atomstates} \hypercoreat{\indexedshortcatvariables} 
 	\end{align}
-	We call Problem~\ref{prob:HUBO} a Higher Order Unconstrained Binary Optimization (HUBO) problem of order $\atomorder$ and sparsity $\slicesparsityof{\hypercore}$.
+	
+	We call Problem~\ref{prob:HUBO} a Higher Order Unconstrained Binary Optimization (HUBO) problem of order $\sliceorder$ and sparsity $\slicerankwrtof{\sliceorder}{\hypercore}$, when $\hypercore$ has a monomial decomposition (see Definition~\ref{def:polynomialSparsity}) with $\cardof{\variablesetof{\decindex}}\leq\sliceorder$ for all $\decindexin$, that is when $\slicerankwrtof{\sliceorder}{\hypercore}<\infty$.
+	
+	
 \end{definition}
 
 
+\begin{remark}[Leg dimensions larger than 2]
 % Leg dimension needs to be 2
-The leg dimension needs to be 2, in order to interpret indices as tuple of binaries.
-Legs with larger dimensions can be splitted into binary legs using a categorical constraint tensor.
-
-
-% 
-The sparsity $\slicesparsityof{\hypercore}$ is the minimal number of monomials, for which a weighted sum is equal to $\hypercore$.
-Thus we interpret Problem~\ref{prob:HUBO} as searching for the maximum in a polynomial consistent of $\slicesparsityof{\hypercore}$ monomial terms.
-
-
-\begin{remark}[Sparsity]% To sparse Tensor Calculus?
-
-The number $\slicesparsityof{\hypercore}$ of a tensor $\hypercore$ defining a HUBO is of central importance to have an effective solution.
-%Here the number of nonzero coordinates coincides with the number of monomials required to represent the polynomial as a sum.
-
-\red{We investigated the Sparsity as the slice sparsity not the vector sparsity in Chapter~\ref{cha:sparseTC}.}
-%We here investigate, whether the same reasoning assumptions used for sparse representation by tensor networks also lead to $\ell_0$-sparse tensors. 
-
+	We demanded leg dimensions $\catdimof{\atomenumerator}=2$ to have binary valued variables $\catvariableof{\catenumerator}$, which is required to connect with the formalism of binary optimization.
+	Categorical variables with larger dimensions can be represented by atomization variables, which are created by contractions with categorical constraint tensors (see Section~\ref{sec:categoricalTN}).
 \end{remark}
+
+
+% Interpretation of sparsity
+The sparsity $\slicerankwrtof{\sliceorder}{\hypercore}$ is the minimal number of monomials, for which a weighted sum is equal to $\hypercore$.
+Thus we interpret Problem~\ref{prob:HUBO} as searching for the maximum in a polynomial consistent of $\slicerankwrtof{\sliceorder}{\hypercore}$ monomial terms.
+\red{Each monomial is also refered to as potential.}
+
+
+
+%\begin{remark}[Sparsity]% To sparse Tensor Calculus?
+%
+%The number $\slicesparsityof{\hypercore}$ of a tensor $\hypercore$ defining a HUBO is of central importance to have an effective solution.
+%%Here the number of nonzero coordinates coincides with the number of monomials required to represent the polynomial as a sum.
+%
+%\red{We investigated the Sparsity as the slice sparsity not the vector sparsity in Chapter~\ref{cha:sparseTC}.}
+%%We here investigate, whether the same reasoning assumptions used for sparse representation by tensor networks also lead to $\ell_0$-sparse tensors. 
+%
+%\end{remark}
 
 
 
 
 \subsection{Quadratic Unconstrained Binary Optimization (QUBO)}
 
+\red{Quadratic Unconstrained Binary Optimization problems are HUBOs of order $\sliceorder=2$.}
+
 We refine the monomial decomposition of tensors (see Definition~\ref{def:polynomialSparsity}) by demanding that monomials consist of at most two variables.
 
 \begin{definition}
-	We call a monomial decomposition $\mathcal{M}$ of a tensor $\hypercore\in\bigotimes_{\atomenumeratorin}\rr^2$ a quadratic decomposition, if $\cardof{\variableset}\leq 2$ for all $(\lambda,\variableset,\catindexof{\variableset}) \in \mathcal{M}$.
-	We denote the smallest cardinality $\cardof{\mathcal{M}}$ among quadratic decompositions of $\hypercore$ by $\quacprankof{\hypercore}$.
+	We call a monomial decomposition $\sliceset$ of a tensor $\hypercore\in\atomspace$ a quadratic decomposition, if $\cardof{\variableset}\leq 2$ for all $(\lambda,\variableset,\catindexof{\variableset}) \in \sliceset$.
+	We denote the smallest cardinality $\cardof{\sliceset}$ among quadratic decompositions of $\hypercore$ by $\quacprankof{\hypercore}$.
 
 	If a tensor $\hypercore\in\bigotimes_{\atomenumeratorin}\rr^2$ has a quadratic decomposition, we call Problem~\ref{prob:HUBO} a Quadratic Unconstrained Binary Optimization (QUBO) problem of sparsity $\quacprankof{\hypercore}$.
 \end{definition}
-
-%\begin{definition}
-%	A quadratic decomposition of a tensor $\hypercore\in\bigotimes_{\atomenumeratorin}\rr^2$ consists of index sets $\indexsetof{\variableset}$ to each $\variableset\subset[\atomorder]$ and values $\scalarcoreof{\variableset, \catindexof{\variableset}}\in\rr$ for each $\catindexof{\variableset}\in \indexsetof{\variableset}$ such that
-%	\begin{align} % Almost copied from monomial decomposition
-%		\hypercore 
-%			= \sum_{\variableset\subset[\atomorder], \cardof{\variableset}\leq2} \sum_{\catindexof{\variableset}\in \indexsetof{\variableset}}  
-%			\scalarcoreof{\variableset, \catindexof{\variableset}} \cdot \left( \onehotmapof{\catindexof{\variableset}} \otimes \onesof{[\atomorder]/\variableset} \right)   \, . 
-%	\end{align} 
-%	We denote the smallest cardinality $\# \left( \bigcup_{\variableset\subset[\atomorder]} \indexsetof{\variableset} \right)$ among quadratic decompositions of $\hypercore$ by $\quacprankof{\hypercore}$.
-%	When $\hypercore$ admits a quadratic decomposition, we call Problem~\ref{prob:HUBO} a Quadratic Unconstrained Binary Optimization (QUBO) problem of order $\atomorder$ and sparsity $\quacprankof{\hypercore}$.
-%\end{definition}
 
 % CP Decompositions
 Analogously to monomial decompositions, quadratic decompositions have an equivalence in a CP decomposition of $\hypercore$.

@@ -143,32 +143,17 @@ This is a typical tabular format to store relational databases.
 The minimal rank of CP Decompositon is closely related to polynomial sparsity of the map $\hypercore$, which we will define next.
 
 \begin{definition}\label{def:polynomialSparsity}
-	A monomial decomposition of a tensor $\hypercore\in\facspace$ 
-	%consists of index sets $\indexsetof{\variableset}$ to each $\variableset\subset[\atomorder]$ and values $\scalarcoreat{\variableset, \catindexof{\variableset}}\in\rr$ for each $\catindexof{\variableset}\in \indexsetof{\variableset}$ such that
-	is a set $\sliceset$ of tuples $\slicetupleof{}$ where $\slicescalar\in\rr, \variableset\subset[\atomorder]$ and $\catindexof{\variableset}\in\bigtimes_{\atomenumerator\in\variableset} [\catdimof{\atomenumerator}]$ such that
+	A monomial decomposition of a tensor $\hypercore\in\facspace$ is a set $\sliceset$ of tuples $\slicetupleof{}$ where $\slicescalar\in\rr, \variableset\subset[\atomorder]$ and $\catindexof{\variableset}\in\bigtimes_{\atomenumerator\in\variableset} [\catdimof{\atomenumerator}]$ such that
 	\begin{align}\label{eq:decIntoMonomials}
 		\hypercoreat{\shortcatvariables} = \sum_{\slicetupleof{}\in\sliceset} \slicescalar \cdot \contractionof{\onehotmapof{\catindexof{\variableset}}}{\shortcatvariables} \, .
 	\end{align}
-%	\begin{align}
-%		\hypercore 
-%			= \sum_{\variableset\subset[\atomorder]} \sum_{\catindexof{\variableset}\in \indexsetof{\variableset}}  
-%			\scalarcoreat{\variableset, \catindexof{\variableset}} \cdot \left( \onehotmapof{\catindexof{\variableset}} \otimes \onesof{[\atomorder]/\variableset} \right)   \, . 
-%	\end{align}
-	For any tensor $\hypercore\in\facspace$ we define its polynomial sparsity as
+	For any tensor $\hypercore\in\facspace$ we define its polynomial sparsity of order $\sliceorder$ as
 	\begin{align*}
-		\slicesparsityof{\hypercore} =
+		\slicerankwrtof{\sliceorder}{\hypercore} =
 		 \min \left\{ \cardof{\sliceset} \, : \, 
-		 	\hypercoreat{\shortcatvariables} = \sum_{\slicetupleof{}\in\sliceset} \slicescalar \cdot \contractionof{\onehotmapof{\catindexof{\variableset}}}{\shortcatvariables} 
+		 	\hypercoreat{\shortcatvariables} = \sum_{\slicetupleof{}\in\sliceset} \slicescalar \cdot \contractionof{\onehotmapof{\catindexof{\variableset}}}{\shortcatvariables} \, , \, \forall_{\slicetupleof{}\in\sliceset} \cardof{\variableset} \leq \sliceorder \, . 
 		 \right\}
 	\end{align*}
-%	\begin{align}
-%		\slicesparsityof{\hypercore} =
-%		 \min \left\{ \# \left( \bigcup_{\variableset\subset[\atomorder]} \indexsetof{\variableset} \right) \, : \, \exists \scalarcoreat{\variableset, \catindexof{\variableset}} \in \rr : 
-%		 \hypercore 
-%		 	= \sum_{\variableset\subset[\atomorder]} \sum_{\catindexof{\variableset}\in \indexsetof{\variableset}}  
-%			\scalarcoreat{\variableset, \catindexof{\variableset}} \cdot \left( \onehotmapof{\catindexof{\variableset}} \otimes \onesof{[\atomorder]/\variableset} \right)   
-%		 \right\}
-%	\end{align}
 \end{definition}
 
 
@@ -180,6 +165,15 @@ The monomial of multiple such binary variables indicated, whether all variables 
 	\[ \onehotmapofat{\catindexof{\variableset}}{\catvariableof{\variableset}} = \bigotimes_{\atomenumerator\in\variableset} \onehotmapofat{\catindexof{\atomenumerator}}{\catvariableof{\atomenumerator}}  \, . \]
 The states of the variables labeled by $\atomenumerator\in[\atomorder]/\variableset$ are not specified in the monomial and the monomial is trivially extended to
 	\[ \contractionof{\onehotmapof{\catindexof{\variableset}}}{\shortcatvariables}  = \onehotmapofat{\catindexof{\variableset}}{\catvariableof{\variableset}} \otimes \onesat{\catvariableof{[\atomorder]/\variableset}} \, .   \]
+
+
+% Infinite rank
+\red{
+For some $\sliceorder<\catorder$ there are tensors $\hypercoreat{\shortcatvariables}$, which do not have a monomial monomial decomposition with $\cardof{\variablesetof{\decindex}} \leq \sliceorder$ for all $\decindex$.
+In that case we the minimum is over an empty set and we define $\slicerankwrtof{\sliceorder}{\hypercore}=\infty$.
+If $\sliceorder\geq\catorder$, the $\slicerankwrtof{\sliceorder}{\hypercore}$ is always finite, since it coincides with the basis+ CP rank, as we show next.
+}
+
 
 %% Interpretation as Monomial Sparsity
 %Each tensor $\lambda \cdot \contractionof{\onehotmapof{\catindexof{\variableset}}}{\shortcatvariables}$ is a by $\lambda\in\rr$ weighted monomial of the variables (or their negations) in $\variableset$.
@@ -310,13 +304,13 @@ The set of slice-sparse tensors coincides with the expressivity of specific sele
 We first define a slice selecting tensor and then show its decomposition into a formula selecting neural network.
 
 \begin{definition}
-	Given a set of atomic variables $\shortcatvariables$, a slice selecting tensor of maximal cardinality $\selorder$ is the tensor
-		\[ \fselectionmapat{\shortcatvariables,\selvariableof{0,0},\ldots,\selvariableof{\selorder-1,0},\selvariableof{0,1},\ldots,\selvariableof{\selorder-1,1}} \]
+	Given a set of atomic variables $\shortcatvariables$, a slice selecting tensor of maximal cardinality $\sliceorder$ is the tensor
+		\[ \fselectionmapat{\shortcatvariables,\selvariableof{0,0},\ldots,\selvariableof{\sliceorder-1,0},\selvariableof{0,1},\ldots,\selvariableof{\sliceorder-1,1}} \]
 	with dimensions
 		\[ \seldimof{\selenumerator,0} = 2, \seldimof{\selenumerator,1} = \atomorder \]
 	and coordinates
 	\begin{align*}
-		& \fselectionmapat{\shortcatvariables=\shortcatindices,\indexedselvariableof{0,0},\ldots,\indexedselvariableof{\selorder-1,0},\indexedselvariableof{0,1},\ldots,\indexedselvariableof{\selorder-1,1}} \\
+		& \fselectionmapat{\shortcatvariables=\shortcatindices,\indexedselvariableof{0,0},\ldots,\indexedselvariableof{\sliceorder-1,0},\indexedselvariableof{0,1},\ldots,\indexedselvariableof{\sliceorder-1,1}} \\
 		& \quad = \begin{cases}
 			1 & \text{if} \quad 
 			\forall_{\atomenumerator,\selenumerator} : \big(  \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \big) \Rightarrow  (\selindexof{\selenumerator,0} = \catindexof{\atomenumerator})  \\
@@ -336,7 +330,7 @@ In the next two Lemmata we first show that the defined slice selecting tensors i
 \begin{proof}
 	We need to show that 
 	\begin{align}\label{eq:sliceFromSliceSelector}
-	  	\fselectionmapat{\shortcatvariables,\indexedselvariableof{0,0},\ldots,\indexedselvariableof{\selorder-1,0},\indexedselvariableof{0,1},\ldots,\indexedselvariableof{\selorder-1,1}} = \onehotmapofat{\catindexof{\variableset}}{\shortcatvariables} \, . 
+	  	\fselectionmapat{\shortcatvariables,\indexedselvariableof{0,0},\ldots,\indexedselvariableof{\sliceorder-1,0},\indexedselvariableof{0,1},\ldots,\indexedselvariableof{\sliceorder-1,1}} = \onehotmapofat{\catindexof{\variableset}}{\shortcatvariables} \, . 
 	\end{align}
 	If and only if an index $\tilde{\catindex}_{[\atomorder]}$ reduced on $\variableset$ does not coincide with $\catindexof{\variableset}$, we have $\onehotmapofat{\catindexof{\variableset}}{\shortcatvariables=\tilde{\catindex}_{[\atomorder]}}=0$ and otherwise $\onehotmapofat{\catindexof{\variableset}}{\shortcatvariables=\tilde{\catindex}_{[\atomorder]}}=1$ .
 	Let us notice, that this condition is equivalent to 
@@ -349,15 +343,15 @@ In the next two Lemmata we first show that the defined slice selecting tensors i
 	The slice selection tensor coincides with a formula selecting neural network with neurons (see Figure~\ref{fig:sliceSelectingNN}):
 	\begin{itemize}
 		\item unary input neuron enumerated by $\selenumerator$, selecting one of the $\shortcatvariables$ with the variable $\selvariableof{\selenumerator,1}$ and selecting a connective in $\{\lnot, \mathrm{Id}, \mathrm{True}\}$ by $\selvariableof{\selenumerator,0}$
-		\item $\selorder$-ary output neuron fixed to the $\land$ connective.
+		\item $\sliceorder$-ary output neuron fixed to the $\land$ connective.
 	\end{itemize}
 \end{lemma}
 \begin{proof}
 	This can be easily checked on each coordinate.
 \end{proof}
 
-It follows, that the expressivity of the slice selecting neural network coincides with the set of tensors with a bound on their slice sparsity, when $\selorder\geq\atomorder$.
-For arbitrary $\selorder$, the following theorem holds.
+It follows, that the expressivity of the slice selecting neural network coincides with the set of tensors with a bound on their slice sparsity, when $\sliceorder\geq\atomorder$.
+For arbitrary $\sliceorder$, the following theorem holds.
 
 \begin{theorem}
 	Let $\fselectionmap$ be a slice selecting tensor.
@@ -387,7 +381,7 @@ One application is as a parametrization scheme in the approximation of a tensor 
 
 \red{
 The approximated parameter can then be used as a proxy energy to be maximized.
-When choosing $\selorder=2$, the approximating tensor contains only quadratic slices, which then poses a QUBO problem.
+When choosing $\sliceorder=2$, the approximating tensor contains only quadratic slices, which then poses a QUBO problem.
 }
 
 \begin{remark}[Extension to arbitrary CP-formats]
@@ -414,7 +408,10 @@ Especially useful, when the leg dimensions are two, where the slice decompositio
 
 \begin{theorem}\label{the:sliceToCP}
 	For any tensor $\hypercoreat{\shortcatvariables}\in\facspace$ we have
-		\[ \cprankof{\hypercore} \leq \bincprankof{\hypercore} \leq \baspluscprankof{\hypercore} \leq \bascprankof{\hypercore} \, . \]
+		\[ \cprankof{\hypercore} 
+		\leq \bincprankof{\hypercore} 
+		\leq \baspluscprankof{\hypercore} 
+		\leq \bascprankof{\hypercore} \, . \]
 \end{theorem}	
 \begin{proof}
 	% First bound
