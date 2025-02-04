@@ -728,72 +728,192 @@ We can transform certain HUBO problems in QUBO problems with the usage of auxili
 
 Let us now show how optimization problems can be represented as linear programming problems.
 
+% State vector
+We define for each index tuple $\shortcatindices\in\facstates$ a vector $\statevectorofat{\shortcatindices}{\selvariable}\in\rr^{\catorder}$ with coordinates
+	\[ \statevectorofat{\shortcatindices}{\selvariable=\catenumerator} = \catindexof{\catenumerator} \, .  \]
+
 \begin{definition}
-	The integer linear program (ILP) of $A\in\rr^{n \times d}$ and $b\in\rr^{n}$ is the problem
+	The integer linear program (ILP) of $\matrixat{\datvariable,\selvariable}\in\rr^{n \times d}$, $b[\datvariable]\in\rr^{n}$ and $c\in\rr^{\catorder}$ is the problem
 	\begin{align*}
-		\max_{\shortcatindices\in\facstates} \sum_{\catenumeratorin} c[\selvariable=\catenumerator] \cdot \catindexof{\catenumerator} 
-		 \quad \text{subject to } \quad A \shortcatindices \leq b \, . 
+		\argmax_{\shortcatindices\in\facstates} \sbcontraction{c[\selvariable], \statevectorofat{\shortcatindices}{\selvariable}}
+		 \quad \text{subject to } \quad \sbcontraction{\matrixat{\datvariable,\selvariable},\statevectorofat{\shortcatindices}{\selvariable}} \prec b[\datvariable] \, ,
 	\end{align*}
+	where by $\prec$ we denote partial ordering of tensors (see Definition~\ref{def:partialFTOrder}).
 \end{definition}
 
-%\begin{definition}
-%	A Binary Integer Linear Program (ILP) is a problem of the form
-%	\begin{align*}
-%		\max_{x \in\{0,1\}^n} c^T x \quad \text{subject to } \quad A^{upper} x \leq b^{upper} , A^{lower} x \geq b^{lower} 
-%	\end{align*}
-%	where $A^{upper}\in\rr^{n^{upper}\times n}$, $b^{upper}\in\rr^{n^{upper}}$, $A^{lower}\in\rr^{n^{lower}\times n}$, $b^{lower}\in\rr^{n^{lower}}$.
-%\end{definition}
+
+We now show that any binary optimization problem of a tensor can be transformed into a integer linear program, given a monomial decomposition of the tensor $\hypercoreat{\shortcatvariables}$ by $\sliceset=\enumeratedslices$.
+For this we choose state indices by vectors
+\begin{align*}
+	\seccatindex_{[\catorder+\decdim]} = \catindexof{0},\ldots,\catindexof{\catorder-1},\slackindexof{0},\ldots\slackindexof{\decdim-1} \in \left(\bigtimes_{\catenumeratorin}[2]\right) \times  \left(\bigtimes_{\decindexin}[2]\right) \, ,
+\end{align*}
+that is we added for each monomial an index $\slackindexof{\decindex}$, which will represent the evaluations of the respective monomial.
+
+
+We furthermore define a vector $c[\selvariable]$, where $\selvariable$ takes values in $[\catorder+\decdim]$, as
+\begin{align}\label{eq:ilpPotential}
+	c[\indexedselvariable] =
+	\begin{cases}
+		\slicescalarof{\decindex} & \text{if for a } \decindexin \text{ we have } \selindex = \catorder + \decindex \\
+		0 & \text{else} 
+	\end{cases} \, . 
+\end{align}
+
+To construct a matrix $\matrixat{\datvariable,\selvariable}$ and a vector $b[\datvariable]$ to the monomial decomposition $\sliceset$, we now introduce a variable $\datvariable$ enumerating linear inequalities, which takes values in $[\datanum]$, where
+	\[ \datanum =  \sum_{\decindexin} \left(\cardof{\variablesetof{\decindex}} +1\right) \, . \]
+We define for each $\decindexin$ an auxiliary number
+	\[ \datanum_{\decindex} = \sum_{\tilde{\decindex}=0}^{\decindex} \left(\cardof{\variablesetof{\tilde{\decindex}}} +1\right) \]
+enumerate by $\seccatenumerator$ the set $\variablesetof{\decindex}$ and set for $\selindex\in[\catorder+\decdim]$ the coordinates 
+\begin{align}\label{eq:ilpMatrix}
+	\matrixofat{\sliceset}{\datvariable=\datanum_{\decindex}+\datindex,\indexedselvariable} =
+	\begin{cases}
+		1 - 2 \cdot  \catindexof{\seccatenumerator}^{\decindex} & \text{if }  \datindex = \selindex  \text{ and } \selindex = \seccatenumerator   \\ % First $\catorder$ conditions, on x 
+		1 & \text{if } \datindex < \catorder  \text{ and } \selindex=\catorder+\decindex \\ % First $\catorder$ conditions on $z$
+		-\catindexof{\seccatenumerator}^{\decindex} & \text{if }  \datindex = \cardof{\variablesetof{\decindex}} + 1   \text{ and }  \selindex=\seccatenumerator  \\ % Last condition on $x$
+		-1 & \text{if }  \datindex = \cardof{\variablesetof{\decindex}} + 1  \text{ and }  \selindex = \catorder + \decindex \\ % Last condition on $x$
+	\end{cases} \, . 
+\end{align}
+All further coordinates of $\matrixofat{\sliceset}{\datvariable,\selvariable}$ not reached by this construction are set to $0$.
+Similarly, we define $\rhsofat{\sliceset}{\datvariable}$ as the vector which nonvanishing coordinates are for $\decindexin$ at
+\begin{align}\label{eq:ilpRhs}
+	\rhsofat{\sliceset}{\datvariable=\datanum_{\decindex}+\datindex} =
+	\begin{cases}
+		1 & \text{if }  \datindex = \seccatenumerator \text{ and } \catindexof{\seccatenumerator}^{\decindex} = 0 \\ % First $\catorder$ conditions, on x 
+		-1 + \cardof{\{\seccatenumerator\in\variablesetof{\decindex} \, : \,  \catindexof{\seccatenumerator}^{\decindex} = 1\}}  & \text{if }  \datindex = \cardof{\variablesetof{\decindex}} + 1  \text{ and }  \selindex = \catorder + \decindex \\ % Last condition on $x$
+	\end{cases} \, . 
+\end{align}
+
+
+% Intuition
+Informally, we pose for each slice $\cardof{\variableset}+1$ linear equations. 
+The first $\cardof{\variableset}$ enforce, that the slice representing variable $\slackvariable$ is zero once a leg is $0$.
+The last enforces that the slice representing variable is $1$. 
+We prove this claim more formally in the next theorem.
 
 \begin{theorem}
-	Given a monomial decomposition $\sliceset=\enumeratedslices$ of a tensor $\hypercore$ we define an Binary ILP as the maximation of 
-	\begin{align*}
-		\sum_{\decindexin} \slicescalar^{\decindex} \slackvariable^{\decindex} 
-	\end{align*}
-	with the constraints for any $\decindex$
-	\begin{itemize}
-		\item 
-		\begin{align*}
-			\slackvariable^{\decindex}  \leq \catvariableof{\atomenumerator} \quad \text{for} \quad \atomenumerator\in\variableset^j , \catindexof{\atomenumerator} = 1
-		\end{align*}
-		\item 
-		\begin{align*}
-			\slackvariable^{\decindex}  \leq (1-\catvariableof{\atomenumerator}) \quad \text{for} \quad \atomenumerator\in\variableset^j , \catindexof{\atomenumerator} = 0
-		\end{align*}
-		\item 
-		\begin{align*}
-			\slackvariable^{\decindex} \geq 1 + \sum_{\atomenumerator\in\variableset^{\decindex} : \catindexof{\atomenumerator} = 1} (\catvariableof{\atomenumerator} -1)
-		- \sum_{\atomenumerator\in\variableset^{\decindex} : \catindexof{\atomenumerator} = 0} \catvariableof{\atomenumerator} 
-		\end{align*}
-	\end{itemize}
-	The solution $\catindex^{ILP,\sliceset}$ of this ILP and the solution $\catindex^{HUBO,\sliceset}$ of the HUBO coincide on the variables of hypercore, i.e.
-		\[ \catindex^{ILP,\sliceset}|_{[d]} =  \catindex^{HUBO,\sliceset} \, . \]
+	Given a monomial decomposition $\sliceset=\enumeratedslices$ of a tensor $\hypercore$, let  $\catindex^{ILP,\sliceset}$ be a solution of the integer linear program defined by the matrix and vectors in equations \eqref{eq:ilpPotential}, \eqref{eq:ilpMatrix} and \eqref{eq:ilpRhs}.
+	Then we have
+		\[ \restrictionofto{\catindex^{ILP,\sliceset}}{[\catorder]} \in \argmax_{\shortcatindices\in\atomstates} \quad \hypercoreat{\indexedshortcatvariables} \, ,\]
+	where by  $\restrictionofto{\catindex^{ILP,\sliceset}}{[\catorder]}$ we denote the vector of the first $\catorder$ indices of $\catindex^{ILP,\sliceset}$.
+%	we define an Binary ILP as the maximation of 
+%	\begin{align*}
+%		\sum_{\decindexin} \slicescalar^{\decindex} \slackvariable^{\decindex} 
+%	\end{align*}
+%	with the constraints for any $\decindex$
+%	\begin{itemize}
+%		\item 
+%			\begin{align*}
+%			\matrixat{\datvariable=} %  \leq \catvariableof{\atomenumerator} \quad \text{for} \quad \atomenumerator\in\variableset^j , \catindexof{\atomenumerator} = 1
+%			\end{align*}
+%		\item 
+%		\begin{align*}
+%			\slackvariable^{\decindex}  \leq \catvariableof{\atomenumerator} \quad \text{for} \quad \atomenumerator\in\variableset^j , \catindexof{\atomenumerator} = 1
+%		\end{align*}
+%		\item 
+%		\begin{align*}
+%			\slackvariable^{\decindex}  \leq (1-\catvariableof{\atomenumerator}) \quad \text{for} \quad \atomenumerator\in\variableset^j , \catindexof{\atomenumerator} = 0
+%		\end{align*}
+%		\item 
+%		\begin{align*}
+%			\slackvariable^{\decindex} \geq 1 + \sum_{\atomenumerator\in\variableset^{\decindex} : \catindexof{\atomenumerator} = 1} (\catvariableof{\atomenumerator} -1)
+%		- \sum_{\atomenumerator\in\variableset^{\decindex} : \catindexof{\atomenumerator} = 0} \catvariableof{\atomenumerator} 
+%		\end{align*}
+%	\end{itemize}
+% The solution $\catindex^{ILP,\sliceset}$ of this ILP and the solution $\catindex^{HUBO,\sliceset}$ of the HUBO coincide on the variables of hypercore, i.e.
 \end{theorem}
 \begin{proof}
-	We have to show that the constraints are satisfied if and only if $\slackvariable^{\decindex}=\onehotmapofat{\catvariableof{\variableset^{\decindex}}^{\decindex}}{\indexedcatvariableof{\variableset^{\decindex}}}$.
+	We show that the constraints by 
+		\[ \sbcontraction{\matrixofat{\sliceset}{\datvariable,\selvariable},\statevectorofat{\shortcatindices}{\selvariable}} \prec \rhsofat{\sliceset}{\datvariable} \]
+	are satisfied, if and only if for all $\decindexin$
+		\[ \slackindexof{\decindex} 
+		= \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 0} (1 - \catindexof{\seccatenumerator}^\decindex) \right)
+		\cdot \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 1}  \catindexof{\seccatenumerator}^\decindex \right) \, . 
+		 \]
+	For any $\decindexin$ the constraints $\datanum_{\decindex}+\seccatenumerator$ for $\seccatenumerator\in\cardof{\variablesetof{\decindex}}$ are 
+	\begin{align*}
+		\slackindexof{\decindex} \leq 
+		\begin{cases}
+			\catindexof{\seccatenumerator}^\decindex  & \text{if } \catindexof{\seccatenumerator}^\decindex = 1 \\
+			(1- \catindexof{\seccatenumerator}^\decindex ) & \text{if } \catindexof{\seccatenumerator}^\decindex = 0 \\			
+		\end{cases}
+	\end{align*}
+	and thus $\slackindexof{\decindex}=0$ if we have a mismatch on one leg, which establishes 
+		\[ \slackindexof{\decindex} 
+		\leq \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 0} (1 - \catindexof{\seccatenumerator}^\decindex) \right)
+		\cdot \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 1}  \catindexof{\seccatenumerator}^\decindex \right) \, . 
+		 \]
+	The constraint $\datanum_{\decindex}+\cardof{\variablesetof{\decindex}}$ is
+	\begin{align*}
+		\slackindexof{\decindex} \geq 1 -
+		 \left( \sum_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 0} \catindexof{\seccatenumerator}^\decindex \right)
+		 + \left( \sum_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 1}  (\catindexof{\seccatenumerator}^\decindex - 1 )\right)
+	\end{align*}
+	which enforces 
+		\[ \slackindexof{\decindex} 
+		\geq \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 0} (1 - \catindexof{\seccatenumerator}^\decindex) \right)
+		\cdot \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 1}  \catindexof{\seccatenumerator}^\decindex \right)  \, . 
+		 \]
+	In summary we arrive at 
+		\[ \slackindexof{\decindex} 
+		= \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 0} (1 - \catindexof{\seccatenumerator}^\decindex) \right)
+		\cdot \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 1}  \catindexof{\seccatenumerator}^\decindex \right)  
+		 \]
+	if and only if the indices $\seccatindex_{[\catorder+\decdim]}$ are feasible.
+	
+	Now, for any $\shortcatindices$, there is exactly one feasible index $\seccatindex_{[\catorder+\decdim]}$ extending $\shortcatindices$, and the objective takes for this index the value 
+	\begin{align}
+	 	 \sbcontraction{c[\selvariable], \statevectorofat{\shortcatindices}{\selvariable}} 
+		 &= \sum_{\decindexin} \slicescalarof{\decindex} \cdot \slackindexof{\decindex} \\
+		 &= \sum_{\decindexin} \slicescalarof{\decindex} \cdot \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 0} (1 - \catindexof{\seccatenumerator}^\decindex) \right)
+		\cdot \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 1}  \catindexof{\seccatenumerator}^\decindex \right)  \\
+		& = \hypercoreat{\indexedshortcatvariables} \, . 
+	 \end{align}
+	 Therefore, any solution of the ILP reduced to the first $\catorder$ indices corresponding with the axis of $\hypercore$, is a solution of the binary optimization problem to $\hypercore$.
 \end{proof}
 
 
 
+% Sparsity
+In order to achieve a sparse linear program it is benefitial to use a monomial decomposition with small order and rank.
+Beside this sparsity, the matrix $\matrixofat{\sliceset}{\datvariable,\selvariable}$ is often $\ell_0$-sparse, and has thus an efficient representation in a basis CP format.
+More precisely we have by the above construction 
+\begin{align*}
+	\sparsityof{\matrixofat{\sliceset}{\datvariable,\selvariable}} \leq \sum_{\decindexin} 3 \cdot \cardof{\variablesetof{\decindex}} +1 \, . 
+\end{align*}
 
 
+\subsection{Value subspaces of functions}\label{sec:HT}
 
+\red{To Basis Calculus?}
 
+We here provide a subspace perspective for the sparse representation of decomposable functions as tensor networks in the $\rencodingof{\cdot}$ relational encoding scheme of basis calculus.
 
+\begin{definition}
+	Given any function $\exfunction$ on $\facstates$ we define its value subspace as 
+		\[ \subspaceof{\exfunction} = \left\{\sbcontractionof{\rencodingofat{\exfunction}{\catvariableof{\exfunction},\shortcatvariables},W[\catvariableof{\exfunction}]}{\shortcatvariables} \, : \, W[\catvariableof{\exfunction}] \in \rr^{\cardof{\imageof{\exfunction}}} \right\} \]
+\end{definition}
 
-\subsection{Subspaces of formulas}\label{sec:HT}
-
-\red{
-Formula Tensors have Tensor Network decomposition, which are best represented in a $\htformat$ decomposition.
-We here describe this perspective and show applications of this formalism in the recovery/learning of formula tensors.
-}
-The decomposition of formula tensors is basic, since atomic formula tensors being on the leafs consist of basic vectors in the respective legs.
-
-
-\subsubsection{Formula Subspaces}
-
-Each formula tensor defines the subspace of $\atomspace$
+Composition of functions $\exformula,\secexformula$ on distinct variables is then a choice of a subspace in the tensor product of the two function subspaces, that is
 \begin{align}
-	\subspaceof{\exformula} = \mathrm{span} \left\{ \lnot\exformula,\exformula \right\} = \mathrm{im}\left(\ftensorof{\exformula} \right)
+	\subspaceof{\exformula\exconnective\secexformula} 
+	\subset \subspaceof{\exformula} \otimes \subspaceof{\secexformula} \, . 
+\end{align}
+
+
+%\red{
+%Formula Tensors have Tensor Network decomposition, which are best represented in a $\htformat$ decomposition.
+%We here describe this perspective and show applications of this formalism in the recovery/learning of formula tensors.
+%}
+%The decomposition of formula tensors is basic, since atomic formula tensors being on the leafs consist of basic vectors in the respective legs.
+
+
+\subsubsection{Propositional Formula Subspaces}
+
+
+
+Each formula defines by its relational encoding the subspace of $\atomspace$
+\begin{align}
+	\subspaceof{\exformula} = \spanof{\lnot\exformula,\exformula} %=  \mathrm{im}\left(\ftensorof{\exformula} \right)
 	%\mathrm{span} \left\{ \braket{\atombasisvector_1,\ftensorof{\exformula}}, \braket{\atombasisvector_0,\ftensorof{\exformula}} \right\}
 \end{align}
 
