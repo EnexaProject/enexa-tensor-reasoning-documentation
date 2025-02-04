@@ -167,27 +167,34 @@ The states of the variables labeled by $\atomenumerator\in[\atomorder]/\variable
 	\[ \contractionof{\onehotmapof{\catindexof{\variableset}}}{\shortcatvariables}  = \onehotmapofat{\catindexof{\variableset}}{\catvariableof{\variableset}} \otimes \onesat{\catvariableof{[\atomorder]/\variableset}} \, .   \]
 
 
-% Infinite rank
-\red{
-For some $\sliceorder<\catorder$ there are tensors $\hypercoreat{\shortcatvariables}$, which do not have a monomial monomial decomposition with $\cardof{\variablesetof{\decindex}} \leq \sliceorder$ for all $\decindex$.
+% Infinity
+For some $\sliceorder<\catorder$ there are tensors $\hypercoreat{\shortcatvariables}$, which do not have a monomial decomposition of order $\sliceorder$.
 In that case we the minimum is over an empty set and we define $\slicerankwrtof{\sliceorder}{\hypercore}=\infty$.
-If $\sliceorder\geq\catorder$, the $\slicerankwrtof{\sliceorder}{\hypercore}$ is always finite, since it coincides with the basis+ CP rank, as we show next.
-}
+We characterize in the next theorem the set of tensors with monomial decompositions.
 
 
-%% Interpretation as Monomial Sparsity
-%Each tensor $\lambda \cdot \contractionof{\onehotmapof{\catindexof{\variableset}}}{\shortcatvariables}$ is a by $\lambda\in\rr$ weighted monomial of the variables (or their negations) in $\variableset$.
-%The polynomial sparsity is thus the minimal number of monomials that sum up to the function $\hypercore$.
-%Given any monomial decomposition of a tensor, we can alternatively write
-%	\begin{align*}
-%		\hypercore = \sum_{\variableset\subset[\atomorder]} \sum_{\catindexof{\variableset}\in \indexsetof{\variableset}}  
-%			\scalarcoreat{\variableset, \catindexof{\variableset}} \left( \prod_{\atomenumeratorin} \catvariableof{\atomenumerator} == (\catindexof{\variableset})_{\atomenumerator} \right) \, . 
-%	\end{align*}
-%where by $ \catvariableof{\atomenumerator} == (\catindexof{\variableset})_{\atomenumerator}$ we denote the atomic variables, indicating whether the variable $\catvariableof{\atomenumerator}$ is in state $ (\catindexof{\variableset})_{\atomenumerator}$.
-%
-%% Failing to be directed.
-%Note, that the leg cores fail to be directed, when for some $\variableset\neq[\atomorder]$ the set $\indexsetof{\variableset}$ is not empty.
+\begin{theorem}\label{the:polynomialSubspaces}
+	For any $\atomorder, \sliceorder$, the set of tensors of $\catorder$ variables with leg dimension $\catdim$, which have a monomial decomposition of order $\sliceorder$, is a linear subspace $\subspaceof{\atomorder,\sliceorder}$ with dimension
+		\[ \subspacedimof{\subspaceof{\atomorder,\sliceorder}} \leq  \sum_{s \in [\sliceorder]} \catdim^s \binom{\catorder}{s} \, .  \]
+\end{theorem}
+\begin{proof}
+	Any sum of tensors with a monomial decomposition of order $\sliceorder$ admits again a monomial decomposition, which is the concatenation of both.
+	The same holds for a scalar multiplication, and thus, the sets of such tensors form a linear subspace.
 
+	The number of different tensors $\contractionof{\onehotmapof{\catindexof{\variableset}}}{\shortcatvariables}$ is
+		\[  \sum_{s \in [\sliceorder]} \catdim^s \binom{\catorder}{s}  \]
+	Since any tensor with a monomial decomposition is a weighted sum of those, 
+	
+	We notice, that the set of slices is in general not linear independent, and therefore forms a frame and not a linear basis \cite{casazza_introduction_2013}.
+	The number of elements in the frame is therefore an upper bound on the dimension.
+\end{proof}
+
+
+% Infinite rank
+Theorem~\ref{the:polynomialSubspaces} implies, that the tensors admiitting a monomial decomposition of a small order build a low-dimensional subspace in the $\catdim^\catorder$ dimensional space of tensors, since for $\sliceorder << \catorder $ we have
+	\[ \subspacedimof{\subspaceof{\atomorder,\sliceorder}} << \catdim^{\catorder} \, . \]
+If $\sliceorder\geq\catorder$, we always find a monomial decomposition by an enumeration of nonzero coordinates.
+In the next theorem, we show that in that case the $\slicerankwrtof{\sliceorder}{\hypercore}$ furthermore coincides with the basis+ CP rank $\baspluscprankof{\hypercore}$.
 
 \begin{theorem}
 	For any tensor $\hypercore\in\facspace$ we have
@@ -298,98 +305,6 @@ If $\sliceorder\geq\catorder$, the $\slicerankwrtof{\sliceorder}{\hypercore}$ is
 
 
 
-\subsection{Representation involving selection architectures}
-
-The set of slice-sparse tensors coincides with the expressivity of specific selection architecture.
-We first define a slice selecting tensor and then show its decomposition into a formula selecting neural network.
-
-\begin{definition}
-	Given a set of atomic variables $\shortcatvariables$, a slice selecting tensor of maximal cardinality $\sliceorder$ is the tensor
-		\[ \fselectionmapat{\shortcatvariables,\selvariableof{0,0},\ldots,\selvariableof{\sliceorder-1,0},\selvariableof{0,1},\ldots,\selvariableof{\sliceorder-1,1}} \]
-	with dimensions
-		\[ \seldimof{\selenumerator,0} = 2, \seldimof{\selenumerator,1} = \atomorder \]
-	and coordinates
-	\begin{align*}
-		& \fselectionmapat{\shortcatvariables=\shortcatindices,\indexedselvariableof{0,0},\ldots,\indexedselvariableof{\sliceorder-1,0},\indexedselvariableof{0,1},\ldots,\indexedselvariableof{\sliceorder-1,1}} \\
-		& \quad = \begin{cases}
-			1 & \text{if} \quad 
-			\forall_{\atomenumerator,\selenumerator} : \big(  \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \big) \Rightarrow  (\selindexof{\selenumerator,0} = \catindexof{\atomenumerator})  \\
-			0
-		\end{cases} \, . 
-	\end{align*}
-\end{definition}
-
-In the next two Lemmata we first show that the defined slice selecting tensors indeed selects slices and then provide a representation as a formula selecting network.
-
-\begin{lemma}\label{lem:sliceFromSliceSelector}
-	If all input neurons with same selection index are agreeing on the connective index, the selected formula does not vanish and coincides with a slice to the set
-		\[ \variableset = \{ \atomenumerator \, : \, \exists_{\selenumeratorin}: \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \} \]
-	and for $\atomenumerator\in\variableset$
-		\[ \catindexof{\atomenumerator} = \selindexof{\selenumerator,0} \quad \text{if} \quad \selindexof{\selenumerator,1} = \atomenumerator \, . \]
-\end{lemma}
-\begin{proof}
-	We need to show that 
-	\begin{align}\label{eq:sliceFromSliceSelector}
-	  	\fselectionmapat{\shortcatvariables,\indexedselvariableof{0,0},\ldots,\indexedselvariableof{\sliceorder-1,0},\indexedselvariableof{0,1},\ldots,\indexedselvariableof{\sliceorder-1,1}} = \onehotmapofat{\catindexof{\variableset}}{\shortcatvariables} \, . 
-	\end{align}
-	If and only if an index $\tilde{\catindex}_{[\atomorder]}$ reduced on $\variableset$ does not coincide with $\catindexof{\variableset}$, we have $\onehotmapofat{\catindexof{\variableset}}{\shortcatvariables=\tilde{\catindex}_{[\atomorder]}}=0$ and otherwise $\onehotmapofat{\catindexof{\variableset}}{\shortcatvariables=\tilde{\catindex}_{[\atomorder]}}=1$ .
-	Let us notice, that this condition is equivalent to 
-		\[ \forall_{\atomenumerator,\selenumerator} : \big(  \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \big) \Rightarrow  (\selindexof{\selenumerator,0} = \catindexof{\atomenumerator}) \]
-	and thus \eqref{eq:sliceFromSliceSelector} holds.
-\end{proof}
-
-
-\begin{lemma}\label{lem:fsnnRepresentingSliceSelector}
-	The slice selection tensor coincides with a formula selecting neural network with neurons (see Figure~\ref{fig:sliceSelectingNN}):
-	\begin{itemize}
-		\item unary input neuron enumerated by $\selenumerator$, selecting one of the $\shortcatvariables$ with the variable $\selvariableof{\selenumerator,1}$ and selecting a connective in $\{\lnot, \mathrm{Id}, \mathrm{True}\}$ by $\selvariableof{\selenumerator,0}$
-		\item $\sliceorder$-ary output neuron fixed to the $\land$ connective.
-	\end{itemize}
-\end{lemma}
-\begin{proof}
-	This can be easily checked on each coordinate.
-\end{proof}
-
-It follows, that the expressivity of the slice selecting neural network coincides with the set of tensors with a bound on their slice sparsity, when $\sliceorder\geq\atomorder$.
-For arbitrary $\sliceorder$, the following theorem holds.
-
-\begin{theorem}
-	Let $\fselectionmap$ be a slice selecting tensor.
-	For any parameter tensor $\canparam$ we have
-		\[ \baspluscprankof{\contractionof{\fselectionmap,\canparam}{\shortcatvariables}} \leq \bascprankof{\canparam} \, . \]
-\end{theorem}
-\begin{proof}
-	Each non-vanishing coordinate of $\canparam$ represents by Lemma~\ref{lem:fsnnRepresentingSliceSelector} a slice and their weighted sum is thus a monomial decomposition.
-%	\red{Use the above lemma for that on each slice.}
-%	Show, how a coordinate of $\canparam$ corresponds with a slice determining tuple: $\sliceset$ determined by the selection indices.
-\end{proof}
-
-
-\begin{figure}[h]
-	\begin{center}
-		\input{PartIII/tikz_pics/sparse_tensor_calculus/slice_selecting_nn.tex}
-	\end{center}
-	\caption{Representation of a basis+ Tensor by the contraction of a parameter tensor $\canparam$ with a slice selecting architecture $\fselectionmap$, which has a decomposition as a formula selecting neural network (see Lemma~\ref{lem:fsnnRepresentingSliceSelector}).
-	The nonzero coordinates of $\canparam$ represent the (see Lemma~\ref{lem:sliceFromSliceSelector}).}
-\end{figure}\label{fig:sliceSelectingNN}
-
-
-\subsubsection{Applications}
-
-One application is as a parametrization scheme in the approximation of a tensor by a slice-sparse tensor, see Chapter~\ref{cha:tensorApproximation}.
-
-
-\red{
-The approximated parameter can then be used as a proxy energy to be maximized.
-When choosing $\sliceorder=2$, the approximating tensor contains only quadratic slices, which then poses a QUBO problem.
-}
-
-\begin{remark}[Extension to arbitrary CP-formats]
-	Select at each input neuron a specific leg.
-	For finite number of legs, as it is the case in the binary, basis and basis+ formats, we can enumerate all possibilities by the selection variable.
-	For the basis+ format, in case of binary leg dimensions, we here exemplified the approach, by enumerating the three possibilities $\onehotmapof{0},\onehotmapof{1},\onesat{1}$.
-	This approach, however, fails as a generic representation of the directed format, since the directed legs are continuous and there therefore are infinite choosable legs.
-\end{remark}
 
 
 
@@ -581,68 +496,284 @@ Basis CP Decompositions can be constructed by understanding the variable $\indva
 %\subsection{Manipulations of Binary CP Decomposition}\label{sec:BinaryCPManipulation}
 %
 %Since the coordinates on the legs are binary, operations like contractions, slicing and marginalization are especially efficient given binary CP Decompositions.
-%
-%
-%\begin{example}[Hypertrie Format]
-%	Hypertries are another efficient implementation of the slicing operations.
-%%	Hypertries make use of the Basic TT Decomposition, given any permutation of the tensor legs.
-%%	In addition, they eliminate storage redundancies when representing all permuted TT Decompositions, by referencing to same subnetworks (e.g. when slicing wrt leg 1 and then 2 or slicing wrt to 2 and then leg 1 will leave the same tensors to be further decomposed).
-%\end{example}
 
 
 
 
 
 
-%%% NEEDED?
-%\subsection{Basis Tensor Networks}
-%
-%
-%\begin{definition}
-%	We call a tensor network, which cores are directed and binary a basis tensor network. %also acyclic?
-%\end{definition}
-%
-%%\begin{definition}
-%%	We call a Tensor Network with open legs $V$ basis, when for any tensor core in the network any slicing of the closed legs is parallel to a basic tensor (that is has $\ell_0$ norm of at most $1$).
-%%\end{definition}
-%
-%
-%\subsubsection{Basis elementary decomposition}
-%
-%Elementary tensors are tensor products of vectors.
-%Demanding each vector in the product to be a basis vector leads to basis tensors.
-%Thus the tensors which poses a basis elementary decompositions coincide with the basis tensors.
-%
-%\begin{theorem}
-%	Given axis dimensions $\catdimof{\atomenumerator}\in\mathbb{N}$ for $\atomenumeratorin$, the one-hot encoding is a bijection between $\facstates$ and the basis tensors of $\facspace$ with unit norm.
+
+\subsection{Representation by slice selection architectures}
+
+The set of slice-sparse tensors coincides with the expressivity of specific selection architecture.
+We first define a slice selecting tensor and then show its decomposition into a formula selecting neural network.
+
+\begin{definition}
+	Given a set of atomic variables $\shortcatvariables$, a slice selecting tensor of maximal cardinality $\sliceorder$ is the tensor
+		\[ \fselectionmapat{\shortcatvariables,\selvariableof{0,0},\ldots,\selvariableof{\sliceorder-1,0},\selvariableof{0,1},\ldots,\selvariableof{\sliceorder-1,1}} \]
+	with dimensions
+		\[ \seldimof{\selenumerator,0} = 2, \seldimof{\selenumerator,1} = \atomorder \]
+	and coordinates
+	\begin{align*}
+		& \fselectionmapat{\shortcatvariables=\shortcatindices,\indexedselvariableof{0,0},\ldots,\indexedselvariableof{\sliceorder-1,0},\indexedselvariableof{0,1},\ldots,\indexedselvariableof{\sliceorder-1,1}} \\
+		& \quad = \begin{cases}
+			1 & \text{if} \quad 
+			\forall_{\atomenumerator,\selenumerator} : \big(  \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \big) \Rightarrow  (\selindexof{\selenumerator,0} = \catindexof{\atomenumerator})  \\
+			0
+		\end{cases} \, . 
+	\end{align*}
+\end{definition}
+
+In the next two Lemmata we first show that the defined slice selecting tensors indeed selects slices and then provide a representation as a formula selecting network.
+
+\begin{lemma}\label{lem:sliceFromSliceSelector}
+	If all input neurons with same selection index are agreeing on the connective index, the selected formula does not vanish and coincides with a slice to the set
+		\[ \variableset = \{ \atomenumerator \, : \, \exists_{\selenumeratorin}: \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \} \]
+	and for $\atomenumerator\in\variableset$
+		\[ \catindexof{\atomenumerator} = \selindexof{\selenumerator,0} \quad \text{if} \quad \selindexof{\selenumerator,1} = \atomenumerator \, . \]
+\end{lemma}
+\begin{proof}
+	We need to show that 
+	\begin{align}\label{eq:sliceFromSliceSelector}
+	  	\fselectionmapat{\shortcatvariables,\indexedselvariableof{0,0},\ldots,\indexedselvariableof{\sliceorder-1,0},\indexedselvariableof{0,1},\ldots,\indexedselvariableof{\sliceorder-1,1}} = \onehotmapofat{\catindexof{\variableset}}{\shortcatvariables} \, . 
+	\end{align}
+	If and only if an index $\tilde{\catindex}_{[\atomorder]}$ reduced on $\variableset$ does not coincide with $\catindexof{\variableset}$, we have $\onehotmapofat{\catindexof{\variableset}}{\shortcatvariables=\tilde{\catindex}_{[\atomorder]}}=0$ and otherwise $\onehotmapofat{\catindexof{\variableset}}{\shortcatvariables=\tilde{\catindex}_{[\atomorder]}}=1$ .
+	Let us notice, that this condition is equivalent to 
+		\[ \forall_{\atomenumerator,\selenumerator} : \big(  \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \big) \Rightarrow  (\selindexof{\selenumerator,0} = \catindexof{\atomenumerator}) \]
+	and thus \eqref{eq:sliceFromSliceSelector} holds.
+\end{proof}
+
+
+\begin{lemma}\label{lem:fsnnRepresentingSliceSelector}
+	The slice selection tensor coincides with a formula selecting neural network with neurons (see Figure~\ref{fig:sliceSelectingNN}):
+	\begin{itemize}
+		\item unary input neuron enumerated by $\selenumerator$, selecting one of the $\shortcatvariables$ with the variable $\selvariableof{\selenumerator,1}$ and selecting a connective in $\{\lnot, \mathrm{Id}, \mathrm{True}\}$ by $\selvariableof{\selenumerator,0}$
+		\item $\sliceorder$-ary output neuron fixed to the $\land$ connective.
+	\end{itemize}
+\end{lemma}
+\begin{proof}
+	This can be easily checked on each coordinate.
+\end{proof}
+
+It follows, that the expressivity of the slice selecting neural network coincides with the set of tensors with a bound on their slice sparsity, when $\sliceorder\geq\atomorder$.
+For arbitrary $\sliceorder$, the following theorem holds.
+
+\begin{theorem}
+	Let $\fselectionmap$ be a slice selecting tensor.
+	For any parameter tensor $\canparam$ we have
+		\[ \baspluscprankof{\contractionof{\fselectionmap,\canparam}{\shortcatvariables}} \leq \bascprankof{\canparam} \, . \]
+\end{theorem}
+\begin{proof}
+	Each non-vanishing coordinate of $\canparam$ represents by Lemma~\ref{lem:fsnnRepresentingSliceSelector} a slice and their weighted sum is thus a monomial decomposition.
+%	\red{Use the above lemma for that on each slice.}
+%	Show, how a coordinate of $\canparam$ corresponds with a slice determining tuple: $\sliceset$ determined by the selection indices.
+\end{proof}
+
+
+\begin{figure}[h]
+	\begin{center}
+		\input{PartIII/tikz_pics/sparse_tensor_calculus/slice_selecting_nn.tex}
+	\end{center}
+	\caption{Representation of a basis+ Tensor by the contraction of a parameter tensor $\canparam$ with a slice selecting architecture $\fselectionmap$, which has a decomposition as a formula selecting neural network (see Lemma~\ref{lem:fsnnRepresentingSliceSelector}).
+	The nonzero coordinates of $\canparam$ represent the (see Lemma~\ref{lem:sliceFromSliceSelector}).}
+\end{figure}\label{fig:sliceSelectingNN}
+
+
+\subsubsection{Applications}
+
+One application is as a parametrization scheme in the approximation of a tensor by a slice-sparse tensor, see Chapter~\ref{cha:tensorApproximation}.
+
+
+\red{
+The approximated parameter can then be used as a proxy energy to be maximized.
+When choosing $\sliceorder=2$, the approximating tensor contains only quadratic slices, which then poses a QUBO problem.
+}
+
+\begin{remark}[Extension to arbitrary CP-formats]
+	Select at each input neuron a specific leg.
+	For finite number of legs, as it is the case in the binary, basis and basis+ formats, we can enumerate all possibilities by the selection variable.
+	For the basis+ format, in case of binary leg dimensions, we here exemplified the approach, by enumerating the three possibilities $\onehotmapof{0},\onehotmapof{1},\onesat{1}$.
+	This approach, however, fails as a generic representation of the directed format, since the directed legs are continuous and there therefore are infinite choosable legs.
+\end{remark}
+
+
+
+
+
+\subsection{Optimization of sparse tensors}
+
+Let us now study the problem of searching for the maximal coordinate in a tensor represented by a monomial decomposition. 
+
+
+\subsubsection{Mode search in exponential families}
+
+Mode search 
+\begin{align*}
+	\max_{\shortcatindices\in\atomstates} \sbcontraction{\sencsstatat{\indexedshortcatvariables,\selvariable},\canparam} 
+	= \max_{\meanparam\in\meanset} \sbcontraction{\meanparamat{\selvariable},\canparamat{\selvariable}}
+\end{align*}
+
+
+% Appearance of mode search
+The search for maximal coordinates appears in various reasoning tasks:
+\begin{itemize}
+	\item MAP query as mode search of MLN: $\hypercore$ is the contraction of evidence with the distribution, leaving the query variables open.
+	\item Grafting as mode search of proposal distribution: $\hypercore$ is the contraction of the gradient of the likelihood with the relational encoding of the hypothesis.
+\end{itemize}
+Both tasks have been formulated as mode search problems in exponential families.
+
+
+
+\subsubsection{Higher-Order Unconstrained Binary Optimization (HUBO)}
+
+\red{
+Here binary refers to the leg dimensions $\catdimof{\atomenumerator}$ being 2, not to binary coordinates as often refered to in this work.
+}
+
+
+\begin{definition}
+	The binary optimization of a tensor $\hypercoreat{\shortcatvariables}\in\atomstates$ is the problem
+	\begin{align}\tag{$\mathrm{P}_{\hypercore}$}\label{prob:HUBO}
+		\argmax_{\shortcatindices\in\atomstates} \quad \hypercoreat{\indexedshortcatvariables} 
+	\end{align}
+	
+	We call Problem~\ref{prob:HUBO} a Higher Order Unconstrained Binary Optimization (HUBO) problem of order $\sliceorder$ and sparsity $\slicerankwrtof{\sliceorder}{\hypercore}$, when $\hypercore$ has a monomial decomposition (see Definition~\ref{def:polynomialSparsity}) with $\cardof{\variablesetof{\decindex}}\leq\sliceorder$ for all $\decindexin$, that is when $\slicerankwrtof{\sliceorder}{\hypercore}<\infty$.
+	
+	
+\end{definition}
+
+
+\begin{remark}[Leg dimensions larger than 2]
+% Leg dimension needs to be 2
+	We demanded leg dimensions $\catdimof{\atomenumerator}=2$ to have binary valued variables $\catvariableof{\catenumerator}$, which is required to connect with the formalism of binary optimization.
+	Categorical variables with larger dimensions can be represented by atomization variables, which are created by contractions with categorical constraint tensors (see Section~\ref{sec:categoricalTN}).
+\end{remark}
+
+
+% Interpretation of sparsity
+The sparsity $\slicerankwrtof{\sliceorder}{\hypercore}$ is the minimal number of monomials, for which a weighted sum is equal to $\hypercore$.
+Thus we interpret Problem~\ref{prob:HUBO} as searching for the maximum in a polynomial consistent of $\slicerankwrtof{\sliceorder}{\hypercore}$ monomial terms.
+\red{Each monomial is also refered to as potential.}
+
+
+
+\subsubsection{Quadratic Unconstrained Binary Optimization (QUBO)}
+
+\red{Quadratic Unconstrained Binary Optimization problems are HUBOs of order $\sliceorder=2$.}
+
+We refine the monomial decomposition of tensors (see Definition~\ref{def:polynomialSparsity}) by demanding that monomials consist of at most two variables.
+
+\begin{definition}
+	We call a monomial decomposition $\sliceset$ of a tensor $\hypercore\in\atomspace$ a quadratic decomposition, if $\cardof{\variableset}\leq 2$ for all $(\lambda,\variableset,\catindexof{\variableset}) \in \sliceset$.
+	We denote the smallest cardinality $\cardof{\sliceset}$ among quadratic decompositions of $\hypercore$ by $\quacprankof{\hypercore}$.
+
+	If a tensor $\hypercore\in\bigotimes_{\atomenumeratorin}\rr^2$ has a quadratic decomposition, we call Problem~\ref{prob:HUBO} a Quadratic Unconstrained Binary Optimization (QUBO) problem of sparsity $\quacprankof{\hypercore}$.
+\end{definition}
+
+% CP Decompositions
+%Analogously to monomial decompositions, quadratic decompositions have an equivalence in a CP decomposition of $\hypercore$.
+%Beyond being binary tensors, the leg cores are further restricted that for each slice $\decindexin$ at most two of them are basis vectors and the rest trivial vectors $\ones$.
+
+%% REPETITION Existence
+%We notice, that there are tensors, for which no quadratic decomposition exists.
+%This is already obvious from the fact, that the tensors with a quadratic decomposition build a subspace of dimensions bounded by $2 \atomorder + 2^2 \cdot \binom{\atomorder}{2}$ dimensional submanifold in the $2^\atomorder$ dimensional tensor space.
+%This is in contrast with monomial decompositions of order $\sliceorder=\atomorder$, where one can always construct a decomposition.
+
+
+
+%% OLD THEOREM: FALSE!
+%However, for any non-negative tensor $\hypercore$ the Problem~\ref{prob:HUBO} is equivalent to a QUBO problem of possibly larger order as we state next.
+%To turn HUBO problems into QUBO we need the slack variable trick, as described in the next lemma.
+
+%\begin{theorem}\label{the:HUBOtoQUBO}
+%	Let there be a tensor $\hypercore\in\in\bigotimes_{\atomenumeratorin}\rr^2$, which has a monomial decomposition with dimension $r$ and non-negative scalar core $\scalarcore$.
+%	Then, the HUBO defined by $\hypercore$ is equivalent to a QUBO of order at most $\atomorder+r$ and sparsity at most $\atomorder \cdot r $.
+%%	The maximal coordinate problem to any tensor $\hypercore\in\bigotimes_{\atomenumeratorin}\rr^2$ is equivalent to a QUBO with at most $\atomorder+\slicesparsityof{\hypercore}$ variables.
+%%	\red{Need positive coordinates!}
 %\end{theorem}
-%\begin{proof}
-%	The one-hot encoding to the basis tensors is injective, since each state is mapped to a different basis tensor.
-%	The one-hot encoding is further surjective, since every basis tensor has a preimage state by the indices of the $1$ coordinate.
-%	Therefore the one-hot encoding is a bijection.
+
+%To show the theorem we state the following lemma.
+
+
+We can transform certain HUBO problems in QUBO problems with the usage of auxiliary variables, as we show in the next lemma.
+
+%% Slack variables
+\begin{lemma}\label{lem:monomialToQUBO}
+	For any $\atomindices\in[2]$ and $\variableset\subset[\atomorder]$ we have 
+		\[ \left( \prod_{\atomenumerator\in\variableset} \atomlegindexof{\atomenumerator } \right)  \left(  \prod_{\atomenumerator\notin\variableset} (1- \atomlegindexof{\atomenumerator }) \right)
+		=
+		\max_{\slackvariable\in[2]} \slackvariable \cdot 2 \cdot \left( \sum_{\atomenumerator\in\variableset}\atomlegindexof{\atomenumerator}  - \cardof{\variableset} - \sum_{\atomenumerator\notin\variableset}\atomlegindexof{\atomenumerator} + \frac{1}{2} \right) \, . % Alternative: no factor 2, but + 1 instead of +1/2 (->pyqubo)
+ 		\]
+\end{lemma}
+\begin{proof} %Proof by case distinction
+	Only if $\atomlegindexof{\atomenumerator}=1$ for $\atomenumerator\in\variableset$ and $\atomlegindexof{\atomenumerator}=0$ else we have
+		\[ \left( \sum_{\atomenumerator\in\variableset}\atomlegindexof{\atomenumerator}  - \cardof{\variableset} - \sum_{\atomenumerator\notin\variableset}\atomlegindexof{\atomenumerator} + \frac{1}{2} \right) \geq 0 \, . \]
+	In this case the maximum is taken for $\slackvariable=1$ and we have
+		\[ \max_{\slackvariable\in[2]} \slackvariable \cdot 2 \cdot \left( \sum_{\atomenumerator\in\variableset}\atomlegindexof{\atomenumerator}  - \cardof{\variableset} - \sum_{\atomenumerator\notin\variableset}\atomlegindexof{\atomenumerator} + \frac{1}{2} \right) 
+		= 1 = \left( \prod_{\atomenumerator\in\variableset} \atomlegindexof{\atomenumerator } \right)  \left(  \prod_{\atomenumerator\notin\variableset} (1- \atomlegindexof{\atomenumerator }) \right) \, . \]
+	In all other cases, the maximum is taken for $\slackvariable=0$ and thus vanishes, that is 
+		\[ \max_{\slackvariable\in[2]} \slackvariable \cdot 2 \cdot \left( \sum_{\atomenumerator\in\variableset}\atomlegindexof{\atomenumerator}  - \cardof{\variableset} - \sum_{\atomenumerator\notin\variableset}\atomlegindexof{\atomenumerator} + \frac{1}{2} \right) 
+		= 0 = \left( \prod_{\atomenumerator\in\variableset} \atomlegindexof{\atomenumerator } \right)  \left(  \prod_{\atomenumerator\notin\variableset} (1- \atomlegindexof{\atomenumerator }) \right) \, . \]
+	Thus, the claim holds in all cases.
+\end{proof}	
+
+
+%\begin{proof}[Proof of Theorem~\ref{the:HUBOtoQUBO}]
+%	For each summand in the monomial decomposition apply Lemma~\ref{lem:monomialToQUBO}.
 %\end{proof}
-%
-%
-%\subsubsection{Basis CP Decomposition}\label{sec:basisCP}
-%
-%We here provide with the CP Decomposition of binary tensors as ways to overcome the storage overhead of $\ell_0$-sparse (of tensor flattening) tensors.
-%The key idea is to enumerate the nonzero coordinates by introducing an additional axis carrying the data index.
-%Keeping the such introduced hidden rank as constant then results in an elementary tensor, which has a representation with linear demand.
-%We can thus represent the vectors of each such elementary tensor in a matrix and get the cores of the CP decomposition.
-%
-%
-%\subsubsection{Basis TT Decomposition}
-%
-%Exploiting vanishing slices, thus exploiting a form of block $\ell_0$-sparsity (where full slizes are vanishing).
-%
-%Can be generated from the basic CP decomposition, by the CP cores contracted with partial $\delta$ tensors.
-%The rank will thus not be larger than the rank of the $\cpformat$.
-%
-%
-%
-%\subsubsection{Basic HT Decomposition}
-%
-%The constraint that networks need to be basic just affects the leaf cores.
+
+
+
+\subsubsection{Integer Linear Programming}
+
+Let us now show how optimization problems can be represented as linear programming problems.
+
+\begin{definition}
+	The integer linear program (ILP) of $A\in\rr^{n \times d}$ and $b\in\rr^{n}$ is the problem
+	\begin{align*}
+		\max_{\shortcatindices\in\facstates} \sum_{\catenumeratorin} c[\selvariable=\catenumerator] \cdot \catindexof{\catenumerator} 
+		 \quad \text{subject to } \quad A \shortcatindices \leq b \, . 
+	\end{align*}
+\end{definition}
+
+%\begin{definition}
+%	A Binary Integer Linear Program (ILP) is a problem of the form
+%	\begin{align*}
+%		\max_{x \in\{0,1\}^n} c^T x \quad \text{subject to } \quad A^{upper} x \leq b^{upper} , A^{lower} x \geq b^{lower} 
+%	\end{align*}
+%	where $A^{upper}\in\rr^{n^{upper}\times n}$, $b^{upper}\in\rr^{n^{upper}}$, $A^{lower}\in\rr^{n^{lower}\times n}$, $b^{lower}\in\rr^{n^{lower}}$.
+%\end{definition}
+
+\begin{theorem}
+	Given a monomial decomposition $\sliceset=\enumeratedslices$ of a tensor $\hypercore$ we define an Binary ILP as the maximation of 
+	\begin{align*}
+		\sum_{\decindexin} \slicescalar^{\decindex} \slackvariable^{\decindex} 
+	\end{align*}
+	with the constraints for any $\decindex$
+	\begin{itemize}
+		\item 
+		\begin{align*}
+			\slackvariable^{\decindex}  \leq \catvariableof{\atomenumerator} \quad \text{for} \quad \atomenumerator\in\variableset^j , \catindexof{\atomenumerator} = 1
+		\end{align*}
+		\item 
+		\begin{align*}
+			\slackvariable^{\decindex}  \leq (1-\catvariableof{\atomenumerator}) \quad \text{for} \quad \atomenumerator\in\variableset^j , \catindexof{\atomenumerator} = 0
+		\end{align*}
+		\item 
+		\begin{align*}
+			\slackvariable^{\decindex} \geq 1 + \sum_{\atomenumerator\in\variableset^{\decindex} : \catindexof{\atomenumerator} = 1} (\catvariableof{\atomenumerator} -1)
+		- \sum_{\atomenumerator\in\variableset^{\decindex} : \catindexof{\atomenumerator} = 0} \catvariableof{\atomenumerator} 
+		\end{align*}
+	\end{itemize}
+	The solution $\catindex^{ILP,\sliceset}$ of this ILP and the solution $\catindex^{HUBO,\sliceset}$ of the HUBO coincide on the variables of hypercore, i.e.
+		\[ \catindex^{ILP,\sliceset}|_{[d]} =  \catindex^{HUBO,\sliceset} \, . \]
+\end{theorem}
+\begin{proof}
+	We have to show that the constraints are satisfied if and only if $\slackvariable^{\decindex}=\onehotmapofat{\catvariableof{\variableset^{\decindex}}^{\decindex}}{\indexedcatvariableof{\variableset^{\decindex}}}$.
+\end{proof}
+
+
+
 
 
 
@@ -702,6 +833,13 @@ Advantages of this perspective are
 
 
 
+%%% NEEDED? This would be a description of the relational encoding of decompositions
+%\subsection{Basis Tensor Networks}
+%
+%
+%\begin{definition}
+%	We call a tensor network, which cores are directed and binary a basis tensor network. %also acyclic?
+%\end{definition}
 
 
 
