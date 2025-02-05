@@ -226,12 +226,54 @@ The resulting algorithm is called Alternating Least Squares (ALS) (see Algorithm
 
 \subsection{Regularization and Compressed Sensing}
 
-\red{
+
 When regularizing the least squares problem by enforcing the sparsity of $\canparam$, we arrive at a compressed sensing problem.
 There, the sensing matrix coincides with the selection tensor.
+
+% Usage as sparse tensor
 The sparse tensor solving the problem then has a small number of nonzero coordinates and the selection tensor can be restricted to those.
+As a consequence, inference can be performed more efficiently.
+
+% Algorithmic solution
 The algorithmic solution of these problems can be done by greedy algorithms, thresholding based algorithms or optimization based algorithms \cite{foucart_mathematical_2013}.
-}
+
+% Guarantees
+Guarantees for the success of the algorithms depend on the properties of the sensing matrices.
+
+\begin{example}[Propositional Formulas]
+	Let there be a set $\formulaset$ of formulas, then we have
+	\begin{align*}
+		\sbcontractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariableof{\insymbol}},\sencodingofat{\formulaset}{\shortcatvariables,\selvariableof{\outsymbol}}}{\indexedselvariableof{\insymbol},\indexedselvariableof{\outsymbol}}
+		= \sbcontraction{\formulaof{\selindexof{\insymbol}}, \formulaof{\selindexof{\outsymbol}}} \, . 
+	\end{align*}
+	If the formulas have disjoint model sets then 
+	\begin{align*}
+		\sbcontractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariableof{\insymbol}},\sencodingofat{\formulaset}{\shortcatvariables,\selvariableof{\insymbol}}}{\indexedselvariableof{\insymbol},\indexedselvariableof{\outsymbol}}
+		= \begin{cases}
+			\sbcontraction{\formulaof{\insymbol}} & \text{if } \selindexof{\insymbol}=\selindexof{\outsymbol} \\
+			0 & \text{else} 
+		\end{cases} \, . 
+	\end{align*}
+\end{example}
+
+
+
+\begin{example}[Slice selection networks]
+	
+	For the slice selection network
+	\begin{align*}
+		\sbcontractionof{\sliceselectionmapat{\shortcatvariables,\selvariableof{\insymbol}},\sliceselectionmapat{\shortcatvariables,\selvariableof{\outsymbol}}}{\indexedselvariableof{\insymbol},\indexedselvariableof{\outsymbol}}
+		= \begin{cases}
+			0 & \text{if for a }\seccatenumerator\in\variablesetof{\selindexof{\insymbol}}\cap\variablesetof{\selindexof{\outsymbol}}\text{ we have }\catindexof{\seccatenumerator}^{\selindexof{\insymbol}}\neq\catindexof{\seccatenumerator}^{\selindexof{\outsymbol}} \\
+			\prod_{\seccatenumerator\notin\variablesetof{\selindexof{\insymbol}}\cup\variablesetof{\selindexof{\outsymbol}}} \catdimof{\seccatenumerator}& \text{else} 
+		\end{cases} \, . 
+	\end{align*}
+
+	Given a fixed $\selindexof{\insymbol}$, the maximum value in the respective slice is thus taken at $\selindexof{\insymbol}=\selindexof{\outsymbol}$
+\end{example}
+
+
+
 
 
 
