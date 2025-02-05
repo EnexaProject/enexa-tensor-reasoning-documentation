@@ -6,19 +6,16 @@ We in this chapter investigate methods, to replace hard to be sampled tensor net
 
 \subsection{Approximation of Energy tensors}
 
-
-
-
 \subsubsection{Direct Approximation}
 
-Direct approximation would be
-	\[ \argmin_{\canparam\in\Gamma^{\graph}} \|\energytensorat{\shortcatvariables} - \canparamat{\shortcatvariables}\|^2 \]
+Direct approximation is the problem
+	\[ \argmin_{\canparam\in\Gamma^{\graph}} \|\energytensorat{\shortcatvariables} - \canparamat{\shortcatvariables}\|^2 \, . \]
 
 
 \subsubsection{Approximation involving Selection Architectures}
 
-Direct approximation would be
-	\[ \argmin_{\canparam\in\Gamma^{\graph}} \|\energytensor - \sbcontractionof{\sencodingof{\fselectionmap},\canparam}{\shortcatvariables}\|^2 \]
+Approximation involving a selection architecture $\fselectionmap$ is the problem
+	\[ \argmin_{\canparam\in\Gamma^{\graph}} \|\energytensor - \sbcontractionof{\sencodingof{\fselectionmap},\canparam}{\shortcatvariables}\|^2 \, . \]
 
 In a tensor network diagram we depict this as
 \begin{center}
@@ -34,51 +31,35 @@ In a tensor network diagram we depict this as
 \end{example}
 
 
-%\begin{figure}[h]
-
-
-
-%\caption{Tensor Network Representation of the optimization.}
-%\end{figure}
-
-
 
 \subsection{Transformation of Maximum Search to Risk Minimization}
 
-\red{By the squares risk trick, maximum coordinate searches involving contractions with boolean tensors can be turned into squares risk minimization problems.}
-One can use this for MAP inference of MLN and the proposal distribution.
+By the squares risk trick, maximum coordinate searches involving contractions with boolean tensors can be turned into squares risk minimization problems.
+This trick can be applied in MAP inference of MLN and the proposal distribution.
 
-
-\subsubsection{Squares Risk Trick}
+\subsubsection{Weighted Squares Loss Trick}
 
 \begin{lemma}
-	Let $\gentensor$ be a Boolean tensor, that is $\imageof{\gentensor}\subset\{0,1\}$.
+	Let $\hypercore$ be a Boolean tensor, that is $\imageof{\hypercore}\subset\{0,1\}$.
 	Then
-		\[ \gentensor = \ones - \left( \gentensor - \ones \right)^2  \]
-	where $\ones$ is a tensor with same shape as $\gentensor$ and all coordinates being $1$.
+		\[ \hypercoreat{\shortcatvariables} = \onesat{\shortcatvariables} - \left( \hypercoreat{\shortcatvariables} - \onesat{\shortcatvariables} \right)^2  \]
+	where $\ones$ is a tensor with same shape as $\hypercore$ and all coordinates being $1$.
 \end{lemma}
 \begin{proof}
-	Since for each $\shortcatindices\in\facstates$ we have $\gentensor[\shortcatvariables=\shortcatindices]\in\{0,1\}$, it holds that
-		\[ \gentensor[\shortcatvariables=\shortcatindices] = 1 - (\gentensor[\shortcatvariables=\shortcatindices]-1)^2 \]
-	and thus
-		\[ \gentensor[\shortcatvariables] = \onesat{\shortcatvariables} - \left( \gentensor - \ones \right)^2  \]
-	Applying this to all coordinates shows the claim.
+	Since for each $\shortcatindices\in\facstates$ we have $\hypercore[\shortcatvariables=\shortcatindices]\in\{0,1\}$, it holds that
+		\[ \hypercoreat{\shortcatvariables=\shortcatindices} = 1 - (\hypercoreat{\shortcatvariables=\shortcatindices}-1)^2 \]
+	and thus in coordinatewise calculus
+		\[ \hypercoreat{\shortcatvariables} = \onesat{\shortcatvariables} - \left( \hypercoreat{\shortcatvariables} - \onesat{\shortcatvariables} \right)^2 \, .   \]
 \end{proof}
 
-% OLD?
-%Thus, in combination with the slicing theorem \ref{the:CoordinateTransform} we have 
-%	\[ \argmax_{\basisslices} \gentensor\basisslices = \argmin_{\basisslices} \left ( \gentensor\basisslices - \ones \right)^2 \, . \]
-%\red{ALS reformulation thus only works under the constraint of basis slices, i.e. single active formulas and datapoint contraction.}
+We apply this property to reformulate optimization problems over boolean tensors into weighted least squares problems.
 
-
-
-\begin{theorem}\label{the:reweightedLeastSquares}
-	Let $\Theta$ be a set of binary tensors in $\facspace$ and $\importancetensor\in\facspace$ arbitrary.
+\begin{theorem}[Weighted Squares Loss Trick]\label{the:reweightedLeastSquares}
+	Let $\Gamma$ be a set of boolean tensors in $\facspace$ and $\importancetensor\in\facspace$ arbitrary.
 	Then we have
 	\begin{align}
-		\argmax_{\hypercore\in\Theta} \contraction{\importancetensor,\hypercore} 
-		= \argmin_{\hypercore\in\Theta} \contraction{\importancetensor, (\hypercoreat{\shortcatvariables}-\onesat{\shortcatvariables})^2}
-		%\sum_{\catindices} \left(\theta_{\catindices} -1 \right)^2 \hypercore_{\catindices} \, . 
+		\argmax_{\hypercore\in\Gamma} \contraction{\importancetensor,\hypercore} 
+		= \argmin_{\hypercore\in\Gamma} \contraction{\importancetensor, (\hypercoreat{\shortcatvariables}-\onesat{\shortcatvariables})^2}
 	\end{align} 
 \end{theorem}
 \begin{proof}
@@ -92,9 +73,14 @@ One can use this for MAP inference of MLN and the proposal distribution.
 \end{proof}
 
 % Interpretation and Importance Tensor
-Corollary~\ref{cor:reweightedLeastSquares} reformulates maximation of binary tensors with respect to an angle to another tensor into minimization of a squares risk.
-This squares risk trick is especially useful when combining it with a relaxation of $\Theta$ to differentiably parametrizable sets, since then common squares risk solvers can be applied.
-We will call $\hypercore$ in the Corollary~\ref{cor:reweightedLeastSquares} importance tensor, since it manipulates the relevance of each coordinate in the squares loss.
+Theorem~\ref{the:reweightedLeastSquares} reformulates maximation of binary tensors with respect to an angle to another tensor into minimization of a squares risk.
+This squares risk trick is especially useful when combining it with a relaxation of $\Gamma$ to differentiably parametrizable sets, since then common squares risk solvers can be applied.
+We will call $\importancetensor$ in the Theorem~\ref{the:reweightedLeastSquares} importance tensor, since it manipulates the relevance of each coordinate in the squares loss.
+
+%
+As a result, we interpret the objective
+	\[ \contraction{\importancetensor, (\hypercoreat{\shortcatvariables}-\onesat{\shortcatvariables})^2} \]
+as a weighted squares loss.
 
 \begin{example}[Proposal distribution maxima]
 	The Problem~\ref{prob:steepestAscent} of finding the maximal coordinate can thus be turned into
@@ -106,87 +92,25 @@ We will call $\hypercore$ in the Corollary~\ref{cor:reweightedLeastSquares} impo
 \end{example}
 
 
+\subsubsection{Problem of the trivial tensor}
 
-%\subsubsection{Squares Loss Reformulation of Contracted Binary Tensors}
-%
-%% Motivation
-%We here make use of the fact, that $\rencodingof{\formulaset}$ is a binary tensor, which is also true for all contractions with elementary selection tensors.
-%When, like it is the case here, the set $\Gamma$ of hypothesis directions consists of binary tensors, we can apply the squares risk trick (Corollary~\ref{cor:reweightedLeastSquares}) to reformulate Problem~\ref{prob:steepestAscent} to a least squares problem.
-%
-%\begin{theorem}
-%	When $\Gamma$ consists of binary tensors, %that is
-%%		\[ \Gamma \subset \facspace \]
-%	then %Problem~\ref{prob:steepestAscent} 
-%	\begin{align}
-%		\argmax_{\theta\in\Gamma} \braket{\theta, \frac{\partial \lossof{\mlntensor}}{\partial \mlntensor}} =
-%		\argmin_{\theta\in\Gamma} \sum_{\catindices} \left(\theta_{\catindices} -1 \right)^2  \left(\frac{\partial \lossof{\mlntensor}}{\partial \mlntensor_{\catindices}}\right) \, . 
-%	\end{align}
-%\end{theorem}
-%\begin{proof}
-%	Direct application of Corollary~\ref{the:reweightedLeastSquares}.
-%\end{proof}
+By the above we motivated least squares problems on the set of one-hot encoded states.
+One is tempted to extend this set to $\mnexpfamily$ for efficient solutions by alternating algorithms.
+
+However, for any hypergraph $\graph$ we have $\onesat{\shortcatvariables}\in\mnexpfamily$.
+In many situations (e.g. disjoint model sets supported at positive data) the objective is more in favor at the trivial tensor than at the one-hot encoding.
+As a result, we do not solve the previously posed one-hot encoding problem, when allowing such an hypothesis embedding.
 
 
-%Since any formula tensor $\ftensorof{\exformula}$ contains only binary coordinates, we can reformulate the loss as:
-%\begin{align}
-%	\lossof{\mlnparameters} = &
-%		\log\partitionfunctionof{\formulasum\weightof{\exformula}\ftensorof{\exformula}} 
-%		+ \formulasum\weightof{\exformula}
-%		+ \formulasum\weightof{\exformula}\variablesum  \left( 1 - \braket{\ftensorof{\exformula}, \tensordataof{\variableindex}} \right) \\
-%		= & 
-%		\log\partitionfunctionof{\formulasum\weightof{\exformula}\ftensorof{\exformula}} 
-%		+ \formulasum\weightof{\exformula}
-%		+ \formulasum\weightof{\exformula}\variablesum  \left( 1 - \braket{\ftensorof{\exformula}, \tensordataof{\variableindex}} \right)^2
-%\end{align}
+\begin{example}[Fitting a tensor by a formula tensor]\label{exa:formulaFitting}
+	Task: Given a tensor $\hypercore$, find a formula $\exformula\in\formulaset$ such that it coincides with $\hypercore$.
 
+	If $\hypercore$ is a binary tensor, we understand it as a formula and want to find an $\exformula$ such that its number of worlds is maximal, that is solve the problem
+		\[ \argmax_{\exformula\in\formulaset}\sbcontraction{\exformula\Leftrightarrow\hypercore}  \, . \]
 
-%\begin{remark}{Interpretation of Datapoints}
-%	The datapoints are exactly the nonzero entries of the importance core $\importancetensor$.%, i.e. corresponding with individuals in e.g. an \rdf Knowledge Graph.
-%\end{remark}
-
-
-
-
-
-
-
-\subsection{Parametercores}
-
-\red{Parameter cores as tradeoff between expressivity and complexity in sampling.
-When not hidden variables, their maximum can be found by }
-
-
-Parametercores need also an efficient representation.
-
-In case of skeleton expressions with many placeholders further decomposition for algorithmic efficiency are required.
-\begin{itemize}
-	\item Elementary Format ($\elformat$-Format): 
-	\item $\cpformat$-Format: Closest to sum of formula tensors (when all vectors are basis, then have a sum).
-	\item $\ttformat$-Format: Showed better heuristic performance in optimization
-\end{itemize}
-
-For any tensor network decomposition into cores $\parametercoreof{\parenumerator}$ have the derivative $\frac{\partial}{\partial \parametercoreof{\parenumerator}} \parametertensor$ as the tensor network with out the core $\parametercoreof{\parenumerator}$.
-
-\begin{remark}[Parametercores being basis tensors]
-	When the parameter core is a basis tensor, the contraction with the parametercore coincides with the respective formula tensor.
-	Thus, we will search for basis tensors optimizing in contractions objectives to specific reasoning tasks, and add them iteratively to the network at hand.
-\end{remark}
-
-%% Bayesian Neural Network Perspective
-When the parametercores are a tensor network representing a probability tensor by there contraction, we can interpret them as a probability distribution over formulas.
-
-
-
-\subsection{Fitting a tensor by a formula tensor}
-
-Task: Given a tensor $\hypercore$, find a formula $\exformula\in\formulaset$ such that it coincides with $\hypercore$.
-
-If $\hypercore$ is a binary tensor, we understand it as a formula and want to find an $\exformula$ such that its number of worlds is maximal, that is solve the problem
-	\[ \argmax_{\exformula\in\formulaset}\sbcontraction{\exformula\Leftrightarrow\hypercore}  \, . \]
-
-We can use the squares risk trick and get an equivalent problem
-	\[ \argmin_{\exformula\in\formulaset} \| \sbcontractionof{\exformula\Leftrightarrow\hypercore}{\shortcatvariables}  - \onesat{\shortcatvariables} \|^2 \, . \]
-
+	We can use the squares risk trick and get an equivalent problem
+		\[ \argmin_{\exformula\in\formulaset} \| \sbcontractionof{\exformula\Leftrightarrow\hypercore}{\shortcatvariables}  - \onesat{\shortcatvariables} \|^2 \, . \]
+\end{example}
 
 %\begin{remark}{Least Squares Loss by Tensor Fitting}
 %	\red{Alternative approach to least squares problems: Tensor Fitting}
@@ -206,17 +130,51 @@ The resulting algorithm is called Alternating Least Squares (ALS) (see Algorithm
 \begin{algorithm}[hbt!]
 \caption{Alternating Least Squares (ALS)}\label{alg:ALS}
 \begin{algorithmic}
-\For{$\atomenumeratorin$}
-	\State Set $\varcore{\atomenumerator}$ to a random element in $\rr^{\atomlegdimof{\atomenumerator}}$ 
+\For{$\edgein$}
+	\State Set $\hypercoreofat{\edge}{\catvariableof{\edge}}$ to a random element in $\rr^{\atomlegdimof{\atomenumerator}}$ 
 \EndFor
+%\For{$\atomenumeratorin$}
+%	\State Set $\varcore{\atomenumerator}$ to a random element in $\rr^{\atomlegdimof{\atomenumerator}}$ 
+%\EndFor
 \While{Stopping criterion is not met}
-\For{$\atomenumeratorin$}
-	\State Set $\varcore{\atomenumerator}$ to a to a solution of $ \argmin_{\varcore{\atomenumerator}}  \left\|  \importancetensor \chadamard ( \groundingof{\parametrization(\varcore{1},\ldots,\varcore{\atomorder})} - \targettensor ) \right\|^2$
+\For{$\edgein$}
+	\State Set $\hypercoreofat{\edge}{\catvariableof{\edge}}$ to a to a solution of the local problem, that is
+	\[ 
+	\hypercoreofat{\edge}{\catvariableof{\edge}}
+	 \algdefsymbol 
+	 \argmin_{\hypercoreofat{\edge}{\catvariableof{\edge}}} 
+	 \contraction{\importancetensor, (\contractionof{\fselectionmap,\canparam}{\shortcatvariables} - \targettensor[\shortcatvariables])^2}
+	 \]
 \EndFor
+%\For{$\atomenumeratorin$}
+%	\State Set $\varcore{\atomenumerator}$ to a to a solution of 
+%	\[ \varcore{\atomenumerator} \algdefsymbol \argmin_{\varcore{\atomenumerator}}  \left\|  \importancetensor \chadamard ( \groundingof{\parametrization(\varcore{1},\ldots,\varcore{\atomorder})} - \targettensor )  \right\|^2 \]
+%\EndFor
 \EndWhile
 \end{algorithmic}
 \end{algorithm}
 
+
+\subsubsection{Choice of Representation Format}
+
+\red{The choice of the hypergraph $\graph$ used for approximation bears a tradeoff between expressivity and complexity in sampling.
+Hidden variables, that is variables only present in $\graph$, but not in the sensing matrix, increase the expressivity, especially when assigning large dimensions to them.
+When there are no hidden variables, the maximum of $\canparam$ can be found by maximum calibration through a message passing algorithm, since no hidden variable has to marginalized.}
+
+
+In case of skeleton expressions with many placeholders further decomposition for algorithmic efficiency are required.
+\begin{itemize}
+	\item Elementary Format ($\elformat$-Format): 
+	\item $\cpformat$-Format: Closest to sum of formula tensors (when all vectors are basis, then have a sum).
+	\item $\ttformat$-Format: Showed better heuristic performance in optimization
+\end{itemize}
+
+For any tensor network decomposition into cores $\parametercoreof{\parenumerator}$ have the derivative $\frac{\partial}{\partial \parametercoreof{\parenumerator}} \parametertensor$ as the tensor network with out the core $\parametercoreof{\parenumerator}$.
+
+%\begin{remark}[Parametercores being basis tensors]
+%	When the parameter core is a basis tensor, the contraction with the parametercore coincides with the respective formula tensor.
+%	Thus, we will search for basis tensors optimizing in contractions objectives to specific reasoning tasks, and add them iteratively to the network at hand.
+%\end{remark}
 
 
 %\subsection{Projection onto Basis Tensors}
@@ -227,8 +185,23 @@ The resulting algorithm is called Alternating Least Squares (ALS) (see Algorithm
 \subsection{Regularization and Compressed Sensing}
 
 
-When regularizing the least squares problem by enforcing the sparsity of $\canparam$, we arrive at a compressed sensing problem.
-There, the sensing matrix coincides with the selection tensor.
+When regularizing the least squares problem by enforcing the sparsity of $\canparam$, we arrive at the compressed sensing problem
+\begin{align}
+	\argmin_{\canparamat{\selvariable}} \sparsityof{\canparam} 
+	\quad \text{subject to } \quad 
+	\left\| \contractionof{\sencsstat,\canparam}{\shortcatvariables} - \energytensorat{\shortcatvariables} \right\|_2 \leq \eta
+\end{align}
+Here, the sensing matrix is the selection tensor.
+
+
+\begin{example}[Formula fitting to an example]
+	Choosing the best formula fitting data (see Example~\ref{exa:formulaFitting}) is the problem
+	\begin{align}
+	\argmin_{\canparamat{\selvariable}\, : \,  \sparsityof{\canparam}=1} \left\| \contractionof{\importancetensor,\sencsstat,\canparam}{\shortcatvariables} - \targettensor \right\|_2 
+	\end{align}
+	where $\importancetensor$ has nonzero entries at marked coordinates and $\targettensor$ stores in Boolean coordinates whether the marked coordinates are positive or negative examples.
+	\red{When the number of positive and negative examples are identical, we can linearly transform the objective to that of a grafting instance, where the current model is the empirical distribution of negative examples and the data consists of the positive examples.}
+\end{example}
 
 % Usage as sparse tensor
 The sparse tensor solving the problem then has a small number of nonzero coordinates and the selection tensor can be restricted to those.
@@ -239,6 +212,11 @@ The algorithmic solution of these problems can be done by greedy algorithms, thr
 
 % Guarantees
 Guarantees for the success of the algorithms depend on the properties of the sensing matrices.
+Here the sensing matrices are deterministic, since constructed as selection tensors, and concentration based approaches towards probabilistic bounds on these properties (see \cite{goesmann_uniform_2021}) are not applicable.
+
+
+
+
 
 \begin{example}[Propositional Formulas]
 	Let there be a set $\formulaset$ of formulas, then we have
@@ -255,7 +233,6 @@ Guarantees for the success of the algorithms depend on the properties of the sen
 		\end{cases} \, . 
 	\end{align*}
 \end{example}
-
 
 
 \begin{example}[Slice selection networks]
