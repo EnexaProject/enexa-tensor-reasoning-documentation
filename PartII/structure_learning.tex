@@ -111,43 +111,59 @@ We in this section assume a current model $\currentdistribution$, which is a gen
 % 
 We will use the effective selection tensor network representation of exponentially many formulas described in Chapter~\ref{cha:formulaBatches} and select from them a small subset.
 
-\red{Alternative discussion: Can use current distribution as base measure and apply moment matching as first order condition.}
+%\red{Alternative discussion: Can use current distribution as base measure and apply moment matching as first order condition.}
+
+
+\subsubsection{Greedy formula inclusions}
+
+Having a current set of formulas $\formulaset$ we want to choose the best $\formula\in\fselectionmap$ to extend the set of formulas to $\formulaset\cup\{\formula\}$ in a way minimizing the cross entropy.
+Given this, add each step we solve the greedy cross entropy minimization
+\begin{align}\label{prob:perfectGreedy}\tag{$\mathrm{P}_{\datamap,\formulaset,\fselectionmap}$}
+	\argmin_{\formula\in\fselectionmap} \argmin_{\canparam\in\rr^{\cardof{\formulaset}+1}} 
+	\centropyof{\empdistribution}{\expdistof{(\formulaset\cup\{\formula\},\canparam,\basemeasure)}} \, . 
+\end{align}
+
+
+A brute force solution would require parameter estimation for each candidate in $\fselectionmap$.
+We provide two more efficient approximative heuristics in the following (see Chapter~20 in \cite{koller_probabilistic_2009}).
 
 
 
 \subsubsection{Gradient heuristic and the proposal distribution}
 
-We now derive a heuristic of choosing features based on a variation of parameter vectors in naive exponential families.
+\red{Advantage: Might avoid formulawise calculus, when sampling from proposal distribution. 
+Brute force solution of gain heuristic require formulawise approach.}
 
-For the naive exponential family 
+We now derive a heuristic of choosing features based on the maximal coordinate of the gradient when differentiating the canonical parameter in the minterm family.
+To prepare for this, we build the gradient of the loss
+%For the naive exponential family 
 \begin{align*}
 	\lossof{\expdistof{(\naivestat, \naivecanparam)}} 
-	= \frac{1}{\datanum} \sum_{\dataindexin}\lnof{\expdistofat{(\naivestat, \naivecanparam)}{\shortcatvariables=\datamapof{\dataindex}}}
+	%= \frac{1}{\datanum} \sum_{\dataindexin}\lnof{\expdistofat{(\naivestat, \naivecanparam)}{\shortcatvariables=\datamapof{\dataindex}}}
 	= \contraction{\empdistribution, \sencodingof{\naivestat}, \naivecanparam} - \lnof{\contraction{\expof{\contractionof{\sencodingof{\naivestat}, \naivecanparam}{\shortcatvariables}}}} 
 \end{align*}
-we have the gradient
+as
 \begin{align*}
 	\gradwrt{\naivecanparamat{\selvariable}} \lossof{\expdistof{(\naivestat, \naivecanparam)}}
-	%\frac{\partial \lossof{\expdistof{(\naivestat, \naivecanparam)}}}{\partial\naivecanparam} 
 	&= \contractionof{\sencodingof{\naivestat},\empdistribution}{\selvariable} - \contractionof{\sencodingof{\naivestat},\expdistof{(\naivestat, \naivecanparam)}}{\selvariable} \\
 	&= \empdistribution - \expdistof{(\naivestat, \naivecanparam)} \, . 
 \end{align*}
 
 %% Single feature
-Given a feature $\exfunction[\shortcatvariables]$ we vary the naive parameters by a function on $\canparam\in\rr$ by
-\begin{align*}
-	 \naivestat(\canparam) %=  \mlntensor + \weight_{\parindices} \ftensorof{\exformula_{\parindices}}
-	= \naivestat(0) + \canparam\cdot\exfunction
-\end{align*}
-and get a likelihood gradient of
-\begin{align*}
-	 \frac{\partial \lossof{\expdistof{(\naivestat(\canparam), \naivecanparam)}}}{\partial\canparam} 
-	 &= \sbcontraction{
-	 	\frac{\partial\lossof{\expdistof{(\naivestat, \naivecanparam)}}}{\partial\naivecanparam}|_{\naivecanparam(0)},
-		\frac{\partial\naivecanparam(\canparam)}{\partial\canparam} 
-	 }  \\
-	 &= \contraction{\empdistribution,\exfunction} -   \contraction{\expdistof{(\naivestat, \naivecanparam)},\exfunction} \, .
-\end{align*}
+%Given a feature $\exfunction[\shortcatvariables]$ we vary the naive parameters by a function on $\canparam\in\rr$ by
+%\begin{align*}
+%	 \naivestat(\canparam) %=  \mlntensor + \weight_{\parindices} \ftensorof{\exformula_{\parindices}}
+%	= \naivestat(0) + \canparam\cdot\exfunction
+%\end{align*}
+%and get a likelihood gradient of
+%\begin{align*}
+%	 \frac{\partial \lossof{\expdistof{(\naivestat(\canparam), \naivecanparam)}}}{\partial\canparam} 
+%	 &= \sbcontraction{
+%	 	\frac{\partial\lossof{\expdistof{(\naivestat, \naivecanparam)}}}{\partial\naivecanparam}|_{\naivecanparam(0)},
+%		\frac{\partial\naivecanparam(\canparam)}{\partial\canparam} 
+%	 }  \\
+%	 &= \contraction{\empdistribution,\exfunction} -   \contraction{\expdistof{(\naivestat, \naivecanparam)},\exfunction} \, .
+%\end{align*}
 
 
 %% Positive and Negative Search
@@ -160,74 +176,44 @@ When nothing has been learned so far, we can take the current model to be the un
 
 
 %% Collection of features by selection
-We can calculate all feature gradients with the usage of a selection network.
-Given a set $\fselectionmap$ of features we vary $\naivestat$ as
+Given a set $\fselectionmap$ of features we vary $\naivecanparam$ by the function
 \begin{align*}
-	 \naivestat(\canparam) %=  \mlntensor + \weight_{\parindices} \ftensorof{\exformula_{\parindices}}
-	= \naivestat(0) + \sbcontractionof{\canparam,\sencodingof{\fselectionmap}}{\shortcatvariables} \, . 
+	 \exfunction(\canparam) %=  \mlntensor + \weight_{\parindices} \ftensorof{\exformula_{\parindices}}
+	= \naivecanparam + \sbcontractionof{\canparam,\sencodingof{\fselectionmap}}{\shortcatvariables} \, . 
 \end{align*}
-Now the gradient of the loss along the variation is
+At $\canparam=0$ we have the gradient of the loss of the parametrized formula by
 \begin{align*}
-	 \gradwrt{\canparam} \lossof{\expdistof{(\naivestat(\canparam), \naivecanparam)}}
+	 \gradwrtat{\canparam}{0} 
+	 \lossof{\expdistof{(\naivestat,\exfunction(\canparam),\basemeasure)}}
 	 &= \sbcontraction{
-	 	\frac{\partial\lossof{\expdistof{(\naivestat, \naivecanparam)}}}{\partial\naivecanparam}|_{\naivecanparam(0)},
-		\frac{\partial\naivecanparam(\canparam)}{\partial\canparam} 
+	 	 \gradwrtat{\exfunction(\canparam)}{\naivecanparam}  \lossof{\expdistof{(\naivestat,\exfunction(\canparam),\basemeasure)}},
+		 \gradwrtat{\canparam}{0}  \exfunction(\canparam)
 	 }  \\
-	 &= \sbcontraction{\empdistribution,\sencodingof{\sstat}}{\selvariable} -   \sbcontraction{\expdistof{(\naivestat, \naivecanparam)},\sencodingof{\sstat}}{\selvariable} \, . 
+	 &= \sbcontractionof{\empdistribution,\sencodingof{\sstat}}{\selvariable} -   \sbcontractionof{\expdistof{(\naivestat, \naivecanparam, \basemeasure)},\sencodingof{\sstat}}{\selvariable} \, . 
 \end{align*}
-
 
 
 %% Grafting
 We want to choose the formula, which is best aligned with the gradient of the log-likelihood, that is using a formula selecting map $\fselectionmap$
-\begin{align*}
-	\argmax_{\selindex\in[\seldim]} \sbcontractionof{\empdistribution,\sencodingof{\fselectionmap}}{\indexedselvariable} - \sbcontractionof{\expdistof{(\naivestat, \naivecanparam)},\sencodingof{\fselectionmap}}{\indexedselvariable} \, . 
-\end{align*}
+\begin{align} \label{prob:greedyGrad} \tag{$\mathrm{P}^{\mathrm{grad}}_{\datamap,\formulaset,\fselectionmap}$} 
+	\argmax_{\selindex\in[\seldim]} \sbcontractionof{\empdistribution,\fselectionmap}{\indexedselvariable} 
+	- \sbcontractionof{\expdistof{(\naivestat, \naivecanparam, \basemeasure)},\fselectionmap}{\indexedselvariable} \, . 
+\end{align}
 This method is known as the gradient heuristic or grafting.
+% Mean parameter interpretation
+The objective of Problem~\eqref{prob:greedyGrad} has another interpretation by the difference of the mean parameter $\datamean$ and $\currentmean$ of the projections of the empirical and current distributions on the family to $\fselectionmap$. % ! NOT the proposal family, those have transposed statistic
 
-
-%We call this method the search for the steepest ascent in a parametrized set.
-
-
-% Gradient
-%We build the gradient of the loss at a tensor $\mlntensor$
-%\begin{align}
-%	\frac{\partial \lossof{\mlntensor}}{\partial \mlntensor} = \variablesum\datapointof{\variableindex} - \frac{\expof{\mlntensor}}{\partitionfunctionof{\mlntensor}} 
-%	= \empdistribution - \currentdistribution \, .
-%\end{align}
-
-
-%% Search for best alignment, demand $\Gamma\subset\subsphere$?
-When learning Markov Logic Networks, our features are propositional formulas.
-Given a set $\formulaset$ of formulas we search for the best alignment 
-\begin{align}\label{prob:steepestAscent}\tag{$\mathrm{P}_{\formulaset,\empdistribution,\currentdistribution}$}
-	\argmax_{\formula\in\formulaset} \sbcontraction{\formula,\empdistribution-\currentdistribution}
-\end{align}
-We can choose selection architectures to efficiently parametrize 
-
-%% Special case in MLN: $\Gamma$ by formulas
-%Given a model tensor and a formula selecting map $\formulaset$ we vary $\mlntensor$ by the superposition with the parameter core $\parametercore$ 
-%	\[ \tilde{\theta}(\parametercore) %=  \mlntensor + \weight_{\parindices} \ftensorof{\exformula_{\parindices}}
-%	= \mlntensor + \contractionof{\{\parametercore,{\formulaset}\}}{\varnothing} \, . \]
-%The gradient of this map is
-%	\[ \frac{\partial \tilde{\theta}(\parametercore)}{\partial \parametercore}|_{\parametercore=0}  
-%	= \contractionof{\{\formulaset\}}{\selectionvariables} \, . \]
-
-%Differentiating by the parameter core we get with the chain rule
-%\begin{align}
-%	\frac{\partial \lossof{\tilde{\theta}(\parametercore) }}{\partial \parametercore}|_{\parametercore=0} 
-%	& = \contractionof{ \frac{\partial \tilde{\theta}}{\partial \weight}|_{\weight=0} , \frac{\partial \loss(\tilde{\theta})}{\partial \tilde{\theta}}|_{\tilde{\theta} = \mlntensor}}{\selectionvariables} \\
-%	& = \contractionof{\{{\formulaset} ,\empdistribution \}}{\selectionvariables}
-%	-  \contractionof{\{ {\formulaset} ,\distof{\tilde{\theta}} \}}{\selectionvariables} \, . 
-%\end{align}
-
-
-%
-To take the steepest ascent formula among the formulas selectable by $\formulaset$ we thus search for the maximal coordinate in the tensor network, that is solve
-\begin{align}
-	\argmax_{\selindexin} \contractionof{ \gradwrtat{\canparam}{\canparam=0} \lossof{\expdist}}{\indexedselvariable}
-\end{align}
-This is thus equivalent to the problem \ref{prob:steepestAscent}, when taking all formulas selectable by $\formulaset$ as the hypothesis $\Gamma$.
+%% Formula alignment perspective
+Problem~\eqref{prob:greedyGrad} is further equivalent to the formula alignment
+\begin{align*}
+	\argmax_{\formula\in\fselectionmap} \sbcontraction{\formula,\empdistribution-\currentdistribution} \, . 
+\end{align*}
+The objective can be interpreted as the difference of the satisfaction probability of the formula with respect to the empirical distribution and the current distribution.
+%We can choose selection architectures to efficiently parametrize the formulas in the hypothesis $\fselectionmap$ and rewrite the problem as
+%\begin{align*}
+%	\argmax_{\selindexin} \contractionof{ \gradwrtat{\canparam}{\canparam=0} \lossof{\expdist}}{\indexedselvariable}
+%\end{align*}
+%This is thus equivalent to the problem \ref{prob:greedyGrad}, when taking all formulas selectable by $\formulaset$ as the hypothesis $\Gamma$.
 
 
 %\subsection{Proposal distribution}
@@ -239,7 +225,7 @@ Let us now understand the likelihood gradient as the energy tensor of a probabil
 	Let there be a base distribution $\currentdistribution$, a targeted distribution $\empdistribution$ and a formula selecting map $\fselectionmap[\shortcatvariables, \selvariable]$.
 	The proposal distribution at inverse temperature $\invtemp>0$ is the distribution of $\selvariable$ defined by
 	\begin{align*}
-		\normationof{\expof{\contractionof{\{\invtemp\cdot(\empdistribution-\currentdistribution),\fselectionmap\}}{\selvariable}} }{\selvariable} \, . 
+		\normationof{\expof{\sbcontractionof{\invtemp\cdot(\empdistribution-\currentdistribution),\fselectionmap}{\selvariable}} }{\selvariable} \, . 
 	\end{align*}
 	The proposal distribution is the member of the exponential family with statistics $\fselectionmap$ and parameter $\invtemp\cdot(\empdistribution-\currentdistribution)$.
 \end{definition}
@@ -253,42 +239,49 @@ Of further interest are tempered proposal distributions, which are in the same e
 As Markov Logic Networks, the proposal distributions are in exponential families with the sufficient statistic defined in terms of formula selecting maps.
 While Markov Logic Networks contract the maps on the selection variables $\selvariable$, the proposal distributions contract them along the categorical variables $\catvariable$ to define energy tensors.
 
-
-
-
-
 % Mode search
-We can then understand finding the largest coordinate as a search for the mode of this proposal distribution.
-\begin{theorem}
-	Grafting is the MAP query on the proposal distribution to any $\invtemp>0$.
-\end{theorem}
+%We can then understand finding the largest coordinate as a search for the mode of this proposal distribution.
+%\begin{theorem}
+%	Grafting is the MAP query on the proposal distribution to any $\invtemp>0$.
+%\end{theorem}
+
 
 % Methods to solve mode search
+The grafting Problem~\eqref{prob:greedyGrad} is the search for the mode of the proposal distribution.
 To solve grafting, we thus need to answer a MAP query, for which we can apply the methods introduced in Chapter~\ref{cha:probReasoning}, such as Gibbs Sampling or Mean Field Approximations in combination with annealing.
 
 
 
 
 
-
-
-
-%\subsubsection{KL Divergence minimization}
-%When just optimizing the weight of the added formula, we want to solve the problem
-%\begin{align}
-%	\argmin_{\exformula\in\formulaset, \weightof{\exformula}\in \rr} \kldivof{\normationof{\{\currentdistribution,\expof{\weightof{\exformula}\cdot\exformula}\}} }{\empdistribution}  \, . 
-%\end{align}
-%In the next theorem we give the solution in terms of mean parameters.
-
 \subsubsection{Gain Heuristic}
 
 In the gain heuristic, only the parameters of the new formula are optimized and the others left unchanged.
-This is providing upper bounds on the likelihood increase.
+This amounts to 
+\begin{align}\label{prob:greedyGain}\tag{$\mathrm{P}^{\mathrm{gain}}_{\datamap,\formulaset,\fselectionmap}$}
+	\argmin_{\formula\in\fselectionmap} \left ( \min_{\canparamat{\cardof{\formulaset}}\in\rr} 
+	\centropyof{\empdistribution}{\expdistof{(\formulaset\cup\{\formula\},\canparam,\basemeasure)}} \right) \, . 
+\end{align}
+Here we denote by $\canparam$ the first $\cardof{\formulaset}$ coordinates of the M-projection $\currentdistribution$  of $\empdistribution$ onto $\formulaset$ and the variable new coordinate at position $\canparamat{\cardof{\formulaset}}$.
 
-More precisely this is Problem~\ref{prob:restrictedNaiveMLE} in the case
+\begin{lemma}
+	The gain heuristic objective is an upper bound on the true greedy objective. 
+\end{lemma}
+\begin{proof}
+Since
 \begin{align*}
-	\energyhypothesis = \lnof{\currentdistribution} + \cup_{\formula\in\formulaset} \spanof{\formula} \, . 
+	\argmin_{\formula\in\fselectionmap} \left( \argmin_{\canparam\in\rr^{\cardof{\formulaset}+1}} 
+	\centropyof{\empdistribution}{\expdistof{(\formulaset\cup\{\formula\},\canparam,\basemeasure)}} \right)
+	\leq 	\argmin_{\formula\in\fselectionmap} \left ( \argmin_{\canparamat{\cardof{\formulaset}}\in\rr} 
+	\centropyof{\empdistribution}{\expdistof{(\formulaset\cup\{\formula\},\canparam,\basemeasure)}} \right) \, . 
 \end{align*}
+\end{proof}
+
+Further, this is Problem~\eqref{prob:restrictedNaiveMLE} in the case
+\begin{align*}
+	\energyhypothesis = \lnof{\currentdistribution} + \cup_{\formula\in\formulaset} \spanof{\formula} \, .
+\end{align*}
+
 
 
 % For single formula
@@ -325,16 +318,17 @@ We state the solution of this condition in the next theorem.
 %	Follows from Lemma~\ref{ref:lemMMinMLN}.
 %\end{proof}
 
-\red{Taking the current distribution as a base measure and choosing the canonical parameters of the by this base measure manipulated naive family, we state the problem}
-\begin{align}\label{prob:restrictedNaiveCE}\tag{$\mathrm{P}_{\datamap,\currentdistribution,\energyhypothesis}$}
-	\argmin_{\canparamat{\selvariableof{[\catorder]}}\in\energyhypothesis} \quad \centropyof{\empdistribution}{\expdistof{(\naivestat,\canparam,\currentdistribution)}}
-\end{align}
+%\red{Taking the current distribution as a base measure and choosing the canonical parameters of the by this base measure manipulated naive family, we state the problem}
+%\begin{align}\label{prob:restrictedNaiveCE}\tag{$\mathrm{P}_{\datamap,\currentdistribution,\energyhypothesis}$}
+%	\argmin_{\canparamat{\selvariableof{[\catorder]}}\in\energyhypothesis} \quad \centropyof{\empdistribution}{\expdistof{(\naivestat,\canparam,\currentdistribution)}}
+%\end{align}
 
 \begin{theorem}
-	Problem~\ref{prob:restrictedNaiveCE} in the case 
-	\begin{align*}
-		\energyhypothesis = \bigcup_{\formula\in\formulaset} \spanof{\formula} 
-	\end{align*}
+	Problem~\eqref{prob:greedyGain}
+	%~\ref{prob:restrictedNaiveMLE} in the case 
+	%\begin{align*}
+	%	\energyhypothesis =  \lnof{\currentdistribution} + \bigcup_{\formula\in\formulaset} \spanof{\formula} 
+	%\end{align*}
 	is solved at any
 	\begin{align*}
 		\hat{\canparam} = \weightof{\hat{\formula}} \cdot \hat{\formula}
@@ -349,7 +343,7 @@ We state the solution of this condition in the next theorem.
 \end{theorem}	
 \begin{proof}
 	% Solution of the problem restricted to 
-	For any formula $\formula$, Problem~\ref{prob:restrictedNaiveCE}  in the case $\energyhypothesis = \spanof{\formula} $ is by Lemma~\ref{ref:lemMMinMLN} solved at
+	For any formula $\formula$, the inner minimum of Problem~\eqref{prob:greedyGain} is by Lemma~\ref{ref:lemMMinMLN} taken at %Problem~\ref{prob:restrictedNaiveCE}  in the case $\energyhypothesis = \spanof{\formula} $ 
 		\[ \weightof{\formula} = \lnof{\frac{\datamean}{(1-\datamean)}\cdot \frac{(1-\currentmean)}{\currentmean}}  \]
 	where
 		\[ \currentmean = \sbcontraction{\currentdistribution,\formula} \]
@@ -360,8 +354,8 @@ We state the solution of this condition in the next theorem.
 	The difference of the likelihood at the current distribution and the optimum is
 	\begin{align*}
 		\centropyof{\empdistribution}{\currentdistribution}
-		- \centropyof{\empdistribution}{\expdistof{(\exformula,\weightof{\formula},\currentdistribution)}}
-		= \datamean \cdot \weightof{\formula} - \cumfunctionwrt{\exformula,\currentdistribution}(\weightof{\formula}) \, .
+		- \centropyof{\empdistribution}{\expdistof{(\extendedformulaset,\extendedcanparam,\basemeasure)}}
+		= \datamean \cdot \weightof{\formula} - \cumfunctionwrtof{\extendedformulaset,\basemeasure}{\extendedcanparam} \, .
 	\end{align*}
 	
 	% Loss gain at optimum
@@ -376,7 +370,7 @@ We state the solution of this condition in the next theorem.
 	% Refining the cumulant term
 	It follows, that
 	\begin{align*}
-		\cumfunctionwrt{\exformula,\currentdistribution}(\weightof{\formula}) 
+		\cumfunctionwrtof{\extendedformulaset,\basemeasure}{\extendedcanparam}
 		& = \lnof{\sbcontraction{\currentdistribution, \expof{\weightof{\formula} \cdot \formula}}} \\
 		& = \lnof{1-\currentmean} - \lnof{1-\datamean} \, . 
 	\end{align*}
