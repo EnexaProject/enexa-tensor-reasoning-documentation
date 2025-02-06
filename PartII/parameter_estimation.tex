@@ -1,7 +1,7 @@
-\section{Unconstrained Parameter Estimation}\label{cha:parameterEstimation}
+\section{Learning Logic Networks}\label{cha:parameterEstimation}
 
-\red{In this chapter we investigate unconstrained parameter estimated for Markov Logic Networks and Hybrid Logic Networks, which are special cases of the backward maps introduced in Chapter~\ref{cha:probDecomposition}.
-In the next chapter we impose sparsity constrains on the parameters.}
+\red{In this chapter we first investigate unconstrained parameter estimated for Markov Logic Networks and Hybrid Logic Networks, which are special cases of the backward maps introduced in Chapter~\ref{cha:probDecomposition}.
+We then impose sparsity constraints on the parameters on the minterm family to discuss structure learning.}
 
 We estimate the canonical parameters $\canparam$ in an exponential family.
 We first discuss parameter estimation in the more generic situation of exponential families and then discuss the more specific situation of Markov Logic Networks.
@@ -12,16 +12,56 @@ This is in most generality true for the parameters of the M-projection of any di
 We therefore investigate methods to compute the backward mapping, in most generality by alternating algorithms and in the special case of Markov Logic Networks by closed form representations.
 
 
+\subsection{Mean parameters of Hybrid Logic Networks}
 
-\subsection{Learning Markov Logic Networks} % Check for redundancy with the mln introduction chapter!
+The convex polytope of realizable mean parameters (see Definition~\ref{def:meanForwardBackward}) is for a statistic $\formulaset$ of propositional formulas
+	\[ \meansetof{\formulaset} = \left\{ \sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable} \, : \, \probtensor\in\probtensorset \right\} \, ,\]
+where by $\probtensorset$ we denote the set of all probability distributions.
+
+For any $\meanparam\in\meansetof{\formulaset}$ we have one of the following (see also Figure~\ref{fig:meansetSketch}):
+\begin{itemize}
+	\item All $\meanparamat{\indexedselvariable}\notin\{0,1\}$: Then reproducible by a Markov Logic Network, $\meanparam\in\meanset$
+	\item At least one $\meanparamat{\indexedselvariable}\notin\{0,1\}$ and one $\meanparamat{\indexedselvariable}\in\{0,1\}$: Then reproducible by aHybrid Logic Network
+	\item All $\meanparamat{\indexedselvariable}\in\{0,1\}$: Then reproducible by a Hard Logic Network
+\end{itemize}
 
 
+
+\begin{lemma}\label{lem:meanHLNrealizabilityCondition}
+	Let $\meanparam$ be in the boundary of $\meansetof{\formulaset}$, that is $\meanparam\in\closureof{\meanset}_{\formulaset}/\interiorof{\meanset}_{\formulaset}$.
+	%Then for at least one $\selindexin$ we have $\meanparamat{\indexedselvariable}\in\{0,1\}$. %True?
+	If $\meanparam\in\meansetof{\formulaset}$ then the formula
+		\[ \basemeasureofat{\formulaset,\meanparam}{\shortcatvariables} \coloneqq \bigwedge_{\selindexin \, : \, \meanparamat{\indexedselvariable}\in\{0,1\}}
+		\lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables} \]
+	is satisfiable, that is $\sbcontraction{\basemeasureof{\formulaset,\meanparam}}>0$. % Can also use probabilistic entailment for that: $\probtensor\models\basemeasure$
+\end{lemma}
+\begin{proof}
+	For any $\probtensor$ reproducing $\meanparam$ satisfies $\probtensor\models\enumformula$ if $\meanparamat{\indexedselvariable}=1$ and $\probtensor\models\lnot\enumformula$ if $\meanparamat{\indexedselvariable}=0$ and thus $\probtensor\models\basemeasureof{\formulaset,\meanparam}$.
+	If $\basemeasureof{\formulaset,\meanparam}$ is not satisfiable, this would imply $\sbcontraction{\probtensor}=0$ which is a contradiction to $\probtensor$ being a probability distribution.
+\end{proof}
+
+
+
+\begin{figure}[h]\label{fig:meansetSketch}
+\begin{center}
+	\input{PartII/tikz_pics/parameter_estimation/meanset_sketch.tex}
+\end{center}
+\caption{Sketch of the convex polytope ${\meansetof{\formulaset}}$ as a subset of the $\seldim$-dimensional cube $[0,1]^\seldim$ (here as a 2-dimensional projection) with example mean 	parameters $\meanparam_1,\meanparam_2,\meanparam_3$.
+	The boundary points $\meanparam_1,\meanparam_2\in\closureof{\meanset}_{\formulaset}/\interiorof{\meanset}_{\formulaset}$ are examples of mean parameters, which can be realized by a Hard Logic Networks (respectively Hybrid Logic Network). %, if the criterion of Lem ma~\ref{lem:meanHLNrealizabilityCondition} is satisfied.
+	Any extreme point $\meanparam_1\in\meansetof{\formulaset}\cup\{0,1\}^{\seldim}$ is realizable by a Hard Logic Network, while a non-extreme boundary point $\meanparam_2\in\meansetof{\formulaset}/\{0,1\}^{\seldim}$ is realizable by a Hybrid Logic Network.
+	Any interior point $\meanparam_3\in\interiorof{\meansetof{\formulaset}}$ is realizable by a Markov Logic Network.
+} 
+\end{figure}
+
+
+
+
+\subsection{Unconstrained Parameter Estimation} % Check for redundancy with the mln introduction chapter!
 
 % Repetition and result transfering
 Markov Logic Networks are exponential families with statistics by a set $\formulaset$ of propositional formulas.
 We furthermore allow for propositional formulas as base measures, to also include the discussion of Hybrid Logic Networks.
-
-%Based on this fact, we can apply the theory of probabilistic inference, developed in Chapter~\ref{cha:probReasoning}.
+Based on this, we apply the theory of probabilistic inference, developed in Chapter~\ref{cha:probReasoning}.
 
 % Special example: MLE
 The Maximum Likelihood Problem on MLNs is the M-projection
@@ -29,7 +69,7 @@ The Maximum Likelihood Problem on MLNs is the M-projection
 	\argmax_{\canparamat{\selvariable}\in\rr^{\seldim}} \quad 
 	\centropyof{\probtensor}{\expdistof{(\sstat,\basemeasure,\canparam)}}	
 \end{align*}
-in the base $\probtensor=\empdistribution$ for a data map $\datamap$.
+in the case $\probtensor=\empdistribution$ for a data map $\datamap$.
 
 % Backward map
 The M-projection coincides, after dropping constant terms in case of non-trivial base measure, with the backward map
@@ -76,57 +116,9 @@ This is remarkable, because this motivates our restriction to Markov Logic Netwo
 
 
 
-\subsection{Mean parameters}
+\subsubsection{Parameter Estimation in Hybrid Networks}
 
-The convex polytope of realizable mean parameters (see Definition~\ref{def:meanForwardBackward}) is for a statistic $\formulaset$ of propositional formulas
-	\[ \meansetof{\formulaset} = \left\{ \sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable} \, : \, \probtensor\in\probtensorset \right\} \, ,\]
-where by $\probtensorset$ we denote the set of all probability distributions.
-
-For any $\meanparam\in\meansetof{\formulaset}$ we have one of the following:
-\begin{itemize}
-	\item All $\meanparamat{\indexedselvariable}\notin\{0,1\}$: Then reproducible by a Markov Logic Network, $\meanparam\in\meanset$
-	\item At least one $\meanparamat{\indexedselvariable}\notin\{0,1\}$ and one $\meanparamat{\indexedselvariable}\in\{0,1\}$: Then reproducible by aHybrid Logic Network
-	\item All $\meanparamat{\indexedselvariable}\in\{0,1\}$: Then reproducible by a Hard Logic Network
-\end{itemize}
-
-
-
-\begin{lemma}\label{lem:meanHLNrealizabilityCondition}
-	Let $\meanparam$ be in the boundary of $\meansetof{\formulaset}$, that is $\meanparam\in\closureof{\meanset}_{\formulaset}/\interiorof{\meanset}_{\formulaset}$.
-	%Then for at least one $\selindexin$ we have $\meanparamat{\indexedselvariable}\in\{0,1\}$. %True?
-	If $\meanparam\in\meansetof{\formulaset}$ then the formula
-		\[ \basemeasureofat{\formulaset,\meanparam}{\shortcatvariables} \coloneqq \bigwedge_{\selindexin \, : \, \meanparamat{\indexedselvariable}\in\{0,1\}}
-		\lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables} \]
-	is satisfiable, that is $\sbcontraction{\basemeasureof{\formulaset,\meanparam}}>0$. % Can also use probabilistic entailment for that: $\probtensor\models\basemeasure$
-\end{lemma}
-\begin{proof}
-	For any $\probtensor$ reproducing $\meanparam$ satisfies $\probtensor\models\enumformula$ if $\meanparamat{\indexedselvariable}=1$ and $\probtensor\models\lnot\enumformula$ if $\meanparamat{\indexedselvariable}=0$ and thus $\probtensor\models\basemeasureof{\formulaset,\meanparam}$.
-	If $\basemeasureof{\formulaset,\meanparam}$ is not satisfiable, this would imply $\sbcontraction{\probtensor}=0$ which is a contradiction to $\probtensor$ being a probability distribution.
-\end{proof}
-
-
-
-\begin{figure}[h]\label{fig:}
-\begin{center}
-	\input{PartII/tikz_pics/parameter_estimation/meanset_sketch.tex}
-\end{center}
-\caption{Sketch of the convex polytope ${\meansetof{\formulaset}}$ as a subset of the $\seldim$-dimensional cube $[0,1]^\seldim$ (here as a 2-dimensional projection) with example mean 	parameters $\meanparam_1,\meanparam_2,\meanparam_3$.
-	The boundary points $\meanparam_1,\meanparam_2\in\closureof{\meanset}_{\formulaset}/\interiorof{\meanset}_{\formulaset}$ are examples of mean parameters, which can be realized by a Hard Logic Networks (respectively Hybrid Logic Network). %, if the criterion of Lem ma~\ref{lem:meanHLNrealizabilityCondition} is satisfied.
-	Any extreme point $\meanparam_1\in\meansetof{\formulaset}\cup\{0,1\}^{\seldim}$ is realizable by a Hard Logic Network, while a non-extreme boundary point $\meanparam_2\in\meansetof{\formulaset}/\{0,1\}^{\seldim}$ is realizable by a Hybrid Logic Network.
-	Any interior point $\meanparam_3\in\interiorof{\meansetof{\formulaset}}$ is realizable by a Markov Logic Network.
-} 
-\label{fig:DataDecomposition}
-\end{figure}
-
-
-
-\subsection{Parameter Estimation in Hybrid Networks}
-
-\red{
-Modify alternating weight optimization to deal with situations $\meanparamat{\indexedselvariable}\in\{0,1\}$: Add those as facts as base measures.
-}
-
-When there are facts, also situations $\hypercoreat{\catvariable=1}\in\{0,1\}$ can appear.
+When there are facts, also situations $\meanparamat{\indexedselvariable}\in\{0,1\}$ can appear.
 It that case the formula is entailed or contradicted by the facts, and dropping should be considered in both cases.
 
 The max entropy - max likelihood duality still holds for hybrid logic networks as we show next.
@@ -146,18 +138,6 @@ The max entropy - max likelihood duality still holds for hybrid logic networks a
 	The statement then follows from the generic property (see Sec3.1 in \cite{wainwright_graphical_2008}).
 \end{proof}
 
-
-
-
-
-
-
-
-
-
-%% More general Exponential Families
-%More generally sufficient statistics are any maps from the event space to define so called exponential families.
-%Given a set $\formulaset$ of formulas, Markov Logic Networks are exponential families with $\formulaset$ being the sufficient statistics.
 
 
 
@@ -211,51 +191,6 @@ To solve the moment matching condition at a formula $\enumformula$ we refine Lem
 \end{proof}
 
 
-
-
-
-%% OLD DERIVATION: Now as a special case of Exponential Families
-%To solve Problem~\ref{prob:parameterMaxLikelihood} we choose a coordinate ascent approach.
-%The partial derivative of the negative log-likelihood is
-%\begin{align}
-%	\frac{\partial}{\partial \weightof{\texformula}} \lossof{\formulaset,\weight} 
-%	&= \frac{\partial}{\partial \weightof{\texformula}} \left[
-%		\left(\sum_{\exformulain}\contractionof{\{\empdistribution,\weightof{\exformula}\cdot\exformula\}}{\varnothing} \right)
-%		- \lnof{\contractionof{\{\expof{\weightof{\exformula}\cdot\exformula} \, : \, \exformulain\}}{\varnothing}}
-%		\right] \\
-%	& = 	\contractionof{\{\empdistribution,\texformula\}}{\varnothing} 
-%		- \frac{\contractionof{\{\texformula \}\cup\{\expof{\weightof{\exformula}\cdot\exformula} \, : \, \exformulain\}}{\varnothing}}{
-%		\contractionof{\{\expof{\weightof{\exformula}\cdot\exformula} \, : \, \exformulain\}}{\varnothing}
-%		} \\
-%	& = 	\essparof{\empdistribution}_{\texformula} - \essparof{\mlnprob}_{\texformula} \, .  
-%\end{align}
-%We notice that the last term is dependent on $\weightof{\exformula}$ and solve
-%\begin{align}
-%		\frac{\partial}{\partial \weightof{\texformula}} \lossof{\formulaset,\weight} = 0
-%\end{align}
-%which is equal to 
-%\begin{align}\label{eq:momentMatchingExformula}
-%	\essparof{\empdistribution}_{\texformula} = \essparof{\mlnprob}_{\texformula} \, .  
-%\end{align}
-%This is called a moment matching condition to the moment representing the formula $\exformula$.
-%
-%
-%% Solution
-%Equation \ref{eq:momentMatchingExformula} has a solution in closed form by
-%\begin{align} \label{sol:momentMatchingExformula}
-%	\weightof{\texformula} = \lnof{\frac{\essparof{\empdistribution}_{\texformula}}{\big(1-\essparof{\empdistribution}_{\texformula}\big)} \cdot \frac{z_1}{z_2} }  
-%\end{align}
-%where
-%\begin{align}
-%	\begin{bmatrix}
-%	z_1 \\
-%	z_2
-%	\end{bmatrix}
-%	= \contractionof{\{\texformula \}\cup\{\expof{\weightof{\exformula}\cdot\exformula} \, : \, \exformulain, \exformula\neq\texformula\}}{\randomxof{\texformula}} \, . 
-%\end{align}
-
-
-
 %% Hard network reference!
 In the case $\datameanat{\indexedselvariable}\in\{0,1\}$ the moment matching conditions are not satisfiable for $\canparamat{\indexedselvariable}\in\rr$.
 But, we notice, that in the limit $\canparamat{\indexedselvariable}\rightarrow \infty $ (respectively $-\infty$) we have
@@ -274,7 +209,7 @@ This situation will be investigated in Chapter~\ref{cha:hardNetworks}.
 Since the likelihood is concave (see \cite{koller_probabilistic_2009}), there are not local maxima the coordinate descent could run into and coordinate descent will give a monotonic improvement of the likelihood. 
 
 We suggest an alternating optimization by Algorithm~\ref{alg:AWO}, solving the moment matching equation iteratively for all formulas $\exformulain$ and repeat the optimization until a convergence criterion is met.
-
+This is an coordinate ascent algorithm, when interpreted the loss $\lossof{\expdist}$ as an objective depending on the vector $\canparam$.
 
 \begin{algorithm}[hbt!]
 \caption{Alternating Weight Optimization (AWO)}\label{alg:AWO}
@@ -286,10 +221,13 @@ We suggest an alternating optimization by Algorithm~\ref{alg:AWO}, solving the m
 	\If{$\meanparamat{\indexedselvariable}=1$}
 		\[ \hardformulaset \algdefsymbol \hardformulaset \cup \{\enumformula\}\]
 	%\EndIf
-	\ElsIf{$\meanparamat{\indexedselvariable}=1$}
-		\[ \hardformulaset \algdefsymbol \hardformulaset \cup \{\enumformula\}\]
+	\ElsIf{$\meanparamat{\indexedselvariable}=0$}
+		\[ \hardformulaset \algdefsymbol \hardformulaset \cup \{\lnot\enumformula\}\]
 	\Else
 		\State $\secnodes\algdefsymbol \secnodes \cup \{\selindex\}$
+	\EndIf
+\EndFor
+\For{$\selindex\in\secnodes$}	
 		\State Compute
 		\[ \hypercoreat{\catvariableof{\enumformula}}
 		\algdefsymbol \sbcontractionof{\rencodingof{\enumformula}}{\catvariableof{\enumformula}} \]
@@ -301,26 +239,11 @@ We suggest an alternating optimization by Algorithm~\ref{alg:AWO}, solving the m
 			\cdot \frac{\hypercoreat{\catvariableof{\enumformula}=0}}{\hypercoreat{\catvariableof{\enumformula}=1}} 
 			} 
 		\end{align*}
-	\EndIf
 \EndFor
 \If {$\sbcontraction{\kb}=0$}
 	 \State \textbf{raise} "Inconsistent Knowledge Base"
 \EndIf
-%\For{$\selindexin$}
-%	\State Compute
-%		\[ \hypercoreat{\catvariableof{\enumformula}}
-%		\algdefsymbol \sbcontractionof{\rencodingof{\enumformula}}{\catvariableof{\enumformula}} \]
-%	\State Set 
-%		\begin{align*}
-%	 		\canparamat{\indexedselvariable} 
-%			\algdefsymbol \lnof{
-%			\frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})} 
-%			\cdot \frac{\hypercoreat{\catvariableof{\enumformula}=0}}{\hypercoreat{\catvariableof{\enumformula}=1}} 
-%			} 
-%		\end{align*}
-%\EndFor
 \While{Convergence criterion is not met}
-%\For{$\exformula\in\formulaset$}
 \For{$\selindex\in\secnodes$}
 	\State Compute
 	\begin{align*}
@@ -336,7 +259,6 @@ We suggest an alternating optimization by Algorithm~\ref{alg:AWO}, solving the m
 		\cdot \frac{\hypercoreat{\catvariableof{\enumformula}=0}}{\hypercoreat{\catvariableof{\enumformula}=1}} 
 		} 
 	\end{align*}
-	%\State Set $\weightof{\texformula}$ to the optimal weight when keeping $\weightof{\exformula}$ for $\exformula\neq\texformula$ constant, i.e. to the solution of the moment matching by Equation~\ref{sol:momentMatchingExformula}.
 \EndFor
 \EndWhile
 \end{algorithmic}

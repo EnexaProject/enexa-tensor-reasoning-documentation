@@ -1,61 +1,24 @@
-\section{Structure Learning}
+
+%\section{Structure Learning} % Now unified with parameter estimation
 
 \red{To Do:
-Change loss to be function of distribution, not of canparam,
-Current distribution as base measure $\basemeasure=\currentdistribution$, alternative to midterm family approach.}
+Current distribution as base measure $\basemeasure=\currentdistribution$, alternative to midterm family approach.
+}
 
-After having investigated how to parameterize exponentially many formulas by formula selecting networks, let us now develop objectives to be optimized.
 
 % Optimization methods
 %Naively choosing all formulas will not succeed in effective methods or interpretable models, due to the massive overparametrization and therefore redundancy in the representation of probability distributions. 
 %Instead, we in this section investigate approaches to  identify formulas to be activated, given a set of data and a neuro-symbolic architecture.
 
-We will use the effective selection tensor network representation of exponentially many formulas described in Chapter~\ref{cha:formulaBatches}.
 
-%Since the number of possible formulas to activate is large, we need an effective representation.
-%We show such this through a parametrization of superposed formula tensors.
+\subsection{Constrained parameter estimation in the minterm family}
 
-
-
-\subsection{Overparametrization}
-
-\red{Another exponent in the number of possible subsets of formulas!}
-
-Taking $\formulaset$ to consist of all propositional formulas, we get a massive overparametrization: 
-The essential statistics maps to a $2^{\left(2^\atomorder \right)}$ dimensional real vector space.
-All possible distributions of the $\atomorder$ atomic variables are mapped to an $2^\atomorder-1$ dimensional submanifold, where also the essential statistics maps to.
-
-Thus, to identify probabilistic knowledge bases, we need to drastically restrict the shape of formulas allowed.
-It is in principle impossible to decide which formulas to be activated, based only on statistics and not on prior assumptions.
-
-%The nodes of a Markov Propositional Network are all formulas in a propositional theory and the hyperedges all possible decompositons.
-When having $\atomorder$ atoms, there are $2^{\atomorder}$ states in the factored system.
-Since each state can either be a model of a formula or not, there are
-	\[ \cardof{\formulaset} = 2^{\big(2^\atomorder \big)} \]
-formulas.
-Having, for example, $\atomorder=10$, then $\cardof{\formulaset}>10^{308}$.
-
-
-% Regularization by sparsity
-One regularization is by allowing only a small number of formulas to be active.
-We add active formulas in a greedy manner.
-
-% Regularization by formula size
-A further regularization strategy is the restriction of the size of the possible formulas to maintain interpretability. 
-Thus, we choose small formula selection networks.
-
-
-
-
-
-%\subsection{Constrained parameter estimation}
-\subsection{Learning in the minterm family}
 
 % Naive exponential family
-We approach structure learning as constrained parameter estimation in the naive exponential family (see Example~\ref{exa:naiveExpFamily}), \red{which coincides with the minterm family $\formulasetof{\mlnmintermsymbol}$} 
-and has statistic $\sstat = \identityat{\shortcatvariables, \selvariableof{[\catorder]}}$.
+We approach structure learning as constrained parameter estimation in the naive exponential family (see Example~\ref{exa:naiveExpFamily}), which coincides with the minterm family $\formulasetof{\mlnmintermsymbol}$.
+The minterm family is defined by the statistic $\sstat = \identityat{\shortcatvariables, \selvariableof{[\catorder]}}$ and has energy tensors coinciding with the canonical parameters.
 
-By Theorem~\ref{the:mintermExpressivityMLN} all positive distributions are member of the minterm markov logic network.
+By Theorem~\ref{the:mintermExpressivityMLN} all positive distributions are member of the minterm markov logic network family.
 This expressivity result was generalized to arbitrary distributions, when allowing for formulas as basemeasures by Theorem~\ref{the:mintermExpressivityHLN}.
 
 Finding the distribution maximizing the likelihood of data would then be the empirical distribution.
@@ -76,40 +39,77 @@ To avoid this overfitting situation, we regularize by restricting the parameter 
 	\argmax_{\canparam\in\energyhypothesis}  \sbcontraction{\canparam,\empdistribution} - \cumfunctionof{\canparam} \, . 
 \end{align}
 
+Problem~\ref{prob:restricedNaiveMLE} has two important types of instantiation, which we discuss in the next sections.
+
+\subsubsection{Parameter Estimation}
+
 % Parameter Estimation
-When the $\formulaset$ is known we take $\energyhypothesis$ as the linear hull 
-	\[ \energyhypothesisof{\formulaset} = \mathrm{span}(\{\formula : \formula\in\formulaset \}) \, . \]
+\red{Projecting onto the markov logic family to the statistic $\formulaset$ is the instance of Problem~\ref{prob:restricedNaiveMLE} with the hypothesis choice}
+%When the $\formulaset$ is known we take $\energyhypothesis$ as the linear hull 
+	\[ \energyhypothesisof{\formulaset} = \spanof{\{\formula : \formula\in\formulaset \}} \, . \]
 Then, the problem is the parameter estimation problem studied in Chapter~\ref{cha:parameterEstimation}.
-To see this, we reparametrize by the coefficient vectors of the elements in the span, which are then understood as the canonical parameter of a 
+To see this, we reparametrize by the coefficient vectors of the elements in the span, which are then understood as the canonical parameter of the respective distribution in the markov logic family to $\formulaset$.
+
+
+\begin{remark}[Overparametrization]
+	Taking $\formulaset$ to consist of all propositional formulas, we get a massive overparametrization: 
+	The essential statistics maps to a $2^{\left(2^\atomorder \right)}$ dimensional real vector space.
+	All possible distributions of the $\atomorder$ atomic variables are mapped to an $2^\atomorder-1$ dimensional submanifold, where also the essential statistics maps to.
+
+	Thus, to identify probabilistic knowledge bases, we need to drastically restrict the shape of formulas allowed.
+	It is in principle impossible to decide which formulas to be activated, based only on statistics and not on prior assumptions.
+
+	%The nodes of a Markov Propositional Network are all formulas in a propositional theory and the hyperedges all possible decompositons.
+	When having $\atomorder$ atoms, there are $2^{\atomorder}$ states in the factored system.
+	Since each state can either be a model of a formula or not, there are
+		\[ \cardof{\formulaset} = 2^{\big(2^\atomorder \big)} \]
+	formulas.
+	Having, for example, $\atomorder=10$, then $\cardof{\formulaset}>10^{308}$.
+
+
+% Regularization by sparsity
+One regularization is by allowing only a small number of formulas to be active.
+This corresponds with regularization with $\sparsityof{\canparam}$.
+The problem is then non-convex.
+
+
+% Regularization by formula size
+A further regularization strategy is the restriction of the size of the possible formulas to maintain interpretability. 
+Thus, we choose small formula selection networks.
+\end{remark}
+
+
+
+
+\subsubsection{Structure Learning}
 
 % Structure Learning
-The problem of structure learning arises, when the set of formulas is to be learned, i.e. 
-	\[ \energyhypothesisof{\formulasuperset}= \bigcup_{\formulaset\in\formulasuperset} \energyhypothesisof{\formulaset}\, .  \]
+The problem of structure learning arises, when the set of parameters in Problem~\ref{prob:restricedNaiveMLE} is choosen as 
+	\[ \energyhypothesisof{\formulasuperset}= \bigcup_{\formulaset\in\formulasuperset} \spanof{\formulaset} \, .  \] %\energyhypothesisof{\formulaset}\, . 
 In this case, the problem in general fails to be convex.
 
+% Subspace instuition
+Each formula set $\formulaset$ represents a subspace in the parameters of the minterm family, which is spanned by the propositional formulas $\exformula\in\formulaset$.
 
-\subsection{Greedy Learning}
+%\red{Intuition by subspaces in the minterm parameters, which are selected by a nonlinear objective, to distinguish from compressed sensing.}
 
 
-%Three main approaches:
-%\begin{itemize}
-%	\item Ignore the partition term (i.e. the rest of the network).
-%		We can rewrite the problem into a least squares problem and efficiently use any tensor network format to fit a parameter tensor in combination with a projection operation to get a $\exformula$.
-%	\item Take the partition function into account.
-%		This requires computations of the log of the partition function over candidates. 
-%		Gibbs Sampling is still efficiently doable, performing an optimization over basis parameter tensors.
-%	\item Use Gradient Approaches instead.
-%		Gradient is much simpler, can choose best direction to update. 
-%\end{itemize}
-%
-%All three approaches require choosing the largest coordinate of a (sum of possibly nonlinearly transformed) tensor networks.
-%The task is hard, since it is not feasible to contract the tensor network to a tensor, we can only do contractions with other small tensor networks.
+
+
+
+
+
+\subsection{Greedy Structure Learning}
 
 
 %Motivation 
 It can be impracticle to learn all formulas at once, since the set $\formulasuperset$ often grows combinatorically, for example when choosing as a powerset of formulas.
-To avoid intractabilities, one can choose a greedy approach and learn in addition formulas $\exformula$ when already having learned a set $\formulaset$ of formulas.
+\red{Further, we need to avoid overfitting and carefully choose a hypothesis.}
+To avoid intractabilities and overfitting, one can choose a greedy approach and learn in addition formulas $\exformula$ when already having learned a set $\formulaset$ of formulas.
 We in this section assume a current model $\currentdistribution$, which is a generic positive distribution not necessarily a Markov Logic Network. % or Hybrid Logic Network.
+
+% 
+We will use the effective selection tensor network representation of exponentially many formulas described in Chapter~\ref{cha:formulaBatches} and select from them a small subset.
 
 \red{Alternative discussion: Can use current distribution as base measure and apply moment matching as first order condition.}
 
@@ -223,11 +223,9 @@ We can choose selection architectures to efficiently parametrize
 
 
 %
-To take the steepest ascent formula among the formulas selectable by $\formulaset$ we thus search for the maximal coordinate in the tensor network $\frac{\partial \lossof{\theta}}{\partial \parametercore}|_{\parametercore=0}$, that is solve
+To take the steepest ascent formula among the formulas selectable by $\formulaset$ we thus search for the maximal coordinate in the tensor network, that is solve
 \begin{align}
-	\argmax_{\selindexin} \contractionof{ \gradwrtat{\canparam}{\canparam=0} \lossof{\expdist}
-	%\{ \frac{\partial \lossof{\theta}}{\partial \parametercore}|_{\parametercore=0} , \onehotmapof{\parindices} \}
-	}{\indexedselvariable}
+	\argmax_{\selindexin} \contractionof{ \gradwrtat{\canparam}{\canparam=0} \lossof{\expdist}}{\indexedselvariable}
 \end{align}
 This is thus equivalent to the problem \ref{prob:steepestAscent}, when taking all formulas selectable by $\formulaset$ as the hypothesis $\Gamma$.
 
@@ -289,14 +287,14 @@ This is providing upper bounds on the likelihood increase.
 
 More precisely this is Problem~\ref{prob:restrictedNaiveMLE} in the case
 \begin{align*}
-	\energyhypothesis = \lnof{\currentdistribution} + \cup_{\formula\in\formulaset} \mathrm{span}(\formula) \, . 
+	\energyhypothesis = \lnof{\currentdistribution} + \cup_{\formula\in\formulaset} \spanof{\formula} \, . 
 \end{align*}
 
 
 % For single formula
 Let us choose a formula $\formula\in\formulaset$ and consider Problem~\ref{prob:restrictedNaiveMLE}  in the case
 \begin{align*}
-	\energyhypothesisof{\formula} = \lnof{\currentdistribution} + \mathrm{span}(\formula) \, . 
+	\energyhypothesisof{\formula} = \lnof{\currentdistribution} + \spanof{\formula} \, . 
 \end{align*}
 This is parameter estimation on the exponential family with the single feature $\formula$ and the base measure $\currentdistribution$.
 Therefore we can apply the theory of Chapter~\ref{cha:probReasoning} and characterize the solution by the $\weight$ satisfying the moment matching condition
@@ -310,7 +308,7 @@ We state the solution of this condition in the next theorem.
 %\begin{lemma}
 %	Problem~\ref{prob:restrictedNaiveMLE}  in the case
 %	\begin{align*}
-%		\energyhypothesisof{\formula} = \lnof{\currentdistribution} + \mathrm{span}(\formula) \,  
+%		\energyhypothesisof{\formula} = \lnof{\currentdistribution} + \spanof{\formula} \,  
 %	\end{align*}
 %	is solved at
 %	\begin{align*}
@@ -335,7 +333,7 @@ We state the solution of this condition in the next theorem.
 \begin{theorem}
 	Problem~\ref{prob:restrictedNaiveCE} in the case 
 	\begin{align*}
-		\energyhypothesis = \bigcup_{\formula\in\formulaset} \mathrm{span}(\formula) 
+		\energyhypothesis = \bigcup_{\formula\in\formulaset} \spanof{\formula} 
 	\end{align*}
 	is solved at any
 	\begin{align*}
@@ -351,7 +349,7 @@ We state the solution of this condition in the next theorem.
 \end{theorem}	
 \begin{proof}
 	% Solution of the problem restricted to 
-	For any formula $\formula$, Problem~\ref{prob:restrictedNaiveCE}  in the case $\energyhypothesis = \mathrm{span}(\formula) $ is by Lemma~\ref{ref:lemMMinMLN} solved at
+	For any formula $\formula$, Problem~\ref{prob:restrictedNaiveCE}  in the case $\energyhypothesis = \spanof{\formula} $ is by Lemma~\ref{ref:lemMMinMLN} solved at
 		\[ \weightof{\formula} = \lnof{\frac{\datamean}{(1-\datamean)}\cdot \frac{(1-\currentmean)}{\currentmean}}  \]
 	where
 		\[ \currentmean = \sbcontraction{\currentdistribution,\formula} \]
@@ -399,7 +397,7 @@ We state the solution of this condition in the next theorem.
 	\end{align*}
 	By definition, this is the Kullback-Leibler divergence between Bernoulli distributions with parameters $\datamean$ and $\currentmean$.
 	%
-	Since the gain in the likelihood loss when restricting to $\energyhypothesis = \mathrm{span}(\formula)$ is thus given by $\kldivof{\sbcontraction{\empdistribution,\formula}}{\sbcontraction{\currentdistribution,\formula}}$, we have that Problem~\ref{prob:restrictedNaiveCE}  in the case $\energyhypothesis = \bigcup_{\formula\in\formulaset}\mathrm{span}(\formula)$ is solved at $\estcanparam = \weightof{\hat{\formula}}\cdot \hat{\formula}$ where
+	Since the gain in the likelihood loss when restricting to $\energyhypothesis = \spanof{\formula}$ is thus given by $\kldivof{\sbcontraction{\empdistribution,\formula}}{\sbcontraction{\currentdistribution,\formula}}$, we have that Problem~\ref{prob:restrictedNaiveCE}  in the case $\energyhypothesis = \bigcup_{\formula\in\formulaset}\spanof{\formula}$ is solved at $\estcanparam = \weightof{\hat{\formula}}\cdot \hat{\formula}$ where
 		\[ \hat{\formula} = \kldivof{\sbcontraction{\empdistribution,\formula}}{\sbcontraction{\currentdistribution,\formula}} \, . \]
 \end{proof}
 
@@ -468,6 +466,10 @@ During learning, one needs to instantiate the proposal distribution, which requi
 \red{However, one could alternate data energy-based and use this as a particle-based proxy for the probability tensor.}
 
 
+\begin{remark}[Sparsification by Thresholding]
+	To maintain a small set of active formulas, one could combine greedy learning approaches with thresholding on the coordinates of $\canparam$.
+	This is a standard procedure in Iterative Hard Thresholding algorithms of Compressed Sensing, but note that here we do not have a linear in $\canparam$ objective.
+\end{remark}
 
 
 
