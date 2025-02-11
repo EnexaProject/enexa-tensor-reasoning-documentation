@@ -1,4 +1,4 @@
-\section{Notation}\label{cha:TensorNetworks}
+\section{Notation and Basic Concepts}\label{cha:TensorNetworks}
 
 We here provide the fundamental definitions of tensors, which are essentiell for the content in Part~I and Part~II.
 In Part~III we will further investigate the properties of tensors focusing on their contractions.
@@ -15,10 +15,7 @@ This is called an ontological commitment, since it defines what properties a sys
 \end{definition}
 
 % Notation: Large and small literals
-We notate variables by large literals and indices by small literals.
-
-
-%The state of an atomic system is determined by the value of the associated categorical variable.
+We will in this work always notate categorical variables by large literals and indices by small literals, possible with other letters such as $\catvariable,\selvariable,\indvariable,\datvariable$ and corresponding values $\catindex,\selindex,\indindex,\datindex$.
 
 \begin{definition}
 	A factored representation of a system is a set of categorical variables $\catvariableof{\atomenumerator}$, where $\atomenumeratorin$, taking values in $[\catdimof{\atomenumerator}]$.
@@ -26,19 +23,12 @@ We notate variables by large literals and indices by small literals.
 
 \subsection{Tensors}
 
-\red{
-We define Tensors here in an non-canonical way based on categorical variables assigned to its axis.
-This allows us to define contractions without further specification of axes, based on comparisons of shared categorical variables.}
-
-%% Index Set Abbreviation
-In the following we will denote index sets as
-	\[ [\catdimof{\atomenumerator}] \coloneqq \{0,\ldots,\catdimof{\atomenumerator-1} \} \, . \]
-
+% Gentle introduction sentences
 Tensors are multiway arrays and a generalization of vectors and matrices to higher orders.
-We will first define Tensors by their coordinates.
+We will first provide a formal definition as real maps from index sets enumerating the coordinates of vectors, matrices and larger order tensors.
 
 \begin{definition}[Tensor]\label{def:tensor}
-	Let there be numbers $\catdimof{\atomenumerator}\in\mathbb{N}$ for $\atomenumeratorin$ and categorical variables $\catvariableof{\atomenumerator}$ taking their values in $[\catdimof{\atomenumerator}]$.
+	Let there be numbers $\catdimof{\atomenumerator}\in\nn$ for $\atomenumeratorin$ and categorical variables $\catvariableof{\atomenumerator}$ taking their values in $[\catdimof{\atomenumerator}]$.
 	We call maps
 	\begin{align*}
 		\hypercoreat{\catvariables} : \bigtimes_{\atomenumeratorin} [\catdimof{\atomenumerator}] \rightarrow \rr
@@ -56,15 +46,20 @@ We will first define Tensors by their coordinates.
 	which is, with the operations of coordinatewise summation and scalar multiplication, a linear space called a tensor space.
 \end{definition} 
 
+% Non-canonical 
+We here introduced tensors in a non-canonical way based on categorical variables assigned to its axis.
+This allows us to define contractions without further specification of axes, based on comparisons of shared categorical variables.
+Especially, this eases the implementation of tensor network contractions without the need to further specify a graph (see Appendix~\ref{cha:implementation}).
+
+% Further abbreviations
 We abbreviate lists $\catvariables$ of categorical variables by $\shortcatvariables$, that is denote $\hypercoreat{\catvariables}$ by $\hypercoreat{\shortcatvariables}$.
 Occasionally, when the categorical variables of a tensor are clear from the context, we will omit the notation of the variables. %further abbreviate $\hypercoreat{\catvariables}$ by $\hypercore$.
-
 
 \begin{example}[Trivial Tensor]\label{exa:trivialTensor}
 	The trivial tensor is defined as the map 
 		\[ \onesat{\shortcatvariables} : \facstates \rightarrow \{1\} \subset \rr \]
 	with all coordinates being $1$, that is for all $\catindices\in\facstates$
-		\[ \onesat{\indexedcatvariables} = 1 \, . \]
+		\[ \onesat{\indexedshortcatvariables} = 1 \, . \]
 \end{example}
 
 
@@ -103,10 +98,11 @@ In a factored system on the other side, we are dealing with multiple categorical
 	Let there be a factored system defined by a tuple $(\catvariables)$ of variables taking values in $\facstates$.
 	The one-hot encoding of its states is the tensor product of the one-hot encoding to each categorical variables, that is the map
 		\[ \onehotmap : \facstates \rightarrow  \facspace \]
-	defined by mapping $\catindices$ to
-		\[ % \onehotmap(\catindices) =
-		 \onehotmapofat{\catindices}{\catvariables}
-		=: \bigotimes_{\atomenumeratorin} \onehotmapofat{\catindexof{\atomenumerator}}{\catvariableof{\atomenumerator}} \, . \]
+	defined by mapping $\catindices=\shortcatindices$ to
+	\begin{align*}
+		 \onehotmapofat{\shortcatindices}{\shortcatvariables}
+		=: \bigotimes_{\atomenumeratorin} \onehotmapofat{\catindexof{\atomenumerator}}{\catvariableof{\atomenumerator}} \, . 
+	\end{align*}
 	We will call one-hot representations \emph{tensor representations} and depict them as
 	\begin{center}
 		\input{PartI/tikz_pics/overview/one_hot_tensorproduct.tex}
@@ -124,31 +120,18 @@ In a factored system on the other side, we are dealing with multiple categorical
 
 \subsection{Contractions}
 
+Contractions are the central manipulation operation on sets of tensors.
+To introduce them, we will develop a graphical illustration of sets of tensors, which we also call tensor networks.
+In Part~III we will further investigate the utility of contractions in representing specific calculations, which demand different encoding schemes.
 
 
-\subsubsection{Tensor Product}
+\subsubsection{Graphical Illustrations}
 
-
-
-\begin{definition}[Tensor Product]\label{def:tensorProduct}
-	Let there be two tensor
-	\begin{align*}
-		\hypercoreat{\catvariables} : \facstates \rightarrow \rr \quad \text{and} \quad  \sechypercoreat{\seccatvariables} : \secfacstates \rightarrow \rr \, 
-	\end{align*}
-	with different categorical variables assigned to its axes.
-	Then there tensor product is the map
-	\begin{align*}
-		\left(\hypercore \otimes \sechypercore\right)\left[\catvariables,\seccatvariables \right] :  \left(\facstates\right) \times \left(\secfacstates\right) \rightarrow \rr
-	\end{align*}
-	defined for $\catindices\in\facstates$ and $\seccatindices\in\secfacstates$ as
-	\begin{align*}
-		\left(\hypercore \otimes \sechypercore\right)&\left[\indexedcatvariables,\indexedseccatvariables \right] \\
-		&:=  \hypercoreat{\indexedcatvariables}\cdot \sechypercoreat{\indexedseccatvariables} \, .
-	\end{align*}
-\end{definition}
-
-
-\subsection{Illustrations by Hypergraphs}
+% Hypergraph as capturing the categorical variable assignment to tensors
+Sets of tensor with categorical variables assigned to each legs implicitly carry a notion of a hypergraph.
+This perspective is especially useful, when some categorical variables are assigned to axis of multiple tensors, as it will often be the case in the applications considered in this work.
+Each variable can then be labeled by a node and each tensor as a hyperedge containing the nodes to its axis variables.
+Let us first formally introduce hypergraphs, which are generalizations of graphs allowing edges to be arbitrary nonempty subsets of the nodes, whereas canonical graphs demand a cardinality of two.
 
 \begin{definition}\label{def:hypergraphs}
 	A hypergraph is a pair $\graph=(\nodes,\edges)$ of a set of nodes $\nodes$ and a set of edges $\edges$, where each hyperedge $\edge\in\edges$ is a subset of the nodes $\nodes$.
@@ -156,23 +139,32 @@ In a factored system on the other side, we are dealing with multiple categorical
 		\[ \edge = (\incomingnodes,\outgoingnodes)  \, . \]
 \end{definition}
 
+% Diagrammatic representation in factor graphs
+We will use the standard visualization by factor graphs as a diagrammatic illustration of sets of tensors, where tensors are represented by block nodes and each axis assigned with by a categorical variable $\catvariableof{\atomenumerator}$ represented by a node, see Figure~\ref{fig:tensors}a). 
+%We further denote on Each axis of the tensor is represented by a node representing the variable $\catvariableof{\atomenumerator}$ and the tensor $\hypercore$ is associated with the hyperedge $\edge$ connecting all variables.
+ %representing the choice of an element in the set $[\catdimof{\atomenumerator}]$
+% Hyperedge view
+Different simplifications of these factor graph depictions have been evolved in different research fields.
+In the tradition of graphical models, which started with the work \cite{pearl_probabilistic_1988}, the categorical variables are highlighted and the tensor blocks just depicted by hyperedges.
+To depict dependencies with causal interpretations, the edges are further decorated by directions in the depiction of Bayesian networks, see for example \cite{pearl_causality_2009}.
 
-%% Diagrammatic representation
-We will use a diagrammatic illustration of tensors, where tensors are represented by block nodes and each axis as a leg decorated with a categorical variable $\catvariableof{\atomenumerator}$ representing the choice of an element in the set $[\catdimof{\atomenumerator}]$ as shown in Figure~\ref{fig:tensors}b).
+In the tensor network community on the other hand, a simplification scheme highlighting the tensors as blocks and omitting the depiction of categorical variables has been evolved.
+The variables, or sometimes their index or dimension, are then directly assigned to the lines depicting the axes of the tensor blocks.
 
-%% Hyperedge view
-Another useful depiction is by hypergraphs, which are generalizations of graphs allowing that edges being arbitrary nonempty subsets of the nodes, whereas canonical graphs assume pairs.
-Along this depiction (see Figure~\ref{fig:tensors}a) each axis of the tensor is represented by a node representing the variable $\catvariableof{\atomenumerator}$ and the tensor $\hypercore$ is associated with the hyperedge $\edge$ connecting all variables.
+Both depiction schemes are simplifications of factor graphs, by highlighting the categorical variables in the depiction in Figure~\ref{fig:tensors}b) and the tensors in the depiction in Figure~\ref{fig:tensors}c).
+We in this work will prefer the simplification of the tensor network community, depicted in Figure~\ref{fig:tensors}b).
 
-The two representations are dual to each other in the sense that the nodes of the one are the hyperedges of the other graph.
+% Duality
+In another interpretation (see \cite{robeva_duality_2019}), both simplification schemes are itself interpret as hypergraphs, which are dual to each other.
 
 \begin{figure}[h!]
 	\begin{center}
 		\input{PartI/tikz_pics/tensor_networks/hypercore.tex}
 	\end{center}
 	\caption{Depiction of Tensors 
-	a) Decoration of hyperedges connecting the variables $\catvariableof{\atomenumerator}$ to each axis $\atomenumeratorin$.
-	b) Blockwise notation with axis denoted by open legs represented by the variables $\catvariableof{\atomenumerator}$.
+	a) As a factor in a factor graph, depicted by a block, and connected to categorical variables assigned to nodes.
+	b) Highlighting only the variable dependencies by a hyperedge connecting the variables $\catvariableof{\atomenumerator}$ to each axis $\atomenumeratorin$.
+	c) Highlighting the tensor by a blockwise notation with axes denoted by open legs represented by the variables $\catvariableof{\atomenumerator}$.
 	}\label{fig:tensors}
 \end{figure}
 
@@ -186,6 +178,7 @@ The basis vectors being one-hot encodings of states are in this scheme represent
 	\end{center}
 where $\tilde{\catindex}$ is an indexed represented by an open leg. 
 Assigning $\catindex$ to this index will retrieve the $\catindex$th coordinate (with value $1$), whereas all other assignments will retrieve the coordinate values $0$. 
+
 
 Drawing on the interpretation of tensors by hyeredges we can continue with the definition of tensor networks.
 
@@ -213,18 +206,57 @@ Drawing on the interpretation of tensors by hyeredges we can continue with the d
 \end{figure}
 
 %%
-Diagrammatic notation: Best to do version a) as used in the definition, highlighting that tensors have shared categorical variables with fixed dimensions.
+%Diagrammatic notation: Best to do version a) as used in the definition, highlighting that tensors have shared categorical variables with fixed dimensions.
 
 
-\subsection{Generic Contractions}
+
+
+\subsubsection{Tensor Product}
+
+% Diagrams -> Contractions
+Let us now exploit the developed graphical representations to define contractions of tensor networks.
+The simplest contraction is the tensor product, which maps a pair of two tensors with distinct variables onto a third tensor and has an interpretation by coordinatewise products.
+Such a contraction corresponds with a tensor network of two tensors with disjoint variables, depicted as:
+\begin{center}
+	\input{PartI/tikz_pics/tensor_networks/tensor_product.tex}
+\end{center}
+
+\begin{definition}[Tensor Product]\label{def:tensorProduct}
+	Let there be two tensor
+	\begin{align*}
+		\hypercoreofat{\edge_0}{\shortcatvariables} : \facstates \rightarrow \rr \quad \text{and} \quad  \hypercoreofat{\edge_1}{\secshortcatvariables} : \secfacstates \rightarrow \rr \, 
+	\end{align*}
+	with different categorical variables assigned to its axes.
+	Then there tensor product is the map
+	\begin{align*}
+		\contractionof{\hypercoreofat{\edge_0}{\shortcatvariables},\hypercoreofat{\edge_1}{\secshortcatvariables}}{\shortcatvariables,\secshortcatvariables} :  \left(\facstates\right) \times \left(\secfacstates\right) \rightarrow \rr
+	\end{align*}
+	defined for $\catindices\in\facstates$ and $\seccatindices\in\secfacstates$ as
+	\begin{align*}
+		& \contractionof{\hypercore,\sechypercore}{\indexedcatvariables,\indexedseccatvariables} \\
+		&\quad\quad :=  \hypercoreofat{\edge_0}{\indexedcatvariables}\cdot \hypercoreofat{\edge_1}{\indexedseccatvariables} \, .
+	\end{align*}
+\end{definition}
+
+% Other notations
+Other popular standard notations of tensor products (see \cite{kolda_tensor_2009,hackbusch_tensor_2012,cichocki_tensor_2015}) 
+	\[ \left(\hypercore \otimes \sechypercore\right) = \left(\hypercore \circ \sechypercore\right)  
+	= \contractionof{\hypercoreofat{\edge_0}{\shortcatvariables},\hypercoreofat{\edge_1}{\secshortcatvariables}}{\shortcatvariables,\secshortcatvariables}  \, . \]
+We will avoid these notations in this work in favor of a consistent notation capable of depicting generic tensor network contractions.
+
+When the tensor $\hypercoreofat{\edge_1}{\secshortcatvariables}$ coincides with the trivial tensor $\onesat{\secshortcatvariables}$ (see Example~\ref{exa:trivialTensor}), we further make a notation convention to omit that tensor, that is
+\begin{align*}
+	\contractionof{\hypercoreofat{\edge_0}{\shortcatvariables},\onesat{\secshortcatvariables}}{\shortcatvariables,\secshortcatvariables}  
+	= \contractionof{\hypercoreofat{\edge_0}{\shortcatvariables}}{\shortcatvariables,\secshortcatvariables} \, .
+\end{align*}
+
+
+\subsubsection{Generic Contractions}
 
 
 Contractions of Tensor Networks $\extnet$ are operations to retrieve single tensors by summing products of tensors in a network over common indices.
 We will define contractions formally by specifying just the indices not to be summed over.
 
-
-%need specification of Tensor Network at hand and edges to be left over (as in numpy.einsum)
-%	\[ \contractionof{\extnet}{[\randomxof{\atomenumerator_1},...\randomxof{\atomenumerator_d}]} \, . \]
 When some of the variables are not appearing as leg variables, we define the contraction as being a tensor product with the trivial tensor $\ones$ carrying the legs of the missing variables.
 
 
@@ -237,10 +269,8 @@ When some of the variables are not appearing as leg variables, we define the con
 	defined coordinatewise by the sum	
 	\begin{align}
 		\contractionof{\tnetof{\graph}}{\indexedcatvariableof{\node} \, : \, \node\in\secnodes} =
-%		\contractionof{\tnetof{\graph}}{\secnodes}\left(\{\catindexof{\node} \, : \, \node\in\secnodes\}\right) = 
 		\sum_{\{\catindexof{\node} \in [\catdimof{\node}] \, : \, \node \in \nodes/\secnodes\}}
 		\left( \prod_{\edge\in\edges}\hypercoreofat{\edge}{\indexedcatvariableof{\node} \, : \, \node\in\edge} \right) \, .
-		 %\left(\{\catindexof{\node} : \node\in\edge\}\right) \, . 
 	\end{align}
 \end{definition}
 
@@ -254,43 +284,45 @@ When some of the variables are not appearing as leg variables, we define the con
 	}\label{fig:contraction}
 \end{figure}
 
-
-
 %%
-Diagrammatic notation: Best to do version b), since this is easiest to see how tensors combine to new tensors by contractions.
+%Diagrammatic notation: Best to do version b), since this is easiest to see how tensors combine to new tensors by contractions.
 
 \begin{remark}[Alternative Notations]
+	% Einstein summations
 	Contractions can also denoted by the Einstein summations of the indices along connected edges, understood as scalar product in each subspace.
-%	This notation is used in $\mathrm{numpy.einsum}$.
 	This is as in Definition~\ref{def:contraction}, just omitting the sums.
 	We found it useful in this work to do the diagrammatic representation instead, since it offers a better possibility to depict hierarchical arrangements of shared variables.
 \end{remark}
 
 
-% Example
-\begin{example}
-	Tensor products are examples of contractions, where the hypergraph consists of two disjoint edges, which union is left open.
-\end{example}
+% Mode products
+Further notations without usage of axis variables are mode products (see \cite{kolda_tensor_2009,hackbusch_tensor_2012,cichocki_tensor_2015}), often denoted by the operation $\times_n$.
+With our more generic variable-based notations, we can capture these more specific contractions by coloring the tensor axes, that is assignment of axis variables.
 
+% Examples
+To further gain familiarity with the generic contractions, we show the connection to two more popular examples.
 
 %% Diagrammatic representation of Matrix Vector
-\begin{example}
-	Matrix vector contractions are special cases of Tensor Contractions.
-	We use the visualization as in Figure~\ref{fig:tensors}b where vectors are blocks with single categorical variables and matrices with two indices and matrix vector products by
+\begin{example}{Matrix Vector Products}
+	The matrix vector product is a special case of tensor contractions, where a matrix $\matrixat{\exrandom,\secexrandom}$ shares a categorical variable with a vector $\vectorat{\secexrandom}$.
+	When leaving the variable unique to the matrix open we get the matrix vector product as
+		\[ \contractionof{\matrixat{\exrandom,\secexrandom},\vectorat{\secexrandom}}{\exrandom=\exrandind} = \sum_{\secexrandind\in[\secexranddim]} \matrixat{\exrandom=\exrandind,\secexrandom=\secexrandind} \cdot \vectorat{\secexrandom=\secexrandind} \, .  \]
+
+	Exploiting the diagramatic tensor network visualization we depict matrix vector products by:
 	\begin{center}
 		\input{PartI/tikz_pics/overview/one_hot_matrix.tex}
 	\end{center}
-	Here the index $j$ is represented by a closed edge, which means that it is eliminated by a sum.
+%	Here the index $j$ is represented by a closed edge, which means that it is eliminated by a sum.
 \end{example}
 
 
 %% Hadamard Product 
-\begin{example}
+\begin{example}{Hadamard Products of Vectors}
 	A node appearing in arbitrary many hyperedges denotes a Hadamard product of the axis of the respective decorating tensors.
-	To give an example, let $V^k\in\rr^p$ be vectors for $\atomenumeratorin$. Their hadamard product is the vector
-		\[ V^1\circ V^2 \circ \ldots \circ V^{\atomorder-1} \in \rr^p \]
+	To give an example, let $\vectorofat{\catenumerator}{\catvariable}\in\rr^\catdim$ be vectors for $\catenumeratorin$. Their hadamard product is the vector
+		\[ \contractionof{\{\vectorofat{\catenumerator}{\catvariable} \, : \, \catenumeratorin\}}{\catvariable}  \in \rr^\catdim \]
 	defined by
-		\[ \left( V^1\circ V^2 \circ \ldots \circ V^{\atomorder-1} \right)_\catindex = \prod_{\atomenumeratorin} V^\atomenumerator_\catindex \, . \]
+		\[ \contractionof{\{\vectorofat{\catenumerator}{\catvariable} \, : \, \catenumeratorin\}}{\indexedcatvariable}   = \prod_{\atomenumeratorin} V^\atomenumerator[\indexedcatvariable]\, . \]
 	In a contraction diagram the Hadamard product is depicted by 
 	\begin{center}
 		\input{PartI/tikz_pics/tensor_networks/hadamard.tex}
@@ -326,7 +358,7 @@ Summing over outgoing trivializes the tensor.
 	A Tensor 
 		\[ \hypercoreat{\catvariablesinset{\nodes}} \in \bigotimes_{\nodein}\rr^{\catdimof{\node}} \]
 	is said to be directed with incoming variables $\innodes$ and outgoing variables $\outnodes$, where $\nodes=\innodes\dot{\cup}\outnodes$, when
-		\[ \contractionof{\{\hypercore\}}{\catvariablesinset{\outnodes}} =  \onesat{\catvariablesinset{\innodes}} \]
+		\[ \sbcontractionof{\hypercore}{\catvariablesinset{\outnodes}} =  \onesat{\catvariablesinset{\innodes}} \]
 	where $\onesat{\catvariablesinset{\innodes}}$ denoted the trivial tensor in  $\bigotimes_{\node\in\innodes}\rr^{\catdimof{\node}}$ which coordinates are all $1$.
 \end{definition}
 
@@ -334,15 +366,15 @@ While by default all legs are outgoing, we can change the direction by normation
 
 \begin{definition}\label{def:normation}
 	A tensor $\hypercoreat{\catvariablesinset{\nodes}}$ is said to be normable on $\innodes\subset\nodes$, if for any $\atomlegindexof{\innodes}\in\bigtimes_{\node\in\innodes}[\catdimof{\node}]$ we have
-		\[ \contractionof{\{\hypercore\} \cup\{\onehotmapof{\atomlegindexof{\innodes}}\}}{\varnothing} > 0 \, . \]
+		\[ \sbcontraction{\hypercore,\onehotmapof{\atomlegindexof{\innodes}}} > 0 \, . \]
 	The normation of a on $\innodes\subset\nodes$ normable tensor is the tensor
 	\begin{align*}
-		\normationofwrt{\{\hypercore\}}{\outnodes}{\innodes} = 
+		\sbnormationofwrt{\hypercore}{\catvariableof{\outnodes}}{\catvariableof{\innodes}} = 
 		\sum_{\atomlegindexof{\innodes}\in\bigtimes_{\node\in\innodes}[\catdimof{\node}]} 
 		\onehotmapof{\atomlegindexof{\innodes}} \otimes \frac{
-		\contractionof{\{\hypercore\}\cup\{\onehotmapof{\atomlegindexof{\innodes}}\}}{\outnodes}
+		\sbcontractionof{\hypercore,\onehotmapof{\catindexof{\innodes}}}{\catvariableof{\outnodes}}
 		}{
-		\contractionof{\{\hypercore\}\cup\{\onehotmapof{\atomlegindexof{\innodes}}\}}{\varnothing}
+		\sbcontraction{\hypercore,\onehotmapof{\catindexof{\innodes}}}
 		} 
 	\end{align*}
 	where $\outnodes = \nodes / \innodes$.
@@ -460,7 +492,7 @@ We call these tensor representation of maps selection encodings, since the coord
 
 
 %% 
-We will provide more detail to the tensor representation of functions in Chapter~\ref{cha:tensorEncodings}. %where we show that domain encodings coincide with selection encodings.
+We will provide more detail to the tensor representation of functions in Part~III, where we distinguish between embeddings for basis and coordinate calculus. %where we show that domain encodings coincide with selection encodings.
 
 
 
