@@ -12,11 +12,221 @@ The package can be installed either by cloning \href{https://github.com/EnexaPro
 \end{centeredcode}
 
 
-\subsection{Script Language}\label{subsec:scriptLanguage} % To encoding?
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Architecture}
+
+\tnreason is structured in four subpackages and three layers
+\begin{itemize}
+	\item Layer 1: Storage and numerical manipulations, by subpackage \spengine, "Tensor Networks" -> building "tn" of \tnreason
+	\item Layer 2: Specification of workload, subpackage \spencoding specific for storage, subpackage \spalgorithms specific for manipulations
+	\item Layer 3: Applications in reasoning, by subpackage \spknowledge, "Reasoning" -> building "reason" of \tnreason
+\end{itemize}
+
+We sketch this structure by
+\begin{center}
+\begin{tikzpicture}[scale=0.35]
+
+\draw[dashed] (-30,15) -- (12,15) -- (12,-3) -- (-30,-3) -- (-30,15);
+
+\draw (-10,10) rectangle (10,14); 
+\node [anchor=center] at (0,12) {\spknowledge};
+
+\node [anchor=center] at (-20,12) {\layerthreespec};
+\draw[dashed] (-30,9) -- (12,9);
+\node [anchor=center] at (-20,6) {\layertwospec};
+
+\draw[->] (6,10) -- (6,8);
+\draw (2,4) rectangle (10,8); 
+\node [anchor=center] at (6,6) {\spalgorithms};
+\draw[->] (6,4) -- (6,2);
+
+\draw[->] (-6,10) -- (-6,8);
+\draw (-10,4) rectangle (-2,8); 
+\node [anchor=center] at (-6,6) {\spencoding};
+\draw[->] (-6,4) -- (-6,2);
+
+\draw[dashed] (-30,3) -- (12,3);
+\node [anchor=center] at (-20,0) {\layeronespec};
+
+\draw (-10,-2) rectangle (10,2); 
+\node [anchor=center] at (0,0) {\spengine};
+\end{tikzpicture}
+\end{center}
+
+
+
+\subsection{Subpackage \spengine}
+
+The \spengine subpackage is for the storage and numerical manipulation of tensors and tensor networks.
+
+We think of it as the lowest layer, specializing in storage of Tensor Networks and performing the contractions.
+
+\subsubsection{Contraction Calculus} % -> To engine section?
+
+We have described two main encoding schemes of functions, by a direct interpretation of functions as tensors or a more relational encoding.
+Both come with a different calculus scheme, which we have framed coordiante calculus and basis calculus.
+
+
+
+\subsubsection{Cores and Contractions}
+
+\textbf{Cores}
+
+Each Tensor core has attributes
+\begin{itemize}
+	\item values (array-like): storing the value of the coordinates
+	\item colors (list of str): specifying the name of the variables represented by its axes
+	\item name (str): to distinguish from other cores
+\end{itemize} 
+The implemented core types differ in the values argument.
+Cores are instantiated by
+\begin{centeredcode}
+	engine.getCore(coreType)(coreValues, coreColors, coreName)
+\end{centeredcode}
+
+\textbf{Polynomial Cores}
+Polynomial Cores are implementations of the monomial decomposition or basis+ (see Definition~\ref{def:polynomialSparsity}).
+Here the each tuple $(\lambda,\variableset,\catvariableof{\variableset})$ is stored as a tuple of the scalar $\lambda$ and a dictionary with $\variableset$ as keys and $\catvariableof{\variableset}$ as values.
+
+% Contraction Method List
+The supported cores are
+\begin{center}
+\begin{tabular}{|c|c|c|}
+  	\hline
+ 	\textbf{coreType} & \textbf{Package} & \text{Explanation}  \\
+  	\hline
+ 	\stringof{NumpyTensorCore} 	&  $\mathrm{numpy}$  & Numpy array storing the values\\
+  	\hline
+ 	\stringof{PolynomialCore} 	&  $\mathrm{numpy}$  & Storeing the values in a binary CP Decomposition\\
+  	\hline
+\end{tabular}
+\end{center}
+
+
+\textbf{Binary CP Decomposition}
+
+Based on the monomial decomposition $\slicesparsityof{\cdot}$ as specified in Definition~\ref{def:polynomialSparsity}.
+To store the values of a tensor we store the slices of tensors by the indices $\catindexof{\variableset}$. 
+
+% Trick -> To BinaryCP
+Contractions can be performed by partially contracting the cores of the decomposition.
+In this way, one can avoids coordinatewise storages of high-order tensors, which can be intractable.
+
+\textbf{Tensor Networks}
+
+Tensor networks $\tnetof{\graph}$ are defined by hypergraphs with hyperedges decorated by tensor cores. 
+We store them by dictionaries with values being tensor cores and keys coinciding with the name of each tensor core.
+
+
+\textbf{Contractions}
+
+Reflected in the notation
+	\[ \contractionof{\tnetof{\graph}}{\nodevariables} \]
+a contraction is defined by
+\begin{itemize}
+	\item Tensor Network $\tnetof{\graph}$, i.e. a dictionary of tensor cores
+	\item Open Variables $\nodes$
+\end{itemize}
+Contraction calls are done by
+\begin{centeredcode}
+	engine.contract(contractionMethod, coreDict, openColors, dimensionDict, evidenceColorDict)
+\end{centeredcode}
+Where
+\begin{itemize}
+	\item contractionMethod: str, chooses one of the contraction providers
+	\item coreDict: Dictionary of TensorCores (of the above formats), representing the Tensor Network $\tnetof{\graph}$ 
+	\item openColors: List of str, each str identifying a color, that is a variable to be left open in the contraction
+	\item dimensionDict: Dict valued by int and keys by str, storing dimensions to each variable. This is of optional usage, when a color in openColors does not appear in the coreDict.
+	\item evidenceColorDict: Dict valued by int and keys by str, indicating sliced variables
+\end{itemize}
+
+% Contraction Method List
+The supported contraction methods are
+\begin{center}
+\begin{tabular}{|c|c|c|}
+  	\hline
+ 	\textbf{contractionMethod} (str) & \textbf{Package} & \text{Explanation}  \\
+  	\hline
+ 	\stringof{NumpyEinsum} 	&  $\mathrm{numpy}$  & Einstein summation of $\mathrm{numpy}$ arrays\\
+  	\hline
+ 	\stringof{TensorFlowEinsum} 	&  $\mathrm{tensorflow}$  & Einstein summation of $\mathrm{tensorflow}$ tensors\\
+  	\hline
+	\stringof{TorchEinsum} 	&  $\mathrm{torch}$  & Einstein summation of $\mathrm{torch}$ tensors\\
+  	\hline
+	\stringof{TentrisEinsum} 	&  $\mathrm{tentris}$  & Einstein summation of $\mathrm{tentris}$ hypertries\\
+  	\hline
+	\stringof{PgmpyVariableEliminator} 	&  $\mathrm{pgmpy}$  & Variable Elimination of DiscreteFactors in $\mathrm{pgmpy}$\\
+  	\hline
+	\stringof{PolynomialContractor} 	&  $\mathrm{numpy}$  & Contraction of CP Decompositions stored in $\mathrm{numpy}$ arrays\\
+  	\hline	
+\end{tabular}
+\end{center}
+
+
+%\textbf{Einstein Summation}
+Contractions represented as Einstein summation, as implemented in:
+\begin{itemize}
+	\item numpy
+	\item tensorflow
+	\item pytorch
+	\item tentris
+\end{itemize}
+
+%\textbf{Variable Elimination}
+Contractions can be executed by variable elimination as implemented in:
+\begin{itemize}
+	\item pgmpy
+\end{itemize}
+
+\textbf{Manipulation of Binary CP Decomposition}
+Contraction of tensors in Binary CP Decomposition as in Section~\ref{sec:BinaryCPManipulation}.
+
+\textbf{Coordinate Calculus}
+
+Main function
+\begin{centeredcode}
+	engine.coordinate\_transform(coresList, transformFunction)
+\end{centeredcode}
+
+\textbf{Basis Calculus}
+
+Main function 
+\begin{centeredcode}
+	engine.relational\_encoding()
+\end{centeredcode}
+basis calculus then based on contractions
+
+
+
+
+
+\subsection{Subpackage \spencoding}
+
+In the \spencoding subpackage we encode maps 
+Here the relational encodings $\rencodingof{\exfunction}$ of various maps $\exfunction$ are created.
+%
+The maps are either specified by the script language (logical formulas or neuro-symbolic architectures), categorical constraints or data.
+Given a specification of a formula $\exformula$ in script language $\synencodingof{\cdot}$, the task amounts to building a semantic representation based on the syntactic specification.
+
+We arrange the \spencoding subpackage into the second layer of the \tnreason architecture, since it specifies tensor cores which formats are specified in \spengine.
+
+
+\subsubsection{Script Language}\label{subsec:scriptLanguage} % To encoding?
 
 To specify propositional sentences, neuro-symbolic architectures and Markov Logic Networks, we developed a script language.
 
-\subsubsection{Propositional Sentences by Nested Lists}
+\textbf{Propositional Sentences by Nested Lists}
 
 %\textbf{Production Rules}
 Are those of Propositional Logics, but instead of brackets we nest the symbols into lists.
@@ -53,6 +263,21 @@ Are those of Propositional Logics, but instead of brackets we nest the symbols i
 	\end{tabular}};
 \end{tikzpicture}
 \end{center}
+
+% WOLFRAM Numbers
+Besides these specific connectives we exploit a generic representation scheme of propositional formulas by the so-called Wolfram code orginially designed for the classification of cellular automaton rules \cite{wolfram_statistical_1983} and popularized in the book \cite{wolfram_new_2002}.
+Along this, the coordinate encodings of connectives $\exconnective$ with differing arity are flattened and interpreted as a binary number, which is transformed into a decimal number and represented as a string $\synencodingof{\exconnective}$.
+We then choose a prefix to encode the arity by
+\begin{itemize}
+	\item \stringof{u} for unary
+	\item \stringof{b} for binary
+	\item \stringof{t} for ternary
+	\item \stringof{q} for quarternary
+\end{itemize}
+connectives.
+Together, the connective is represented by the string concatenation
+	\[  \synencodingof{\exconnective} = \synencodingof{\catorder} + \synencodingof{\exconnective} \, . \]
+
 
 % Atoms
 \textbf{Atomic Formulas} are represented by arbitrary strings, which are not used for the representation of connectives. 
@@ -119,7 +344,7 @@ For example we have
 
 
 
-\subsubsection{Knowledge Bases}
+\textbf{Knowledge Bases}
 
 % Should distinguish these in knowledge?
 We distinguish here formulas, with propositional logic interpretation and formulas which have a soft logic interpretation.
@@ -129,7 +354,7 @@ The formulas with hard interpretation are called facts in a knowledge base $\kb$
 	\{key($\exformula$) : $\synencodingof{\exformula}$ for $\exformula\in\kb$ \}
 \end{centeredcode}
 
-\subsubsection{Markov Logic Networks}
+\textbf{Markov Logic Networks}
 
 %\textbf{Weighted formulas.} 
 The formulas with soft interpretation are called weighted formulas and encoded by $\expof{\weightof{\exformula}\cdot\exformula}$.
@@ -139,7 +364,7 @@ We then store Markov Logic Networks by dictionaries
 	\{key($\exformula$) : $\synencodingof{\exformula}$ + [$\weightof{\exformula}$] for $\exformula\in\formulaset$\}
 \end{centeredcode}
 
-\subsubsection{Neuro-Symbolic Architecture by Nested Lists}
+\textbf{Neuro-Symbolic Architecture by Nested Lists}
 
 % Generalizing the script language to specify architectures
 To specify neuro-symbolic architectures in terms of formula selecting maps, as has been the subject of Chapter~\ref{cha:architectures} we further exploit the nested list structure of encoding propositional logics.
@@ -229,16 +454,19 @@ In order to represent neuro-symbolic architectures, the grammar of $\synencoding
 
 
 
-\subsection{Tensor Networks} % -> To engine section?
+
 
 \subsubsection{Core Nomenclature}
 
+\red{In encoding.suffixes we }
+
 % See in encoding subpackage
-Appearing cores:
+Cores are named with suffixes based on their funcitonality
 \begin{itemize}
-	\item "\_conCore": logical connectives (relational encoding of the connective map)
-	\item "\_headCore": Binary vectors representing of the exponential (directly a tensor)
-	\item "\_dataCore": Representing (relational encoding of the data map)
+	\item \stringof{\_conCore}: logical connectives (relational encoding of the connective map)
+	\item \stringof{\_headCore}: two-dimensional vectors representing of the activation core to a formula 
+	\item \stringof{\_dataCore}: Representing (relational encoding of the data map)
+	\item \stringof{\_catCore}: Categorical constraint cores 
 \end{itemize}
 
 \subsubsection{Color Nomenclature}
@@ -253,211 +481,14 @@ Represent the three appearing types of variables:
 
 
 
-\subsection{Contraction Calculus} % -> To engine section?
-
-We have described two main encoding schemes of functions, by a direct interpretation of functions as tensors or a more relational encoding.
-Both come with a different calculus scheme, which we have framed coordiante calculus and basis calculus.
-
-\subsubsection{Coordinate Calculus}
-
-Main function
-\begin{centeredcode}
-	engine.coordinate\_transform(coresList, transformFunction)
-\end{centeredcode}
-
-\subsubsection{Basis Calculus}
-
-Main function 
-\begin{centeredcode}
-	engine.relational\_encoding()
-\end{centeredcode}
-basis calculus then based on contractions
-
-
-
-
-\subsection{Architecture}
-
-\tnreason is structured in four subpackages and three layers
-\begin{itemize}
-	\item Layer 1: Storage and numerical manipulations, by subpackage \spengine, "Tensor Networks" -> building "tn" of \tnreason
-	\item Layer 2: Specification of workload, subpackage \spencoding specific for storage, subpackage \spalgorithms specific for manipulations
-	\item Layer 3: Applications in reasoning, by subpackage \spknowledge, "Reasoning" -> building "reason" of \tnreason
-\end{itemize}
-
-We sketch this structure by
-\begin{center}
-\begin{tikzpicture}[scale=0.35]
-
-\draw[dashed] (-30,15) -- (12,15) -- (12,-3) -- (-30,-3) -- (-30,15);
-
-\draw (-10,10) rectangle (10,14); 
-\node [anchor=center] at (0,12) {\spknowledge};
-
-\node [anchor=center] at (-20,12) {\layerthreespec};
-\draw[dashed] (-30,9) -- (12,9);
-\node [anchor=center] at (-20,6) {\layertwospec};
-
-\draw[->] (6,10) -- (6,8);
-\draw (2,4) rectangle (10,8); 
-\node [anchor=center] at (6,6) {\spalgorithms};
-\draw[->] (6,4) -- (6,2);
-
-\draw[->] (-6,10) -- (-6,8);
-\draw (-10,4) rectangle (-2,8); 
-\node [anchor=center] at (-6,6) {\spencoding};
-\draw[->] (-6,4) -- (-6,2);
-
-\draw[dashed] (-30,3) -- (12,3);
-\node [anchor=center] at (-20,0) {\layeronespec};
-
-\draw (-10,-2) rectangle (10,2); 
-\node [anchor=center] at (0,0) {\spengine};
-\end{tikzpicture}
-\end{center}
-
-
-
-\subsection{Subpackage \spengine}
-
-The \spengine subpackage is for the storage and numerical manipulation of tensors and tensor networks.
-
-We think of it as the lowest layer, specializing in storage of Tensor Networks and performing the contractions.
-
-
-\textbf{Cores}
-
-Each Tensor core has attributes
-\begin{itemize}
-	\item values (array-like): storing the value of the coordinates
-	\item colors (list of str): specifying the name of the variables represented by its axes
-	\item name (str): to distinguish from other cores
-\end{itemize} 
-The implemented core types differ in the values argument.
-Cores are instantiated by
-\begin{centeredcode}
-	engine.getCore(coreType)(coreValues, coreColors, coreName)
-\end{centeredcode}
-
-\textbf{Polynomial Cores}
-Polynomial Cores are implementations of the monomial decomposition or basis+ (see Definition~\ref{def:polynomialSparsity}).
-Here the each tuple $(\lambda,\variableset,\catvariableof{\variableset})$ is stored as a tuple of the scalar $\lambda$ and a dictionary with $\variableset$ as keys and $\catvariableof{\variableset}$ as values.
-
-% Contraction Method List
-The supported cores are
-\begin{center}
-\begin{tabular}{|c|c|c|}
-  	\hline
- 	\textbf{coreType} & \textbf{Package} & \text{Explanation}  \\
-  	\hline
- 	\stringof{NumpyTensorCore} 	&  $\mathrm{numpy}$  & Numpy array storing the values\\
-  	\hline
- 	\stringof{PolynomialCore} 	&  $\mathrm{numpy}$  & Storeing the values in a binary CP Decomposition\\
-  	\hline
-\end{tabular}
-\end{center}
-
-
-\textbf{Binary CP Decomposition}
-
-Based on the monomial decomposition $\slicesparsityof{\cdot}$ as specified in Definition~\ref{def:polynomialSparsity}.
-To store the values of a tensor we store the slices of tensors by the indices $\catindexof{\variableset}$. 
-
-% Trick -> To BinaryCP
-Contractions can be performed by partially contracting the cores of the decomposition.
-In this way, one can avoids coordinatewise storages of high-order tensors, which can be intractable.
-
-\textbf{Tensor Networks}
-
-Tensor networks $\tnetof{\graph}$ are defined by hypergraphs with hyperedges decorated by tensor cores. 
-We store them by dictionaries with values being tensor cores and keys coinciding with the name of each tensor core.
-
-
-\textbf{Contractions}
-
-Reflected in the notation
-	\[ \contractionof{\tnetof{\graph}}{\nodes} \]
-a contraction is defined by
-\begin{itemize}
-	\item Tensor Network $\tnetof{\graph}$, i.e. a dictionary of tensor cores
-	\item Open Variables $\nodes$
-\end{itemize}
-Contraction calls are done by
-\begin{centeredcode}
-	engine.contract(contractionMethod, coreDict, openColors, evidenceColorDict)
-\end{centeredcode}
-Where
-\begin{itemize}
-	\item contractionMethod: str, chooses one of the contractionproviders
-	\item coreDict: Dictionary of TensorCores (of the above formats), representing the Tensor Network $\tnetof{\graph}$ 
-	\item openColors: List of str, each str identifying a color, that is a variable to be left open in the contraction
-	\item evidenceColorDict: Dict valued by int and keys by str, indicating sliced variables
-\end{itemize}
-
-% Contraction Method List
-The supported contraction methods are
-\begin{center}
-\begin{tabular}{|c|c|c|}
-  	\hline
- 	\textbf{contractionMethod} (str) & \textbf{Package} & \text{Explanation}  \\
-  	\hline
- 	\stringof{NumpyEinsum} 	&  $\mathrm{numpy}$  & Einstein summation of $\mathrm{numpy}$ arrays\\
-  	\hline
- 	\stringof{TensorFlowEinsum} 	&  $\mathrm{tensorflow}$  & Einstein summation of $\mathrm{tensorflow}$ tensors\\
-  	\hline
-	\stringof{TorchEinsum} 	&  $\mathrm{torch}$  & Einstein summation of $\mathrm{torch}$ tensors\\
-  	\hline
-	\stringof{TentrisEinsum} 	&  $\mathrm{tentris}$  & Einstein summation of $\mathrm{tentris}$ hypertries\\
-  	\hline
-	\stringof{PgmpyVariableEliminator} 	&  $\mathrm{pgmpy}$  & Variable Elimination of DiscreteFactors in $\mathrm{pgmpy}$\\
-  	\hline
-	\stringof{PolynomialContractor} 	&  $\mathrm{numpy}$  & Contraction of CP Decompositions stored in $\mathrm{numpy}$ arrays\\
-  	\hline	
-\end{tabular}
-\end{center}
-
-
-%\textbf{Einstein Summation}
-Contractions represented as Einstein summation, as implemented in:
-\begin{itemize}
-	\item numpy
-	\item tensorflow
-	\item pytorch
-	\item tentris
-\end{itemize}
-
-%\textbf{Variable Elimination}
-Contractions can be executed by variable elimination as implemented in:
-\begin{itemize}
-	\item pgmpy
-\end{itemize}
-
-\textbf{Manipulation of Binary CP Decomposition}
-Contraction of tensors in Binary CP Decomposition as in Section~\ref{sec:BinaryCPManipulation}.
-
-
-
-
-
-\subsection{Subpackage \spencoding}
-
-In the \spencoding subpackage we encode maps 
-Here the relational encodings $\rencodingof{\exfunction}$ of various maps $\exfunction$ are created.
-%
-The maps are either specified by the script language (logical formulas or neuro-symbolic architectures), categorical constraints or data.
-Given a specification of a formula $\exformula$ in script language $\synencodingof{\cdot}$, the task amounts to building a semantic representation based on the syntactic specification.
-
-We arrange the \spencoding subpackage into the second layer of the \tnreason architecture, since it specifies tensor cores which formats are specified in \spengine.
-
 \subsubsection{Relational encoding of formulas}
 
-Core names are  % Missing: neural cores
-\begin{itemize}
-	\item Connective cores with suffix \stringof{\_conCore} in name
-	\item Head cores with suffix \stringof{\_headCore} in name
-	\item Data cores with suffix \stringof{\_dataCore} in name
-	\item Categorical constraint cores with suffix \stringof{\_catCore} in name
-\end{itemize} 
+%Core names are  % Missing: neural cores
+%\begin{itemize}
+%	\item Connective cores with suffix \stringof{\_conCore} in name
+%	\item Head cores with suffix \stringof{\_headCore} in name
+%	\item Data cores with suffix \stringof{\_dataCore} in name
+%\end{itemize} 
 
 Propositional formulas $\exformula$ are represented in three schemes:
 \begin{itemize}
