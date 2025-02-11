@@ -1,25 +1,21 @@
-\section{Hard and Hybrid Logic Networks}\label{cha:hardNetworks} % To be dropped in the unification with the MLN chapter
+\subsection{Hard Logic Networks}\label{sec:hardNetworks} % To be dropped in the unification with the MLN chapter
 
-\red{Hard Logic Networks are Knowledge Bases, Hybrid Logic Networks are exponential families on Knowledge Bases.
-This makes it impossible to build energy tensors without basemeasures capturing vanishing coordinates.}
-
-
-
-\red{Work in Theorem~\ref{the:factorReduction} to reduce entailment!}
+%\red{Hard Logic Networks are Knowledge Bases, Hybrid Logic Networks are exponential families on Knowledge Bases.
+%This makes it impossible to build energy tensors without basemeasures capturing vanishing coordinates.}
 
 % Hard logic vs markov logic
 While exponential families are positive distributions, in logics probability distributions can assign states zero probability.
 As a consequence, Markov Logic Networks have a soft logic interpretation in the sense that violation of activated formulas have nonzero probability.
 We here discuss their hard logic counterparts, where worlds not satisfying activated formulas have zero probability.
 
-Further we investigate, how both hard and soft logic factors can be combined to hybrid networks.
+
 
 %The Tensor Network decomposition of formula tensors is analogously constructed to a graphical representation of the formulas.
 %We thus develop in this section the interpretation of formula tensor decompositions as Bayesian and Markov Propositional Networks.
 
 
 
-\subsection{The limit of hard logic}\label{sec:hardLogicLimit} % To be merged with the above
+\subsubsection{The limit of hard logic}\label{sec:hardLogicLimit} % To be merged with the above
 
 The probability function of Markov Logic Networks with positive weights mimiks the tensor network representation of the knowledge base, which is the conjunction of the formulas. 
 The maxima of the probability function coincide with the models of the corresponding knowledge base, if the latter is satisfiable.
@@ -129,18 +125,9 @@ Since both distributions are tensors in the same space to a factored system, we 
 
 
 
+\subsubsection{Tensor Network Representation}
 
-
-
-
-
-
-
-
-
-\subsection{Hard Logic Networks}
-
-Hard Logic Network coincide with Knowledge Bases.
+Hard Logic Network coincide with Knowledge Bases and are thus representable by contractions of formulas (which can be interpreted as an effective calculus scheme, see Section~\ref{sec:effectiveCalculus}).
 We use $\land$ symmetry to represent them as a contraction of the formulas building the Knowledge Base as conjunction.
 
 \begin{theorem}[Conjunction Decomposition of Knowledge Bases]\label{the:conDecKB}
@@ -184,24 +171,17 @@ We use $\land$ symmetry to represent them as a contraction of the formulas build
 %We call the application of these in changing the Knowledge Cores without changing the contracted network as the representation symmetry.
 
 
-\subsubsection{Conjunctive Normal Representation}
-
-\red{Poly reps here?}
-
-We can now apply the representation symmetries to represent a propositional Knowledge Base in conjunctive normal form.
-A Knowledge Base in Conjunctive Normal Form is a conjunction of clauses, where clauses are disjunctions of literals being atoms (positive literals) or negated atoms (negative literals).
-
-
-
+%\subsubsection{Conjunctive Normal Representation}
 
 %One tensor representation of a Knowledge Base is the association of the Knowledge Core $\tbasis$ at the formula being the Knowledge Base itself.
 %We can use the $\land$ symmetry (Theorem~\ref{the:landSymmetry}) to propagate $\tbasis$ to all clause cores and get an alternative representation.
 %Those are especially interesting when using Modus Ponens/Resolution as local sub-KB reasoners (see Section~\ref{subsec:LocalEntailment}).
 
 
-\subsubsection{Polynomial Representation of Formulas}
+\subsubsection{Polynomial Representation}
 
-\red{We can further derive representation schemes for Knowledge Bases, which are in conjunctive normal forms.}
+We now apply the representation symmetries to represent a propositional Knowledge Base in conjunctive normal form.
+A Knowledge Base in Conjunctive Normal Form is a conjunction of clauses, where clauses are disjunctions of literals being atoms (positive literals) or negated atoms (negative literals).
 
 Formulas can be represented as sparse polynomials, which will be discussed in more detail in Chapter~\ref{cha:sparseTC} (see Definition~\ref{def:polynomialSparsity}).
 
@@ -249,11 +229,127 @@ We apply Lemma~\ref{lem:clauseTermBasisPlus} to show the following sparsity boun
 \end{proof}
 
 
+\subsubsection{Categorical Constraints}\label{sec:categoricalTN}
 
+%% Categorical variables with more possibilities
+We made the assumption that all categorical variables in factored systems to be represented by propositional logics take binary values (i.e. $\catdim=2$).
+In cases where a categorical variable $\catvariable$ takes multiple values we define for each $\catindex$ an atomic formula $\catvariableof{\catindex}$ representing whether $\catvariable$ is assigned by $\catindex$ in a specific state.
+	%\[ \catvariableof{\catindex} =  (\catvariable = \catindex \, . \] Confusing notation
+Following this construction we have the constraint that exactly one of the atoms $\catvariableof{\catindex}$ is $1$ at each state.
+
+%% Capture constraint
+To capture the constraints resulting from this construction we introduce auxiliary parts. % of Bayesian Propositional Networks.
+Such constraints can also be expressed by a formula but would result in an unnecessary large tensor network.
+
+
+%% Categorical selection map
+\begin{definition}[Categorical Constraint and Atomization Variables]
+	Given a list $\catvariableof{0},\ldots,\catvariableof{\catdim-1}$ of boolean variables and a categorical variable $\catvariable$ with dimension $\catdim$ a categorical constraint is a tensor $\categoricalmap[\catvariable,\catvariableof{[\catdim]}]$ defined as
+	\begin{align*}
+		 \categoricalmap(\catindex,\catindexof{\variableset}) 
+		 = \begin{cases} 
+		 	1 & \text{if} \quad \catindexof{[\catdim]} = \onehotmapof{\catindex} \\
+			0 & \text{else} \, . 
+		 \end{cases}
+	\end{align*}
+	We then call the variables  $\catvariableof{0},\ldots,\catvariableof{\catdim-1}$ the atomization variables to the categorical variable $\catvariable$.
+\end{definition}
+
+%% Decomposition
+With Theorem~\ref{the:functionDecompositionBasisCP} the tensor representation of $\categoricalcore$ decomposes in a basis CP format (see Figure~\ref{fig:CategoricalDecomposition}b) of if its coordinate maps $\categoricalmap_{\catindex}$, where $\catindex\in[\catdim]$.
+For the cores
+\begin{align}
+	\categoricalcoreof{\catindex} = \onehotmapofat{\catindex}{\catvariable} \otimes \onehotmapofat{1}{\catvariableof{\catindex}} + (\onesat{\catvariable}- \onehotmapofat{\catindex}{\catvariable} ) \otimes \onehotmapofat{0}{\catvariableof{\catindex}} 
+\end{align}	
+we have by Theorem~\ref{the:functionDecompositionBasisCP}
+\begin{align*}
+	\rencodingofat{\categoricalmap}{\catvariable, \catvariableof{0}, \ldots, \catvariableof{\catdim-1}} 
+	= \contractionof{\{\rencodingof{\categoricalmap(\catindex)} \, : \, \catindex\in[\catdim]\}}{\catvariable, \catvariableof{0}, \ldots, \catvariableof{\catdim-1}} \, . 
+\end{align*}
+
+
+In the next theorem we show how a categorical constraint can be enforced in a tensor network by adding the tensor $\categoricalmap$ to a contraction.
+
+\begin{theorem}
+	For any tensor $\hypercoreat{\shortcatvariables}$ and a categorical constraint defined by an ordered subset $\catvariableof{\variableset}\subset\shortcatvariables$, a variable $\catvariable\in\shortcatvariables$ we have
+	\begin{align*}
+	 	\contractionof{\{\hypercoreat{\shortcatvariables}, \categoricalmap\}}{\indexedcatvariables} 
+		= \begin{cases}
+			\hypercoreat{\indexedcatvariables} & \text{if} \quad \catindexof{\variableset} = \onehotmapof{\catindex} \\
+			0 & \text{else} \, . 
+		\end{cases}
+	\end{align*}
+\end{theorem}
+\begin{proof}
+	For any $\catindexof{[\atomorder]}$ we have
+		\[ \contractionof{\{\hypercoreat{\shortcatvariables}, \categoricalmap\}}{\indexedcatvariables}  = 
+			\hypercoreat{\indexedcatvariableof{[\atomorder]}} \cdot \categoricalmap[\indexedcatvariableof{},\indexedcatvariableof{\variableset}] \, . 
+		\]
+	If $\catindexof{\variableset} = \onehotmapof{\catindex}$ we have $\categoricalmap[\indexedcatvariableof{},\indexedcatvariableof{\variableset}] = 1$ and thus
+		\[ \contractionof{\{\hypercoreat{\shortcatvariables}, \categoricalmap\}}{\indexedcatvariables}  =  \hypercoreat{\indexedcatvariableof{[\atomorder]}}  \, . \]
+	If $\catindexof{\variableset} \neq \onehotmapof{\catindex}$ then $\categoricalmap[\indexedcatvariableof{},\indexedcatvariableof{\variableset}] = 0$ and  
+		\[ \contractionof{\{\hypercoreat{\shortcatvariables}, \categoricalmap\}}{\indexedcatvariables}  = 0 \, . \]
+\end{proof}
+
+\begin{figure}[h]
+\begin{center}
+	\input{PartII/tikz_pics/hybrid_networks/categorical_decomposition.tex}
+\end{center}
+\caption{Representation of a categorical constraint in a $\cpformat$ Format tensor network.
+	a) Representation of the dependency of the graphical model.
+	b) Tensor Representation with further network decomposition.
+	We average by contraction with the dashed tensor $\ones$, if we do not specify the active atom.
+	}
+\label{fig:CategoricalDecomposition}
+\end{figure}
+
+\begin{remark}[Combination of Constraints]
+	We can combine constraint cores by Hadamard products in the dual tensor network representation, as long as they can be satisfied together.
+	An example, where this is not the case, are the categorical constraints to the three sets
+		\[ \{\randomxof{0},\randomxof{1},\randomxof{2},\randomxof{3}\} \, , \, \{\randomxof{0},\randomxof{1}\}\, ,\,\{\randomxof{2},\randomxof{3}\} \, . \] 
+	Besides the categorical cores also the datacores have a similar bayesian network affecting the atoms by another hidden variable.
+	Combining both is welldefined, only when all datapoints satisfy the categorical constraints (that is only one of the atoms in each constraint is active).
+\end{remark}
+
+
+\begin{example}[Sudoku]
+	An interesting example, where categorical constraints are combined is Sudoku, the game of assigning numbers to a grid.
+	The basic variables therein are $\catvariableof{i,j}$, with $\catdimof{i,j}=n^2$ and $i,j\in[n^2]$.
+	By understanding $i$ as a line index and $j$ as a column index, they are ordered in a grid as sketched in Figure~\ref{fig:sudokuGrid} in the case $n=3$.
+		
+	For a $n\in\nn$ we further define the atomization variables $\catvariableof{i,j,k}$ where $i,j,k\in[n^2]$ and $\catdimof{i,j,k}=2$.
+	These $n^6$ variables are the booleans indicating whether a specific position has a specific number assigned.
+	The consistency of the atomization variables to the basic variables is then for each $i,j\in[n^2]$ ensured by the constraints
+		\[ \{\catvariableof{i,j,k} \, : \, k \in [n^2] \} \, . \]
+	
+	We further have $3\cdot n^2$ constraints by the
+	\begin{itemize}
+		\item Row constraints: Each number $k$ appears exactly once in each row $i\in[n^2]$, captured by the constraints
+			\[ \{\catvariableof{i,j,k}  \, : \, j \in [n^2] \} \, . \]
+		\item Column constraints: Each number $k$ appears exactly once in each column $j\in[n^2]$, captured by the constraints
+			\[ \{\catvariableof{i,j,k}  \, : \, i \in [n^2] \} \, . \]
+		\item Square constraints: Each number appears exactly once in each square $s,r\in[n]$, captured by the constraints
+			\[ \{\catvariableof{i+n\cdot s,j+n\cdot r,k}  \, : \, i,j \in [n] \} \, . \]
+	\end{itemize}
+	
+	In total we have $3\cdot n^2 + n^4$ constraints for $n^6$ variables.
+
+	\begin{figure}\label{fig:sudokuGrid} 
+	\begin{center}
+		\input{PartII/tikz_pics/hybrid_networks/sudoku_grid.tex}
+	\end{center}
+	\caption{Sudoku grid of basic categorical variables $\catvariableof{i,j}$, here drawn in the standard case of $n=3$, each with dimension $\catdim=n^2=9$.}
+	\end{figure}
+
+	\red{Reasoning by Entailment propagation! 
+	Also, probabilistic choices possible when exact (!) contraction at a position not a basis vector, then can choose one possibility.}
+
+\end{example}
 
 
 
 \subsection{Hybrid Logic Network}
+
 
 Markov Logic Networks are by definition positive distributions.
 In contrary, Hard Logic Networks model uniform distributions over model sets of the respective Knowledge Base and therefore have vanishing coordinates.
@@ -369,7 +465,7 @@ For an example see Figure~\ref{fig:ActivatedHeads}.
 
 \subsubsection{Reasoning Properties}
 
-
+Deciding probabilistic entailment (see Definition~\ref{def:probEntailment}) with respect to Hybrid Logic Networks can be reduced to 
 
 \begin{theorem}
 	Let $(\softformulaset,\canparam,\hardformulaset)$ define a Hybrid Logic Network.
@@ -379,21 +475,11 @@ For an example see Figure~\ref{fig:ActivatedHeads}.
 		\[ \hardformulaset \models \exformula \, . \]
 \end{theorem}
 \begin{proof}
-	Application of Theorem~\ref{the:factorReduction} on the representation of Hybrid Logic Networks as Markov Networks in Theorem~\ref{the:hybridNetworkRepresentation}.
+	This follows from Theorem~\ref{the:factorReduction} on the representation of Hybrid Logic Networks as Markov Networks in Theorem~\ref{the:hybridNetworkRepresentation}.
 \end{proof}
 
 
-%% Now in theorems
-%\begin{itemize}
-%	\item Entailment queries answered on the hard logic parts alone.
-%	\item Well defined distributions, when hard logic formulas are satisfiable.
-%	\item Redundant hard formulas (Redundancy, whenever the contractions unchanged): If entailled by the rest of the hard logic formulas. 
-%	\item Redundant soft formulas (Redundancy, whenever the normations unchanged):  Either if entailled or contradicted by the hard logic formulas
-%\end{itemize}
-
-
-
-Formulas in $\softformulaset$, which are entailed or contradicted by $\hardformulaset$ are redundant 
+Formulas in $\softformulaset$, which are entailed or contradicted by $\hardformulaset$ are redundant, as we show next.
 
 \begin{theorem}
 	If for a formula $\exformula$ and $\hardformulaset$ we have  %and only if
@@ -461,153 +547,40 @@ Hybrid Logic Networks extend the expressivity result of Theorem~\ref{the:minterm
 
 
 
-\subsection{Categorical Constraints}\label{sec:categoricalTN}
-
-\red{Also called atomization of categorical variables.}
-
-%% Categorical variables with more possibilities
-We made the assumption that all categorical variables in factored systems to be represented by propositional logics take binary values (i.e. $\catdim=2$).
-In cases where a categorical variable $\catvariable$ takes multiple values we define for each $\catindex$ an atomic formula $\catvariableof{\catindex}$ representing whether $\catvariable$ is assigned by $\catindex$ in a specific state.
-	%\[ \catvariableof{\catindex} =  (\catvariable = \catindex \, . \] Confusing notation
-Following this construction we have the constraint that exactly one of the atoms $\catvariableof{\catindex}$ is $1$ at each state.
-
-%% Capture constraint
-To capture the constraints resulting from this construction we introduce auxiliary parts. % of Bayesian Propositional Networks.
-Such constraints can also be expressed by a formula but would result in an unnecessary large tensor network.
-
-
-%% Categorical selection map
-\begin{definition}[Categorical Constraint]
-	Given a list $\catvariableof{0},\ldots,\catvariableof{\catdim-1}$ of binary variables and a categorical variable $\catvariable$ with dimension $\catdim$ a categorical constraint is a tensor $\categoricalmap[\catvariable,\catvariableof{[\catdim]}]$ defined as
-%	A categorical constraint taking values in $[\catdim]$ maps to its atoms by
-%		\[ \categoricalmap : [\catdim] \rightarrow \bigtimes_{\catindex\in[\catdim]}[2]  \]
-	\begin{align*}
-		 \categoricalmap(\catindex,\catindexof{\variableset}) 
-		 = \begin{cases} 
-		 	1 & \text{if} \quad \catindexof{[\catdim]} = \onehotmapof{\catindex} \\
-			0 & \text{else} \, . 
-		 \end{cases}
-	\end{align*}
-% where the $1$ is at position $\catindex$.
-\end{definition}
-
-%% Decomposition
-With Theorem~\ref{the:functionDecompositionBasisCP} the tensor representation of $\categoricalcore$ decomposes in a basis CP format (see Figure~\ref{fig:CategoricalDecomposition}b) of if its coordinate maps $\categoricalmap_{\catindex}$, where $\catindex\in[\catdim]$.
-For the cores
-\begin{align}
-	\categoricalcoreof{\catindex} = \onehotmapofat{\catindex}{\catvariable} \otimes \onehotmapofat{1}{\catvariableof{\catindex}} + (\onesat{\catvariable}- \onehotmapofat{\catindex}{\catvariable} ) \otimes \onehotmapofat{0}{\catvariableof{\catindex}} 
-\end{align}	
-we have by Theorem~\ref{the:functionDecompositionBasisCP}
-\begin{align*}
-	\rencodingofat{\categoricalmap}{\catvariable, \catvariableof{0}, \ldots, \catvariableof{\catdim-1}} 
-	= \contractionof{\{\rencodingof{\categoricalmap(\catindex)} \, : \, \catindex\in[\catdim]\}}{\catvariable, \catvariableof{0}, \ldots, \catvariableof{\catdim-1}} \, . 
-\end{align*}
-
-
-In the next theorem we show how a categorical constraint can be enforced in a tensor network by adding the tensor $\categoricalmap$ to a contraction.
-
-\begin{theorem}
-	For any tensor $\hypercoreat{\shortcatvariables}$ and a categorical constraint defined by an ordered subset $\catvariableof{\variableset}\subset\shortcatvariables$, a variable $\catvariable\in\shortcatvariables$ we have
-	\begin{align*}
-	 	\contractionof{\{\hypercoreat{\shortcatvariables}, \categoricalmap\}}{\indexedcatvariables} 
-		= \begin{cases}
-			\hypercoreat{\indexedcatvariables} & \text{if} \quad \catindexof{\variableset} = \onehotmapof{\catindex} \\
-			0 & \text{else} \, . 
-		\end{cases}
-	\end{align*}
-\end{theorem}
-\begin{proof}
-	For any $\catindexof{[\atomorder]}$ we have
-		\[ \contractionof{\{\hypercoreat{\shortcatvariables}, \categoricalmap\}}{\indexedcatvariables}  = 
-			\hypercoreat{\indexedcatvariableof{[\atomorder]}} \cdot \categoricalmap[\indexedcatvariableof{},\indexedcatvariableof{\variableset}] \, . 
-		\]
-	If $\catindexof{\variableset} = \onehotmapof{\catindex}$ we have $\categoricalmap[\indexedcatvariableof{},\indexedcatvariableof{\variableset}] = 1$ and thus
-		\[ \contractionof{\{\hypercoreat{\shortcatvariables}, \categoricalmap\}}{\indexedcatvariables}  =  \hypercoreat{\indexedcatvariableof{[\atomorder]}}  \, . \]
-	If $\catindexof{\variableset} \neq \onehotmapof{\catindex}$ then $\categoricalmap[\indexedcatvariableof{},\indexedcatvariableof{\variableset}] = 0$ and  
-		\[ \contractionof{\{\hypercoreat{\shortcatvariables}, \categoricalmap\}}{\indexedcatvariables}  = 0 \, . \]
-\end{proof}
 
 
 
+\subsection{Applications}
 
-%We define the corresponding network cores as
-%\begin{align}
-%	\categoricalcoreof{\catindex} =
-%	\begin{cases}
-%		\tbasis & \text{ if } \catvariable = \catindex \\
-% 		\fbasis & \text{ else }
-%	\end{cases} \, . 
-%\end{align}	
-
-%Similar to atom selector tensor, but different core definition ($\fbasis$ instead of $\ones$, when $\parindexof{}$ is not matching the core position).
-
-%% CONFUSING!
-%We represent the categorical constraint as another variable $\randomxof{\categoricalmap}$, which when known defines the values of the corresponding variables $\randomxof{\atomenumerator}$ (see Figure~\ref{fig:CategoricalDecomposition}a).
+Markov Logic Networks as neuro-symbolic architectures:
+\begin{itemize}
+	\item Neural Paradigm here by decompositions of logical formulas into their connectives.
+		In more generality by decompositions of sufficient statistics into composed functions, using Basis Calculus.
+		Deeper nodes as carrying correlations of lower nodes.
+	\item Symbolic Paradigm by interpretability of propositional logics.
+\end{itemize}
 
 
-\begin{figure}[h]
-\begin{center}
-	\input{PartII/tikz_pics/hybrid_networks/categorical_decomposition.tex}
-\end{center}
-\caption{Representation of a categorical constraint in a $\cpformat$ Format tensor network.
-	a) Representation of the dependency of the graphical model.
-	b) Tensor Representation with further network decomposition.
-	We average by contraction with the dashed tensor $\ones$, if we do not specify the active atom.
-	}
-\label{fig:CategoricalDecomposition}
-\end{figure}
+Markov Logic Networks as trainable Machine Learning models:
+\begin{itemize}
+	\item Expressivity: Can represent any positive distribution, as shown by Theorem~\ref{the:maximalClausesRepresentation}, with $2^d$ formulas.
+	\item Efficiency: Can only handle small subsets of possible formulas, since their possible number is huge.
+		Tensor networks provide means to efficiently represent formulas depending on many variables and reason based on contractions.
+	\item Differentiability: Distributions are differentiable functions of their weights, see Parameter Estimation Chapter. 
+		The log-likelihood of data is therefore also differentiable function of their weights and we can exploit first-order methods in their optimization.
+	\item Structure Learning: We need to find differentiable parametrizations of logical formulas respecting a chosen architecture.
+		In Chapter~\ref{cha:formulaBatches} such representations are described based on Selector Tensor Networks.
+\end{itemize}
 
-\begin{remark}[Combination of Constraints]
-	We can combine constraint cores by Hadamard products in the dual tensor network representation, as long as they can be satisfied together.
-	An example, where this is not the case, are the categorical constraints to the three sets
-		\[ \{\randomxof{0},\randomxof{1},\randomxof{2},\randomxof{3}\} \, , \, \{\randomxof{0},\randomxof{1}\}\, ,\,\{\randomxof{2},\randomxof{3}\} \, . \] 
-	Besides the categorical cores also the datacores have a similar bayesian network affecting the atoms by another hidden variable.
-	Combining both is welldefined, only when all datapoints satisfy the categorical constraints (that is only one of the atoms in each constraint is active).
-\end{remark}
+\red{When understanding atoms as observed variables, and the computed as hidden, Hybrid Logic Networks are deep higher-order boltzmann machines: 
+More generic correlations can be captured by a logical connective, calculated by a relational encoding and activated by a head core.}
 
+\red{Hybrid Logic Networks as bridging soft and hard logics.}
 
-\begin{example}[Sudoku]
-	An interesting example, where categorical constraints are combined is Sudoku, the game of assigning numbers to a grid.
-	For a $n\in\nn$ we define variables $\catvariableof{i,j,k}$ where $i,j,k\in[n^2]$ and $\catdimof{i,j,k}=2$.
-	By understanding $i$ as a line index and $j$ as a column index, they are ordered in a grid as sketched in Figure~\ref{fig:sudokuGrid} in the case $n=3$.
-	
-%	We further define atomization variables
-%		\[ \catvariableof{i,j,k} = (\catvariableof{i,j} == k) \, . \]
-%	\red{These are also at each $i,j$ categorical constraints!}
-	
-	
-	At each position there is a single number, that is for each $i,j\in[n^2]$ have a constraint
-		\[ \{\catvariableof{i,j,k} \, : \, k \in [n^2] \} \]
-	
-	Here the $n^6$ variables are the random variables whether a specific position has a specific number assigned.
-	The $3\cdot n^2$ constraints are 
-	\begin{itemize}
-		\item Each number $k$ appears exactly once in each row $i\in[n^2]$:
-			\[ \{\catvariableof{i,j,k}  \, : \, j \in [n^2] \} \]
-		\item Each number $k$ appears exactly once in each column $j\in[n^2]$:
-			\[ \{\catvariableof{i,j,k}  \, : \, i \in [n^2] \} \]
-		\item Each number appears exactly once in each square $s,r\in[n]$
-			\[ \{\catvariableof{i+n\cdot s,j+n\cdot r,k}  \, : \, i,j \in [n] \} \]
-	\end{itemize}
-	
-	In total we have $3\cdot n^2 + n^4$ constraints for $n^6$ variables.
-
-	\begin{figure}\label{fig:sudokuGrid} % ! Still without k index of the variables.
-	\begin{center}
-		\input{PartII/tikz_pics/hybrid_networks/sudoku_grid.tex}
-	\end{center}
-	\caption{Sudoku grid of categorical variables, here drawn in the standard case of $n=3$, each with dimension $\catdim=n^2=9$.}
-	\end{figure}
-
-	\red{Reasoning by Entailment propagation! 
-	Also, probabilistic choices possible when exact (!) contraction at a position not a basis vector, then can choose one possibility.}
-
-\end{example}
-
-
-
-
-
+%\begin{remark}[Hopfield networks]
+%	Also interesting for MLNs is a Hopfield perspective.
+%	Having an initialization the update can be interpreted as a Gibbs sampling step at temperature $0$ (since deterministic update).
+%\end{remark}
 
 
 

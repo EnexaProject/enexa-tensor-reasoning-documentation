@@ -1,6 +1,11 @@
 \section{Representing Logic Networks}
 
-Markov Logic Networks exploit the efficiency and interpretability of logical calculus as well as the expressivity of graphical models. 
+Logic networks are graphical models with an interpretation by propositional logics.
+We first distinguish between Markov Logic Networks, which are an approach to soft logics in the framework of exponential families, and Hard Logic Networks, which correspond with propositional knowledge bases.
+Then we exploit non-trivial boolean base measures to unify both approaches by Hybrid Logic Networks, which are itself in exponential families.
+
+
+
 
 %Markov Logic Networks are probability functions of truth assignments to logical functions.
 %They respect propositional logic as hard constraints, but have beyond that freedom to shape probability distributions on possible situations.
@@ -8,8 +13,11 @@ Markov Logic Networks exploit the efficiency and interpretability of logical cal
 % We in this part employ them to combine the probabilistic and the logical paradigm.
 
 
+\subsection{Markov Logic Networks}
 
-\subsection{Markov Logic Networks as Exponential Families}
+Markov Logic Networks exploit the efficiency and interpretability of logical calculus as well as the expressivity of graphical models. 
+
+\subsubsection{Markov Logic Networks as Exponential Families}
 
 We introduce Markov Logic Networks in the formalism of exponential families (see Section~\ref{sec:exponentialFamilies}).
 
@@ -42,18 +50,11 @@ The sufficient statistics consistent in a map $\formulaset$ of formulas brings t
 \begin{remark}[Alternative Definitions]
 	We here defined MLNs on propositional logic, while originally they are defined in FOL.
 	The relation of both frameworks will be discussed further in Chapter~\ref{cha:folModels}.
-	Besides that we allow for degeneracy and improper MLNs.
 \end{remark}
 
 
-%\subsubsection{Interpretation as Graphical Models}
 
-
-
-
-
-
-\subsection{Tensor Network Representation of MLNs}
+\subsubsection{Tensor Network Representation}
 
 Based on the previous discussion on the representation of exponential families by tensor networks in Section~\ref{sec:exponentialFamilies} we now derive a representation for Markov Logic Networks.
 
@@ -97,7 +98,6 @@ Based on the previous discussion on the representation of exponential families b
 	\input{PartII/tikz_pics/mln/factor.tex}
 \end{center}
 \caption{Factor of a Markov Logic Network to a formula $\formulaof{\selindex}$.}
-% Where $\headcoreofat{\formulaof{\selindex}}{\catvariableof{\formulaof{\selindex}}} =\begin{bmatrix} 1 & \expof{\weightof{\exformula}} \end{bmatrix}[\catvariableof{\exformula}] $}
 \label{fig:mlnFactor}
 \end{figure}
 
@@ -173,7 +173,7 @@ One can then exploit redundancies and make sure that every subresult is computed
 
 
 
-\subsubsection{Energy tensors of Markov Logic Networks}
+\subsubsection{Energy tensors}
 
 %% Tensor Representation of MLN
 With the energy tensor
@@ -211,14 +211,14 @@ For such tasks, contractions of formula selecting networks are not sufficient an
 
 
 
-\subsection{Expressivity}\label{sec:MLNMaxMintermRep}
+\subsubsection{Expressivity}\label{sec:MLNMaxMintermRep}
 
 Based on Markov Logic Networks containing only maxterms and minterms (see Definition~\ref{def:clauses}), we here provide an expressivity study.
 There are $2^{\atomorder}$ maxterms and $2^{\atomorder}$ minterms which are enough to represent any probability distribution as we show next.
 
 \begin{theorem}\label{the:maximalClausesRepresentation}\label{the:mintermExpressivityMLN}
-	Let there be a positive probability tensor %distribution of the worlds to the atoms $\shortcatvariables$ with probability tensor
-		 \[ \probof{\shortcatvariables} \in \bigotimes_{\atomenumeratorin}\rr^2 \, . \] %= \frac{\expof{\mlntensor}}{\partitionfunctionof{\mlntensor}} \, . \]
+	Let there be a positive probability tensor 
+		 \[ \probof{\shortcatvariables} \in \bigotimes_{\atomenumeratorin}\rr^2 \, . \] 
 	Then the Markov Logic Network of minterms (see Definition~\ref{def:clauses})
 		\[ \mintermformulaset = \{\mintermof{\atomindices} \, : \, \atomindices\in\atomstates \}\]
 	with parameters %with nonzero weights at the maxterms indexed by $\atomindicesin$
@@ -286,17 +286,9 @@ Here we require positive distributions for well-defined energy tensors.
 	\red{Make a theorem out of that?}
 \end{remark}
 
-%\subsection{Markov Logical Networks as Graphical Models}
 
 
-
-
-
-
-
-
-
-\subsection{Examples}
+%\subsubsection{Examples}
 
 
 \subsubsection{Distribution of independent variables}
@@ -326,7 +318,6 @@ We show next, the independent positive distributions are representable by tuning
 		\[ \probofat{\catenumerator}{\catvariableof{\catenumerator}} = \sbcontractionof{\probtensor}{\catvariableof{\catenumerator}} \, . \]
 	
 	By assumption of positivity, the vector $\probofat{\catenumerator}{\catvariableof{\catenumerator}}$ is positive for each $\catenumeratorin$ and the parameter
-		%\[ \canparam^\catenumerator = \lnof{\frac{\probofat{\catenumerator}{\catvariableof{\catenumerator}=1}}{\probofat{\catenumerator}{\catvariableof{\catenumerator}=0}}} \]
 		\[ \canparam^\catenumerator 
 		= \lnof{\frac{
 		\probofat{\catenumerator}{\catvariableof{\catenumerator}=1}
@@ -336,14 +327,14 @@ We show next, the independent positive distributions are representable by tuning
 	well-defined.
 	
 	We then notice, that 
-		\[ \expdistofat{(\{\atomicformulaof{\catenumerator}\},\canparam^{\catenumerator})}{\catvariableof{\catenumerator}} 
+		\[ \expdistofat{(\{\atomicformulaof{\catenumerator}\},\canparamat{\selvariable=\catenumerator})}{\catvariableof{\catenumerator}} 
 		= \probofat{\catenumerator}{\catvariableof{\catenumerator}}\]
 	and therefore with the parameter vector of dimension $\seldim=\catorder$ defined as
-		\[ \canparamat{\selvariable} = \sum_{\catenumeratorin} \canparam^{\catenumerator} \cdot \onehotmapofat{\catenumerator}{\selvariable}  \]
+		\[ \canparamat{\selvariable} = \sum_{\catenumeratorin} \canparamat{\selvariable=\catenumerator} \cdot \onehotmapofat{\catenumerator}{\selvariable}  \]
 	we have
 	\begin{align*}
 	 	 \expdistofat{(\{\atomicformulaof{\catenumerator} \, : \, \catenumeratorin\},\canparam)}{\shortcatvariables} 
-		& = \bigotimes_{\catenumeratorin} \expdistofat{(\{\atomicformulaof{\catenumerator}\},\canparam^{\catenumerator})}{\catvariableof{\catenumerator}} \\
+		& = \bigotimes_{\catenumeratorin} \expdistofat{(\{\atomicformulaof{\catenumerator}\},\canparamat{\selvariable=\catenumerator})}{\catvariableof{\catenumerator}} \\
 		& = \bigotimes_{\catenumeratorin} \probofat{\catenumerator}{\catvariableof{\catenumerator}} \\
 		& = \probat{\shortcatvariables} \, . 
 	\end{align*}
@@ -354,7 +345,7 @@ We show next, the independent positive distributions are representable by tuning
 % Failing to be positive -> Hybrid networks
 In Theorem~\ref{the:independentAtomicMLN} we made the assumption of positive distributions.
 If the distribution fails to be positive, we still get a decomposition into distributions of each variable, but there is at least one factor failing to be positive.
-Such factors need to be treated by hybrid logic networks, that is they are base measure for an exponential family coinciding with a logical literal (see Chapter~\ref{cha:hardNetworks}.
+Such factors need to be treated by hybrid logic networks, that is they are base measure for an exponential family coinciding with a logical literal (see Section~\ref{sec:hardNetworks}).
 
 % Energy representation
 All atomic formulas can be selected by a single variable selecting tensor, that is
@@ -363,20 +354,20 @@ All atomic formulas can be selected by a single variable selecting tensor, that 
 	\]
 	
 % Holds also more generally for any formula! -> Place it earlier?
-In case of negative $\canparamat{\catenumerator}$ it is convenient to replace $\atomicformulaof{\catenumerator}$ by $\lnot\atomicformulaof{\catenumerator}$, in order to facilitate the interpretation.
-The probability distribution is left invariant, when also replacing $\canparamat{\catenumerator}$ by $-\canparamat{\catenumerator}$.
+In case of negative coordiantes $\canparamat{\selvariable=\catenumerator}$ it is convenient to replace $\atomicformulaof{\catenumerator}$ by $\lnot\atomicformulaof{\catenumerator}$, in order to facilitate the interpretation.
+The probability distribution is left invariant, when also replacing $\canparamat{\selvariable=\catenumerator}$ by $-\canparamat{\selvariable=\catenumerator}$.
 
 
 
-\subsubsection{Boltzmann machines as MLNs}
+\subsubsection{Boltzmann machines}
 
 %\red{Add sufficient statistics?}
 
-A Boltzmann machine is a member of an exponential family with the energy tensor
+A Boltzmann machine is a member of an exponential family with the energy tensor (see e.g. \cite{mackay_information_2003})
 	\[ \energytensorofat{W,b}{\indexedcatvariables} = 
 	\sum_{\atomenumerator,\secatomenumerator \in [\atomorder]} 
-		W[\selvariableof{\vselectionsymbol,0}=\atomenumerator, \selvariableof{\vselectionsymbol,1}=\secatomenumerator] \catindexof{\atomenumerator} \catindexof{\secatomenumerator} 
-	+ \sum_{\atomenumerator,\secatomenumerator \in [\atomorder]} b[\selvariableof{\vselectionsymbol,0}=\atomenumerator] \, . \]
+		W[\selvariableof{\vselectionsymbol,0}=\atomenumerator, \selvariableof{\vselectionsymbol,1}=\secatomenumerator] \cdot \catindexof{\atomenumerator} \cdot \catindexof{\secatomenumerator} 
+	+ \sum_{\atomenumerator\in[\atomorder]} b[\selvariableof{\vselectionsymbol,0}=\atomenumerator] \cdot \catindexof{\atomenumerator}\, . \]
 
 
 %sufficient statistic 
@@ -439,72 +430,8 @@ We can use any binary logical connective and have an associated formula where we
 
 
 
-%\begin{remark}[Hopfield networks]
-%	Also interesting for MLNs is a Hopfield perspective.
-%	Having an initialization the update can be interpreted as a Gibbs sampling step at temperature $0$ (since deterministic update).
-%\end{remark}
 
 
-%\begin{remark}[Representation by Formula Selecting Networks]
-%	When choosing an architecture with a single neurons selecting on both arguments any atom and having the logical biconditional as fixed connective.
-%	The sufficient statistics of the empirical distribution is the correlation matrix between the atoms.
-%\end{remark}
-
-%
-%\subsubsection{MLNs as higher-order deep Boltzmann Machines}
-%
-%\red{Unclear whether this makes sense: Hidden nodes depend deterministically on the observed!}
-%
-%We understand 
-%\begin{itemize}
-%	\item Atoms as observed nodes (might be redundant, since they are formulas themselves)
-%	\item Formulas (including the atomic formulas) as hidden nodes
-%\end{itemize}
-%
-%Non-atomic formulas have a hard coded deterministic dependency on the atomic formulas.
-%
-%The MLN distribution is given by associating a potential to some hidden nodes.
-
-
-
-
-
-
-
-
-\subsection{Applications}
-
-Markov Logic Networks as neuro-symbolic architectures:
-\begin{itemize}
-	\item Neural Paradigm here by decompositions of logical formulas into their connectives.
-		In more generality by decompositions of sufficient statistics into composed functions, using Basis Calculus.
-		Deeper nodes as carrying correlations of lower nodes.
-	\item Symbolic Paradigm by interpretability of propositional logics.
-\end{itemize}
-
-
-Markov Logic Networks as trainable Machine Learning models:
-\begin{itemize}
-	\item Expressivity: Can represent any distributions, as shown by Theorem~\ref{the:maximalClausesRepresentation}, with $2^d$ formulas.
-	\item Efficiency: Can only handle small subsets of possible formulas, since their possible number is huge.
-		Tensor networks provide means to efficiently represent formulas depending on many variables and reason based on contractions.
-	\item Differentiability: Distributions are differentiable functions of their weights, see Parameter Estimation Chapter. 
-		The log-likelihood of data is therefore also differentiable function of their weights and we can exploit first-order methods in their optimization.
-	\item Structure Learning: We need to find differentiable parametrizations of logical formulas respecting a chosen architecture.
-		In Chapter~\ref{cha:formulaBatches} such representations are described based on Selector Tensor Networks.
-\end{itemize}
-
-
-
-
-
-%\subsection{Symbolic Paradigm by Logics}
-%Logical formulas (which are maps from $\atomstates$ to $[2]$ as explained before) correspond with a function to be represented by a neural network.
-
-%\subsubsection{Neural Paradigm by Formula Decompositions}
-
-%% Decompositions
-%In logics, formula can be decomposed into logical connectives acting on smaller formulas as has been shown in Chapter~\ref{cha:FormulaTensors}.
 
 
 
