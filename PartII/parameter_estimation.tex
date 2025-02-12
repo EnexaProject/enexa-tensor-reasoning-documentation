@@ -18,12 +18,61 @@ The convex polytope of realizable mean parameters (see Definition~\ref{def:meanF
 	\[ \meansetof{\formulaset} = \left\{ \sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable} \, : \, \probtensor\in\probtensorset \right\} \, ,\]
 where by $\probtensorset$ we denote the set of all probability distributions.
 
-For any $\meanparam\in\meansetof{\formulaset}$ we have one of the following (see also Figure~\ref{fig:meansetSketch}):
-\begin{itemize}
-	\item All $\meanparamat{\indexedselvariable}\notin\{0,1\}$: Then reproducible by a Markov Logic Network, $\meanparam\in\meanset$
-	\item At least one $\meanparamat{\indexedselvariable}\notin\{0,1\}$ and one $\meanparamat{\indexedselvariable}\in\{0,1\}$: Then reproducible by aHybrid Logic Network
-	\item All $\meanparamat{\indexedselvariable}\in\{0,1\}$: Then reproducible by a Hard Logic Network
-\end{itemize}
+The convex polytope has a characterization as a convex hull
+\begin{align}\label{eq:hlnMeansetConvCharacterization}
+	\meansetof{\formulaset} = \convhullof{\sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\atomstates} \, . 
+\end{align}
+
+We exploit this characterization to show, that the extreme points of $\meansetof{\formulaset}$ are exactly those realizable by Hard Logic Networks.
+
+\begin{theorem}\label{the:extremeCharacterizationHLN}
+	Any parameter $\meanparamat{\selvariable}\in\meansetof{\formulaset}$ is an extreme point of $\meansetof{\formulaset}$, if and only $\meanparamat{\selvariable}$ is boolean and the formula
+			\[ \basemeasureofat{\formulaset,\meanparam}{\shortcatvariables} \coloneqq \bigwedge_{\selindexin \, : \, \meanparamat{\indexedselvariable}\in\{0,1\}}
+		\lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables} \]
+	is satisfiable.
+	In that case, $\meanparam$ is the mean parameter of the Hard Logic Network with 
+		\[ \kb=\{\lnot^{(1-\meanparamat{\indexedselvariable})} \enumformula \, : \, \selindexin \} \, . \]
+\end{theorem}
+\begin{proof}
+	\proofrightsymbol: Let $\meanparam$ be an extreme point of $\meansetof{\formulaset}$. 
+		Since by \eqref{eq:hlnMeansetConvCharacterization} $\meansetof{\formulaset}$ is a convex hull of vectors, there exists a $\shortcatindices\in\atomstates$ such that
+			\[ \meanparamat{\selvariable} = \sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable}  \, . \]
+		By definition of $\sencodingof{\formulaset}$, $\meanparamat{\selvariable}$ is a boolean vector and for any $\selindexin$ we have
+			\[ \enumformulaat{\indexedshortcatvariables} = \meanparamat{\indexedselvariable} \]
+		and thus
+			\[ \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\indexedshortcatvariables} = 1 \, .  \]
+		It follows that $\shortcatindices$ is also a model of $\basemeasureof{\formulaset,\meanparam}$ and $\basemeasureof{\formulaset,\meanparam}$ is satisfiable.
+			
+	\proofleftsymbol: To show the converse direction, let $\meanparamat{\selvariable}$ be a boolean vector such that $\basemeasureof{\formulaset,\meanparam}$ is satisfiable.
+		Then there exists a model $\shortcatindices$ of $\basemeasureof{\formulaset,\meanparam}$.
+		We have for any $\selindexin$ 
+			\[ \sencodingofat{\formulaset}{\indexedshortcatvariables,\indexedselvariable} =  \enumformulaat{\indexedshortcatvariables} = \meanparamat{\indexedselvariable} \]
+		and thus $\meanparamat{\selvariable}=\sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable}$.
+		With the characterization \eqref{eq:hlnMeansetConvCharacterization} this establishes in particular $\meanparamat{\selvariable}\in\meansetof{\formulaset}$.		
+		Since $\meanparamat{\selvariable}$ is boolean and therefore an extreme point of the cube $\cubeof{\seldim}$, it is also an extreme point of the subset $\meansetof{\formulaset}\subset\cubeof{\seldim}$.
+\end{proof}
+
+
+Let us now state, that any element of the mean parameter set can be realized by a hybrid logic network.
+
+\begin{theorem}
+	To any $\meanparamat{\selvariable}\in\meansetof{\formulaset}$ we build the set $\formulaset^{\meanparam}=\{\enumformula\in\formulaset : \meanparamat{\indexedselvariable}\notin\{0,1\}\}$ and the base measure
+			\[ \basemeasureofat{\formulaset,\meanparam}{\shortcatvariables} \coloneqq \bigwedge_{\selindexin \, : \, \meanparamat{\indexedselvariable}\in\{0,1\}}
+		\lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables} \, . \]
+	Then, $\meanparamat{\selvariable}$ is realizable by an element of $\expfamilyof{\formulaset^{\meanparam},\basemeasureof{\formulaset,\meanparam}}$, that is there is a $\probtensor\in\expfamilyof{\formulaset^{\meanparam},\basemeasureof{\formulaset,\meanparam}}$ with
+		\[ \sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable} = \meanparamat{\selvariable} \, .  \] 
+\end{theorem}
+\begin{proof}
+	Since $\meanparamat{\selvariable}\in\meansetof{\formulaset}$ there is a $\secprobat{\shortcatvariables}$ with 
+		\[ \contractionof{\secprobtensor,\sencodingof{\formulaset}}{\selvariable} = \meanparamat{\selvariable} \, . \]
+	From this it follows, that $\secprobtensor$ has a representation with respect to the base measure $\basemeasureof{\formulaset,\meanparam}$ since
+		\[ \secprobat{\shortcatvariables} = \contractionof{\secprobtensor,\basemeasureof{\formulaset,\meanparam}}{\shortcatvariables}  \, . \]
+	Thus, we have for the reduced mean parameter $\tilde{\meanparam}$, which results from dropping the coordinates in $\{0,1\}$, that
+		\[ \tilde{\meanparam} \in \meansetof{\formulaset^{\meanparam},\basemeasureof{\formulaset,\meanparam}} \, . \]
+	%% NOT SOLID YET! BETTER ARGUMENT FOR INTERIOR POINT?
+	If $\formulaset^{\meanparam}$ is a minimal representation for the family $\expfamilyof{\formulaset^{\meanparam},\basemeasureof{\formulaset,\meanparam}}$, $\tilde{\meanparam}$ is an interior point of $\meansetof{\formulaset^{\meanparam},\basemeasureof{\formulaset,\meanparam}}$ any by Theorem~3.3 in \cite{wainwright_graphical_2008}, there is a $\probtensor$ with $\sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable} = \meanparamat{\selvariable}$.
+	If $\formulaset^{\meanparam}$ is not a minimal representation, we can choose a subset of formulas providing a minimal representation with same expressivity and find $\probtensor$ with the same argument.
+\end{proof}
 
 
 
@@ -41,13 +90,22 @@ For any $\meanparam\in\meansetof{\formulaset}$ we have one of the following (see
 \end{proof}
 
 
+For any $\meanparam\in\meansetof{\formulaset}$ we have one of the following (see also Figure~\ref{fig:meansetSketch}):
+\begin{itemize}
+	\item All $\meanparamat{\indexedselvariable}\notin\{0,1\}$: Then reproducible by a Markov Logic Network, $\meanparam\in\meanset$.
+		This follows from the classical result of Theorem~3.3 in \cite{wainwright_graphical_2008}.
+	\item At least one $\meanparamat{\indexedselvariable}\notin\{0,1\}$ and one $\meanparamat{\indexedselvariable}\in\{0,1\}$: Then reproducible by a Hybrid Logic Network.
+	\item All $\meanparamat{\indexedselvariable}\in\{0,1\}$: Then  an extreme point and by Theorem~\ref{the:extremeCharacterizationHLN} reproducible by a Hard Logic Network.
+\end{itemize}
+
+
 
 \begin{figure}[h]\label{fig:meansetSketch}
 \begin{center}
 	\input{PartII/tikz_pics/parameter_estimation/meanset_sketch.tex}
 \end{center}
 \caption{Sketch of the convex polytope ${\meansetof{\formulaset}}$ as a subset of the $\seldim$-dimensional cube $[0,1]^\seldim$ (here as a 2-dimensional projection) with example mean 	parameters $\meanparam_1,\meanparam_2,\meanparam_3$.
-	The boundary points $\meanparam_1,\meanparam_2\in\closureof{\meanset}_{\formulaset}/\interiorof{\meanset}_{\formulaset}$ are examples of mean parameters, which can be realized by a Hard Logic Networks (respectively Hybrid Logic Network). %, if the criterion of Lem ma~\ref{lem:meanHLNrealizabilityCondition} is satisfied.
+	The boundary points $\meanparam_1,\meanparam_2\in\closureof{\meanset}_{\formulaset}/\interiorof{\meanset}_{\formulaset}$ are examples of mean parameters, which can be realized by a Hard Logic Networks (respectively Hybrid Logic Network). 
 	Any extreme point $\meanparam_1\in\meansetof{\formulaset}\cup\{0,1\}^{\seldim}$ is realizable by a Hard Logic Network, while a non-extreme boundary point $\meanparam_2\in\meansetof{\formulaset}/\{0,1\}^{\seldim}$ is realizable by a Hybrid Logic Network.
 	Any interior point $\meanparam_3\in\interiorof{\meansetof{\formulaset}}$ is realizable by a Markov Logic Network.
 } 
