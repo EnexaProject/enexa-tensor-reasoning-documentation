@@ -804,7 +804,7 @@ In contrary, Hard Logic Networks model uniform distributions over model sets of 
 We now show how to combine both approaches by defining Hybrid Logic Networks, when understanding Hard Logic Networks as base measures.
 This trick is known to the field of variational inference, see for Example~3.6 in \cite{wainwright_graphical_2008}. 
 
-\begin{definition}
+\begin{definition}\label{def:hln}
 	Given a set of formulas $\softformulaset$ with weights $\canparam$ and set $\hardformulaset$ of formulas, which conjunction is satisfiable, the hybrid logic network is the probability distribution
 	\begin{align*}
 		\probtensorof{(\softformulaset,\canparam,\hfbasemeasure)}[\shortcatvariables] 
@@ -814,6 +814,18 @@ This trick is known to the field of variational inference, see for Example~3.6 i
 	\end{align*}
 	which is the member of the exponential family with statistic by $\softformulaset$ and the base measure
 		\[ \hfbasemeasure[\shortcatvariables] = \contractionof{\{\formula : \formula \in \hardformulaset\}}{\shortcatvariables} \, .\]
+		
+	Given a set of formulas $\formulaset$, we define the set of hybrid logic networks realizable with $\formulaset$ as
+	\begin{align*}
+		\hlnsetof{\formulaset} 
+		= \bigcup_{\secformulaset\subset\formulaset \, , \, \meanparam\in\{0,1\}^{\cardof{\formulaset}}}
+		\expfamilyof{\formulaset/\secformulaset,\basemeasureof{\secformulaset,\meanparam}}
+	\end{align*}
+	where we denote base measures
+	\begin{align*}
+		\basemeasureofat{\secformulaset,\meanparam}{\shortcatvariables}
+		= \bigwedge_{\enumformula\in\secformulaset} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables} \, . 
+	\end{align*}
 \end{definition}
 
 The assumption of a satisfiable set $\hardformulaset$ is necessary, as we show next.
@@ -904,7 +916,7 @@ For an example see Figure~\ref{fig:ActivatedHeads}.
 
 \subsubsection{Reasoning Properties}
 
-Deciding probabilistic entailment (see Definition~\ref{def:probEntailment}) with respect to Hybrid Logic Networks can be reduced to 
+Deciding probabilistic entailment (see Definition~\ref{def:probEntailment}) with respect to Hybrid Logic Networks can be reduced to the hard logic parts of the network.
 
 \begin{theorem}\label{the:hlnEntailmentReduction}
 	Let $(\softformulaset,\canparam,\hardformulaset)$ define a Hybrid Logic Network.
@@ -921,7 +933,7 @@ Deciding probabilistic entailment (see Definition~\ref{def:probEntailment}) with
 Formulas in $\softformulaset$, which are entailed or contradicted by $\hardformulaset$ are redundant, as we show next.
 
 \begin{theorem}%\label{the:hlnRepRedundancy}
-	If for a formula $\exformula$ and $\hardformulaset$ we have  %and only if
+	If for a formula $\exformula$ and $\hardformulaset$ we have 
 		\[ \hardformulaset \models \exformula \, \quad \text{or} \quad \hardformulaset \models \lnot\exformula \]
 	then for any $(\softformulaset,\canparam,\hardformulaset)$
 		\[ \probofat{(\softformulaset/\{\exformula\},\tilde{\canparam},\hardformulaset)}{\shortcatvariables} =  \probofat{(\softformulaset,\canparam,\hardformulaset)}{\shortcatvariables}  \, , \]

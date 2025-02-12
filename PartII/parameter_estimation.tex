@@ -1,16 +1,7 @@
 \section{Learning Logic Networks}\label{cha:networkLearning}
 
-\red{In this chapter we first investigate unconstrained parameter estimated for Markov Logic Networks and Hybrid Logic Networks, which are special cases of the backward maps introduced in Chapter~\ref{cha:probDecomposition}.
-We then impose sparsity constraints on the parameters on the minterm family to discuss structure learning.}
-
-We estimate the canonical parameters $\canparam$ in an exponential family.
-We first discuss parameter estimation in the more generic situation of exponential families and then discuss the more specific situation of Markov Logic Networks.
-
-% Reduction to backward map
-The parameters optimizing the likelihood, will be shown to coinciding by the backward mapping acting on the expectation of the sufficient statistics (see Theorem~\ref{the:parEstToBackwardMap}).
-This is in most generality true for the parameters of the M-projection of any distribution onto the exponential family.
-We therefore investigate methods to compute the backward mapping, in most generality by alternating algorithms and in the special case of Markov Logic Networks by closed form representations.
-
+In this chapter we first investigate unconstrained parameter estimated for Markov Logic Networks and Hybrid Logic Networks, which are special cases of the backward maps introduced in Chapter~\ref{cha:probDecomposition}.
+We then motivate structure learning based on sparsity constraints on the parameters on the minterm family and present heuristic strategies leading to efficient structure learning algorithms.
 
 \subsection{Mean parameters of Hybrid Logic Networks}
 
@@ -53,7 +44,7 @@ We exploit this characterization to show, that the extreme points of $\meansetof
 \end{proof}
 
 
-Let us now state, that any element of the mean parameter set can be realized by a hybrid logic network.
+We now show, that any element of the mean parameter set can be realized by a hybrid logic network.
 
 \begin{theorem}
 	To any $\meanparamat{\selvariable}\in\meansetof{\formulaset}$ we build the set $\formulaset^{\meanparam}=\{\enumformula\in\formulaset : \meanparamat{\indexedselvariable}\notin\{0,1\}\}$ and the base measure
@@ -74,23 +65,14 @@ Let us now state, that any element of the mean parameter set can be realized by 
 	If $\formulaset^{\meanparam}$ is not a minimal representation, we can choose a subset of formulas providing a minimal representation with same expressivity and find $\probtensor$ with the same argument.
 \end{proof}
 
+% Reduction to Hybrid Logic Networks
+We can thus reduce the set of probability distributions in the definition of the convex polytope of mean parameters to the set $\hlnsetof{\formulaset}$ (see Definition~\ref{def:hln}), that is
+\begin{align*}
+	\meansetof{\formulaset} = \left\{ \sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable} \, : \, \probtensor\in\hlnsetof{\formulaset} \right\} \, .
+\end{align*}
 
-
-\begin{lemma}\label{lem:meanHLNrealizabilityCondition}
-	Let $\meanparam$ be in the boundary of $\meansetof{\formulaset}$, that is $\meanparam\in\closureof{\meanset}_{\formulaset}/\interiorof{\meanset}_{\formulaset}$.
-	%Then for at least one $\selindexin$ we have $\meanparamat{\indexedselvariable}\in\{0,1\}$. %True?
-	If $\meanparam\in\meansetof{\formulaset}$ then the formula
-		\[ \basemeasureofat{\formulaset,\meanparam}{\shortcatvariables} \coloneqq \bigwedge_{\selindexin \, : \, \meanparamat{\indexedselvariable}\in\{0,1\}}
-		\lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables} \]
-	is satisfiable, that is $\sbcontraction{\basemeasureof{\formulaset,\meanparam}}>0$. % Can also use probabilistic entailment for that: $\probtensor\models\basemeasure$
-\end{lemma}
-\begin{proof}
-	For any $\probtensor$ reproducing $\meanparam$ satisfies $\probtensor\models\enumformula$ if $\meanparamat{\indexedselvariable}=1$ and $\probtensor\models\lnot\enumformula$ if $\meanparamat{\indexedselvariable}=0$ and thus $\probtensor\models\basemeasureof{\formulaset,\meanparam}$.
-	If $\basemeasureof{\formulaset,\meanparam}$ is not satisfiable, this would imply $\sbcontraction{\probtensor}=0$ which is a contradiction to $\probtensor$ being a probability distribution.
-\end{proof}
-
-
-For any $\meanparam\in\meansetof{\formulaset}$ we have one of the following (see also Figure~\ref{fig:meansetSketch}):
+% Mean parameter characterization
+To summarize, for any $\meanparam\in\meansetof{\formulaset}$ we have one of the following (see also Figure~\ref{fig:meansetSketch}):
 \begin{itemize}
 	\item All $\meanparamat{\indexedselvariable}\notin\{0,1\}$: Then reproducible by a Markov Logic Network, $\meanparam\in\meanset$.
 		This follows from the classical result of Theorem~3.3 in \cite{wainwright_graphical_2008}.
@@ -119,13 +101,13 @@ For any $\meanparam\in\meansetof{\formulaset}$ we have one of the following (see
 % Repetition and result transfering
 Markov Logic Networks are exponential families with statistics by a set $\formulaset$ of propositional formulas.
 We furthermore allow for propositional formulas as base measures, to also include the discussion of Hybrid Logic Networks.
-Based on this, we apply the theory of probabilistic inference, developed in Chapter~\ref{cha:probReasoning}.
+Based on this, we apply the theory of probabilistic inference, developed in Chapter~\ref{cha:probReasoning} for the generic exponential families.
 
 % Special example: MLE
-The Maximum Likelihood Problem on MLNs is the M-projection
+The Maximum Likelihood Problem on Markov Logic Networks is the M-projection
 \begin{align*}
 	\argmax_{\canparamat{\selvariable}\in\rr^{\seldim}} \quad 
-	\centropyof{\probtensor}{\expdistof{(\sstat,\basemeasure,\canparam)}}	
+	\centropyof{\probtensor}{\expdistof{(\sstat,\canparam,\basemeasure)}}	
 \end{align*}
 in the case $\probtensor=\empdistribution$ for a data map $\datamap$.
 
@@ -137,10 +119,36 @@ The M-projection coincides, after dropping constant terms in case of non-trivial
 \end{align*}
 where
 \begin{align*}
-	\meanparam{\selvariable} = \sbcontractionof{\sencodingof{\formulaset},\probtensor}{\selvariable} 
+	\meanparam{\selvariable} 
+	= \sbcontractionof{\sencodingof{\formulaset},\probtensor}{\selvariable} 
 	\quad \text{and} \quad
-	\cumfunctionof{\canparamat{\selvariable}} = \sbcontraction{\expof{ \sbcontractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables} }, \basemeasure} \, . 
+	\cumfunctionof{\canparamat{\selvariable}} 
+	= \sbcontraction{\expof{ \sbcontractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables} }, \basemeasure} \, . 
 \end{align*}
+
+\red{Theory for MLN a special case of the generic case of exponential families, here corollaries?.}
+
+% Extension to HLN
+We now extend to Hybrid Logic Networks
+\begin{align*}
+	\argmax_{\secprobtensor\in\hlnsetof{\formulaset}} \quad 
+	\centropyof{\probtensor}{\secprobtensor}	
+\end{align*}
+
+\begin{theorem}
+	Let $\meanparamat{\selvariable} = \contractionof{\probtensor,\sencfset}{\selvariable}$ and
+		\[ \secformulaset = \{\enumformula \, : \, \meanparamat{\indexedselvariable} \in \{0,1\}\} \quad , \quad 
+		\basemeasureofat{\secformulaset,\meanparam}{\shortcatvariables} 
+		= \bigwedge_{\enumformula\in\secformulaset} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables}
+		\, . \]
+	The solution of the M-projection of $\probtensor$ onto the set of hybrid logic networks representable by $\formulaset$ then coincides with the projection of $\probtensor$ onto $\expframilyof{\formulaset/\secformulaset,\basemeasureof{\secformulaset,\meanparam}}$.
+\end{theorem}
+\begin{proof}
+	Work by weight cutoff, in the limit of hard logics?
+\end{proof}
+
+\subsubsection{Maximum Entropy in Hybrid Networks}
+
 
 % Special example: MaxEnt
 The Maximum Entropy Problem for Markov Logic Networks is
@@ -150,6 +158,7 @@ The Maximum Entropy Problem for Markov Logic Networks is
 	\sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable}
 	 =  \meanparamat{\selvariable} 
 \end{align}
+
 
 
 \begin{corollary}[of Theorem~\ref{the:maxEntMaxLikeDuality}]
@@ -163,13 +172,11 @@ We notice, that the solution of the maximum entropy problem is thus a Markov Log
 This is remarkable, because this motivates our restriction to Markov Logic Networks as those distributions with maximal entropy given satisfaction rates of formulas in $\formulaset$.
 
 
-
-\subsubsection{Parameter Estimation in Hybrid Networks}
-
-When there are facts, also situations $\meanparamat{\indexedselvariable}\in\{0,1\}$ can appear.
+% Extension to HLN
+When now extend to the situations $\meanparamat{\indexedselvariable}\in\{0,1\}$ can appear.
 It that case the formula is entailed or contradicted by the facts, and dropping should be considered in both cases.
 
-The max entropy - max likelihood duality still holds for hybrid logic networks as we show next.
+The max entropy - max likelihood duality still holds for hybrid logic networks as we show in the next theorem.
 
 \begin{theorem}
 	Given a set of formulas $\tilde{\formulaset}$ and $\tilde{\meanparam}$, with coordinates $\tilde{\meanparam}_\selindex\in[0,1]$ in the closed interval $[0,1]$.
@@ -497,7 +504,7 @@ We will investigate such examples in more detail in Chapter~\ref{cha:sparseTC}, 
 	
 % Interpretation of the result as independence approximation
 The maximum likelihood estimator of a positive probability distribution by the MLN of atomic formulas is therefore the tensor product of the marginal distributions.
-\red{The Kullback-Leibler divergence between the distribution and its projection is the mutual information of the atoms.}
+The Kullback-Leibler divergence between the distribution and its projection is the mutual information of the atoms, see for example Chapter~8 in \cite{mackay_information_2003}.
 
 \begin{remark}[Decomposition into systems of atomic networks]
 	\red{By Independence Decomposition we reduce to a system of atomic MLN.

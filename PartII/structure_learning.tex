@@ -4,6 +4,12 @@
 We approach structure learning as constrained parameter estimation in the naive exponential family (see Example~\ref{exa:naiveExpFamily}), which coincides with the minterm family $\formulasetof{\mlnmintermsymbol}$.
 The minterm family is defined by the statistic $\sstat = \identityat{\shortcatvariables, \selvariableof{[\catorder]}}$ and has energy tensors coinciding with the canonical parameters.
 
+% Convex polytope characterization
+\red{For the minterm family, we have as mean parameter set the convex hull of one-hot encodings. 
+Each basis vector is an extreme point is an extreme point.
+}
+
+
 By Theorem~\ref{the:mintermExpressivityMLN} all positive distributions are member of the minterm markov logic network family.
 This expressivity result was generalized to arbitrary distributions, when allowing for formulas as basemeasures by Theorem~\ref{the:mintermExpressivityHLN}.
 
@@ -53,15 +59,15 @@ To see this, we reparametrize by the coefficient vectors of the elements in the 
 	Having, for example, $\atomorder=10$, then $\cardof{\formulaset}>10^{308}$.
 
 
-% Regularization by sparsity
-One regularization is by allowing only a small number of formulas to be active.
-This corresponds with regularization with $\sparsityof{\canparam}$.
-The problem is then non-convex.
+	% Regularization by sparsity
+	One regularization is by allowing only a small number of formulas to be active.
+	This corresponds with regularization with $\sparsityof{\canparam}$.
+	The problem is then non-convex.
 
 
-% Regularization by formula size
-A further regularization strategy is the restriction of the size of the possible formulas to maintain interpretability. 
-Thus, we choose small formula selection networks.
+	% Regularization by formula size
+	A further regularization strategy is the restriction of the size of the possible formulas to maintain interpretability. 
+	Thus, we choose small formula selection networks.
 \end{remark}
 
 
@@ -369,10 +375,11 @@ The result is Algorithm~\ref{alg:greedyStructureLearning}, which is a greedy alg
 	\State Initialize
 		\[ \currentdistribution \algdefsymbol \frac{1}{\prod_{\catenumeratorin}\catdimof{\atomenumerator}} \cdot \onesat{\shortcatvariables} \quad, \quad \formulaset = \varnothing \]
 	\While{Stopping criterion is not met}
-		\State Structure Learning: Compute a (approximative) solution $\hat{\formula}$ to Problem~\ref{prob:restrictedNaiveMLE} and add the formula to $\formulasetof{t}$, i.e.
-				\[ \formulasetof{t} \algdefsymbol \formulasetof{t-1} \cup \{\hat{\formula}\} \]
+		\State Structure Learning: Compute a (approximative) solution $\hat{\formula}$ to Problem~\ref{prob:restrictedNaiveMLE} and add the formula to $\formulaset$, i.e.
+				\[ \formulaset \algdefsymbol \formulaset \cup \{\hat{\formula}\} \]
+			Extend dimension of $\selvariable$ by one, by $\formulaof{\seldim}=\hat{\formula}$ and $\canparamat{\seldim}=0$
 		\State Weight Estimation: Estimate the best weights for the added formula and recalibrate the weights of the previous formulas, by calling Algorithm~\ref{alg:AWO}.
-			\[ \currentdistribution \algdefsymbol \expdistof{\formulasetof{t}, \canparam^{t}} \]
+				\[ \currentdistribution \algdefsymbol \expdistof{\formulaset, \canparam} \]
 \EndWhile
 \end{algorithmic}
 \end{algorithm}
