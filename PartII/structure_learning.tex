@@ -1,18 +1,4 @@
-
-%\section{Structure Learning} % Now unified with parameter estimation
-
-\red{To Do:
-Current distribution as base measure $\basemeasure=\currentdistribution$, alternative to midterm family approach.
-}
-
-
-% Optimization methods
-%Naively choosing all formulas will not succeed in effective methods or interpretable models, due to the massive overparametrization and therefore redundancy in the representation of probability distributions. 
-%Instead, we in this section investigate approaches to  identify formulas to be activated, given a set of data and a neuro-symbolic architecture.
-
-
 \subsection{Constrained parameter estimation in the minterm family}
-
 
 % Naive exponential family
 We approach structure learning as constrained parameter estimation in the naive exponential family (see Example~\ref{exa:naiveExpFamily}), which coincides with the minterm family $\formulasetof{\mlnmintermsymbol}$.
@@ -47,7 +33,7 @@ Problem~\ref{prob:restricedNaiveMLE} has two important types of instantiation, w
 \red{Projecting onto the markov logic family to the statistic $\formulaset$ is the instance of Problem~\ref{prob:restricedNaiveMLE} with the hypothesis choice}
 %When the $\formulaset$ is known we take $\energyhypothesis$ as the linear hull 
 	\[ \energyhypothesisof{\formulaset} = \spanof{\{\formula : \formula\in\formulaset \}} \, . \]
-Then, the problem is the parameter estimation problem studied in Chapter~\ref{cha:parameterEstimation}.
+Then, the problem is the parameter estimation problem studied in Section~\ref{sec:parameterEstimation}.
 To see this, we reparametrize by the coefficient vectors of the elements in the span, which are then understood as the canonical parameter of the respective distribution in the markov logic family to $\formulaset$.
 
 
@@ -238,13 +224,6 @@ Of further interest are tempered proposal distributions, which are in the same e
 As Markov Logic Networks, the proposal distributions are in exponential families with the sufficient statistic defined in terms of formula selecting maps.
 While Markov Logic Networks contract the maps on the selection variables $\selvariable$, the proposal distributions contract them along the categorical variables $\catvariable$ to define energy tensors.
 
-% Mode search
-%We can then understand finding the largest coordinate as a search for the mode of this proposal distribution.
-%\begin{theorem}
-%	Grafting is the MAP query on the proposal distribution to any $\invtemp>0$.
-%\end{theorem}
-
-
 % Methods to solve mode search
 The grafting Problem~\eqref{prob:greedyGrad} is the search for the mode of the proposal distribution.
 To solve grafting, we thus need to answer a MAP query, for which we can apply the methods introduced in Chapter~\ref{cha:probReasoning}, such as Gibbs Sampling or Mean Field Approximations in combination with annealing.
@@ -276,6 +255,8 @@ Since
 \end{align*}
 \end{proof}
 
+
+% Minterm family interpretation
 Further, this is Problem~\eqref{prob:restrictedNaiveMLE} in the case
 \begin{align*}
 	\energyhypothesis = \lnof{\currentdistribution} + \cup_{\formula\in\formulaset} \spanof{\formula} \, .
@@ -295,40 +276,8 @@ Therefore we can apply the theory of Chapter~\ref{cha:probReasoning} and charact
 \end{align*}
 We state the solution of this condition in the next theorem.
 
-
-%% Redundant? Repetition of Lemma~\ref{ref:lemMMinMLN}.
-%\begin{lemma}
-%	Problem~\ref{prob:restrictedNaiveMLE}  in the case
-%	\begin{align*}
-%		\energyhypothesisof{\formula} = \lnof{\currentdistribution} + \spanof{\formula} \,  
-%	\end{align*}
-%	is solved at
-%	\begin{align*}
-%		\hat{\weightof{\exformula}} = \lnof{ \frac{Z_1}{Z_0} \frac{\meanparam^{\datamap}_{\formula} }{1-\meanparam^{\datamap}_{\formula} } } 
-%	\end{align*}
-%	where
-%	\begin{align*}
-%		Z_0 = \sbcontractionof{\currentdistribution, \rencodingof{\formula}}{\catvariableof{\formula}=0}  \quad , \quad
-%		Z_1 = \sbcontractionof{\currentdistribution, \rencodingof{\formula}}{\catvariableof{\formula}=1}  \quad \text{and} \quad
-%		\meanparam^{\datamap}_{\formula} = \contraction{\empdistribution, \formula} \, .
-%	\end{align*}
-%\end{lemma}
-%\begin{proof}
-%	Follows from Lemma~\ref{ref:lemMMinMLN}.
-%\end{proof}
-
-%\red{Taking the current distribution as a base measure and choosing the canonical parameters of the by this base measure manipulated naive family, we state the problem}
-%\begin{align}\label{prob:restrictedNaiveCE}\tag{$\mathrm{P}_{\datamap,\currentdistribution,\energyhypothesis}$}
-%	\argmin_{\canparamat{\selvariableof{[\catorder]}}\in\energyhypothesis} \quad \centropyof{\empdistribution}{\expdistof{(\naivestat,\canparam,\currentdistribution)}}
-%\end{align}
-
 \begin{theorem}
-	Problem~\eqref{prob:greedyGain}
-	%~\ref{prob:restrictedNaiveMLE} in the case 
-	%\begin{align*}
-	%	\energyhypothesis =  \lnof{\currentdistribution} + \bigcup_{\formula\in\formulaset} \spanof{\formula} 
-	%\end{align*}
-	is solved at any
+	Problem~\eqref{prob:greedyGain} is solved at any
 	\begin{align*}
 		\hat{\canparam} = \weightof{\hat{\formula}} \cdot \hat{\formula}
 	\end{align*}
@@ -342,11 +291,10 @@ We state the solution of this condition in the next theorem.
 \end{theorem}	
 \begin{proof}
 	% Solution of the problem restricted to 
-	For any formula $\formula$, the inner minimum of Problem~\eqref{prob:greedyGain} is by Lemma~\ref{ref:lemMMinMLN} taken at %Problem~\ref{prob:restrictedNaiveCE}  in the case $\energyhypothesis = \spanof{\formula} $ 
+	For any formula $\formula$, the inner minimum of Problem~\eqref{prob:greedyGain} is by Lemma~\ref{ref:lemMMinMLN} taken at 
 		\[ \weightof{\formula} = \lnof{\frac{\datamean}{(1-\datamean)}\cdot \frac{(1-\currentmean)}{\currentmean}}  \]
 	where
 		\[ \currentmean = \sbcontraction{\currentdistribution,\formula} \]
-		%\[ \sechypercoreat{\catvariableof{\formula}} = \sbcontractionof{\currentdistribution,\rencodingof{\formula}}{\catvariableof{\formula}} \]
 	and
 		\[ \datamean = \sbcontraction{\empdistribution,\formula} \, . \]
 	
@@ -394,13 +342,7 @@ We state the solution of this condition in the next theorem.
 		\[ \hat{\formula} = \kldivof{\sbcontraction{\empdistribution,\formula}}{\sbcontraction{\currentdistribution,\formula}} \, . \]
 \end{proof}
 
-%\begin{theorem}
-%	When only optimizing the additional weight (i.e. the problem above), the KL divergence improves by the KL divergence of the Bernoulli distributions with the mean parameters to empirical and current, denoted as
-%		\[ \kldivof{\meanparam^D}{\meanparam^t} \, . \]
-%\end{theorem}
-
-
-\red{Thus, we solve the grain heuristic with a coordinatewise transform of the mean parameter tensors to $\empdistribution$ and $\currentdistribution$, using the bernoulli Kullback-Leibler divergence as transform function.}
+\red{Thus, we solve the grain heuristic with a coordinatewise transform of the mean parameter tensors to $\empdistribution$ and $\currentdistribution$, using the Bernoulli Kullback-Leibler divergence as transform function.}
 
 
 % Interpretation
@@ -414,16 +356,6 @@ Since we need to evaluate each coordinate, this can be intractable for large set
 % Further weight optimization
 Further improvement of the model can be achieved by iteratively optimizing the other weights as well, since their corresponding moment matching conditions might be violated after the integration of a new formula.
 This would require the computation of backward mappings for each candidate formula, for which we only have an alternating approach in general.
-
-%% OLD:  Iterative application
-%The optimization problem is hard, even in the unconstrained factors  (CITE: Koller Friedman).
-
-
-
-
-
-
-
 
 
 \subsubsection{Iterations}
@@ -442,8 +374,6 @@ The result is Algorithm~\ref{alg:greedyStructureLearning}, which is a greedy alg
 		\State Weight Estimation: Estimate the best weights for the added formula and recalibrate the weights of the previous formulas, by calling Algorithm~\ref{alg:AWO}.
 			\[ \currentdistribution \algdefsymbol \expdistof{\formulasetof{t}, \canparam^{t}} \]
 \EndWhile
-%We further apply in the next section a greedy perspective on learning $\formulaset$, by iteratively adding a formula $\exformula$ to a given set.
-%After each addition step, we can adjust the weights to all formulas.
 \end{algorithmic}
 \end{algorithm}
 
@@ -465,5 +395,16 @@ During learning, one needs to instantiate the proposal distribution, which requi
 \end{remark}
 
 
+\subsection{Discussion}
+
+\begin{remark}[Bayesian approach]
+	We only treated the estimation of a single resulting distribution by the data, while in a Bayesian approach one typically considers an uncertainty over possible distributions.
+	% MAP
+	\red{When treating $\canparam$ as a random tensor, which prior distribution is given and posteriori distribution wanted, we have a more involved Bayesian approach.}
+	When having a prior $\probof{\mlnparameters}$ over the Markov Logic Networks we alternatively want to find the parameters $\mlnparameters$ solving the maximum a posteriori problem
+	\begin{align}
+		\argmax_{\mlnparameters} \mlnprobat{\data}\cdot \probof{\mlnparameters}\, . 
+	\end{align}
+\end{remark}
 
 

@@ -1,4 +1,4 @@
-\section{Learning Logic Networks}\label{cha:parameterEstimation}
+\section{Learning Logic Networks}\label{cha:networkLearning}
 
 \red{In this chapter we first investigate unconstrained parameter estimated for Markov Logic Networks and Hybrid Logic Networks, which are special cases of the backward maps introduced in Chapter~\ref{cha:probDecomposition}.
 We then impose sparsity constraints on the parameters on the minterm family to discuss structure learning.}
@@ -56,7 +56,7 @@ For any $\meanparam\in\meansetof{\formulaset}$ we have one of the following (see
 
 
 
-\subsection{Unconstrained Parameter Estimation} % Check for redundancy with the mln introduction chapter!
+\subsection{Unconstrained Parameter Estimation} \label{sec:parameterEstimation} % Check for redundancy with the mln introduction chapter!
 
 % Repetition and result transfering
 Markov Logic Networks are exponential families with statistics by a set $\formulaset$ of propositional formulas.
@@ -103,16 +103,6 @@ The Maximum Entropy Problem for Markov Logic Networks is
 % Unique property of MLN
 We notice, that the solution of the maximum entropy problem is thus a Markov Logic Network.
 This is remarkable, because this motivates our restriction to Markov Logic Networks as those distributions with maximal entropy given satisfaction rates of formulas in $\formulaset$.
-
-
-\begin{remark}[Bayesian approach]
-	% MAP
-	\red{When treating $\canparam$ as a random tensor, which prior distribution is given and posteriori distribution wanted, we have a more involved Bayesian approach.}
-	When having a prior $\probof{\mlnparameters}$ over the Markov Logic Networks we alternatively want to find the parameters $\mlnparameters$ solving the maximum a posteriori problem
-	\begin{align}
-		\argmax_{\mlnparameters} \mlnprobat{\data}\cdot \probof{\mlnparameters}\, . 
-	\end{align}
-\end{remark}
 
 
 
@@ -295,15 +285,16 @@ This can be a bottleneck and circumvented by approximative inference, see e.g. C
 \end{remark}
 
 
-\subsection{Forward and backward mappings of MLNs in closed form}
+\subsection{Forward and backward mappings in closed form}
 
-\red{We recall from Chapter~\ref{cha:probReasoning}, that while forward mappings are always in closed form by contractions, backward mapping in general fail.
-We here investigate specific examples, where closed forms can be derived for both.}
+% Closed form availability
+We recall from Chapter~\ref{cha:probReasoning}, that while forward mappings are always in closed form by contractions, backward mapping in general do not have a closed form representation.
+Instead, the backward map is in general implicitly characterized by a maximum entropy problem constrained to matching expected sufficient statistics.
+We investigate in this section specific examples, where closed forms are available for both.
+In these cases, parameter estimation can thus be solved by application of the inverse on the expected sufficient statistics with respect to the empirical distribution, and iterative algorithms can be avoided.
 
-We have formulated parameter estimation as a maximum entropy problem constrained to matching expected sufficient statistics.
-Let us discuss situations, where the forward and backward mappings are available in closed form and parameter estimation can thus be solved by application of the inverse on the expected sufficient statistics with respect to the empirical distribution.
 % Usage
-When the backward map $\backwardmap$ is available in closed form, we directly get optimal parameters by the inversion acting on the satisfaction rate and can avoid iterative algorithms of parameter estimation.
+%When the backward map $\backwardmap$ is available in closed form, we directly get optimal parameters by the inversion acting on the satisfaction rate and can avoid iterative algorithms of parameter estimation.
 
 \subsubsection{Maxterms and Minterms}
 
@@ -357,11 +348,7 @@ We can use these insights to provide a characterization of the forward and backw
 	
 	We notice that for any $\meanparam$ in the image of the forward map we have
 		\[ \forwardmapwrt{\mlnmintermsymbol}(\backwardmapwrt{\mlnmintermsymbol}(\meanparam)) = \meanparam \]
-	%We notice that for any $\canparam\in\rr^{\seldim}$ we have
-	%	\[ \backwardmapwrt{\mlnmintermsymbol}( \forwardmapwrt{\mlnmintermsymbol}(\canparam) ) = \canparam - \contractionof{\expof{\canparam}}{\varnothing} \cdot \onesat{\shortcatvariables}
-	%	\]
-%	and thus $\canparam$ and $\backwardmapwrt{\mintermformulaset}( \forwardmapwrt{\mintermformulaset}(\canparam) )$ are representing the same member of the exponential family (see Theorem~\ref{the:tensorRepUniqueness}).	
-	Therefor, $\backwardmapwrt{\mintermformulaset}$ is indeed a backward mapping to the exponential family of minterms.
+	Therefore, $\backwardmapwrt{\mintermformulaset}$ is indeed a backward mapping to the exponential family of minterms.
 	
 	For the maxterms we use that
 		\[ \maxtermformulaset[\shortcatvariables,\catvariableof{\maxtermformulaset}] = \onesat{\shortcatvariables,\catvariableof{\maxtermformulaset}}-\identityat{\shortcatvariables,\catvariableof{\maxtermformulaset}} \]
@@ -389,7 +376,6 @@ We can use these insights to provide a characterization of the forward and backw
 	and $\backwardmapwrt{\mlnmintermsymbol}$ is thus a backward map for the exponential family of maxterms.
 \end{proof}
 
-	
 % Fitting arbitrary distributions
 Any positive probability distribution can thus be fitted by minterms when we choose $\canparam=\lnof{\probtensor}$, respectively by maxterms when we choose $\canparam=\ones-\lnof{\probtensor}$.
 Thus, we have identified a subset of $2^{\atomorder}$ formulas, which is rich enough to fit any distribution.
@@ -449,16 +435,17 @@ The mean parameters coincide with the queries on the atomic formulas, that is th
 
 % Representation by selection tensor networks
 In a selection tensor networks they are represented by a single neuron with identity connective and variable selection to all atoms.
-\red{To architectures: Redo the discussions on these examples.}
+We will investigate such examples in more detail in Chapter~\ref{cha:sparseTC}, where atomic formulas Markov Logic Networks are specific cases of monomial decomposition of order 1.
 	
-% Interpretation of the result
+% Interpretation of the result as independence approximation
 The maximum likelihood estimator of a positive probability distribution by the MLN of atomic formulas is therefore the tensor product of the marginal distributions.
+\red{The Kullback-Leibler divergence between the distribution and its projection is the mutual information of the atoms.}
 
-
-\begin{remark}
+\begin{remark}[Decomposition into systems of atomic networks]
 	\red{By Independence Decomposition we reduce to a system of atomic MLN.
 	The minterms of such MLNs are the literals.
-	By redundancy (literals sum up to $\ones$), it suffices to take only the positive or the negative literal.}
+	By redundancy (literals sum up to $\ones$), it suffices to take only the positive or the negative literal.
+	}
 %	We set the weights of $\weightof{\lnot\atomicformulaof{\atomenumerator}}=0$ (corresponding with a gauge normation of the energy offset symmetry). % Not needed!
 \end{remark}
 
