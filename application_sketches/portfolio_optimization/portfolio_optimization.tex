@@ -66,15 +66,16 @@
 
 \begin{document}
 \title{\tnreason for portfolio optimization}
-\author{Alex Goessmann, DATEV eG}
 
 \maketitle
 \date{\today}
 
+We here investigate the portfolio optimization problem described in the tutorial \url{https://qiskit-community.github.io/qiskit-finance/tutorials/01_portfolio_optimization.html}.
 
 \section{The portfolio optimization problem}
 
 \newcommand{\productsnum}{n}
+
 
 Given $\productsnum$ products and the covariance matrices $\Sigma[\selvariableof{0},\selvariableof{1}]\in\rr^{\catorder\times\catorder}$, the expectations $\mu[\selvariableof{0}]$ and the risk appetite parameter $q>0$, we state the portfolio optimization problem
 \begin{align}
@@ -85,6 +86,7 @@ Given $\productsnum$ products and the covariance matrices $\Sigma[\selvariableof
 \end{align}
 
 \begin{remark}[Connection with \tnreason]
+A few comments on this problem to be elaborated on in the following:
 \begin{itemize}
 	\item	The portfolio optimization problem is a mode search in an exponential family of atomic variables and terms of pairs.
 	\item The objective of the optimization is the (negative of its) energy tensor $\energytensor$.
@@ -98,7 +100,11 @@ Let us now show the connection with \tnreason in more precision.
 
 \subsection{Exponential family of features}
 
-The portfolio optimization problem is a mode search in an exponential family of atomic variables and terms of pairs.
+The portfolio optimization problem is a mode search in an exponential family, which statistic is a set of formulas consisting in 
+\begin{itemize}
+	\item atomic variables: To capture the expectations, i.e. the coordinates of $\mu$
+	\item terms of variable pairs: To capture the correlations, i.e. the coordinates of $\Sigma$
+\end{itemize}
 
 \subsection{Energy Tensor and corresponding distribution}
 
@@ -116,10 +122,32 @@ Sampling from these members in the low temperature limit $\invtemp\rightarrow 0$
 
 \subsection{Representation by a monomial selection architecture}
 
-The energy tensor $\energytensor$ has a monomial decomposition with order constraint $\sliceorder=2$.
+The energy tensor $\energytensor$ has a monomial decomposition with order constraint $\sliceorder=2$, see Section 17.3 in the main report.
+For the representation we take the slice selection tensor to $\catorder=\productsnum$ and order $\sliceorder=2$ (see Definition~77 in 17.3) and define a canonical parameter $\canparamat{\selvariableof{0,0},\selvariableof{1,0},\selvariableof{0,1},\selvariableof{1,1}}$ by 
+\begin{align*}
+	\canparamat{\selvariableof{0,0},\selvariableof{0,1},\selvariableof{1,0},\selvariableof{1,1}}
+	= & \sum_{\selindexof{0},\selindexof{1}\in[\productsnum], \, \selindexof{0}\neq\selindexof{1}}	
+	-q \cdot \Sigma[\indexedselvariableof{0},\indexedselvariableof{1}]  \cdot \onehotmapofat{1,1}{\selvariableof{0,0},\selvariableof{1,0}} \otimes \onehotmapofat{\selindexof{0},\selindexof{1}}{\selvariableof{0,1},\selvariableof{1,1}}\\
+	& + \sum_{\selindex\in[\productsnum]}  \mu[\indexedselvariable] \cdot  \onehotmapofat{1,2}{\selvariableof{0,0},\selvariableof{1,0}} \otimes \onehotmapofat{\selindex,0}{\selvariableof{0,1},\selvariableof{1,1}}
+\end{align*}
 
 
+Then we have
+\begin{align*}
+	\energytensorat{\shortcatvariables} 
+	= \contractionof{\canparamat{\selvariableof{0,0},\selvariableof{1,0},\selvariableof{0,1},\selvariableof{1,1}},\sliceselectionmapat{\shortcatvariables,\selvariableof{0,0},\selvariableof{1,0},\selvariableof{0,1},\selvariableof{1,1}}}{\shortcatvariables} \, . 
+\end{align*}
 
+\section{Outlook}
+
+We can use the theory developed in the main documentation for
+\begin{itemize}
+	\item \textbf{Approximation by sparse energies:} Use either the cross-entropy or the squares risk approach in combination with sparsity enhancing algorithms (here the greedy algorithms implemented in \tnreason)
+	\item \textbf{Extension to higher order porfolio models:} Instead of restricting to $\sliceorder=2$ we could allow for larger orders of correlation models.
+		To enhance (numerical and statistical) efficiency and maintain explainability, we could describe influences based on generic propositional formulas instead of the term restriction done here (which is more a brute force way).
+	\item \textbf{Usage of classical optimization algorithms:} We could use the algorithms implemented in the \tnreason library to solve the optimization problem or more general sample from the tempered distribution.
+		Here, variational inference algorithms such as mean field approaches and classical optimization such as integer linear programs are available.
+\end{itemize}
 
 
 \end{document}

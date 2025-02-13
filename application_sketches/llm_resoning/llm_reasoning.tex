@@ -1,0 +1,162 @@
+\documentclass[aps,onecolumn,nofootinbib,pra]{article}
+
+\usepackage{../../arxiv}
+\usepackage{amsmath,amsfonts,amssymb,amsthm,bbm,graphicx,enumerate,times}
+\usepackage{mathtools}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{hyperref}
+\hypersetup{
+	breaklinks,
+	colorlinks,
+	linkcolor=gray,
+	citecolor=gray,
+	urlcolor=gray,
+	pdftitle={The Tensor Network Approach to Efficient and Explainable AI},
+	pdfauthor={Alex Goessmann}
+}
+
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{comment}
+\usepackage{csquotes}
+
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{etoolbox}
+\usepackage{braket}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{titlesec}
+\usepackage{tikz}
+\usepackage{mathtools}
+\usepackage{fancyhdr}
+\usepackage{bbm}
+\usepackage{bm}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{lipsum}
+
+\newtheorem{remark}{Remark}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+
+\input{../../macros/general_macros.tex}
+\input{../../macros/tc_macros.tex}
+\input{../../macros/tikz_macros.tex}
+
+\pretolerance=500
+\tolerance=100 
+\emergencystretch=10pt
+
+% Bibliography
+\DeclareUnicodeCharacter{FB01}{fi}
+\usepackage[round]{natbib}
+
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+\begin{document}
+\title{\tnreason for LLM Reasoning}
+
+\maketitle
+\date{\today}
+
+We here sketch, how the usage of \tnreason can be enhanced based on LLMs, and how \tnreason could be exploited in the retraining of LLMs.
+
+\section{Copilots for the usage of \tnreason}
+
+We envision users to provide prompts describing their reasoning objectives, which the LLM interprets to generate precise tnreason function calls, ensuring a natural and efficient workflow.
+By leveraging LLMs' natural language understanding, users can describe complex reasoning tasks intuitively, allowing the copilot to translate them into structured calls to \tnreason. 
+
+\subsection{Model explainability}
+
+% Explainability
+Having a \tnreason model described in the formal script language, a LLM can be prompted to explain that model to an user.
+Besides datapoint specific inquiries, such a copilot can be used to explain entire parts of the model, for example based on a collection of rules triggered when having a specific input feature.
+The envisioned explainability therefore goes beyond the typical "post-hoc" explainability towards an intrinsic "ante-hoc" explainability bringing guarantees for a models behavior.
+
+\subsection{Prompt structure}
+
+% Prompt structure
+The systems prompt will describe the basic functionality of \tnreason and the users prompt consists in the requirements of the use case, formulated in natural language.
+Here the user does not have to be informed about the formal grammar of the \tnreason script language, nor the structure and expressivity of propositional logics.
+This approach enhances accessibility of \tnreason, enabling seamless interaction between human intuition and formal logical computation.
+
+% Gemini
+Preliminary experiments with the Gemini model on Colab can be found here:
+\url{https://colab.research.google.com/drive/1ESzJeZp7O022I1z31NeA8VExALUVfUf7?usp=sharing}
+
+\subsection{Multi-agent Orchestration}
+
+Another interesting idea is a multi-agent orchestration, where the ability of LLMs and formal proof languages are balanced with respect to each other.
+Here one might exploit the LLMs as a translator between human understandable text and formal statements such as in the \tnreason script language.
+\begin{itemize}
+	\item Communication agent (LLM): 
+		Interacts with the user, to create and maintain a \tnreason model. 
+		Further, when asked about the models behavior at a specific data instance or in a more generic situation, it interprets the model in human understandable language.
+		At best realized by a LLM to handle the flexible user-specific prompts.
+	\item Execution agent (\tnreason): 
+		Maintains a model about a use case in cooperation with the communication agent, and executes the inference calls from the data agent.
+		At best realized in an efficient and explainable manner and therefore in a formal, declarative language such as the \tnreason script language.
+	\item Data agent (Classical Software): 
+		Handles the runtime of a productive model, by transforming the input data into an inference instance, passing it to the execution agent, and preparing the output in a specific format.
+\end{itemize}
+
+\section{Retraining LLMs based on a reinforcement environment created by \tnreason}
+
+Retraining LLMs in a reinforcement learning environment incorporating \tnreason workloads enables adaptive improvement in logical reasoning and decision-making. 
+The model receives feedback based on the correctness and efficiency of its generated \tnreason calls, refining its ability to solve complex reasoning tasks over time. 
+This iterative training approach enhances the LLM’s alignment with formal reasoning principles, leading to more reliable and interpretable outputs.
+
+
+
+
+\section{Parametrizing a Search Tree by a Formula Selecting Network}
+
+Search Trees in combination with Monte Carlo tree searches MCTS received recent popularity as a mechanism to advanced reasoning functionalities of LLMs.
+
+In the \tnreason framework, several formula selecting networks (and other selection architectures such as slice selection) follow a similar idea.
+Instead of branches, we typically depict choices by assignments to selection variables.
+Thus, a formula selecting network parametrizes formulas, which are in the expressivity of formula search trees, where the branches along each layer of the tree have a common structure (such as selection of a logical connective or selection of a categorical variable).
+
+When having a  search problem parameterized as a maximal coordinate search of the energy tensor (such as in the grafting heuristic of inductive learning), MCTS compares with a simple forward sampling approach.
+Alternatives here are further sampling approaches considered in \tnreason, such as Gibbs sampling strategies resampling previous parameters in combination with simulated annealing.
+
+
+\section{Literature}
+
+Small LLMs suffice to develop reasoning capability:
+\begin{itemize}
+	\item \cite{guan_rstar-math_2025}
+\end{itemize}
+
+Reinforcement learning to enhance the reasoning capability of LLMs:
+\begin{itemize}
+	\item \cite{deepseek-ai_deepseek-r1_2025}
+\end{itemize}
+
+Combination with the LEAN language:
+\begin{itemize}
+	\item \cite{xin_deepseek-prover-v15_2024}
+\end{itemize}
+
+Monte Carlo Tree Search:
+\begin{itemize}
+	\item \cite{besta_reasoning_2025}: Integration of MCTS into Reasoning Language Models (RLM)
+	\item \cite{xin_deepseek-prover-v15_2024}: RMaxTS algorithm
+\end{itemize}
+
+
+\bibliographystyle{plainnat}
+\bibliography{llm_reasoning}
+
+\end{document}
