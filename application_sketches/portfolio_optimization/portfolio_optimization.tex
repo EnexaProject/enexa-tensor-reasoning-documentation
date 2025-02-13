@@ -1,0 +1,125 @@
+\documentclass[aps,onecolumn,nofootinbib,pra]{article}
+
+\usepackage{../../arxiv}
+\usepackage{amsmath,amsfonts,amssymb,amsthm,bbm,graphicx,enumerate,times}
+\usepackage{mathtools}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{hyperref}
+\hypersetup{
+	breaklinks,
+	colorlinks,
+	linkcolor=gray,
+	citecolor=gray,
+	urlcolor=gray,
+	pdftitle={The Tensor Network Approach to Efficient and Explainable AI},
+	pdfauthor={Alex Goessmann}
+}
+
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{comment}
+\usepackage{csquotes}
+
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{etoolbox}
+\usepackage{braket}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{titlesec}
+\usepackage{tikz}
+\usepackage{mathtools}
+\usepackage{fancyhdr}
+\usepackage{bbm}
+\usepackage{bm}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{lipsum}
+
+\newtheorem{remark}{Remark}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+
+\input{../../macros/general_macros.tex}
+\input{../../macros/tc_macros.tex}
+\input{../../macros/tikz_macros.tex}
+
+\pretolerance=500
+\tolerance=100 
+\emergencystretch=10pt
+
+% Bibliography
+\DeclareUnicodeCharacter{FB01}{fi}
+\usepackage[round]{natbib}
+
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+\begin{document}
+\title{\tnreason for portfolio optimization}
+\author{Alex Goessmann, DATEV eG}
+
+\maketitle
+\date{\today}
+
+
+\section{The portfolio optimization problem}
+
+\newcommand{\productsnum}{n}
+
+Given $\productsnum$ products and the covariance matrices $\Sigma[\selvariableof{0},\selvariableof{1}]\in\rr^{\catorder\times\catorder}$, the expectations $\mu[\selvariableof{0}]$ and the risk appetite parameter $q>0$, we state the portfolio optimization problem
+\begin{align}
+	\argmin_{\shortcatindices} 
+	q \left(\sum_{\selindexof{0},\selindexof{1}\in[\productsnum] , \, \selindexof{0}\neq\selindexof{1}} 
+	\Sigma[\indexedselvariableof{0},\indexedselvariableof{1}] \cdot \onehotmapofat{1}{\catvariableof{\selindexof{0}}}\cdot \onehotmapofat{1}{\catvariableof{\selindexof{1}}}\right) 
+	- \sum_{\selindex\in[\productsnum]} \mu[\indexedselvariable] \cdot \onehotmapofat{1}{\catvariableof{\selindex}} \, . 
+\end{align}
+
+\begin{remark}[Connection with \tnreason]
+\begin{itemize}
+	\item	The portfolio optimization problem is a mode search in an exponential family of atomic variables and terms of pairs.
+	\item The objective of the optimization is the (negative of its) energy tensor $\energytensor$.
+	 \item It has a monomial decomposition with order constraint $\sliceorder=2$.
+\end{itemize}
+\end{remark}
+
+\section{Connection with \tnreason}
+
+Let us now show the connection with \tnreason in more precision.
+
+\subsection{Exponential family of features}
+
+The portfolio optimization problem is a mode search in an exponential family of atomic variables and terms of pairs.
+
+\subsection{Energy Tensor and corresponding distribution}
+
+The energy tensor to be maximized is
+	\[ \energytensor = - q \left(\sum_{\selindexof{0},\selindexof{1}\in[\productsnum] , \, \selindexof{0}\neq\selindexof{1}} 
+	\Sigma[\indexedselvariableof{0},\indexedselvariableof{1}] \cdot \onehotmapofat{1}{\catvariableof{\selindexof{0}}}\cdot \onehotmapofat{1}{\catvariableof{\selindexof{1}}}\right) 
+	+ \sum_{\selindex\in[\productsnum]} \mu[\indexedselvariable] \cdot \onehotmapofat{1}{\catvariableof{\selindex}} \, . \]
+
+We can reconstruct a member of the corresponding Markov Logic Network to the by the temperature $\invtemp>0$ scaled energy as
+\begin{align*}
+	\probofat{\invtemp}{\shortcatvariables} = \normationof{\expof{\invtemp\cdot\energytensor}}{\shortcatvariables} \, . 
+\end{align*}
+
+Sampling from these members in the low temperature limit $\invtemp\rightarrow 0$ is equivalent to the portfolio optimization problem.
+
+\subsection{Representation by a monomial selection architecture}
+
+The energy tensor $\energytensor$ has a monomial decomposition with order constraint $\sliceorder=2$.
+
+
+
+
+
+\end{document}
