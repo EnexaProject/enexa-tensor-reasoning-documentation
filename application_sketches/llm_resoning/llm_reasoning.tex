@@ -121,8 +121,13 @@ This iterative training approach enhances the LLM’s alignment with formal reas
 One can pose \tnreason inference models, such as probabilistic queries of formulas in a hybrid knowledge base generated from random, as a prompt and calculate the reward as the absolute difference of the exact calculation by \tnreason and the response from the LLM.
 
 
+\section{Ideas to Monte Carlo Tree Searches}
 
-\section{Parametrizing a Search Tree by a Formula Selecting Network}
+Monte Carlo Tree Search (MCTS) is a classical method in AI to solve adversarial games.
+Recent work \cite{besta_reasoning_2025,xin_deepseek-prover-v15_2024} integrate them into the architecture of LLMs to enhance reasoning capabilities.
+
+
+\subsection{Parametrizing a Search Tree by a Formula Selecting Network}
 
 Search Trees in combination with Monte Carlo tree searches MCTS received recent popularity as a mechanism to advanced reasoning functionalities of LLMs.
 
@@ -130,9 +135,25 @@ In the \tnreason framework, several formula selecting networks (and other select
 Instead of branches, we typically depict choices by assignments to selection variables.
 Thus, a formula selecting network parametrizes formulas, which are in the expressivity of formula search trees, where the branches along each layer of the tree have a common structure (such as selection of a logical connective or selection of a categorical variable).
 
-When having a  search problem parameterized as a maximal coordinate search of the energy tensor (such as in the grafting heuristic of inductive learning), MCTS compares with a simple forward sampling approach.
+
+
+\subsection{Solving mode search problems by MCTS}
+
+Mode search problems have been a central class of problems in the main documentation, ranging from MAP inference of Markov Logic Networks to the grafting heuristic in greedy learning.
+So far, we have investigated methods from variational inference as well as reformulations into known optimization formats (HUBO) to solve mode search problems.
+MCTS provide alternative ways to solve such search problems, which follow a sampling based approach and make use of the search tree parametrization in the section above.
+Let us note, that while MCTS could operate on any tree representing a search space, we here have specific trees with constant branching factors to the nodes in each layer, and with each leaf corresponding with a coordinate.
+
+The decisions, which have to be done iteratively, are assignments to the variables $\shortcatvariables$ on the axis of a tensor $\energytensor$.
+Given assignments $\catindexof{[\catenumerator]}$ to the first $\catenumerator$ variables $\catvariableof{[\catenumerator]}$, we could choose an assignment on $\catvariableof{\catenumerator}$ based on 
+\begin{align*}
+	\argmax_{\catindexof{\catenumerator}\in[\catdimof{\catenumerator}]} \quad \contractionof{\energytensorat{\shortcatvariables}}{\indexedcatvariableof{[\catenumerator]},\indexedcatvariableof{\catenumerator}} \, .
+ \end{align*}
+ For efficiency reasons, MCTS optimizes an approximative problem instead, where the above contraction is estimated by a particle-based approximation of the tensor.
+
 Alternatives here are further sampling approaches considered in \tnreason, such as Gibbs sampling strategies resampling previous parameters in combination with simulated annealing.
 
+When annealing the underlying distribution by scaling the energy tensor, the search objective in each decision step is more sensitive to the maximum in the respective slice, but harder to estimate (since the maximum is typically not found during estimation).
 
 \section{Literature}
 
