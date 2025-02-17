@@ -1,4 +1,4 @@
-\section{Learning Logic Networks}\label{cha:networkLearning}
+\section{Logic Network Inference}\label{cha:networkLearning}
 
 In this chapter we first investigate unconstrained parameter estimated for Markov Logic Networks and Hybrid Logic Networks, which are special cases of the backward maps introduced in Chapter~\ref{cha:probDecomposition}.
 We then motivate structure learning based on sparsity constraints on the parameters on the minterm family and present heuristic strategies leading to efficient structure learning algorithms.
@@ -50,7 +50,7 @@ We now show, that any element of the mean parameter set can be realized by a hyb
 	To any $\meanparamat{\selvariable}\in\meansetof{\formulaset}$ we build the set $\formulaset^{\meanparam}=\{\enumformula\in\formulaset : \meanparamat{\indexedselvariable}\notin\{0,1\}\}$ and the base measure
 			\[ \basemeasureofat{\formulaset,\meanparam}{\shortcatvariables} \coloneqq \bigwedge_{\selindexin \, : \, \meanparamat{\indexedselvariable}\in\{0,1\}}
 		\lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables} \, . \]
-	Then, $\meanparamat{\selvariable}$ is realizable by an element of $\expfamilyof{\formulaset^{\meanparam},\basemeasureof{\formulaset,\meanparam}}$, that is there is a $\probtensor\in\expfamilyof{\formulaset^{\meanparam},\basemeasureof{\formulaset,\meanparam}}$ with
+	Then, if $\meanparamat{\selvariable}$ is realizable by a positive distribution wrt $\basemeasureofat{\formulaset,\meanparam}{\shortcatvariables}$, it is realizable by an element of $\expfamilyof{\formulaset^{\meanparam},\basemeasureof{\formulaset,\meanparam}}$, that is there is a $\probtensor\in\expfamilyof{\formulaset^{\meanparam},\basemeasureof{\formulaset,\meanparam}}$ with
 		\[ \sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable} = \meanparamat{\selvariable} \, .  \] 
 \end{theorem}
 \begin{proof}
@@ -60,10 +60,65 @@ We now show, that any element of the mean parameter set can be realized by a hyb
 		\[ \secprobat{\shortcatvariables} = \contractionof{\secprobtensor,\basemeasureof{\formulaset,\meanparam}}{\shortcatvariables}  \, . \]
 	Thus, we have for the reduced mean parameter $\tilde{\meanparam}$, which results from dropping the coordinates in $\{0,1\}$, that
 		\[ \tilde{\meanparam} \in \meansetof{\formulaset^{\meanparam},\basemeasureof{\formulaset,\meanparam}} \, . \]
-	%% NOT SOLID YET! BETTER ARGUMENT FOR INTERIOR POINT?
-	If $\formulaset^{\meanparam}$ is a minimal representation for the family $\expfamilyof{\formulaset^{\meanparam},\basemeasureof{\formulaset,\meanparam}}$, $\tilde{\meanparam}$ is an interior point of $\meansetof{\formulaset^{\meanparam},\basemeasureof{\formulaset,\meanparam}}$ any by Theorem~3.3 in \cite{wainwright_graphical_2008}, there is a $\probtensor$ with $\sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable} = \meanparamat{\selvariable}$.
+	%% Using the positive distribution assumption -> Need to incorporate by a lemma!
+	\red{Use here the below Lemma!}
+	If $\formulaset^{\meanparam}$ is a minimal representation for the family $\expfamilyof{\formulaset^{\meanparam},\basemeasureof{\formulaset,\meanparam}}$,
+	then $\tilde{\meanparam}$ is an interior point of $\meansetof{\formulaset^{\meanparam},\basemeasureof{\formulaset,\meanparam}}$ any by Theorem~3.3 in \cite{wainwright_graphical_2008}, there is a $\probtensor$ with $\sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable} = \meanparamat{\selvariable}$.
 	If $\formulaset^{\meanparam}$ is not a minimal representation, we can choose a subset of formulas providing a minimal representation with same expressivity and find $\probtensor$ with the same argument.
 \end{proof}
+
+
+\begin{lemma}
+	If $\meanparamat{\selvariable}$ is in an exponential family with boolean base measure $\basemeasure$ and minimal representation, then it is in the interior of $\meanset$ if and only if it is representable by a positive distribution with respect to $\basemeasure$.
+\end{lemma}
+\begin{proof} 
+	\proofrightsymbol: % Orient on proof of Theorem~3.3 
+		We show, that for any test vector $\vectorat{\selvariable}$ different from the origin, there is a $\tilde{\meanparam}[\selvariable]$ with
+			\[ \contraction{\vectorat{\selvariable},\meanparamat{\selvariable}} <  \contraction{\vectorat{\selvariable},\tilde{\meanparam}[\selvariable]} \, . \]
+		Then, by [Rockafellar], since the exponential family is minimal and thus $\meanset$ full-dimensional, we have $\meanparamat{\selvariable}$ in the interior of $\meanset$.
+	
+	\proofleftsymbol: Theorem~3.3 in \cite{wainwright_graphical_2008}, we can construct the positive distribution by a member of the exponential family using that the gradient of the cumulant function is onto.
+\end{proof}
+
+
+\begin{lemma}
+	If $\meanparamat{\selvariable}$ is in an exponential family with boolean base measure $\basemeasure$ and minimal representation, and not representable by a positive distribution with respect to $\basemeasure$, then there is $\canparamat{\selvariable}$ such that
+		\[ \meanparamat{\selvariable} \in \argmax_{\meanparam\in\meanset} \contraction{\canparam,\meanparam} \, . \]
+	Moreover, $\meanparamat{\selvariable}$ is representable with respect to the basemeasure
+		\[ \basemeasure \cup  \indicatorofat{\arbset}{\shortcatvariables} \, , \]
+	where the indicator is on the set
+		\[ \arbset = \argmax_{\shortcatindices} \contraction{\canparam,\sstat(\shortcatindices)}  \, . \]
+\end{lemma}
+\begin{proof}
+	We use the halfspace representation of the bounded polyhedron $\meanset$ to show the first claim.
+	By the above lemma, $\meanparamat{\selvariable}$ is not in the interior, therefore on a facet and thus the $\canparam$ is found by the normal equation of that facet.
+	
+	This facet is the convex hull of the extreme points of $\meanset$ corresponding with the elements of $\arbset$.
+	There exists hence a convex combination in the form of a distribution $\probtensor$ supported on $\arbset$, such that 
+		\[ \meanparamat{\selvariable} = \sum_{\shortcatindices\in\arbset} \probat{\indexedshortcatvariables} \sencsstatat{\indexedshortcatvariables,\selvariable} \]
+	and $\meanparamat{\selvariable}$ is reproduced by $\probtensor$.
+\end{proof}
+
+Each facet of $\meanset$ thus defines a possible base measure, which is sufficient to reproduce the mean parameters on that facet.
+
+\begin{definition}
+	The facet basemeasure to the facet of $\meanset$ with normal $\canparam$ is
+		\[ \basemeasureof{\formulaset,\canparam} = \indicatorofat{\argmax_{\shortcatindices} \contraction{\canparam,\sstat(\shortcatindices)}}{\shortcatvariables} \, . \]
+\end{definition}
+
+
+\begin{lemma}
+	Let $\canparamat{\indexedselvariable}$ be a normal to a facet of $\meanset$.
+	If and only if the formula
+		\[ \formulaof{\formulaset,\canparam} = \bigwedge_{\selindexin \, : \, \canparamat{\indexedselvariable}\neq0} \lnot^{(1-\greaterzeroof{\canparamat{\indexedselvariable}})} \enumformula  \]
+	is satisfiable, then it is the base measure to the facet with normal $\canparam$.
+	Here $\greaterzeroof{z}$ denotes the indicator of $z>0$.
+	
+	If the above is not satisfiable, then the base measure is
+		\[ \bigvee_{v[\selvariable] \, : \, \contraction{\canparam,v} \in \max_{\meanparam} \contraction{\canparam,\meanparam} }  \formulaof{\formulaset,\contractionof{\canparam,v}{\selvariable}}  \]
+	where $v$ are boolean vectors.
+\end{lemma}
+
 
 % Reduction to Hybrid Logic Networks
 We can thus reduce the set of probability distributions in the definition of the convex polytope of mean parameters to the set $\hlnsetof{\formulaset}$ (see Definition~\ref{def:hln}), that is
