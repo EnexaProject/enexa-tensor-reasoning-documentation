@@ -102,7 +102,7 @@ We now show, that any element of the mean parameter set can be realized by a hyb
 Each facet of $\meanset$ thus defines a possible base measure, which is sufficient to reproduce the mean parameters on that facet.
 
 \begin{definition}
-	The facet basemeasure to the facet of $\meanset$ with normal $\canparam$ is
+	The base measure to the facet of $\meanset$ with normal $\canparam$ is
 		\[ \basemeasureof{\formulaset,\canparam} = \indicatorofat{\argmax_{\shortcatindices} \contraction{\canparam,\sstat(\shortcatindices)}}{\shortcatvariables} \, . \]
 \end{definition}
 
@@ -118,21 +118,80 @@ Each facet of $\meanset$ thus defines a possible base measure, which is sufficie
 		\[ \bigvee_{v[\selvariable] \, : \, \contraction{\canparam,v} \in \max_{\meanparam} \contraction{\canparam,\meanparam} }  \formulaof{\formulaset,\contractionof{\canparam,v}{\selvariable}}  \]
 	where $v$ are boolean vectors.
 \end{lemma}
+\begin{proof}
+	We show this lemma based on characterizations of
+		\[ \argmax_{\shortcatindices} \contraction{\canparamat{\selvariable},\sencfsetat{\indexedshortcatvariables,\selvariable}} \, . \]
 
+	For the first claim:
+	We have since $\sencfset$ is boolean that
+		\[ \|\canparamat{\selvariable}\|_1 \geq \max_{\shortcatindices} \contraction{\canparamat{\selvariable},\sencfsetat{\indexedshortcatvariables,\selvariable}}  \, . \]
+	If and only if the formula $\formulaof{\formulaset,\canparam}$ is satisfiable, then we find a model $\shortcatindices$ and the inequalitiy is straight.
+	The maximum is taken at any $\shortcatindices$ if and only if for any $\selindex$ in the support of $\canparam$ we have $\sencfsetat{\indexedshortcatvariables,\indexedselvariable}=\greaterzeroof{\canparamat{\indexedselvariable}}$.
+	This condition is equal to $\shortcatindices$ being a model of $\lnot^{(1-\greaterzeroof{\canparamat{\indexedselvariable}})} \enumformula$ for any $\selindex$ in the support of $\canparam$ and thus to being a model of $\formulaof{\formulaset,\canparam}$.
 
-% Reduction to Hybrid Logic Networks
-We can thus reduce the set of probability distributions in the definition of the convex polytope of mean parameters to the set $\hlnsetof{\formulaset}$ (see Definition~\ref{def:hln}), that is
+	For the second claim:
+	The auxiliary boolean vector $v$ serves as an indicator fo the formulas $\lnot^{(1-\greaterzeroof{\canparamat{\indexedselvariable}})} \enumformula$ being satisfied.
+	In the worlds, for which $\max_{\shortcatindices}\contraction{\canparamat{\selvariable},\sencfsetat{\indexedshortcatvariables,\selvariable}}$ is attained, we have 
+		\[ \contraction{\canparam,v} \in \max_{\meanparam} \contraction{\canparam,\meanparam} \, . \]
+	They are the models of $\formulaof{\formulaset,\contractionof{\canparam,v}{\selvariable}}$.
+	Note that then, all formulas $\enumformula$ with $v[\indexedselvariable]=0$ need to be contradicted from $\formulaof{\formulaset,\contractionof{\canparam,v}{\selvariable}}$, since otherwise the maximum would be larger.
+	The mean parameters solving the optimization problem are convex combinations of these extreme points, which correspond with distributions being convex combinations of the one-hot encodings of these models.
+	Such distributions are therefore representable by the base measure being the indicator of these models, which is
+		\[ \bigvee_{v[\selvariable] \, : \, \contraction{\canparam,v} \in \max_{\meanparam} \contraction{\canparam,\meanparam} }  \formulaof{\formulaset,\contractionof{\canparam,v}{\selvariable}}  \, . \]
+\end{proof}
+
+% Reduction to Hybrid Logic Networks, question of sufficient expressivity
+Let us recall, that the set $\hlnsetof{\formulaset}$ contains all Hybrid Logic Networks, which can be realized as tensor networks with the same structure of computation and activation cores.
+We now investigate, whether we can reduce the set of probability distributions in the definition of the convex polytope of mean parameters to the set $\hlnsetof{\formulaset}$ (see Definition~\ref{def:hln}), that is
 \begin{align*}
-	\meansetof{\formulaset} = \left\{ \sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable} \, : \, \probtensor\in\hlnsetof{\formulaset} \right\} \, .
+	\meansetof{\formulaset}|_{\hlnsetof{\formulaset}} = \left\{ \sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable} \, : \, \probtensor\in\hlnsetof{\formulaset} \right\} \, .
 \end{align*}
+While $\meansetof{\formulaset}|_{\hlnsetof{\formulaset}}\subset\meansetof{\formulaset}$ is obvious, we pose the question, for which $\formulaset$ there is an equivalence.
+We will refer to the equality of both sets as sufficient expressivity of $\hlnsetof{\formulaset}$.
+In the next example we provide a class of formulas, for which $\hlnsetof{\formulaset}$ does not have sufficient expressivity.
+
+% Insufficient Expressivity
+\begin{example}[Insufficient expressivity of $\hlnsetof{\formulaset}$ in cases of disjoint models]
+	To provide an example, where the set of hybrid logic networks does not suffice to reproduce all possible mean parameters, consider the formulas
+		\[ \formulaof{0} = \exrandom \land \secexrandom \quad, \quad \formulaof{1} = \lnot\exrandom \land \lnot\secexrandom \, . \]
+	The probability distributions on the facet with normal $\canparam=[1\,\, 1]$ are those with support on the models of $\formulaof{0}\lor\formulaof{1}$.
+	The Hybrid Logic Networks can only reproduce those with are supported on the model of $\formulaof{0}$ or the model of $\formulaof{1}$, but not their convex combinations.
+		
+	More generally, we can construct similar examples by arbitrary sets of formulas with pairwise disjoint model sets.
+	If they do not sum to $\ones$, i.e. there is a world which is not a model to any formula, the statistic is minimal.
+	The vector $\canparamat{\selvariable} = \onesat{\selvariable}$ is then the normal of the facet with 
+	All probabilities supported on the models of the formulas have mean parameters on this facet.
+\end{example}
+
+% Sufficient Expressivity
+Before presenting the example class of atomic formulas as a case, where $\hlnsetof{\formulaset}$ has sufficient expressivity, let us first proof a generic criterion.
+
+\begin{theorem}\label{the:sufficientHLNExpressivity}
+	The set of mean parameters realizable by $\hlnsetof{\formulaset}$ coincides with the set of mean parameters realizable by any distribution, if and only if for any boolean vector $v[\selvariable]$ the formula $\formulaof{\formulaset,\canparam}$ is satisfiable.
+\end{theorem}
+\begin{proof}
+	\proofleftsymbol:
+		If these formulas are satisfiable, the base measures to the facets coincides with those realizable by $\hlnsetof{\formulaset}$.
+	\proofrightsymbol: 
+		We show that implication by refutation.
+		If one of these formulas are not satisfiable, we find a facet, which mean parameters optimize 
+		The uniform distribution on the worlds taking the maximum is not representable by any base measure. 
+\end{proof}
+
+\begin{example}[Sufficient expressivity in cases of atomic formulas]
+	The assumption of Theorem~\ref{the:sufficientHLNExpressivity} is satisfied in the case for atomic formulas, where the formulas  $\formulaof{\formulaset,\canparam}$ are the minterms, which are always satifiable in exactly one situation.
+\end{example}
+
 
 % Mean parameter characterization
 To summarize, for any $\meanparam\in\meansetof{\formulaset}$ we have one of the following (see also Figure~\ref{fig:meansetSketch}):
 \begin{itemize}
-	\item All $\meanparamat{\indexedselvariable}\notin\{0,1\}$: Then reproducible by a Markov Logic Network, $\meanparam\in\meanset$.
+	\item $\meanparamat{\indexedselvariable}\in\interiorof{\meansetof{\formulaset}}$: Then reproducible by a Markov Logic Network, $\meanparam\in\meanset$.
 		This follows from the classical result of Theorem~3.3 in \cite{wainwright_graphical_2008}.
-	\item At least one $\meanparamat{\indexedselvariable}\notin\{0,1\}$ and one $\meanparamat{\indexedselvariable}\in\{0,1\}$: Then reproducible by a Hybrid Logic Network.
-	\item All $\meanparamat{\indexedselvariable}\in\{0,1\}$: Then  an extreme point and by Theorem~\ref{the:extremeCharacterizationHLN} reproducible by a Hard Logic Network.
+	\item  $\meanparamat{\indexedselvariable}\notin\interiorof{\meansetof{\formulaset}}$:
+		Then on a facet and reproducible by a Hybrid Logic Network
+	%\item At least one $\meanparamat{\indexedselvariable}\notin\{0,1\}$ and one $\meanparamat{\indexedselvariable}\in\{0,1\}$: Then reproducible by a Hybrid Logic Network.
+	%\item All $\meanparamat{\indexedselvariable}\in\{0,1\}$: Then an extreme point and by Theorem~\ref{the:extremeCharacterizationHLN} reproducible by a Hard Logic Network.
 \end{itemize}
 
 
@@ -151,12 +210,14 @@ To summarize, for any $\meanparam\in\meansetof{\formulaset}$ we have one of the 
 
 
 
-\subsection{Unconstrained Parameter Estimation} \label{sec:parameterEstimation} % Check for redundancy with the mln introduction chapter!
+\subsection{Entropic Motivation of unconstrained Parameter Estimation} \label{sec:parameterEstimation} % Check for redundancy with the mln introduction chapter!
 
 % Repetition and result transfering
 Markov Logic Networks are exponential families with statistics by a set $\formulaset$ of propositional formulas.
 We furthermore allow for propositional formulas as base measures, to also include the discussion of Hybrid Logic Networks.
 Based on this, we apply the theory of probabilistic inference, developed in Chapter~\ref{cha:probReasoning} for the generic exponential families.
+
+\subsubsection{Maximum Likelihood in Hybrid Logic Networks}
 
 % Special example: MLE
 The Maximum Likelihood Problem on Markov Logic Networks is the M-projection
@@ -174,14 +235,12 @@ The M-projection coincides, after dropping constant terms in case of non-trivial
 \end{align*}
 where
 \begin{align*}
-	\meanparam{\selvariable} 
+	\meanparamat{\selvariable} 
 	= \sbcontractionof{\sencodingof{\formulaset},\probtensor}{\selvariable} 
 	\quad \text{and} \quad
 	\cumfunctionof{\canparamat{\selvariable}} 
 	= \sbcontraction{\expof{ \sbcontractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables} }, \basemeasure} \, . 
 \end{align*}
-
-\red{Theory for MLN a special case of the generic case of exponential families, here corollaries?.}
 
 % Extension to HLN
 We now extend to Hybrid Logic Networks
@@ -190,19 +249,21 @@ We now extend to Hybrid Logic Networks
 	\centropyof{\probtensor}{\secprobtensor}	
 \end{align*}
 
-\begin{theorem}
+
+
+\begin{corollary}
 	Let $\meanparamat{\selvariable} = \contractionof{\probtensor,\sencfset}{\selvariable}$ and
 		\[ \secformulaset = \{\enumformula \, : \, \meanparamat{\indexedselvariable} \in \{0,1\}\} \quad , \quad 
 		\basemeasureofat{\secformulaset,\meanparam}{\shortcatvariables} 
 		= \bigwedge_{\enumformula\in\secformulaset} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables}
 		\, . \]
-	The solution of the M-projection of $\probtensor$ onto the set of hybrid logic networks representable by $\formulaset$ then coincides with the projection of $\probtensor$ onto $\expfamilyof{\formulaset/\secformulaset,\basemeasureof{\secformulaset,\meanparam}}$.
-\end{theorem}
-\begin{proof}
-	Work by weight cutoff, in the limit of hard logics?
-\end{proof}
+	If $\meanparamat{\selvariable}$ is reproduceable by a positive distribution with respect to $\basemeasureofat{\secformulaset,\meanparam}{\shortcatvariables} $, then the solution of the M-projection of $\probtensor$ onto the set of hybrid logic networks is representable by $\formulaset$ then coincides with the projection of $\probtensor$ onto $\expfamilyof{\formulaset/\secformulaset,\basemeasureof{\secformulaset,\meanparam}}$.
+\end{corollary}
+%\begin{proof}
+%	Work by weight cutoff, in the limit of hard logics?
+%\end{proof}
 
-\subsubsection{Maximum Entropy in Hybrid Networks}
+\subsubsection{Maximum Entropy in Hybrid Logic Networks}
 
 
 % Special example: MaxEnt
@@ -217,9 +278,9 @@ The Maximum Entropy Problem for Markov Logic Networks is
 
 
 \begin{corollary}[of Theorem~\ref{the:maxEntMaxLikeDuality}]
-	\red{Works only for $\meanparamat{\indexedselvariable}\in(0,1)$}
-	Among all distributions $\probtensor$ of $\atomstates$ satisfying $\sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable}
-	 = \sbcontractionof{\empdistribution,\sencodingof{\formulaset}}{\selvariable}$ the Markov Logic Network with formulas $\formulaset$ and weights $\canparam$ being the solution of the maximum likelihood problem has minimal entropy.
+	%\red{Works only for $\meanparamat{\indexedselvariable}\in\interiorof{\meansetof{\formulaset}}$}
+	Let $\empdistribution$ be a distribution such that there is a positive distribution $\probtensor$ with $\sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable} = \sbcontractionof{\empdistribution,\sencodingof{\formulaset}}{\selvariable}$.
+	Among all positive distributions $\probtensor$ of $\atomstates$ satisfying this moment matching condition, the Markov Logic Network with formulas $\formulaset$ and weights $\canparam$ being the solution of the maximum likelihood problem has minimal entropy.
 \end{corollary}
 
 % Unique property of MLN
