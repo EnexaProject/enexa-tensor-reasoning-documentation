@@ -24,12 +24,12 @@ We then formalize a world in the following based on a selection variable $\selva
 \begin{definition}[FOL World]
 	Given a set of objects $\worlddomain=\{\exindividualof{\indindex} \, : \, \indindexin\}$ enumerated by $[\inddim]$ and a finite set $\{\folpredicates\}$ of $\variableorder$-ary predicates a world is a Boolean tensor
 	\begin{align}
-		\dataworldat{\selvariable,\indvariableof{[\variableorder]}} : [\folpredicateorder] \times \left( \bigtimes_{\indenumeratorin} [\inddim] \right) \rightarrow [2] \, . 
+		\dataworldat{\selvariable,\indvariableof{[\indorder]}} : [\folpredicateorder] \times \left( \bigtimes_{\indenumeratorin} [\inddim] \right) \rightarrow [2] \, . 
 	\end{align}
 	
-	We interpret the world tensor as encoding in the coordinate $\dataworld(\folpredicateenumerator,\indindexlist)$, whether the substitution of the variables in the $\folpredicateenumerator$th predicate by the individuals $\individuals$ is satsifed on a corresponding world, that is
+	We interpret the world tensor as encoding in the coordinate $\dataworldat{\selvariable=\folpredicateenumerator,\indexedindvariableof{[\indorder]}}$, whether the substitution of the variables in the $\folpredicateenumerator$th predicate by the individuals $\individuals$ is satisfed on a corresponding world, that is
 	\begin{align*}
-		\folpredicateof{\folpredicateenumerator}(\individuals) = \dataworld(\folpredicateenumerator,\indindexlist) \, . 
+		\folpredicateof{\folpredicateenumerator}(\individuals) = \dataworldat{\selvariable=\folpredicateenumerator,\indexedindvariableof{[\indorder]}} \, . 
 	\end{align*}
 \end{definition}
 
@@ -107,13 +107,13 @@ Given a FOL World $\dataworld$, arbitrary formulas in first order logics are int
 
 \begin{definition}[Grounding of FOL Formulas]
 	Given a specific world $\dataworld$, with domain $\worlddomain$ enumerated by $[\inddim]$, the grounding of a formula $\folexformula$ with $\individualorder_{\folexformula}$ variables is the tensor
-		\[ \groundingof{\folexformula}[\indvariableof{\folexformula}] :  \bigtimes_{\indenumerator\in[\individualorder_{\folexformula}]} [\inddim] \rightarrow [2] \, . \]
+		\[ \groundingofat{\folexformula}{\indvariableof{\folexformula}} :  \bigtimes_{\indenumerator\in[\individualorder_{\folexformula}]} [\inddim] \rightarrow [2] \, . \]
 	
 	We interpret the coordinates as encoding, whether the substitution of the variables in the formula is satisfied given a world $\dataworld$, that is
 	\begin{align*}
-		\groundingof{\folexformula} \left(\indindexof{0},\ldots,\indindexof{\individualorder_{\folexformula}}\right) = 
+		\groundingofat{\folexformula}{\indindexof{0},\ldots,\indindexof{\individualorder_{\folexformula}-1}} = 
 			\begin{cases}
-				1 \quad \text{if $\folexformula\left(\exindividualof{\indindexof{0}},\ldots,\exindividualof{\indindexof{\individualorder_{\folexformula}}}\right)=1$ given the world $\dataworld$}  \\
+				1 \quad \text{if $\folexformula\left(\exindividualof{\indindexof{0}},\ldots,\exindividualof{\indindexof{\individualorder_{\folexformula}-1}}\right)=1$ given the world $\dataworld$}  \\
 				0 \quad \text{else}
 			\end{cases} \, . 
 	\end{align*}
@@ -145,13 +145,13 @@ Atomic formulas are stored in the slices to the first axis of $\dataworld$ and w
 
 
 
-\begin{figure}[h]
-	\begin{center}
-		\input{./PartII/tikz_pics/fol_models/grounding_tensor.tex}
-	\end{center}
-	\caption{Relational encoding of the grounding tensor to a formula $\folexformula$ with $\variableorder$ arguments on world $\dataworld$. }
-	\label{fig:groundingTensor}
-\end{figure}
+%\begin{figure}[h]
+%	\begin{center}
+%		\input{./PartII/tikz_pics/fol_models/grounding_tensor.tex}
+%	\end{center}
+%	\caption{Grounding tensor to a formula $\folexformula$ with $\variableorder$ arguments on world $\dataworld$. }
+%	\label{fig:groundingTensor}
+%\end{figure}
 
 
 
@@ -215,18 +215,18 @@ We depict the relation of a grounding tensor to a propositional formula
 
 \subsubsection{Quantifiers}
 
-\red{The variables quantified over are dropped i.e. $\indvariableof{\exists_{\indvariableof{\exists}} \folexformula} =\indvariableof{\folexformula}/\indvariableof{\exists}$.}
+%\red{The variables quantified over are dropped i.e. $\indvariableof{\exists_{\indvariableof{\exists}} \folexformula} =\indvariableof{\folexformula}/\indvariableof{\exists}$.}
 
 Existential and universal quantifiers appear in generic first order logic.
 They are not representable as linear transform of the respective quantifier-free formula.
 Here we represent them as a compositions of contractions with the greater zero function $\greaterzerofunction$ defined as
-\begin{align}
+\begin{align*}
 	\greaterzerofunction : \rr \rightarrow [2] \quad, \quad \greaterzeroof{x} = 
 	\begin{cases}
 		1 &  \text{if  } x > 0\\
 		0 & else
-	\end{cases}
-\end{align}
+	\end{cases} \, .
+\end{align*}
 
 
 \begin{theorem}
@@ -234,7 +234,7 @@ Here we represent them as a compositions of contractions with the greater zero f
 %	\begin{itemize}
 %		\item existential quantification 
 		\begin{align}
-			\left(\groundingof{\exists_{\exindividualof{\indindexof{0}}}  \folexformula}\right)[\indvariableof{1},\ldots,\indvariableof{\indorder-1}] = 
+			\groundingofat{\left(\exists_{\exindividualof{\indindexof{0}}}  \folexformula\right)}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}} = 
 			\greaterzeroof{
 			\sbcontractionof{\groundingof{\folexformula}}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}
 			}
@@ -242,7 +242,7 @@ Here we represent them as a compositions of contractions with the greater zero f
 	and
 %	\item universal quantification 
 		\begin{align}
-			\left(\groundingof{\forall_{\exindividualof{\indindexof{0}}} \folexformula}\right)[\indvariableof{1},\ldots,\indvariableof{\indorder-1}] = 
+			\groundingofat{\left(\forall_{\exindividualof{\indindexof{0}}} \folexformula\right)}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}= 
 			\greaterzeroof{
 			\sbcontractionof{\groundingof{\folexformula}}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}
 			- \inddim \cdot \onesat{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}
@@ -369,7 +369,7 @@ To be more precise, let us show how Join operations on groundings are represente
 
 \begin{definition}
 	Let there be a world with individual sets $\indexset_\node$ for $\node\in\nodes$ and groundings $\groundingof{\extformulaof{l}}$ 
-		\[ \groundingof{\extformulaof{l}}: \bigtimes_{\node\in\nodes_l} \rightarrow [2] \]
+		\[ \groundingof{\extformulaof{l}}: \bigtimes_{\node\in\nodes_l} [\inddimof{\node}] \rightarrow [2] \]
 	defined on subsets of the individuals sets $\bigtimes_{\node\in\nodes}\indexset_\node$.
 	Then their $\mathrm{Join}$ is defined as
 		\[ \groundingof{\mathrm{Join}\left(\extformulaof{0},\ldots,\extformulaof{p-1} \right)} = \prod_{l\in[p]} \groundingof{\extformulaof{l}} \, .\]
@@ -381,26 +381,26 @@ We can understand the $\mathrm{Join}$ of groundings by a factor graph, where eac
 
 \begin{theorem}[Joins by Hadamard products]
 	For any $\mathrm{Join}$ of grounded formulas we have
-		\[ \groundingof{\mathrm{Join}\left(\extformulaof{0},\ldots,\extformulaof{p-1} \right)} = 
-		\contractionof{\{\groundingof{\extformulaof{0}},\ldots,\groundingof{\extformulaof{p-1}}\}}{\nodes} \, . \]
+		\[ \groundingofat{\mathrm{Join}\left(\extformulaof{0},\ldots,\extformulaof{p-1} \right)}{\indvariableof{\nodes}} = 
+		\sbcontractionof{\groundingof{\extformulaof{0}},\ldots,\groundingof{\extformulaof{p-1}}}{\indvariableof{\nodes}} \, . \]
 \end{theorem}
 \begin{proof}
-	Later by effective directed calculus.
+	Direct
 \end{proof}
 
 Thus, we can store the $\mathrm{Join}$ by at most linear in the number of joined formulas demand.
 Storing the result by solution maps on the other side can create storage overheads as we show next.
 
-\begin{theorem}
-	Given a grounding $\groundingof{\folexformula}$ on a world then the minimal rank of a basis CP Decomposition storing $\groundingof{\folexformula}$  is the number of tuples $\{\exindividualof{\node} \, : \, \node\in\nodes \}$ such that
-		\[ \groundingof{\folexformula}(\{\exindividualof{\node} \, : \, \node\in\nodes \}) = 1\, . \]
-\end{theorem}
-\begin{proof}
-	Later in binary+directed Contraction Calculus, where we also define $\ell_0$-norm
-\end{proof}
+%\begin{theorem}
+%	Given a grounding $\groundingof{\folexformula}$ on a world then the minimal rank of a basis CP Decomposition storing $\groundingof{\folexformula}$  is the number of tuples $\{\exindividualof{\node} \, : \, \node\in\nodes \}$ such that
+%		\[ \groundingof{\folexformula}(\{\exindividualof{\node} \, : \, \node\in\nodes \}) = 1\, . \]
+%\end{theorem}
+%\begin{proof}
+%	Later in binary+directed Contraction Calculus, where we also define $\ell_0$-norm
+%\end{proof}
 
 \begin{example}
-	For example, when a query with many basic graph patterns with pairwise different projection variables. 
+	For example take a query with many basic graph patterns with pairwise different projection variables. 
 	The global CP Decomposition would come here with an exponential storage overhead compared with storage as a tensor product of CP Decompositions to each Basic graph pattern.
 \end{example}
 
@@ -573,7 +573,7 @@ We in this section show, when and how we can interpret likelihoods of Markov Log
 \subsubsection{Markov Logic Networks in FOL}
 
 % Templates
-Following \cite{domingos_markov_2006} we define Markov Logic Networks as templates for distributions, which instantiate random worlds when choosing a set of objects $\worlddomain$.
+Following \cite{richardson_markov_2006} we define Markov Logic Networks as templates for distributions, which instantiate random worlds when choosing a set of objects $\worlddomain$.
 Given a fixed set of constants, they then define a distribution over the worlds, which objects correspond with the constants. % this is database semantics!
 This applies database semantics, where only those worlds are considered, where the unique name and domain closure assumptions given a set of constants are satisfied.
 
@@ -1036,13 +1036,13 @@ The empirical distribution is then the normalized contraction leaving only the l
 \begin{align*}
  	\empdistribution 
 	= \frac{
-	\contractionof{\{\rencodingof{\extractionrelation}\}}{\atomicformulas}
+	\sbcontractionof{\rencodingof{\extractionrelation}}{\shortcatvariables}
 	}{
-	\contractionof{\{\rencodingof{\extractionrelation}\}}{\varnothing}
+	\sbcontraction{\rencodingof{\extractionrelation}}
 	}  \, . 
 \end{align*}
 Here the number of extracted data is the denominator
-	\[ \datanum = \contractionof{\{\rencodingof{\extractionrelation}\}}{\varnothing} \, .  \]
+	\[ \datanum = \contraction{\rencodingof{\extractionrelation}} \, .  \]
 	
 We depict this by
 \begin{center}
@@ -1241,7 +1241,7 @@ This amounts to an "inversion" of the data generation process described in the s
 
 % Formalization
 \begin{definition}[Reproduction of Empirical Distributions]
-	Given an empirical distribution $\empdistribution\in\bigotimes_{\atomenumeratorin}\rr^2$, we say that a triple $(\kg,\impformula,\{\atomicqueries\})$ of a Knowledge Graph $\kg$ and queries $\impformula,\extformulaof{\atomenumerator}$ reproduces $\empdistribution$, when 
+	Given an empirical distribution $\empdistribution\in\bigotimes_{\atomenumeratorin}\rr^2$, we say that a tuple $(\kg,\impformula,\{\atomicqueries\})$ of a Knowledge Graph $\kg$ and queries $\impformula,\extformulaof{\atomenumerator}$ reproduces $\empdistribution$, when 
 		\[ \empdistribution = \normationof{\{\kggroundingof{\impformula}\}\cup\{\rencodingof{\kggroundingof{\extformulaof{\atomenumerator}}\, : \, \atomenumeratorin}\}}{\shortcatvariables} \, .  \]
 \end{definition}
 
@@ -1294,12 +1294,12 @@ Their sub-class memberships corresponding with the categorical variables of the 
 	\end{align}
 	Summing over the resource variables of these tensors in a contraction we get
 	\begin{align}
-		\contractionof{\{\kggroundingof{\impformula}\}\cup\{\rencodingof{\kggroundingof{\extformulaof{\atomenumerator}}\, : \, \atomenumeratorin}\}}{\{\enumeratedatoms\}}
+		\contractionof{\{\kggroundingof{\impformula}\}\cup\{\rencodingof{\kggroundingof{\extformulaof{\atomenumerator}}\, : \, \atomenumeratorin}\}}{\shortcatvariables}
 		& = \sum_{\atomenumeratorin}  \datanum\cdot\empdistribution(\atomindices) \cdot \onehotmapof{\atomindices} = \datanum \cdot \empdistribution 
 	\end{align}
 	and therefore
 	\begin{align}
-		\normationofwrt{\{\kggroundingof{\impformula}\}\cup\{\rencodingof{\kggroundingof{\extformulaof{\atomenumerator}}\, : \, \atomenumeratorin}\}}{\{\enumeratedatoms\}}{\varnothing} = \empdistribution \, . 
+		\normationof{\{\kggroundingof{\impformula}\}\cup\{\rencodingof{\kggroundingof{\extformulaof{\atomenumerator}}}\, : \, \atomenumeratorin\}}{\shortcatvariables} = \empdistribution \, . 
 	\end{align}
 \end{proof}
 
@@ -1336,7 +1336,8 @@ Label individuals $a_{\dataindex,\indenumerator}$ by dataindex and variable inde
 		\[ \kggroundingof{\impformula} = \sum_{\dataindex} \bigotimes_{\indenumeratorin} \onehotmapof{\dataindex,\indenumerator} \]
 	and for any $\atomenumeratorin$
 		\[ \kggroundingof{\extformulaof{\atomenumerator}} 
-		= \sum_{\dataindex : \datamap^{\atomenumerator}(\dataindex)=1} \bigotimes_{\indenumerator \in \extformulaof{\atomenumerator}} \onehotmapof{\dataindex,\indenumerator} \]
+		= \sum_{\dataindex : \datamap^{\atomenumerator}(\dataindex)=1} \bigotimes_{\indenumerator \in \extformulaof{\atomenumerator}} \onehotmapof{\dataindex,\indenumerator} \, . \]
+	Then the tuple $(\kg,\impformula,\{\atomicqueries\})$ reproduces $\empdistribution$.
 \end{theorem}
 \begin{proof}
 	It can be shown that the contraction is
@@ -1406,5 +1407,7 @@ From this perspective, it is obvious that any triple in the orthogonal complemen
 Models of FOL are called Probabilistic Relational Models. % (RUSSELL - Chapter Probabilistic Programming).
 Extensions are models that also handle structural uncertainty, i.e. distributions of worlds with varying $\worlddomain$.
 
+%\subsubsection{Network Science}
 
+\red{Statistical Models of Knowledge Graphs going beyond the typical single edge type perspective of network science \cite{barabasi_network_2016, latora_complex_2017}.}
 
