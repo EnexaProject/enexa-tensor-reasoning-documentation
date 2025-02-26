@@ -48,7 +48,7 @@ We will first provide a formal definition as real maps from index sets enumerati
 
 % Non-canonical 
 We here introduced tensors in a non-canonical way based on categorical variables assigned to its axis.
-This allows us to define contractions without further specification of axes, based on comparisons of shared categorical variables.
+While coming as syntactic sugar at this point, this will allow us to define contractions without further specification of axes, based on comparisons of shared categorical variables.
 Especially, this eases the implementation of tensor network contractions without the need to further specify a graph (see Appendix~\ref{cha:implementation}).
 
 % Further abbreviations
@@ -68,7 +68,7 @@ Occasionally, when the categorical variables of a tensor are clear from the cont
 We are now ready to provide the link between tensors and states of systems with factored representations.
 To this end, we define the one-hot encoding of a state, which is a bijection between the states and the basis elements of a tensor space.
 
-\begin{definition}[One-hot representations of Atomic Systems]
+\begin{definition}[One-hot encodings to Atomic Representations]
 	Given an atomic system described by the categorical variable $\catvariable$, we define for each $\catindex\in[\catdim]$ the basis vector $\onehotmapofat{\catindex}{\catvariable}$ by
 	\begin{align}
 		\onehotmapofat{\catindex}{\catvariable=\tilde{\catindex}} = \begin{cases}
@@ -94,7 +94,7 @@ where the $1$ is at the $\catindex$th coordinate of the vector.
 We have so far described one-hot representations of the states of a single categorical variable, which would suffice to encode the state of an atomic system.
 In a factored system on the other side, we are dealing with multiple categorical variables.
 
-\begin{definition}[One-hot representations of Factored Systems]
+\begin{definition}[One-hot encodings to Factored Representations]
 	Let there be a factored system defined by a tuple $(\catvariables)$ of variables taking values in $\facstates$.
 	The one-hot encoding of its states is the tensor product of the one-hot encoding to each categorical variables, that is the map
 		\[ \onehotmap : \facstates \rightarrow  \facspace \]
@@ -259,7 +259,6 @@ We will define contractions formally by specifying just the indices not to be su
 
 When some of the variables are not appearing as leg variables, we define the contraction as being a tensor product with the trivial tensor $\ones$ carrying the legs of the missing variables.
 
-
 \begin{definition}\label{def:contraction}
 	Let $\tnetof{\graph}$ be a tensor network on a decorated hypergraph $\graph=(\nodes,\edges)$.
 	For any subset $\secnodes\subset\nodes$ we define the contraction  to be the tensor 
@@ -268,11 +267,13 @@ When some of the variables are not appearing as leg variables, we define the con
 	\end{align}
 	defined coordinatewise by the sum	
 	\begin{align}
-		\contractionof{\tnetof{\graph}}{\indexedcatvariableof{\node} \, : \, \node\in\secnodes} =
-		\sum_{\{\catindexof{\node} \in [\catdimof{\node}] \, : \, \node \in \nodes/\secnodes\}}
-		\left( \prod_{\edge\in\edges}\hypercoreofat{\edge}{\indexedcatvariableof{\node} \, : \, \node\in\edge} \right) \, .
+		\contractionof{\tnetof{\graph}}{\indexedcatvariableof{\secnodes}} =
+		\sum_{\catindexof{\nodes/\secnodes} \in\,\nodestatesof{\nodes/\secnodes}}
+		\left( \prod_{\edge\in\edges}\hypercoreofat{\edge}{\indexedcatvariableof{\edge}} \right) \, .
 	\end{align}
+	We call $\catvariableof{\secnodes}$ the open variables of the contraction.
 \end{definition}
+
 
 \begin{figure}
 	\begin{center}
@@ -322,7 +323,8 @@ To further gain familiarity with the generic contractions, we show the connectio
 	To give an example, let $\vectorofat{\catenumerator}{\catvariable}\in\rr^\catdim$ be vectors for $\catenumeratorin$. Their hadamard product is the vector
 		\[ \contractionof{\{\vectorofat{\catenumerator}{\catvariable} \, : \, \catenumeratorin\}}{\catvariable}  \in \rr^\catdim \]
 	defined by
-		\[ \contractionof{\{\vectorofat{\catenumerator}{\catvariable} \, : \, \catenumeratorin\}}{\indexedcatvariable}   = \prod_{\atomenumeratorin} V^\atomenumerator[\indexedcatvariable]\, . \]
+		\[ \contractionof{\{\vectorofat{\catenumerator}{\catvariable} \, : \, \catenumeratorin\}}{\indexedcatvariable}   
+		= \prod_{\atomenumeratorin} \vectorofat{\atomenumerator}{\indexedcatvariable}\, . \]
 	In a contraction diagram the Hadamard product is depicted by 
 	\begin{center}
 		\input{OtherContent/tikz_pics/notation/hadamard.tex}
@@ -333,21 +335,24 @@ To further gain familiarity with the generic contractions, we show the connectio
 
 \subsubsection{Decompositions}
 
+Tensors can be represented by tensor network decompositions, when the contraction of the network retrieves the tensor.
+
 \begin{definition}\label{def:tnDecomposition}
-	Let $\extensor$ be a tensor in $\extensorspace$.
-	A Tensor Network Decomposition of a tensor $\hypercoreat{\catvariablesinset{\nodes}}$ is a Tensor Network $\tnetof{\graph}$ to a hypergraph containing  such that
-		\[ \hypercoreat{\catvariablesinset{\nodes}}= \contractionof{\tnetof{\graph}}{\catvariablesinset{\nodes}} \, . \]
+	%Let $\hypercoreat{\nodevaraibles}$ be a tensor in $\extensorspace$.
+	A Tensor Network Decomposition of a tensor $\hypercoreat{\nodevariables}$ is a Tensor Network $\tnetof{\graph}$ such that
+		\[ \hypercoreat{\nodevariables}= \contractionof{\tnetof{\graph}}{\nodevariables} \, . \]
+	We call the hypergraph $\graph$ the format of the decomposition.
 \end{definition}
 
 
 
 \subsection{Properties of Tensors}
 
-%% Binary
-We will often encounter situations, where the coordinates of tensors are binary valued, i.e. the tensor is a map to the set $[2]$.
+%% Boolean
+We will often encounter situations, where the coordinates of tensors are in $\{0,1\}=[2]$.
 
 \begin{definition}\label{def:binaryTensor} % CALL BOOLEAN INSTEAD?
-	We call a tensor binary, when $\imageof{T}\subset[2]$, i.e. all coordinates are either $0$ or $1$.
+	We call a tensor $\hypercoreat{\shortcatvariables}$ boolean, when $\imageof{\hypercore}\subset[2]$, i.e. all coordinates are either $0$ or $1$.
 \end{definition}
 
 %% Directionality
@@ -356,7 +361,7 @@ Summing over outgoing trivializes the tensor.
 
 \begin{definition}\label{def:directedTensor}
 	A Tensor 
-		\[ \hypercoreat{\catvariablesinset{\nodes}} \in \bigotimes_{\nodein}\rr^{\catdimof{\node}} \]
+		\[ \hypercoreat{\nodevariables} \in \bigotimes_{\nodein}\rr^{\catdimof{\node}} \]
 	is said to be directed with incoming variables $\innodes$ and outgoing variables $\outnodes$, where $\nodes=\innodes\dot{\cup}\outnodes$, when
 		\[ \sbcontractionof{\hypercore}{\catvariablesinset{\outnodes}} =  \onesat{\catvariablesinset{\innodes}} \]
 	where $\onesat{\catvariablesinset{\innodes}}$ denoted the trivial tensor in  $\bigotimes_{\node\in\innodes}\rr^{\catdimof{\node}}$ which coordinates are all $1$.
@@ -365,34 +370,19 @@ Summing over outgoing trivializes the tensor.
 While by default all legs are outgoing, we can change the direction by normation.
 
 \begin{definition}\label{def:normation}
-	A tensor $\hypercoreat{\catvariablesinset{\nodes}}$ is said to be normable on $\innodes\subset\nodes$, if for any $\atomlegindexof{\innodes}\in\bigtimes_{\node\in\innodes}[\catdimof{\node}]$ we have
-		\[ \sbcontraction{\hypercore,\onehotmapof{\atomlegindexof{\innodes}}} > 0 \, . \]
+	A tensor $\hypercoreat{\nodevariables}$ is said to be normable on $\innodes\subset\nodes$, if for any $\catindexof{\innodes}\in\nodestatesof{\innodes}$ we have
+		\[ \sbcontraction{\hypercoreat{\nodevariables},\onehotmapofat{\atomlegindexof{\innodes}}{\catvariableof{\innodes}}} > 0 \, . \]
 	The normation of a on $\innodes\subset\nodes$ normable tensor is the tensor
 	\begin{align*}
-		\sbnormationofwrt{\hypercore}{\catvariableof{\outnodes}}{\catvariableof{\innodes}} = 
-		\sum_{\atomlegindexof{\innodes}\in\bigtimes_{\node\in\innodes}[\catdimof{\node}]} 
-		\onehotmapof{\atomlegindexof{\innodes}} \otimes \frac{
-		\sbcontractionof{\hypercore,\onehotmapof{\catindexof{\innodes}}}{\catvariableof{\outnodes}}
+		\sbnormationofwrt{\hypercoreat{\nodevariables}}{\catvariableof{\outnodes}}{\catvariableof{\innodes}} = 
+		\sum_{\catindexof{\innodes}\in\nodestatesof{\innodes}} 
+		\onehotmapofat{\atomlegindexof{\innodes}}{\catvariableof{\innodes}} \otimes \frac{
+		\sbcontractionof{\hypercoreat{\nodevariables},\onehotmapofat{\catindexof{\innodes}}{\catvariableof{\innodes}}}{\catvariableof{\outnodes}}
 		}{
-		\sbcontraction{\hypercore,\onehotmapof{\catindexof{\innodes}}}
+		\sbcontraction{\hypercoreat{\nodevariables},\onehotmapofat{\catindexof{\innodes}}{\catvariableof{\innodes}}}
 		} 
 	\end{align*}
-	where $\outnodes = \nodes / \innodes$.
-%	
-%	A tensor network $\extnet$ on variables $\nodes$ can be normed on $\secnodes$, if the coordinates of no slice with respect to $\secnodes$ sum to $0$.
-%	Then we define the normed tensor
-%		\[ \normationofwrt{\extnet}{\outnodes}{\innodes} 
-%		\in \left( \bigotimes_{\node\in\innodes} \rr^{\catdimof{\node}} \right) \otimes \left( \bigotimes_{\node\in\outnodes} \rr^{\catdimof{\node}} \right) \]
-%	by
-%	 \begin{align*}
-%	 	\normationofwrt{\extnet}{\outnodes}{\innodes} 
-%		= \sum_{\atomlegindexof{\innodes}\in\bigtimes_{\node\in\innodes}[\catdimof{\node}]} 
-%		\onehotmapof{\atomlegindexof{\innodes}} \otimes \frac{
-%		\contractionof{\extnet\cup\{\onehotmapof{\atomlegindexof{\innodes}}\}}{\outnodes}
-%		}{
-%		\contractionof{\extnet\cup\{\onehotmapof{\atomlegindexof{\innodes}}\}}{\varnothing}
-%		} \, . 
-%	 \end{align*}
+	where $\outnodes = \nodes/\innodes$.
 \end{definition}
 
 We will investigate the contractions of directed tensors in Part~III, where we show in Theorem~\ref{the:normationDirected} that normations are directed tensors.
@@ -413,27 +403,27 @@ Tensors are defined here as real-valued functions on the state set of a system d
 We provide further schemes to represent functions in order to perform sparse calculus and to handle more generic functions.
 
 
-\subsubsection{Real-valued functions}
 
-
-\begin{example}[Uncertainty about States]\label{exa:onehotUncertainty}
-	The uncertainty about the state of a categorical variable $\catvariable$ can be expressed in vectors.
-	For example let there be real numbers $\probof{\catvariable=\catindex} \in [0,1]$ for $\catindex\in[\catdim]$ with $\sum_{\catindex\in[\catdim]}\probof{\catvariable=\catindex}=1$ with the interpretation that $\probof{\catvariable=\catindex}$ is the probability of a system being in state $\catindex$. 
-	We can represent this uncertain state simply by a vector 
-		\[ \probof{\catvariable}\in\rr^{\catdim} \]
-	defined as the sum of one-hot representations weighted by $\probof{\catvariable=\catindex}$
-	\[ \sum_{\catindex\in[\catdim]} \probof{\catvariable=\catindex} \cdot \onehotmapofat{\catindex}{\catvariable} =
-		\begin{bmatrix}
-		\probof{\catvariable=0} & \probof{\catvariable=1} & \cdots & \probof{\catvariable=\catdim-1}
-		\end{bmatrix} \, . 
-	\]
-\end{example}
+%
+%\subsubsection{Real-valued functions}
+%\begin{example}[Uncertainty about States]\label{exa:onehotUncertainty}
+%	The uncertainty about the state of a categorical variable $\catvariable$ can be expressed in vectors.
+%	For example let there be real numbers $\probof{\catvariable=\catindex} \in [0,1]$ for $\catindex\in[\catdim]$ with $\sum_{\catindex\in[\catdim]}\probof{\catvariable=\catindex}=1$ with the interpretation that $\probof{\catvariable=\catindex}$ is the probability of a system being in state $\catindex$. 
+%	We can represent this uncertain state simply by a vector 
+%		\[ \probof{\catvariable}\in\rr^{\catdim} \]
+%	defined as the sum of one-hot representations weighted by $\probof{\catvariable=\catindex}$
+%	\[ \sum_{\catindex\in[\catdim]} \probof{\catvariable=\catindex} \cdot \onehotmapofat{\catindex}{\catvariable} =
+%		\begin{bmatrix}
+%		\probof{\catvariable=0} & \probof{\catvariable=1} & \cdots & \probof{\catvariable=\catdim-1}
+%		\end{bmatrix} \, . 
+%	\]
+%\end{example}
 
 
 
 \subsubsection{Relational encodings}
 
-We have already observed in Example~\ref{exa:atomicFunction}, that any function of a categorical variable has a representation as a linear function acting on the one-hot encoding of the variable.
+%We have already observed in Example~\ref{exa:atomicFunction}, that any function of a categorical variable has a representation as a linear function acting on the one-hot encoding of the variable.
 Let us now show how we can encode maps between factored systems.
 The scheme is described in more generality and detail (encoding of subsets and relations) in Chapter~\ref{cha:tensorEncodings}, see Definition~\ref{def:functionRelationEncoding}.
 
@@ -448,8 +438,12 @@ The scheme is described in more generality and detail (encoding of subsets and r
 		  \onehotmapofat{\catindices}{\catvariables} \otimes \onehotmapofat{\exfunction(\catindices)}{\seccatvariables} \, . \]
 \end{definition}
 
+
+
 % Notation with image categorical variable
-When the categorical variables of the image factored system to a map $\exfunction$ are not specified otherwise, we will denote them by $\catvariableof{\exfunction}$.
+%When the categorical variables of the image factored system to a map $\exfunction$ are not specified otherwise, we will denote them by $\catvariableof{\exfunction}$.
+
+
 
 
 \subsubsection{Tensor-valued functions}

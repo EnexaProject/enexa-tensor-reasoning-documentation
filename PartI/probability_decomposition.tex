@@ -1,17 +1,14 @@
 \section{Probability Distributions}\label{cha:probDecomposition}
 
-After having discussed how to represent states of factored systems by tensors, let us now take advantage of these representation by associating properties with these states.
-We will associate with each state its probability and have represented a probability distribution about the states.
-This is an epistemological commitment about the system, since we assume the property of probability to each state and reason about this property.
-
-
-
-%We have studied how to represent logical semantics by tensor (networks). 
-%Now we continue with probability distributions.
+In this chapter we will establish relations between the formalism of tensor networks and basic concepts of probability theory.
+We will first understand distributions as tensors and connect their marginalizations and conditionings to the tensor operations of contractions and normations.
+Then we discuss independence assumptions as examples of contraction equations, which lead to tensor network decompositions known as graphical models.
+We then treat more generic exponential families and investigate their representation as tensor networks.
 
 \subsection{Tensor Representation of Distributions}
 
 %% Random Variables: Introduction in Bayesian way by uncertainties
+After having discussed how to represent states of factored systems by one-hot encodings, let us now take advantage of these representation by associating properties with these states.
 Let there be uncertainties of the assignments $\catindexof{\atomenumerator}$ to the categorical variables $\catvariableof{\atomenumerator}$ of a factored system.
 We then understand $\catvariableof{\atomenumerator}$ as random variables, which have a joint distribution defined by the uncertainties of the state assignments.
 To capture these uncertainties we now make use of the one-hot representation of factored systems in Chapter~\ref{cha:factoredRepresentation}.
@@ -19,26 +16,24 @@ To capture these uncertainties we now make use of the one-hot representation of 
 \begin{definition}[Probability Tensor] % From the axioms of Kolmogorov!
 	Let there be a factored system defined by a categorical variable $\catvariableof{\atomenumerator}$ for each $\atomenumeratorin$ taking values in $[\catdimof{\atomenumerator}]$. 
 	A probability distribution over the states of $\facsystem$ is a tensor
-		\[ \probof{\catvariableof{0},\ldots,\catvariableof{\atomorder-1}} : \facstates \rightarrow [0, 1] \subset \rr \]
+		\[ \probat{\catvariableof{0},\ldots,\catvariableof{\atomorder-1}} : \facstates \rightarrow [0, 1] \subset \rr \]
 	such that
-		\[ \sum_{\catindices\in\facstates} \probof{\indexedcatvariables} = 1 \, . \]
+		\[ \sum_{\catindices\in\facstates} \probat{\indexedcatvariables} = 1 \, . \]
 \end{definition}
-
-
 
 We notice that there are two conditions for a tensor to be probability tensor.
 First, the tensor needs to have non-negative coordinates and second, the coordinates need to sum to $1$.
 
 %% One-hot Decomposition -> Contraction Equivalences
 The probability tensor to the distribution is an object
-		\[ \probof{\catvariables} \in \bigotimes_{\atomenumeratorin}\rr^{\catdimof{\atomenumerator}} \]
+		\[ \probat{\catvariables} \in \bigotimes_{\atomenumeratorin}\rr^{\catdimof{\atomenumerator}} \]
 which is the sum over the one-hot encodings (see Lemma~\ref{lem:tensorBasisDecomposition})
-		\[ \probof{\catvariables} = \sum_{\catindices\in\facstates} \probof{\indexedcatvariables} \cdot \onehotmapofat{\catindices}{\catvariables} \, . \]
+		\[ \probat{\catvariables} = \sum_{\catindices\in\facstates} \probat{\indexedcatvariables} \cdot \onehotmapofat{\catindices}{\catvariables} \, . \]
 		
 %%
 The normation condition of probability tensors can be expressed by the contraction equation $1= \sbcontraction{\probtensor}$ since
 \begin{align*}
-	1 = \sum_{\catindices}\probof{\indexedcatvariables}
+	1 = \sum_{\catindices}\probat{\indexedcatvariables}
 	=  \sum_{\catindices}\sbcontraction{\probtensor, \onehotmapof{\catindices}}
 	= \sbcontraction{\probtensor} \, . 
 \end{align*}
@@ -46,66 +41,53 @@ The normation condition of probability tensors can be expressed by the contracti
 %% NOT NEEDED
 %Using the Coordinate Calculus as described in Theorem~\ref{the:coordinateCalculus} we can retrieve the coordinates of $\probtensor$ storing the probabilities of specific states by the contraction
 %\begin{align*}
-%	\probof{\indexedcatvariables} = \contractionof{\{\probtensor, \onehotmapof{\catindices}\}}{\varnothing} \, . 
+%	\probat{\indexedcatvariables} = \contractionof{\{\probtensor, \onehotmapof{\catindices}\}}{\varnothing} \, . 
 %\end{align*}
 
 %% Coordinates
 %The probability tensor stores all probabilities on its coordinates, which are by construction
-%	\[ \probtensor_{\catindices} = \probof{\catvariableof{\atomenumerator} = \catindexof{\atomenumerator} \, : \, \atomenumeratorin}  \, . \]
+%	\[ \probtensor_{\catindices} = \probat{\catvariableof{\atomenumerator} = \catindexof{\atomenumerator} \, : \, \atomenumeratorin}  \, . \]
 %We here draw on the redundancy of the one-hot encoding of each state of a factored system, which enables us to represent the properties of multiple states in single tensors (see Example~\ref{exa:onehotUncertainty}).
 
-
-
 Probability tensors are depicted as
-	\begin{center}
-		\input{PartI/tikz_pics/probability_decomposition/probability_tensor.tex}
-	\end{center}
-
-
+\begin{center}
+	\input{PartI/tikz_pics/probability_decomposition/probability_tensor.tex}
+\end{center}
 
 
 \subsection{Marginal Distribution}
 
-The contraction formalism is especially suited in visualizing conditional distributions and marginalizations.
-
+Contractions of probability distributions are related to marginalizations as we introduce next.
 
 \begin{definition}[Marginal Probability]\label{def:marginalProbability}
-	Given a distribution $\probof{\exrandom,\secexrandom}$ of the categorical variables $\exrandom$ and $\secexrandom$ the marginal distribution of the categorical variable $\exrandom$ is defined for each $\exrandind$ as the tensor
+	Given a distribution $\probat{\exrandom,\secexrandom}$ of the categorical variables $\exrandom$ and $\secexrandom$ the marginal distribution of the categorical variable $\exrandom$ is defined for each $\exrandind$ as the tensor
 	\begin{align*}
-		\probof{\exrandom} : [\exranddim] \rightarrow \rr
+		\probat{\exrandom} : [\exranddim] \rightarrow \rr
 	\end{align*}
 	defined for $\exrandind\in[\exranddim]$ by
 	\begin{align*}
-		\probof{\exrandom=\exrandind} 
-		= \sum_{\secexrandind\in[\secexranddim]} \probof{\exrandom=\exrandind,\secexrandom=\secexrandind} \, .
+		\probat{\indexedexrandom} 
+		= \sum_{\secexrandind\in[\secexranddim]} \probat{\indexedexrandom,\indexedsecexrandom} \, .
 	\end{align*}
 \end{definition}
 
-% Generalization
+% Sets of variables
 Definition~\ref{def:marginalProbability} generalizes to marginalizations of sets of variables, since we can always group a set of categorical variables and understand them as a single one.
-
-%% Tensor Representation
-We represent the sum over the possible values of $\secexrandom$ by contraction of the probability tensor with the trivial tensors $\ones$ as 
-\begin{center}
-	\input{PartI/tikz_pics/probability_decomposition/marginalized_probability.tex}
-\end{center}
-Let us notice, that marginal distributions are probability tensors for themself, which we again denote by a directed leg.
-%We here omit the denotation of the nodes in the hypergraph of a Tensor Network and represent a Tensor Network just by the appearing Tensor Cores on the hyperedge.
 
 %% Contractions
 \begin{theorem}\label{the:marginalContraction}
-	Given a Tensor Network (see Definition~\ref{def:tensorNetwork}) $\{\probtensor\}$ consistent of the variables $\exrandom,\secexrandom$ and hyperedge $\{\catvariable,\secexrandom\}$ decorated with the tensor $\probtensor$.
-	Then the marginal distribution of the variable $\catvariable$ is the contraction
+	%Given a Tensor Network (see Definition~\ref{def:tensorNetwork}) $\{\probtensor\}$ consistent of the variables $\exrandom,\secexrandom$ and hyperedge $\{\exrandom,\secexrandom\}$ decorated with the tensor $\probtensor$.
+	For any distribution $\probat{\exrandom,\secexrandom}$ the marginal distribution of the variable $\catvariable$ is the contraction
 	\begin{align*}
-		\probof{\exrandom} = \sbcontractionof{\probtensor}{\exrandom} \, .
+		\probat{\exrandom} = \sbcontractionof{\probtensor}{\exrandom} \, .
 	\end{align*}
 	Further, any marginal distribution is a probability distribution.
 \end{theorem}
 \begin{proof}
-	We have $\probof{\exrandom} = \contractionof{\{\probtensor\}}{\exrandom}$ by definition.
-	To show that $\probof{\exrandom}$ is a probability distribution, we need to show that $\sbcontraction{\probof{\exrandom}}=1$.
+	We have $\probat{\exrandom} = \contractionof{\{\probtensor\}}{\exrandom}$ by definition.
+	To show that $\probat{\exrandom}$ is a probability distribution, we need to show that $\sbcontraction{\probat{\exrandom}}=1$.
 	But this follows from the normation of $\probtensor$ and the commutativity of contractions (see Theorem~\ref{the:splittingContractions} in Chapter~\ref{cha:localContractions}) as
-		\[ \sbcontraction{\probof{\exrandom}} = 
+		\[ \sbcontraction{\probat{\exrandom}} = 
 		\sbcontraction{
 			\sbcontractionof{\probtensor}{\exrandom}
 		} =
@@ -114,61 +96,50 @@ Let us notice, that marginal distributions are probability tensors for themself,
 		\]
 \end{proof}
 
-
-
-
-% ADD? Properties from Contractions such as composition of marginalizations: Marginalization first wrt to X,Y and then by X is the same as directly doing X
-
+%% Tensor Representation
+We depict the sum over the possible values of $\secexrandom$ by contraction of the probability tensor with the trivial tensors $\ones$ as 
+\begin{center}
+	\input{PartI/tikz_pics/probability_decomposition/marginalized_probability.tex}
+\end{center}
+Let us notice, that marginal distributions are probability tensors for themself, which we again denote by a directed leg.
+%We here omit the denotation of the nodes in the hypergraph of a Tensor Network and represent a Tensor Network just by the appearing Tensor Cores on the hyperedge.
 
 
 \subsection{Conditional Probabilities}
 
-Conditional Probability Tensors are Probability Tensor with additional legs, where each slice to these additional legs defines a probability tensor.
+Normations of probability distributions result in conditional distributions as we define next.
 
 \begin{definition}[Conditional Probability]\label{def:conditionalProbability}
-	Given a distribution $\probtensor$ of the categorical variables $\exrandom$ and $\secexrandom$, the conditioned distribution of $\catvariable$ is defined by
-		\[ \condprobof{\exrandom=\exrandind}{\secexrandom=\secexrandind}  
-		= \frac{\probof{\exrandom = \exrandind,\secexrandom=\secexrandind}}{\probof{\secexrandom=\secexrandind}} \, . \]
+	Let $\probat{\exrandom,\secexrandom}$ be a distribution of the categorical variables $\exrandom$ and $\secexrandom$, such that $\probtensor$ is normable on $\{\secexrandom\}$.
+	Then the distribution of $\exrandom$ conditioned on $\secexrandom$ is defined by
+		\[ \condprobof{\indexedexrandom}{\indexedsecexrandom}  
+		= \frac{\probat{\indexedexrandom,\indexedsecexrandom}}{\probat{\indexedsecexrandom}} \, . \]
 \end{definition}
 
-
-The conditional probability
-	\[ \condprobof{\exrandom}{\secexrandom=\secexrandind}  
-	= \frac{\probof{\exrandom,\secexrandom=\secexrandind}}{\probof{\secexrandom=\secexrandind}} \]
-is represented as a tensor with legs to $\exrandom$ and $\secexrandom$.
-For each one-hot encoding $\onehotmapof{\secexrandind}$ of the assignment $\secexrandind$ to the variable $\secexrandom$ we represent the conditional probability by the diagrams
-\begin{center}
-	\input{PartI/tikz_pics/probability_decomposition/conditional_probability.tex}
-\end{center}
-
-
-
-Here we denote by the quotient a coordinatewise normation, as sketched by the dashed unit vector. % is contracted before each normation, but we will omit it in future diagrams.
-We depict conditional variables by directed edges, where legs to conditions are incoming while the others outgoing.
+%The conditional probability
+%	\[ \condprobof{\exrandom}{\indexedsecexrandom}  
+%	= \frac{\probat{\exrandom,\indexedsecexrandom}}{\probat{\indexedsecexrandom}} \]
+%is also a tensor with legs to $\exrandom$ and $\secexrandom$.
+%For each one-hot encoding $\onehotmapof{\secexrandind}$ of the assignment $\secexrandind$ to the variable $\secexrandom$ we represent the conditional probability by the diagrams
+%\begin{center}
+%	\input{PartI/tikz_pics/probability_decomposition/conditional_probability.tex}
+%\end{center}
+%Here we denote by the quotient a coordinatewise normation, as sketched by the dashed unit vector. % is contracted before each normation, but we will omit it in future diagrams.
+%We depict conditional variables by directed edges, where legs to conditions are incoming while the others outgoing.
 
 %% Normation and Directed Notation
-We will discuss operations on tensors like conditioning more detail in Chapter~\ref{cha:directedTC} as normation operation of Definition~\ref{def:normation}.
-In Theorem~\ref{the:conditionalContraction} we will show that the resulting tensor is directed with incoming variables by the conditions.
-
-%\subsubsection{Properties}
+We show in the next theorem, that conditional distributions are calculated by normations.
+%We will discuss operations on tensors like conditioning more detail in Chapter~\ref{cha:directedTC} as normation operation of Definition~\ref{def:normation}.
+%In Theorem~\ref{the:conditionalContraction} we will show that the resulting tensor is directed with incoming variables by the conditions.
 
 \begin{theorem}\label{the:conditionalContraction}
-	The tensor $\condprobof{\exrandom}{\secexrandom}$ is the normation of $\probof{\exrandom,\secexrandom}$ on $\secexrandom$  (see Definition~\ref{def:normation}), that is
+	The tensor $\condprobof{\exrandom}{\secexrandom}$ is the normation of $\probat{\exrandom,\secexrandom}$ on $\secexrandom$  (see Definition~\ref{def:normation}), that is
 	\begin{align*}
 		\condprobof{\exrandom}{\secexrandom}   
-		= \normationofwrt{\{\probtensor\}}{\secexrandom}{\exrandom} \, . 
+		= \sbnormationofwrt{\probtensor}{\exrandom}{\secexrandom} \, . 
 	\end{align*}
-	Further, for any $\secexrandind\in[\secexranddim]$ the tensor $\condprobof{\exrandom}{\secexrandom=\secexrandind}$ is a probability tensor.
+	Further, for any $\secexrandind\in[\secexranddim]$ the tensor $\condprobof{\exrandom}{\indexedsecexrandom}$ is a probability tensor.
 \end{theorem}
-%\begin{theorem}\label{the:conditionalMarginalization}
-%	For any $\secexrandind\in\secexranddim$ the tensor $\condprobof{\exrandom}{\secexrandom=\secexrandind}$ is a probability tensor.
-%	
-%	Any conditional probability tensor $\condprobof{\exrandom}{\secexrandom}$ is a probability tensor when keeping $\secexrandind$ fixed, i.e. for any $\secexrandind$ we have
-%	\begin{align}
-%		\sum_{\catindexofin{\exrandom}}
-%		\condprobof{\exrandom=\exrandind}{\secexrandom=\secexrandind} = 1 \, . 
-%	\end{align}
-%\end{theorem}
 \begin{proof}
 	The first claim follows from a comparison of Definition~\ref{def:conditionalProbability} and \ref{def:normation}.
 	The second claim follows from the first and Theorem~\ref{the:normationDirected}.
@@ -176,35 +147,12 @@ In Theorem~\ref{the:conditionalContraction} we will show that the resulting tens
 	\begin{center}
 		\input{PartI/tikz_pics/probability_decomposition/proof_cond_normed.tex}
 	\end{center}
-	%For each $\catindexofin{\seccatvariable}$ the conditional probability distribution $\condprobof{\exrandom}{\secexrandom=\secexrandind}$ is by definition normed and thus
 \end{proof}
 
 
 
 % Contraction Formalism
-Theorem~\ref{the:marginalContraction} and \ref{the:conditionalContraction} apply the formalism of contractions in the basic operations of probabilistic reasoning.
-Marginalization and Conditioning differs here only by the core $\onehotmapof{\secexrandind}$ in the contraction.
-
-
-%\begin{theorem}\label{the:conditionalAverage}
-%	The contraction of a conditional probability tensor $\condprobof{\exrandom}{\secexrandom}$ with any tensor $\lambda \in \rr^{\secexranddim}$ with coordinates satisfying $\lambda_{\secexrandind}\in [0,1]$ and $\sum_{\secexrandind\in[\secexranddim]} \lambda_{\secexrandind} = 1$ is again a probability tensor.
-%\end{theorem}
-%\begin{proof}
-%	Follows from Theorem~\ref{the:conditionalContractionPreservation}.
-%\end{proof}
-
-
-
-%% Condition means 
-%We have shown, that conditional probability tensors are directed tensors.
-%The converse also holds, when a directed tensor is of non-negative coordinates, which we show next.
-%We can further characterize conditional probability tensors by directed tensors.
-
-
-
-
-
-
+Theorem~\ref{the:marginalContraction} and \ref{the:conditionalContraction} show that the formalism of contractions and normations is applied in basic operations of probabilistic reasoning.
 
 We can further show, that exactly the directed tensors with non-negative coordinates are conditional probability tensors.
 
@@ -212,18 +160,19 @@ We can further show, that exactly the directed tensors with non-negative coordin
 	Any tensor with non-negative coordinates is a conditional distribution tensor, if and only if it is directed with the condition variables ingoing and the other outgoing.
 \end{theorem}
 \begin{proof}
-	% =>
+	\proofrightsymbol:
 	By Theorem~\ref{the:conditionalContraction} a conditional probability tensor $\condprobof{\exrandom}{\secexrandom}$ is the normation of a tensor and by Theorem~\ref{the:normationDirected} a directed tensor.
-	Since probability tensors have only non-negative coordinates, their contractions with one-hot encodings also have only non-negative coordinates and also their normations.
-	% <=
+	Since probability tensors have only non-negative coordinates, their contractions with one-hot encodings also have only non-negative coordinates and also their normations. 
+	
+	\proofleftsymbol:
 	Conversely, let $\hypercoreat{\nodevariables}$ be a directed tensor with $\innodes$ incoming and $\outnodes$ outgoing and non-negative coordinates.
 	Then
 	\begin{align}
-		\probof{\nodevariables} = \frac{1}{\prod_{\node\in\innodes}\catdimof{\node}} \cdot \hypercoreat{\nodevariables}
+		\probat{\nodevariables} = \frac{1}{\prod_{\node\in\innodes}\catdimof{\node}} \cdot \hypercoreat{\nodevariables}
 	\end{align}
 	is a probability tensor, since 
 	\begin{align*}
-		\sum_{\atomlegindexof{\innodes}} \sum_{\atomlegindexof{\outnodes}} \probof{\indexedcatvariableof{\nodes}} =
+		\sum_{\atomlegindexof{\innodes}} \sum_{\atomlegindexof{\outnodes}} \probat{\indexedcatvariableof{\nodes}} =
 		\sum_{\atomlegindexof{\innodes}} \sum_{\atomlegindexof{\outnodes}} \frac{1}{\prod_{\node\in\innodes}\catdimof{\node}} \cdot \hypercoreat{\indexedcatvariableof{\nodes}} =
 		\sum_{\atomlegindexof{\innodes}} \frac{1}{\prod_{\node\in\innodes}\catdimof{\node}} = 1 \, . 
 	\end{align*}
@@ -231,9 +180,9 @@ We can further show, that exactly the directed tensors with non-negative coordin
 	\begin{align*}
 		\condprobof{\catvariableof{\outnodes}}{\indexedcatvariableof{\innodes}} 
 		=& \frac{
-		\probof{\catvariableof{\outnodes},\indexedcatvariableof{\innodes}}
+		\probat{\catvariableof{\outnodes},\indexedcatvariableof{\innodes}}
 		}{
-		\sum_{\catindexof{\outnodes}} \probof{\indexedcatvariableof{\outnodes},\indexedcatvariableof{\innodes}}
+		\sum_{\catindexof{\outnodes}} \probat{\indexedcatvariableof{\outnodes},\indexedcatvariableof{\innodes}}
 		} \\
 		=& \frac{
 		\hypercoreat{\catvariableof{\outnodes},\indexedcatvariableof{\innodes}}
@@ -256,52 +205,31 @@ Since conditional probabilities are directed tensors we therefore depict them by
 Theorem~\ref{the:conditionalDirected} specifies a broad class of tensors to represent conditional probabilities.
 In combination with Theorem~\ref{the:rencodingDirected}, which states that relational encodings are directed, we get that any relational encoding of a function is a conditional probability tensor.
 
-
-
-
-
-%% Usage of directionality
-%Conditional probability tensors are by Theorem~\ref{the:conditionalDirected} non-negative directed tensors.
-%When contracting in directionality, Theorem~\ref{the:conditionalAverage} ensures, that the property of tensors being probability tensors is preserved. 
-%Theorem~\ref{the:conditionalMarginalization} and \ref{the:conditionalAverage} enable us to interpret directed tensor networks in an easy to access usage. 
-%When contracting in directionality, Theorem~\ref{the:conditionalAverage} ensures, that the property of tensors being probability tensors is preserved. 
-%When contracting against the directionality, Theorem~\ref{the:conditionalMarginalization} states that trivial tensors $\ones$ contract to other trivial tensors, when performing a contraction on all outgoing legs.
-%If the contraction with a trivial tensor $\ones$ is only performed on some outgoing legs, then the results corresponds by Definition~\ref{def:marginalProbability} with marginalizations, which are also probability tensors themself.
-
-
-
-
-
-
-
-
-
-
-
 \subsection{Bayes Theorem and the Chain Rule}
 
 So far, we have connected concepts of probability theory such as marginal and conditional probabilities with contractions and normations of tensors.
 We will now proceed to show that basic theorems of probability theory translate into more general contraction equations.
 
 \begin{theorem}[Bayes Theorem]\label{the:bayes}
-	For any probability distribution $\probof{\exrandom, \secexrandom}$ with positive $\probof{\secexrandom}$ we have
+	For any probability distribution $\probat{\exrandom, \secexrandom}$ with positive $\probat{\secexrandom}$ we have
 	\begin{align*}
-		\probof{\exrandom, \secexrandom} = \contractionof{\{ \condprobof{\exrandom}{\secexrandom}, \probof{\secexrandom} \}}{\exrandom, \secexrandom} \, . 
+		\probat{\exrandom,\secexrandom} 
+		= \contractionof{\condprobof{\exrandom}{\secexrandom},\probat{\secexrandom}}{\exrandom,\secexrandom} \, . 
 	\end{align*}
 \end{theorem}
 \begin{proof}
-	Directly from the more generic contraction equation Theorem~\ref{the:normationContractionEQ}, since by assumption of positivity of $\probof{\secexrandom}$, the tensor network $\{\probtensor\}$ is normable with respect to $\{\secexrandom\}$.
+	Directly from the more generic contraction equation Theorem~\ref{the:normationContractionEQ}, since by assumption of positivity of $\probat{\secexrandom}$, the tensor network $\probtensor$ is normable with respect to $\secexrandom$.
 \end{proof}
 
 
 Probability distributions can be decomposed into conditional probabilities, as we demonstrate in the next theorem.
 
 \begin{theorem}[Chain Rule]\label{the:chainRule}
-	For any joint probability distribution $\probtensor$ of the variables $\probof{\catvariableof{0},\ldots,\catvariableof{\atomorder-1}}$ we have
+	For any joint probability distribution $\probtensor$ of the variables $\probat{\catvariableof{0},\ldots,\catvariableof{\atomorder-1}}$ we have
 	\begin{align*}
 		\probtensor = \sbcontractionof{\condprobof{\catvariableof{\atomenumerator},\ldots,\catvariableof{\atomorder-1}}{\catvariableof{0},\ldots,\catvariableof{\atomenumerator-1}}\, : \, \atomenumeratorin\}}{\enumeratedatoms} 
 	\end{align*}
-	where for $\atomenumerator=0$ we denote by $ \condprobof{\catvariableof{0}}{\catvariableof{0},\ldots,\catvariableof{-1}}$ the marginal distribution $\probof{\catvariableof{0}}$.
+	where for $\atomenumerator=0$ we denote by $ \condprobof{\catvariableof{0}}{\catvariableof{0},\ldots,\catvariableof{-1}}$ the marginal distribution $\probat{\catvariableof{0}}$.
 \end{theorem}
 \begin{proof}
 	This follows from Theorem~\ref{the:genericChainRule}.
@@ -350,10 +278,10 @@ We will demonstrate this here applying the chain rule.
 
 \begin{definition}[Independence]\label{def:independence}
 	Given a joint distribution of variables $\exrandom$ and $\secexrandom$, we say that $\exrandom$ is independent from $\secexrandom$ if for any values $\exrandind,\secexrandind$ we have
-		\[ \probof{\exrandom=\exrandind,\secexrandom=\secexrandind} 
-		= \margprobof{\exrandom=\exrandind}{\exrandom}
+		\[ \probat{\indexedexrandom,\indexedsecexrandom} 
+		= \margprobof{\indexedexrandom}{\exrandom}
 		 \cdot 
-		 \margprobof{\secexrandom=\secexrandind}{\secexrandom} \, . \]
+		 \margprobof{\indexedsecexrandom}{\secexrandom} \, . \]
 \end{definition}
 
 We give a criterion on independence based on a contraction equation of the probability distribution in the next theorem.
@@ -361,38 +289,38 @@ We give a criterion on independence based on a contraction equation of the proba
 \begin{theorem}\label{the:independenceProductCriterion}
 	Given a probability distribution $\probtensor$, $\exrandom$ is independent from $\secexrandom$, if and only if 
 	\begin{align*}
-		\probof{\exrandom,\secexrandom} 
+		\probat{\exrandom,\secexrandom} 
 		= \sbcontractionof{\contractionof{\probtensor}{\exrandom},\contractionof{\probtensor}{\secexrandom}}{\exrandom,\secexrandom} \, . 
 	\end{align*}
 \end{theorem}
 \begin{proof}
-	By Theorem~\ref{the:marginalContraction} we know that marginal probabilities are equivalent to contracted probability distributions, i.e. $\probof{\exrandom} = \contractionof{\{\probtensor\}}{\exrandom} $.
+	By Theorem~\ref{the:marginalContraction} we know that marginal probabilities are equivalent to contracted probability distributions, i.e. $\probat{\exrandom} = \contractionof{\{\probtensor\}}{\exrandom} $.
 	By orthogonality of one-hot encodings we have that
 	\begin{align*}
-		\forall \exrandind, \secexrandind : \quad  \probof{\exrandom=\exrandind,\secexrandom=\secexrandind} 
-		= \margprobof{\exrandom=\exrandind}{\exrandom}
+		\forall \exrandind, \secexrandind : \quad  \probat{\indexedexrandom,\indexedsecexrandom} 
+		= \margprobof{\indexedexrandom}{\exrandom}
 		 \cdot 
-		 \margprobof{\secexrandom=\secexrandind}{\secexrandom} 
+		 \margprobof{\indexedsecexrandom}{\secexrandom} 
 	\end{align*}
 	is equivalent to 
 	\begin{align*}
-		\sum_{\exrandind}\sum_{\secexrandind} \probof{\exrandom=\exrandind,\secexrandom=\secexrandind} \cdot \onehotmapofat{\exrandind}{\exrandom}\onehotmapofat{\secexrandind}{\secexrandom}
+		\sum_{\exrandind}\sum_{\secexrandind} \probat{\indexedexrandom,\indexedsecexrandom} \cdot \onehotmapofat{\exrandind}{\exrandom}\onehotmapofat{\secexrandind}{\secexrandom}
 		= \sum_{\exrandind}\sum_{\secexrandind} 
-		\margprobof{\exrandom=\exrandind}{\exrandom}
+		\margprobof{\indexedexrandom}{\exrandom}
 		 \cdot 
-		 \margprobof{\secexrandom=\secexrandind}{\secexrandom} \cdot \onehotmapofat{\exrandind}{\exrandom}\onehotmapofat{\secexrandind}{\secexrandom} \, .
+		 \margprobof{\indexedsecexrandom}{\secexrandom} \cdot \onehotmapofat{\exrandind}{\exrandom}\onehotmapofat{\secexrandind}{\secexrandom} \, .
 	\end{align*}
 	We reorder the summations and arrive at
 	\begin{align*}
 		\sum_{\exrandind,\secexrandind} 
-		\probof{\exrandom=\exrandind,\secexrandom=\secexrandind} \cdot \onehotmapofat{\exrandind,\secexrandind}{\exrandom, \secexrandom}
-		= \left(\sum_{\exrandind}\margprobof{\exrandom=\exrandind}{\exrandom} \onehotmapofat{\exrandind}{\exrandom} \right)
+		\probat{\indexedexrandom,\indexedsecexrandom} \cdot \onehotmapofat{\exrandind,\secexrandind}{\exrandom, \secexrandom}
+		= \left(\sum_{\exrandind}\margprobof{\indexedexrandom}{\exrandom} \onehotmapofat{\exrandind}{\exrandom} \right)
 		\cdot 
-		\left( \sum_{\secexrandind}  \margprobof{\secexrandom=\secexrandind}{\secexrandom} \cdot \onehotmapofat{\secexrandind}{\secexrandom}  \right) 
+		\left( \sum_{\secexrandind}  \margprobof{\indexedsecexrandom}{\secexrandom} \cdot \onehotmapofat{\secexrandind}{\secexrandom}  \right) 
 	\end{align*}
 	which is by Lemma~\ref{lem:tensorBasisDecomposition} equal to the claim
 	\begin{align*}
-		\probof{\exrandom,\secexrandom} = \sbcontractionof{\contractionof{\probtensor}{\exrandom},\contractionof{\probtensor}{\secexrandom}}{\exrandom,\secexrandom} \, . 
+		\probat{\exrandom,\secexrandom} = \sbcontractionof{\contractionof{\probtensor}{\exrandom},\contractionof{\probtensor}{\secexrandom}}{\exrandom,\secexrandom} \, . 
 	\end{align*}
 \end{proof}
 
@@ -412,9 +340,9 @@ This leads to tensor network decompositions with a more realistic assumption.
 
 \begin{definition}[Conditional Independence]\label{def:condIndependence}
 	Given a joint distribution of variables $\exrandom$, $\secexrandom$ and $\thirdexrandom$, we say $\exrandom$ is independent from $\secexrandom$ conditioned on $\thirdexrandom$ if for any incides $\exrandind,\secexrandind$ and $\thirdexrandind$
-		\[ \condprobof{\exrandom=\exrandind,\secexrandom=\secexrandind}{\thirdexrandom=\thirdexrandind} 
-		= \condprobof{\exrandom=\exrandind}{\thirdexrandom=\thirdexrandind} 
-		\cdot \condprobof{\secexrandom=\secexrandind}{\thirdexrandom=\thirdexrandind}   \, . \]
+		\[ \condprobof{\indexedexrandom,\indexedsecexrandom}{\indexedthirdexrandom} 
+		= \condprobof{\indexedexrandom}{\indexedthirdexrandom} 
+		\cdot \condprobof{\indexedsecexrandom}{\indexedthirdexrandom}   \, . \]
 \end{definition}
 
 Conditional independence is a relation between conditional probabilities and is therefore equivalent to a normation equation stated next.
@@ -423,9 +351,9 @@ Conditional independence is a relation between conditional probabilities and is 
 	Given a distribution $\probtensor$ of variables $\exrandom$, $\secexrandom$ and $\thirdexrandom$, the variable $\exrandom$ is independent from $\secexrandom$ if and only if the contraction equation
 	\begin{align*}
 		 \condprobof{\exrandom,\secexrandom}{\thirdexrandom} 
-		 = \contractionof{\{
+		 = \sbcontractionof{
 		 \condprobof{\exrandom}{\thirdexrandom} ,\condprobof{\secexrandom}{\thirdexrandom} 
-		 \}}{\exrandom,\secexrandom,\thirdexrandom}
+		 }{\exrandom,\secexrandom,\thirdexrandom}
 	\end{align*}
 	holds.
 \end{theorem}
@@ -437,7 +365,7 @@ We can exploit conditional independence to find tensor network decompositions of
 
 \begin{corollary}\label{cor:secCriterionCondIndepencence}
 	If and only if $\exrandom$ is independent from $\secexrandom$ conditioned on $\thirdexrandom$ the probability distribution $\probtensor$ satisfies
-		\[ \probof{\exrandom, \secexrandom, \thirdexrandom} 
+		\[ \probat{\exrandom, \secexrandom, \thirdexrandom} 
 		= \contractionof{
 			\{ \condprobof{\exrandom}{\thirdexrandom}, \condprobof{\secexrandom}{\thirdexrandom}, \margprobof{\thirdexrandom}{\thirdexrandom} \}
 		}{
@@ -448,7 +376,7 @@ We can exploit conditional independence to find tensor network decompositions of
 \begin{proof}
 	Follows from Theorem~\ref{the:condIndependenceProductCriterion} and Theorem~\ref{the:bayes}.
 %	We start with the chain rule decomposition of Theorem~\ref{the:chainRule} and have
-%		\[ \probof{\exrandom,\secexrandom,\thirdexrandom} = \probof{\thirdexrandom}  \cdot \condprobof{\exrandom,\secexrandom}{\thirdexrandom} \]
+%		\[ \probat{\exrandom,\secexrandom,\thirdexrandom} = \probat{\thirdexrandom}  \cdot \condprobof{\exrandom,\secexrandom}{\thirdexrandom} \]
 %	Since $\exrandom$ is independent from $\secexrandom$ conditioned on $\thirdexrandom$ we have
 %		\[ \condprobof{\exrandom,\secexrandom}{\thirdexrandom}  = \condprobof{\exrandom}{\thirdexrandom}  \cdot \condprobof{\secexrandom}{\thirdexrandom}  \, . \]
 %	Converse direction similar.
@@ -481,18 +409,18 @@ We can exploit conditional independence to find tensor network decompositions of
 		\catvariableof{0},\ldots,\catvariableof{\tdim-1}
 		} 
 	\end{align*}	
-%		\[ \probof{\catvariableof{0},\ldots,\catvariableof{\tdim-1}} = %\probof{\catvariableof{1}} 
+%		\[ \probat{\catvariableof{0},\ldots,\catvariableof{\tdim-1}} = %\probat{\catvariableof{1}} 
 %		\prod_{\tenumeratorin} \condprobof{\catvariableof{\tenumerator}}{\catvariableof{\tenumerator-1}} \, . \] 
 	We depict this decomposition in Figure~\ref{fig:MC}.
 \end{theorem}
 \begin{proof}
 	By the chain rule (Theorem~\ref{the:chainRule}) we have
 	\begin{align*}
-	 	\probof{\catvariableof{0},\ldots,\catvariableof{\tdim-1}}
+	 	\probat{\catvariableof{0},\ldots,\catvariableof{\tdim-1}}
 		= \contractionof{
 		\{ \condprobof{\catvariableof{\tenumerator}}{\catvariableof{0:\tenumerator}} : \tenumeratorin \}
 		}{\catvariableof{[\tdim]}}
-		%= \contractionof{\{\probof{\catvariableof{0}} \prod_{\tenumeratorin, \tenumerator>1} \condprobof{\catvariableof{\tenumerator}}{\catvariableof{0:\tenumerator}}\}{\catvariableof{[\tdim]}} \, . 
+		%= \contractionof{\{\probat{\catvariableof{0}} \prod_{\tenumeratorin, \tenumerator>1} \condprobof{\catvariableof{\tenumerator}}{\catvariableof{0:\tenumerator}}\}{\catvariableof{[\tdim]}} \, . 
 	\end{align*}
 	Using the conditional independence of $\catvariableof{\tenumerator}$ and $\catvariableof{0:{\tenumerator-2}}$ conditioned on $\catvariableof{\tenumerator-1}$ we further have by Corollary~\ref{cor:conditionDropping}
 		\[ \condprobof{\catvariableof{\tenumerator}}{\indexedcatvariableof{0:\tenumerator}}  = \condprobof{\catvariableof{\tenumerator}}{\indexedcatvariableof{\tenumerator-1}} \, .  \]
@@ -531,21 +459,12 @@ Here we denoted by $\catvariableof{0:\tenumerator}$ the tuple $\catvariableof{0}
 We have already depicted conditional dependency assumptions made for Markov Chains in Figure~\ref{fig:MC} and discussed the implied decomposition of the dual tensor networks.
 Graphical models provide a more general framework for conditional dependency assumptions and provide a generic approach to exploit independences in finding tensor network decompositions of $\probtensor$.
 
-Graphical Models are typically depictured by nodes to each variable and edges.
-Whether the graph is directed or not distinguished between Bayesian Networks and Markov Networks.
+
+%Graphical Models are typically depicted by nodes to each variable and edges.
+Following the tensor network formalism we in this section introduce graphical models based on hypergraphs.
+Whether the hypergraph is directed or not distinguished between Bayesian Networks and Markov Networks.
 
 
-\begin{remark}[Alternative definitions]
-	In the literature, tensor networks are often called dual to the hypergraphs defining graphical models (see e.g. \cite{robeva_duality_2019}).
-	The duality becomes clear, when one interpretes the tensors as cores and their common variables as edges.
-	We in this work avoid this ambiguity by directly defining tensor networks as decoration of hyperedges by tensors.
-	
-	Often, the tensors decorating hyperedges are called factors and their logarithm features.
-	
-	Further, we directly use hypergraphs instead of the more canonical association of factors with cliques of a graph.
-	This avoids the discussion of non-maximal cliques as decorated with trivial tensors.
-	Such hypergraphs follow the same line of though compared with factor graphs, which are bipartite graphs with nodes either corresponding with single variables or with a collection of them affected by a factor.
-\end{remark}
 
 
 %\begin{remark}[Further nomenclature]
@@ -554,223 +473,41 @@ Whether the graph is directed or not distinguished between Bayesian Networks and
 %	Since each edge variable can appear in multiple factors, the Tensor Network is defined on a Hypergraph, where edges are interpreted as Hadamard contractions.
 %\end{remark}
 
-\subsubsection{Bayesian Networks}
-
-Bayesian networks are described by directed acyclic graphs (DAG).
-The probability distribution is a Hadamard product of conditional probabilities, where each variable has a conditional probability factor conditioned on the parents variables in the graph.
-
-We introduce Bayesian Networks based on directed hypergraphs (see Definition~\ref{def:hypergraphs}) and define further properties.
-
-\begin{definition}
-%% Already in notation chapter 
-%	A directed hypergraph is a tuple $\graph=(\nodes,\edges)$ of nodes $\nodes$ and hyperedges $\edges$, where each hyperedge $\edge\in\edges$ is a tuple
-%		\[ \edge = (\incomingnodes,\outgoingnodes) \]
-%	of disjoint sets of incoming nodes $\incomingnodes\subset\nodes$ and outgoing nodes $\outgoingnodes\subset\nodes$.
-	A directed path is a sequence $\node_{0},\ldots\node_{\secatomorder}$ such that for any $\secatomenumeratorin$ there is an hyperedge $\edge=(\incomingnodes,\outgoingnodes)\in\edges$ such that $\node_{\secatomenumerator}\in\incomingnodes$ and $\node_{\secatomenumerator+1}\in\outgoingnodes$.
-	We call the hypergraph $\graph$ acyclic, if there is no path with $\secatomorder>0$ such that $\node_{0}=\node_{\secatomorder}$.
-	Given a directed hypergraph $\graph=(\nodes,\edges)$ we define for any node $\nodein$ its parents by
-		\[ \parentsof{\node} = \{\secnode \, : \, \exists\edge=(\incomingnodes,\outgoingnodes)\in\edges: \secnode\in\incomingnodes,\node\in\outgoingnodes \} \]
-	and its non-descendants $\nondescendantsof{\node}$ as the set of nodes $\secnode$, such that there is no directed path from $\node$ to $\secnode$.
-\end{definition}
-
-\begin{definition}
-	%Let $\nodes$ be a set of nodes decorated by dimensions and 
-	Let $\graph=(\nodes,\edges)$ be a directed acyclic hypergraph with edges of the form 
-		\[ \edges = \{(\parentsof{\node},\{\node\}) \, : \, \nodein\} \, . \]
-%	and for each node $\node\in\nodes$ a random variable $\catvariableof{\node}$.
-	A \emph{Bayesian Network} is a decoration of each edge $(\parentsof{\node},\{\node\})$ by a conditional probability distribution
-	%Further let there be for each node $\node\in\nodes$ with parents $\parentsof{\node}$ a conditional probability distribution
-		\[ \condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \]
-	which represents the probability distribution
-%	Then the \emph{Bayesian Network} with respect to $\graph$ and the conditional probability terms is the distribution
-	\begin{align*}
-		\probof{\nodevariables} = \contractionof{\{\condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \, : \, \nodein\}}{\nodevariables} \, .
-	\end{align*}
-%		\[ \probof{\catvariableof{\node} \, : \, \node\in\nodes } = \prod_{\node\in\nodes} \condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \, . \]
-\end{definition}
-
-%
-By definition each tensor decorating a hyperedge is directed with $\catvariableof{\parentsof{\node}}$ incoming and $\catvariableof{\node}$ outgoing.
-Thus, the directionality of the hypergraph is reflected in each tensor decorating a directed hyperedge.
-This allows us to verify with Theorem~\ref{the:conditionalContractionPreservation} that their contraction defines a probability distribution.
-
-% Contraction -> Now in definition!
-%By definition we can represent a Bayesian network by the contraction
-%\begin{align*}
-%	\probtensorof{\graph} = \sbcontractionof{\{ \condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \, : \, \node\in\nodes\}}{\nodes} \, . 
-%\end{align*}
-
-% Dual
-%The dual tensor network consists of conditional probability distributions to each node $\node\in\nodes$ (see Figure~\ref{fig:BayesianFactor}b).
-
-\begin{figure}[h]
-\begin{center}
-	\input{PartI/tikz_pics/probability_decomposition/bayesian_factor.tex}
-\end{center}
-\caption{Example of a Factor of a Bayesian Network to the node $\catvariableof{\node}$ with parents $\catvariableof{0},\ldots,\catvariableof{\catorder-1}$, as subgraph $a)$ and dual tensor core $b)$.}
-\label{fig:BayesianFactor}
-\end{figure}
-
-
-%% Marginalization and Contraction
-Marginalization of a Bayesian Network are still Bayesian Networks on a graph where the edges directing to variables, which are not marginalized over, are replaced by directed edges to the children.
-Conditioned Bayesian Network do not have a simple Bayesian Network representation, which is why we will treat them as Markov Networks to be introduced next.
-
-
-\begin{theorem}[Independence Characterization of Bayesian Networks]\label{the:condIndBN}
-	A probability distribution $\probof{\nodevariables}$ has a representation by a Bayesian Network on a directed acyclic graph $\graph=(\nodes,\edges)$, if and only if for any $\nodein$ the variables $\catvariableof{\node}$ are independent on $\nondescendantsof{\node}$ conditioned on $\parentsof{\node}$.
-\end{theorem}
-\begin{proof}
-	We choose a topological order $\prec$ on the nodes of $\graph$, which exists since $\graph$ is acyclic.
-	% =>
-	Let us assume, that the conditional independencies are satisfied and apply the chain rule with respect to that ordering to get
-	\begin{align*}
-		\probof{\nodevariables} =
-		\contractionof{
-			\condprobof{\catvariableof{\node}}{\catvariableof{\secnode} : \secnode \prec \node}
-		}
-		{\nodevariables} \, .
-	\end{align*}
-	Since $\prec$ is a topological ordering we have
-		\[ \parentsof{\node} \subset \{\secnode : \secnode \prec \node\} \]
-	We apply the assumed conditional independence with Corollary~\ref{cor:conditionDropping} and get
-	\begin{align*}
-		\probof{\nodevariables} =
-		\contractionof{
-			\condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}}
-		}
-		{\nodevariables} \, .
-	\end{align*}
-	% <=
-	To show the converse direction, let there be a Bayesian Network $\probof{\nodevariables}$ on $\graph$.
-	To show for any node $\node$, that $\catvariableof{\node}$ is independent of $\nondescendantsof{\node}$ conditioned on $\parentsof{\node}$, we reorder the tensors in the contraction
-	%with respect to a set $\node_0$ 
-	\begin{align*}
-		\condprobof{\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}}{\indexedcatvariableof{\parentsof{\node}}}
-		& = \normationofwrt{
-			\{\condprobof{\catvariableof{\secnode}}{\parentsof{\secnode}} \, : \, \secnode\in\nodes\}
-		}
-		{\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}}
-		{\indexedcatvariableof{\parentsof{\node}}} \\
-		& = \normationof{
-			\{\condprobof{\catvariableof{\secnode}}{\parentsof{\secnode}} \, : \, \secnode\in\nodes\} \cup \{\onehotmapof{\catindexof{\parentsof{\node}}}\}
-		}
-		{\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}}\\
-		& = \normationof{
-			\{\condprobof{\catvariableof{\secnode}}{\parentsof{\secnode}} \, : \, \secnode\in\nondescendantsof{\node}\} \cup \{\onehotmapof{\catindexof{\parentsof{\node}}}, \condprobof{\catvariableof{\node}}{\parentsof{\node}} \}
-		}
-		{\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}} \\
-		& =  %\contractionof{
-		 \normationof{
-			\{\condprobof{\catvariableof{\secnode}}{\parentsof{\secnode}} \, : \, \secnode\in\nondescendantsof{\node}\} \cup \{\onehotmapof{\catindexof{\parentsof{\node}}}\}
-		}
-		{\catvariableof{\nondescendantsof{\node}}} \\
-		& \quad  \cdot \normationof{
-			\{\condprobof{\catvariableof{\node}}{\parentsof{\node}},\onehotmapof{\catindexof{\parentsof{\node}}}\}
-		}
-		{\catvariableof{\node}} \\
-		& = \contractionof{\{
-		\condprobof{\catvariableof{\nondescendantsof{\node}}}{\indexedcatvariableof{\parentsof{\node}}},
-		\condprobof{\catvariableof{\node}}{\indexedcatvariableof{\parentsof{\node}}}
-		\}}{\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}}
-		%}{\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}}
-	\end{align*}
-	Here we have dropped in the third equation all tensors to the descendants, since their marginalization is trivial (which can be shown by a leaf-stripping argument).
-	In the fourth equation we made use of the fact, that any directed path between the non-descendants and the node is through the parents of the node.
-	By Theorem~\ref{the:condIndependenceProductCriterion}, it now follows that $\catvariableof{\node}$ is independent of $\nondescendantsof{\node}$ conditioned on $\parentsof{\node}$.
-\end{proof}
-
-
-
-\subsubsection{Example of a Bayesian Network: Hidden Markov Models}
-
-We here extend the example of Markov Chains from Theorem \ref{the:MarkovChain} to a limited observation of the variables by observations.
-Let there be the variables $\catvariableof{\tenumerator}$ (states) and $\randomeof{\tenumerator}$ (observations) with a discrete and finite time $\tenumeratorin$.
-
-The conditional assumptions are 
-\begin{itemize}
-	\item $\catvariableof{\tenumerator+1}$ is independent of $\catvariableof{0:\tenumerator-1}$ and $\randomeof{0:\tenumerator}$ conditioned on $\catvariableof{\tenumerator}$
-	\item $\randomeof{\tenumerator}$ is independent of all other variables conditioned on $\catvariableof{\tenumerator}$
-\end{itemize}
-
-Then the probability tensor has the decomposition 
-\begin{align}
-	\probof{\catvariableof{0:\tdim},\randomeof{0:\tdim}} 
-	& = \prod_{\tenumeratorin}
-	 \left( \condprobof{\catvariableof{\tenumerator}}{\catvariableof{0:\tenumerator-1},\randomeof{0:\tenumerator-1}} \cdot \condprobof{\randomeof{\tenumerator}}{\catvariableof{0:\tenumerator},\randomeof{0:\tenumerator-1}} \right) \\
-	& = \probof{\catvariableof{0}} \cdot \condprobof{\randomeof{0}}{\catvariableof{0}} \cdot \prod_{\tenumeratorin, \tenumerator>0} 
-	\left( \condprobof{\catvariableof{\tenumerator}}{\catvariableof{\tenumerator-1}} \cdot \condprobof{\randomeof{\tenumerator}}{\catvariableof{\tenumerator}} \right)
-\end{align}
-Here we used the Chain Rule decomposition of Theorem~\ref{the:chainRule} in the first equation and the conditional independence assumptions in the second.
-
-We notice, that this is a Bayesian Netowork on a directed acyclic hypergraph $\graph$ consistent in nodes to each state and each observation and hyperedges
-\begin{itemize}
-	\item $(\{\catvariableof{\tenumerator}\}, \{\catvariableof{\tenumerator+1}\})$ for $\tenumerator\in[\tdim-1]$
-	\item $(\{\catvariableof{\tenumerator}\}, \{\randomeof{\tenumerator}\})$ for $\tenumeratorin$
-\end{itemize}
-
-
-\begin{figure}[h]
-\begin{center}
-	\input{PartI/tikz_pics/probability_decomposition/hidden_markov_model.tex}
-\end{center}
-\caption{Depiction of a Hidden Markov Model. 
-	a) Dependency Graph (of the corresponding chain Graphical Model).
-	b) Dual Tensor Network representing the conditional probability factors.}
-\label{fig:HMM}
-\end{figure}
-
 
 
 \subsubsection{Markov Networks}
 
-\red{While typically Markov Networks are defined on graphs, we define them here on hypergraphs to establish a direct connection to tensor networks defined on the same hypergraph.}
+While typically Markov Networks are defined on graphs, we define them here on hypergraphs to establish a direct connection to tensor networks defined on the same hypergraph.
 Along that line, Markov Networks are tensor networks with non-negative tensors (see Definition~\ref{def:tensorNetwork}), which are interpreted as probability distributions after normation.
 
 \begin{definition}\label{def:markovNetwork}
-	Let $\tnetof{\graph}$ be a Tensor Network on a hypergraph $\graph$.
+	Let $\tnetof{\graph}$ be a Tensor Network of non-negative tensors on a hypergraph $\graph$.
 	Then the Markov Network to $\tnetof{\graph}$ is the probability distribution of $\catvariableof{\node}$ defined by the tensor
-		\[ \probtensorof{\graph} = \frac{
-			\contractionof{\{\hypercoreof{\edge} : \edge \in \edges\}}{\nodes} 
+		\[ \probofat{\graph}{\nodevariables} = \frac{
+			\contractionof{\{\hypercoreof{\edge} : \edge \in \edges\}}{\nodevariables} 
 		}{
 			\contraction{\{\hypercoreof{\edge} : \edge \in \edges\}}
-		} = \normationof{\{\hypercoreof{\edge} : \edge \in \edges\}}{\nodes} \, . \] 
+		} = \normationof{\tnetof{\graph}}{\nodevariables} \, . \] 
 	We call the denominator
-		\[\partitionfunctionof{\graph} = \contraction{\{\hypercoreof{\edge} : \edge \in \edges\}} \]
+		\[\partitionfunctionof{\tnetof{\graph}} = \contraction{\{\hypercoreof{\edge} : \edge \in \edges\}} \]
 	the partition function of the Markov Network.
 \end{definition}
 
-%
-This established a generic relation between Markov Networks and Tensor Networks with coordinatewise non-negative contractions.
-
-%
-
-
 % Marginalization and Conditioning
-Let us now demonstrate how marginalizations and contractions can be done on Markov Networks.
-
-\begin{theorem}[Marginalization by Contractions]
-	The marginalization of a Markov Network to $\tnetof{\graph}$ on the variables of the subset $\secnodes$ is
+Often, we are only interested in the distribution of a subset of variables, which are called the observable variables, and call the other variables hidden variables.
+The marginalization of a Markov Network to $\tnetof{\graph}$ on the variables $\catvariableof{\secnodes}$ is
 	\[
-		\probtensor^{\graph}\left[ \catvariableof{\secnodes}\right] 
-		= \contractionof{\tnetof{\graph}}{\catvariableof{\secnodes}}
+		\probofat{\graph}{\catvariableof{\secnodes}}
+		= \normationof{\tnetof{\graph}}{\catvariableof{\secnodes}} \, . 
 	\]
-	and the distribution of $\secnodes$ conditioned on $\thirdnodes$ is
+This can be derived from Theorem~\ref{the:splittingContractions}, which established an equivalence of contractions with sequences of consecutive contractions.
+
+
+Further, the distribution of $\catvariableof{\secnodes}$ conditioned on $\catvariableof{\thirdnodes}$, where $\secnodes,\thirdnodes$ are disjoint subsets of $\nodes$, is
 	\[
 		\probtensor^{\graph}\left[ \catvariableof{\secnodes} | \catvariableof{\thirdnodes}\right] 
-		= \normationofwrt{\tnetof{\graph}}{\catvariableof{\secnodes}}{\catvariableof{\thirdnodes}}
+		= \normationofwrt{\tnetof{\graph}}{\catvariableof{\secnodes}}{\catvariableof{\thirdnodes}} \, . 
 	\]
-\end{theorem}
-\begin{proof}
-	From contraction by subcontraction Theorem~\ref{the:splittingContractions}.
-\end{proof}
-
-%Markov networks are especially good at incorporating evidence.
-%Bayesian networks on the other side always need to impose local normation conditions, which drop when conditioning on evidence.
-
-%\begin{theorem}
-%	The Markov Network conditioned on evidence is the Markov Network, where the evidence is added as decoration of an additional hyperedge.
-%\end{theorem}
 
 \begin{definition}[Separation of Hypergraph]
 	A path in a hypergraph is a sequence of nodes $\node_{\atomenumerator}$ for $\atomenumeratorin$, such that for any $\atomenumerator\in[\atomorder-1]$ we find a hyperedge $\edge\in\edges$ such that $(\node_{\atomenumerator}, \node_{\atomenumerator+1})\subset \edge$.
@@ -778,9 +515,10 @@ Let us now demonstrate how marginalizations and contractions can be done on Mark
 	%when removing the hyperedges which are contained in $\nodesc$ leads to a hypergraph with no path of hyperedges between a node in $\nodesa$ to a node in $\nodesb$.
 \end{definition}
 
-To characterize Markov Networks in terms of coditional independencies we need to further define the property of clique-capturing.
+To characterize Markov Networks in terms of conditional independencies we need to further define the property of clique-capturing.
+This property of clique-capturing established a correspondence of hyperedges with maximal cliques in an alternative graph-based definition of Markov Networks \cite{koller_probabilistic_2009}.
 
-\begin{definition}[Clique-Capturing Hypergraph]
+\begin{definition}[Clique-Capturing Hypergraph]\label{def:ccHypergraph}
 	We call a hypergraph $\graph$ clique-capturing, when each subset $\secnodes\subset\nodes$ is contained in a hyperedge, if for any $a,b\in\secnodes$ there is a hyperedge $\edge\in\edges$ with $a,b\in\secnodes$.
 \end{definition}
 
@@ -815,30 +553,246 @@ Let us now show a characterization of Markov Networks in terms of conditional in
 From the proof of Theorem~\ref{the:condIndMN} Markov Networks with zero coordinates still satisfy the conditional independence assumption.
 However, the reverse is not true, that is there are distributions with vanishing coordinates, which satisfy the conditional independence assumptions, but cannot be represented as a Markov Network (see Example~4.4 in \cite{koller_probabilistic_2009}).
 
-\subsubsection{Bayesian Networks as Markov Networks}
 
-Markov Networks are more flexible compared with Bayesian Networks, since any Bayesian Network is a Markov Network, as we will show in the next theorem.
 
-\begin{theorem}\label{the:BayesianToMarkov}
-	Any Bayesian Network on a directed graph $\graph=(\nodes,\edges)$ is a Markov Network on a hypergraph $\secgraph=(\nodes,\secedges)$ with identical nodes and hyperedges consistent of  a hyeredge to each node with $\node$ being the only outgoing node and
-		\[  \{\tilde{\node} \, : \, (\tilde{\node},\node) \in \edges\} \,  \]
-	being the incoming nodes.
-	Each hyperedge of the Markov Network is decorated with the conditional probability distribution and the partition function is vanishing.
+
+\subsubsection{Bayesian Networks}
+
+Bayesian networks are described by directed acyclic graphs (DAG).
+The probability distribution is a Hadamard product of conditional probabilities, where each variable has a conditional probability factor conditioned on the parents variables in the graph.
+
+We introduce Bayesian Networks based on directed hypergraphs (see Definition~\ref{def:hypergraphs}) and define further properties.
+
+\begin{definition}
+%% Already in notation chapter 
+%	A directed hypergraph is a tuple $\graph=(\nodes,\edges)$ of nodes $\nodes$ and hyperedges $\edges$, where each hyperedge $\edge\in\edges$ is a tuple
+%		\[ \edge = (\incomingnodes,\outgoingnodes) \]
+%	of disjoint sets of incoming nodes $\incomingnodes\subset\nodes$ and outgoing nodes $\outgoingnodes\subset\nodes$.
+	A directed path is a sequence $\node_{0},\ldots\node_{\secatomorder}$ such that for any $\secatomenumeratorin$ there is an hyperedge $\edge=(\incomingnodes,\outgoingnodes)\in\edges$ such that $\node_{\secatomenumerator}\in\incomingnodes$ and $\node_{\secatomenumerator+1}\in\outgoingnodes$.
+	We call the hypergraph $\graph$ acyclic, if there is no path with $\secatomorder>0$ such that $\node_{0}=\node_{\secatomorder}$.
+	Given a directed hypergraph $\graph=(\nodes,\edges)$ we define for any node $\nodein$ its parents by
+		\[ \parentsof{\node} = \{\secnode \, : \, \exists\edge=(\incomingnodes,\outgoingnodes)\in\edges: \secnode\in\incomingnodes,\node\in\outgoingnodes \} \]
+	and its non-descendants $\nondescendantsof{\node}$ as the set of nodes $\secnode$, such that there is no directed path from $\node$ to $\secnode$.
+\end{definition}
+
+\begin{definition}
+	%Let $\nodes$ be a set of nodes decorated by dimensions and 
+	Let $\graph=(\nodes,\edges)$ be a directed acyclic hypergraph with edges of the form 
+		\[ \edges = \{(\parentsof{\node},\{\node\}) \, : \, \nodein\} \, . \]
+%	and for each node $\node\in\nodes$ a random variable $\catvariableof{\node}$.
+	A \emph{Bayesian Network} is a decoration of each edge $(\parentsof{\node},\{\node\})$ by a conditional probability distribution
+	%Further let there be for each node $\node\in\nodes$ with parents $\parentsof{\node}$ a conditional probability distribution
+		\[ \condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \]
+	which represents the probability distribution
+%	Then the \emph{Bayesian Network} with respect to $\graph$ and the conditional probability terms is the distribution
+	\begin{align*}
+		\probat{\nodevariables} = \contractionof{\{\condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \, : \, \nodein\}}{\nodevariables} \, .
+	\end{align*}
+%		\[ \probat{\catvariableof{\node} \, : \, \node\in\nodes } = \prod_{\node\in\nodes} \condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \, . \]
+\end{definition}
+
+%
+By definition each tensor decorating a hyperedge is directed with $\catvariableof{\parentsof{\node}}$ incoming and $\catvariableof{\node}$ outgoing.
+Thus, the directionality of the hypergraph is reflected in each tensor decorating a directed hyperedge.
+This allows us to verify with Theorem~\ref{the:conditionalContractionPreservation} that their contraction defines a probability distribution.
+
+% Contraction -> Now in definition!
+%By definition we can represent a Bayesian network by the contraction
+%\begin{align*}
+%	\probtensorof{\graph} = \sbcontractionof{\{ \condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \, : \, \node\in\nodes\}}{\nodes} \, . 
+%\end{align*}
+
+% Dual
+%The dual tensor network consists of conditional probability distributions to each node $\node\in\nodes$ (see Figure~\ref{fig:BayesianFactor}b).
+
+\begin{figure}[h]
+\begin{center}
+	\input{PartI/tikz_pics/probability_decomposition/bayesian_factor.tex}
+\end{center}
+\caption{Example of a Factor of a Bayesian Network to the node $\catvariableof{\node}$ with parents $\catvariableof{0},\ldots,\catvariableof{\catorder-1}$, as subgraph $a)$ and dual tensor core $b)$.}
+\label{fig:BayesianFactor}
+\end{figure}
+
+
+%% Marginalization and Contraction
+Marginalization of a Bayesian Network are still Bayesian Networks on a graph where the edges directing to variables, which are not marginalized over, are replaced by directed edges to the children.
+Conditioned Bayesian Network do not have a simple Bayesian Network representation, which is why we will treat them as Markov Networks to be introduced next.
+
+
+\begin{theorem}[Independence Characterization of Bayesian Networks]\label{the:condIndBN}
+	A probability distribution $\probat{\nodevariables}$ has a representation by a Bayesian Network on a directed acyclic graph $\graph=(\nodes,\edges)$, if and only if for any $\nodein$ the variables $\catvariableof{\node}$ are independent on $\nondescendantsof{\node}$ conditioned on $\parentsof{\node}$.
 \end{theorem}
 \begin{proof}
-	Each conditional probability distribution is associated with the hyperedge constructed to the representative node.
-	The contraction of all conditional probability distributions is the Bayesian Network, which corresponds with the constructed Markov Network due to the trivial partition function.
+	We choose a topological order $\prec$ on the nodes of $\graph$, which exists since $\graph$ is acyclic.
+	% =>
+	Let us assume, that the conditional independencies are satisfied and apply the chain rule with respect to that ordering to get
+	\begin{align*}
+		\probat{\nodevariables} =
+		\contractionof{
+			\condprobof{\catvariableof{\node}}{\catvariableof{\secnode} : \secnode \prec \node}
+		}
+		{\nodevariables} \, .
+	\end{align*}
+	Since $\prec$ is a topological ordering we have
+		\[ \parentsof{\node} \subset \{\secnode : \secnode \prec \node\} \]
+	We apply the assumed conditional independence with Corollary~\ref{cor:conditionDropping} and get
+	\begin{align*}
+		\probat{\nodevariables} =
+		\contractionof{
+			\condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}}
+		}
+		{\nodevariables} \, .
+	\end{align*}
+	% <=
+	To show the converse direction, let there be a Bayesian Network $\probat{\nodevariables}$ on $\graph$.
+	To show for any node $\node$, that $\catvariableof{\node}$ is independent of $\nondescendantsof{\node}$ conditioned on $\parentsof{\node}$, we reorder the tensors in the contraction
+	%with respect to a set $\node_0$ 
+	\begin{align*}
+		& \condprobof{\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}}{\indexedcatvariableof{\parentsof{\node}}} \\
+		& \quad\quad = \normationofwrt{
+			\{\condprobof{\catvariableof{\secnode}}{\catvariableof{\parentsof{\secnode}}} \, : \, \secnode\in\nodes\}
+		}
+		{\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}}
+		{\indexedcatvariableof{\parentsof{\node}}} \\
+		& \quad\quad  = \normationof{
+			\{\condprobof{\catvariableof{\secnode}}{\catvariableof{\parentsof{\secnode}}} \, : \, \secnode\in\nodes\} \cup \{\onehotmapof{\catindexof{\parentsof{\node}}}\}
+		}
+		{\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}}\\
+		&  \quad\quad = \normationof{
+			\{\condprobof{\catvariableof{\secnode}}{\catvariableof{\parentsof{\secnode}}} \, : \, \secnode\in\nondescendantsof{\node}\} \cup \{\onehotmapof{\catindexof{\parentsof{\node}}}, \condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \}
+		}
+		{\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}} \\
+		&  \quad\quad =  %\contractionof{
+		 \normationof{
+			\{\condprobof{\catvariableof{\secnode}}{\catvariableof{\parentsof{\secnode}}} \, : \, \secnode\in\nondescendantsof{\node}\} \cup \{\onehotmapof{\catindexof{\parentsof{\node}}}\}
+		}
+		{\catvariableof{\nondescendantsof{\node}}} \\
+		& \quad\quad  \quad  \cdot \normationof{
+			\{\condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}},\onehotmapof{\catindexof{\parentsof{\node}}}\}
+		}
+		{\catvariableof{\node}} \\
+		& \quad\quad  = \contractionof{\{
+		\condprobof{\catvariableof{\nondescendantsof{\node}}}{\indexedcatvariableof{\parentsof{\node}}},
+		\condprobof{\catvariableof{\node}}{\indexedcatvariableof{\parentsof{\node}}}
+		\}}{\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}}
+		%}{\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}}
+	\end{align*}
+	Here we have dropped in the third equation all tensors to the descendants, since their marginalization is trivial (which can be shown by a leaf-stripping argument).
+	In the fourth equation we made use of the fact, that any directed path between the non-descendants and the node is through the parents of the node.
+	By Theorem~\ref{the:condIndependenceProductCriterion}, it now follows that $\catvariableof{\node}$ is independent of $\nondescendantsof{\node}$ conditioned on $\parentsof{\node}$.
 \end{proof}
 
+
+
+\subsubsection{Example of a Bayesian Network: Hidden Markov Models}
+
+We here extend the example of Markov Chains from Theorem \ref{the:MarkovChain} to a limited observation of the variables by observations.
+Let there be the variables $\catvariableof{\tenumerator}$ (states) and $\randomeof{\tenumerator}$ (observations) with a discrete and finite time $\tenumeratorin$.
+
+The conditional assumptions are 
+\begin{itemize}
+	\item $\catvariableof{\tenumerator+1}$ is independent of $\catvariableof{0:\tenumerator-1}$ and $\randomeof{0:\tenumerator}$ conditioned on $\catvariableof{\tenumerator}$
+	\item $\randomeof{\tenumerator}$ is independent of all other variables conditioned on $\catvariableof{\tenumerator}$
+\end{itemize}
+
+Then the probability tensor has the decomposition 
+\begin{align}
+	\probat{\catvariableof{0:\tdim},\randomeof{0:\tdim}} 
+	& = \prod_{\tenumeratorin}
+	 \left( \condprobof{\catvariableof{\tenumerator}}{\catvariableof{0:\tenumerator-1},\randomeof{0:\tenumerator-1}} \cdot \condprobof{\randomeof{\tenumerator}}{\catvariableof{0:\tenumerator},\randomeof{0:\tenumerator-1}} \right) \\
+	& = \probat{\catvariableof{0}} \cdot \condprobof{\randomeof{0}}{\catvariableof{0}} \cdot \prod_{\tenumeratorin, \tenumerator>0} 
+	\left( \condprobof{\catvariableof{\tenumerator}}{\catvariableof{\tenumerator-1}} \cdot \condprobof{\randomeof{\tenumerator}}{\catvariableof{\tenumerator}} \right)
+\end{align}
+Here we used the Chain Rule decomposition of Theorem~\ref{the:chainRule} in the first equation and the conditional independence assumptions in the second.
+
+We notice, that this is a Bayesian Netowork on a directed acyclic hypergraph $\graph$ consistent in nodes to each state and each observation and directed hyperedges
+\begin{itemize}
+	\item $(\{\catvariableof{\tenumerator}\}, \{\catvariableof{\tenumerator+1}\})$ for $\tenumerator\in[\tdim-1]$
+	\item $(\{\catvariableof{\tenumerator}\}, \{\randomeof{\tenumerator}\})$ for $\tenumeratorin$
+\end{itemize}
+
+
+\begin{figure}[h]
+\begin{center}
+	\input{PartI/tikz_pics/probability_decomposition/hidden_markov_model.tex}
+\end{center}
+\caption{Depiction of a Hidden Markov Model. 
+	a) Dependency Graph (of the corresponding chain Graphical Model).
+	b) Dual Tensor Network representing the conditional probability factors.}
+\label{fig:HMM}
+\end{figure}
+
+
+
+\subsubsection{Bayesian Networks as Markov Networks}
+
+Markov Networks are more flexible compared with Bayesian Networks, since any Bayesian Network is a Markov Network by ignoring the directionality of the hypergraph and understanding the conditional distributions as generic tensor cores.
+In the next theorem we provide the conditions for the interpretation of a Markov Network as a Bayesian Network.
+
+\begin{theorem}\label{the:MarkovToBayesian}
+	Let $\tnetof{\graph}$ be a tensor network on a directed acyclic hypergraph, such that the edges are of the structure
+		\[ \edges = \{ (\parentsof{\node}, \{\node\}) \, : \, \node\in\nodes \} \]
+	and each tensor $\hypercoreof{\edge}$ respects the directionality of the graph, that is each $\hypercoreof{(\parentsof{\node}, \{\node\})}$ is directed with the variables to $\parentsof{\node}$ incoming and $\node$ outgoing.
+	Then $\partitionfunctionof{\tnetof{\graph}}=1$ and for each $\node\in\nodes$ we have
+		\[ \bnnodecore = \normationofwrt{\tnetof{\graph}}{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \, . \]
+	In particular, $\tnetof{\graph}$ is a Bayesian Network.
+\end{theorem}
+\begin{proof}
+	We show the claim by induction over the cardinality of $\nodes$.
+	
+	$\cardof{\nodes}=1$: In this case we find a unique node $\node\in\nodes$ and have $\edges=\{(\varnothing,\{\node\})\}$.
+		The tensor $\hypercoreof{(\varnothing,\{\node\})}$ is then normed with no incoming variables and we thus have
+			\[ \partitionfunctionof{\tnetof{\graph}} = \contraction{\tnetof{\graph}} = \contraction{\hypercoreof{(\varnothing,\{\node\})}} = 1 \]
+		and
+			\[ \normationof{\tnetof{\graph}}{\catvariableof{\node}} = \hypercoreof{(\varnothing,\{\node\})} \, .  \]
+			
+	$\cardof{\nodes}-1 \rightarrow \cardof{\nodes}$: Let there now be a directed hypergraph $\graph=(\nodes,\edges)$ and let us now assume, that the theorem holds for any tensor networks with node cardinality $\cardof{\nodes}-1$.
+		Since the hypergraph is acyclic, we find a root $\node\in\nodes$ such that $\node\notin\parentsof{\secnode}$ for $\secnode\in\nodes$.
+		We denote $\tnetof{\secgraph}$ the tensor network on the hypergraph $\secgraph=\{\nodes/\{\node\},\edges/\{(\parentsof{\node},\{\node\})\}\}$ with decorations inherited from $\tnetof{\graph}$.
+		With Theorem~\ref{the:splittingContractions}, the directionality of $\bnnodecore$ and the induction assumption on $\tnetof{\secgraph}$ we have
+		\begin{align*}
+			\contraction{\tnetof{\secgraph}\cup\left\{\bnnodecore\right\}}
+			 = \contraction{\tnetof{\secgraph}\cup\left\{\contractionof{\bnnodecore}{\catvariableof{\parentsof{\node}}}\right\}}
+			 = \contraction{\tnetof{\secgraph}\cup\left\{\onesat{\catvariableof{\parentsof{\node}}}\right\}}
+			 = 1
+		\end{align*}
+		and thus a trivial partition function.
+		Since $\node$ does not appear in $\secgraph$, we have for any index $\catindexof{\parentsof{\nodes}}$
+		\begin{align*}
+			\contractionof{\tnetof{\graph}}{\catvariableof{\node},\indexedcatvariableof{\parentsof{\node}}}
+			= \contractionof{\bnnodecore}{\catvariableof{\node},\indexedcatvariableof{\parentsof{\node}}}
+			\cdot \contractionof{\tnetof{\secgraph}}{\indexedcatvariableof{\parentsof{\node}}}
+		\end{align*}
+		and thus, since $\bnnodecore$ is directed, that
+		\begin{align*}
+			\normationofwrt{\tnetof{\graph}}{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}}
+			= \bnnodecore \, .
+		\end{align*}
+\end{proof}
+
+
+%\begin{theorem}\label{the:BayesianToMarkov}
+%	Any Bayesian Network on a directed graph $\graph=(\nodes,\edges)$ is a Markov Network on a hypergraph $\secgraph=(\nodes,\secedges)$ with identical nodes and hyperedges consistent of  a hyeredge to each node with $\node$ being the only outgoing node and
+%		\[  \{\tilde{\node} \, : \, (\tilde{\node},\node) \in \edges\} \,  \]
+%	being the incoming nodes.
+%	Each hyperedge of the Markov Network is decorated with the conditional probability distribution and the partition function is vanishing.
+%\end{theorem}
+%\begin{proof}
+%	Each conditional probability distribution is associated with the hyperedge constructed to the representative node.
+%	The contraction of all conditional probability distributions is the Bayesian Network, which corresponds with the constructed Markov Network due to the trivial partition function.
+%\end{proof}
+
 %% Bayesian Network richer
-Theorem~\ref{the:BayesianToMarkov} states that Markov Networks are more generic compared with Bayesian Networks.
-While Markov Network allow for any Tensor Cores and norming the probability distribution globally, Bayesian Networks impose a local normation condition on each Tensor Core by demanding it to be a conditional probability tensor.
+Theorem~\ref{the:MarkovToBayesian} states that Bayesian Networks are a subset of Markov Networks.
+While Markov Network allow generic tensor cores, Bayesian Networks impose a local directionality condition on each tensor core by demanding it to be a conditional probability tensor.
 In our diagrammatic notation, the local normation of Bayesian Networks is highlighted by the directionality of the hypergraph.
-Generic Markov Networks are on undirected hypergraphs, where no local normation condition applies.
+Generic Markov Networks are on undirected hypergraphs, where in general no local directionality condition is assumed.
+As a consequence, tasks such as the determination of the partition functions or calculation of conditional distributions involve global contractions.
+
 
 %% Conditioning
-The representation of Bayesian Networks by Markov Networks is of special interest when representing conditional distributions.
-Bayesian Networks conditioned on evidence are no longer Bayesian Networks on the same graph, but Markov Networks on a hypergraph enriched by the evidence conditioned about.
+%The representation of Bayesian Networks by Markov Networks is of special interest when representing conditional distributions.
+%Bayesian Networks conditioned on evidence are no longer Bayesian Networks on the same graph, but Markov Networks on a hypergraph enriched by the evidence conditioned about.
 
 
 
@@ -1186,8 +1140,19 @@ In another perspective, we can understand $\frac{1}{\datanum}\ones$ as the unifo
 
 
 
+\section{Discussion and Outlook}
 
-
+\begin{remark}[Alternative definitions of graphical models]
+	In the literature, tensor networks are often called dual to the hypergraphs defining graphical models (see e.g. \cite{robeva_duality_2019}).
+	The duality becomes clear, when one interpretes the tensors as cores and their common variables as edges.
+	We in this work avoid this ambiguity by directly defining tensor networks as decoration of hyperedges by tensors.
+	
+	Often, the tensors decorating hyperedges are called factors and their logarithm features \cite{koller_probabilistic_2009}.
+	
+	Further, we directly use hypergraphs instead of the more canonical association of factors with cliques of a graph.
+	This avoids the discussion of non-maximal cliques as decorated with trivial tensors.
+	Such hypergraphs follow the same line of though compared with factor graphs, which are bipartite graphs with nodes either corresponding with single variables or with a collection of them affected by a factor.
+\end{remark}
 
 
 
