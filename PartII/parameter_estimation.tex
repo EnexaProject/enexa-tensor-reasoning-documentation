@@ -3,26 +3,40 @@
 In this chapter we first investigate unconstrained parameter estimated for Markov Logic Networks and Hybrid Logic Networks, which are special cases of the backward maps introduced in Chapter~\ref{cha:probDecomposition}.
 We then motivate structure learning based on sparsity constraints on the parameters on the minterm family and present heuristic strategies leading to efficient structure learning algorithms.
 
+
+
 \subsection{Mean parameters of Hybrid Logic Networks}
 
 The convex polytope of realizable mean parameters (see Definition~\ref{def:meanForwardBackward}) is for a statistic $\formulaset$ of propositional formulas
 	\[ \meansetof{\formulaset} = \left\{ \sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable} \, : \, \probtensor\in\probtensorset \right\} \, ,\]
 where by $\probtensorset$ we denote the set of all probability distributions.
-
-The convex polytope has a characterization as a convex hull
+By Theorem~\ref{the:meanPolytopeConvHull} the convex polytope has a characterization as a convex hull
 \begin{align}\label{eq:hlnMeansetConvCharacterization}
-	\meansetof{\formulaset} = \convhullof{\sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\atomstates} \, . 
+	\meansetof{\formulaset} 
+	= \convhullof{\sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\atomstates} \, . 
 \end{align}
+
+Some insights:
+\begin{itemize}
+	\item If all mean parameters in $\{0,1\}$ then an extreme points, exactly those are hard logic networks
+	\item If some mean params in $\{0,1\}$, then not in the interior. 
+		Back direction not correct: There are interior points where no coordinate in $\{0,1\}$.
+	\item If in the interior after dropping the hard coordinates: Then a hybrid logic network
+\end{itemize}
+
+
+\subsubsection{Extreme points by hard logic networks}
 
 We exploit this characterization to show, that the extreme points of $\meansetof{\formulaset}$ are exactly those realizable by Hard Logic Networks.
 
 \begin{theorem}\label{the:extremeCharacterizationHLN}
 	Any parameter $\meanparamat{\selvariable}\in\meansetof{\formulaset}$ is an extreme point of $\meansetof{\formulaset}$, if and only $\meanparamat{\selvariable}$ is boolean and the formula
-			\[ \basemeasureofat{\formulaset,\meanparam}{\shortcatvariables} \coloneqq \bigwedge_{\selindexin \, : \, \meanparamat{\indexedselvariable}\in\{0,1\}}
-		\lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables} \]
+			\[ \basemeasureofat{\formulaset,\meanparam}{\shortcatvariables} 
+			\coloneqq \bigwedge_{\selindexin} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables} \]
 	is satisfiable.
-	In that case, $\meanparam$ is the mean parameter of the Hard Logic Network with 
-		\[ \kb=\{\lnot^{(1-\meanparamat{\indexedselvariable})} \enumformula \, : \, \selindexin \} \, . \]
+	In that case, $\meanparam$ is the mean parameter of the Hard Logic Network with formulas
+		\[ \kb=\{\lnot^{(1-\meanparamat{\indexedselvariable})} \enumformula \, : \, \selindexin \} \, , \]
+	where we denote by $\lnot^0$ the identity connective and by $\lnot^1=\lnot$ the logical negation.
 \end{theorem}
 \begin{proof}
 	\proofrightsymbol: Let $\meanparam$ be an extreme point of $\meansetof{\formulaset}$. 
@@ -43,8 +57,15 @@ We exploit this characterization to show, that the extreme points of $\meansetof
 		Since $\meanparamat{\selvariable}$ is boolean and therefore an extreme point of the cube $\cubeof{\seldim}$, it is also an extreme point of the subset $\meansetof{\formulaset}\subset\cubeof{\seldim}$.
 \end{proof}
 
+\subsubsection{Interior points by Markov Logic Networks}
 
-We now show, that any element of the mean parameter set can be realized by a hybrid logic network.
+\red{Following the Theorem 3.3. of Wainwright, cite here the ProbReasoning chapter version.}
+
+
+
+\subsubsection{Points outside the interior}
+
+
 
 \begin{theorem}
 	To any $\meanparamat{\selvariable}\in\meansetof{\formulaset}$ we build the set $\formulaset^{\meanparam}=\{\enumformula\in\formulaset : \meanparamat{\indexedselvariable}\notin\{0,1\}\}$ and the base measure
@@ -68,36 +89,9 @@ We now show, that any element of the mean parameter set can be realized by a hyb
 \end{proof}
 
 
-\begin{lemma}
-	If $\meanparamat{\selvariable}$ is in an exponential family with boolean base measure $\basemeasure$ and minimal representation, then it is in the interior of $\meanset$ if and only if it is representable by a positive distribution with respect to $\basemeasure$.
-\end{lemma}
-\begin{proof} 
-	\proofrightsymbol: % Orient on proof of Theorem~3.3 
-		We show, that for any test vector $\vectorat{\selvariable}$ different from the origin, there is a $\tilde{\meanparam}[\selvariable]$ with
-			\[ \contraction{\vectorat{\selvariable},\meanparamat{\selvariable}} <  \contraction{\vectorat{\selvariable},\tilde{\meanparam}[\selvariable]} \, . \]
-		Then, by [Rockafellar], since the exponential family is minimal and thus $\meanset$ full-dimensional, we have $\meanparamat{\selvariable}$ in the interior of $\meanset$.
-	
-	\proofleftsymbol: Theorem~3.3 in \cite{wainwright_graphical_2008}, we can construct the positive distribution by a member of the exponential family using that the gradient of the cumulant function is onto.
-\end{proof}
 
 
-\begin{lemma}
-	If $\meanparamat{\selvariable}$ is in an exponential family with boolean base measure $\basemeasure$ and minimal representation, and not representable by a positive distribution with respect to $\basemeasure$, then there is $\canparamat{\selvariable}$ such that
-		\[ \meanparamat{\selvariable} \in \argmax_{\meanparam\in\meanset} \contraction{\canparam,\meanparam} \, . \]
-	Moreover, $\meanparamat{\selvariable}$ is representable with respect to the basemeasure
-		\[ \basemeasure \cup  \indicatorofat{\arbset}{\shortcatvariables} \, , \]
-	where the indicator is on the set
-		\[ \arbset = \argmax_{\shortcatindices} \contraction{\canparam,\sstat(\shortcatindices)}  \, . \]
-\end{lemma}
-\begin{proof}
-	We use the halfspace representation of the bounded polyhedron $\meanset$ to show the first claim.
-	By the above lemma, $\meanparamat{\selvariable}$ is not in the interior, therefore on a facet and thus the $\canparam$ is found by the normal equation of that facet.
-	
-	This facet is the convex hull of the extreme points of $\meanset$ corresponding with the elements of $\arbset$.
-	There exists hence a convex combination in the form of a distribution $\probtensor$ supported on $\arbset$, such that 
-		\[ \meanparamat{\selvariable} = \sum_{\shortcatindices\in\arbset} \probat{\indexedshortcatvariables} \sencsstatat{\indexedshortcatvariables,\selvariable} \]
-	and $\meanparamat{\selvariable}$ is reproduced by $\probtensor$.
-\end{proof}
+
 
 Each facet of $\meanset$ thus defines a possible base measure, which is sufficient to reproduce the mean parameters on that facet.
 
@@ -139,6 +133,9 @@ Each facet of $\meanset$ thus defines a possible base measure, which is sufficie
 	Such distributions are therefore representable by the base measure being the indicator of these models, which is
 		\[ \bigvee_{v[\selvariable] \, : \, \contraction{\canparam,v} \in \max_{\meanparam} \contraction{\canparam,\meanparam} }  \formulaof{\formulaset,\contractionof{\canparam,v}{\selvariable}}  \, . \]
 \end{proof}
+
+
+\subsubsection{Expressivity of Hybrid Logic Networks}
 
 % Reduction to Hybrid Logic Networks, question of sufficient expressivity
 Let us recall, that the set $\hlnsetof{\formulaset}$ contains all Hybrid Logic Networks, which can be realized as tensor networks with the same structure of computation and activation cores.

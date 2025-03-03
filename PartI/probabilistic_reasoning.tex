@@ -453,10 +453,11 @@ This is especially useful, when the contraction is intractable, for example beca
 		  = \argmax_{\meanparam\in\meanset}  \sbcontraction{\meanparam,\canparam} + \sentropyof{\meanrepprob} 
 	\end{align*}
 	where 
-	\begin{align*}
-		 \meanset = \{  \sbcontractionof{\probtensor,\sencodingof{\sstat}}{\selvariable} \, :  \,  \probtensor \,\, \text{a distribution} \}
-	\end{align*}
-	and by $\meanrepprob$ we denote a probability tensor reproducing the mean parameter $\meanparam$.
+	%\begin{align*}
+	%	 \meanset = \{  \sbcontractionof{\probtensor,\sencodingof{\sstat}}{\selvariable} \, :  \,  \probtensor \,\, \text{a distribution} \}
+	%\end{align*}
+	%and 
+	by $\meanrepprob$ we denote a probability tensor reproducing the mean parameter $\meanparam$.
 \end{theorem}
 \begin{proof}
 	Theorem3.4 in \cite{wainwright_graphical_2008}.
@@ -467,14 +468,132 @@ This is especially useful, when the contraction is intractable, for example beca
 Further in \cite{wainwright_graphical_2008}: 
 Forward mapping coincides with gradient, i.e. $\meanparam = \nabla \cumfunction(\canparam)$.
 
+
+\begin{theorem}\label{the:meanPolytopeInterior}
 % Theorem out of this?
-The image $\imageof{\forwardmap}$ of the forward map is the interior of the convex polytope $\meansetof{\sstat}$.
-It contains any mean parameters $\sbcontractionof{\probtensor,\sstat}{\selvariable}$ realizable by any probability distribution $\probtensor$ \cite{wainwright_graphical_2008}.
+	For any statistics $\sstat$, which is minimal with respect to a base measure $\basemeasure$, the image $\imageof{\forwardmap}$ of the forward map is the interior of the convex polytope $\meansetof{\sstat}$.
+	%It contains any mean parameters $\sbcontractionof{\probtensor,\sstat}{\selvariable}$ realizable by any probability distribution $\probtensor$ \cite{wainwright_graphical_2008}.
+\end{theorem}
+\begin{proof}
+	Theorem 3.3 in \cite{wainwright_graphical_2008}.
+\end{proof}
+
+
+For the practicle usage of this theorem, we need a characterization of the interior of $\meansetof{\sstat}$.
+
+\begin{definition}
+	We say that a probability distribution $\probtensor$ is positive with respect to a boolean base measure $\basemeasure$, if the distribution is representable by $\basemeasure$ (i.e. $\contraction{\probtensor,\basemeasure}=1$) and for all $\shortcatindices$ with $\basemeasureat{\indexedcatvariables}=1$ we have $\probat{\indexedcatvariables}>0$.
+\end{definition}
+
+\begin{theorem}\label{the:meanPolytopeInteriorCharacterization}
+	For any minimal statistics $\sstat$ and boolean base measure $\basemeasure$ we have for some $\meanparamat{\selvariable}$ that $\meanparamat{\selvariable}\in\meanset{\sstat,\basemeasure}$ if and only if there is a positive distribution with respect to $\basemeasure$ such that
+		\[ \meanparamat{\selvariable} = \sbcontractionof{\probtensor,\sencsstat}{\selvariable} \, . \]
+%	If $\meanparamat{\selvariable}$ is in an minimal exponential family with boolean base measure $\basemeasure$, then it is in the interior of $\meanset$ if and only if it is representable by a positive distribution with respect to $\basemeasure$.
+\end{theorem}
+\begin{proof} 
+	\proofrightsymbol: 
+		By Theorem~\ref{the:meanPolytopeInterior} we find a canonical parameter $\canparamat{\selvariable}$ such that
+		\begin{align*}
+			\meanparamat{\selvariable} = \sbcontractionof{\expdistat{\shortcatvariables},\sencsstatwith}{\selvariable} \, .
+		\end{align*}
+		We notice, that $\expdist$ is positive with respect to $\basemeasure$, as is any member of an exponential family with base measure $\basemeasure$.
+		
+	\proofleftsymbol: % Orient on proof of Theorem~3.3 
+		Since by assumption the statistics is minimal, the convex set $\meansetof{\sstat,\basemeasure}$ is full dimensional (see e.g. Appendix B in \cite{wainwright_graphical_2008}). 
+		We thus use a well-known property for full-dimensional convex sets (see \cite{rockafellar_convex_1997,hiriart-urruty_convex_1993}), that $\meanparam\in\interiorof{\meansetof{\sstat,\basemeasure}}$ if for any non-vanishing vector $\vectorat{\selvariable}$ there is a  % citations from Wainwright - Appendix B	
+		there is a $\tilde{\meanparam}[\selvariable]$ with
+			\[ \contraction{\vectorat{\selvariable},\meanparamat{\selvariable}} <  \contraction{\vectorat{\selvariable},\tilde{\meanparam}[\selvariable]} \, . \]
+		It thus suffices to show for an arbitrary non-vanishing vector $\vectorat{\selvariable}$ the existence of a distribution $\tilde{\probtensor}$, such that
+		\begin{align*}
+			\contraction{\vectorat{\selvariable},\meanparamat{\selvariable}} < \contraction{\vectorat{\selvariable},\sencsstatwith,\secprobat{\shortcatvariables}} \, .
+		\end{align*}
+		We define for $\epsilon\in\rr$
+		\begin{align*}
+			\probofat{\epsilon}{\shortcatvariables} 
+			= \sbnormationof{\probof{\shortcatvariables},\expof{\epsilon\cdot\contractionof{\sencsstatwith,\vectorat{\selvariable}}{\shortcatvariables}}}{\shortcatvariables}
+		\end{align*}
+		The derivation of this map at $\epsilon=0$ is 
+		\begin{align*}
+			\difwrt{\epsilon}\probofat{\epsilon}{\shortcatvariables}|_{\epsilon=0}
+			= \contractionof{\probwith,\sencsstatwith,\vectorat{\selvariable}}{\shortcatvariables} - \contraction{\probwith,\sencsstatwith,\vectorat{\selvariable}} \cdot \probwith 
+		\end{align*}
+		and thus
+		\begin{align*}
+			\difwrt{\epsilon} \contraction{\probofat{\epsilon}{\shortcatvariables},\sencsstatwith,\vectorat{\selvariable}}|_{\epsilon=0}
+			= \contractionof{\probwith,(\contractionof{\sencsstatwith,\vectorat{\selvariable}})^2}{\shortcatvariables}
+			 - \left(\contractionof{\probwith,\sencsstatwith,\vectorat{\selvariable}}{\shortcatvariables}\right)^2 \, . 
+		\end{align*}
+		We can interpret this quantity as the variance of the random variable $\contractionof{\sencsstatwith,\vectorat{\selvariable}}{\indexedshortcatvariables}$, where $\shortcatindices$ is drawn from $\probwith$.
+		The variance is greater than zero, if this random variable is not constant.
+		But from the minimality of $\sstat$ with respect to $\basemeasure$ it follows, that this variable is not constant and we therefore have
+		\begin{align*}
+			0 < \difwrt{\epsilon} \contraction{\probofat{\epsilon}{\shortcatvariables},\sencsstatwith,\vectorat{\selvariable}}|_{\epsilon=0} \, . 
+		\end{align*}
+		Thus, there is a $\epsilon>0$ with 
+		\begin{align*}
+			\contraction{\vectorat{\selvariable},\meanparamat{\selvariable}} < \contraction{\vectorat{\selvariable},\sencsstatwith,\probofat{\epsilon}{\shortcatvariables}} \, .
+		\end{align*}
+
+\end{proof}
+
+
+\subsection{Boundary of convex polytopes}
+
+For mean parameters $\meanparamat{\selvariable}$ outside the interior of $\meansetof{\sstat,\basemeasure}$ we know by Theorem~\ref{the:meanPolytopeInteriorCharacterization}, that any distribution with mean parameter $\meanparamat{\selvariable}$ is not positive with respect to $\basemeasure$ and is therefore not in the exponential family.
+We investigate this situation further and provide here a construction scheme to adapt the base measure such that there are exponential families containing these boundary distributions.
+
+\begin{theorem}
+	Let there be a minimal $\sstat$ with respect to the base measure $\basemeasure$ and $\meanparamat{\selvariable}\notin\meanset{\sstat,\basemeasure}$.
+	Then there is a $\canparamat{\selvariable}$ with 
+		\[ \meanparamat{\selvariable} \in \argmax_{\meanparam\in\meansetof{\sstat,\basemeasure}} \contraction{\canparamat{\selvariable},\meanparamat{\selvariable}} \,  \]
+	and all distributions with mean parameter $\meanparamat{\selvariable}$ are representable with respect to the base measure
+		\[ \contractionof{\basemeasure, \indicatorofat{\arbset}{\shortcatvariables}}{\shortcatvariables} \, , \]
+	where the indicator is on the set
+		\[ \arbset = \argmax_{\shortcatindices} \contraction{\canparam,\sstat(\shortcatindices)}  \, . \]
+\end{theorem}
+%\begin{lemma}
+%	If $\meanparamat{\selvariable}$ is in an exponential family with boolean base measure $\basemeasure$ and minimal representation, and not representable by a positive distribution with respect to $\basemeasure$, then there is $\canparamat{\selvariable}$ such that
+%		\[ \meanparamat{\selvariable} \in \argmax_{\meanparam\in\meanset} \contraction{\canparam,\meanparam} \, . \]
+%	Moreover, $\meanparamat{\selvariable}$ is representable with respect to the basemeasure
+%		\[ \basemeasure \cup  \indicatorofat{\arbset}{\shortcatvariables} \, , \]
+%	where the indicator is on the set
+%		\[ \arbset = \argmax_{\shortcatindices} \contraction{\canparam,\sstat(\shortcatindices)}  \, . \]
+%\end{lemma}
+\begin{proof}
+	We use the halfspace representation of Theorem~\ref{the:meanPolytopeHalfspaces} to show the first claim.
+	By the above lemma, $\meanparamat{\selvariable}$ is not in the interior, therefore on a face and thus the $\canparam$ is found by one $a_i[\selvariable]$ of that face.
+	
+	This face is the convex hull of the extreme points of $\meanset$ corresponding with the elements of $\arbset$.
+	There exists hence a convex combination in the form of a distribution $\probtensor$ supported on $\arbset$, such that 
+		\[ \meanparamat{\selvariable} = \sum_{\shortcatindices\in\arbset} \probat{\indexedshortcatvariables} \sencsstatat{\indexedshortcatvariables,\selvariable} \]
+	and $\meanparamat{\selvariable}$ is reproduced by $\probtensor$.
+\end{proof}
+
+
+\subsubsection{Mode Search by annealing}
+
+%% ANNEALING
+Finding the mode of a distribution is related to the forward mapping of $\invtemp\cdot\canparam$: $\meanparam$ to a delta distribution (or in the convex hull of multiple maxima) in the limit.
+
+% Annealing effect on the optimization problem
+This is because 
+\begin{align*}
+	\argmax_{\meanparam\in\meanset}  \sbcontraction{\meanparam,\canparam}
+\end{align*}
+is taken at an extreme point in $\meanset$ (since linear objective over closed convex set), which is a delta distribution of a set and
+\begin{align*}
+	\argmax_{\meanparam\in\meanset}  \sbcontraction{\meanparam,\invtemp\cdot\canparam}+ \sentropyof{\meanrepprob} 
+	= 
+	\argmax_{\meanparam\in\meanset}  \sbcontraction{\meanparam,\canparam} + \frac{1}{\invtemp} \cdot \sentropyof{\meanrepprob} 	
+\end{align*}
+thus the entropy term is neglectible for large $\invtemp$.
+A more precise argument is using a limit of the maxima and can be found in Theorem~8.1 in \cite{wainwright_graphical_2008}
+
+
+
 
 
 \subsubsection{Mean Field Method}
-
-
 
 We rewrite 
 \begin{align*}
@@ -727,23 +846,7 @@ The mean field method corresponds with minimization of the KL Divergence to the 
 \end{proof}
 
 
-\subsubsection{Mode Search by annealing}
 
-Finding the mode of a distribution is related to the forward mapping of $\invtemp\cdot\canparam$: $\meanparam$ to a delta distribution (or in the convex hull of multiple maxima) in the limit.
-
-% Annealing effect on the optimization problem
-This is because 
-\begin{align*}
-	\argmax_{\meanparam\in\meanset}  \sbcontraction{\meanparam,\canparam}
-\end{align*}
-is taken at an extreme point in $\meanset$ (since linear objective over closed convex set), which is a delta distribution of a set and
-\begin{align*}
-	\argmax_{\meanparam\in\meanset}  \sbcontraction{\meanparam,\invtemp\cdot\canparam}+ \sentropyof{\meanrepprob} 
-	= 
-	\argmax_{\meanparam\in\meanset}  \sbcontraction{\meanparam,\canparam} + \frac{1}{\invtemp} \cdot \sentropyof{\meanrepprob} 	
-\end{align*}
-thus the entropy term is neglectible for large $\invtemp$.
-A more precise argument is using a limit of the maxima and can be found in Theorem~8.1 in \cite{wainwright_graphical_2008}
 
 
 

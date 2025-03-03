@@ -120,124 +120,6 @@ A brute force solution would require parameter estimation for each candidate in 
 We provide two more efficient approximative heuristics in the following (see Chapter~20 in \cite{koller_probabilistic_2009}).
 
 
-
-\subsubsection{Gradient heuristic and the proposal distribution}
-
-\red{Advantage: Might avoid formulawise calculus, when sampling from proposal distribution. 
-Brute force solution of gain heuristic require formulawise approach.}
-
-We now derive a heuristic of choosing features based on the maximal coordinate of the gradient when differentiating the canonical parameter in the minterm family.
-To prepare for this, we build the gradient of the loss
-%For the naive exponential family 
-\begin{align*}
-	\lossof{\expdistof{(\naivestat, \naivecanparam)}} 
-	%= \frac{1}{\datanum} \sum_{\dataindexin}\lnof{\expdistofat{(\naivestat, \naivecanparam)}{\shortcatvariables=\datamapof{\dataindex}}}
-	= \contraction{\empdistribution, \sencodingof{\naivestat}, \naivecanparam} - \lnof{\contraction{\expof{\contractionof{\sencodingof{\naivestat}, \naivecanparam}{\shortcatvariables}}}} 
-\end{align*}
-as
-\begin{align*}
-	\gradwrt{\naivecanparamat{\selvariable}} \lossof{\expdistof{(\naivestat, \naivecanparam)}}
-	&= \contractionof{\sencodingof{\naivestat},\empdistribution}{\selvariable} - \contractionof{\sencodingof{\naivestat},\expdistof{(\naivestat, \naivecanparam)}}{\selvariable} \\
-	&= \empdistribution - \expdistof{(\naivestat, \naivecanparam)} \, . 
-\end{align*}
-
-%% Single feature
-%Given a feature $\exfunction[\shortcatvariables]$ we vary the naive parameters by a function on $\canparam\in\rr$ by
-%\begin{align*}
-%	 \naivestat(\canparam) %=  \mlntensor + \weight_{\parindices} \ftensorof{\exformula_{\parindices}}
-%	= \naivestat(0) + \canparam\cdot\exfunction
-%\end{align*}
-%and get a likelihood gradient of
-%\begin{align*}
-%	 \frac{\partial \lossof{\expdistof{(\naivestat(\canparam), \naivecanparam)}}}{\partial\canparam} 
-%	 &= \sbcontraction{
-%	 	\frac{\partial\lossof{\expdistof{(\naivestat, \naivecanparam)}}}{\partial\naivecanparam}|_{\naivecanparam(0)},
-%		\frac{\partial\naivecanparam(\canparam)}{\partial\canparam} 
-%	 }  \\
-%	 &= \contraction{\empdistribution,\exfunction} -   \contraction{\expdistof{(\naivestat, \naivecanparam)},\exfunction} \, .
-%\end{align*}
-
-
-%% Positive and Negative Search
-The gradient shows the typical decomposition into a positive and a negative phase.
-While the positive phase comes from the data term and prefers directions of large data support, the negative phase originates in the partition function and draws the gradient away from directions already supported by the current model $\expdistof{(\naivestat, \naivecanparam)}$.
-%% Regularization functionality
-The negative phase is a regularization, by comparing with what has already been learned.
-When nothing has been learned so far, we can take the current model to be the uniform distribution, which is the naive exponential family with vanishing canonical parameters. 
-
-
-
-%% Collection of features by selection
-Given a set $\fselectionmap$ of features we vary $\naivecanparam$ by the function
-\begin{align*}
-	 \exfunction(\canparam) = \naivecanparam + \sbcontractionof{\canparam,\sencodingof{\fselectionmap}}{\shortcatvariables} \, . 
-\end{align*}
-At $\canparam=0$ we have the gradient of the loss of the parametrized formula by
-\begin{align*}
-	 \gradwrtat{\canparam}{0} 
-	 \lossof{\expdistof{(\naivestat,\exfunction(\canparam),\basemeasure)}}
-	 &= \sbcontraction{
-	 	 \gradwrtat{\exfunction(\canparam)}{\naivecanparam}  \lossof{\expdistof{(\naivestat,\exfunction(\canparam),\basemeasure)}},
-		 \gradwrtat{\canparam}{0}  \exfunction(\canparam)
-	 }  \\
-	 &= \sbcontractionof{\empdistribution,\sencodingof{\sstat}}{\selvariable} -   \sbcontractionof{\expdistof{(\naivestat, \naivecanparam, \basemeasure)},\sencodingof{\sstat}}{\selvariable} \, . 
-\end{align*}
-
-
-%% Grafting
-We want to choose the formula, which is best aligned with the gradient of the log-likelihood, that is using a formula selecting map $\fselectionmap$
-\begin{align} \label{prob:greedyGrad} \tag{$\mathrm{P}^{\mathrm{grad}}_{\datamap,\formulaset,\fselectionmap}$} 
-	\argmax_{\selindex\in[\seldim]} \sbcontractionof{\empdistribution,\fselectionmap}{\indexedselvariable} 
-	- \sbcontractionof{\expdistof{(\naivestat, \naivecanparam, \basemeasure)},\fselectionmap}{\indexedselvariable} \, . 
-\end{align}
-This method is known as the gradient heuristic or grafting.
-% Mean parameter interpretation
-The objective of Problem~\eqref{prob:greedyGrad} has another interpretation by the difference of the mean parameter $\datamean$ and $\currentmean$ of the projections of the empirical and current distributions on the family to $\fselectionmap$. % ! NOT the proposal family, those have transposed statistic
-
-%% Formula alignment perspective
-Problem~\eqref{prob:greedyGrad} is further equivalent to the formula alignment
-\begin{align*}
-	\argmax_{\formula\in\fselectionmap} \sbcontraction{\formula,\empdistribution-\currentdistribution} \, . 
-\end{align*}
-The objective can be interpreted as the difference of the satisfaction probability of the formula with respect to the empirical distribution and the current distribution.
-%We can choose selection architectures to efficiently parametrize the formulas in the hypothesis $\fselectionmap$ and rewrite the problem as
-%\begin{align*}
-%	\argmax_{\selindexin} \contractionof{ \gradwrtat{\canparam}{\canparam=0} \lossof{\expdist}}{\indexedselvariable}
-%\end{align*}
-%This is thus equivalent to the problem \ref{prob:greedyGrad}, when taking all formulas selectable by $\formulaset$ as the hypothesis $\Gamma$.
-
-
-%\subsection{Proposal distribution}
-
-% Proposal distribution
-Let us now understand the likelihood gradient as the energy tensor of a probability distribution, which we call the proposal distribution.
-
-\begin{definition}[Proposal Distribution]
-	Let there be a base distribution $\currentdistribution$, a targeted distribution $\empdistribution$ and a formula selecting map $\fselectionmap[\shortcatvariables, \selvariable]$.
-	The proposal distribution at inverse temperature $\invtemp>0$ is the distribution of $\selvariable$ defined by
-	\begin{align*}
-		\normationof{\expof{\sbcontractionof{\invtemp\cdot(\empdistribution-\currentdistribution),\fselectionmap}{\selvariable}} }{\selvariable} \, . 
-	\end{align*}
-	The proposal distribution is the member of the exponential family with statistics $\fselectionmap$ and parameter $\invtemp\cdot(\empdistribution-\currentdistribution)$.
-\end{definition}
-
-
-%. Exponential family
-The proposal distribution is in the exponential family with sufficient statistic by the formula selecting map $\fselectionmap$, namely the member with the canonical parameters $\canparam=\empdistribution-\currentdistribution$.
-Of further interest are tempered proposal distributions, which are in the same exponential family with canonical parameters $\invtemp\cdot(\empdistribution-\currentdistribution)$ where $\invtemp>0$ is the inverse temperature parameter.
-
-% MLN
-As Markov Logic Networks, the proposal distributions are in exponential families with the sufficient statistic defined in terms of formula selecting maps.
-While Markov Logic Networks contract the maps on the selection variables $\selvariable$, the proposal distributions contract them along the categorical variables $\catvariable$ to define energy tensors.
-
-% Methods to solve mode search
-The grafting Problem~\eqref{prob:greedyGrad} is the search for the mode of the proposal distribution.
-To solve grafting, we thus need to answer a MAP query, for which we can apply the methods introduced in Chapter~\ref{cha:probReasoning}, such as Gibbs Sampling or Mean Field Approximations in combination with annealing.
-
-
-
-
-
 \subsubsection{Gain Heuristic}
 
 In the gain heuristic, only the parameters of the new formula are optimized and the others left unchanged.
@@ -364,6 +246,103 @@ Further improvement of the model can be achieved by iteratively optimizing the o
 This would require the computation of backward mappings for each candidate formula, for which we only have an alternating approach in general.
 
 
+
+\subsubsection{Gradient heuristic and the proposal distribution}
+
+\red{Advantage: Might avoid formulawise calculus, when sampling from proposal distribution. 
+Brute force solution of gain heuristic require formulawise approach.}
+
+We now derive a heuristic of choosing features based on the maximal coordinate of the gradient when differentiating the canonical parameter in the minterm family.
+To prepare for this, we build the gradient of the loss
+%For the naive exponential family 
+\begin{align*}
+	\lossof{\expdistof{(\naivestat, \naivecanparam)}} 
+	%= \frac{1}{\datanum} \sum_{\dataindexin}\lnof{\expdistofat{(\naivestat, \naivecanparam)}{\shortcatvariables=\datamapof{\dataindex}}}
+	= \contraction{\empdistribution, \sencodingof{\naivestat}, \naivecanparam} - \lnof{\contraction{\expof{\contractionof{\sencodingof{\naivestat}, \naivecanparam}{\shortcatvariables}}}} 
+\end{align*}
+as
+\begin{align*}
+	\gradwrt{\naivecanparamat{\selvariable}} \lossof{\expdistof{(\naivestat, \naivecanparam)}}
+	&= \contractionof{\sencodingof{\naivestat},\empdistribution}{\selvariable} - \contractionof{\sencodingof{\naivestat},\expdistof{(\naivestat, \naivecanparam)}}{\selvariable} \\
+	&= \empdistribution - \expdistof{(\naivestat, \naivecanparam)} \, . 
+\end{align*}
+
+%% Single feature
+%Given a feature $\exfunction[\shortcatvariables]$ we vary the naive parameters by a function on $\canparam\in\rr$ by
+%\begin{align*}
+%	 \naivestat(\canparam) %=  \mlntensor + \weight_{\parindices} \ftensorof{\exformula_{\parindices}}
+%	= \naivestat(0) + \canparam\cdot\exfunction
+%\end{align*}
+%and get a likelihood gradient of
+%\begin{align*}
+%	 \frac{\partial \lossof{\expdistof{(\naivestat(\canparam), \naivecanparam)}}}{\partial\canparam} 
+%	 &= \sbcontraction{
+%	 	\frac{\partial\lossof{\expdistof{(\naivestat, \naivecanparam)}}}{\partial\naivecanparam}|_{\naivecanparam(0)},
+%		\frac{\partial\naivecanparam(\canparam)}{\partial\canparam} 
+%	 }  \\
+%	 &= \contraction{\empdistribution,\exfunction} -   \contraction{\expdistof{(\naivestat, \naivecanparam)},\exfunction} \, .
+%\end{align*}
+
+
+%% Positive and Negative Search
+The gradient shows the typical decomposition into a positive and a negative phase.
+While the positive phase comes from the data term and prefers directions of large data support, the negative phase originates in the partition function and draws the gradient away from directions already supported by the current model $\expdistof{(\naivestat, \naivecanparam)}$.
+%% Regularization functionality
+The negative phase is a regularization, by comparing with what has already been learned.
+When nothing has been learned so far, we can take the current model to be the uniform distribution, which is the naive exponential family with vanishing canonical parameters. 
+
+
+
+%% Collection of features by selection
+Given a set $\fselectionmap$ of features we vary $\naivecanparam$ by the function
+\begin{align*}
+	 \exfunction(\canparam) = \naivecanparam + \sbcontractionof{\canparam,\sencodingof{\fselectionmap}}{\shortcatvariables} \, . 
+\end{align*}
+At $\canparam=0$ we have the gradient of the loss of the parametrized formula by
+\begin{align*}
+	 \gradwrtat{\canparam}{0} 
+	 \lossof{\expdistof{(\naivestat,\exfunction(\canparam),\basemeasure)}}
+	 &= \sbcontraction{
+	 	 \gradwrtat{\exfunction(\canparam)}{\naivecanparam}  \lossof{\expdistof{(\naivestat,\exfunction(\canparam),\basemeasure)}},
+		 \gradwrtat{\canparam}{0}  \exfunction(\canparam)
+	 }  \\
+	 &= \sbcontractionof{\empdistribution,\sencodingof{\sstat}}{\selvariable} -   \sbcontractionof{\expdistof{(\naivestat, \naivecanparam, \basemeasure)},\sencodingof{\sstat}}{\selvariable} \, . 
+\end{align*}
+
+
+%% Grafting
+We want to choose the formula, which is best aligned with the gradient of the log-likelihood, that is using a formula selecting map $\fselectionmap$
+\begin{align} \label{prob:greedyGrad} \tag{$\mathrm{P}^{\mathrm{grad}}_{\datamap,\formulaset,\fselectionmap}$} 
+	\argmax_{\selindex\in[\seldim]} \sbcontractionof{\empdistribution,\fselectionmap}{\indexedselvariable} 
+	- \sbcontractionof{\expdistof{(\naivestat, \naivecanparam, \basemeasure)},\fselectionmap}{\indexedselvariable} \, . 
+\end{align}
+This method is known as the gradient heuristic or grafting.
+% Mean parameter interpretation
+The objective of Problem~\eqref{prob:greedyGrad} has another interpretation by the difference of the mean parameter $\datamean$ and $\currentmean$ of the projections of the empirical and current distributions on the family to $\fselectionmap$. % ! NOT the proposal family, those have transposed statistic
+
+%% Formula alignment perspective
+Problem~\eqref{prob:greedyGrad} is further equivalent to the formula alignment
+\begin{align*}
+	\argmax_{\formula\in\fselectionmap} \sbcontraction{\formula,\empdistribution-\currentdistribution} \, . 
+\end{align*}
+The objective can be interpreted as the difference of the satisfaction probability of the formula with respect to the empirical distribution and the current distribution.
+%We can choose selection architectures to efficiently parametrize the formulas in the hypothesis $\fselectionmap$ and rewrite the problem as
+%\begin{align*}
+%	\argmax_{\selindexin} \contractionof{ \gradwrtat{\canparam}{\canparam=0} \lossof{\expdist}}{\indexedselvariable}
+%\end{align*}
+%This is thus equivalent to the problem \ref{prob:greedyGrad}, when taking all formulas selectable by $\formulaset$ as the hypothesis $\Gamma$.
+
+
+
+
+
+
+
+
+
+
+
+
 \subsubsection{Iterations}
 
 Let us now iterate the search for a best formula at a current model with the optimization of weights after each step.
@@ -400,6 +379,50 @@ During learning, one needs to instantiate the proposal distribution, which requi
 	To maintain a small set of active formulas, one could combine greedy learning approaches with thresholding on the coordinates of $\canparam$.
 	This is a standard procedure in Iterative Hard Thresholding algorithms of Compressed Sensing, but note that here we do not have a linear in $\canparam$ objective.
 \end{remark}
+
+
+
+
+\subsection{Proposal distribution}
+
+
+% Proposal distribution
+Let us now understand the likelihood gradient as the energy tensor of a probability distribution, which we call the proposal distribution.
+
+\begin{definition}[Proposal Distribution]
+	Let there be a base distribution $\currentdistribution$, a targeted distribution $\empdistribution$ and a formula selecting map $\fselectionmap[\shortcatvariables, \selvariable]$.
+	The proposal distribution at inverse temperature $\invtemp>0$ is the distribution of $\selvariable$ defined by
+	\begin{align*}
+		\normationof{\expof{\sbcontractionof{\invtemp\cdot(\empdistribution-\currentdistribution),\fselectionmap}{\selvariable}} }{\selvariable} \, . 
+	\end{align*}
+	The proposal distribution is the member of the exponential family with statistics $\fselectionmap$ and parameter $\invtemp\cdot(\empdistribution-\currentdistribution)$.
+\end{definition}
+
+
+%. Exponential family
+The proposal distribution is in the exponential family with sufficient statistic by the formula selecting map $\fselectionmap$, namely the member with the canonical parameters $\canparam=\empdistribution-\currentdistribution$.
+Of further interest are tempered proposal distributions, which are in the same exponential family with canonical parameters $\invtemp\cdot(\empdistribution-\currentdistribution)$ where $\invtemp>0$ is the inverse temperature parameter.
+
+% MLN
+As Markov Logic Networks, the proposal distributions are in exponential families with the sufficient statistic defined in terms of formula selecting maps.
+While Markov Logic Networks contract the maps on the selection variables $\selvariable$, the proposal distributions contract them along the categorical variables $\catvariable$ to define energy tensors.
+
+% Methods to solve mode search
+The grafting Problem~\eqref{prob:greedyGrad} is the search for the mode of the proposal distribution.
+To solve grafting, we thus need to answer a MAP query, for which we can apply the methods introduced in Chapter~\ref{cha:probReasoning}, such as Gibbs Sampling or Mean Field Approximations in combination with annealing.
+
+
+\subsubsection{Mean parameter polytope}
+
+The mean parameter polytope of the proposal distribution with statistic $\proposalstat$ is the convex hull of the formulas in $\formulaset$, that is
+\begin{align*}
+	\meansetof{\proposalstat}
+	= \convhullof{\sencodingof{\proposalstat}{\indexedselvariable,\shortcatvariables} \, : \, \selindexin{}}
+	= \convhullof{\formulaat{\shortcatvariables} \, : \, \formula\in\fselectionmap}
+\end{align*}
+
+
+
 
 
 \subsection{Discussion}

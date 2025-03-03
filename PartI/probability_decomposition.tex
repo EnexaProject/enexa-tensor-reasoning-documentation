@@ -811,7 +811,7 @@ We then understand $\canparam$ as a vector to the categorical variable $\selvari
 	and a boolean base measure
 		\[ \basemeasure : \facstates \rightarrow [2] \]
 	with $\contraction{\basemeasure}\neq0$,  the set $\expfamily=\{\expdist \, : \, \canparam[\selvariable] \in \simpleparspace\}$ of probability distributions 
-		\[ \expdistat{\shortcatvariables} = \normationof{\expof{\sbcontractionof{\sencodingof{\sstat},\canparam}{\shortcatvariables},\basemeasureat{\shortcatvariables}}}{\shortcatvariables} \]
+		\[ \expdistat{\shortcatvariables} = \normationof{\expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables},\basemeasureat{\shortcatvariables}}}{\shortcatvariables} \]
 	is called the exponential family to $\sstat$.
 	We further define for each member with parameters $\canparam$ the associated energy tensor
 		\[ \expenergy = \sbcontractionof{\sencsstat,\canparam}{\shortcatvariables} \]
@@ -845,7 +845,7 @@ In Chapter~\ref{cha:networkRepresentation} we will investigate distributions, wh
 		\expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables}},\basemeasureat{\shortcatvariables}
 		}{\shortcatvariables} \\
 		&= \frac{\contractionof{\expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables},\basemeasureat{\shortcatvariables}}}{\shortcatvariables}
-			}{\contraction{\expof{\sbcontractionof{\sencodingof{\sstat},\canparam	}{\shortcatvariables}},\basemeasureat{\shortcatvariables}}} \\
+			}{\contraction{\expof{\sbcontractionof{\sencsstat,\canparam	}{\shortcatvariables}},\basemeasureat{\shortcatvariables}}} \\
 		&=  \frac{
 		\contractionof{\expof{\expenergyat{\shortcatvariables}},\basemeasureat{\shortcatvariables}}{\shortcatvariables}
 		}{
@@ -856,13 +856,25 @@ In Chapter~\ref{cha:networkRepresentation} we will investigate distributions, wh
 \end{proof}
 
 
+
+
+% Minimal statistics
+
+\begin{definition}[Minimal]\label{def:minimalStatistics}
+	We say that a statistic $\sstat$ is minimal with respect to a boolean base measure $\basemeasure$, if there is no pair of a nonvanishing vector $\canparamat{\selvariable}$ and a scalar $\lambda\in\rr$ with
+		\[ \contractionof{\sencsstat,\canparam,\basemeasure}{\shortcatvariables} = \lambda\cdot\basemeasureat{\shortcatvariables} \, . \]
+\end{definition}
+
+
+
+
 \subsubsection{Tensor Network Representation} 
 
 We can use the relational encoding formalism to represent members of exponential families by a single contraction, as we show next.
 The central insight here is a relational encoding of the sufficient statistics, which enables representation by tensor network decomposition, when the sufficient statistic is decomposable.
 
 \begin{theorem}[Generic Representation of Exponential Families]\label{def:expFamilyTensorRep}
-	Given any base measure $\basemeasure$ and a sufficient statistic $\sstat$ we enumerate for each coordindate $\selindexin$ the image $\imageof{\sstatcoordinateof{\selindex}}$ by a variable $\sstatcatof{\selindex}$ taking values in $[\cardof{\imageof{\sstatcoordinateof{\statenumerator}}}]$, given an interpretation map
+	Given any base measure $\basemeasure$ and a sufficient statistic $\sstat$ we enumerate for each coordinate $\selindexin$ the image $\imageof{\sstatcoordinateof{\selindex}}$ by a variable $\sstatcatof{\selindex}$ taking values in $[\cardof{\imageof{\sstatcoordinateof{\statenumerator}}}]$, given an interpretation map
 		\[ \indexinterpretationof{\selindex} : 
 		[\cardof{\imageof{\sstatcoordinateof{\statenumerator}}}] \rightarrow \imageof{\sstatcoordinateof{\statenumerator}} \, . \]
 	
@@ -945,35 +957,60 @@ and both the activation core and the corresponding computation core can be dropp
 Mean parameters are an alternative way to represent members of exponential families.
 
 \begin{definition}\label{def:meanForwardBackward}
-	Let there be an exponential family defined by $\sstat$.
+	Let there be an exponential family defined by a statistic $\sstat$ and a boolean base measure.
 	We call the tensor
-		\[ \meanparam = \sbcontractionof{\probtensor,\sencodingof{\sstat}}{\selvariable} \]
+		\[ \meanparam = \sbcontractionof{\probtensor,\sencsstat}{\selvariable} \]
 	the mean parameter tensor to a distribution $\probtensor$ of an exponential family.
 	The set 
-		\[ \meansetof{\sstat} = \left\{\contractionof{\probtensor,\sencodingof{\sstat}}{\selvariable} \, : \, \probtensor\in\probtensorset \right\} \, , \]
+		\[ \meansetof{\sstat,\basemeasure} = \left\{\contractionof{\probtensor,\sencsstat,\basemeasure}{\selvariable} \, : \, 0\prec\probtensor , \, \contractionof{\probtensor,\basemeasure}{\shortcatvariables} 
+		= \basemeasureat{\shortcatvariables} \right\} \, , \]
 	where $\probtensorset$ denotes the set of all probability distributions,
 	is called the convex polytope of realizable mean parameters.
 	The map
 		\[ \forwardmap :  \simpleparspace\rightarrow\simpleparspace\]
-	with $\forwardmapof{\canparam} = \sbcontractionof{\expdist,\sencodingof{\sstat}}{\selvariable}$ is called the forward map of the exponential family and any map
+	with $\forwardmapof{\canparam} = \sbcontractionof{\expdist,\sencsstat}{\selvariable}$ is called the forward map of the exponential family and any map
 		\[ \backwardmap : \imageof{\forwardmap} \rightarrow \simpleparspace\]
 	with $\expdistof{(\sstat,\backwardmapof{\forwardmapof{\canparam}},\basemeasure)} = \expdist$ for any $\canparam\in\rr^{\statorder}$ a backward map.
 \end{definition}
 
 
-% Polytope
+% Convex Hull Characterization Polytope
 While introduced here as a property of a distribution, the mean parameters will be central to the discussion of probabilistic inference in Chapter~\ref{cha:probReasoning}.
 We now provide a simple characterization of the sets of mean parameters based on slices of the selection encoding of the statistic.
 
-\begin{theorem}
+\begin{theorem}\label{the:meanPolytopeConvHull}
 	For any statistic $\sstat$ the polytope of mean parameters is the convex hull of the slices of $\sencsstat$ with fixed indices to $\shortcatvariables$, that is
 	\begin{align*}
-		\meansetof{\sstat} = \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\facstates} \, . 
+		\meansetof{\sstat,\basemeasure} 
+		= \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\facstates, \, \basemeasureat{\indexedshortcatvariables}=1} \, . 
 	\end{align*}	
 \end{theorem}
 \begin{proof}
 	This follows from the fact, that the set of probability distributions is the convex hull of the one-hot encodings and the convex hull of mean parameters is a linear transform of that set.
 \end{proof}
+
+% Halfspace Representation
+\begin{theorem}\label{the:meanPolytopeHalfspaces}
+	For any statistic $\sstat$ and base measure $\basemeasure$ there exists a collection $\left( (a_i[\selvariable],b_i) \, : \, i \in[n]\right)$ where $a_i[\selvariable]$ a vector and $b_i\in\rr$ for all $i\in[n]$ such that
+	\begin{align*}
+		\meansetof{\sstat,\basemeasure}
+		= \left\{\meanparamat{\selvariable} \, : \, \forall_{i\in[n]} \, \contraction{\meanparamat{\selvariable},a_i[\selvariable]}\leq b_i \right\} \, . 
+	\end{align*}
+\end{theorem}
+\begin{proof}
+	This is a standard result of combinatorical optimization, see e.g. \cite{ziegler_lectures_2013}.
+\end{proof}
+
+
+\begin{definition}\label{def:meanPolytopeFaces}
+	Given a mean parameter polytope $\meansetof{\sstat,\basemeasure}$ in the half space representation of Theorem~\ref{the:meanPolytopeHalfspaces}, and any subset $\mathcal{I}\subset[n]$ we say that the set
+	\begin{align*}
+		 \left\{\meanparamat{\selvariable} \, : \, \forall_{i\in\mathcal{I}} \, \contraction{\meanparamat{\selvariable},a_i[\selvariable]} = b_i \right\} 
+	\end{align*}
+	is the face to the constraints $\mathcal{I}$.
+\end{definition}
+
+
 
 
 \subsubsection{Examples}
@@ -997,7 +1034,7 @@ Given a hypergraph with fixed node decoration, the different decorations of the 
 		\[ \sstat = \bigtimes_{\edge\in\edges}  \sstatcoordinateof{\edge} \]
 	where 
 		\[ \sstatcoordinateof{\edge}(\catindexof{\nodes}) = \catindexof{\edge} \, . \]
-	Given any Markov Network $\{\hypercoreof{\edge}\}$ on $\graph$ with positive tensors $\hypercoreof{\edge}$ we define
+	Given any Markov Network $\{\hypercoreof{\edge} \, : \, \edge\in\edges\}$ on $\graph$ with positive tensors $\hypercoreof{\edge}$ we define
 		\[ \canparam = \bigtimes_{\edge\in\edges} \canparam_{\edge} \]
 	where
 		\[ \canparam_{\edge} =  \ln\left[ \hypercoreof{\edge} \right] \]
