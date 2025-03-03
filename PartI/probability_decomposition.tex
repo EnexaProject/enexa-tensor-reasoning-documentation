@@ -879,12 +879,12 @@ The central insight here is a relational encoding of the sufficient statistics, 
 	We use an extended image of $\sstat$ by  %	which does not modify the statement of Theorem~\ref{the:tensorFunctionComposition} (since extension to cases, which are never met).
 		\[ \imageof{\sstat} = \bigtimes_{\statenumeratorin} \imageof{\sstatcoordinateof{\selindex}} \, . \]
 	Theorem~\ref{the:tensorFunctionComposition} implies
-		\[ \expof{\contractionof{\{\sstat, \canparam\}}{X}}
-		= \contractionof{\{\rencodingof{\sstat}, \restrictionofto{\expof{\braket{\cdot, \weight}}}{\imageof{\sstat}} \}}{X} \, . \]
+		\[ \expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables}}
+		= \sbcontractionof{\rencodingof{\sstat}, \restrictionofto{\expof{\braket{\cdot, \weight}}}{\imageof{\sstat}}}{\shortcatvariables} \, . \]
 	The claim follows from the equation
-		\[ \restrictionofto{\expof{\braket{\cdot, \canparam}}}{\imageof{\sstat}} 
-		= \bigotimes_{\selindexin} \restrictionofto{\expof{\cdot \canparamat{\indexedselvariable}}}{\imageof{\sstatcoordinateof{\selindex}}}  
-		= \bigotimes_{\selindexin} \headcoreof{\selindex} \, . \]
+		\[ \restrictionoftoat{\expof{\braket{\cdot, \canparam}}}{\imageof{\sstat}}{\catvariableof{\sstatcoordinateof{0}},\ldots,\catvariableof{\sstatcoordinateof{\seldim-1}}}
+		= \bigotimes_{\selindexin} \restrictionoftoat{\expof{\cdot \canparamat{\indexedselvariable}}}{\imageof{\sstatcoordinateof{\selindex}}}{\catvariableof{\sstatcoordinateof{\selindex}}}
+		= \bigotimes_{\selindexin} \headcoreofat{\selindex}{\catvariableof{\sstatcoordinateof{\selindex}}} \, . \]
 \end{proof}
 
 
@@ -947,10 +947,10 @@ Mean parameters are an alternative way to represent members of exponential famil
 \begin{definition}\label{def:meanForwardBackward}
 	Let there be an exponential family defined by $\sstat$.
 	We call the tensor
-		\[ \meanparam = \sbcontractionof{\expdist,\sencodingof{\sstat}}{\selvariable} \]
-	the mean parameter tensor to a member $\expdist$ of an exponential family.
+		\[ \meanparam = \sbcontractionof{\probtensor,\sencodingof{\sstat}}{\selvariable} \]
+	the mean parameter tensor to a distribution $\probtensor$ of an exponential family.
 	The set 
-		\[ \meansetof{\sstat} = \{\contractionof{\probtensor,\sencodingof{\sstat}}{\selvariable} \, : \, \probtensor\in\probtensorset \} \, , \]
+		\[ \meansetof{\sstat} = \left\{\contractionof{\probtensor,\sencodingof{\sstat}}{\selvariable} \, : \, \probtensor\in\probtensorset \right\} \, , \]
 	where $\probtensorset$ denotes the set of all probability distributions,
 	is called the convex polytope of realizable mean parameters.
 	The map
@@ -962,19 +962,30 @@ Mean parameters are an alternative way to represent members of exponential famil
 
 
 % Polytope
-The image $\imageof{\forwardmap}$ of the forward map is the interior of the convex polytope $\meansetof{\sstat}$.
-It contains any mean parameters $\sbcontractionof{\probtensor,\sstat}{\selvariable}$ realizable by any probability distribution $\probtensor$ \cite{wainwright_graphical_2008}.
+While introduced here as a property of a distribution, the mean parameters will be central to the discussion of probabilistic inference in Chapter~\ref{cha:probReasoning}.
+We now provide a simple characterization of the sets of mean parameters based on slices of the selection encoding of the statistic.
 
-\red{Add convex hull interpretation!}
+\begin{theorem}
+	For any statistic $\sstat$ the polytope of mean parameters is the convex hull of the slices of $\sencsstat$ with fixed indices to $\shortcatvariables$, that is
+	\begin{align*}
+		\meansetof{\sstat} = \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\facstates} \, . 
+	\end{align*}	
+\end{theorem}
+\begin{proof}
+	This follows from the fact, that the set of probability distributions is the convex hull of the one-hot encodings and the convex hull of mean parameters is a linear transform of that set.
+\end{proof}
+
 
 \subsubsection{Examples}
 
-% Naive Exponential Family
-\begin{example}[The naive exponential family]\label{exa:naiveExpFamily}
-	When taking as sufficient statistic the identity $\identityat{\shortcatvariables,\selvariable}$, we can represent any positive distribution $\probtensor$ as a member of the exponential family, namely when choosing the canonical parameter
+% Minterm Exponential Family
+\begin{example}[The minterm exponential family]\label{exa:mintermExpFamily}
+	When taking as sufficient statistic the identity $\identityat{\shortcatvariables,\selvariableof{[\catorder]}}$, we can represent any positive distribution $\probtensor$ as a member of the exponential family, namely when choosing the canonical parameter
 		\[ \canparam = \lnof{\probtensor} \, . \]
-	The associated mean parameter is then
-		\[ \meanparam = \probtensor \, . \]
+	The associated mean parameter is then, after relabeling the variables $\shortcatvariables$ by $\selvariableof{[\catorder]}$,
+		\[ \meanparam = \probtensor \,  \]
+	and $\meansetof{\sstat}$ coincides with the set of probability tensors.
+	For reasons to be explained in the Chapter~\ref{cha:logicalRepresentation} we refer to this family as the minterm exponential family.
 \end{example}
 
 
@@ -1020,73 +1031,60 @@ The mean parameter of the Markov Network exponential family is the cartesian pro
 
 \subsection{Empirical Distributions}\label{sec:empDistribution}
 
-
-%The statistic of observed worlds is stored in the data tensor $\datacore$, carrying again indices to each atom.
-%It is the probability tensor of the empirical distribution $\probtensorof{\datacore}$. 
-%Each coordinate is thus the ratio of the observation of the world with the by the indices specified world.
-%
-%
-%\subsubsection{Representing a single sample}
-%
-%Single samples are states of the factored systems, which are indexed by $(\catindices)$ and represented by one-hot encodings $\onehotmapof{\catindices}$.
-%
-%%% Inductive vs Deductive perspective
-%Each evidence is a probability distribution
-%\begin{itemize}
-%	\item Inductive Reasoning: When we interpret evidence as a datapoint, they are typically a basis tensor specifying precisely a world.
-%	\item Deductive Reasoning: Evidence is a partial observation of the world, typically basis vectors at each variable, but leaving some unspecified ($\ones$).
-%	We then interpret the evidence as being a uniform distribution over the worlds not contradicting with the evidence.
-%\end{itemize}
-%
-%
-%\subsubsection{Construction from a list of samples}
-
+Let us now apply the formalism of probability distributions in tensor network representations to encode data.
 \begin{definition}\label{def:dataMap}
-	Given a dataset $\{(\catindicesof{\dataindex}) \, : \, \dataindexin \}$ of samples of the factored system we define the sample selector map
+	Given a dataset $\dataset$ of samples of the factored system we define the sample selector map
 		\[ \datamap : [\datanum] \rightarrow \facstates \]
 	elementwise by 
 		\[ \datamap(\dataindex) = (\catindicesof{\dataindex}) \, . \]
-	Its relational encoding (see Definition~\ref{def:functionRepresentation}) is the tensor
-		\[ \rencodingofat{\datamap}{\datvariable,\shortcatvariables} = \sum_{\dataindexin} \onehotmapofat{\dataindex}{\datvariable} \otimes \onehotmapofat{\catindicesof{\dataindex}}{\shortcatvariables} \, , \]
-	which we call a data tensor.
+	%% Empirical Distribution
+	The empirical distribution to the sample selector map $\datamap$ is the probability distribution
+	\begin{align*}
+		\empdistributionat{\shortcatvariables}
+		\coloneqq \sbnormationof{\datacore}{\shortcatvariables} \, ,
+	\end{align*}
+	where by $\datacore$ we denote the relational encoding (see Definition~\ref{def:functionRepresentation}) of the sample selector map, and the distributed variables $\shortcatvariables$ are the head variables of the relational encoding.
 \end{definition}
 
-%% Basic CP Decomposition of the Data Tensor
-The Data Tensor is a conditional probability tensor and has a network decomposition depicted in Figure~\ref{fig:DataDecomposition}.
-The cores $\datacoreof{\atomenumerator}$ are matrices storing the value of the categorical variable $\catvariableof{\atomenumerator}$ in the sample world indexed by $\dataindex$.
-Whereas the one-hot encoding of single samples is a basis tensor (and therefore a basis elementary decomposition), the data tensor has a basis CP decomposition, see Section~\ref{sec:basisCP}).
-This follows from Theorem~\ref{the:functionDecompositionBasisCP}, using the coordinate maps of $\datamap$ by
-	\[ \datamap_{\atomenumerator} : [\datanum] \rightarrow [\catdimof{\atomenumerator}] \]
-defined by
-	\[  \datamap_{\atomenumerator}(\dataindex) = \catindexof{\atomenumerator}^\dataindex \, .  \]
+% Sample Selector map (former data tensor)
+The relational encoding of the sample selector map is the sum 
+	\[ \datacoreat{\datvariable,\shortcatvariables} 
+	= \sum_{\dataindexin} \onehotmapofat{\dataindex}{\datvariable} \otimes \onehotmapofat{\catindicesof{\dataindex}}{\shortcatvariables} \, . \]
+% Interpretation of the empirical distribution
+Each coordinate $\shortcatindices$ of the empirical distribution can be calculated by
+\begin{align*}
+	\empdistributionat{\indexedshortcatvariables} 
+	= \frac{1}{\sbcontraction{\datacore}} \left( \sum_{\dataindexin} \onehotmapofat{\catindicesof{\dataindex}}{\indexedshortcatvariables}  \right) 
+	= \frac{\cardof{\dataindexin \, : \, (\catindicesof{\dataindex}) = (\catindices)}}{\cardof{\dataindexin}}
+\end{align*}
+and is thus interpreted as the frequency of the corresponding world in the data.
+
+%% Basic CP Decomposition 
+The relational encoding of the sample selector map is a sum of one-hot encodings of the data indices and the corresponding sample states.
+Such sums of basis tensors will be further investigated in Section~\ref{sec:basisCP} as basis CP decompositions.
+We now exploit this structure to find efficient tensor network decompositions (see Figure~\ref{fig:DataDecomposition}) based on matrices encoding its variables.
+
 
 \begin{figure}[h]
 \begin{center}
 	\input{PartI/tikz_pics/probability_decomposition/data_decomposition.tex}
 \end{center}
 \caption{
-	Representation of a dataset.
-	a) As a Bayesian network.
-	b) Decomposition of the data tensor into a tensor network in the $\cpformat$ Format.
-	Without the contraction with the dashed $\frac{1}{\datanum}\ones$ core, the datacore encodes the distribution conditioned on a datapoint. }
+	Representation of a dataset $\dataset$.
+	a) Interpretation as a data selection variable $\datvariable$ selecting states for the variables $\shortcatvariables$.
+	b) Corresponding decomposition of the relational encoding $\datacore$ into a tensor network in the basis $\cpformat$ Format (see Section~\ref{sec:basisCP}), where $\hypercoreof{\edgeof{\atomenumerator}}=\datacoreof{\atomenumerator}$.
+	%Without the contraction with the dashed $\frac{1}{\datanum}\onesat{\datvariable}$ core, the datacore encodes the distribution conditioned on a datapoint. 
+}
 \label{fig:DataDecomposition}
 \end{figure}
 
 
-%% Conditional Probability interpretation
-The Data Tensor a conditional probability tensor, which retrieves the respective sample distribution when selecting a sample.
-We can represent this probability distribution by a random variable $\catvariableof{\dataindex}$ selecting a specific datapoint on which the atoms depend.
-
-%% Empirical Distribution
-We define the empirical distribution by the normation of the relational encoding of the datamap as
-\begin{align*}
-	\empdistribution 
-	\coloneqq \sbnormationof{\datacore}{\shortcatvariables} \, . 
-\end{align*}
-Each coordinate of the empirical distribution is the frequency of the by the index specified word in the data.
-
 \begin{theorem}\label{the:empCPRep}
-	Given a data map $\datamap$ we have
+	Given a data map $\datamap: [\datanum] \rightarrow \facstates$ we define for $\catenumeratorin$ its coordinate maps
+		\[ \datamap_{\catenumerator} : [\datanum] \rightarrow [\catdimof{\catenumerator}] \]
+	by
+		\[  \datamap_{\catenumerator}(\dataindex) = \catindexof{\catenumerator}^\dataindex \, .  \]
+	We then have
 	\begin{align*}
 		\rencodingofat{\datamap}{\datvariable,\shortcatvariables}  
 		= \contractionof{
@@ -1095,17 +1093,22 @@ Each coordinate of the empirical distribution is the frequency of the by the ind
 	\end{align*}
 	and
 	\begin{align*}
-	\empdistribution = \sbcontractionof{\datacore, \frac{1}{\datanum}\ones}{\shortcatvariables} 
-	= \sbcontractionof{\datacoreof{0},\ldots,\datacoreof{\atomorder-1}, \frac{1}{\datanum}\onesat{\datvariable}}{\shortcatvariables} \, . 
+	\empdistributionat{\shortcatvariables}
+	= \sbcontractionof{\datacoreat{\datvariable,\shortcatvariables}, \frac{1}{\datanum}\onesat{\datvariable}}{\shortcatvariables} 
+	= \sbcontractionof{\datacoreofat{0}{\datvariable,\catvariableof{0}},\ldots,\datacoreofat{\catorder-1}{\catvariableof{\catorder-1}}, \frac{1}{\datanum}\onesat{\datvariable}}{\shortcatvariables} \, . 
 	\end{align*}
+	In a contraction diagram this reads
+	\begin{center}
+		\input{PartI/tikz_pics/probability_decomposition/empirical_distribution.tex}
+	\end{center}
 \end{theorem}
 \begin{proof}
 	The first claim is a special case of Theorem~\ref{the:functionDecompositionBasisCP}, to be shown in Chapter~\ref{cha:tensorEncodings}.
 	To show the second claim we notice
 		\[ \sbcontraction{\datacore} = \sum_{\datindexin} \sbcontraction{\rencodingofat{\datamap}{\datvariable=\datindex,\shortcatvariables}} = \datanum \,  . \]
-	With the first claim it follows that
+	With the first claim it now follows that
 	\begin{align*}
-		\empdistribution 
+		\empdistributionat{\shortcatvariables}
 		 = \sbnormationof{\datacore}{\shortcatvariables}
 		 = \frac{\sbcontractionof{\datacore}{\shortcatvariables}}{\sbcontraction{\datacore}} 
 		 =  \contractionof{
@@ -1114,26 +1117,28 @@ Each coordinate of the empirical distribution is the frequency of the by the ind
 	\end{align*}
 \end{proof}
 
-%The normation can be represented by averaging the data index $\dataindex$ and we have
-%\begin{align*}
-%	\empdistribution = \contractionof{\{\datacore, \frac{1}{\datanum}\ones \}}{\shortcatvariables} 
-%	= \contractionof{\{\datacoreof{0},\ldots,\datacoreof{\atomorder-1}, \frac{1}{\datanum}\ones \}}{\shortcatvariables} \, . 
-%\end{align*}
-In a contraction diagram we represent the empirical distribution by
-\begin{center}
-	\input{PartI/tikz_pics/probability_decomposition/empirical_distribution.tex}
-\end{center}
 
-%% Perspective of forwarding the uniform distribution of the samples
-In another perspective, we can understand $\frac{1}{\datanum}\ones$ as the uniform probability distribution over the samples, which is by the map $\datamap$ forwarded to a distribution over $\facstates$.
-%By Theorem~\ref{the:conditionalAverage} also the empirical distribution tensor $\empdistribution$ is a probability tensor.
+The cores $\datacoreof{\atomenumerator}$ are matrices storing the value of the categorical variable $\catvariableof{\atomenumerator}$ in the sample world indexed by $\dataindex$.
+
+% Interpretation
+From the proof of Theorem~\ref{the:empCPRep} we notice that the scalar $\frac{1}{\datanum}$ could be assigned with any core in a representation of $\empdistribution$, and the core $\onesat{\datvariable}$ is thus redundant in the contraction representation.
+However, creating the core $\frac{1}{\datanum}\onesat{\datvariable}$ provides us with a simple interpretation of the empirical distribution.
+We can understand $\frac{1}{\datanum}\onesat{\datvariable}$ as the uniform probability distribution over the samples, which is by the map $\datamap$ forwarded to a distribution over $\facstates$.
+The one-hot encoding of each sample is itself a probability distribution, which is understood as conditioned on the respective state of the sample selection variable $\datvariable$.
+The conditional distribution $\datacore$ therefore forwards the uniform distribution of the samples to a distribution of the variables $\shortcatvariables$.
+In the perspective of a Bayesian Network (see Figure~\ref{fig:DataDecomposition}, the variable $\datvariable$ served as single parent for each categorical variable $\catvariableof{\catenumerator}$.
 
 
+%%% Inductive vs Deductive perspective
+%Each evidence is a probability distribution
+%\begin{itemize}
+%	\item Inductive Reasoning: When we interpret evidence as a datapoint, they are typically a basis tensor specifying precisely a world.
+%	\item Deductive Reasoning: Evidence is a partial observation of the world, typically basis vectors at each variable, but leaving some unspecified ($\ones$).
+%	We then interpret the evidence as being a uniform distribution over the worlds not contradicting with the evidence.
+%\end{itemize}
 
 
-
-
-\section{Discussion and Outlook}
+\subsection{Discussion and Outlook}
 
 \begin{remark}[Alternative definitions of graphical models]
 	In the literature, tensor networks are often called dual to the hypergraphs defining graphical models (see e.g. \cite{robeva_duality_2019}).
