@@ -480,8 +480,8 @@ Whether the hypergraph is directed or not distinguished between Bayesian Network
 While typically Markov Networks are defined on graphs, we define them here on hypergraphs to establish a direct connection to tensor networks defined on the same hypergraph.
 Along that line, Markov Networks are tensor networks with non-negative tensors (see Definition~\ref{def:tensorNetwork}), which are interpreted as probability distributions after normation.
 
-\begin{definition}\label{def:markovNetwork}
-	Let $\tnetof{\graph}$ be a Tensor Network of non-negative tensors on a hypergraph $\graph$.
+\begin{definition}[Markov Network]\label{def:markovNetwork}
+	Let $\tnetof{\graph}$ be a tensor network of non-negative tensors on a hypergraph $\graph$.
 	Then the Markov Network to $\tnetof{\graph}$ is the probability distribution of $\catvariableof{\node}$ defined by the tensor
 		\[ \probofat{\graph}{\nodevariables} = \frac{
 			\contractionof{\{\hypercoreof{\edge} : \edge \in \edges\}}{\nodevariables} 
@@ -558,16 +558,16 @@ However, the reverse is not true, that is there are distributions with vanishing
 
 \subsubsection{Bayesian Networks}
 
-Bayesian networks are described by directed acyclic graphs (DAG).
-The probability distribution is a Hadamard product of conditional probabilities, where each variable has a conditional probability factor conditioned on the parents variables in the graph.
+Compared to Markov Networks, Bayesian Networks impose further conditions on tensor networks representing a distribution.
+They assume a directed hypergraph and each tensor decorating the edges to be normed according to the direction.
+We will observe, that if the hypergraph is in addition acyclic, then each tensor core coincides with the conditional distribution of the underlying Markov Network.
+To introduce Bayesian Networks, we extend Definition~\ref{def:hypergraphs} by introducing the property of acyclicity for hypergraphs.
 
-We introduce Bayesian Networks based on directed hypergraphs (see Definition~\ref{def:hypergraphs}) and define further properties.
+%are described by directed acyclic graphs (DAG).
+%The probability distribution is a Hadamard product of conditional probabilities, where each variable has a conditional probability factor conditioned on the parents variables in the graph.
+%We introduce Bayesian Networks based on directed hypergraphs (see Definition~\ref{def:hypergraphs}) and define further properties.
 
 \begin{definition}
-%% Already in notation chapter 
-%	A directed hypergraph is a tuple $\graph=(\nodes,\edges)$ of nodes $\nodes$ and hyperedges $\edges$, where each hyperedge $\edge\in\edges$ is a tuple
-%		\[ \edge = (\incomingnodes,\outgoingnodes) \]
-%	of disjoint sets of incoming nodes $\incomingnodes\subset\nodes$ and outgoing nodes $\outgoingnodes\subset\nodes$.
 	A directed path is a sequence $\node_{0},\ldots\node_{\secatomorder}$ such that for any $\secatomenumeratorin$ there is an hyperedge $\edge=(\incomingnodes,\outgoingnodes)\in\edges$ such that $\node_{\secatomenumerator}\in\incomingnodes$ and $\node_{\secatomenumerator+1}\in\outgoingnodes$.
 	We call the hypergraph $\graph$ acyclic, if there is no path with $\secatomorder>0$ such that $\node_{0}=\node_{\secatomorder}$.
 	Given a directed hypergraph $\graph=(\nodes,\edges)$ we define for any node $\nodein$ its parents by
@@ -575,20 +575,17 @@ We introduce Bayesian Networks based on directed hypergraphs (see Definition~\re
 	and its non-descendants $\nondescendantsof{\node}$ as the set of nodes $\secnode$, such that there is no directed path from $\node$ to $\secnode$.
 \end{definition}
 
-\begin{definition}
-	%Let $\nodes$ be a set of nodes decorated by dimensions and 
+Based on these additional graphical properties, we now define Bayesian Networks.
+
+\begin{definition}[Bayesian Network]\label{def:bayesianNetwork}
 	Let $\graph=(\nodes,\edges)$ be a directed acyclic hypergraph with edges of the form 
-		\[ \edges = \{(\parentsof{\node},\{\node\}) \, : \, \nodein\} \, . \]
-%	and for each node $\node\in\nodes$ a random variable $\catvariableof{\node}$.
+		\[ \edges = \bnedges \, . \]
 	A \emph{Bayesian Network} is a decoration of each edge $(\parentsof{\node},\{\node\})$ by a conditional probability distribution
-	%Further let there be for each node $\node\in\nodes$ with parents $\parentsof{\node}$ a conditional probability distribution
 		\[ \condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \]
 	which represents the probability distribution
-%	Then the \emph{Bayesian Network} with respect to $\graph$ and the conditional probability terms is the distribution
 	\begin{align*}
 		\probat{\nodevariables} = \contractionof{\{\condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \, : \, \nodein\}}{\nodevariables} \, .
 	\end{align*}
-%		\[ \probat{\catvariableof{\node} \, : \, \node\in\nodes } = \prod_{\node\in\nodes} \condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \, . \]
 \end{definition}
 
 %
@@ -624,7 +621,8 @@ Conditioned Bayesian Network do not have a simple Bayesian Network representatio
 \end{theorem}
 \begin{proof}
 	We choose a topological order $\prec$ on the nodes of $\graph$, which exists since $\graph$ is acyclic.
-	% =>
+	
+	\proofrightsymbol:
 	Let us assume, that the conditional independencies are satisfied and apply the chain rule with respect to that ordering to get
 	\begin{align*}
 		\probat{\nodevariables} =
@@ -643,7 +641,8 @@ Conditioned Bayesian Network do not have a simple Bayesian Network representatio
 		}
 		{\nodevariables} \, .
 	\end{align*}
-	% <=
+	
+	\proofleftsymbol:
 	To show the converse direction, let there be a Bayesian Network $\probat{\nodevariables}$ on $\graph$.
 	To show for any node $\node$, that $\catvariableof{\node}$ is independent of $\nondescendantsof{\node}$ conditioned on $\parentsof{\node}$, we reorder the tensors in the contraction
 	%with respect to a set $\node_0$ 
@@ -682,9 +681,77 @@ Conditioned Bayesian Network do not have a simple Bayesian Network representatio
 	By Theorem~\ref{the:condIndependenceProductCriterion}, it now follows that $\catvariableof{\node}$ is independent of $\nondescendantsof{\node}$ conditioned on $\parentsof{\node}$.
 \end{proof}
 
+\subsubsection{Bayesian Networks as Markov Networks}
+
+Markov Networks are more flexible compared with Bayesian Networks, since any Bayesian Network is a Markov Network by ignoring the directionality of the hypergraph and understanding the conditional distributions as generic tensor cores.
+In the next theorem we provide the conditions for the interpretation of a Markov Network as a Bayesian Network.
+
+\begin{theorem}\label{the:MarkovToBayesian}
+	Let $\tnetof{\graph}$ be a tensor network on a directed acyclic hypergraph, such that the edges are of the structure
+		\[ \edges = \bnedges \]
+	and each tensor $\hypercoreof{\edge}$ respects the directionality of the graph, that is each $\hypercoreof{(\parentsof{\node}, \{\node\})}$ is directed with the variables to $\parentsof{\node}$ incoming and $\node$ outgoing.
+	Then $\partitionfunctionof{\tnetof{\graph}}=1$ and for each $\node\in\nodes$ we have
+		\[ \bnnodecore = \normationofwrt{\tnetof{\graph}}{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \, . \]
+	In particular, $\tnetof{\graph}$ is a Bayesian Network.
+\end{theorem}
+\begin{proof}
+	We show the claim by induction over the cardinality of $\nodes$.
+	
+	$\cardof{\nodes}=1$: In this case we find a unique node $\node\in\nodes$ and have $\edges=\{(\varnothing,\{\node\})\}$.
+		The tensor $\hypercoreof{(\varnothing,\{\node\})}$ is then normed with no incoming variables and we thus have
+			\[ \partitionfunctionof{\tnetof{\graph}} = \contraction{\tnetof{\graph}} = \contraction{\hypercoreof{(\varnothing,\{\node\})}} = 1 \]
+		and
+			\[ \normationof{\tnetof{\graph}}{\catvariableof{\node}} = \hypercoreof{(\varnothing,\{\node\})} \, .  \]
+			
+	$\cardof{\nodes}-1 \rightarrow \cardof{\nodes}$: Let there now be a directed hypergraph $\graph=(\nodes,\edges)$ and let us now assume, that the theorem holds for any tensor networks with node cardinality $\cardof{\nodes}-1$.
+		Since the hypergraph is acyclic, we find a root $\node\in\nodes$ such that $\node\notin\parentsof{\secnode}$ for $\secnode\in\nodes$.
+		We denote $\tnetof{\secgraph}$ the tensor network on the hypergraph $\secgraph=\{\nodes/\{\node\},\edges/\{(\parentsof{\node},\{\node\})\}\}$ with decorations inherited from $\tnetof{\graph}$.
+		With Theorem~\ref{the:splittingContractions}, the directionality of $\bnnodecore$ and the induction assumption on $\tnetof{\secgraph}$ we have
+		\begin{align*}
+			\contraction{\tnetof{\secgraph}\cup\left\{\bnnodecore\right\}}
+			 = \contraction{\tnetof{\secgraph}\cup\left\{\contractionof{\bnnodecore}{\catvariableof{\parentsof{\node}}}\right\}}
+			 = \contraction{\tnetof{\secgraph}\cup\left\{\onesat{\catvariableof{\parentsof{\node}}}\right\}}
+			 = 1
+		\end{align*}
+		and thus a trivial partition function.
+		Since $\node$ does not appear in $\secgraph$, we have for any index $\catindexof{\parentsof{\nodes}}$
+		\begin{align*}
+			\contractionof{\tnetof{\graph}}{\catvariableof{\node},\indexedcatvariableof{\parentsof{\node}}}
+			= \contractionof{\bnnodecore}{\catvariableof{\node},\indexedcatvariableof{\parentsof{\node}}}
+			\cdot \contractionof{\tnetof{\secgraph}}{\indexedcatvariableof{\parentsof{\node}}}
+		\end{align*}
+		and thus, since $\bnnodecore$ is directed, that
+		\begin{align*}
+			\normationofwrt{\tnetof{\graph}}{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}}
+			= \bnnodecore \, .
+		\end{align*}
+\end{proof}
+
+%\begin{theorem}\label{the:BayesianToMarkov}
+%	Any Bayesian Network on a directed graph $\graph=(\nodes,\edges)$ is a Markov Network on a hypergraph $\secgraph=(\nodes,\secedges)$ with identical nodes and hyperedges consistent of  a hyeredge to each node with $\node$ being the only outgoing node and
+%		\[  \{\tilde{\node} \, : \, (\tilde{\node},\node) \in \edges\} \,  \]
+%	being the incoming nodes.
+%	Each hyperedge of the Markov Network is decorated with the conditional probability distribution and the partition function is vanishing.
+%\end{theorem}
+%\begin{proof}
+%	Each conditional probability distribution is associated with the hyperedge constructed to the representative node.
+%	The contraction of all conditional probability distributions is the Bayesian Network, which corresponds with the constructed Markov Network due to the trivial partition function.
+%\end{proof}
+
+%% Bayesian Network richer
+Theorem~\ref{the:MarkovToBayesian} states that Bayesian Networks are a subset of Markov Networks.
+While Markov Network allow generic tensor cores, Bayesian Networks impose a local directionality condition on each tensor core by demanding it to be a conditional probability tensor.
+In our diagrammatic notation, the local normation of Bayesian Networks is highlighted by the directionality of the hypergraph.
+Generic Markov Networks are on undirected hypergraphs, where in general no local directionality condition is assumed.
+As a consequence, tasks such as the determination of the partition functions or calculation of conditional distributions involve global contractions.
 
 
-\subsubsection{Example of a Bayesian Network: Hidden Markov Models}
+%% Conditioning
+%The representation of Bayesian Networks by Markov Networks is of special interest when representing conditional distributions.
+%Bayesian Networks conditioned on evidence are no longer Bayesian Networks on the same graph, but Markov Networks on a hypergraph enriched by the evidence conditioned about.
+
+
+\subsubsection{Example: Hidden Markov Models}
 
 We here extend the example of Markov Chains from Theorem \ref{the:MarkovChain} to a limited observation of the variables by observations.
 Let there be the variables $\catvariableof{\tenumerator}$ (states) and $\randomeof{\tenumerator}$ (observations) with a discrete and finite time $\tenumeratorin$.
@@ -724,82 +791,6 @@ We notice, that this is a Bayesian Netowork on a directed acyclic hypergraph $\g
 
 
 
-\subsubsection{Bayesian Networks as Markov Networks}
-
-Markov Networks are more flexible compared with Bayesian Networks, since any Bayesian Network is a Markov Network by ignoring the directionality of the hypergraph and understanding the conditional distributions as generic tensor cores.
-In the next theorem we provide the conditions for the interpretation of a Markov Network as a Bayesian Network.
-
-\begin{theorem}\label{the:MarkovToBayesian}
-	Let $\tnetof{\graph}$ be a tensor network on a directed acyclic hypergraph, such that the edges are of the structure
-		\[ \edges = \{ (\parentsof{\node}, \{\node\}) \, : \, \node\in\nodes \} \]
-	and each tensor $\hypercoreof{\edge}$ respects the directionality of the graph, that is each $\hypercoreof{(\parentsof{\node}, \{\node\})}$ is directed with the variables to $\parentsof{\node}$ incoming and $\node$ outgoing.
-	Then $\partitionfunctionof{\tnetof{\graph}}=1$ and for each $\node\in\nodes$ we have
-		\[ \bnnodecore = \normationofwrt{\tnetof{\graph}}{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \, . \]
-	In particular, $\tnetof{\graph}$ is a Bayesian Network.
-\end{theorem}
-\begin{proof}
-	We show the claim by induction over the cardinality of $\nodes$.
-	
-	$\cardof{\nodes}=1$: In this case we find a unique node $\node\in\nodes$ and have $\edges=\{(\varnothing,\{\node\})\}$.
-		The tensor $\hypercoreof{(\varnothing,\{\node\})}$ is then normed with no incoming variables and we thus have
-			\[ \partitionfunctionof{\tnetof{\graph}} = \contraction{\tnetof{\graph}} = \contraction{\hypercoreof{(\varnothing,\{\node\})}} = 1 \]
-		and
-			\[ \normationof{\tnetof{\graph}}{\catvariableof{\node}} = \hypercoreof{(\varnothing,\{\node\})} \, .  \]
-			
-	$\cardof{\nodes}-1 \rightarrow \cardof{\nodes}$: Let there now be a directed hypergraph $\graph=(\nodes,\edges)$ and let us now assume, that the theorem holds for any tensor networks with node cardinality $\cardof{\nodes}-1$.
-		Since the hypergraph is acyclic, we find a root $\node\in\nodes$ such that $\node\notin\parentsof{\secnode}$ for $\secnode\in\nodes$.
-		We denote $\tnetof{\secgraph}$ the tensor network on the hypergraph $\secgraph=\{\nodes/\{\node\},\edges/\{(\parentsof{\node},\{\node\})\}\}$ with decorations inherited from $\tnetof{\graph}$.
-		With Theorem~\ref{the:splittingContractions}, the directionality of $\bnnodecore$ and the induction assumption on $\tnetof{\secgraph}$ we have
-		\begin{align*}
-			\contraction{\tnetof{\secgraph}\cup\left\{\bnnodecore\right\}}
-			 = \contraction{\tnetof{\secgraph}\cup\left\{\contractionof{\bnnodecore}{\catvariableof{\parentsof{\node}}}\right\}}
-			 = \contraction{\tnetof{\secgraph}\cup\left\{\onesat{\catvariableof{\parentsof{\node}}}\right\}}
-			 = 1
-		\end{align*}
-		and thus a trivial partition function.
-		Since $\node$ does not appear in $\secgraph$, we have for any index $\catindexof{\parentsof{\nodes}}$
-		\begin{align*}
-			\contractionof{\tnetof{\graph}}{\catvariableof{\node},\indexedcatvariableof{\parentsof{\node}}}
-			= \contractionof{\bnnodecore}{\catvariableof{\node},\indexedcatvariableof{\parentsof{\node}}}
-			\cdot \contractionof{\tnetof{\secgraph}}{\indexedcatvariableof{\parentsof{\node}}}
-		\end{align*}
-		and thus, since $\bnnodecore$ is directed, that
-		\begin{align*}
-			\normationofwrt{\tnetof{\graph}}{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}}
-			= \bnnodecore \, .
-		\end{align*}
-\end{proof}
-
-
-%\begin{theorem}\label{the:BayesianToMarkov}
-%	Any Bayesian Network on a directed graph $\graph=(\nodes,\edges)$ is a Markov Network on a hypergraph $\secgraph=(\nodes,\secedges)$ with identical nodes and hyperedges consistent of  a hyeredge to each node with $\node$ being the only outgoing node and
-%		\[  \{\tilde{\node} \, : \, (\tilde{\node},\node) \in \edges\} \,  \]
-%	being the incoming nodes.
-%	Each hyperedge of the Markov Network is decorated with the conditional probability distribution and the partition function is vanishing.
-%\end{theorem}
-%\begin{proof}
-%	Each conditional probability distribution is associated with the hyperedge constructed to the representative node.
-%	The contraction of all conditional probability distributions is the Bayesian Network, which corresponds with the constructed Markov Network due to the trivial partition function.
-%\end{proof}
-
-%% Bayesian Network richer
-Theorem~\ref{the:MarkovToBayesian} states that Bayesian Networks are a subset of Markov Networks.
-While Markov Network allow generic tensor cores, Bayesian Networks impose a local directionality condition on each tensor core by demanding it to be a conditional probability tensor.
-In our diagrammatic notation, the local normation of Bayesian Networks is highlighted by the directionality of the hypergraph.
-Generic Markov Networks are on undirected hypergraphs, where in general no local directionality condition is assumed.
-As a consequence, tasks such as the determination of the partition functions or calculation of conditional distributions involve global contractions.
-
-
-%% Conditioning
-%The representation of Bayesian Networks by Markov Networks is of special interest when representing conditional distributions.
-%Bayesian Networks conditioned on evidence are no longer Bayesian Networks on the same graph, but Markov Networks on a hypergraph enriched by the evidence conditioned about.
-
-
-
-
-
-
-
 
 \subsection{Exponential Families}\label{sec:exponentialFamilies}
 
@@ -817,48 +808,50 @@ We then understand $\canparam$ as a vector to the categorical variable $\selvari
 \begin{definition}
 	Given a sufficient statistics 
 		\[ \sstat : \facstates \rightarrow \parameterspace\]
-%		\[ \sstat : \atomstates \times [\statorder] \rightarrow \rr \]
-	and a non-negative base measure
-		\[ \basemeasure : \facstates \rightarrow \rr \]
-	the set $\expfamily=\{\expdist \, : \, \canparam[\selvariable] \in \simpleparspace\}$ of probability distributions 
-		\[ \expdist = \normationof{\expof{\sbcontractionof{\sencodingof{\sstat},\canparam}{\shortcatvariables}}}{\shortcatvariables} \]
+	and a boolean base measure
+		\[ \basemeasure : \facstates \rightarrow [2] \]
+	with $\contraction{\basemeasure}\neq0$,  the set $\expfamily=\{\expdist \, : \, \canparam[\selvariable] \in \simpleparspace\}$ of probability distributions 
+		\[ \expdistat{\shortcatvariables} = \normationof{\expof{\sbcontractionof{\sencodingof{\sstat},\canparam}{\shortcatvariables},\basemeasureat{\shortcatvariables}}}{\shortcatvariables} \]
 	is called the exponential family to $\sstat$.
-	If the base measure is positive, we define for each member with parameters $\canparam$
-		\[ \expenergy = \sbcontractionof{\sencsstat,\canparam,\lnof{\basemeasure}}{\shortcatvariables} \]
-	the associated energy tensor.
-	We further introduce the cumulant function
+	We further define for each member with parameters $\canparam$ the associated energy tensor
+		\[ \expenergy = \sbcontractionof{\sencsstat,\canparam}{\shortcatvariables} \]
+	and the cumulant function
 		\[ \cumfunctionof{\canparam} = \lnof{\sbcontraction{\basemeasure,\expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables} }} } \, .\]
 \end{definition}
 
 
-%We have
-%	\[ \expenergyat{\indexedcatvariables} = \sum_{\statenumeratorin}\sstatcoordinateof{\statenumerator}(\catindices) \cdot \canparam(\statenumerator) \, . \]
 
 % Diverging partition functions avoided here
-Since we here restrict the discussion to finite state spaces, the distribution $\expdist$ is well-defined for any $\canparam\in\rr^{\statorder}$.
-For infinite state space there are sufficient statistics and parameters, such that the partition function $\sbcontraction{\basemeasure,\expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables}}}$ diverges and the normation $\expdist$ is not defined.
+Since we restrict the discussion to finite state spaces, the distribution $\expdist$ is well-defined for any $\canparam\in\rr^{\statorder}$.
+For infinite state space there are sufficient statistics and parameters, such that the partition function $\sbcontraction{\basemeasure,\expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables}}}$ diverges and the normation $\expdist$ is not well-defined.
 In that cases, the canonical parameters need to be chosen from a subset where the partition function is finite. 
+
+% Restriction to boolean base measures
+We further restrict to boolean base measures, which satisfy $\contraction{\basemeasure}\neq0$
+In Chapter~\ref{cha:logicalRepresentation} these tensors will be called satisfiable propositional formulas.
+In Chapter~\ref{cha:networkRepresentation} we will investigate distributions, where the base measures and the sufficient statistics share a common computation framework.
 
 % Cumulant representation
 \begin{lemma}\label{lem:energyCumulantRepresentation}
-	For any member of an exponential family $\expfamily$ with positive base measure we have
-		\[ \expdist = \expof{ \expenergy - \cumfunctionof{\canparam}\cdot \onesat{\shortcatvariables}} \, . \]
+	For any member of an exponential family $\expfamily$ we have
+		\[ \expdistat{\shortcatvariables} 
+		= \contractionof{\expof{ \expenergy - \cumfunctionof{\canparam}\cdot \onesat{\shortcatvariables}},\basemeasureof{\shortcatvariables}}{\shortcatvariables} \, . \]
 \end{lemma}
 \begin{proof}
 	By definition we have
 	\begin{align*}
-		\expdist 
+		\expdistat{\shortcatvariables} 
 		&= \normationof{
-		\expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables}}
+		\expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables}},\basemeasureat{\shortcatvariables}
 		}{\shortcatvariables} \\
-		&= \frac{\contractionof{\expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables}}}{\shortcatvariables}
-			}{\contraction{\expof{\sbcontractionof{\sencodingof{\sstat},\canparam	}{\shortcatvariables}}}} \\
+		&= \frac{\contractionof{\expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables},\basemeasureat{\shortcatvariables}}}{\shortcatvariables}
+			}{\contraction{\expof{\sbcontractionof{\sencodingof{\sstat},\canparam	}{\shortcatvariables}},\basemeasureat{\shortcatvariables}}} \\
 		&=  \frac{
-		\contractionof{\expof{\expenergyat{\shortcatvariables}}}{\shortcatvariables}
+		\contractionof{\expof{\expenergyat{\shortcatvariables}},\basemeasureat{\shortcatvariables}}{\shortcatvariables}
 		}{
 		\expof{\cumfunctionof{\canparam}}
 		} \\
-		& = \expof{ \expenergyat{\shortcatvariables} - \cumfunctionof{\canparam}\cdot \onesat{\shortcatvariables}} \, . 
+		& = \contractionof{\expof{ \expenergy - \cumfunctionof{\canparam}\cdot \onesat{\shortcatvariables}},\basemeasureof{\shortcatvariables}}{\shortcatvariables} \, . 
 	\end{align*}
 \end{proof}
 
@@ -869,7 +862,7 @@ We can use the relational encoding formalism to represent members of exponential
 The central insight here is a relational encoding of the sufficient statistics, which enables representation by tensor network decomposition, when the sufficient statistic is decomposable.
 
 \begin{theorem}[Generic Representation of Exponential Families]\label{def:expFamilyTensorRep}
-	Given any base measure $\basemeasure$ sufficient statistic $\sstat$ we enumerate for each coordindate $\selindexin$ the image $\imageof{\sstatcoordinateof{\selindex}}$ by a variable $\sstatcatof{\selindex}$ taking values in $[\cardof{\imageof{\sstatcoordinateof{\statenumerator}}}]$, given an interpretation map
+	Given any base measure $\basemeasure$ and a sufficient statistic $\sstat$ we enumerate for each coordindate $\selindexin$ the image $\imageof{\sstatcoordinateof{\selindex}}$ by a variable $\sstatcatof{\selindex}$ taking values in $[\cardof{\imageof{\sstatcoordinateof{\statenumerator}}}]$, given an interpretation map
 		\[ \indexinterpretationof{\selindex} : 
 		[\cardof{\imageof{\sstatcoordinateof{\statenumerator}}}] \rightarrow \imageof{\sstatcoordinateof{\statenumerator}} \, . \]
 	
