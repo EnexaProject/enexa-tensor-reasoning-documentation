@@ -66,7 +66,7 @@ Conversely, we can understand the conditional query $\condprobof{\exfunction}{\s
 We further denote event queries by
 	\[  \expectationof{\exfunction=z} = \sbcontraction{\probtensor,\rencodingof{\exfunction},\onehotmapof{z}}\]
 where by $\onehotmapof{z}$ be denote the one hot encoding of the state $z$ with respect to some enumeration.
-Let us note that they are further contraction of the queries in \defref{def:queries} since by Theorem~\ref{the:splittingContractions}
+Let us note that they are further contraction of the queries in \defref{def:queries} since by \theref{the:splittingContractions}
 \begin{align*}
 	 \expectationof{\exfunction=z} 
 	& =  \sbcontraction{ \sbcontractionof{\probtensor,\rencodingof{\exfunction}}{\catvariableof{\exfunction}} ,\onehotmapof{z}}\\
@@ -188,7 +188,7 @@ One can instead exploit a representation of $\probtensor$ by a Markov network or
 
 \subsubsection{Exact Methods}
 
-Forward Sampling (see Algorithm~\ref{alg:ForwardSampling}) uses a chain decomposition (see Theorem~\ref{the:chainRule}) of a probability distribution to iteratively sample the variables.
+Forward Sampling (see Algorithm~\ref{alg:ForwardSampling}) uses a chain decomposition (see \theref{the:chainRule}) of a probability distribution to iteratively sample the variables.
 
 \begin{algorithm}[hbt!]
 \caption{Forward Sampling}\label{alg:ForwardSampling}
@@ -314,7 +314,7 @@ This is especially useful, when investigating the convergence of the objective f
 \end{definition}
 
 We now state the Maximum Likelihood Problem in the form
-\begin{align}\tag{$\mathrm{P}_{\Gamma, \empdistribution}$}\label{prob:parameterMaxLikelihood}
+\begin{align}\tag{$\probtagtypeinst{\loss}{\Gamma,\empdistribution}$}\label{prob:parameterMaxLikelihood}
 	\argmin_{\probtensor\in\Gamma} \lossof{\probtensor} \, . % Naive Exponential Family perspective!
 \end{align}
 
@@ -480,7 +480,7 @@ For the practicle usage of this theorem, we need a characterization of the inter
 \end{theorem}
 \begin{proof} 
 	\proofrightsymbol: 
-		By Theorem~\ref{the:meanPolytopeInterior} we find a canonical parameter $\canparamat{\selvariable}$ such that
+		By \theref{the:meanPolytopeInterior} we find a canonical parameter $\canparamat{\selvariable}$ such that
 		\begin{align*}
 			\meanparamat{\selvariable} = \sbcontractionof{\expdistat{\shortcatvariables},\sencsstatwith}{\selvariable} \, .
 		\end{align*}
@@ -527,7 +527,7 @@ For the practicle usage of this theorem, we need a characterization of the inter
 
 \subsubsection{Boundary of convex polytopes}
 
-For mean parameters $\meanparamat{\selvariable}$ outside the interior of $\genmeanset$ we know by Theorem~\ref{the:meanPolytopeInteriorCharacterization}, that any distribution with mean parameter $\meanparamat{\selvariable}$ is not positive with respect to $\basemeasure$ and is therefore not in the exponential family.
+For mean parameters $\meanparamat{\selvariable}$ outside the interior of $\genmeanset$ we know by \theref{the:meanPolytopeInteriorCharacterization}, that any distribution with mean parameter $\meanparamat{\selvariable}$ is not positive with respect to $\basemeasure$ and is therefore not in the exponential family.
 We investigate this situation further and provide here a construction scheme to adapt the base measure such that there are exponential families containing these boundary distributions.
 
 \begin{theorem}\label{the:faceToArgmax}
@@ -562,11 +562,65 @@ Each face of $\genmeanset$ thus defines a refinement of a base measure, which is
 		\[ \basemeasureof{\sstat,\canparam} = \indicatorofat{\argmax_{\shortcatindices} \contraction{\canparam,\sstat(\shortcatindices)}}{\shortcatvariables} \, . \]
 \end{definition}
 
-
 \theref{the:faceToArgmax} therefore states, that when a mean parameter is on a face of $\genmeanset$, then each distribution reproducing the mean parameter has a representation with respect to the refined base measure
 \begin{align*}
 	\secbasemeasureat{\shortcatvariables} = \contractionof{\basemeasure,\basemeasureof{\sstat,\canparam}}{\shortcatvariables} \, . 
 \end{align*}
+
+% Base Measure Refinement algorithm
+We now utilize these findings and provide in \algoref{alg:baseMeasureRefinement} a procedure to refine the base measure until the reduced mean parameter is in the open set of a reduced mean parameter polytope.
+
+\begin{algorithm}[h!]\label{alg:baseMeasureRefinement}
+\caption{Base Measure Refinement}
+\begin{algorithmic}
+\State \textbf{Input}: Base measure $\basemeasure$, statistic $\sstat$ and mean parameter $\meanparam\in\genmeanset$
+\State \textbf{Output}: Refined base measure $\secbasemeasure$, remaining statistic $\secsstat$ and remaining mean parameter $\secmeanparam$
+\hrule
+%\State \noindent\rule{\linewidth}{0.4pt}
+\While{$\meanparam\notin\sbinteriorof{\genmeanset}$}
+	\While{$\sstat$ not minimal with respect to $\basemeasure$ (see \defref{def:minimalStatistics})}
+		\State Find non-vanishing vector $\vectorat{\selvariable}$ and scalar $\lambda\in\rr$ such that 
+			\[ \contractionof{\sencsstatat{\shortcatvariables,\selvariable},\vectorat{\selvariable},\basemeasureat{\shortcatvariables}}{\shortcatvariables} = \lambda\cdot\basemeasureat{\shortcatvariables} \, . \]
+		\State Choose a coordinate $\selindexin$ with $\vectorat{\indexedselvariable}\neq0$ and drop it from $\sstat$ and $\meanparam$
+	\EndWhile
+	\State Find a non-trivial face (i.e. a non-empty face, which is a proper subset of $\genmeanset$) with normal $\canparam$, such that
+		\[ \meanparam\in\genfacesetof{\canparam} \]
+	\State Refine base measure
+		\[ \basemeasure \algdefsymbol \contractionof{\basemeasure,\basemeasureof{\sstat,\canparam}}{\shortcatvariables} \]
+\EndWhile
+\State \textbf{return} $\basemeasure, \, \sstat,\,\meanparam$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{theorem}\label{the:baseMeasureRefinement}
+	For arbitrary inputs $\basemeasure,\sstat$ and $\meanparam\in\genmeanset$, \algoref{alg:baseMeasureRefinement} terminates in finite time and outputs a triple of base measure $\secbasemeasure$, statistic $\secsstat$ and mean parameter $\secmeanparam$ such that the following holds.
+	Any probability tensor $\probtensor$ reproducing $\meanparam$ is representable with respect to $\secbasemeasure$ and $\secmeanparam\in\sbinteriorof{\meansetof{\secsstat,\secbasemeasure}}$.
+%	Thus, there is a member of the exponential family $\expfamilyof{\secsstat,\secbasemeasure}$ reproducing $\meanparam$.
+\end{theorem}
+\begin{proof}
+	Let us first show, that \algoref{alg:baseMeasureRefinement} always terminates.
+	The inner while loop of \algoref{alg:baseMeasureRefinement} always terminates, since $\sstat$ has a finite number of coordinates, and in each iteration one of the coordinates is dropped.
+	To show that the outer while loop also terminates, it suffices to show, that the non-vanishing coordinates of the refined base measure are a proper subset of the base measure before refinement.
+	But if this would not be the case, we would have 
+		\[ \basemeasureat{\shortcatvariables} = \contractionof{\basemeasure,\basemeasureof{\sstat,\canparam}}{\shortcatvariables} \]
+	and thus $\genfacesetof{\canparam}=\genmeanset$, which is a contradiction with the assumption of a non-trivial face.
+	
+	The second claim follows from an iterative application of \theref{the:faceToArgmax} and the fact, that a probability distribution reproduces $\meanparam$ in a non-minimal representation, if and only if it reproduces the corresponding reduced $\meanparam$ with respect to the reduced statistics.
+\end{proof}
+
+
+\begin{example}[Faces with normals parallel to one-hot encodings]
+	To get some intuition how to represent face base measures, let us consider face normals $\canparam\in\{\lambda\cdot\onehotmapofat{\selindex}{\selvariable} \, : \, \selindexin, \, \lambda\in\rr/\{0\}\}$.
+	We use relational encodings of the coordinates $\sstatcoordinateof{\selindex}$ of the statistic $\sstat$, with head variables $\catvariableof{\sstatcoordinateof{\selindex}}$ with dimension $\catdimof{\sstatcoordinateof{\selindex}}$ enumerating the image $\imageof{\sstatcoordinateof{\selindex}}\subset\rr$ in an ascending order.
+	If $\canparamat{\selvariable}=\lambda\cdot\onehotmapofat{\selindex}{\selvariable}$ with $\lambda>0$, then $\argmax_{\shortcatindices} \contraction{\canparam,\sstat(\shortcatindices)}$ consists of states $\shortcatindices$ with minimal statistic $\sstatcoordinateofat{\selindex}{\indexedshortcatvariables}$, that is
+		\[  \basemeasureofat{\sstat,\lambda\cdot\onehotmapof{\selindex}}{\shortcatvariables}
+		 = \contractionof{\rencodingofat{\sstatcoordinateof{\selindex}}{\shortcatvariables,\catvariableof{\sstatcoordinateof{\selindex}}},
+		 \onehotmapofat{\catdimof{\sstatcoordinateof{\selindex}}-1}{\catvariableof{\sstatcoordinateof{\selindex}}}}{\shortcatvariables}  \, . \]		
+	If $\canparamat{\selvariable}=\lambda\cdot\onehotmapofat{\selindex}{\selvariable}$ with $\lambda<0$, then at the states with minimal statistic $\sstatcoordinateofat{\selindex}{\indexedshortcatvariables}$, that is
+		\[  \basemeasureofat{\sstat,\lambda\cdot\onehotmapof{\selindex}}{\shortcatvariables}
+		 = \contractionof{\rencodingofat{\sstatcoordinateof{\selindex}}{\shortcatvariables,\catvariableof{\sstatcoordinateof{\selindex}}},
+		 \onehotmapofat{0}{\catvariableof{\sstatcoordinateof{\selindex}}}}{\shortcatvariables}  \, . \]
+\end{example}
 
 
 \subsubsection{Mode Search by annealing}
@@ -722,7 +776,7 @@ We approximate the solution of this problem again by an alternating algorithm, w
 	for any $\lambda>0$ (e.g. by the norm).
 	Here, the quotient denotes the coordinatewise quotient.
 \end{theorem}
-\begin{proof}%[Proof of Theorem~\ref{the:updateEquationStructuredVariational}]
+\begin{proof}%[Proof of \theref{the:updateEquationStructuredVariational}]
 	We proof the theorem by first order condition on the objective $\objof{\extnet} = \sbcontraction{\energytensor,\extnetdist} + \sentropyof{\extnetdist}$.
 	
 	To proof the theorem, we use Lemma~\ref{lem:difMNExpectation}, which shows a characterization of the derivative of functions
@@ -855,7 +909,7 @@ The mean field method corresponds with minimization of the KL Divergence to the 
 \subsection{Backward Mapping in Exponential Families}
 
 %% FROM NETWORK LEARNING
-The parameters optimizing the likelihood, will be shown to coincide with the backward mapping evaluated on the expectation of the sufficient statistics (see Theorem~\ref{the:parEstToBackwardMap}).
+The parameters optimizing the likelihood, will be shown to coincide with the backward mapping evaluated on the expectation of the sufficient statistics (see \theref{the:parEstToBackwardMap}).
 This is in most generality true for the parameters of the M-projection of any distribution onto the exponential family.
 We therefore investigate methods to compute the backward mapping, in most generality by alternating algorithms and in the special case of Markov Logic Networks by closed form representations.
 
@@ -906,13 +960,6 @@ The backward mapping to $\datameanat{\selvariable} = \sbcontractionof{\empdistri
 	and any $\canparam$ satisfies this condition exactly when $\canparam=\backwardmapof{\meanparam}$ for a backward map.
 \end{proof}
 
-% Gradient property
-In \cite{wainwright_graphical_2008}:
-The objective is the conjugate dual $\dualcumfunction$ of $\cumfunction$, and backward mapping has an expression by the gradient, i.e. $\canparam = \nabla \dualcumfunction(\meanparam)$.
-
-
-
-
 
 \subsubsection{Interpretation by Maximum Likelihood Estimation}
 
@@ -930,7 +977,7 @@ The loss is the cross entropy between a distribution with $\meanparam$ and the d
 	In particular, if $\meanparam=\datamean$ for a data map $\datamap$, the backward map is a maximum likelihood estimator.
 \end{theorem}
 \begin{proof}
-	We exploit the variational characterization of the backward map by Theorem~\ref{the:varBackward}, and first show that the objective coincides with the cross entropy between the distribution $\gendistribution$ and the respective member of the exponential family.
+	We exploit the variational characterization of the backward map by \theref{the:varBackward}, and first show that the objective coincides with the cross entropy between the distribution $\gendistribution$ and the respective member of the exponential family.
 	For any $\gendistribution$ and $\canparam$ we have with Example~\ref{exa:cEntropyExp}
 	\begin{align*}
 		\centropyof{\gendistribution}{\expdistof{(\sstat,\canparam,\basemeasure)}} 
@@ -944,7 +991,7 @@ The loss is the cross entropy between a distribution with $\meanparam$ and the d
 	This shows, that the backward map coincides with the M-projection onto $\Gamma=\expfamily$.
 
 	Further, if $\meanparam=\datamean$ for a data map $\datamap$, we have that the corresponding empirical distribution $\empdistribution$ satisfies $\sbcontractionof{\sencsstat,\empdistribution}{\selvariable}=\meanparamat{\selvariable}$.
-	The backward map of $\meanparam$ is therefore the M-projection of $\empdistribution$, which is with Theorem~\ref{the:lossCentropy} the maximum likelihood estimator.
+	The backward map of $\meanparam$ is therefore the M-projection of $\empdistribution$, which is with \theref{the:lossCentropy} the maximum likelihood estimator.
 \end{proof}
 
 
@@ -1005,29 +1052,22 @@ The loss is the cross entropy between a distribution with $\meanparam$ and the d
 \subsubsection{Connection with Maximum Entropy}\label{sec:maxEntDuality}
 
 
-The Maximum entropy problem with respect to matching expected statistics is
-\begin{align}\tag{$\mathrm{P}_{\sentropyof{}, \genmean}$}\label{prob:maxEntropy}
-	\argmax_{\probtensor} \sentropyof{\probtensor} \quad \text{subject to} \quad 
+The Maximum entropy problem with respect to matching expected statistics $\genmean\in\genmeanset$ 
+\begin{align}\tag{$\probtagtypeinst{\entropysymbol}{\sstat,\basemeasure,\genmean}$}\label{prob:maxEntropy}
+	\argmax_{\probtensor\in\Gamma^{\basemeasure}} \sentropyof{\probtensor} \quad \text{subject to} \quad 
 	 \sbcontractionof{\probtensor,\sencsstat}{\selvariable} =  \genmeanat{\selvariable}
 \end{align}
-where the optimization is over all probability distributions $\probtensor$.
+where the optimization is over all the distributions $\Gamma^{\basemeasure}$, which are representable with respect to the base measure $\basemeasure$.
 
-
-\begin{theorem}\label{the:maxEntMaxLikeDuality} % In Koller Book, Theorem 20.2
-	If $\genmean\in\imageof{\forwardmap}$, we have that any distribution solving Problem~\ref{prob:maxEntropy} has a representation by $\expdistof{(\sstat,\estcanparam,\basemeasure)}$, 
-	where $\estcanparam=\backwardmapof{\genmean}$ for any backward map of the exponential family. 
-	%where $\estcanparam$ is the Maximum Likelihood Estimate with respect to any $\probtensor$ with $\sbcontractionof{\secprobtensor,\sencsstat}{\selvariable} =\genmean$.
-%
-%	Let $\sstat$ be a map and $\gendistribution$ be any distribution of $\atomstates$ and define
-%		\[ \genmeanat{\selvariable} = \sbcontractionof{\gendistribution,\sencsstat}{\selvariable} \, .  \]
-%	Then the solution of \ref{prob:maxEntropy} coincides with the member $\expdistof{(\sstat,\estcanparam,\basemeasure)}$ of the exponential family $\expfamily$ where
-%		\[ \estcanparam = \backwardmapof{\genmean} \]
-%	for a backward map $\backwardmap$ of $\expfamily$.
+\begin{theorem}\label{the:maxEntInterior}
+	Let $\sstat$ be a statistic and $\basemeasure$ a base measure.
+ 	For any $\genmean\in\sbinteriorof{\genmeanset}$ the solution of \probref{prob:maxEntropy} is the distribution $\expdistof{(\secsstat,\estcanparam,\secbasemeasure)}$, where $\estcanparam=\backwardmapwrtof{\secsstat,\secbasemeasure}{\secmeanparam}$.
 \end{theorem}
 \begin{proof}
-	Since $\genmean\in\imageof{\forwardmap}$, there is a parameter $\estcanparam$ such that 
+	Since $\genmean\in\sbinteriorof{\genmeanset}$, \theref{the:meanPolytopeInteriorCharacterization} implies the existence of $\estcanparam$ such that 
 		\[ \genmeanat{\selvariable} = \sbcontractionof{\expdistof{(\sstat,\estcanparam,\basemeasure)},\sencsstat}{\selvariable}   \, . \]
-	Let $\secprobtensor$ further be an arbitrary distribution such that
+	We now follow the argumentation of the proof of Theorem~20.2 in \cite{koller_probabilistic_2009}.
+	Let $\secprobtensor$ further be an arbitrary distribution, possibly different from $\expdistof{(\sstat,\estcanparam,\basemeasure)}$, such that
 		\[ \genmeanat{\selvariable} = \sbcontractionof{\secprobtensor,\sencsstat}{\selvariable}  \, . \]
 	We then have
 	\begin{align*}
@@ -1045,9 +1085,63 @@ where the optimization is over all probability distributions $\probtensor$.
 	%Classical result based on duality of maximum entropy and maximum likelihood, shown e.g. in Koller Book.
 \end{proof}
 
-%
-Theorem~\ref{the:maxEntMaxLikeDuality} states, that when the maximum entropy problem has a solution (i.e. $\genmean\in\genmeanset$), then the solution is in the exponential family to the statistic $\sstat$.
-\red{This is a main motivation of the usage of exponential families as models.}
+% Interpretation
+Let us highlight the fact, that in \probref{prob:maxEntropy} we did not restrict to distributions in an exponential family and only demanded representability with respect to the base measure.
+When choosing the trivial base measure, this does not pose a restriction on the distributions.
+\theref{the:maxEntInterior} states, that when the maximum entropy problem has a solution (i.e. $\genmean\in\genmeanset$), then the solution is in the exponential family to the statistic $\sstat$.
+
+% Generalization
+When $\genmean\notin\sbinteriorof{\genmeanset}$, the mean paramater is by \theref{the:meanPolytopeInteriorCharacterization} not reproducable by a member of the exponential family $\expfamilyof{\sstat,\basemeasure}$. 
+Instead, in combination with the base measure refinement \algoref{alg:baseMeasureRefinement}, we show that the solution is in a refined exponential family.
+% dropping the assumption that the mean parameters are in the interior of the mean parameter polytope.
+
+\begin{theorem}\label{the:maxEntMaxLikeDuality} 
+	Let $\sstat$ be a statistic and $\basemeasure$ a base measure.
+	For any $\genmean\in\genmeanset$, let $\secsstat,\secbasemeasure$ and $\secmeanparam$ be the outputs of \algoref{alg:baseMeasureRefinement} when passing $\sstat,\basemeasure$ and $\genmean$ as input.
+	Then, the distribution $\expdistof{(\secsstat,\estcanparam,\secbasemeasure)}$, where $\estcanparam=\backwardmapwrtof{\secsstat,\secbasemeasure}{\secmeanparam}$, solves \probref{prob:maxEntropy}.
+\end{theorem}
+\begin{proof}
+	\theref{the:baseMeasureRefinement} and the above Lemma.
+\end{proof}
+
+% Minimality of the refined base measure
+\theref{the:maxEntMaxLikeDuality} further implies, that the base measure $\secbasemeasure$ identified by \algoref{alg:baseMeasureRefinement} is minimal for the maximum entropy problem, in the sense that the solving distribution is positive with respect to it and all feasible distributions have to be representable by it.
+This highlights the fact, that the maximum entropy distribution does not vanish beyond those states, which are necessary by \theref{the:baseMeasureRefinement}.
+
+
+%\begin{theorem}\label{the:maxEntMaxLikeDuality} % In Koller Book, Theorem 20.2
+%	If $\genmean\in\imageof{\forwardmap}$, we have that any distribution solving Problem~\ref{prob:maxEntropy} has a representation by $\expdistof{(\sstat,\estcanparam,\basemeasure)}$, 
+%	where $\estcanparam=\backwardmapof{\genmean}$ for any backward map of the exponential family. 
+%	%where $\estcanparam$ is the Maximum Likelihood Estimate with respect to any $\probtensor$ with $\sbcontractionof{\secprobtensor,\sencsstat}{\selvariable} =\genmean$.
+%%
+%%	Let $\sstat$ be a map and $\gendistribution$ be any distribution of $\atomstates$ and define
+%%		\[ \genmeanat{\selvariable} = \sbcontractionof{\gendistribution,\sencsstat}{\selvariable} \, .  \]
+%%	Then the solution of \ref{prob:maxEntropy} coincides with the member $\expdistof{(\sstat,\estcanparam,\basemeasure)}$ of the exponential family $\expfamily$ where
+%%		\[ \estcanparam = \backwardmapof{\genmean} \]
+%%	for a backward map $\backwardmap$ of $\expfamily$.
+%\end{theorem}
+%\begin{proof}
+%	Since $\genmean\in\imageof{\forwardmap}$, there is a parameter $\estcanparam$ such that 
+%		\[ \genmeanat{\selvariable} = \sbcontractionof{\expdistof{(\sstat,\estcanparam,\basemeasure)},\sencsstat}{\selvariable}   \, . \]
+%	Let $\secprobtensor$ further be an arbitrary distribution such that
+%		\[ \genmeanat{\selvariable} = \sbcontractionof{\secprobtensor,\sencsstat}{\selvariable}  \, . \]
+%	We then have
+%	\begin{align*}
+%		\sentropyof{\expdistof{(\sstat,\estcanparam,\basemeasure)}}
+%		= \centropyof{\secprobtensor}{\expdistof{(\sstat,\estcanparam,\basemeasure)}}
+%	\end{align*}
+%	
+%	With the Gibbs inequality we have if $\secprobtensor\neq\expdistof{(\sstat,\estcanparam,\basemeasure)}$
+%	\begin{align*}
+%		\sentropyof{\expdistof{(\sstat,\estcanparam,\basemeasure)}} - \sentropyof{\secprobtensor}
+%		= \centropyof{\secprobtensor}{\expdistof{(\sstat,\estcanparam,\basemeasure)}} - \sentropyof{\secprobtensor} > 0 \, . 
+%	\end{align*}	
+%	
+%	Therefore, if $\secprobtensor$ does not coincide with$\expdistof{(\sstat,\estcanparam,\basemeasure)}$, it is not a solution of Problem~\ref{prob:maxEntropy}.
+%	%Classical result based on duality of maximum entropy and maximum likelihood, shown e.g. in Koller Book.
+%\end{proof}
+
+
 
 
 \subsubsection{Alternating Algorithms to Approximate the Backward Map}\label{sec:alternatingBackwardMap}
@@ -1063,7 +1157,7 @@ Alternate through the coordinates of the statistics and adjust $\canparamat{\ind
 \end{align*}
 
 % Moment matching
-This condition is equal to the collection of moment matching equations % (see Theorem~\ref{the:mm})
+This condition is equal to the collection of moment matching equations % (see \theref{the:mm})
 \begin{align*}
 	\sbcontractionof{\expdist,\sencsstat}{\indexedselvariable} = \sbcontraction{\empdistribution,\sencsstat}{\indexedselvariable} \, . 
 \end{align*}
@@ -1163,5 +1257,9 @@ The computation of $\hypercoreof{\selindex}$ in Algorithm~\ref{alg:AMM} can be i
 % Forward mapping as gradient of A
 Further in \cite{wainwright_graphical_2008}: Convex Duality.
 Forward mapping coincides with gradient, i.e. $\meanparam = \nabla \cumfunction(\canparam)$.
+
+% Gradient property of the backward mapping
+In \cite{wainwright_graphical_2008}:
+The objective is the conjugate dual $\dualcumfunction$ of $\cumfunction$, and backward mapping has an expression by the gradient, i.e. $\canparam = \nabla \dualcumfunction(\meanparam)$.
 
 
