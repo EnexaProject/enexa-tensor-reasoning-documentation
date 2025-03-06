@@ -1,22 +1,21 @@
-\section{Propositional Logics}\label{cha:FormulaTensors}\label{cha:logicalRepresentation}
+\section{Propositional Logics}\label{cha:logicalRepresentation}
 
 Propositional logics describes systems with $\atomorder$ boolean variables, which are called atoms and denoted by $\atomicformulaof{\atomenumerator}$ for $\atomenumeratorin$.
-Indices $\atomlegindexof{\atomenumerator}\in[2]$ to the atoms $\atomenumeratorin$ enumerate the $2^\atomorder$ states of these systems, which are called worlds.
-In each world indexed by $\atomindices$ the indices $\atomicformulaof{\atomenumerator}$ encode whether the corresponding variable is $\truesymbol$. 
+Indices $\catindexof{\atomenumerator}\in[2]$ to the atoms $\atomenumeratorin$ enumerate the $2^\atomorder$ states of these systems, which are called worlds.
+In each world indexed by $\shortcatindices=\catindices$ the indices $\atomicformulaof{\atomenumerator}$ encode whether the corresponding variable is $\truesymbol$. 
 
-% Structure
-We here choose a semantic centric approach to propositional logic, by defining formulas as boolean tensors.
-Then we investigate the corresponding syntax of formulas as specification of a tensor network decomposition of the relational encoding of formulas.
+% Propositional logics
+The epistemological commitments of propositional logics are whether the state is $\truesymbol$ or $\falsesymbol$ reflected by the coordinate of the one-hot encoding being $1$ or $0$.
+Intuitively this describes, whether a specific world can be the state of a factored system.
+Propositional logic amounts to reason about boolean variables, which are categorical variables with $2$ possible values.
 
-Propositional logic amounts to reason about Boolean variables, which are categorical variables with $2$ possible values.
+\red{Boolean tensors have been already used as boolean base measures in the previous chapters.}
 
 Before discussing the semantics and syntax of propositional formulas, we first investigate how Boolean can be represented by vectors in order to mechanize their processing based on contractions.
 
 \subsection{Encoding of Booleans}
 
 Booleans are variables valued by $\truthset$ and consist a basic data structure.
-
-%we investigate scheme to interpret the states $\truthset$ of a boolean 
 
 \subsubsection{Representation by coordinates}
 
@@ -114,8 +113,9 @@ This amounts to posing a global directionality constraint on the boolean tensor,
 
 \subsection{Semantics of Propositional Formulas}
 
-The epistemological commitments are whether the state is $\truesymbol$ or $\falsesymbol$ reflected by the coordinate of the one-hot encoding being $1$ or $0$.
-Intuitively this describes, whether a specific world can be the state of a factored system.
+% Structure
+We now choose a semantic centric approach to propositional logic, by defining formulas as boolean tensors.
+Then we investigate the corresponding syntax of formulas as specification of a tensor network decomposition of the relational encoding of formulas.
 
 \subsubsection{Formulas}
 
@@ -124,22 +124,22 @@ Logics is especially useful in interpreting boolean tensors representing Proposi
 To make this more precise, we associate each such tensor is associated with a formula $\exformula$ being a composition of the atomic variables with logical connectives as we proof next.
 
 \begin{definition}\label{def:formulas}
-	A propositional formula $\formulaat{\catvariables}$ depending on $\atomorder$ atoms $\catvariableof{\atomenumerator}$ is a tensor
-		\[ \formulaat{\catvariables} : \atomstates \rightarrow [2] \subset \rr \, . \]
-	We call $\atomindices \in \atomstates$ a model of a propositional formula $\formula$, if 
+	A propositional formula $\formulaat{\shortcatvariables}$ depending on $\atomorder$ atoms $\catvariableof{\atomenumerator}$ is a tensor
+		\[ \formulaat{\shortcatvariables} : \atomstates \rightarrow [2] \subset \rr \, . \]
+	We call $\shortcatindices \in \atomstates$ a model of a propositional formula $\formula$, if 
 		\[ \formulaat{\indexedcatvariables}=1 \].
 	If there is a model to a propositional formula, say the formula is satisfiable.
 \end{definition}
 
-% Binary Tensors
-The propositional formulas coincide therefore with the binary tensors (see Definition~\ref{def:binaryTensor}).
+% Boolean Tensors
+The propositional formulas coincide therefore with the boolean tensors (see \defref{def:booleanTensor}).
 
 
 % Decomposition into model sums
 Since propositional formulas are binary valued tensors, the generic decomposition of Lemma~\ref{lem:tensorBasisDecomposition} simplifies to
 \begin{align}\label{eq:formulaModelDecomposition}
-	\formulaat{\catvariables} = \sum_{\catindices\in\atomstates} \formulaat{\indexedcatvariables} \cdot \onehotmapofat{\catindices}{\catvariables} \\
-	= \sum_{\catindices\in\atomstates \, : \, \formulaat{\indexedcatvariables}=1}  \onehotmapofat{\catindices}{\catvariables} \, .
+	\formulaat{\shortcatvariables} = \sum_{\catindices\in\atomstates} \formulaat{\indexedcatvariables} \cdot \onehotmapofat{\shortcatindices}{\shortcatvariables} \\
+	= \sum_{\catindices\in\atomstates \, : \, \formulaat{\indexedcatvariables}=1}  \onehotmapofat{\catindices}{\shortcatvariables} \, .
 \end{align}
 Thus, any propositional formula is the sum over the one-hot encodings of its models.
 This is equal to the encoding of the set of models, which will be introduced in Chapter~\ref{cha:tensorEncodings} (see Definition~\ref{def:subsetEncoding}).
@@ -191,19 +191,19 @@ There are two ways to represent formulas by tensors.
 One way is to understand $[2]$ as subset of $\rr$ and interpreting the formula directly as a tensor (as in Definition~\ref{def:formulas}).
 Another way is to understand $[2]$ as the possible values of a categorical variable.
 % Maps between factored systems
-Following this second perspective, formulas are maps between factored systems, where the image system is the factored systems of atoms and the target system the atomic system defined by a variable $\catvariableof{\formula}$ representing the formula satisfaction.
+Following this second perspective, formulas are maps between factored systems, where the image system is the factored systems of atoms and the target system the atomic system defined by a variable $\formulavar$ representing the formula satisfaction.
 %Following this perspective, formulas are maps between the factored systems of atoms and the atomic system of the formula.
 We can then build the relational encoding (Definition~\ref{def:functionRepresentation}) of that map to represent the formula (see Figure~\ref{fig:formulaRencoding}).
 
-\begin{definition}[Relation Encoding of Formulas] % Own definition, since a reinterpretation of the formula
-	Given a factored system with $\atomorder$ atoms $\catvariables$ and a propositional formula $\formula$, we define the relational encoding of $\formula$ (see Definition~\ref{def:functionRepresentation}) 
-		\[ \rencodingofat{\formula}{\catvariables,\catvariableof{\formula}} \in  \left(\bigotimes_{\atomenumeratorin} \rr^2\right) \otimes \rr^2 \]
-	by 
-	\begin{align} 
-		\rencodingofat{\formula}{\catvariables,\catvariableof{\formula}} 
-		= & \sum_{\atomindices\in\atomstates}  \onehotmapofat{\atomindices}{\catvariables} \otimes \onehotmapofat{\exformula(\atomindices)}{\catvariableof{\formula}} \, . 
-	\end{align}
-\end{definition}
+%\begin{definition}[Relation Encoding of Formulas] % Own definition, since a reinterpretation of the formula
+Given a factored system with $\atomorder$ atoms $\shortcatvariables$ and a propositional formula $\formula$, the relational encoding of $\formula$ (see Definition~\ref{def:functionRepresentation}) is the tensor
+	\[ \rencodingofat{\formula}{\shortcatvariables,\formulavar} \in  \left(\atomspace \right) \otimes \rr^2 \]
+decomposable as
+\begin{align} 
+	\rencodingofat{\formula}{\shortcatvariables,\formulavar} 
+	= & \sum_{\shortcatindices\in\atomstates}  \onehotmapofat{\shortcatindices}{\shortcatvariables} \otimes \onehotmapofat{\formulaat{\indexedshortcatvariables}}{\formulavar} \, . 
+\end{align}
+%\end{definition}
 
 %% More general relational encodings
 We can build relational encodings more generally of any tensors, where we identify the image of the tensor with the states of a categorical variable.
@@ -212,23 +212,23 @@ Exactly for propositional formulas, this construction will lead to Boolean image
 
 \begin{lemma}\label{lem:formulaEncodingDecomposition}
 	For any formula $\formula$ we have
-		\[ \rencodingofat{\formula}{\shortcatvariables,\catvariableof{\formula}} 
-		= \formulaat{\shortcatvariables} \otimes \onehotmapofat{1}{\catvariableof{\formula}} 
-		+ \lnot\formulaat{\shortcatvariables} \otimes  \onehotmapofat{0}{\catvariableof{\exformula}} \, . 
+		\[ \rencodingofat{\formula}{\shortcatvariables,\formulavar} 
+		= \formulaat{\shortcatvariables} \otimes \onehotmapofat{1}{\formulavar} 
+		+ \lnot\formulaat{\shortcatvariables} \otimes  \onehotmapofat{0}{\formulavar} \, . 
 		 \]
 	In particular
-		\[ \formulaat{\shortcatvariables} = \contractionof{\{
-		\rencodingofat{\formula}{\shortcatvariables,\catvariableof{\formula}} , \onehotmapofat{1}{\catvariableof{\formula}}
-		\}}{\shortcatvariables} \, . \]
+		\[ \formulaat{\shortcatvariables} = \contractionof{
+		\rencodingofat{\formula}{\shortcatvariables,\formulavar},\onehotmapofat{1}{\formulavar}
+		}{\shortcatvariables} \, . \]
 \end{lemma}
 \begin{proof}
 %% Decomposition
 	We can decompose relational encodings of formulas into the sum (see Figure~\ref{fig:formulaRencoding}) % ! Not a tensor network decomposition !
 	\begin{align} 
-		\rencodingof{\exformula} = & \fbasis \otimes \left( \sum_{\atomindices\, : \, \exformula(\atomindices) = 0}  \onehotmapof{\atomindices} \right) \\
-		 + & \tbasis \otimes \left( \sum_{\atomindices\, : \,  \exformula(\atomindices) = 1}  \onehotmapof{\atomindices} \right)
+		 \rencodingofat{\formula}{\shortcatvariables,\formulavar}  = & \fbasisat{\formulavar} \otimes \left( \sum_{\formulazerocoordinates}  \onehotmapofat{\shortcatindices}{\shortcatvariables} \right) \\
+		 + & \tbasisat{\formulavar} \otimes \left( \sum_{\formulaonecoordinates}  \onehotmapofat{\shortcatindices}{\shortcatvariables} \right)
 	\end{align}
-	where the second term sums up the models of $\exformula$ and the first one the models of $\lnot\exformula$.
+	where the second term sums up the models of $\formula$ and the first one the models of $\lnot\formula$.
 \end{proof}
 
 
@@ -240,11 +240,11 @@ This representation is required to represent arbitrary propositional formulas by
 %% Coordinatewise 
 The relational coordinate $\rencodingof{\exformula}$ has slices
 \begin{align}
-		\contractionof{\{\rencodingof{\exformula},\onehotmapof{\atomindices}\}}{\catvariableof{\exformula}} 
-		\rencodingofat{\exformula}{\indexedshortcatvariables,\catvariableof{\exformula}}
-		= \begin{cases}
-		\tbasis[\catvariableof{\exformula}] & \text{if the world where $\indexedshortcatvariables$ is a model of $\exformula$}  \\
-		\fbasis[\catvariableof{\exformula}] & \text{else}\, .
+	\contractionof{\rencodingof{\exformula},\onehotmapof{\shortcatindices}}{\formulavar} 
+		\rencodingofat{\exformula}{\indexedshortcatvariables,\formulavar}
+	= \begin{cases}
+		\tbasis[\formulavar] & \text{if the world $\shortcatindices$ is a model of $\exformula$}  \\
+		\fbasis[\formulavar] & \text{else}\, .
 		\end{cases}
 \end{align} 
 The contractions of the relational encoding therefore calculate whether an assignment of atoms is a model of the formula, using basis calculus (see Theorem~\ref{the:basisCalculus}).
@@ -281,15 +281,24 @@ We call atomic formulas the most granular formulas, which are not splitted into 
 Our syntactic decomposition of propositional formulas will then investigate, how any propositional formula can be represented by these.
 
 \begin{definition}
-	The tensors $\formulaofat{\atomenumerator}{\catvariables}$ defined for $\catindices$ as
-		\[ \formulaofat{\atomenumerator}{\indexedcatvariables} = \atomlegindexof{\atomenumerator} \]
+	The tensors $\formulaofat{\atomenumerator}{\shortcatvariables}$ defined for $\catindices$ as
+		\[ \formulaofat{\atomenumerator}{\indexedshortcatvariables} 
+		= \catindexof{\atomenumerator} \]
 	are called atomic formulas.
 \end{definition}
 
-\begin{theorem}\label{the:AtomicFTensor}
-	The relational encoding of any atomic formula $\formulaofat{\atomenumerator}{\catvariables}$ has a tensor decomposition by
-		\[ \rencodingofat{\atomicformulaof{\atomenumerator}}{\catvariables,\catvariableof{\formulaof{\atomenumerator}}}
-		= \sbcontractionof{\identityat{\catvariableof{\atomenumerator},\catvariableof{\formulaof{\atomenumerator}}}}{\catvariables,\catvariableof{\formulaof{\atomenumerator}}} \, . \]
+Atomic formulas and their relational encodings have an especially compelling representation.
+
+\begin{theorem}
+	Any atomic formula $\formulaofat{\atomenumerator}{\shortcatvariables}$ is represented as
+		\[ \formulaofat{\atomenumerator}{\indexedshortcatvariables} 
+		= \contractionof{\tbasisat{\catvariableof{\atomenumerator}}}{\shortcatvariables}
+		= \tbasisat{\catvariableof{\atomenumerator}} \otimes \onesat{\catvariableof{[\catorder]/\{\atomenumerator\}}}  \, . \]	
+
+	The relational encoding of any atomic formula $\formulaofat{\atomenumerator}{\shortcatvariables}$ has a tensor decomposition by
+		\[ \rencodingofat{\formulaof{\atomenumerator}}{\shortcatvariables,\catvariableof{\formulaof{\atomenumerator}}}
+		= \contractionof{\identityat{\catvariableof{\atomenumerator},\catvariableof{\formulaof{\atomenumerator}}}}{\shortcatvariables}
+		= \identityat{\catvariableof{\atomenumerator},\catvariableof{\formulaof{\atomenumerator}}} \otimes \onesat{\catvariableof{[\catorder]/\{\atomenumerator\}}} \, . \]
 	The decomposition is depicted in a network diagram as
 	\begin{center}
 		\input{./PartI/tikz_pics/logic_representation/atomic_ft.tex}
@@ -298,283 +307,150 @@ Our syntactic decomposition of propositional formulas will then investigate, how
 \begin{proof}
 	We have by definition
 	\begin{align*}
-		\rencodingofat{\atomicformulaof{\atomenumerator}}{\catvariables,\catvariableof{\formulaof{\atomenumerator}}}
-		=& \sum_{\catindices\in\atomstates} \onehotmapofat{\catindices}{\catvariables} \otimes \onehotmapofat{\formulaofat{\atomenumerator}{\indexedcatvariables}}{\catvariableof{\formulaof{\atomenumerator}}} \\
+		\rencodingofat{\atomicformulaof{\atomenumerator}}{\shortcatvariables,\catvariableof{\formulaof{\atomenumerator}}}
+		=& \sum_{\catindices\in\atomstates} \onehotmapofat{\catindices}{\shortcatvariables} \otimes \onehotmapofat{\formulaofat{\atomenumerator}{\indexedcatvariables}}{\catvariableof{\formulaof{\atomenumerator}}} \\
 		=& \left( \onehotmapofat{0,0}{\catvariableof{\atomenumerator},\catvariableof{\formulaof{\atomenumerator}}} +
 		\onehotmapofat{1,1}{\catvariableof{\atomenumerator},\catvariableof{\formulaof{\atomenumerator}}} \right) \otimes \onesat{\catvariableof{\secatomenumerator}\, : \, \secatomenumerator \neq \atomenumerator} \\
-		=& \contractionof{\{\identityat{\catvariableof{\atomenumerator},\catvariableof{\formulaof{\atomenumerator}}}\}}{\catvariables,\catvariableof{\formulaof{\atomenumerator}}} \, .
-%		\ftensorof{\exformula}_{1,\atomindices} = \begin{cases}
-%		1 & \text{if $\atomlegindexof{\atomenumerator}=1$}  \\
-%		0 & \text{else} \, .
-	%\end{cases}
+		=& \contractionof{\identityat{\catvariableof{\atomenumerator},\catvariableof{\formulaof{\atomenumerator}}}}{\shortcatvariables,\catvariableof{\formulaof{\atomenumerator}}} \, .
 	\end{align*} 
-%	Since all atom indices $\secatomenumerator\neq\atomenumerator$ are irrelevant, the formula tensor decomposed into factors with the constant vector $\onesof{\secatomenumerator}$.
 \end{proof}
-
-
-%\begin{figure}[h]
-%\caption{Representation of an atomic formula tensor $\atomicformulaof{\atomenumerator}$.}
-%\label{fig:FormulaChain} 
-%\end{figure}
-
-\begin{remark}[Representation of atomic formula tensors for connective action]
- 	Need to represent this as $\braket{\delta \otimes \ones, \truevectorat{\atomenumerator}}$, where the bracket indicates contraction along the $\atomenumerator$th axis.
-	The core $\truevectorat{\atomenumerator}$ can be replaced by further operations based on logical connectives.
-	The axis $\atomenumerator$ is changed from an axis associated with an atom truth to an axis associated with an formula truth.
-\end{remark}
-
 
 \subsubsection{Syntactical combination of formulas}
 
-Formula tensors are elements of tensor spaces with $\atomorder+1$ axis. 
+Propositional formulas are elements of tensor spaces with $\atomorder$ axis. 
 The number of coordinates thus grows exponentially with the number of atoms, which is
-	\[ \dim\left[ \rr^2 \otimes \bigotimes_{\atomenumeratorin}\rr^{2} \right] = 2^{\atomorder +1} \, . \]
-When the number of atoms in a theory is large, the naive representation of formula tensors will be thus intractable.
-In contrast, most logical formulas appearing in practical knowledge bases are sparse in the sense that they have short representations in a logical syntax.
+	\[ \dimof{\atomspace} = 2^{\atomorder} \, . \]
+When the number of atoms is large, the naive representation of formula tensors will be thus intractable.
+In contrast, typcial logical formulas appearing in practical knowledge bases are sparse in the sense that they have short representations in a logical syntax.
 Motivated by this consideration we now discuss propositional syntax and investigate the sparse decomposition of formula tensors along their formula structure to avoid the curse of dimensionality.
 
 %% Propositional Syntax
 In logical syntax formulas are described by atomic formulas recursively connected via connectives. 
-We show, that representations of logical connectives $\circ \in \{\lnot, \land, \lor, \oplus, \Rightarrow, \Leftrightarrow\}$ can be represented by feasible tensor cores $\concoreof{\circ}$ contracted along a tensor network.
-
-
-%More general: Theorem~\ref{the:compositionByContraction} shows that any composition of functions can be expressed by contractions of relational encodings.
-
+We show, that representations of logical connectives can be represented by feasible tensor cores $\rencodingof{\exconnective}$ contracted along a tensor network.
+Let us first provide in \exaref{exa:connectives} unary ($\atomorder=1$) and binary ($\atomorder=2$) connectives.
 
 \begin{example}\label{exa:connectives}
-%	Given formulas $\exformula$ and $\secexformula$ we define $\lnot \exformula$ and $\exformula \exconnective \secexformula$ for $\exconnective \in \{\lnot, \land, \lor, \oplus, \Rightarrow, \Leftrightarrow\}$ by their formula tensors
-%	\begin{align}
-%		\rencodingof{\lnot\exformula} = \contractionof{\{\concoreof{\lnot},\rencodingof{\exformula}\}}{\atomicformulas\cup\{\catvariableof{\lnot\exformula}\}}
-%	\end{align}
-%	and 
-%	\begin{align}
-%		\rencodingof{\exformula\exconnective\secexformula} 
-%		= \contractionof{\{\concoreof{\exconnective},\rencodingof{\exformula},\rencodingof{\secexformula}\}}{\atomicformulas\cup\{\catvariableof{\exformula\exconnective\secexformula}\}}
-%	\end{align}
 	We use the following connectives:
 	\begin{itemize}
-	\item negation $\lnot: [2]\rightarrow [2]$ by the vector
-	\begin{align}
-		{\lnot}[\catvariableof{\exformula}] = \begin{bmatrix}
+	\item negation $\notucon: [2]\rightarrow [2]$ by the vector
+	\begin{align*}
+		\notucon[\exformulavar] = \begin{bmatrix}
 		0  \\
 		1  
 		\end{bmatrix} 
-	\end{align}
-%	\begin{align}
-%		\rencodingof{\lnot} = \begin{bmatrix}
-%		0 & 1 \\
-%		1 & 0 
-%		\end{bmatrix} 
-%	\end{align}
-%	and by $\rencodingof{\exconnective}$ the order $3$ tensors
+	\end{align*}
 	\item conjunctions $\land:  [2]\times[2] \rightarrow[2]$
-		\begin{align}
-			\land[\catvariableof{\exformula},\catvariableof{\secexformula}]
+		\begin{align*}
+			\land[\exformulavar,\secexformulavar]
 			 = \begin{bmatrix}
 			0 & 0 \\
 			0 & 1 
 			\end{bmatrix}
-		\end{align}
+		\end{align*}
 	\item disjunctions $\lor : [2]\times[2] \rightarrow[2]$
-		\begin{align}
-			\lor[\catvariableof{\exformula},\catvariableof{\secexformula}]
+		\begin{align*}
+			\lor[\exformulavar,\secexformulavar]
 			 = \begin{bmatrix}
 			0 & 1 \\
 			1 & 1 
 			\end{bmatrix}
-		\end{align}
+		\end{align*}
 	\item exact disjunction $\oplus:  [2]\times[2] \rightarrow[2]$	
-		\begin{align}
-			\oplus[\catvariableof{\exformula},\catvariableof{\secexformula}]
+		\begin{align*}
+			\oplus[\exformulavar,\secexformulavar]
 			 = \begin{bmatrix}
 			0 & 1 \\
 			1 & 0 
 			\end{bmatrix}
-		\end{align}
-	\item implications $\Rightarrow:  [2]\times[2] \rightarrow[2]$ 
-		\begin{align}
-			\Rightarrow[\catvariableof{\exformula},\catvariableof{\secexformula}]
+		\end{align*}
+	\item implications $\impbincon:  [2]\times[2] \rightarrow[2]$ 
+		\begin{align*}
+			\impbincon[\exformulavar,\secexformulavar]
 			 = \begin{bmatrix}
 			1 & 1 \\
 			0 & 1 
 			\end{bmatrix}
-		\end{align}
-	\item biimplication $\Leftrightarrow:  [2]\times[2] \rightarrow[2]$ 
-		\begin{align}
-			\Leftrightarrow[\catvariableof{\exformula},\catvariableof{\secexformula}]
+		\end{align*}
+	\item biimplication $\eqbincon:  [2]\times[2] \rightarrow[2]$ 
+		\begin{align*}
+			\eqbincon[\exformulavar,\secexformulavar]
 			 = \begin{bmatrix}
 			1 & 0 \\
 			0 & 1 
 			\end{bmatrix}
-		\end{align}
+		\end{align*}
 	\end{itemize}
-%	\item conjunctions $\land$
-%		\begin{align}
-%			\rencodingof{\land}_{1,:,:} 
-%			 = \begin{bmatrix}
-%			0 & 0 \\
-%			0 & 1 
-%			\end{bmatrix}
-%			\quad,\quad			
-%			\rencodingof{\land}_{0,:,:} 
-%			 = \begin{bmatrix}
-%			1 & 1 \\
-%			1 & 0 
-%			\end{bmatrix} \, .
-%		\end{align}
-%	\item disjunctions $\lor$
-%		\begin{align}
-%			\rencodingof{\lor}_{1,:,:} 
-%			 = \begin{bmatrix}
-%			0 & 1 \\
-%			1 & 1 
-%			\end{bmatrix}
-%			\quad, \quad \rencodingof{\lor}_{0,:,:} 
-%			 = \begin{bmatrix}
-%			1 & 0 \\
-%			0 & 0 
-%			\end{bmatrix}
-%		\end{align}
-%	\item exact disjunction $\oplus$	
-%		\begin{align}
-%			\rencodingof{\oplus}_{1,:,:} 
-%			 = \begin{bmatrix}
-%			0 & 1 \\
-%			1 & 0 
-%			\end{bmatrix}
-%			\quad, \quad \rencodingof{\oplus}_{0,:,:} 
-%			 = \begin{bmatrix}
-%			1 & 0 \\
-%			0 & 1 
-%			\end{bmatrix}
-%		\end{align}
-%	\item implications $\Rightarrow$ 
-%		\begin{align}
-%			\rencodingof{\Rightarrow}_{1,:,:} 
-%			 = \begin{bmatrix}
-%			1 & 1 \\
-%			0 & 1 
-%			\end{bmatrix}
-%			\quad, \quad \rencodingof{\Rightarrow}_{0,:,:} 
-%			 = \begin{bmatrix}
-%			0 & 0 \\
-%			1 & 0 
-%			\end{bmatrix}
-%		\end{align}
-%	\item biconditionals $\Leftrightarrow$ 
-%		\begin{align}
-%			\rencodingof{\Leftrightarrow}_{1,:,:} 
-%			 = \begin{bmatrix}
-%			1 & 0 \\
-%			0 & 1 
-%			\end{bmatrix}
-%			\quad, \quad \rencodingof{\Leftrightarrow}_{0,:,:} 
-%			 = \begin{bmatrix}
-%			0 & 1 \\
-%			1 & 0 
-%			\end{bmatrix}
-%		\end{align}
-%	\end{itemize}
 \end{example}
-
-
-\begin{lemma}\label{lem:compositionByContraction}
-	Let there be formulas $\exformula$ and $\secexformula$ depending on categorical variables $\shortcatvariables=\catvariables$ and a map 
-		\[ \exconnective: [2]\times[2] \rightarrow[2] \, . \]
-	Then we have
-	\begin{align*}
-		\rencodingofat{\exformula\exconnective\secexformula}{\shortcatvariables,\catvariableof{\exformula\exconnective\secexformula}}
-		= \contractionof{\{
-		\rencodingofat{\exconnective}{\catvariableof{\exformula},\catvariableof{\secexformula},\catvariableof{\exformula\exconnective\secexformula}},
-		\rencodingofat{\exformula}{\shortcatvariables,\catvariableof{\exformula}},
-		\rencodingofat{\secexformula}{\shortcatvariables,\catvariableof{\secexformula}} 
-		\}}{
-		\shortcatvariables,\catvariableof{\exformula\exconnective\secexformula}
-		}
-	\end{align*}
-	and for any map $\exconnective: [2] \rightarrow[2]$
-	\begin{align*}
-		\rencodingofat{\exconnective\exformula}{\shortcatvariables,\catvariableof{\exconnective\exformula}}
-		= \contractionof{\{
-		\rencodingofat{\exconnective}{\catvariableof{\exformula},\catvariableof{\exconnective\exformula}},
-		\rencodingofat{\exformula}{\shortcatvariables,\catvariableof{\exformula}}
-		\}}{
-		\shortcatvariables,\catvariableof{\exconnective\exformula}
-		} \, . 
-	\end{align*}
-\end{lemma}
-\begin{proof}
-	This follows from Theorem~\ref{the:compositionByContraction} to be shown in Chapter~\ref{cha:tensorEncodings}.
-\end{proof}
-
-
-\begin{theorem}[Composition of Formulas]\label{the:compositionByContraction}
-	Let there be a set of binary variables $\catvariableof{\nodes}$ including atoms $\catvariables$ and image variables to some formulas.
-	For any formula $\formulaat{\catvariables}$, which has a syntactical composition into connectives $\{\exconnective_{l}[\catvariableof{\{\nodes_l \}}] : l \in [p]\}$ taking their inputs by variables $\catvariableof{\{\nodes_l \}}\subset \catvariableof{\nodes}$ and output by a variable $\catvariableof{\exconnective_l}$
-	we have that
-	\begin{align*}
-		\rencodingofat{\formula}{\catvariables,\catvariableof{\formula}} =
-		\contractionof{\left\{
-		\rencodingofat{\exconnective_l}{\catvariableof{\{\nodes_l \}}, \catvariableof{\exconnective_l} : l \in [p] }
-		\right\} }
-		{\catvariables,\catvariableof{\formula}} \, . 
-	\end{align*}
-\end{theorem}
-\begin{proof}
-	When a variable in $\catvariableof{\nodes}$ appears multiple times as input to connectives, we replace it by a set of copies (which wont change the contraction, since all tensors are binary and Theorem~\ref{the:invarianceAddingSubcontractions} can be applied).
-	The claim follows then from iterative application of Lemma~\ref{lem:compositionByContraction}.
-\end{proof}
 
 \begin{figure}[h]
 \begin{center}
 	\input{PartI/tikz_pics/logic_representation/unary_binary_composition.tex}
 \end{center}
-\caption{a) Relational encoding of a negated formula $\exformula$ as a tensor network of the encoded formula and the encoded connective $\lnot$.
-b) Relational encoding of a composition of formulas $\exformula, \secexformula$ by a connective $\circ\in\{\land,\lor,\oplus,\Rightarrow,\Leftrightarrow\}$. 
-The encoding is a contraction of encodings to  $\exformula, \secexformula$ and $\circ$.}
-\label{fig:NegatedFormulaTensor} 
+\caption{a) Relational encoding of a negated formula $\exformula$ as a tensor network of the encoded formula and the encoded connective $\notucon$.
+	b) Relational encoding of a composition of formulas $\exformula, \secexformula$ by a connective $\exconnective\in\{\land,\lor,\oplus,\impbincon,\eqbincon\}$. 
+	The encoding is a contraction of encodings to  $\exformula, \secexformula$ and $\exconnective$.}
+	\label{fig:unaryBinaryComposition} 
 \end{figure}
 
-%\begin{remark}[Universality of connectives]
-%	The negation $\lnot$ is the only nontrivial unary connective in propositional logics.
-%	In combination with $\land$ it already suffices to represent any other $\atomorder$-connective.
-%	This fact can be derived from CNF decompositions and De Morgans rules.
-%\end{remark}
+Let there be formulas $\exformula$ and $\secexformula$ depending on categorical variables $\shortcatvariables$ and a binary connective
+	\[ \exconnective: [2]\times[2] \rightarrow[2] \, . \]
+Then we can show as a special case of the next theorem, that (see \figref{fig:unaryBinaryComposition})
+\begin{align*}
+	\rencodingofat{\exformula\exconnective\secexformula}{\shortcatvariables,\catvariableof{\exformula\exconnective\secexformula}}
+	= \contractionof{
+	\rencodingofat{\exconnective}{\formulavar,\secexformulavar,\catvariableof{\exformula\exconnective\secexformula}},
+	\rencodingofat{\exformula}{\shortcatvariables,\formulavar},
+	\rencodingofat{\secexformula}{\shortcatvariables,\secexformulavar} 
+	}{
+	\shortcatvariables,\catvariableof{\exformula\exconnective\secexformula}
+	} \, . 
+\end{align*}
 
-% To Logical Inference!
-%\begin{remark}[Conditional Probability Interpretation]
-%	For all these symbol tensors we have the zeroth component defined by
-%		\[ \concoreof{\circ}_{0,:,:}  = \ones - \concoreof{\circ}_{1,:,:} \, .\]
-%	This again results from the conditional probability distribution interpretation of each $\concoreof{\circ}$.
-%\end{remark}
+For any unary connective $\exconnective: [2] \rightarrow[2]$ we have
+\begin{align*}
+	\rencodingofat{\exconnective\exformula}{\shortcatvariables,\catvariableof{\exconnective\exformula}}
+	= \contractionof{
+	\rencodingofat{\exconnective}{\formulavar,\catvariableof{\exconnective\exformula}},
+	\rencodingofat{\exformula}{\shortcatvariables,\formulavar}
+	}{
+	\shortcatvariables,\catvariableof{\exconnective\exformula}} \, . 
+\end{align*}
+
+Let us now generalize this observation to arbitrary arity of connectives and provide a proof of its correctness.
+
+\begin{theorem}[Composition of Formulas]\label{the:compositionByContraction}
+	Let there be a set of binary variables $\catvariableof{\nodes}$ including atoms $\shortcatvariables$ and image variables to some formulas.
+	For any formula $\formulaat{\catvariables}$, which has a syntactical composition into connectives $\{\connectiveofat{\selindex}{\catvariableof{\nodesof{\selindex}}} : \selindexin\}$ taking their inputs by variables $\catvariableof{\nodesof{\selindex}}\subset \catvariableof{\nodes}$ and output by a variable $\catvariableof{\connectiveof{\selindex}}$
+	we have that
+	\begin{align*}
+		\rencodingofat{\formula}{\shortcatvariables,\formulavar} =
+		\contractionof{\left\{
+		\rencodingofat{\connectiveof{\selindex}}{\catvariableof{\nodesof{\selindex}}, \catvariableof{\connectiveof{\selindex}}} : \selindexin
+		\right\} }
+		{\shortcatvariables,\formulavar} \, . 
+	\end{align*}
+\end{theorem}
+\begin{proof}
+	When a variable in $\nodevariables$ appears multiple times as input to connectives, we replace it by a set of copies (which wont change the contraction, since all tensors are binary and Theorem~\ref{the:invarianceAddingSubcontractions} can be applied).
+	This follows from an iterative application of \theref{the:compositionByContraction} to be shown in \charef{cha:tensorEncodings}.
+\end{proof}
 
 \begin{remark}[$\atomorder$-ary connectives such as $\land$ and $\lor$]\label{rem:naryConnectives}
 	Since the decomposition of relational encoding can be applied to generic function compositions (see Theorem~\ref{the:compositionByContraction}), we can also allow for $\atomorder$-ary connectives
-		\[ \exconnective : \bigtimes_{\atomenumeratorin} [2] \rightarrow [2] \,  \]
-	in Theorem~\ref{the:compositionByContraction}
+		\[ \exconnective : \bigtimes_{\atomenumeratorin} [2] \rightarrow [2] \, . \]
 	The connectives $\land$ and $\lor$ satisfy associativity and have thus straightforward generalizations to the $\atomorder$-ary case.
 	This is because associativity can be exploited to represent the relational encoding by any tree-structured composition of binary $\land$ and $\lor$ connectives.
 \end{remark}
 
-%% Maps perspective
-In general, any $\atomorder$ary logical connective is a map
-
-%In Example~\ref{exa:connectives} we defined unary ($\atomorder=1$) and binary ($\atomorder=2$) connectives.
 %Propositional Syntax describes generic formulas $\exformula$ based on the composition of these maps starting with atomic formulas.
 %We can thus apply Theorem~\ref{the:compositionByContraction} recursively to decompose the formula tensors $\ftensorof{\exformula}$ into cores $\concoreof{\exconnective}$.
 
-
-
 %% Construction from atomic formula tensors
 Propositional syntax consists in the application of connectives on atomic formulas, and recursively on the results of such constructions.
-When passed towards connective cores, atomic formula tensors act trivial on the legs and just identify the corresponding atomic formula index $\atomlegindexof{\atomicformulaof{\atomenumerator}}$ with $\atomlegindexof{\atomenumerator}$.
-This is due to the fact, that the Hadamard product with the trivial tensor $\ones$ leaves any tensor invariant, and the contraction with the elementary matrix $\delta$ identifies indices with each other.
+When passed towards connective cores, atomic formula tensors act trivial on the legs and just identify the corresponding atomic formula index $\catindexof{\atomicformulaof{\atomenumerator}}$ with $\catindexof{\atomenumerator}$.
+This is due to the fact, that contractions with the trivial tensor $\ones$ leaves any tensor invariant, and the contraction with the elementary matrix $\identity$ identifies indices with each other.
 We can thus savely ignore the atomic formula tensors appearing in the decomposition of formula tensors to non-atomic formulas.
-An example of such a decomposition is depicted in Figure~\ref{fig:FTDecomposition}.
-
-
-
-
+An example of such a decomposition is depicted in \figref{fig:decompositionExample}.
 
 \begin{figure}[h]
 \begin{center}
@@ -582,18 +458,15 @@ An example of such a decomposition is depicted in Figure~\ref{fig:FTDecompositio
 \end{center}
 \caption{Decomposition of the formula tensor to $\exformula = a \land b \land \lnot c$ into unary (matrix) and binary (third order tensor) cores.
 	a) Visualization of $\exformula$ as a graph. %(\red{Exploiting the duality between tensor networks on hypergraphs and graphical models \cite{robeva_duality_2019} })
-	b) Dual Tensor Network decomposition of $\exformula$.
+	b) Tensor Network decomposition of $\exformula$.
 	We can make use of the invariance of a Hadamard product with a constant tensor $\ones$ and thus not draw axis to atoms not affected by a formula.}
-\label{fig:FTDecomposition}
+\label{fig:decompositionExample}
 \end{figure}
 
-
-
-
-
-\begin{remark}[$\htformat$ Interpretation of Formula Tensor Networks]\label{rem:HTDecomFT}
-	The sketched decomposition of the formula tensor into a network is a hierarchical tree decomposition of the formula tensor, which we will describe in more detail in Section~\ref{sec:HT}.
-	At each decomposition of a formula into subformulas, two subspaces spanned by the respective atomic spaces are selected. 
+\begin{remark}[Tensor Network Decomposition of Formulas]
+	The decomposition of the propositional into a tensor network is a hierarchical decomposition of the formula tensor, which we will describe in more detail in Section~\ref{sec:HT}.
+	\red{Of special interest are tree hypergraphs, where the format is called Hierarchical Tucker.}
+	At each decomposition of a formula into sub-formulas, two subspaces spanned by the respective atomic spaces are selected. 
 \end{remark}
 
 
@@ -610,86 +483,78 @@ We show in the following, how we can find a syntactic specification of a formula
 
 
 \begin{definition}[Terms and Clauses]\label{def:clauses}
-	Given two disjoint subsets $\nodes_0$ and $\nodes_1$ of the $[\atomorder]$, the corresponding term is the formula defined on the indices $\catindices\in\atomstates$ by
-		\[ \termof{\nodes_0}{\nodes_1}
-		=\left( \bigwedge_{\atomenumerator\in\nodes_0} \lnot\formulaof{\atomenumerator} \right)  \land \left( \bigwedge_{\atomenumerator\in\nodes_1} \formulaof{\atomenumerator} \right)  \]
+	Given two disjoint subsets $\nodesof{0}$ and $\nodesof{1}$ of $[\atomorder]$, the corresponding term is the formula defined on the indices $\shortcatindices\in\atomstates$ by
+		\[ \termofat{\nodesof{0}}{\nodesof{1}}{\shortcatvariables}
+		=\left( \bigwedge_{\atomenumerator\in\nodesof{0}} \lnot\formulaof{\atomenumerator} \right)  \land \left( \bigwedge_{\atomenumerator\in\nodesof{1}} \formulaof{\atomenumerator} \right)  \]
 	and the corresponding clause is the formula defined on the indices $\catindices\in\atomstates$ by
-		\[ \clauseof{\nodes_0}{\nodes_1}
-		=\left( \bigvee_{\atomenumerator\in\nodes_0} \formulaof{\atomenumerator} \right)  \lor \left( \bigvee_{\atomenumerator\in\nodes_1} \lnot\formulaof{\atomenumerator} \right)  \, , \]
+		\[ \clauseofat{\nodesof{0}}{\nodesof{1}}{\shortcatvariables}
+		=\left( \bigvee_{\atomenumerator\in\nodesof{0}} \formulaof{\atomenumerator} \right)  \lor \left( \bigvee_{\atomenumerator\in\nodesof{1}} \lnot\formulaof{\atomenumerator} \right)  \, , \]
 	where by $\land_{\atomenumerator\in\nodes}$ and $\lor_{\atomenumerator\in\nodes}$ we refer to the $n$-ary connectives $\land$ and $\lor$.
-	%We call the clause a minterm, if $\nodes_0\cup\nodes_1 = [\atomorder]$.
-	We call the term a minterm and the clause a maxterm, if $\nodes_0\cup\nodes_1 = [\atomorder]$.
+	%We call the clause a minterm, if $\nodesof{0}\cup\nodesof{1} = [\atomorder]$.
+	We call the term a minterm and the clause a maxterm, if $\nodesof{0}\cup\nodesof{1} = [\atomorder]$.
 \end{definition}
 
 %% 
-Terms and Clauses have for any index tuple $\catindexof{[\atomorder]}$ a polynomial representation by
-		\[ \termof{\nodes_0}{\nodes_1}[\shortcatvariables=\catindexof{[\atomorder]}] 
-		= \left( \prod_{\atomenumerator \in \nodes_0} (1-\catindexof{\atomenumerator}) \right)
-		\left(  \prod_{\atomenumerator \in \nodes_1} \catindexof{\atomenumerator} \right) \]
+Terms and Clauses have for any index tuple $\shortcatindices$ a polynomial representation by
+		\[ \termof{\nodesof{0}}{\nodesof{1}}[\indexedshortcatvariables] 
+		= \left( \prod_{\atomenumerator \in \nodesof{0}} (1-\catindexof{\atomenumerator}) \right)
+		\left(  \prod_{\atomenumerator \in \nodesof{1}} \catindexof{\atomenumerator} \right) \]
 and
-		\[ \clauseof{\nodes_0}{\nodes_1}[\shortcatvariables=\catindexof{[\atomorder]}] 
-		= 1 - \left( \prod_{\atomenumerator \in \nodes_0} (1-\catindexof{\atomenumerator})\right)
-		\left(  \prod_{\atomenumerator \in \nodes_1} \catindexof{\atomenumerator} \right) \, . \]
+		\[ \clauseof{\nodesof{0}}{\nodesof{1}}[\indexedshortcatvariables] 
+		= 1 - \left( \prod_{\atomenumerator \in \nodesof{0}} (1-\catindexof{\atomenumerator})\right)
+		\left(  \prod_{\atomenumerator \in \nodesof{1}} \catindexof{\atomenumerator} \right) \, . \]
 
 
 \begin{lemma}\label{lem:termClauseOneHot}
-	Terms are contractions of one-hot encodings, that is for any disjoint subsets $\nodes_0,\nodes_1\subset[\atomorder]$ we have
-		\[ \termof{\nodes_0}{\nodes_1}[\shortcatvariables] = \contractionof{\onehotmapof{\{\atomlegindexof{k}=0 : k \in \nodes_0 \} \cup \{\atomlegindexof{k}=1 : k \in \nodes_1\}}}{\shortcatvariables} \, . \]
-	Clauses are substractions of one-hot encodings from the trivial tensor, that is for any disjoint subsets $\nodes_0,\nodes_1\subset[\atomorder]$ we have
-		\[ \clauseof{\nodes_0}{\nodes_1}[\shortcatvariables] = 
+	Terms are contractions of one-hot encodings, that is for any disjoint subsets $\nodesof{0},\nodesof{1}\subset[\atomorder]$ we have
+		\[ \termof{\nodesof{0}}{\nodesof{1}}[\shortcatvariables] = \contractionof{\onehotmapof{\{\catindexof{\atomenumerator}=0 : \atomenumerator\in\nodesof{0} \} \cup \{\catindexof{\atomenumerator}=1 : \atomenumerator\in\nodesof{1}\}}}{\shortcatvariables} \, . \]
+	Clauses are substractions of one-hot encodings from the trivial tensor, that is for any disjoint subsets $\nodesof{0},\nodesof{1}\subset[\atomorder]$ we have
+		\[ \clauseof{\nodesof{0}}{\nodesof{1}}[\shortcatvariables] = 
 		\onesat{\shortcatvariables} -
-		\contractionof{\onehotmapof{\{\atomlegindexof{k}=0 : k \in \nodes_0 \} \cup \{\atomlegindexof{k}=1 : k \in \nodes_1\}}}{\shortcatvariables} \, . \]
+		\contractionof{\onehotmapof{\{\catindexof{\atomenumerator}=0 : \atomenumerator\in\nodesof{0} \} \cup \{\catindexof{\atomenumerator}=1 : \atomenumerator\in\nodesof{1}\}}}{\shortcatvariables} \, . \]
 \end{lemma}
 
 
 	
 %
-The reference of the formulas in the case $\nodes_0\dot{\cup}\nodes_1 = [\atomorder]$ as minterms and maxterms is due to the fact, that minterms are formulas with unique models and maxterms are formulas with a unique world not satisfying the formula.
+The reference of the formulas in the case $\nodesof{0}\dot{\cup}\nodesof{1} = [\atomorder]$ as minterms and maxterms is due to the fact, that minterms are formulas with unique models and maxterms are formulas with a unique world not satisfying the formula.
 % Enumeration by $\atomstates$
 We use this insight and enumerate maxterms and minterms by the index $\catindex\in\atomstates$ of the unique world where the minterm is satisfied, respectively the maxterm is not satisfied.
-For any $\nodes_0\dot{\cup}\nodes_1 = [\atomorder]$ we take the index tuple $\catindices$ where $\catindexof{\atomenumerator}=0$ if $\atomenumerator\in\nodes_0$ and $\catindexof{\atomenumerator}=1$ if $\atomenumerator\in\nodes_1$ and define
+For any $\nodesof{0}\dot{\cup}\nodesof{1} = [\atomorder]$ we take the index tuple $\catindices$ where $\catindexof{\atomenumerator}=0$ if $\atomenumerator\in\nodesof{0}$ and $\catindexof{\atomenumerator}=1$ if $\atomenumerator\in\nodesof{1}$ and define
 \begin{align*}
-	\maxtermof{\catindices} = \clauseof{\nodes_0}{\nodes_1} \quad \text{and} \quad \mintermof{\catindices} = \termof{\nodes_0}{\nodes_1} \, .
+	\maxtermof{\catindices} = \clauseof{\nodesof{0}}{\nodesof{1}} \quad \text{and} \quad \mintermof{\catindices} = \termof{\nodesof{0}}{\nodesof{1}} \, .
 \end{align*}
 
 
 \begin{corollary}
-	Minterms are basis elements of the tensor space, that is for any $\catindices\in\atomstates$ we have
+	Minterms are basis elements of the tensor space, that is for any $\shortcatindices\in\atomstates$ we have
 	\begin{align*}
-		\mintermof{\catindices} = \onehotmapof{\catindices}
+		\mintermof{\shortcatindices} = \onehotmapofat{\shortcatindices}{\shortcatvariables}
 	\end{align*}
-	Maxterms are substraction of basis elements from the trivial tensor, that is for any $\catindices\in\atomstates$ we have
+	Maxterms are substraction of basis elements from the trivial tensor, that is for any $\shortcatindices\in\atomstates$ we have
 	\begin{align*}
-		\maxtermof{\catindices} = \onesat{\shortcatvariables} - \onehotmapof{\catindices} \, .
+		\maxtermof{\shortcatindices} = \onesat{\shortcatvariables} - \onehotmapofat{\shortcatindices}{\shortcatvariables}  \, .
 	\end{align*}
 \end{corollary}
 \begin{proof}
-	Follows from Lemma~\ref{lem:termClauseOneHot}, since when $\nodes_0\cup\nodes_1 = [\atomorder]$ the contractions of the one-hot encodings coincides with the one-hot encoding of a fully specified state.
+	Follows from Lemma~\ref{lem:termClauseOneHot}, since when $\nodesof{0}\cup\nodesof{1} = [\atomorder]$ the contraction of the one-hot encodings coincides with the one-hot encoding of a fully specified state.
 \end{proof}
 
 
 Based on this insight, we can decompose any propositional formula into a conjunction of maxterms or a disjunction of minterms as we show next.
 
 \begin{theorem}\label{the:tensorToMaxMinTerms}
-	For any binary tensor $\hypercoreat{\shortcatvariables}\in\bigotimes_{\atomenumeratorin}\rr^2$ with two-dimensional axes we have
+	For any binary tensor $\hypercoreat{\shortcatvariables}\in\atomspace$ with two-dimensional axes we have
 	\begin{align*}
-		\hypercoreat{\shortcatvariables} = \left( \bigvee_{\catindices : \hypercoreat{\shortcatvariables=\catindexof{[\atomorder]}}=1} 
-		\termof{
-		\{\atomenumerator : \catindexof{\atomenumerator}=0\}
-		}{
-		\{\atomenumerator: \catindexof{\atomenumerator}=1\}
-		} 
+		\hypercoreat{\shortcatvariables} = \left( \bigvee_{\hyperonecoordinates} 
+		\termof{\catzeropositions}{\catonepositions} 
 		\right)
 		[\shortcatvariables] 
 	\end{align*}
 	and
 	\begin{align*}
-		\hypercoreat{\shortcatvariables} = \left( \bigwedge_{\catindices : \hypercoreat{\shortcatvariables=\catindexof{[\atomorder]}}=0} 
-		\clauseof{
-		\{\atomenumerator : \catindexof{\atomenumerator}=0\}
-		}{
-		\{\atomenumerator: \catindexof{\atomenumerator}=1\}
-		} 
+		\hypercoreat{\shortcatvariables} = \left( \bigwedge_{\hyperzerocoordinates} 
+		\clauseof{\catzeropositions}{\catonepositions} 
 		\right)
 		[\shortcatvariables] \, .
 	\end{align*}
@@ -697,44 +562,20 @@ Based on this insight, we can decompose any propositional formula into a conjunc
 \begin{proof}
 	To show the representation by minterms we use the decomposition
 	\begin{align*}
-		\hypercoreat{\shortcatvariables}  = \sum_{\catindexof{[\atomorder]} : \hypercoreat{\catvariableof{[\atomorder]}=\catindexof{[\atomorder]}} = 1} \onehotmapofat{\catindexof{[\atomorder]}}{\shortcatvariables}
+		\hypercoreat{\shortcatvariables}  = \sum_{\hyperonecoordinates} \onehotmapofat{\shortcatindices}{\shortcatvariables}
 	\end{align*}
-	and notice that each term in the disjunction modifies the formula by adding respective world $\catindexof{[\atomorder]}$ to the models of the formula.
+	and notice that each term in the disjunction modifies the formula by adding respective world $\shortcatindices$ to the models of the formula.
 	To show the representation by maxterms we use the decomposition
 	\begin{align*}
-		\hypercoreat{\shortcatvariables}  = \onesat{\shortcatvariables} \quad - \sum_{\catindexof{[\atomorder]} : \hypercoreat{\catvariableof{[\atomorder]}=\catindexof{[\atomorder]}} = 0} \onehotmapofat{\catindexof{[\atomorder]}}{\shortcatvariables}
+		\hypercoreat{\shortcatvariables}  = \onesat{\shortcatvariables} \quad - \sum_{\hyperzerocoordinates} \onehotmapofat{\shortcatindices}{\shortcatvariables}
 	\end{align*}
-	and notice that each term in the conjunction modifies the formula by removing the respective world $\catindexof{[\atomorder]}$ from the models of the formula.	
+	and notice that each term in the conjunction modifies the formula by removing the respective world $\shortcatindices$ from the models of the formula.	
 	Thus, both decompositions are propositional formulas with the same set of models as the formula $\hypercore$ and are thus identical to $\hypercore$.
 \end{proof}
 
 
 % Canonical normal forms
 The decompositions found in Theorem~\ref{the:tensorToMaxMinTerms} are also called canonical normal forms to propositional formulas $\hypercoreat{\shortcatvariables}$.
-
-%\begin{theorem}\label{the:FormulaToTensor}
-%	For any binary tensor $\hypercore\in\bigotimes_{\atomenumeratorin}\rr^2$ with two-dimensional axes we find a formula $\exformula$ in propositional syntax such that
-%		\[ \hypercore = \exformula \, . \]
-%\end{theorem}
-%\begin{proof}
-%	For any such $\hypercore$ we construct the formula
-%		\[ \exformula^{\hypercore} = \lor_{\atomindices : \hypercore_{\atomindices}=1} \clauseof{\{\atomenumerator : \atomlegindexof{\atomenumerator=0}\}}{\{\atomenumerator : \atomlegindexof{\atomenumerator=1}\}}  \, . \]
-%	Since the clauses are basis vectors and $\hypercore$ is binary we get
-%		\[ \exformula^{\hypercore} = \sum_{\atomindices : \hypercore_{\atomindices}=1} \onehotmapof{\atomindices} = \hypercore \, .   \] 
-%%	Take for any $\ftensor$ the formula
-%%		\[ \exformula = \lor_{\atomindices : \ftensor_{:,\atomindices} = \tbasis}
-%%		 \left( \land_{\atomenumerator : \atomlegindexof{\atomenumerator} =1} \atomicformulaof{\atomenumerator}\right)
-%%		\left( \land_{\atomenumerator : \atomlegindexof{\atomenumerator} =0} \lnot \atomicformulaof{\atomenumerator} \right) \]
-%%	to show the claim.
-%\end{proof}
-
-%
-%In the proof of Theorem~\ref{the:FormulaToTensor} we only applied the connectives $\land,\lor$ and $\lnot$ in the construction of syntactical specifications of formulas. 
-%These connectives thus universal in the sense, that their combinations are representing any binary tensor as in Theorem~\ref{the:FormulaToTensor}.
-%This observation can be connected with the theory of normal forms, where arbitrary formulas can be syntactically represented by these connectives only (often called logical equivalent, which in our case means identical formula tensor). 
-
-
-
 
 %% Universality of representations
 \begin{remark}[Efficient Representation in Propositional Syntax]
@@ -771,7 +612,7 @@ Further study of representing Knowledge Bases based on Tensor Networks of its fo
 %	\rencodingofat{\kb}{\shortcatvariables,\catvariableof{\kb}}
 %	= \contractionof{
 %	\{\rencodingofat{\land}{\catvariableof{\formulaset}, \catvariableof{\kb}}\}
-%	\cup\{\rencodingofat{\exformula}{\shortcatvariables,\catvariableof{\exformula}}  : \exformula \in \formulaset \}}{\shortcatvariables,\catvariableof{\kb}}
+%	\cup\{\rencodingofat{\exformula}{\shortcatvariables,\formulavar}  : \exformula \in \formulaset \}}{\shortcatvariables,\catvariableof{\kb}}
 %\end{align}
 %Here we denote by $\land$ the $\cardof{\formulaset}$-ary conjunction, which is well-defined by Remark~\ref{rem:naryConnectives}.
 %
