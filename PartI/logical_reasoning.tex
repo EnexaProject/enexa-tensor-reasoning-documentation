@@ -339,7 +339,7 @@ By Theorem~\ref{the:probEntailment} the definition of entailment reduces to prop
 
 
 
-\subsubsection{Deciding entailment on Markov Networks}
+\subsubsection{Knowledge Bases as Base Measures for Probability Distributions}
 
 
 
@@ -350,7 +350,7 @@ Given a generic probability distribution $\probtensor$ we can build a Knowledge 
 where $\nonzerofunction:\rr\rightarrow \rr$ is defined as $\nonzeroof{x}=1$ if $x\neq0$ and $\nonzeroof{x}=0$ else.
 
 % Generic case of distributions
-\begin{theorem}\label{the:entailmentMarkovToKB}
+\begin{theorem}\label{the:entailmentProbToLogical}
 	Any probability distribution $\probtensor$ probabilistically entails a formula $\exformula$, if and only if the Knowledge Base $\kb^{\probtensor}$ logically entails $\exformula$.
 \end{theorem}
 \begin{proof}
@@ -365,6 +365,32 @@ where $\nonzerofunction:\rr\rightarrow \rr$ is defined as $\nonzeroof{x}=1$ if $
 	Therefore, probabilistic entailment of $\exformula$ by $\probtensor$ is equivalent to logical entailment of $\exformula$ by $\kb^{\probtensor}$.
 \end{proof}
 
+Let us use this to connect the entailment formalism with the representability (see \defref{def:representationBaseMeasure}) and positivity (see \defref{def:positivityBaseMeasure}) of distributions with respect to boolean base measures.
+
+\begin{theorem}\label{the:minimalRepPosBaseMeasure}
+	A distribution $\probtensor$ of boolean variables is representable with respect to $\basemeasure$, if and only if $\nonzerofunction\circ\probtensor\models\basemeasure$.
+	A distribution $\probtensor$ of boolean variables is positive with respect to $\basemeasure$, if and only if $\basemeasure=\nonzerofunction\circ\probtensor$.
+\end{theorem}
+\begin{proof}
+	To show the first claim, let $\probtensor$ be a distribution and $\basemeasure$ be a base measure.
+	With \defref{def:representationBaseMeasure}, $\probtensor$ is representable with respect to $\basemeasure$, if and only if
+		\[ \forall_{\shortcatindices\in\atomstates} \big(\basemeasureat{\indexedshortcatvariables}=0\big) \rightarrow \big(\probat{\indexedshortcatvariables}=0\big) \, .  \]
+	This is equal to
+		\[ \forall_{\shortcatindices\in\atomstates} \big(\nonzerofunction\circ\probat{\indexedshortcatvariables}=1\big) \rightarrow \big(\basemeasureat{\indexedshortcatvariables}=1\big)    \]
+	and by definition \defref{def:logicalEntailment} equal to $\basemeasure\models\nonzerofunction\circ\probtensor$.
+	
+	To show the second claim, we show that when $\probtensor$ is in addition positive with respect to $\basemeasure$, then also $\basemeasure\models\nonzerofunction\circ\probtensor$ and thus $\basemeasure=\nonzerofunction\circ\probtensor$.
+	Let $\probtensor$ be a distribution, which is representable with respect to $\basemeasure$.
+	Then $\probtensor$ is positive with respect to $\basemeasure$, if and only if
+		\[ \forall_{\shortcatindices\in\atomstates} \big(\basemeasureat{\indexedshortcatvariables}=1\big) \rightarrow \big(\probat{\indexedshortcatvariables}>0\big)   \]
+	This is equal to
+		\[ \forall_{\shortcatindices\in\atomstates} \big(\basemeasureat{\indexedshortcatvariables}=1\big) \rightarrow \big(\nonzerofunction\circ\probat{\indexedshortcatvariables}=1\big)   \]
+	and thus $\basemeasure\models\nonzerofunction\circ\probtensor$.
+\end{proof}
+
+
+
+\subsubsection{Deciding entailment on Markov Networks}
 
 
 
@@ -380,7 +406,7 @@ where $\nonzerofunction:\rr\rightarrow \rr$ is defined as $\nonzeroof{x}=1$ if $
 	\begin{align}\label{eq:proofFacReduction}
 		 \nonzerofunction\circ\probtensor = \nonzerofunction\circ\tilde{\probtensor} \, . 
 	\end{align}
-	The claim follows then from Theorem~\ref{the:entailmentMarkovToKB}.
+	The claim follows then from Theorem~\ref{the:entailmentProbToLogical}.
 	To show \eqref{eq:proofFacReduction} let there be $\indexedcatvariableof{\secnodes}$ such that $\probtensor[\indexedcatvariableof{\secnodes}]=0$.
 	Then for any $\indexedcatvariableof{\nodes}$ extending  $\indexedcatvariableof{\secnodes}$ we have $\contractionof{\{\hypercoreat{\edge} \, : \, \edge\in\edges \}}{\indexedcatvariableof{\nodes}} = 0$ and thus also $\contractionof{\{\nonzerofunction\circ\hypercoreat{\edge} \, : \, \edge\in\edges \}}{\indexedcatvariableof{\nodes}} = 0$ and $\tilde{\probtensor}[\indexedcatvariableof{\secnodes}]=0$.
 	One can similarly show, that when $\tilde{\probtensor}[\indexedcatvariableof{\secnodes}]=0$ then also ${\probtensor}[\indexedcatvariableof{\secnodes}]=0$. 
@@ -558,7 +584,7 @@ Vanishing local contractions provide sufficient but not necessary criterion to d
 	For any Markov Network on the decorated hypergraph $\graph$ and any subgraph $\secgraph$, we have for any formula that $\probtensor^{\graph}\models\exformula$ if $\probtensor^{\secgraph}\models\exformula$.
 \end{theorem}	
 \begin{proof}
-	Based on the reduction to Knowledge Bases by Theorem~\ref{the:entailmentMarkovToKB} and the monotonocity of binary contractions as shown in Theorem~\ref{the:monotonicityBinaryContractions}.
+	Based on the reduction to Knowledge Bases by Theorem~\ref{the:entailmentProbToLogical} and the monotonocity of binary contractions as shown in Theorem~\ref{the:monotonicityBinaryContractions}.
 \end{proof}
 
 

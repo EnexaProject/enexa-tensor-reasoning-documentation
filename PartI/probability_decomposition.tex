@@ -54,6 +54,42 @@ Probability tensors are depicted as
 	\input{PartI/tikz_pics/probability_decomposition/probability_tensor.tex}
 \end{center}
 
+\subsubsection{Base measures}
+
+
+From a measure theoretic perspective, probabilities are measurable functions called probability densities, which integrals are $1$. % Add citations?
+In our case of finite dimensional state spaces of factored systems, we implicitly used the trivial tensor $\onesat{\shortcatvariables}$ as a base measure, which measures subsets of states by their cardinality and is therefore refered to as state counting base measure.
+The distribution tensors $\probat{\shortcatvariables}$ can then be understood as probability densities with respect to this state counting base measure.
+We in this work will also consider more general base measures $\basemeasureat{\shortcatvariables}$, which we restrict to be boolean, that is $\basemeasureat{\indexedshortcatvariables}\in\{0,1\}$ for all states $\shortcatindices$.
+When understanding $\probtensor$ as a probability density with respect to $\basemeasure$, any probabilistic interpretation will be through the contraction $\contractionof{\probtensor,\basemeasure}{\shortcatvariables}$ and the normation condition reads as
+	\[ \contraction{\probtensor,\basemeasure} = 1 \, . \]
+Since we restrict to boolean base measures, the contraction effectively manipulates the tensor $\probtensor$ by setting the coordinates $\probat{\indexedshortcatvariables}$ to zero, when $\basemeasureat{\indexedshortcatvariables}=0$.
+Therefore, multiple tensors $\probtensor$ will have the same proabilistic interpretation, when $\basemeasureat{\shortcatvariables}\neq\onesat{\shortcatvariables}$.
+To avoid this ambiguity, we introduce the notation of representability with respect to a base measure $\basemeasure$, by demanding that such coordinates are zero.
+
+\begin{definition}\label{def:representationBaseMeasure}
+	We say that a probability distribution $\probtensor$ is representable with respect to a boolean base measure $\basemeasure$, if for all $\shortcatindices$ with $\basemeasureat{\indexedshortcatvariables}=0$ we have $\probat{\indexedshortcatvariables}=0$.
+\end{definition}
+
+When a probability distribution $\probtensor$ is representable with respect to a boolean base measure $\basemeasure$, we have the invariance
+	\[ \probat{\shortcatvariables} =  \contractionof{\probtensor,\basemeasure}{\shortcatvariables} \]
+and can therefore safely ignore the base measures.
+
+Starting with \charef{cha:logicalRepresentation} we will further investigate boolean tensors and relate them with propositional formulas.
+In \charef{cha:logicalReasoning} we will connect the representation and positivity with respect to boolean base measures with the formalism of entailment.
+
+% Positive distribution
+We now investigate, which base measures $\basemeasure$ can be chosen for a probability distribution $\probtensor$, such that $\probtensor$ is representable by $\basemeasure$.
+Here we want to finde a $\basemeasure$, which is in a sense to be defined minimal amount the base measures, such that $\probtensor$ is representable with respect to them.
+For this minimality criterion we will develop in \charef{cha:logicalReasoning} orders based on entailment and show the minimality in \theref{the:minimalRepPosBaseMeasure}.
+Here, we just introduce the minimality criterion as positivity of a distribution with respect to a base measure.
+
+\begin{definition}\label{def:positivityBaseMeasure}
+	We say that a probability distribution $\probtensor$ is positive with respect to a boolean base measure $\basemeasure$, if the distribution is representable by $\basemeasure$ (i.e. $\contraction{\probtensor,\basemeasure}=1$) and for all $\shortcatindices$ with $\basemeasureat{\indexedcatvariables}=1$ we have $\probat{\indexedcatvariables}>0$.
+\end{definition}
+
+%This is a slide abuse of the measure theoretic approach to probability theory, since typically the base measure needs to be defined before considering probability distributions. 
+
 
 \subsection{Marginal Distribution}
 
@@ -827,9 +863,12 @@ For infinite state space there are sufficient statistics and parameters, such th
 In that cases, the canonical parameters need to be chosen from a subset where the partition function is finite. 
 
 % Restriction to boolean base measures
-We further restrict to boolean base measures, which satisfy $\contraction{\basemeasure}\neq0$
-In Chapter~\ref{cha:logicalRepresentation} these tensors will be called satisfiable propositional formulas.
+As before, we restrict for boolean base measures, which satisfy $\contraction{\basemeasure}\neq0$
+We notice, that by positivity of the exponential function, any distribution in an exponential family $\expfamily$ is positive with respect to $\basemeasure$ (see \defref{def:positivityBaseMeasure}).
+%In Chapter~\ref{cha:logicalRepresentation} these tensors will be called satisfiable propositional formulas.
 In Chapter~\ref{cha:networkRepresentation} we will investigate distributions, where the base measures and the sufficient statistics share a common computation framework.
+
+
 
 % Cumulant representation
 \begin{lemma}\label{lem:energyCumulantRepresentation}
