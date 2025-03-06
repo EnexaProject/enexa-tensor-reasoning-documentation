@@ -1,56 +1,116 @@
 \section{Propositional Logics}\label{cha:FormulaTensors}\label{cha:logicalRepresentation}
 
-Propositional logics describes systems with $\atomorder$ binary categorical variables, which are called atoms and denoted by $\atomicformulaof{\atomenumerator}$ for $\atomenumeratorin$.
+Propositional logics describes systems with $\atomorder$ boolean variables, which are called atoms and denoted by $\atomicformulaof{\atomenumerator}$ for $\atomenumeratorin$.
 Indices $\atomlegindexof{\atomenumerator}\in[2]$ to the atoms $\atomenumeratorin$ enumerate the $2^\atomorder$ states of these systems, which are called worlds.
 In each world indexed by $\atomindices$ the indices $\atomicformulaof{\atomenumerator}$ encode whether the corresponding variable is $\truesymbol$. 
 
 % Structure
-We here choose a semantic centric approach to propositional logic, by defining formulas as binary tensors.
+We here choose a semantic centric approach to propositional logic, by defining formulas as boolean tensors.
 Then we investigate the corresponding syntax of formulas as specification of a tensor network decomposition of the relational encoding of formulas.
 
+Propositional logic amounts to reason about Boolean variables, which are categorical variables with $2$ possible values.
+
+Before discussing the semantics and syntax of propositional formulas, we first investigate how Boolean can be represented by vectors in order to mechanize their processing based on contractions.
 
 \subsection{Encoding of Booleans}
 
-Propositional logic amounts to reason about Boolean variables, which are categorical variables with $2$ possible values.
-Before applying this insight in the representation of propositional formulas, we first investigate how Boolean calculus can be represented by multilinear operations.
+Booleans are variables valued by $\truthset$ and consist a basic data structure.
 
-\subsubsection{Booleans as categorical variables}
+%we investigate scheme to interpret the states $\truthset$ of a boolean 
+
+\subsubsection{Representation by coordinates}
+
+To represent Booleans by categorical variables $\catvariable$ with two states we use the index interpretation function
+	\[ \indexinterpretation:\truthset\rightarrow\ozset \]
+defined as
+    	\[ \indexinterpretationat{\truesymbol} = 1 \quad \text{and} \quad \indexinterpretationat{\falsesymbol} = 0 \, . \]
+% Outlook: General interpretation maps
+In \defref{def:subsetEncoding} in Part~III will define encodings of arbitrary sets based on index interpretation maps.
+
+% Group homomorphism
+One motivation for this particular choice of the interpretation function $\indexinterpretation$ is the effective execution of the conjunction as we show in the next Lemma.
+
+\begin{lemma}
+	$\indexinterpretation$ is a homomorphism between the groups	
+		\[ \big(\truthset,\land\big) \quad \text{and} \quad \big(\ozset,\cdot\big) \, . \]
+\end{lemma}
+\begin{proof}
+	It suffices to notice, that for arbitrary $\truthstateof{0},\truthstateof{1}\in\truthset$ we have
+		\[ \indexinterpretationat{\truthstateof{0}\land \truthstateof{1}} 
+		= \indexinterpretationat{\truthstateof{0}} \cdot \indexinterpretationat{\truthstateof{1}}  \, . \]
+\end{proof}
+	
+% Interpretation of boolean contraction and type conversion application
+Based on this homomorphism, contractions of boolean tensors, in which all variables are kept open, can be regarded as parallel calculations of the conjunction $\land$ encoded by $\indexinterpretation$.
+This homomorphism is further applied in type conversion in dynamically-typed languages (e.g. in $\mathrm{python}$ \cite{python_software_foundation_python_2025}).
+
+% Nonlinearity issues
+Operations like the negation fail to be linear and are only affine linear, since for $\truthstate\in\truthset$ we have
+\begin{align}\label{eq:affineLinearNegation}
+ 	\indexinterpretationat{\lnot\truthstate} = 1 - \indexinterpretationat{\truthstate}  \, . 
+\end{align}
+Since any logical connective can be represented as a composition of conjunctions and negations, any logical connective corresponds with an affine linear function on the interpreted truth values.
+Direct applications of this insight to execute logical calculus will be discussed later in \secref{sec:effectiveCalculus}.
+For our purposes here, we would like to execute logical connective based on single contractions and avoid summations over them.
+This is why we call the negation representation as in \eqref{eq:affineLinearNegation} the affine representation problem, which we in the following want to resolve.
+
+% Disjunction central interpretation
+While in this work, we will always encode boolean states by $\indexinterpretation$, other index interpretation functions could be chosen.
+For example, the interpretation
+	\[ \indexinterpretationof{\lor}:\truthset\rightarrow\ozset \]
+defined as
+    	\[ \indexinterpretationofat{\lor}{\truesymbol} = 0 \quad \text{and} \quad \indexinterpretationofat{\lor}{\falsesymbol} = 1 \, , \]
+results is a homomorphism between the groups	
+	\[ \big(\truthset,\lor\big) \quad \text{and} \quad \big(\ozset,\cdot\big) \, . \]
+While placing the disjunction $\lor$ as the logical connective effectively executed by contractions, the negation will for arbitrary interpretations mapping onto $\ozset$ remain the function %\eqref{eq:affineLinearNegation}
+\begin{align*}
+ 	\indexinterpretationofat{\lor}{\lnot\truthstate} = 1 - \indexinterpretationofat{\lor}{\truthstate}  \, . 
+\end{align*}
+Thus, the problem of affine linear operations cannot be resolved by a clever choice of an interpretation function with image in $\ozset$. 
 
 
-%\begin{remark}[Boolean Calculus to Binary Calculus] % This is Coordinate Calculus, Happening on the Coordinates during Binary Tensor Contractions
-	%We use an embedding of truth assignments to $\{0,1\}=[2]$ and store in large vectors, restructured as tensors, truths to sets of formulas.
-	To represent Booleans by categorical variables $\catvariable$ with two states we use the following standard group homomorphism % (this is standard, also build in python)
-		\[ \big(\{\truesymbol,\falsesymbol\},\land\big) \quad \text{and} \quad \big(\{ 1,0\},\cdot\big) \]
-	by the map
-    		\[ [\cdot]:\{\truesymbol,\falsesymbol\} \rightarrow \{1,0\} \]
-	defined as
-	    	\[ [\truesymbol] = 1 \quad , \quad [\falsesymbol] = 0 \, . \]
-	The multiplication is performed in the binary tensor contractions and can thus be interpreted as the $\land$ connective performed on Boolean coordinates.
-%\end{remark}
+\subsubsection{Representation by basis vectors} % This is what Basis Calculus does! Refer to that here?
+
+While contractions can just perform conjunctions, we need a representation trick to extend the contraction expressivity to arbitrary connectives and resolve the affine representation problem.
+To this end we now compose $\indexinterpretation$ with the one-hot encoding $\onehotmap$ and get an encoding
+\begin{align*}
+	\onehotmap\circ\indexinterpretation : \truthset \rightarrow \ozbasisset \, ,
+\end{align*}
+where $\catvariable$ is a categorical variable with $\catdim=2$.
+For any $\truthstate\in\truthset$ we have
+\begin{align*}
+	\onehotmap\circ\indexinterpretationat{\truthstate} = 
+	\begin{bmatrix}
+		\indexinterpretationat{\lnot\truthstate} \\
+		\indexinterpretationat{\truthstate}
+	\end{bmatrix}  \, .
+\end{align*}
 
 
-% Expressivity Issues
-While the conjunction of is in this embedding performed by multiplications, operations like the negation
-	\[ [\lnot X] = 1 - [X]  \]
-are affine linear.
-Direct applications of these affine linear operations to perform logical calculus will be discussed later in Section~\ref{sec:effectiveGroundingCalculus}.
+% Resolving the affine representation problem
+Performing the negation now amounts to switching the coordinates of the encoded vector, which can be performed by contraction with a transposition matrix
+\begin{align*}
+	\rencodingofat{\lnot}{\catvariable,\catvariableof{\lnot}} = 
+	\begin{bmatrix}
+		0 & 1 \\
+		1 & 0
+	\end{bmatrix} \, ,
+\end{align*}
+where in this notation we always understand the first variable $\catvariable$ as the row index selector and the second variable $\catvariableof{\lnot}$ as the column index selector.
+We then have
+\begin{align*}
+	\onehotmap\circ\indexinterpretationat{\lnot\truthstate}[\catvariableof{\lnot}] = \contractionof{\rencodingofat{\lnot}{\catvariable,\catvariableof{\lnot}},\onehotmap\circ\indexinterpretationat{\truthstate}[\catvariable]}{\catvariableof{\lnot}} \, .  
+\end{align*}
+We therefore arrived at our aim to resolve the affine representation problem and have found a procedure to represent logical negations by a contraction, which is a linear operation.
+Besides negations, we will show in this chapter, that arbitrary logical formulas can be represented by contractions.
 
-However, in this chapter we will circumvent the problems arising with affine linearity by using the one-hot encoding of Booleans.
+\subsubsection{Coordinate and Basis Calculus}
 
-
-\subsubsection{One-hot Encoding} % This is what Basis Calculus does! Refer to that here?
-
-Booleans are categorical variables with $\catdim=2$ states, where we interpret the states $[2]=\{0,1\}$ by $\{\truesymbol,\falsesymbol\}$.
-The one-hot encoding of Booleans
-	\[ \onehotmap: [2] \rightarrow \{\fbasis[\catvariable] ,\tbasis[\catvariable] \}  \subset \rr^2 \]
-is thus understood as an encoding of truth values.
-
-%% Expressivity
-As discussed before, the one-hot encoding is rich enough to represent any function of the state by a linear function on the encoding.
-The truth of formulas is a function of the truth of atomic formulas, and thus representable by linear functions of the one-hot encodings.
-
-
-
+Our findings on the encoding of booleans hint towards more general schemes to encode information into boolean tensors, which will be explored in more detail in \charef{cha:coordinateCalculus} and \charef{cha:basisCalculus}.
+When each coordinate in a boolean tensor represents one in $\ozset$ interpreted boolean we call the scheme coordinate calculus.
+In basis calculus on the other hand, booleans are represented by elements of $\ozbasisset$.
+In that scheme, there are pairs of two coordinates (building slice vectors of the tensors), which are restricted to be different from each other.
+This amounts to posing a global directionality constraint on the boolean tensor, as will be shown in \theref{the:rencodingDirected}.
 
 \subsection{Semantics of Propositional Formulas}
 
@@ -59,10 +119,9 @@ Intuitively this describes, whether a specific world can be the state of a facto
 
 \subsubsection{Formulas}
 
-%% Intro of formulas
-Logics is especially strong in interpreting binary tensors representing Propositional Knowledge Bases, based on connections with abstract human thinking.
+% Intro of formulas
+Logics is especially useful in interpreting boolean tensors representing Propositional Knowledge Bases, based on connections with abstract human thinking.
 To make this more precise, we associate each such tensor is associated with a formula $\exformula$ being a composition of the atomic variables with logical connectives as we proof next.
-
 
 \begin{definition}\label{def:formulas}
 	A propositional formula $\formulaat{\catvariables}$ depending on $\atomorder$ atoms $\catvariableof{\atomenumerator}$ is a tensor
@@ -179,12 +238,13 @@ This representation is required to represent arbitrary propositional formulas by
 
 
 %% Coordinatewise 
-The relational decomposition $\rencodingof{\exformula}$ has coordinates 
+The relational coordinate $\rencodingof{\exformula}$ has slices
 \begin{align}
 		\contractionof{\{\rencodingof{\exformula},\onehotmapof{\atomindices}\}}{\catvariableof{\exformula}} 
+		\rencodingofat{\exformula}{\indexedshortcatvariables,\catvariableof{\exformula}}
 		= \begin{cases}
-		\tbasis & \text{if the world where $\atomicformulaof{\atomenumerator}=\atomlegindexof{\atomenumerator}$ is a model of $\exformula$}  \\
-		\fbasis & \text{else}\, .
+		\tbasis[\catvariableof{\exformula}] & \text{if the world where $\indexedshortcatvariables$ is a model of $\exformula$}  \\
+		\fbasis[\catvariableof{\exformula}] & \text{else}\, .
 		\end{cases}
 \end{align} 
 The contractions of the relational encoding therefore calculate whether an assignment of atoms is a model of the formula, using basis calculus (see Theorem~\ref{the:basisCalculus}).
@@ -229,7 +289,7 @@ Our syntactic decomposition of propositional formulas will then investigate, how
 \begin{theorem}\label{the:AtomicFTensor}
 	The relational encoding of any atomic formula $\formulaofat{\atomenumerator}{\catvariables}$ has a tensor decomposition by
 		\[ \rencodingofat{\atomicformulaof{\atomenumerator}}{\catvariables,\catvariableof{\formulaof{\atomenumerator}}}
-		= \contractionof{\{\identityat{\catvariableof{\atomenumerator},\catvariableof{\formulaof{\atomenumerator}}}\}}{\catvariables,\catvariableof{\formulaof{\atomenumerator}}} \, . \]
+		= \sbcontractionof{\identityat{\catvariableof{\atomenumerator},\catvariableof{\formulaof{\atomenumerator}}}}{\catvariables,\catvariableof{\formulaof{\atomenumerator}}} \, . \]
 	The decomposition is depicted in a network diagram as
 	\begin{center}
 		\input{./PartI/tikz_pics/logic_representation/atomic_ft.tex}
