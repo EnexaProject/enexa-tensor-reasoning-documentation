@@ -89,16 +89,17 @@ For any $\truthstate\in\truthset$ we have
 % Resolving the affine representation problem
 Performing the negation now amounts to switching the coordinates of the encoded vector, which can be performed by contraction with a transposition matrix
 \begin{align*}
-	\rencodingofat{\lnot}{\catvariable,\catvariableof{\lnot}} = 
+	\rencodingofat{\lnot}{\headvariableof{\lnot},\catvariable} = 
 	\begin{bmatrix}
 		0 & 1 \\
 		1 & 0
 	\end{bmatrix} \, ,
 \end{align*}
-where in this notation we always understand the first variable $\catvariable$ as the row index selector and the second variable $\catvariableof{\lnot}$ as the column index selector.
+where in this notation we always understand the first variable $\catvariable$ as the row index selector and the second variable $\headvariableof{\notucon}$ as the column index selector.
 We then have
 \begin{align*}
-	\onehotmap\circ\indexinterpretationat{\lnot\truthstate}[\catvariableof{\lnot}] = \contractionof{\rencodingofat{\lnot}{\catvariable,\catvariableof{\lnot}},\onehotmap\circ\indexinterpretationat{\truthstate}[\catvariable]}{\catvariableof{\lnot}} \, .  
+	\onehotmap\circ\indexinterpretationat{\lnot\truthstate}[\headvariableof{\lnot}] 
+	= \contractionof{\rencodingofat{\notucon}{\headvariableof{\notucon},\catvariable},\onehotmap\circ\indexinterpretationat{\truthstate}[\catvariable]}{\headvariableof{\notucon}} \, .  
 \end{align*}
 We therefore arrived at our aim to resolve the affine representation problem and have found a procedure to represent logical negations by a contraction, which is a linear operation.
 Besides negations, we will show in this chapter, that arbitrary logical formulas can be represented by contractions.
@@ -197,10 +198,10 @@ We can then build the relational encoding (Definition~\ref{def:functionRepresent
 
 %\begin{definition}[Relation Encoding of Formulas] % Own definition, since a reinterpretation of the formula
 Given a factored system with $\atomorder$ atoms $\shortcatvariables$ and a propositional formula $\formula$, the relational encoding of $\formula$ (see Definition~\ref{def:functionRepresentation}) is the tensor
-	\[ \rencodingofat{\formula}{\shortcatvariables,\formulavar} \in  \left(\atomspace \right) \otimes \rr^2 \]
+	\[ \rencodingofat{\formula}{\formulavar,\shortcatvariables} \in  \left(\atomspace \right) \otimes \rr^2 \]
 decomposable as
 \begin{align} 
-	\rencodingofat{\formula}{\shortcatvariables,\formulavar} 
+	\rencodingofat{\formula}{\formulavar,\shortcatvariables} 
 	= & \sum_{\shortcatindices\in\atomstates}  \onehotmapofat{\shortcatindices}{\shortcatvariables} \otimes \onehotmapofat{\formulaat{\indexedshortcatvariables}}{\formulavar} \, . 
 \end{align}
 %\end{definition}
@@ -212,20 +213,21 @@ Exactly for propositional formulas, this construction will lead to Boolean image
 
 \begin{lemma}\label{lem:formulaEncodingDecomposition}
 	For any formula $\formula$ we have
-		\[ \rencodingofat{\formula}{\shortcatvariables,\formulavar} 
-		= \formulaat{\shortcatvariables} \otimes \onehotmapofat{1}{\formulavar} 
-		+ \lnot\formulaat{\shortcatvariables} \otimes  \onehotmapofat{0}{\formulavar} \, . 
+		\[ \rencodingofat{\formula}{\formulavar,\shortcatvariables} 
+		= \formulaat{\shortcatvariables} \otimes \tbasisat{\formulavar} 
+		+ \lnot\formulaat{\shortcatvariables} \otimes  \fbasisat{\formulavar} \, . 
 		 \]
 	In particular
 		\[ \formulaat{\shortcatvariables} = \contractionof{
-		\rencodingofat{\formula}{\shortcatvariables,\formulavar},\onehotmapofat{1}{\formulavar}
+		\rencodingofat{\formula}{\formulavar,\shortcatvariables},\tbasisat{\formulavar}
 		}{\shortcatvariables} \, . \]
 \end{lemma}
 \begin{proof}
 %% Decomposition
 	We can decompose relational encodings of formulas into the sum (see Figure~\ref{fig:formulaRencoding}) % ! Not a tensor network decomposition !
 	\begin{align} 
-		 \rencodingofat{\formula}{\shortcatvariables,\formulavar}  = & \fbasisat{\formulavar} \otimes \left( \sum_{\formulazerocoordinates}  \onehotmapofat{\shortcatindices}{\shortcatvariables} \right) \\
+		 \rencodingofat{\formula}{\formulavar,\shortcatvariables}  
+		 = & \fbasisat{\formulavar} \otimes \left( \sum_{\formulazerocoordinates}  \onehotmapofat{\shortcatindices}{\shortcatvariables} \right) \\
 		 + & \tbasisat{\formulavar} \otimes \left( \sum_{\formulaonecoordinates}  \onehotmapofat{\shortcatindices}{\shortcatvariables} \right)
 	\end{align}
 	where the second term sums up the models of $\formula$ and the first one the models of $\lnot\formula$.
@@ -295,10 +297,10 @@ Atomic formulas and their relational encodings have an especially compelling rep
 		= \contractionof{\tbasisat{\catvariableof{\atomenumerator}}}{\shortcatvariables}
 		= \tbasisat{\catvariableof{\atomenumerator}} \otimes \onesat{\catvariableof{[\catorder]/\{\atomenumerator\}}}  \, . \]	
 
-	The relational encoding of any atomic formula $\formulaofat{\atomenumerator}{\shortcatvariables}$ has a tensor decomposition by
-		\[ \rencodingofat{\formulaof{\atomenumerator}}{\shortcatvariables,\catvariableof{\formulaof{\atomenumerator}}}
-		= \contractionof{\identityat{\catvariableof{\atomenumerator},\catvariableof{\formulaof{\atomenumerator}}}}{\shortcatvariables}
-		= \identityat{\catvariableof{\atomenumerator},\catvariableof{\formulaof{\atomenumerator}}} \otimes \onesat{\catvariableof{[\catorder]/\{\atomenumerator\}}} \, . \]
+	The relational encoding of any atomic formula $\atomicformulaofat{\atomenumerator}{\shortcatvariables}$ has a tensor decomposition by
+		\[ \rencodingofat{\atomicformulaof{\atomenumerator}}{\headvariableof{\atomorder},\shortcatvariables}
+		= \contractionof{\identityat{\catvariableof{\atomenumerator},\headvariableof{\atomenumerator}}}{\shortcatvariables}
+		= \identityat{\catvariableof{\atomenumerator},\headvariableof{\atomenumerator}} \otimes \onesat{\catvariableof{[\catorder]/\{\atomenumerator\}}} \, . \]
 	The decomposition is depicted in a network diagram as
 	\begin{center}
 		\input{./PartI/tikz_pics/logic_representation/atomic_ft.tex}
@@ -307,11 +309,11 @@ Atomic formulas and their relational encodings have an especially compelling rep
 \begin{proof}
 	We have by definition
 	\begin{align*}
-		\rencodingofat{\atomicformulaof{\atomenumerator}}{\shortcatvariables,\catvariableof{\formulaof{\atomenumerator}}}
-		=& \sum_{\catindices\in\atomstates} \onehotmapofat{\catindices}{\shortcatvariables} \otimes \onehotmapofat{\formulaofat{\atomenumerator}{\indexedcatvariables}}{\catvariableof{\formulaof{\atomenumerator}}} \\
-		=& \left( \onehotmapofat{0,0}{\catvariableof{\atomenumerator},\catvariableof{\formulaof{\atomenumerator}}} +
-		\onehotmapofat{1,1}{\catvariableof{\atomenumerator},\catvariableof{\formulaof{\atomenumerator}}} \right) \otimes \onesat{\catvariableof{\secatomenumerator}\, : \, \secatomenumerator \neq \atomenumerator} \\
-		=& \contractionof{\identityat{\catvariableof{\atomenumerator},\catvariableof{\formulaof{\atomenumerator}}}}{\shortcatvariables,\catvariableof{\formulaof{\atomenumerator}}} \, .
+		\rencodingofat{\atomicformulaof{\atomenumerator}}{\headvariableof{\atomenumerator},\shortcatvariables}
+		=& \sum_{\catindices\in\atomstates} \onehotmapofat{\catindices}{\shortcatvariables} \otimes \onehotmapofat{\formulaofat{\atomenumerator}{\indexedcatvariables}}{\headvariableof{\atomenumerator}} \\
+		=& \left( \onehotmapofat{0,0}{\catvariableof{\atomenumerator},\headvariableof{\atomenumerator}} +
+		\onehotmapofat{1,1}{\catvariableof{\atomenumerator},\headvariableof{\atomenumerator}} \right) \otimes \onesat{\catvariableof{\secatomenumerator}\, : \, \secatomenumerator \neq \atomenumerator} \\
+		=& \contractionof{\identityat{\catvariableof{\atomenumerator},\headvariableof{\atomenumerator}}}{\shortcatvariables,\headvariableof{\atomenumerator}} \, .
 	\end{align*} 
 \end{proof}
 
@@ -420,14 +422,14 @@ Let us now generalize this observation to arbitrary arity of connectives and pro
 
 \begin{theorem}[Composition of Formulas]\label{the:compositionByContraction}
 	Let there be a set of binary variables $\catvariableof{\nodes}$ including atoms $\shortcatvariables$ and image variables to some formulas.
-	For any formula $\formulaat{\catvariables}$, which has a syntactical composition into connectives $\{\connectiveofat{\selindex}{\catvariableof{\nodesof{\selindex}}} : \selindexin\}$ taking their inputs by variables $\catvariableof{\nodesof{\selindex}}\subset \catvariableof{\nodes}$ and output by a variable $\catvariableof{\connectiveof{\selindex}}$
+	For any formula $\formulaat{\catvariables}$, which has a syntactical composition into connectives $\{\connectiveofat{\selindex}{\catvariableof{\nodesof{\selindex}}} : \selindexin\}$ taking their inputs by variables $\catvariableof{\nodesof{\selindex}}\subset \catvariableof{\nodes}$ and output by a variable $\headvariableof{\connectiveof{\selindex}}$
 	we have that
 	\begin{align*}
-		\rencodingofat{\formula}{\shortcatvariables,\formulavar} =
+		\rencodingofat{\formula}{\formulavar,\shortcatvariables} =
 		\contractionof{\left\{
-		\rencodingofat{\connectiveof{\selindex}}{\catvariableof{\nodesof{\selindex}}, \catvariableof{\connectiveof{\selindex}}} : \selindexin
+		\rencodingofat{\connectiveof{\selindex}}{\headvariableof{\connectiveof{\selindex}},\catvariableof{\nodesof{\selindex}}} : \selindexin
 		\right\} }
-		{\shortcatvariables,\formulavar} \, . 
+		{\formulavar,\shortcatvariables} \, . 
 	\end{align*}
 \end{theorem}
 \begin{proof}

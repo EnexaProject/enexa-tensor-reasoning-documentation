@@ -28,7 +28,7 @@
 \newcommand{\truthstate}{z}
 \newcommand{\truthstateof}[1]{\truthstate_{#1}}
 \newcommand{\ozset}{\{0,1\}}
-\newcommand{\ozbasisset}{\{\fbasis[\catvariable],\tbasis[\catvariable]\}}
+\newcommand{\ozbasisset}{\{\fbasisat{\catvariable},\tbasisat{\catvariable}\}}
 
 \newenvironment{centeredcode}
     {\begin{center}\begin{algorithmic}\hspace{1cm}}
@@ -186,13 +186,25 @@
 \newcommand{\formulaat}[1]{\formula\left[#1\right]}
 \newcommand{\formulaof}[1]{\formula_{#1}}
 \newcommand{\formulaofat}[2]{\formulaof{#1}\left[#2\right]}
+
+\newcommand{\formulavar}{\headvariableof{\formula}}
+\newcommand{\formulacc}{\rencodingof{\formula}} % computation core
+\newcommand{\formulaccwith}{\rencodingofat{\formula}{\formulavar,\shortcatvariables}}
+
 \newcommand{\enumformula}{\formulaof{\selindex}}
 \newcommand{\enumformulaat}[1]{\enumformula\left[#1\right]}
 
-\newcommand{\formulavar}{\catvariableof{\formula}}
+\newcommand{\enumformulavar}{\headvariableof{\selindex}}
+
+\newcommand{\enumformulacc}{\rencodingof{\enumformula}} % computation core
+\newcommand{\enumformulaccwith}{\rencodingofat{\enumformula}{\enumformulavar,\shortcatvariables}}
+\newcommand{\enumformulaac}{\actcoreof{\enumformula,\canparamat{\indexedselvariable}}}
+\newcommand{\enumformulaacwith}{\actcoreofat{\enumformula,\canparamat{\indexedselvariable}}{\headvariableof{\enumformula}}}
+
+
 
 \newcommand{\exformula}{\formula}
-\newcommand{\exformulavar}{\catvariableof{\exformula}}
+\newcommand{\exformulavar}{\headvariableof{\exformula}}
 
 \newcommand{\formulazerocoordinates}{\shortcatindices\,:\,\formulaat{\shortcatindices}=0}
 \newcommand{\formulaonecoordinates}{\shortcatindices\,:\,\formulaat{\shortcatindices}=1}
@@ -200,7 +212,7 @@
 \newcommand{\texformula}{\tilde{\exformula}}
 
 \newcommand{\secexformula}{h} % Since g is atom
-\newcommand{\secexformulavar}{\catvariableof{\secexformula}}
+\newcommand{\secexformulavar}{\headvariableof{\secexformula}}
 
 \newcommand{\exformulain}{\exformula\in\formulaset}
 \newcommand{\exformulaof}[1]{\exformula\left(#1\right)}
@@ -492,6 +504,7 @@
 
 \newcommand{\atomicformula}{\catvariable}
 \newcommand{\atomicformulaof}[1]{\catvariableof{#1}}
+\newcommand{\atomicformulaofat}[2]{\catvariableof{#1}\left[#2\right]}
 \newcommand{\atomicformulas}{\catvariableof{[\atomorder]}} %{\{\atomicformulaof{\atomenumerator} :  \atomenumeratorin \}}
 \newcommand{\enumeratedatoms}{\atomicformulaof{0},\ldots,\atomicformulaof{\atomorder-1}}
 \newcommand{\atomformulaset}{\formulasetof{\mlnatomsymbol}}
@@ -640,7 +653,7 @@
 %% Hard Logic
 
 \newcommand{\kb}{\mathcal{KB}}
-\newcommand{\kbvar}{\catvariableof{\kb}}
+\newcommand{\kbvar}{\headvariableof{\kb}}
 \newcommand{\kbat}[1]{\kb\left[#1\right]}
 
 \newcommand{\seckb}{\tilde{\kb}}
@@ -722,10 +735,11 @@
 \newcommand{\expfamilyof}[1]{\Gamma^{#1}}
 \newcommand{\expfamily}{\expfamilyof{\sstat,\basemeasure}}
 
-\newcommand{\hlnsetof}[1]{\Lambda^{#1}}
+\newcommand{\realizabledistsof}[1]{\Lambda^{#1}}
+\newcommand{\hlnsetof}[1]{\realizabledistsof{#1,\elformat}}
 
 \newcommand{\mnexpfamily}{\expfamilyof{\graph,\ones}} % The exponential family of Markov Networks on \graph
-\newcommand{\mlnexpfamily}{\expfamilyof{\formulaset,\ones}}
+\newcommand{\mlnexpfamily}{\expfamilyof{\mlnstat,\ones}}
 
 \newcommand{\basemeasure}{\nu}
 \newcommand{\basemeasureof}[1]{\basemeasure^{#1}}
@@ -739,14 +753,22 @@
 \newcommand{\sstat}{\phi}
 \newcommand{\secsstat}{\tilde{\sstat}}
 \newcommand{\proposalstat}{\fselectionmap^T}
-\newcommand{\mlnstat}{\fselectionmap}
+\newcommand{\mlnstat}{\formulaset}
 \newcommand{\naivestat}{\identity}
 
 \newcommand{\sstatcoordinateof}[1]{\sstat_{#1}}
 \newcommand{\sstatcoordinate}{\sstatcoordinateof{\selindex}}
 \newcommand{\sstatcoordinateofat}[2]{\sstat_{#1}\left[#2\right]}
 
-\newcommand{\sstatcatof}[1]{\catvariableof{\sstatcoordinateof{#1}}}
+\newcommand{\sstatheadvariables}{\headvariableof{[\seldim]}}
+
+\newcommand{\sstatcc}{\rencodingof{\sstat}}
+\newcommand{\sstatccwith}{\rencodingofat{\sstat}{\sstatheadvariables,\shortcatvariables}}
+\newcommand{\sstatac}{\actcoreof{\sstatcoordinateof{\selindex},\canparamat{\indexedselvariable}}}
+\newcommand{\sstatacwith}{\actcoreofat{\sstatcoordinateof{\selindex},\canparamat{\indexedselvariable}}{\headvariableof{\selindex}}}
+
+\newcommand{\sstatcatof}[1]{\headvariableof{\sstatcoordinateof{#1}}}
+
 \newcommand{\sstatindof}[1]{\catindexof{\sstatcoordinateof{#1}}}
 \newcommand{\sencsstat}{\sencodingof{\sstat}}
 \newcommand{\sencsstatat}[1]{\sencodingof{\sstat}\left[#1\right]}
@@ -869,6 +891,9 @@
 \newcommand{\nodesof}[1]{\nodes^{#1}}
 \newcommand{\innodes}{\nodesof{\mathrm{in}}}
 \newcommand{\outnodes}{\nodesof{\mathrm{out}}}
+
+\newcommand{\elgraph}{\graphof{\elformat}}
+\newcommand{\maxgraph}{\graphof{\mathrm{max}}}
 
 \newcommand{\prenodes}{\{\secnode \, : \, \secnode \prec \node, \secnode\neq\node\}}
 \newcommand{\afternodes}{\{\secnode \, : \, \node \prec \secnode, \secnode\neq\node\}}

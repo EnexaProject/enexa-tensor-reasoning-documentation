@@ -23,7 +23,7 @@ We introduce Markov Logic Networks in the formalism of exponential families (see
 
 \begin{definition}[Markov Logic Networks]
 	Markov Logic Networks are exponential families $\mlnexpfamily$ with sufficient statistics by functions
-		\[ \formulaset : \atomstates \rightarrow \bigtimes_{\exformulain}[2] \subset \rr^{\cardof{\formulaset}} \]
+		\[ \mlnstat : \atomstates \rightarrow \bigtimes_{\exformulain}[2] \subset \rr^{\cardof{\formulaset}} \]
 	defined coordinatewise by propositional formulas $\exformulain$.
 \end{definition}
 
@@ -32,7 +32,7 @@ Since the image of each feature is contained in $[2]$, they are propositional fo
 
 % Characterization of MLNs among exponential families: When choosing binary features
 Conversely, any binary feature $\sstatcoordinateof{\statenumerator}$ of an exponential family defines a propositional formula (see Definition~\ref{def:formulas}).
-Thus, any exponential family of distributions of $\atomstates$, such that $\imageof{\sstatcoordinateof{\statenumerator}}\subset\{0,1\}$ for all $\statenumeratorin$ is a set of Markov Logic Networks with fixed formulas.
+Thus, any exponential family of distributions of $\atomstates$, such that $\imageof{\sstatcoordinateof{\statenumerator}}\subset\ozset$ for all $\statenumeratorin$ is a set of Markov Logic Networks with fixed formulas.
 
 % Formula Selecting Networks
 %We will further study the sparse representation of formula sets in Chapter~\ref{cha:architectures}.
@@ -59,37 +59,33 @@ The sufficient statistics consistent in a map $\formulaset$ of formulas brings t
 Based on the previous discussion on the representation of exponential families by tensor networks in Section~\ref{sec:exponentialFamilies} we now derive a representation for Markov Logic Networks.
 
 \begin{theorem}[Relational Encodings for Markov Logic Networks]\label{the:mlnTensorRep}
-	A Markov Logic Network to a set of formulas $\formulaset = \{\formulaof{\selindex} \, : \, \selindexin\}$ is represented as
+	A Markov Logic Network to a set of formulas $\formulaset = \{\enumformula \, : \, \selindexin\}$ is represented as
 	\begin{align*}
 		\mlnprobat{\shortcatvariables} = 
-		\normationof{
-			\{\rencodingofat{\formulaof{\selindex}}{\catvariableof{\formulaof{\selindex}},\shortcatvariables} : \selindexin \} 
-			\cup \{ 
-			\headcoreofat{\formulaof{\selindex},\canparamat{\selvariable=\selindex}}{\catvariableof{\formulaof{\selindex}}} 
-			: \selindexin \}
+		\normationof{\{\enumformulaccwith : \selindexin \} \cup \{\enumformulaacwith : \selindexin \}
 		}{\shortcatvariables}
 	\end{align*}
 	where we denote for each $\selindexin$ an activation core
 	\begin{align*}
-		\headcoreofat{\formulaof{\selindex},\canparamat{\indexedselvariableof{}}}{\catvariableof{\formulaof{\selindex}}} 
+		\enumformulaacwith
 		= \begin{bmatrix} 1 \\
-		 \expof{\canparamat{\indexedselvariableof{}}} 
-		 \end{bmatrix}[\catvariableof{\formulaof{\selindex}}] \, .
+		 \expof{\canparamat{\indexedselvariable}} 
+		 \end{bmatrix}[\enumformulavar] \, .
 	\end{align*}
 \end{theorem}
 \begin{proof}
 	The claim follows from Theorem~\ref{def:expFamilyTensorRep} and the following contraction equations.
-	We have with the grouped variable $\catvariableof{\formulaset} = \{\catvariableof{\formulaof{\selindex}}\, : \, \selindexin\}$
+	We have with the grouped variable $\headvariableof{\formulaset} = \{\enumformulavar\, : \, \selindexin\}$
 	\begin{align*}
-		\rencodingofat{\formulaset}{\shortcatvariables,\catvariableof{\formulaset}}
-		= \contractionof{\{\rencodingofat{\formulaof{\selindex}}{\catvariableof{\formulaof{\selindex}},\shortcatvariables} : \selindexin \}}{\shortcatvariables,\catvariableof{\formulaset}} \, .
+		\rencodingofat{\formulaset}{\headvariableof{\formulaset},\shortcatvariables}
+		= \contractionof{\{\enumformulaccwith : \selindexin \}}{\headvariableof{\formulaset},\shortcatvariables} \, .
 	\end{align*}
-	Since we have a Markov Logic Network we have $\imageof{\formulaof{\selindex}}\subset [2]$ and thus
+	Since we have a Markov Logic Network we have $\imageof{\enumformula}\subset [2]$ and thus
 	\begin{align*}
-	 	\headcoreofat{\formulaof{\selindex},\canparamat{\indexedselvariableof{}}}{\indexedcatvariableof{\formulaof{\selindex}}} 
+		\enumformulaac\left[\indexedcatvariableof{\enumformula}\right]
 		= \begin{cases}
-			1 & \text{for} \quad \catvariableof{\formulaof{\selindex}} = 0 \\
-			\expof{\canparamat{\indexedselvariableof{}}} & \text{for} \quad \catvariableof{\formulaof{\selindex}} = 1
+			1 & \text{for} \quad \catindexof{\enumformula} = 0 \\
+			\expof{\canparamat{\indexedselvariable}} & \text{for} \quad \catindexof{\enumformula}  = 1
 		\end{cases}  
 	\end{align*}
 	Using these equations, the claim follows from Theorem~\ref{def:expFamilyTensorRep}.
@@ -99,7 +95,9 @@ Based on the previous discussion on the representation of exponential families b
 \begin{center}
 	\input{PartII/tikz_pics/network_representation/factor.tex}
 \end{center}
-\caption{Factor of a Markov Logic Network to a formula $\formulaof{\selindex}$.}
+\caption{Factor of a Markov Logic Network to a formula $\enumformula$, represented as the contraction of a computation core $\enumformulacc$ and an activation core $\enumformulaac$.
+	While the computation core $\enumformulacc$ prepares based on basis calculus a categorical variable representing the value of the statistic formula $\enumformula$ dependent on assignments to the distributed variables, the activation core multiplies an exponential weight to coordinates satisfying the formula.
+}
 \label{fig:mlnFactor}
 \end{figure}
 
@@ -112,7 +110,7 @@ Since any member of an exponential family is a Markov Network with tensors to ea
 	where by $\nodesof{\formula}$ we denote the minimal set such that there exists a tensor $\hypercoreat{\catvariableof{\nodesof{\formula}}}$ with
 		\[ \formulaat{\catvariableof{\nodes}} = \hypercoreat{\catvariableof{\nodesof{\formula}}} \otimes \onesat{\catvariableof{\nodes/\nodesof{\formula}}} \, . \]		
 	Any Markov Logic Network $\mlnparameters$ is then a Markov Network given the graph $\graphof{\formulaset}$
-	$\{\expof{\canparamat{\selvariable=\selindex}\cdot\formulaof{\selindex}}
+	$\{\expof{\canparamat{\indexedselvariable}\cdot\enumformula}
 \, :\,\selindexin\}$.
 \end{corollary}
 
@@ -143,7 +141,7 @@ One can then exploit redundancies and make sure that every subresult is computed
 \end{center}
 \caption{Example of a decomposed Markov Network representation of a Markov Logic Network with formulas $\{\formulaof{0} = a\lor b, \formulaof{1} = a \lor b \lor \lnot c\}$.
 	Since both formulas share the subformula $a\lor b$, their contracted factors have a representation by a connected tensor network.}
-% Where $\headcoreofat{\formulaof{\selindex}}{\catvariableof{\formulaof{\selindex}}} =\begin{bmatrix} 1 & \expof{\weightof{\exformula}} \end{bmatrix}[\catvariableof{\exformula}] $}
+% Where $\actcoreofat{\enumformula}{\enumformulavar} =\begin{bmatrix} 1 & \expof{\weightof{\exformula}} \end{bmatrix}[\formulavar] $}
 \label{fig:mlnDecRep}
 \end{figure}
 
@@ -155,38 +153,18 @@ One can then exploit redundancies and make sure that every subresult is computed
 %\end{theorem}
 
 
-%When the further factor cores contain only one variable, we can label them by the formula $\exformula$ corresponding with that node $[1,\expof{\weightof{\exformula}}]$.
-%\begin{definition}{Markov Logic Networks}
-%	Given a set of formulas $\mlnformulaset$ with weights $\weight:\mlnformulaset\rightarrow\rr$ the Markov Logic Network is the distribution
-%		\[ \mlnprobat{\indexedcatvariables}= \frac{1}{\partitionfunctionof{\mlnparameters}} \expof{
-%			\sum_{\mlnformulain} \exformula(\atomindices) \weightof{\exformula}
-%			} \]
-%	where the partition function
-%		\[ \partitionfunctionof{\mlnparameters} = \sum_{\atomindicesin}  \expof{
-%			\sum_{\mlnformulain} \exformula(\atomindices) \weightof{\exformula}
-%		} \]
-%	ensures the normation.
-%\end{definition}
-
-%where the partition function is the contraction 
-%\begin{align}
-%	\partitionfunctionof{\mlnparameters} = \sbcontraction{\expof{\mlnenergy}} \, . 
-%\end{align}
-
-
-
 \subsubsection{Energy tensors}
 
 %% Tensor Representation of MLN
 With the energy tensor
 \begin{align}
 	\mlnenergy 
-	= \sum_{\selindexin} \canparamat{\selvariable=\selindex} \cdot \formulaofat{\selindex}{\shortcatvariables} 
+	= \sum_{\selindexin} \canparamat{\indexedselvariable} \cdot \enumformulaat{\shortcatvariables} 
 	= \sbcontractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables} 
 \end{align}
 the MLN is the distribution
 \begin{align}
-	\mlnprobat{\shortcatvariables} = \normationofwrt{\expof{\mlnenergy}}{\shortcatvariables}{\varnothing} \, . 
+	\mlnprobat{\shortcatvariables} = \normationof{\expof{\mlnenergy}}{\shortcatvariables} \, . 
 \end{align}
 
 In case of a common structure of the formulas in a Markov Logic Network, Formula selecting networks can be applied to represent their energies.
@@ -219,7 +197,7 @@ Based on Markov Logic Networks containing only maxterms and minterms (see Defini
 There are $2^{\atomorder}$ maxterms and $2^{\atomorder}$ minterms which are enough to represent any probability distribution as we show next.
 
 \begin{theorem}\label{the:maximalClausesRepresentation}\label{the:mintermExpressivityMLN}
-	Let there be a positive probability tensor 
+	Let there be a positive probability distribution
 		 \[ \probof{\shortcatvariables} \in \bigotimes_{\atomenumeratorin}\rr^2 \, . \] 
 	Then the Markov Logic Network of minterms (see Definition~\ref{def:clauses})
 		\[ \mintermformulaset = \{\mintermof{\atomindices} \, : \, \atomindices\in\atomstates \}\]
@@ -320,7 +298,7 @@ We show next, the independent positive distributions are representable by tuning
 		\[ \probofat{\catenumerator}{\catvariableof{\catenumerator}} = \sbcontractionof{\probtensor}{\catvariableof{\catenumerator}} \, . \]
 	
 	By assumption of positivity, the vector $\probofat{\catenumerator}{\catvariableof{\catenumerator}}$ is positive for each $\catenumeratorin$ and the parameter
-		\[ \canparam^\catenumerator 
+		\[ \canparamat{\selvariable=\catenumerator} 
 		= \lnof{\frac{
 		\probofat{\catenumerator}{\catvariableof{\catenumerator}=1}
 		}{
@@ -445,20 +423,10 @@ We can use any binary logical connective and have an associated formula where we
 
 \subsection{Hard Logic Networks}\label{sec:hardNetworks} % To be dropped in the unification with the MLN chapter
 
-%\red{Hard Logic Networks are Knowledge Bases, Hybrid Logic Networks are exponential families on Knowledge Bases.
-%This makes it impossible to build energy tensors without basemeasures capturing vanishing coordinates.}
-
 % Hard logic vs markov logic
 While exponential families are positive distributions, in logics probability distributions can assign states zero probability.
 As a consequence, Markov Logic Networks have a soft logic interpretation in the sense that violation of activated formulas have nonzero probability.
 We here discuss their hard logic counterparts, where worlds not satisfying activated formulas have zero probability.
-
-
-
-%The Tensor Network decomposition of formula tensors is analogously constructed to a graphical representation of the formulas.
-%We thus develop in this section the interpretation of formula tensor decompositions as Bayesian and Markov Propositional Networks.
-
-
 
 \subsubsection{The limit of hard logic}\label{sec:hardLogicLimit} % To be merged with the above
 
@@ -468,43 +436,63 @@ However, since the Markov Logic Network is defined as a normed exponentiation of
 Since both distributions are tensors in the same space to a factored system, we can take the limits of large weights and observe, that Markov Logic Networks indeed converge to normed knowledge bases.
 
 
-% Limit of Activation core
 \begin{lemma}
-	When taking the limit of large weights $\weightof{\exformula}\rightarrow\infty$ we observe a coordinatewise (in the sense of a convergence of each coordinate of the tensor) convergence 
-	\begin{align}
-%	\frac{1}{\partitionfunctionof{\weightof{\exformula}\exformula}} \expof{\weightof{\exformula}\exformula} 
-		\normationofwrt{\expof{\weightof{\exformula}\cdot \exformula}}{\shortcatvariables}{\varnothing} \rightarrow  \normationofwrt{\exformula}{\shortcatvariables}{\varnothing}
-%	\frac{1}{\braket{\exformula,\ones}}\exformula
-	\end{align}
+	For any satisfiable formula $\formulaat{\shortcatvariables}$ and a variable weight $\canparam\in\rr$, we have for $\canparam\rightarrow\infty$
+	\begin{align*}
+		\normationof{\expof{\canparam\cdot\formulaat{\shortcatvariables}}}{\shortcatvariables} \rightarrow \normationof{\exformula}{\shortcatvariables}
+	\end{align*}
+	and for $\canparam\rightarrow-\infty$
+	\begin{align*}
+		\normationof{\expof{\canparam\cdot\formulaat{\shortcatvariables}}}{\shortcatvariables} \rightarrow \normationof{\lnot\exformula}{\shortcatvariables} \, .
+	\end{align*}
+	Here we denote the understand the convergence of tensors as a convergence of each coordinate.
 \end{lemma}
 \begin{proof}
 	We have 
 	\begin{align*}
-		\partitionfunctionof{\mlnparameters} = (\prod_{\atomenumerator} \catdimof{\atomenumerator} - \contractionof{\exformula}{\varnothing}) + \contractionof{\exformula}{\varnothing} \cdot \expof{\weightof{\exformula}}
+		\partitionfunctionof{\mlnparameters} = \left(\prod_{\atomenumeratorin} \catdimof{\atomenumerator}\right) - \contraction{\exformula} + \contraction{\exformula} \cdot \expof{\canparam}
 	\end{align*}
-	and therefore for any $\atomindices\in\atomstates$ with $\exformula(\atomindices)=1$
+	and therefore for any $\shortcatindices\in\atomstates$ with $\formulaat{\indexedshortcatvariables}=1$
 	\begin{align*}
-		\normationofwrt{\expof{\weightof{\exformula}\cdot \exformula}}{\indexedcatvariables}{\varnothing} 
+		\normationof{\expof{\canparam\cdot \exformula}}{\indexedshortcatvariables}
 		&= \frac{
-			\expof{\weightof{\exformula}}
+			\expof{\canparam}
 			}{
-			(\prod_{\atomenumerator} \catdimof{\atomenumerator} - \contractionof{\exformula}{\varnothing}) + \contractionof{\exformula}{\varnothing} \cdot \expof{\weightof{\exformula}}
+			\left(\prod_{\atomenumeratorin} \catdimof{\atomenumerator} \right) - \contraction{\exformula} + \contraction{\exformula} \cdot \expof{\canparam}
 			} \\
-		& \rightarrow \frac{1}{\contractionof{\exformula}{\varnothing}} 
-		= \normationofwrt{\exformula}{\indexedcatvariables}{\varnothing} \, . 
+		& \rightarrow \frac{1}{\contraction{\exformula}} 
+		= \normationof{\exformula}{\indexedcatvariables} \, . 
 	\end{align*}
-	For any $\atomindices\in\atomstates$ with $\exformula(\atomindices)=0$ we have on the other side
+	For any $\atomindices\in\atomstates$ with $\formulaat{\indexedshortcatvariables}=0$ we have on the other side
 	\begin{align*}
-		\normationofwrt{\expof{\weightof{\exformula}\cdot \exformula}}{\indexedcatvariables}{\varnothing} 
+		\normationof{\expof{\canparam\cdot \exformula}}{\indexedcatvariables}
 		&= \frac{
 			1
 			}{
-			(\prod_{\atomenumerator} \catdimof{\atomenumerator} - \contractionof{\exformula}{\varnothing}) + \contractionof{\exformula}{\varnothing} \cdot \expof{\weightof{\exformula}}
+			\left(\prod_{\atomenumeratorin} \catdimof{\atomenumerator}\right) - \contraction{\exformula} + \contraction{\exformula} \cdot \expof{\canparam}
 			} \\
 		& \rightarrow 0
-		= \normationofwrt{\exformula}{\indexedcatvariables}{\varnothing} \, . 
+		= \normationof{\exformula}{\indexedcatvariables} \, . 
 	\end{align*}
 \end{proof}
+
+
+
+% Limit on the activation core
+We can by the above Lemma represent both the situation of non-asymptotic weights and the limit for diverging weights by the same computation core $\formulaccwith$, with different activation cores, since
+\begin{align*}
+	\normationof{\expof{\canparam\cdot\formulaat{\shortcatvariables}}}{\shortcatvariables} 
+	= \contractionof{\formulaccwith,\actcoreof{\formula,\canparam}}{\shortcatvariables}
+\end{align*}
+and 
+\begin{align*}
+	\normationof{\formula}{\shortcatvariables}
+	= \contractionof{\formulaccwith,\tbasisat{\formulavar}}{\shortcatvariables} \quad \text{respectively} \quad
+	\normationof{\lnot\formula}{\shortcatvariables}
+	= \contractionof{\formulaccwith,\fbasisat{\formulavar}}{\shortcatvariables} \, . 
+\end{align*}
+
+
 
 \begin{theorem}
 	Let $\formulaset$ be a formulaset and $\canparam$ a positive parameter vector.
@@ -581,11 +569,11 @@ We use $\land$ symmetry to represent them as a contraction of the formulas build
 	we have
 		\[ \kbat{\shortcatvariables} = \contractionof{\formulaat{\shortcatvariables}}{\shortcatvariables}   \]
 	and
-		\[ \kbat{\shortcatvariables} = \contractionof{\{\rencodingofat{\exformula}{\catvariableof{\exformula},\shortcatvariables} \, : \, \exformula\in\formulaset\} \cup \{\onehotmapofat{1}{\catvariableof{\exformula}} \, : \, \exformula\in\formulaset\} }{\shortcatvariables} \, .  \]
+		\[ \kbat{\shortcatvariables} = \contractionof{\{\formulaccwith \, : \, \formula\in\formulaset\} \cup \{\tbasisat{\formulavar} \, : \, \formula\in\formulaset\} }{\shortcatvariables} \, .  \]
 \end{theorem}
 \begin{proof}
 	By the $\land$-symmetry, see effective calculus and 
-		\[ \formulaat{\shortcatvariables} =  \contractionof{\{\rencodingofat{\exformula}{\catvariableof{\exformula},\shortcatvariables}, \onehotmapofat{1}{\catvariableof{\exformula}}\} }{\shortcatvariables} \]
+		\[ \formulaat{\shortcatvariables} =  \contractionof{\{\formulaccwith,\tbasisat{\formulavar}\}}{\shortcatvariables} \]
 \end{proof}
 
 \begin{remark}{$\land$ symmetry does not generalize to Markov Logic Networks}
@@ -728,12 +716,12 @@ In the next theorem we show how a categorical constraint can be enforced in a te
 \begin{proof}
 	For any $\catindexof{[\atomorder]}$ we have
 		\[ \contractionof{\{\hypercoreat{\shortcatvariables}, \categoricalmap\}}{\indexedcatvariables}  = 
-			\hypercoreat{\indexedcatvariableof{[\atomorder]}} \cdot \categoricalmap[\indexedcatvariableof{},\indexedcatvariableof{\variableset}] \, . 
+			\hypercoreat{\shortcatindices} \cdot \categoricalmap[\indexedcatvariableof{},\indexedcatvariableof{\variableset}] \, . 
 		\]
 	If $\catindexof{\variableset} = \onehotmapof{\catindex}$ we have $\categoricalmap[\indexedcatvariableof{},\indexedcatvariableof{\variableset}] = 1$ and thus
-		\[ \contractionof{\{\hypercoreat{\shortcatvariables}, \categoricalmap\}}{\indexedcatvariables}  =  \hypercoreat{\indexedcatvariableof{[\atomorder]}}  \, . \]
+		\[ \contractionof{\hypercoreat{\shortcatvariables},\categoricalmap}{\indexedcatvariables}  =  \hypercoreat{\shortcatindices}  \, . \]
 	If $\catindexof{\variableset} \neq \onehotmapof{\catindex}$ then $\categoricalmap[\indexedcatvariableof{},\indexedcatvariableof{\variableset}] = 0$ and  
-		\[ \contractionof{\{\hypercoreat{\shortcatvariables}, \categoricalmap\}}{\indexedcatvariables}  = 0 \, . \]
+		\[ \contractionof{\hypercoreat{\shortcatvariables},\categoricalmap}{\indexedcatvariables}  = 0 \, . \]
 \end{proof}
 
 \begin{figure}[h]
@@ -864,9 +852,9 @@ We can employ the formula decompositions to represent both probabilistic facts o
 	\begin{align*}
 		\probtensorof{(\softformulaset,\canparam,\hardformulaset)}[\shortcatvariables] 
 		= \normationof{
-		\{\rencodingofat{\exformula}{\catvariableof{\exformula},\shortcatvariables} : \exformula\in\softformulaset\cup\hardformulaset \}
-		\cup \{\onehotmapofat{1}{\catvariableof{\exformula}} : \exformula\in\hardformulaset \}
-		\cup \{\headcoreofat{\exformula}{\catvariableof{\exformula}} : \exformula\in\softformulaset \}
+		\{\formulaccwith : \exformula\in\softformulaset\cup\hardformulaset \}
+		\cup \{\tbasisat{\formulavar} : \exformula\in\hardformulaset \}
+		\cup \{\actcoreofat{\exformula}{\formulavar} : \exformula\in\softformulaset \}
 		}{\shortcatvariables} \, . 
 	\end{align*}
 \end{theorem}
@@ -878,17 +866,17 @@ We can employ the formula decompositions to represent both probabilistic facts o
 While the statistics computing cores in the relational encoding are shared to compute the soft and the hard logic formulas, their activation cores differ.
 While probabilistic soft formulas get activation cores (see Theorem~\ref{the:mlnTensorRep})
 \begin{align*}
-	\headcoreofat{\exformula}{\catvariableof{\exformula}} 
+	\actcoreofat{\exformula}{\formulavar} 
 	= \begin{bmatrix} 1 \\
 		 \expof{\canparamat{\indexedselvariableof{}}} 
-		 \end{bmatrix}[\catvariableof{\formulaof{\selindex}}] \,
+		 \end{bmatrix}[\enumformulavar] \,
 \end{align*}
 the hard formulas get activation cores by unit vectors
 \begin{align*}
-	\onehotmapofat{1}{\catvariableof{\exformula}} 
+	\tbasisat{\formulavar} 
 	= \begin{bmatrix} 0 \\
 		 1
-	 \end{bmatrix}[\catvariableof{\formulaof{\selindex}}]  \, .
+	 \end{bmatrix}[\enumformulavar]  \, .
 \end{align*}
 As shown in Section~\ref{sec:hardLogicLimit}, the soft activation cores converge to these hard activation cores in the limit of large parameters, when imposing a local normation.
 %

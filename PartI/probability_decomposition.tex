@@ -916,13 +916,13 @@ The central insight here is a relational encoding of the sufficient statistics, 
 		[\cardof{\imageof{\sstatcoordinateof{\statenumerator}}}] \rightarrow \imageof{\sstatcoordinateof{\statenumerator}} \, . \]
 	
 	For any parameter vector $\canparamat{\selvariable}:[\seldim]\rightarrow\rr$ we build the activation cores
-		\[ \headcoreofat{\statenumerator}{\sstatcatof{\selindex}=\sstatindof{\selindex}} 
+		\[ \actcoreofat{\statenumerator}{\sstatcatof{\selindex}=\sstatindof{\selindex}} 
 		= \expof{\canparamat{\indexedselvariable} \cdot \indexinterpretationofat{\selindex}{\sstatcatof{\selindex}} } \,   \]
 	and have
 		\[ \expdist = 
-		\normationof{\{\basemeasure,\rencodingof{\sstat}\}\cup\{\headcoreof{\statenumerator} \, : \, \statenumeratorin\}}{\shortcatvariables} \, . 
+		\normationof{\{\basemeasure,\rencodingof{\sstat}\}\cup\{\actcoreof{\statenumerator} \, : \, \statenumeratorin\}}{\shortcatvariables} \, . 
 		\]
-%	where we use the vectors $\headcoreof{\statenumerator} : \imageof{\sstatcoordinateof{\statenumerator}} \rightarrow \rr $ defined for $y \in \imageof{\sstatcoordinateof{\statenumerator}}$ by
+%	where we use the vectors $\actcoreof{\statenumerator} : \imageof{\sstatcoordinateof{\statenumerator}} \rightarrow \rr $ defined for $y \in \imageof{\sstatcoordinateof{\statenumerator}}$ by
 \end{theorem}
 \begin{proof}
 	We use an extended image of $\sstat$ by  %	which does not modify the statement of Theorem~\ref{the:tensorFunctionComposition} (since extension to cases, which are never met).
@@ -933,7 +933,7 @@ The central insight here is a relational encoding of the sufficient statistics, 
 	The claim follows from the equation
 		\[ \restrictionoftoat{\expof{\braket{\cdot, \canparam}}}{\imageof{\sstat}}{\catvariableof{\sstatcoordinateof{0}},\ldots,\catvariableof{\sstatcoordinateof{\seldim-1}}}
 		= \bigotimes_{\selindexin} \restrictionoftoat{\expof{\cdot \canparamat{\indexedselvariable}}}{\imageof{\sstatcoordinateof{\selindex}}}{\catvariableof{\sstatcoordinateof{\selindex}}}
-		= \bigotimes_{\selindexin} \headcoreofat{\selindex}{\catvariableof{\sstatcoordinateof{\selindex}}} \, . \]
+		= \bigotimes_{\selindexin} \actcoreofat{\selindex}{\catvariableof{\sstatcoordinateof{\selindex}}} \, . \]
 \end{proof}
 
 
@@ -948,31 +948,56 @@ When the coordinate maps are sharing common components, a sparser representation
 A tensor network representation of an exponential family is thus a Markov Network consistent of two types of cores.
 Computation cores are relational encodings of statistics $\rencodingof{\sstatcoordinateof{\selindex}}$.
 Our intuition is that they compute the hidden variable $\catvariableof{\sstatcoordinateof{\selindex}}$, based on Basis Calculus (see Chapter~\ref{cha:basisCalculus}).
-Activation cores $\headcoreof{\selindex}$ exploit the computed variable and provide, when contracted with the relational encoding, a factor 
-	\[ \sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \headcoreofat{\statenumerator}{\catvariableof{\statenumerator}}}{\shortcatvariables}  \]
+Activation cores $\actcoreof{\selindex}$ exploit the computed variable and provide, when contracted with the relational encoding, a factor 
+	\[ \sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \actcoreofat{\statenumerator}{\catvariableof{\statenumerator}}}{\shortcatvariables}  \]
 to the Markov Network reduced to the visible coordinates $\shortcatvariables$.
-The activation cores are trivial, i.e. $\headcoreofat{\selindex}{\sstatcatof{\selindex}}=\onesat{\sstatcatof{\selindex}}$, when $\canparamat{\selvariable=\selindex}=0$.
+The activation cores are trivial, i.e. $\actcoreofat{\selindex}{\sstatcatof{\selindex}}=\onesat{\sstatcatof{\selindex}}$, when $\canparamat{\selvariable=\selindex}=0$.
 In that case 
-	\[  \sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \headcoreofat{\statenumerator}{\catvariableof{\statenumerator}}}{\shortcatvariables} 
+	\[  \sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \actcoreofat{\statenumerator}{\catvariableof{\statenumerator}}}{\shortcatvariables} 
 	= \onesat{\shortcatvariables} \]
 and both the activation core and the corresponding computation core can be dropped from the network without changing its distribution.
+
+% Interpretation as elementary 
+By \theref{def:expFamilyTensorRep} any member of an exponential family is represented by the normed contraction of a collection of unary activation cores contracted with the computation network $\rencodingofat{\sstat}{\headvariableof{[\seldim]},\shortcatvariables}$.
+We understand these activation cores as a member of a simple Markov Network distributing the head variables $\headvariableof{[\seldim]}$.
+This Markov Network has a graph, where the edges contain single variables, that is $\elgraph=([\seldim],\{\{\selindex\} \, : \, \selindexin\})$.
+We generalize these classed of probability distributions now to generic tensor network formats representing activation cores.
+%Furthermore, we define 
+
+% Define sets of realizable distributions
+\begin{definition}
+	Given a statistic $\sstat$, and a hypergraph $\graph=([\seldim],\edges)$ with nodes associated to the coordinates of the statistic, we define the set of realizable distributions by
+	\begin{align*}
+		\realizabledistsof{\sstat,\graph} = \left\{ \normationof{\{\rencodingofat{\sstat}{\headvariableof{[\seldim]},\shortcatvariables}\} \cup \{\hypercoreofat{\edge}{\headvariableof{\edge}}\}}{\shortcatvariables}  \, : \,\hypercoreofat{\edge}{\headvariableof{\edge}} \in\bigotimes_{\selindex\in\edge}\rr^{\headdimof{\selindex}} \right\} \, .
+	\end{align*}
+\end{definition}
+
+\begin{corollary}[Corollary of \theref{def:expFamilyTensorRep}]
+	For any base measure $\basemeasure$ and statistic $\sstat$ we have
+		\[ \expfamilyof{\sstat,\basemeasure} \subset \realizabledistsof{\sstat,\graph} \, . \]
+\end{corollary}
+
+% Proper subset
+A natural question is to further ask, whether $\expfamilyof{\sstat,\basemeasure}$ is a proper subset of $\realizabledistsof{\sstat,\graph}$.
+This is the case for most pairs $\sstat,\basemeasure$, since members of exponential families are positive with respect to their base measure, while in $\realizabledistsof{\sstat,\graph}$ we allow also for activation cores with vanishing coordinates, which in general do not produce positive distributions.
+We will follow these intuitions in the discussion of logical reasoning, starting with \charef{cha:logicalReasoning}, and will use the formats $\realizabledistsof{\sstat,\graph}$ as hybrid formats storing probability distributions and logical knowledge bases.
 
 %% FALSE STATEMENT? 
 %We can sum multiples of the trivial tensor on the head cores without changing the distribution as we show next.
 %
 %\begin{theorem}
-%	For any $\statenumeratorin$, the distribution is invariant under replacing $\headcoreofat{\statenumerator}{\selvariableof{\statenumerator}}$ by $\headcoreofat{\statenumerator}{\catvariableof{\statenumerator}}+\lambda\cdot \onesat{\catvariableof{\statenumerator}}$ where $\lambda\in\rr$
+%	For any $\statenumeratorin$, the distribution is invariant under replacing $\actcoreofat{\statenumerator}{\selvariableof{\statenumerator}}$ by $\actcoreofat{\statenumerator}{\catvariableof{\statenumerator}}+\lambda\cdot \onesat{\catvariableof{\statenumerator}}$ where $\lambda\in\rr$
 %\end{theorem}
 %\begin{proof}
 %	Follows from linearity in each head core, trivialization by trivial heads and normation.
 %	
 %	By linearity we have
 %	\begin{align*}
-%		\sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, (\headcoreofat{\statenumerator}{\catvariableof{\statenumerator}}+\lambda\cdot \onesat{\catvariableof{\statenumerator}})}{\shortcatvariables}
+%		\sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, (\actcoreofat{\statenumerator}{\catvariableof{\statenumerator}}+\lambda\cdot \onesat{\catvariableof{\statenumerator}})}{\shortcatvariables}
 %		= 
-%		\sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \headcoreofat{\statenumerator}{\catvariableof{\statenumerator}}}{\shortcatvariables}
+%		\sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \actcoreofat{\statenumerator}{\catvariableof{\statenumerator}}}{\shortcatvariables}
 %		+\lambda\cdot  \sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \onesat{\catvariableof{\statenumerator}}}{\shortcatvariables}
-%		=  \sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \headcoreofat{\statenumerator}{\catvariableof{\statenumerator}}}{\shortcatvariables}
+%		=  \sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \actcoreofat{\statenumerator}{\catvariableof{\statenumerator}}}{\shortcatvariables}
 %		+ \lambda \cdot \onesat{\shortcatvariables} \, .
 %	\end{align*}
 %\end{proof}

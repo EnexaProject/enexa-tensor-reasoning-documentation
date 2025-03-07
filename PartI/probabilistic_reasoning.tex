@@ -566,8 +566,8 @@ Each face of $\genmeanset$ thus defines a refinement of a base measure, which is
 % Base Measure Refinement algorithm
 We now utilize these findings and provide in \algoref{alg:baseMeasureRefinement} a procedure to refine the base measure until the reduced mean parameter is in the open set of a reduced mean parameter polytope.
 
-\begin{algorithm}[h!]\label{alg:baseMeasureRefinement}
-\caption{Base Measure Refinement}
+\begin{algorithm}[h!]
+\caption{Base Measure Refinement}\label{alg:baseMeasureRefinement}
 \begin{algorithmic}
 \State \textbf{Input}: Base measure $\basemeasure$, statistic $\sstat$ and mean parameter $\meanparam\in\genmeanset$
 \State \textbf{Output}: Refined base measure $\secbasemeasure$, remaining statistic $\secsstat$ and remaining mean parameter $\secmeanparam$
@@ -618,6 +618,40 @@ We now utilize these findings and provide in \algoref{alg:baseMeasureRefinement}
 		 \onehotmapofat{0}{\catvariableof{\sstatcoordinateof{\selindex}}}}{\shortcatvariables}  \, . \]
 \end{example}
 
+
+% Define sets of realizable distributions
+\begin{theorem}
+	For the maximal graph $\maxgraph=([\seldim],\{[\seldim]\})$, which has a single hyperedge containing all head variables we have
+	\begin{align*}
+		\genmeanset = \left\{ \contractionof{\probat{\shortcatvariables},\sencodingofat{\sstat}{\shortcatvariables,\selvariable}}{\shortcatvariables} \, , \, \probtensor \in \realizabledistsof{\sstat,\maxgraph} \right\}
+	\end{align*}
+\end{theorem}
+\begin{proof}
+	It is enough show, that for any output tuples $\secbasemeasure$, $\secsstat$ of the Base Measure Refinement \algoref{alg:baseMeasureRefinement} we have
+		\[ \expfamilyof{\secbasemeasure,\secsstat} \subset  \realizabledistsof{\sstat,\maxgraph} \, . \]
+	We notice, that the normation of any face base measure is realizable by $\realizabledistsof{\sstat,\maxgraph}$, since the objective in the maximation problem in \defref{def:faceBaseMeasure} depends only on $\sstat$.
+	Providing a more technical argument, we have
+	\begin{align*}
+		\indicatorofat{\argmax_{\shortcatindices} \contraction{\canparam,\sstat(\shortcatindices)}}{\shortcatvariables}
+		= \contractionof{
+			\sstatcc,
+			\sum_{\sstat(\shortcatindices) \, : \, \shortcatindices \in \argmax_{\shortcatindices} \contraction{\canparam,\sstat(\shortcatindices)} }
+			\onehotmapofat{\indexinterpretationat{\sstat(\shortcatindices)}}{\sstatheadvariables}
+		}{\shortcatvariables} \, .
+	\end{align*}
+	Since during the execution of \algoref{alg:baseMeasureRefinement}, $\secsstat$ is a subset of $\sstat$, we can find a corresponding $\canparamof{i}$ extending the face normal by vanishing coordinates to $\sstat$.
+	We then have, that 
+	\begin{align*}
+		\secbasemeasure = \contractionof{
+			\{\rencodingofat{\sstat}{\sstatheadvariables,\shortcatvariables}\} \cup
+			\left\{\sum_{\sstat(\shortcatindices) \, : \, \shortcatindices \in \argmax_{\shortcatindices} \contraction{\canparamof{i},\sstat(\shortcatindices)} } 
+			\onehotmapofat{\indexinterpretationat{\sstat(\shortcatindices)}}{\sstatheadvariables}
+			: i \in [n] \right\}
+			}{\sstatheadvariables} 
+	\end{align*}
+	represents the output base measure, where $i\in[n]$ label the faces chosen during in the loop of \algoref{alg:baseMeasureRefinement}.
+	Now, any member $\expdistof{\secbasemeasure,\canparam,\secsstat}\in\expfamilyof{\secsstat,\secbasemeasure}$ can be represented by a member of  $\realizabledistsof{\sstat,\maxgraph}$, by contracting these base measure representing cores with the activation cores $\bigotimes_{\selindexin}\sstatacwith$.
+\end{proof}
 
 \subsubsection{Mode Search by annealing}
 
@@ -1163,7 +1197,7 @@ This condition is equal to the collection of moment matching equations % (see \t
 	For any sufficient statistic $\sstat$ a parameter vector $\canparam$ and a $\selindexin$ we define
 	\begin{align*}
 	 	\hypercoreat{\catvariableof{\sstatcoordinateof{\selindex}}} 
-		= \contractionof{\{\rencodingof{\sstat}\}\cup\{\headcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}}{\catvariableof{\sstatcoordinateof{\selindex}}} \, . 
+		= \contractionof{\{\sstatcc\}\cup\{\headcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}}{\catvariableof{\sstatcoordinateof{\selindex}}} \, . 
 	\end{align*}
 	Then the moment matching condition for $\sstatcoordinateof{\selindex}$ relative to $\canparam$ and $\meanparam$ is satisfied for any $\canparamat{\indexedselvariable}$ with
 	\begin{align*}
@@ -1227,7 +1261,7 @@ Since the log likelihood is concave, the algorithm converges to a global minimum
 	\State Compute 
 		\begin{align*}
 			\hypercoreofat{\selindex}{\catvariableof{\sstatcoordinateof{\selindex}}} 
-			\algdefsymbol \contractionof{\{\rencodingof{\sstat}\}\cup\{\headcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}}{\catvariableof{\sstatcoordinateof{\selindex}}} 
+			\algdefsymbol \contractionof{\{\sstatcc\}\cup\{\headcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}}{\catvariableof{\sstatcoordinateof{\selindex}}} 
 		\end{align*}
 	\State Set $\canparamat{\indexedselvariable}$ to a solution of 
 	\begin{align*}
