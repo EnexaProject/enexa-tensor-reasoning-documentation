@@ -55,15 +55,15 @@ This perspective can be applied with subset encodings in Chapter~\ref{cha:tensor
 % Can use relational encoding
 To decide whether a formula is entailed, or its negation is entailed (in which case one says that the formula is contradicted) by a single contraction, one can perform the contraction
 \begin{align*}
-	\hypercore = \sbcontractionof{\kbat{\shortcatvariables},\formulaat{\shortcatvariables,\catvariableof{\exformula}}}{\catvariableof{\exformula}}
+	\hypercore = \sbcontractionof{\kbat{\shortcatvariables},\formulaat{\shortcatvariables,\exformulavar}}{\exformulavar}
 \end{align*}
 and use that
 \begin{align*}
-	 \sbcontraction{\kb,\lnot\exformula} = \hypercoreat{\catvariableof{\exformula}=0} 
+	 \sbcontraction{\kb,\lnot\exformula} = \hypercoreat{\exformulavar=0} 
 \end{align*}
 and 
 \begin{align*}
-	 \sbcontraction{\kb,\exformula} = \hypercoreat{\catvariableof{\exformula}=1} \, .  
+	 \sbcontraction{\kb,\exformula} = \hypercoreat{\exformulavar=1} \, .  
 \end{align*}
 
 
@@ -162,15 +162,15 @@ We thus interpret the formula tensors as defining a conditional probability of $
 
 
 % Interpretation of directionality as 
-The conditional query $\condprobof{\formulavar}{\enumeratedatoms}$ provides an interpretation of $\rencodingof{\exformula}$ as a conditional probability. 
-This is also reflected in the fact that both $\condprobof{\exformula}{\shortcatvariables}$ and $\rencodingof{\exformula}$ are directed, since the first is a normation by Defintion~\ref{def:queries} and the second a encoding of a function.
+The conditional query $\condprobof{\formulavar}{\shortcatvariables}$ provides an interpretation of $\rencodingof{\exformula}$ as a conditional probability. 
+This is also reflected in the fact that both $\condprobof{\formulavar}{\shortcatvariables}$ and $\rencodingof{\exformula}$ are directed, since the first is a normation by Defintion~\ref{def:queries} and the second a encoding of a function.
 
 %The direction of the legs in the formula tensor diagram in Figure~\ref{fig:FormulaTensor} is chosen to highlight the conditional probability interpretation.
 
 
 This directly implies using Theorem~\ref{the:conditionalMarginalization}  the trivialization of the formula tensor when contracting its head axis indexed by $\atomlegindexof{\exformula}$ with the trivial vector $\ones$, depicted as
 \begin{center}
-	\input{./PartI/tikz_pics/logic_representation/ones_property_ft.tex}
+	\input{./PartI/tikz_pics/logical_reasoning/ones_property_ft.tex}
 \end{center}
 
 
@@ -184,8 +184,8 @@ In this way, we have propositonal formulas defining probability distributions on
 Given a Markov Network $\probtensor$ with a single core $\rencodingof{\exformula}$ for a propositional formula $\exformula$.
 By definition we have
 \begin{align*}
-	\condprobof{\enumeratedatoms}{\formulavar} 
-	= \sbnormationofwrt{\rencodingof{\exformula}}{\enumeratedatoms}{\formulavar} \, .  
+	\condprobof{\shortcatvariables}{\formulavar} 
+	= \sbnormationofwrt{\rencodingof{\exformula}}{\shortcatvariables}{\formulavar} \, .  
 \end{align*}
 \begin{center}
 	\input{./PartI/tikz_pics/logical_reasoning/kb_as_condition.tex}
@@ -195,10 +195,10 @@ By definition we have
 Let us further investigate the slices of $\condprobof{\shortcatvariables}{\exformula}$ with respect to $\exformula$, which define distributions of the states of the factored system.
 To this end, let us condition on the event of $\exformula=1$, for which we have the distribution
 \begin{align}\label{eq:eventFormulaProb}
-	\condprobof{\shortcatvariables}{\exformula=1} = \frac{1}{\sbcontraction{\exformula}} \sum_{\atomindices \in \atomstates \, : \, \formulaat{\indexedcatvariableof{[\catorder]}}=1} \onehotmapof{\atomindices} \, .
+	\condprobof{\shortcatvariables}{\formulavar=1} = \frac{1}{\sbcontraction{\exformula}} \sum_{\shortcatindices\in\atomstates \, : \, \formulaat{\indexedshortcatvariables}=1} \onehotmapofat{\shortcatindices}{\shortcatvariables} \, .
 \end{align}
 With $\sbcontraction{\exformula}$ being the number of models of $\exformula$,  this is the uniform distribution among the models of $\exformula$.
-Conversely, when conditioning on the event $\exformula=0$ we get a uniform distribution of the models of $\lnot\exformula$.
+Conversely, when conditioning on the event $\formulavar=0$ we get a uniform distribution of the models of $\lnot\exformula$.
 
 % 
 The probability distribution in Equation~\eqref{eq:eventFormulaProb} is well defined except for the case that $\sbcontraction{\exformula}=0$.
@@ -662,13 +662,13 @@ There are different ways of implementing Algorithm~\ref{alg:KP}, by choosing an 
 
 \begin{corollary}
 	Whenever for a formula $\formulaat{\catvariableof{\secnodes}}$ and a $\kcoreof{\edge}$ we have
-		\[ \contractionof{\kcoreof{\edge},\rencodingof{\exformula}}{\catvariableof{\exformula}=0} =0  \]
+		\[ \contractionof{\kcoreof{\edge},\rencodingof{\exformula}}{\exformulavar=0} =0  \]
 	then the Markov Network $\extnet$ probabilistically entails $\exformula$.
 \end{corollary}
 
 
 %% Interpretation for leg dimension two
-Another way to use Algorithm~\ref{alg:KP} to decide entailement of formulas $\exformula$ is adding each $\rencodingof{\exformula}$ to $\extnet$ and defining Knowledge Cores $\kcoreof{\exformula}[\catvariableof{\exformula}]$.
+Another way to use Algorithm~\ref{alg:KP} to decide entailement of formulas $\exformula$ is adding each $\rencodingof{\exformula}$ to $\extnet$ and defining Knowledge Cores $\kcoreof{\exformula}[\exformulavar]$.
 Since then the Knowledge Core has only two dimensions, there are only four possible cores with the interpretation
 \begin{itemize}
 	\item $\tbasis$: the formula is known to be true

@@ -82,10 +82,10 @@ Based on the previous discussion on the representation of exponential families b
 	\end{align*}
 	Since we have a Markov Logic Network we have $\imageof{\enumformula}\subset [2]$ and thus
 	\begin{align*}
-		\enumformulaac\left[\indexedcatvariableof{\enumformula}\right]
+		\enumformulaac\left[\headvariableof{\selindex}=\headindex_{\selindex}\right]
 		= \begin{cases}
-			1 & \text{for} \quad \catindexof{\enumformula} = 0 \\
-			\expof{\canparamat{\indexedselvariable}} & \text{for} \quad \catindexof{\enumformula}  = 1
+			1 & \text{for} \quad \headindex_{\selindex} = 0 \\
+			\expof{\canparamat{\indexedselvariable}} & \text{for} \quad \headindex_{\selindex}  = 1
 		\end{cases}  
 	\end{align*}
 	Using these equations, the claim follows from Theorem~\ref{def:expFamilyTensorRep}.
@@ -158,7 +158,7 @@ One can then exploit redundancies and make sure that every subresult is computed
 %% Tensor Representation of MLN
 With the energy tensor
 \begin{align}
-	\mlnenergy 
+	\mlnenergy\left[\shortcatvariables\right]
 	= \sum_{\selindexin} \canparamat{\indexedselvariable} \cdot \enumformulaat{\shortcatvariables} 
 	= \sbcontractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables} 
 \end{align}
@@ -803,7 +803,7 @@ This trick is known to the field of variational inference, see for Example~3.6 i
 	which is the member of the exponential family with statistic by $\softformulaset$ and the base measure
 		\[ \hfbasemeasure[\shortcatvariables] = \contractionof{\{\formula : \formula \in \hardformulaset\}}{\shortcatvariables} \, .\]
 		
-	Given a set of formulas $\formulaset$, we define the set of hybrid logic networks realizable with $\formulaset$ as
+	Given a set of formulas $\formulaset$, we define the set of hybrid logic networks realizable with $\formulaset$ and elementary activation cores as
 	\begin{align*}
 		\hlnsetof{\formulaset} 
 		= \bigcup_{\secformulaset\subset\formulaset \, , \, \meanparam\in\{0,1\}^{\cardof{\formulaset}}}
@@ -953,8 +953,8 @@ Hybrid Logic Networks extend the expressivity result of Theorem~\ref{the:minterm
 	\begin{align*}
 		\canparamat{\selvariableof{[\catorder]}=\shortcatindices}
 		= \begin{cases}
-			0 & \text{if} \quad \probat{\shortcatvariables=\shortcatindices} = 0  \\
-			\lnof{\probat{\shortcatvariables=\shortcatindices}} & \text{else} 
+			0 & \text{if} \quad \probat{\indexedshortcatvariables} = 0  \\
+			\lnof{\probat{\indexedshortcatvariables}} & \text{else} 
 		\end{cases} \, . 
 	\end{align*}
 	Then the probability tensor is the member of the minterm exponential family with base measure $\hardformulaset$ and parameter $\canparam$, that is
@@ -967,22 +967,22 @@ Hybrid Logic Networks extend the expressivity result of Theorem~\ref{the:minterm
 		}{
 		\shortcatvariables
 		}}}{\shortcatvariables} = \probat{\shortcatvariables} \, . \]
-	For indices $\shortcatindices$ with $\probat{\shortcatvariables=\shortcatindices}=0$ we have $\hfbasemeasureat{\shortcatvariables=\shortcatindices}=0$ and thus also 
+	For indices $\shortcatindices$ with $\probat{\indexedshortcatvariables}=0$ we have $\hfbasemeasureat{\indexedshortcatvariables}=0$ and thus also 
 		\[ \sbcontractionof{\hfbasemeasure, \expof{\contractionof{
 		\sencodingof{\mintermformulaset}\canparam
 		}{
 		\shortcatvariables
-		}}}{\shortcatvariables=\shortcatindices} = 0 \, . \]
-	For indices $\shortcatindices$ with $\probat{\shortcatvariables=\shortcatindices}>0$ we have $\hfbasemeasureat{\shortcatvariables=\shortcatindices}=1$ and
+		}}}{\indexedshortcatvariables} = 0 \, . \]
+	For indices $\shortcatindices$ with $\probat{\indexedshortcatvariables}>0$ we have $\hfbasemeasureat{\indexedshortcatvariables}=1$ and
 	\begin{align*}
 		 \sbcontractionof{\hfbasemeasure, \expof{\contractionof{
 		\sencodingof{\mintermformulaset},\canparam
 		}{
 		\shortcatvariables
-		}}}{\shortcatvariables=\shortcatindices} 
-		&= \prod_{\selindexof{[\catorder]}} \expof{\canparamat{\selvariableof{[\catorder]}=\selindexof{[\catorder]}} \cdot \mintermofat{\selindexof{[\catorder]}}{\shortcatvariables=\shortcatindices}} \\
+		}}}{\indexedshortcatvariables} 
+		&= \prod_{\selindexof{[\catorder]}} \expof{\canparamat{\selvariableof{[\catorder]}=\selindexof{[\catorder]}} \cdot \mintermofat{\selindexof{[\catorder]}}{\indexedshortcatvariables}} \\
 		&=  \expof{\canparamat{\selvariableof{[\catorder]}=\shortcatindices}} \\
-		&=  \probat{\shortcatvariables=\shortcatindices} \, .
+		&=  \probat{\indexedshortcatvariables} \, .
 	\end{align*}
 \end{proof}
 
@@ -1021,7 +1021,7 @@ More generic correlations can be captured by a logical connective, calculated by
 
 
 % CSP
-A more general class of problems, which have natural representations by Hard Logic Networks are Constraint Satisfaction Problems (see Chapter~5 in \cite{russel_artificial_2021}).
+A more general class of problems, which have natural representations by Hard Logic Networks are Constraint Satisfaction Problems (see Chapter~5 in \cite{russell_artificial_2021}).
 Solving such problems is then equivalent to sampling from the worlds in a logical interpretation, and can be approached by the methods of Chapter~\ref{cha:logicalReasoning}.
 Among these classed, we have only discussed the Sudoku game in Example~\ref{exa:sudoku}.
 Extensions by Hybrid Logic Networks can be interpreted as implementations of preferences among possible solutions by probabilities.
