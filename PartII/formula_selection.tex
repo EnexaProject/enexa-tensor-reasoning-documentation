@@ -4,8 +4,8 @@ In this chapter we will investigate efficient schemes to represent collections o
 
 % Relational encoding of the selection map
 \begin{definition}
-	Given a set of $\parlegdim$ formulas $\{\formulaof{\selindex} : \selindexin\}$, we define the formula selecting map as
-		\[  \fselectionmapat{\shortcatvariables,\selvariable} : \atomstates \times [\parlegdim] \rightarrow [2] \]
+	Given a set of $\seldim$ formulas $\{\formulaof{\selindex} : \selindexin\}$, we define the formula selecting map as
+		\[  \fselectionmapat{\shortcatvariables,\selvariable} : \atomstates \times [\seldim] \rightarrow [2] \]
 	defined for $\selindexin$ by
 		\[ \fselectionmapat{\shortcatvariables=\atomindices,\selvariable=\selindex} =  \formulaofat{\selindex}{\shortcatvariables=\atomindices} \, . \]
 \end{definition}
@@ -46,10 +46,10 @@ We represent choices over connectives with a fixed number of arguments by adding
 
 % Formal map
 \begin{definition}\label{def:connectiveSelector}
-	Let $\{\connectiveof{0},\ldots,\connectiveof{\parlegdimof{\cselectionsymbol}-1}\}$ be a set of connectives with $\atomorder$ arguments.
+	Let $\{\connectiveof{0},\ldots,\connectiveof{\seldimof{\cselectionsymbol}-1}\}$ be a set of connectives with $\atomorder$ arguments.
 	The associated connective selection map is
 		\[ \cselectionmapat{\shortcatvariables,\selvariableof{\cselectionsymbol}}
-		: \atomstates \times [\parlegdimof{\cselectionsymbol}] \rightarrow [2] \]
+		: \atomstates \times [\seldimof{\cselectionsymbol}] \rightarrow [2] \]
 	defined for each $\selindexofin{\cselectionsymbol}$ and $\shortcatindices\in\atomstates$ by 
 		\[ \cselectionmapat{\shortcatvariables=\shortcatindices,\indexedselvariableof{\cselectionsymbol}} 
 		= \connectiveofat{\selindexof{\cselectionsymbol}}{\shortcatvariables=\shortcatindices}  \, . \]
@@ -71,7 +71,7 @@ We depict the relational encoding of connective selection maps in Figure~\ref{fi
 
 \begin{remark}[$\htformat$ Interpretation of Superposed Formula Tensor Networks]\label{rem:HTDecomSFT}
 	Continuing Remark ~\ref{rem:HTDecomFT}: 
-	Superposed Formula Tensors have a decomposition into a $\htformat$ as sketched here, where we distinguish between formula selection subspaces (indices $\selindexof{\parenumerator}$) and atomic subspaces (indices $\atomlegindexof{\atomenumerator})$.
+	Superposed Formula Tensors have a decomposition into a $\htformat$ as sketched here, where we distinguish between formula selection subspaces (indices $\selindexof{\selenumerator}$) and atomic subspaces (indices $\atomlegindexof{\atomenumerator})$.
 	At each formula selection we thus have a decomposition into three subspaces, two of atomic formulas and one for the formula selection.
 \end{remark}
 
@@ -86,7 +86,7 @@ We depict the relational encoding of connective selection maps in Figure~\ref{fi
 \begin{definition}\label{def:variableSelector}
 	The selection of one out of $\seldim$ variables in a list $\catvariableof{[\seldim]}$ is done by variable selecting maps
 	\begin{align}
-		\vselectionmapat{\catvariableof{[\seldim]},\selvariableof{\vselectionsymbol}}:  \left(\bigtimes_{\selindex\in[\parlegdim]}[2]\right) \times [\seldim]  \rightarrow [2]
+		\vselectionmapat{\catvariableof{[\seldim]},\selvariableof{\vselectionsymbol}}:  \left(\bigtimes_{\selindex\in[\seldim]}[2]\right) \times [\seldim]  \rightarrow [2]
 	\end{align}
 	are defined coordinatewise by
 	\begin{align}
@@ -112,10 +112,10 @@ This structure is exploited in the next theorem to derive a tensor network decom
 		+ \onesat{\vselectionheadvar,\catvariableof{\selindexof{\vselectionsymbol}}} \otimes \left(\onesat{\selvariableof{\vselectionsymbol}} - \onehotmapofat{\selindexof{\vselectionsymbol}}{\selvariableof{\vselectionsymbol}} \right) \, . 
 		\]
 	Then we have (see Figure~\ref{fig:SelectorDecomposition})
-		\[ \rencodingofat{\vselectionmap}{\vselectionheadvar,\catvariableof{[\parlegdim]},\selvariableof{\vselectionsymbol}} 
+		\[ \rencodingofat{\vselectionmap}{\vselectionheadvar,\catvariableof{[\seldim]},\selvariableof{\vselectionsymbol}}
 		= \contractionof{
 			\{\selectorcomponentofat{\selindexof{\vselectionsymbol}}{\vselectionheadvar,\catvariableof{\selindexof{\vselectionsymbol}},\selvariableof{\vselectionsymbol}} \, : \, \selindexofin{\vselectionsymbol}\}
-		}{\vselectionheadvar,\catvariableof{[\parlegdim]},\selvariableof{\vselectionsymbol}} \, . 
+		}{\vselectionheadvar,\catvariableof{[\seldim]},\selvariableof{\vselectionsymbol}} \, .
 		\]
 \end{theorem}
 \begin{proof}
@@ -124,7 +124,7 @@ This structure is exploited in the next theorem to derive a tensor network decom
 	\begin{align*}
 		& \contractionof{
 			\{\selectorcomponentofat{\selindexof{\vselectionsymbol}}{\vselectionheadvar,\catvariableof{\selindexof{\vselectionsymbol}},\selvariableof{\vselectionsymbol}} \, : \, \selindexofin{\vselectionsymbol}\}
-		}{\indexedheadvariableof{\vselectionsymbol},\indexedcatvariableof{[\parlegdim]},\selvariableof{\vselectionsymbol} = \tilde{\selindex}_{\vselectionsymbol}} \\
+		}{\indexedheadvariableof{\vselectionsymbol},\indexedcatvariableof{[\seldim]},\selvariableof{\vselectionsymbol} = \tilde{\selindex}_{\vselectionsymbol}} \\
 		& \quad = 
 		\prod_{\selindexofin{\vselectionsymbol}} \selectorcomponentofat{\selindexof{\vselectionsymbol}}{
 			\indexedheadvariableof{\vselectionsymbol},\indexedcatvariableof{\selindexof{\vselectionsymbol}},\selvariableof{\vselectionsymbol}=\tilde{\selindex}_{\vselectionsymbol}
@@ -137,7 +137,7 @@ This structure is exploited in the next theorem to derive a tensor network decom
 		 	1 & \text{if} \quad \headindexof{\vselectionsymbol} = \catindexof{\selindexof{\vselectionsymbol}} \\
 		 	0 & \text{else}  
 		 \end{cases} \\ 
-		 & = \rencodingofat{\vselectionmap}{\indexedheadvariableof{\vselectionsymbol},\indexedcatvariableof{[\parlegdim]},\selvariableof{\vselectionsymbol}=\tilde{\selindex}_{\vselectionsymbol}}
+		 & = \rencodingofat{\vselectionmap}{\indexedheadvariableof{\vselectionsymbol},\indexedcatvariableof{[\seldim]},\selvariableof{\vselectionsymbol}=\tilde{\selindex}_{\vselectionsymbol}}
 	\end{align*}
 	In the second equality, we used that the tensor $\selectorcomponentof{\selindexof{\vselectionsymbol}}$ have coordinates $1$ whenever $\tilde{\selindex}_{\vselectionsymbol}\neq\selindexof{\vselectionsymbol}$.
 \end{proof}
@@ -152,8 +152,8 @@ The introduced tensors $\selectorcomponentof{\selindexof{\vselectionsymbol}}$ ar
 %Using that the encoding $\rencodingof{\atomicformulaof{\selindex}}$ of atomic formulas admits and elementary decomposition (see \theref{the:AtomicFTensor}) we notice that Equation~\ref{eq:selectorDecomposition} describes a so-called monomial decomposition, which will be introduced in \defref{def:polynomialSparsity}.
 %We can apply \theref{the:sliceToCP} to find a decomposition of $\selectorcore$ in a CP format consisting of cores
 %\begin{align}
-%	\selectorcoreof{\selindex} = \dirdeltaof{\randomxof{\selindex},\vselectionvariable} \otimes \onehotmapof{\selindex}
-%	+ \sum_{\tilde{\selindex}\in[\parlegdim] \, , \, \tilde{\selindex}\neq\selindex} \onesof{\randomxof{\selindex},\vselectionvariable} \otimes \onehotmapof{\tilde{\selindex}} \, . 
+%	\selectorcoreof{\selindex} = \dirdeltaof{\randomxof{\selindex},\selvariable} \otimes \onehotmapof{\selindex}
+%	+ \sum_{\tilde{\selindex}\in[\seldim] \, , \, \tilde{\selindex}\neq\selindex} \onesof{\randomxof{\selindex},\selvariable} \otimes \onehotmapof{\tilde{\selindex}} \, .
 %\end{align}	
 %The CP decomposition is depicted in Figure~\ref{fig:SelectorDecomposition}.
 %
@@ -164,7 +164,7 @@ The introduced tensors $\selectorcomponentof{\selindexof{\vselectionsymbol}}$ ar
 %\begin{align}\label{eq:selectorDecomposition}
 % 	\selectorcore = 
 %	\contractionof{\{\selectorcomponentof{\selindex}\, : \, \selindexin\}}
-%	{\{\randomxof{0},\ldots,\randomxof{\parlegdim-1},\vselectionvariable\}} 
+%	{\{\randomxof{0},\ldots,\randomxof{\seldim-1},\selvariable\}}
 %\end{align}
 %is the relational encoding of the function $\vselectionmap$ and thus binary and directed.
 
@@ -179,8 +179,8 @@ The introduced tensors $\selectorcomponentof{\selindexof{\vselectionsymbol}}$ ar
 	\input{PartII/tikz_pics/formula_selection/variable_selector.tex}
 \end{center}
 \caption{Decomposition of the relational encoding of a variable selecting tensor into a network of tensors defined in \theref{the:varSelectorDecomposition}.
-	The decomposition is in a $\cpformat$-Format (see \charef{cha:sparseCalculus}. %, when grouping the indices  $\selindexof{\parenumerator}$ and $\atomlegindexof{\atomicformulaof{\selindexof{\parenumerator}}}$).
-	%To ease the notation, we here use $\rencodingof{\parenumerator}$ to denote $\rencodingof{\rencodingof{\parenumerator}}$.
+	The decomposition is in a $\cpformat$-Format (see \charef{cha:sparseCalculus}. %, when grouping the indices  $\selindexof{\selenumerator}$ and $\atomlegindexof{\atomicformulaof{\selindexof{\selenumerator}}}$).
+	%To ease the notation, we here use $\rencodingof{\selenumerator}$ to denote $\rencodingof{\rencodingof{\selenumerator}}$.
 }
 \label{fig:SelectorDecomposition}
 \end{figure}
@@ -265,17 +265,17 @@ We call the composition of a connective selection with variable selection maps f
 
 
 \begin{definition}\label{def:fsNeuron}
-	Given an order $\selorder\in\nn$ let there be a connective selector $\cselectionvariable$ selecting connectives of order $\selorder$ and let $\vselectionmapof{0},\ldots,\vselectionmapof{\selorder-1}$ be a collection of variable selectors.
+	Given an order $\selorder\in\nn$ let there be a connective selector $\selvariable_{\exconnective}$ selecting connectives of order $\selorder$ and let $\vselectionmapof{0},\ldots,\vselectionmapof{\selorder-1}$ be a collection of variable selectors.
 	The corresponding logical neuron is the map
 	\begin{align*}
 		\lneuronat{\shortcatvariablelist,\shortselvariablelist} 
 		: \left(\atomstates\right) \times [\seldimof{\cselectionsymbol}] \times \left( \bigtimes_{\selenumeratorin} [\seldimof{\selenumerator}]\right) \rightarrow [2] 
 	\end{align*}
-	defined for $\shortcatindices\in\atomstates$, $\selindexof{\cselectionsymbol}\in[\parlegdimof{\cselectionsymbol}]$ and 
-	$\parindices\in \bigtimes_{\parenumeratorin} [\parlegdimof{\parenumerator}]$ by
+	defined for $\shortcatindices\in\atomstates$, $\selindexof{\cselectionsymbol}\in[\seldimof{\cselectionsymbol}]$ and
+	$\selindices\in \bigtimes_{\selenumeratorin} [\seldimof{\selenumerator}]$ by
 	\begin{align*}
-		\lneuron(\atomindices, \selindexof{\cselectionsymbol}, \parindices) = 
-		\cselectionmap(\vselectionmapof{0}(\atomindices, \selindexof{0}),\ldots,\vselectionmapof{\parorder-1}(\atomindices,\selindexof{\parorder-1}), \selindexof{\cselectionsymbol}) \, .
+		\lneuron(\atomindices, \selindexof{\cselectionsymbol}, \selindices) =
+		\cselectionmap(\vselectionmapof{0}(\atomindices, \selindexof{0}),\ldots,\vselectionmapof{\selorder-1}(\atomindices,\selindexof{\selorder-1}), \selindexof{\cselectionsymbol}) \, .
 	\end{align*}
 \end{definition}
 
@@ -283,7 +283,7 @@ We call the composition of a connective selection with variable selection maps f
 Each neuron has a tensor network decomposition by a connective selector tensor and a variable selector tensor network for each argument, as we state in the next theorem.
 
 \begin{theorem}{Decomposition of formula selecting neurons}\label{the:neuronDecomposition}
-	Let $\lneuron$ a logical neuron, defined for a connective selector $\cselectionvariable$ and variable selectors $\vselectionmapof{0},\ldots,\vselectionmapof{\selorder-1}$.
+	Let $\lneuron$ a logical neuron, defined for a connective selector $\selvariable_{\exconnective}$ and variable selectors $\vselectionmapof{0},\ldots,\vselectionmapof{\selorder-1}$.
 	Then we have (see Figure~\ref{fig:neuronDecomposition} for the example of $\selorder=2$):
 	\begin{align*}
 		&\rencodingofat{\lneuron}{\headvariableof{\lneuron},\shortcatvariables,\selvariableof{\cselectionsymbol},\selvariableof{\vselectionsymbol,0},\ldots,\selvariableof{\vselectionsymbol,\selorder-1}} \\
@@ -306,13 +306,13 @@ Each neuron has a tensor network decomposition by a connective selector tensor a
 
 \red{Example of a formula selecting neuron:}
 Given a skeleton expression and a set of candidates at each placeholder, we parameterize a set of formulas by the assignment of candidate atoms to each placeholder position.
-Let us denote the set of formulas, which are generated through choosing atoms from $\candidatelistof{\parenumerator}$ for the skeleton formula $\skeleton$ by
+Let us denote the set of formulas, which are generated through choosing atoms from $\candidatelistof{\selenumerator}$ for the skeleton formula $\skeleton$ by
 		\[ \formulasetof{\skeleton} \coloneqq 
 	 \left\{ \skeletonof{\placeholderof{1},\ldots,\placeholderof{\atomorder}} \, : \, \placeholderof{\atomenumerator} \in \candidatelistof{\atomenumerator} \right\} \]
 
-%We now enumerate at each position $\parenumerator$ the list of candidates $\candidatelistof{\parenumerator}$ using an index $\selindexof{\parenumerator}\in[\parlegdimof{\parenumerator}]$ and parametrize the choice of the $\selindexof{\parenumerator}$ for the placeholder $\placeholderof{\parenumerator}$ by unit vectors
-%	\[ \unitvectoratof{\parenumerator}{\selindexof{\parenumerator}} \in \rr^{\parlegdimof{\parenumerator}} \, . \]
-%We thus have a parameter space $\parameterspace$ parametrizing the possible assignments to the skeleton in its basis vectors.
+%We now enumerate at each position $\selenumerator$ the list of candidates $\candidatelistof{\selenumerator}$ using an index $\selindexof{\selenumerator}\in[\seldimof{\selenumerator}]$ and parametrize the choice of the $\selindexof{\selenumerator}$ for the placeholder $\placeholderof{\selenumerator}$ by unit vectors
+%	\[ \unitvectoratof{\selenumerator}{\selindexof{\selenumerator}} \in \rr^{\seldimof{\selenumerator}} \, . \]
+%We thus have a parameter space $\rr^{\seldim}$ parametrizing the possible assignments to the skeleton in its basis vectors.
 
 \begin{figure}[h]
 \begin{center}
@@ -443,20 +443,20 @@ By the commutation of contractions, we can further use \theref{the:neuronDecompo
 %
 %\begin{definition}\label{def:skeleton}
 %	A skeleton expression
-%		\[ \skeleton(\placeholderof{0},\ldots,\placeholderof{\parorder-1}) \] 
-%	is a composition of atom and connective selector maps, which are denoted by placeholders $\placeholderof{\parenumerator}$, where $\parenumerator\in[\parorder]$..
-%	Each placeholder has a by $\selindexof{\parenumerator}$ enumerated list $\candidatelistof{\parenumerator}$ with cardinality $\parlegdimof{\parenumerator}= \cardof{\candidatelistof{\parenumerator}}$ of possible symbols denoting atoms or connectives to be placed in at this position.
+%		\[ \skeleton(\placeholderof{0},\ldots,\placeholderof{\selorder-1}) \]
+%	is a composition of atom and connective selector maps, which are denoted by placeholders $\placeholderof{\selenumerator}$, where $\selenumerator\in[\selorder]$..
+%	Each placeholder has a by $\selindexof{\selenumerator}$ enumerated list $\candidatelistof{\selenumerator}$ with cardinality $\seldimof{\selenumerator}= \cardof{\candidatelistof{\selenumerator}}$ of possible symbols denoting atoms or connectives to be placed in at this position.
 %	This defines a map
 %		\[ \skeleton : \left(\facstates\right) \times \left(\secfacstates\right) \rightarrow \{0,1\} \]
-%	where $\skeleton(\atomindices,\parindices)$ denotes the formula given the selection of placeholders by $\parindices$, which is evaluated at the atoms $\atomindices$.
+%	where $\skeleton(\atomindices,\selindices)$ denotes the formula given the selection of placeholders by $\selindices$, which is evaluated at the atoms $\atomindices$.
 %\end{definition}
 
 %\begin{definition}
 %	A skeleton expression is a formula
-%		\[ \skeleton(\placeholderof{0},\ldots,\placeholderof{\parorder-1}) \]
-%	where instead of atoms and connectives there are placeholders $\placeholderof{\parenumerator}$, where $\parenumerator\in[\parorder]$.
-%	Each skeleton has for each placeholder $\placeholderof{\parenumerator}$ a set $\candidatelistof{\parenumerator}$ of candidate atoms to be plugged in the placeholders.
-%	We denote its cardinality to be $\parlegdimof{\parenumerator}= \cardof{\candidatelistof{\parenumerator}}$ and enumerate the elements $\placeholderof{\parenumerator}_{\selindexof{\parenumerator}}$ in each candidates list by an index $\selindexof{\parenumerator}\in[\parlegdimof{\parenumerator}]$.
+%		\[ \skeleton(\placeholderof{0},\ldots,\placeholderof{\selorder-1}) \]
+%	where instead of atoms and connectives there are placeholders $\placeholderof{\selenumerator}$, where $\selenumerator\in[\selorder]$.
+%	Each skeleton has for each placeholder $\placeholderof{\selenumerator}$ a set $\candidatelistof{\selenumerator}$ of candidate atoms to be plugged in the placeholders.
+%	We denote its cardinality to be $\seldimof{\selenumerator}= \cardof{\candidatelistof{\selenumerator}}$ and enumerate the elements $\placeholderof{\selenumerator}_{\selindexof{\selenumerator}}$ in each candidates list by an index $\selindexof{\selenumerator}\in[\seldimof{\selenumerator}]$.
 %\end{definition}
 
 
@@ -473,13 +473,13 @@ By the commutation of contractions, we can further use \theref{the:neuronDecompo
 %\begin{definition}
 %	Given a skeleton expression, the skeleton tensor is the map from the parameter space to the space of formula tensors, defined by
 %	\begin{align}
-%		 \skeletontensor : \parameterspace \rightarrow  \modelspace \quad , \quad
-%		 \skeletontensor\left( \bigotimes_{\parenumeratorin}\unitvectoratof{\parenumerator}{\selindexof{\parenumerator}} \right) = \rencodingof{\skeletonof{\placeholderof{\parenumerator}_{\selindexof{\parenumerator}}\, : \, \parenumeratorin}}
+%		 \skeletontensor : \rr^{\seldim} \rightarrow  \modelspace \quad , \quad
+%		 \skeletontensor\left( \bigotimes_{\selenumeratorin}\unitvectoratof{\selenumerator}{\selindexof{\selenumerator}} \right) = \rencodingof{\skeletonof{\placeholderof{\selenumerator}_{\selindexof{\selenumerator}}\, : \, \selenumeratorin}}
 %	\end{align}
 %\end{definition}
 %
 %Using the canonical duality of tensors as maps and elements of tensor spaces, we can reinterpret is as a tensor \red{Domain representation of skeleton map}
-%	\[ \skeletontensor \in \bigotimes_{\parenumerator\in[\parorder]} \rr^{\parlegdimof{\parenumerator}} \otimes  \modelspace  \, , \]
+%	\[ \skeletontensor \in \bigotimes_{\selenumerator\in[\selorder]} \rr^{\seldimof{\selenumerator}} \otimes  \modelspace  \, , \]
 %which is the superposed formula tensor to a skeleton based parametrization.
 %In the following, we investigate how to efficiently represent the skeleton tensor $\rencodingof{\skeleton}$ as a tensor network.
 
@@ -537,8 +537,8 @@ Their contraction with probability tensor networks, is thus a batchwise evaluati
 This is possible due to redundancies in logical calculus due to modular combinations of subformulas.
 
 % Retrieve functions
-We can retrieve specific formulas by slicing the selection variables, i.e. for $\parindices$ we have
-	\[ \exformula_{\parindices}[\shortcatvariables] = \fselectionmapat{\shortcatvariables,\selvariable=\parindices} \, .  \]
+We can retrieve specific formulas by slicing the selection variables, i.e. for $\selindices$ we have
+	\[ \exformula_{\selindices}[\shortcatvariables] = \fselectionmapat{\shortcatvariables,\selvariable=\selindices} \, .  \]
 
 In a tensor network diagram we depict this by
 \begin{center}

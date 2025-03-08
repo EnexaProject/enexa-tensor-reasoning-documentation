@@ -499,7 +499,7 @@ and for binary
 defined by identity and basis vectors depending on the type of triple.
 
 In the example $\exunarytriple$ we have
-	\[ \psi^{\exunarytriple} = \identity^{\variableof{\sindex},?\variableof{0}} \otimes \onehotmapof{0} \otimes \identity^{\variableof{\oindex},?\variableof{1}}   \]
+	\[ \psi^{\exunarytriple} = \identity^{\exindividualof{\sindex},?\exindividualof{0}} \otimes \onehotmapof{0} \otimes \identity^{\exindividualof{\oindex},?\exindividualof{1}}   \]
 
 
 %
@@ -512,8 +512,8 @@ That means that applying $\psi (\psi^T)$ is the same map as applying once.
 		\input{./PartII/tikz_pics/fol_models/kg_triple_patterns.tex}
 \end{center}
 \caption{Triple patterns of $\sparql$ as tensor networks.
-	a) Example of unary triple pattern $\exunarytriple$ specifying whether an individual $\variableof{1}$ is a member of class $C$. 
-	b) Example of a binary triple pattern $\exbinarytriple$ specifying whether individuals $\variableof{1}$ and $\variableof{2}$ have a relation $R$.
+	a) Example of unary triple pattern $\exunarytriple$ specifying whether an individual $\exindividualof{1}$ is a member of class $C$.
+	b) Example of a binary triple pattern $\exbinarytriple$ specifying whether individuals $\exindividualof{1}$ and $\exindividualof{2}$ have a relation $R$.
 		By $\onehotmapof{0},\onehotmapof{C},\onehotmapof{R}$ we denote the one-hot encodings of the enumeration of the resources $rdf:type, C$ and $R$.}
 \label{fig:triplePatterns}
 \end{figure}
@@ -582,7 +582,7 @@ This applies database semantics, where only those worlds are considered, where t
 	A Markov Logic Network is a template of probability distributions defined by a set $\folformulaset$ of FOL formulas with maximal arity $\individualorder$, which is weighted by a function $\weight:\folformulaset \rightarrow \rr$.
 	The Markov Logic Network instantiated for a given set of objects $\worlddomain$ and a base measure $\basemeasure$ is the random world, which is a member of the exponential family with sufficient statistics
 	\begin{align*}
-		\sstat_{\statenumerator}(\dataworld)  = \sbcontraction{\groundingof{\folexformula_\statenumerator}} % Formulas can have different 
+		\sstat_{\selindex}(\dataworld)  = \sbcontraction{\groundingof{\folexformula_\selindex}} % Formulas can have different
 	\end{align*}
 	and canonical parameters $\weight$.
 \end{definition}
@@ -590,10 +590,10 @@ This applies database semantics, where only those worlds are considered, where t
 % Interpretation
 The statistics
 	\begin{align*}
-		\sbcontraction{\groundingof{\folexformula_\statenumerator}} % Formulas can have different 
+		\sbcontraction{\groundingof{\folexformula_\selindex}} % Formulas can have different
 	\end{align*}
 can be interpreted as the number of substitutions to a formula, such that the formula ist satisfied.
-Each substitution satisfying a formula adds a factor of $\expof{\canparam_\statenumerator}$ to the probability of the respective world before normalization.
+Each substitution satisfying a formula adds a factor of $\expof{\canparam_\selindex}$ to the probability of the respective world before normalization.
 
 
 %
@@ -617,11 +617,11 @@ The statistic map is then a formula selecting tensor as in the propositional log
 
 We want to reduce the number of object tuples influencing the probability distribution in order to arrive at an interpretation of FOL MLNs as likelihoods to datasets of propositional MLNs.
 
-To this end, we mark pairs of objects relevant to the distributions by an index $\dataindexin$.
-Given a set $\{\indindexof{[\indorder]}^{\dataindex} \, : \, \dataindexin \}$ of indices to the important tuples we build a set encoding (see \defref{def:subsetEncoding})
+To this end, we mark pairs of objects relevant to the distributions by an index $\datindexin$.
+Given a set $\{\indindexof{[\indorder]}^{\datindex} \, : \, \datindexin \}$ of indices to the important tuples we build a set encoding (see \defref{def:subsetEncoding})
 \begin{align*}
-	\fixedimpformula = \sum_{\dataindexin} \left(
-		 \bigotimes_{\indenumeratorin} \onehotmapofat{\indindexof{\indenumerator}^{\dataindex}}{\indvariableof{\indenumerator}} 
+	\fixedimpformula = \sum_{\datindexin} \left(
+		 \bigotimes_{\indenumeratorin} \onehotmapofat{\indindexof{\indenumerator}^{\datindex}}{\indvariableof{\indenumerator}}
 	 \right) \, . 
 \end{align*}
 
@@ -646,7 +646,7 @@ This amounts to assuming that $\groundingof{\impformula}$ represents certain inf
 % Extraction query
 To reduce the likelihood of a world to we make the assumption that all formulas in a Markov Logic Network are of the form
 \begin{align}\label{eq:folImplicationForm}
-	\folexformula_{\statenumerator}(\individuals) =
+	\folexformula_{\selindex}(\individuals) =
 	\left( \impformula(\individuals) \Rightarrow \headfolexformula(\individuals) \right) 
 \end{align}
 that is a rule with the importance formula being the premise.
@@ -707,14 +707,14 @@ We have
 where the the second term is constant among the supported worlds and the first can be enumerated by the satisfied substitutions of $\impformula$, that is
 \begin{align*}
 	\contraction{\groundingof{\impformula\land\headfolexformula}} 
-	= \sum_{\dataindexin}\groundingofat{\headfolexformula}{\indvariableof{[\indorder]} = \indindexof{[\indorder]}^{\dataindex}} \, . 
+	= \sum_{\datindexin}\groundingofat{\headfolexformula}{\indvariableof{[\indorder]} = \indindexof{[\indorder]}^{\datindex}} \, .
 \end{align*}
 
 
 Using these insights we decompose a normalized log likelihood as
 \begin{align}\label{eq:dataworldLogProb}
 	\frac{1}{\datanum} \lnof{\probtensorof{(\folmlnparameters)} [\dataworld]}
-	= & \frac{1}{\datanum} \sum_{\dataindexin} \groundingofat{\headfolexformula}{\indvariableof{[\indorder]} = \indindexof{[\indorder]}^{\dataindex}} 
+	= & \frac{1}{\datanum} \sum_{\datindexin} \groundingofat{\headfolexformula}{\indvariableof{[\indorder]} = \indindexof{[\indorder]}^{\datindex}}
 	- \frac{1}{\datanum} \lnof{
 		\frac{\partitionfunctionof{\folmlnparameters}}{
 			\expof{\contraction{\weight} \cdot \contraction{\groundingof{\lnot\impformula}}}
@@ -782,11 +782,11 @@ We in the next section present assumptions on the tuples satisfying $\impformula
 \begin{theorem}\label{the:FOLworldToPLdataset}
 	Let $\fixedimpbm$ be a base measure of worlds such that the vectors
 	\begin{align} \label{eq:data}
-		\left(  \groundingofatwrt{\extformulaof{0}}{\indvariableof{0}=\indindexof{0}^\dataindex,\ldots,\indvariableof{\indorder-1}=\indindexof{\indorder-1}^\dataindex}{\tilde{\dataworld}}, \ldots, 
-			\groundingofatwrt{\extformulaof{\atomorder-1}}{\indvariableof{0}=\indindexof{0}^\dataindex,\ldots,\indvariableof{\indorder-1}=\indindexof{\indorder-1}^\dataindex}{\tilde{\dataworld}}
+		\left(  \groundingofatwrt{\extformulaof{0}}{\indvariableof{0}=\indindexof{0}^\datindex,\ldots,\indvariableof{\indorder-1}=\indindexof{\indorder-1}^\datindex}{\tilde{\dataworld}}, \ldots,
+			\groundingofatwrt{\extformulaof{\atomorder-1}}{\indvariableof{0}=\indindexof{0}^\datindex,\ldots,\indvariableof{\indorder-1}=\indindexof{\indorder-1}^\datindex}{\tilde{\dataworld}}
 		\right) 
 	\end{align}
-	for $\dataindexin$ are independent and identical distributed by a distribution $\atombasemeasure$, when distributing $\tilde{\dataworld}$ by $\fixedimpbm$.
+	for $\datindexin$ are independent and identical distributed by a distribution $\atombasemeasure$, when distributing $\tilde{\dataworld}$ by $\fixedimpbm$.
 
 	Let there further be a set of formulas $\folformulaset$, which formulas $\folexformula\in\folformulaset$ are representable by 
 		\[ \folexformula = \impformula \Rightarrow \headfolexformula \]
@@ -795,11 +795,11 @@ We in the next section present assumptions on the tuples satisfying $\impformula
 		
 		
 	We then have for the likelihood of any by $\fixedimpbm$ supported world $\dataworld$ that
-		\[ 	\frac{1}{\datanum} \lnof{\probtensorof{(\folmlnparameters)} [\dataworld]} = 	\frac{1}{\datanum} \lnof{\probtensorof{(\mlnparameters,\atombasemeasure)} [\datamap]} - \frac{1}{\datanum} \sum_{\dataindexin} \lnof{\atombasemeasure[\shortcatvariables = \datamap({\dataindex})]} \]
+		\[ 	\frac{1}{\datanum} \lnof{\probtensorof{(\folmlnparameters)} [\dataworld]} = 	\frac{1}{\datanum} \lnof{\probtensorof{(\mlnparameters,\atombasemeasure)} [\datamap]} - \frac{1}{\datanum} \sum_{\datindexin} \lnof{\atombasemeasure[\shortcatvariables = \datamap({\datindex})]} \]
 	where $\atombasemeasure$ is the distribution of the random vectors \eqref{eq:data} and by $\datamap$ we denote the dataset
 	\begin{align*}
-		\datamap = \big\{\big( \groundingofat{\extformulaof{0}}{\indvariableof{0}=\indindexof{0}^\dataindex,\ldots,\indvariableof{\indorder-1}=\indindexof{\indorder-1}^\dataindex}, \ldots ,
-				 \groundingofat{\extformulaof{\atomorder-1}}{\indvariableof{0}=\indindexof{0}^\dataindex,\ldots,\indvariableof{\indorder-1}=\indindexof{\indorder-1}^\dataindex} \big) \, : \dataindexin \big\}
+		\datamap = \big\{\big( \groundingofat{\extformulaof{0}}{\indvariableof{0}=\indindexof{0}^\datindex,\ldots,\indvariableof{\indorder-1}=\indindexof{\indorder-1}^\datindex}, \ldots ,
+				 \groundingofat{\extformulaof{\atomorder-1}}{\indvariableof{0}=\indindexof{0}^\datindex,\ldots,\indvariableof{\indorder-1}=\indindexof{\indorder-1}^\datindex} \big) \, : \datindexin \big\}
 	\end{align*}
 	and $\formulaset$ is the set of propositional formulas to $\folexformula\in\folformulaset$.
 \end{theorem}
@@ -821,26 +821,26 @@ To show the theorem, we show first in the following lemma the factorization of t
 		}{\dataworld\sim\fixedimpbm} \\
 		&= \expof{\contraction{\weight} \cdot \contraction{\groundingof{\lnot\impformula}}} \cdot 
 		\expectationofwrt{
-			 \expof{\sum_{\folexformulain}\weightof{\folexformula}  \sum_{\dataindexin} \groundingofat{\headfolexformula}{\indvariableof{[\indorder]} = \indindexof{[\indorder]}^{\dataindex}} } 
+			 \expof{\sum_{\folexformulain}\weightof{\folexformula}  \sum_{\datindexin} \groundingofat{\headfolexformula}{\indvariableof{[\indorder]} = \indindexof{[\indorder]}^{\datindex}} }
 		}{\dataworld\sim\fixedimpbm} \\
 		&= \expof{\contraction{\weight} \cdot \contraction{\groundingof{\lnot\impformula}}} \cdot 
 		\expectationofwrt{
-			\prod_{\dataindexin} \expof{ \sum_{\folexformulain} \weightof{\folexformula} \cdot \groundingofat{\headfolexformula}{\indvariableof{[\indorder]} = \indindexof{[\indorder]}^{\dataindex}} } 
+			\prod_{\datindexin} \expof{ \sum_{\folexformulain} \weightof{\folexformula} \cdot \groundingofat{\headfolexformula}{\indvariableof{[\indorder]} = \indindexof{[\indorder]}^{\datindex}} }
 		}{\dataworld\sim\fixedimpbm} \\
 		&= \expof{\contraction{\weight} \cdot \contraction{\groundingof{\lnot\impformula}}} \cdot 
-			\prod_{\dataindexin} 
+			\prod_{\datindexin}
 			 \expectationofwrt{
-			 \expof{ \sum_{\folexformulain} \weightof{\folexformula} \cdot \groundingofat{\headfolexformula}{\indvariableof{[\indorder]} = \indindexof{[\indorder]}^{\dataindex}} } 
+			 \expof{ \sum_{\folexformulain} \weightof{\folexformula} \cdot \groundingofat{\headfolexformula}{\indvariableof{[\indorder]} = \indindexof{[\indorder]}^{\datindex}} }
 		}{\dataworld\sim\fixedimpbm} \\
 	\end{align*}
 	Here we used, that since the substitutions of the atom formulas at the respective object tuples are independent, also the variables
-		\[ \expof{\weightof{\folexformula}  \cdot \groundingofat{\headfolexformula}{\indvariableof{[\indorder]} = \indindexof{[\indorder]}^{\dataindex}}  } \]
-	for $\dataindexin$ are independent.
+		\[ \expof{\weightof{\folexformula}  \cdot \groundingofat{\headfolexformula}{\indvariableof{[\indorder]} = \indindexof{[\indorder]}^{\datindex}}  } \]
+	for $\datindexin$ are independent.
 	
-	Since each $\groundingofat{\headfolexformula}{\indvariableof{[\indorder]}}$ depends only on the random value $\catindexof{\atomenumerator}^\dataindex=\extformulaof{\atomenumerator}[\indvariableof{[\indorder]}]$ we have
+	Since each $\groundingofat{\headfolexformula}{\indvariableof{[\indorder]}}$ depends only on the random value $\catindexof{\atomenumerator}^\datindex=\extformulaof{\atomenumerator}[\indvariableof{[\indorder]}]$ we have
 	\begin{align*}
 		\expectationofwrt{
-			\expof{ \sum_{\folexformulain} \weightof{\folexformula} \cdot \groundingofat{\headfolexformula}{\indvariableof{[\indorder]} = \indindexof{[\indorder]}^{\dataindex}} } 
+			\expof{ \sum_{\folexformulain} \weightof{\folexformula} \cdot \groundingofat{\headfolexformula}{\indvariableof{[\indorder]} = \indindexof{[\indorder]}^{\datindex}} }
 		}{\dataworld\sim\fixedimpbm} 
 		& = \sum_{\catindexof{[\atomorder]} \in [2]^\atomorder} 
 		\expectationofwrt{\forall {\atomenumeratorin} \, : \, \extformulaof{\atomenumerator}[\indvariableof{[\indorder]}]=\catindexof{\atomenumerator}}{\dataworld\sim\fixedimpbm} \\
@@ -871,7 +871,7 @@ To show the theorem, we show first in the following lemma the factorization of t
 Let us now investigate, when the assumptions of independent data can be matched.
 
 \begin{lemma}
-	Let $\impformula$ and $\atomicqueries$ be quantor and constant free and let the index tuples of the support of $\fixedimpformula$ be pairwise disjoint.
+	Let $\impformula$ and $\extformulas$ be quantor and constant free and let the index tuples of the support of $\fixedimpformula$ be pairwise disjoint.
 	Then the vectors \eqref{eq:data} are pairwise independent.
 \end{lemma}
 \begin{proof}
@@ -893,46 +893,46 @@ Situations where atom base $\atombasemeasure$ measures are not uniform:
 %%% OLD
 
 %\begin{definition}
-%	We say that $\impformula,\atomicqueries$ do not influence each other, when for any pair $\individuals$, $\atomenumerator,\dataindex$ and $\sigma : [\atomorder] \times [\datanum] \rightarrow [2]$ the formula 
-%		\[ \left( \land_{\dataindexin} \impformula(\individualsof{\dataindex}) \right)
+%	We say that $\impformula,\extformulas$ do not influence each other, when for any pair $\individuals$, $\atomenumerator,\datindex$ and $\sigma : [\atomorder] \times [\datanum] \rightarrow [2]$ the formula
+%		\[ \left( \land_{\datindexin} \impformula(\individualsof{\datindex}) \right)
 %		\land 
-%		\left( \land_{\atomenumeratorin, \dataindexin, \dataindex\neq\secdataindex, \atomenumerator\neq\secatomenumerator} (\lnot)^{\sigma(\atomenumerator,\dataindex)}\extformulaof{\atomenumerator}(\individualsof{\dataindex})  \right) 
+%		\left( \land_{\atomenumeratorin, \datindexin, \datindex\neq\secdataindex, \atomenumerator\neq\secatomenumerator} (\lnot)^{\sigma(\atomenumerator,\datindex)}\extformulaof{\atomenumerator}(\individualsof{\datindex})  \right)
 %		\Rightarrow
 %		 (\lnot)^{\sigma(\secatomenumerator,\secdataindex)} \extformulaof{\secatomenumerator}(\individualsof{\secdataindex}) 
 %		 \]
 %	is not a tautology.
 %\end{definition}
-%This is satisfied, when different predicates are in $\impformula$ and $\atomicqueries$, both are quantor and constant free, and all individual pairs with $\impformula(\individuals)=1$ are disjoint.
+%This is satisfied, when different predicates are in $\impformula$ and $\extformulas$, both are quantor and constant free, and all individual pairs with $\impformula(\individuals)=1$ are disjoint.
 %
 %
 %%
 %In the case of disjoint constant pairs answering the query $\impformula$ the probability of a data world is thus the likelihood of a dataset given a propositional logics MLN, as we show next.
 
 %\begin{theorem}
-%	When $\impformula,\atomicqueries$ do not influence each other we have
+%	When $\impformula,\extformulas$ do not influence each other we have
 %		\[ \frac{1}{\datanum}\lnof{\probtensor^{\folformulaset,\weight,\worlddomain,\fixedimpformula}[\dataworld]} = 
 %		\lossof{\formulaset,\weight} \]
-%%		\prod_{\dataindexin} \left( \probtensor^{\formulaset,\weight}[\extformulaof{0}(\individualsof{\dataindex})] \right)   \]
+%%		\prod_{\datindexin} \left( \probtensor^{\formulaset,\weight}[\extformulaof{0}(\individualsof{\datindex})] \right)   \]
 %	where 
-%		\[ \datamap(\dataindex) = \{(\groundingof{\extformulaof{0}}(\individualsof{\dataindex}),\ldots, \groundingof{\extformulaof{\atomorder-1}}(\individualsof{\dataindex}) ) : \dataindexin \}\]
-%	and $\individualsof{\dataindex}$ is the enumeration of the pairs satisfying $\impformula(\individuals)=1$.
+%		\[ \datamap(\datindex) = \{(\groundingof{\extformulaof{0}}(\individualsof{\datindex}),\ldots, \groundingof{\extformulaof{\atomorder-1}}(\individualsof{\datindex}) ) : \datindexin \}\]
+%	and $\individualsof{\datindex}$ is the enumeration of the pairs satisfying $\impformula(\individuals)=1$.
 %\end{theorem}
 %\begin{proof}
 %	Based on our semantic assumptions, we only consider worlds with $\groundingof{\impformula}=\fixedimpformula$ and $\groundingof{\extformulaof{\atomenumerator}}(\individuals)=0$ for any pair with $\impformula(\individuals)=0$.
 %	We can thus represent each worlds by the Boolean tensor
 %		\[ T^\dataworld: [\atomorder] \times [\datanum] \rightarrow [2] \]
 %	defined as
-%		\[ T^\dataworld(\atomenumerator,\dataindex) = \groundingof{\extformulaof{\atomenumerator}}(\individualsof{\dataindex}) \, .  \]
-%	By the assumption, that $\impformula,\atomicqueries$ do not influence each other, each boolean tensor $T: [\atomorder] \times [\datanum] \rightarrow [2]$ has a world $\dataworld$ with $T^{\dataworld}=T$.
+%		\[ T^\dataworld(\atomenumerator,\datindex) = \groundingof{\extformulaof{\atomenumerator}}(\individualsof{\datindex}) \, .  \]
+%	By the assumption, that $\impformula,\extformulas$ do not influence each other, each boolean tensor $T: [\atomorder] \times [\datanum] \rightarrow [2]$ has a world $\dataworld$ with $T^{\dataworld}=T$.
 %	
 %	The partition function is then factorized into
 %	\begin{align*}
 %		\secpartitionfunctionof{\folformulaset,\weight,\worlddomain,\fixedimpformula} 
-%		=&  \sum_{\groundingof{\extformulaof{\atomenumerator}}(\individualsof{\dataindex})\in[2],\atomenumeratorin,\dataindexin}
-%			\prod_{\dataindexin} \expof{\sum_{\folexformulain} \folexformula(\individualsof{\dataindex}) \cdot \weightof{\folexformula}}
+%		=&  \sum_{\groundingof{\extformulaof{\atomenumerator}}(\individualsof{\datindex})\in[2],\atomenumeratorin,\datindexin}
+%			\prod_{\datindexin} \expof{\sum_{\folexformulain} \folexformula(\individualsof{\datindex}) \cdot \weightof{\folexformula}}
 %		 \\
-%		=& \prod_{\dataindexin} \left( \sum_{\groundingof{\extformulaof{\atomenumerator}}(\individualsof{\dataindex}) \in [2], \atomenumeratorin} 
-%			\expof{\sum_{\folexformulain} \folexformula(\individualsof{\dataindex}) \cdot \weightof{\folexformula}}
+%		=& \prod_{\datindexin} \left( \sum_{\groundingof{\extformulaof{\atomenumerator}}(\individualsof{\datindex}) \in [2], \atomenumeratorin}
+%			\expof{\sum_{\folexformulain} \folexformula(\individualsof{\datindex}) \cdot \weightof{\folexformula}}
 %		\right) \\
 %		=& \left(  \sum_{\groundingof{\extformulaof{\atomenumerator}}(\individuals) \in [2], \atomenumeratorin} 
 %			\expof{\sum_{\folexformulain} \folexformula(\individuals) \cdot \weightof{\folexformula}}
@@ -949,10 +949,10 @@ Situations where atom base $\atombasemeasure$ measures are not uniform:
 %	It follows that
 %	\begin{align*}
 %		\frac{1}{\datanum}\lnof{\probtensor^{\folformulaset,\weight,\worlddomain,\fixedimpformula}[\dataworld]}
-%		=& \frac{1}{\datanum} \left[ \sum_{\dataindexin} \sum_{\folexformulain} \folexformula(\individualsof{\dataindex}) \cdot \weightof{\folexformula} + \lnof{\secpartitionfunctionof{\folformulaset,\weight,\worlddomain,\fixedimpformula}} \right] \\
-%		=& \frac{1}{\datanum}\sum_{\dataindexin} \sum_{\folexformulain} \contractionof{\{\exformula,\onehotmapof{\groundingof{\extformulaof{0}}(\individualsof{\dataindex})},\ldots,\onehotmapof{\groundingof{\extformulaof{\atomorder-1}}(\individualsof{\dataindex})}\}}{\varnothing}  \cdot \weightof{\folexformula}
+%		=& \frac{1}{\datanum} \left[ \sum_{\datindexin} \sum_{\folexformulain} \folexformula(\individualsof{\datindex}) \cdot \weightof{\folexformula} + \lnof{\secpartitionfunctionof{\folformulaset,\weight,\worlddomain,\fixedimpformula}} \right] \\
+%		=& \frac{1}{\datanum}\sum_{\datindexin} \sum_{\folexformulain} \contractionof{\{\exformula,\onehotmapof{\groundingof{\extformulaof{0}}(\individualsof{\datindex})},\ldots,\onehotmapof{\groundingof{\extformulaof{\atomorder-1}}(\individualsof{\datindex})}\}}{\varnothing}  \cdot \weightof{\folexformula}
 %		+ \frac{1}{\datanum} \left( \datanum \cdot \lnof{\partitionfunctionof{\formulaset,\weight}}  \right) \\
-%		=& \frac{1}{\datanum} \left[ \sum_{\dataindexin} \sum_{\exformulain} \exformula\big(\groundingof{\extformulaof{0}}(\individualsof{\dataindex}),\ldots, \groundingof{\extformulaof{\atomorder-1}}(\individualsof{\dataindex})\big) \cdot \weightof{\folexformula} \right]
+%		=& \frac{1}{\datanum} \left[ \sum_{\datindexin} \sum_{\exformulain} \exformula\big(\groundingof{\extformulaof{0}}(\individualsof{\datindex}),\ldots, \groundingof{\extformulaof{\atomorder-1}}(\individualsof{\datindex})\big) \cdot \weightof{\folexformula} \right]
 %		+\lnof{\partitionfunctionof{\formulaset,\weight}}  \\
 %		=& \lossof{\formulaset,\weight} \, , 
 %	\end{align*}
@@ -966,7 +966,7 @@ Situations where atom base $\atombasemeasure$ measures are not uniform:
 
 \subsubsection{Approximation by Independent Samples}
 
-In general, we cannot assume that the $\impformula,\atomicqueries$ do not influence each other.
+In general, we cannot assume that the $\impformula,\extformulas$ do not influence each other.
 
 We approximate the partition function into factors to each solution map of $\impformula$.
 This amounts to the assumption, that the atoms created to each tuple are independent.
@@ -1017,7 +1017,7 @@ Let us now understand the extraction process as a relation between a tuple of in
 	
 Towards constructing the encoding of this we enumerate the individuals in the set $\worlddomain$ and use in the following the respective one-hot encoding 
 	\[ \onehotmap : \worlddomain \rightarrow \rr^{\cardof{\worlddomain}} \, . \]
-The combination of the queries $\impformula$ and $\{\atomicqueries\}$ by the relational encoding
+The combination of the queries $\impformula$ and $\{\extformulas\}$ by the relational encoding
 	\[\rencodingof{\extractionrelation} \subset \left(\indspace\right) \otimes \left(\atomspace\right) \]
 defined by
 	\[ \rencodingof{\extractionrelation} 
@@ -1060,7 +1060,7 @@ To connect with the empirical distribution introduced in \secref{sec:empDistribu
 
 Each datacore is then a contraction with the grounding of a formula, which is contracted with the grounding of the extraction query in the basis CP decomposition, 
 \begin{align*}
-	\datacoreof{\atomenumerator} = \sbcontractionof{\rencodingof{\groundingof{\extformulaof{\atomenumerator}}},\groundingof{\impformula}}{\datavariable,\catvariableof{\atomenumerator}} 
+	\datacoreof{\atomenumerator} = \sbcontractionof{\rencodingof{\groundingof{\extformulaof{\atomenumerator}}},\groundingof{\impformula}}{\datvariable,\catvariableof{\atomenumerator}}
 \end{align*}
 see Figure~\ref{fig:datacoreGeneration}.
 
@@ -1083,7 +1083,7 @@ This is a collection of basis leg cores $\legcoreof{\fixedimpformula,\indenumera
 \end{align*}
 
 % Data enumeration -> To representation
-%We can further utilize any decomposition of $\impformula$ into a directed and binary CP Format to enumerate the datapoints by the slice index $\dataindex$. % Approaches like SPARQL directly give us these by solution mappings.
+%We can further utilize any decomposition of $\impformula$ into a directed and binary CP Format to enumerate the datapoints by the slice index $\datindex$. % Approaches like SPARQL directly give us these by solution mappings.
 %Understanding $\impformula$ as a query on the world being the database, such decomposition is given by the set of solution mappings.
 
 
@@ -1091,8 +1091,8 @@ This is a collection of basis leg cores $\legcoreof{\fixedimpformula,\indenumera
 \begin{center}
 	\input{./PartII/tikz_pics/fol_models/datacore_generation.tex}
 \end{center}
-\caption{Generation of Datacores given a formula $\exformula$, whose variables (here $\variableof{1},\variableof{2},\variableof{3}$) are selected from an extraction query $\impformula$.
-	Variables, which are not appearing in the formula $\exformula$ are trivialized over (here $\variableof{4},\ldots,\variableof{\variableorder})$.
+\caption{Generation of Datacores given a formula $\exformula$, whose variables (here $\exindividualof{1},\exindividualof{2},\exindividualof{3}$) are selected from an extraction query $\impformula$.
+	Variables, which are not appearing in the formula $\exformula$ are trivialized over (here $\exindividualof{4},\ldots,\exindividualof{\variableorder})$.
 	For consistency we denoted the index $\atomlegindexof{\exformulaof{\atomenumerator}}$ by $\atomlegindexof{\atomenumerator}$.}
 	\label{fig:datacoreGeneration}
 \end{figure}
@@ -1155,7 +1155,7 @@ We propose to
 
 %\subsubsection{Construction of Empirical Distributions from groundings of Sentences}
 %
-%When taking groundings of sentences instead, we have multiple data axis then $\dataindex$, one for each variable in the sentence.
+%When taking groundings of sentences instead, we have multiple data axis then $\datindex$, one for each variable in the sentence.
 %
 %\begin{remark}[Datacores as groundings of FOL sentences]
 %	We can also alternative parametrizations of data, such as a represention of groundings of first order sentences.
@@ -1191,7 +1191,7 @@ We propose to
 %	When only maximizing the number of satisfaction, our approach corresponds with fitting fully grounded FOL formulas of the format
 %		\[ \forall a_1,...,a_n : \impformula(a_1,...,a_n) \Rightarrow F(a_1,...,a_n) \]
 %	where Q is the extraction query and F is restricted to match relations with the allowed ones for each argument.
-%	Enumerating the individual tuples $a_1,...,a_n$ satisfying the query introduced the dataindex $\dataindex$, which is averaged over.
+%	Enumerating the individual tuples $a_1,...,a_n$ satisfying the query introduced the dataindex $\datindex$, which is averaged over.
 %\end{remark} 
 
 
@@ -1212,7 +1212,7 @@ The first reproduction scheme identifies the datapoints with objects $\worlddoma
 \begin{theorem}
 	Given a dataset $\datamap$ the world $\dataworld[\selvariable,\indvariable]$ 
 	\begin{align*}
-		\dataworld[\selvariable,\indvariable] = \sum_{\atomenumeratorin} \sum_{\dataindexin \, : \datamap_{\atomenumerator}(\dataindex)=1} \onehotmapofat{\atomenumerator}{\selvariable} \otimes \onehotmapofat{\dataindex}{\indvariable}
+		\dataworld[\selvariable,\indvariable] = \sum_{\atomenumeratorin} \sum_{\datindexin \, : \datamap_{\atomenumerator}(\datindex)=1} \onehotmapofat{\atomenumerator}{\selvariable} \otimes \onehotmapofat{\datindex}{\indvariable}
 	\end{align*}
 	reproduces with the trivial importance query and extraction queries coinciding with the predicates the dataset $\datamap$.
 \end{theorem}
@@ -1241,7 +1241,7 @@ This amounts to an "inversion" of the data generation process described in the s
 
 % Formalization
 \begin{definition}[Reproduction of Empirical Distributions]
-	Given an empirical distribution $\empdistribution\in\bigotimes_{\atomenumeratorin}\rr^2$, we say that a tuple $(\kg,\impformula,\{\atomicqueries\})$ of a Knowledge Graph $\kg$ and queries $\impformula,\extformulaof{\atomenumerator}$ reproduces $\empdistribution$, when 
+	Given an empirical distribution $\empdistribution\in\bigotimes_{\atomenumeratorin}\rr^2$, we say that a tuple $(\kg,\impformula,\{\extformulas\})$ of a Knowledge Graph $\kg$ and queries $\impformula,\extformulaof{\atomenumerator}$ reproduces $\empdistribution$, when
 		\[ \empdistribution = \normationof{\{\kggroundingof{\impformula}\}\cup\{\rencodingof{\kggroundingof{\extformulaof{\atomenumerator}}\, : \, \atomenumeratorin}\}}{\shortcatvariables} \, .  \]
 \end{definition}
 
@@ -1328,26 +1328,26 @@ When the atom queries $\extformulas$ have different triple patterns compared wit
 
 
 %
-Label individuals $a_{\dataindex,\indenumerator}$ by dataindex and variable index and 
+Label individuals $a_{\datindex,\indenumerator}$ by dataindex and variable index and
 
 \begin{theorem}
-	Let there be queries $\impformula,\atomicqueries$, a Knowledge Graph $\kg$ containing individuals $a_{\dataindex,\indenumerator}$ and a data map $\datamap$.
+	Let there be queries $\impformula,\extformulas$, a Knowledge Graph $\kg$ containing individuals $a_{\datindex,\indenumerator}$ and a data map $\datamap$.
 	If
-		\[ \kggroundingof{\impformula} = \sum_{\dataindex} \bigotimes_{\indenumeratorin} \onehotmapof{\dataindex,\indenumerator} \]
+		\[ \kggroundingof{\impformula} = \sum_{\datindex} \bigotimes_{\indenumeratorin} \onehotmapof{\datindex,\indenumerator} \]
 	and for any $\atomenumeratorin$
 		\[ \kggroundingof{\extformulaof{\atomenumerator}} 
-		= \sum_{\dataindex : \datamap^{\atomenumerator}(\dataindex)=1} \bigotimes_{\indenumerator \in \extformulaof{\atomenumerator}} \onehotmapof{\dataindex,\indenumerator} \, . \]
-	Then the tuple $(\kg,\impformula,\{\atomicqueries\})$ reproduces $\empdistribution$.
+		= \sum_{\datindex : \datamap^{\atomenumerator}(\datindex)=1} \bigotimes_{\indenumerator \in \extformulaof{\atomenumerator}} \onehotmapof{\datindex,\indenumerator} \, . \]
+	Then the tuple $(\kg,\impformula,\{\extformulas\})$ reproduces $\empdistribution$.
 \end{theorem}
 \begin{proof}
 	It can be shown that the contraction is
-		\[ \sum_{\dataindex} \bigotimes_{\atomenumeratorin} \onehotmapof{\datamap^{\atomenumerator}(\dataindex)} \, . \]
+		\[ \sum_{\datindex} \bigotimes_{\atomenumeratorin} \onehotmapof{\datamap^{\atomenumerator}(\datindex)} \, . \]
 \end{proof}
 
 \begin{theorem}
 	The Knowledge Graph
-		\[ \kggroundingof{\rdf} = \sum_{t \in \impformula} \sum_{\dataindex} t(a_{\dataindex,\indenumerator})
-		+ \sum_{\atomenumeratorin} \sum_{t \in \extformulaof{\atomenumeratorin}} \sum_{\dataindex : \datamap^{\atomenumerator}(\dataindex)=1} t(a_{\dataindex,\indenumerator})\]
+		\[ \kggroundingof{\rdf} = \sum_{t \in \impformula} \sum_{\datindex} t(a_{\datindex,\indenumerator})
+		+ \sum_{\atomenumeratorin} \sum_{t \in \extformulaof{\atomenumeratorin}} \sum_{\datindex : \datamap^{\atomenumerator}(\datindex)=1} t(a_{\datindex,\indenumerator})\]
 	reproduces the data, if the summed tensors are pairwise orthogonal.
 	\red{Here we denote by t(..) the one-hot encoding of the tuple when mapping the corresponding individuals on the projection variables of the triple pattern t.}
 \end{theorem}
@@ -1360,7 +1360,7 @@ One reproducing KG is then the sum of the projection of any reproducing KG.
 
 
 \begin{theorem}
-	Let  $\impformula,\atomicqueries$ contain of triple patterns such that for $t\neq \tilde{t}$
+	Let  $\impformula,\extformulas$ contain of triple patterns such that for $t\neq \tilde{t}$
 		\[ P_t \circ P_{\tilde{t}} = 0 \, . \]
 	For any KG reproducing the data $\datamap$ also the KG 
 		\[ \sum_{t} P_t \kggroundingof{\rdf} \]
@@ -1380,14 +1380,14 @@ From this perspective, it is obvious that any triple in the orthogonal complemen
 %% OLD: Do 
 %\subsubsection{FOL grounding tensors as Knowledge Graphs}
 %
-%We can represent any grounding tensor as a knowledge graph where the individuals are enumerated by $\dataindex$ and the classes are the arguments enumerated by $\indenumerator$.
-%Given the naive CP decomposition (Figure~\ref{fig:groundingCP}) of a grounding tensor we define for any $\dataindex$ and $\indenumerator$
+%We can represent any grounding tensor as a knowledge graph where the individuals are enumerated by $\datindex$ and the classes are the arguments enumerated by $\indenumerator$.
+%Given the naive CP decomposition (Figure~\ref{fig:groundingCP}) of a grounding tensor we define for any $\datindex$ and $\indenumerator$
 %\begin{align}
-%	\gtensorof{\kg}_{\dataindex,0,\indenumerator} := \gtensorof{\indenumerator}_{\dataindex,1} \, .
+%	\gtensorof{\kg}_{\datindex,0,\indenumerator} := \gtensorof{\indenumerator}_{\datindex,1} \, .
 %\end{align}
 %
 %\begin{example}[Knowledge Graphs out of samples]
-%	We might have a single data index $\dataindex$ marking different sample worlds.
+%	We might have a single data index $\datindex$ marking different sample worlds.
 %	The Markov network then represents universal quantification over all the sample worlds and all Evidence Cores would just have the single data index as additional axis.
 %	In the interpretation by a Knowledge Graph, the ABox would consist in abstract nodes corresponding with worlds, which are classified by the atom classes.
 %\end{example}

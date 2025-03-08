@@ -15,7 +15,7 @@ To capture these uncertainties we now make use of the one-hot representation of 
 
 \begin{definition}[Probability Tensor] % From the axioms of Kolmogorov!
 	Let there be a factored system defined by a categorical variable $\catvariableof{\atomenumerator}$ for each $\atomenumeratorin$ taking values in $[\catdimof{\atomenumerator}]$. 
-	A probability distribution over the states of $\facsystem$ is a tensor
+	A probability distribution over the states of a system in factored representation is a tensor
 		\[ \probat{\catvariableof{0},\ldots,\catvariableof{\atomorder-1}} : \facstates \rightarrow [0, 1] \subset \rr \]
 	such that
 		\[ \sum_{\catindices\in\facstates} \probat{\indexedcatvariables} = 1 \, . \]
@@ -832,18 +832,18 @@ We notice, that this is a Bayesian Netowork on a directed acyclic hypergraph $\g
 
 % Usage of the selection encoding -> Can also make a theorem out of this
 Exponential families are collections of probability distributions, where each coordinate is determined by a base measure and a set $\sstat$ of features as
-	\[ \probat{\indexedshortcatvariables}  \propto \basemeasure(\catindex) \cdot \expof{\sum_{\statenumeratorin} \sstatcoordinateofat{\selindex}{\indexedshortcatvariables} \cdot \canparamat{\indexedselvariable}} \, . \]
+	\[ \probat{\indexedshortcatvariables}  \propto \basemeasure(\catindex) \cdot \expof{\sum_{\selindexin} \sstatcoordinateofat{\selindex}{\indexedshortcatvariables} \cdot \canparamat{\indexedselvariable}} \, . \]
 We use the selection encoding to represent the weighted summation over the statistics, that is the tensor
-	\[ \sencsstatat{\shortcatvariables,\selvariable}: \facstates \times [\statorder] \rightarrow \rr \]
+	\[ \sencsstatat{\shortcatvariables,\selvariable}: \facstates \times [\seldim] \rightarrow \rr \]
 with
 	\[ \sencsstatat{\indexedshortcatvariables,\indexedselvariable} = \sstatcoordinateofat{\selindex}{\indexedshortcatvariables} \, . \]
 We then understand $\canparam$ as a vector to the categorical variable $\selvariable$ and use Theorem~\ref{the:linCompSelEncoding} to get
-	\[ \sum_{\statenumeratorin}\canparamat{\indexedselvariable}\cdot \sstatcoordinateofat{\selindex}{\shortcatvariables}
+	\[ \sum_{\selindexin}\canparamat{\indexedselvariable}\cdot \sstatcoordinateofat{\selindex}{\shortcatvariables}
 		 = \sbcontractionof{\sencsstatat{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables} \, . \]
 
 \begin{definition}
 	Given a sufficient statistics 
-		\[ \sstat : \facstates \rightarrow \parameterspace\]
+		\[ \sstat : \facstates \rightarrow \rr^{\seldim}\]
 	and a boolean base measure
 		\[ \basemeasure : \facstates \rightarrow [2] \]
 	with $\contraction{\basemeasure}\neq0$,  the set $\expfamily=\{\expdist \, : \, \canparam[\selvariable] \in \simpleparspace\}$ of probability distributions 
@@ -858,7 +858,7 @@ We then understand $\canparam$ as a vector to the categorical variable $\selvari
 
 
 % Diverging partition functions avoided here
-Since we restrict the discussion to finite state spaces, the distribution $\expdist$ is well-defined for any $\canparam\in\rr^{\statorder}$.
+Since we restrict the discussion to finite state spaces, the distribution $\expdist$ is well-defined for any $\canparam\in\rr^{\seldim}$.
 For infinite state space there are sufficient statistics and parameters, such that the partition function $\sbcontraction{\basemeasure,\expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables}}}$ diverges and the normation $\expdist$ is not well-defined.
 In that cases, the canonical parameters need to be chosen from a subset where the partition function is finite. 
 
@@ -911,22 +911,22 @@ We can use the relational encoding formalism to represent members of exponential
 The central insight here is a relational encoding of the sufficient statistics, which enables representation by tensor network decomposition, when the sufficient statistic is decomposable.
 
 \begin{theorem}[Generic Representation of Exponential Families]\label{def:expFamilyTensorRep}
-	Given any base measure $\basemeasure$ and a sufficient statistic $\sstat$ we enumerate for each coordinate $\selindexin$ the image $\imageof{\sstatcoordinateof{\selindex}}$ by a variable $\sstatcatof{\selindex}$ taking values in $[\cardof{\imageof{\sstatcoordinateof{\statenumerator}}}]$, given an interpretation map
+	Given any base measure $\basemeasure$ and a sufficient statistic $\sstat$ we enumerate for each coordinate $\selindexin$ the image $\imageof{\sstatcoordinateof{\selindex}}$ by a variable $\sstatcatof{\selindex}$ taking values in $[\cardof{\imageof{\sstatcoordinateof{\selindex}}}]$, given an interpretation map
 		\[ \indexinterpretationof{\selindex} : 
-		[\cardof{\imageof{\sstatcoordinateof{\statenumerator}}}] \rightarrow \imageof{\sstatcoordinateof{\statenumerator}} \, . \]
+		[\cardof{\imageof{\sstatcoordinateof{\selindex}}}] \rightarrow \imageof{\sstatcoordinateof{\selindex}} \, . \]
 	
 	For any parameter vector $\canparamat{\selvariable}:[\seldim]\rightarrow\rr$ we build the activation cores
-		\[ \actcoreofat{\statenumerator}{\sstatcatof{\selindex}=\sstatindof{\selindex}} 
+		\[ \actcoreofat{\selindex}{\sstatcatof{\selindex}=\sstatindof{\selindex}}
 		= \expof{\canparamat{\indexedselvariable} \cdot \indexinterpretationofat{\selindex}{\sstatcatof{\selindex}} } \,   \]
 	and have
 		\[ \expdist = 
-		\normationof{\{\basemeasure,\rencodingof{\sstat}\}\cup\{\actcoreof{\statenumerator} \, : \, \statenumeratorin\}}{\shortcatvariables} \, . 
+		\normationof{\{\basemeasure,\rencodingof{\sstat}\}\cup\{\actcoreof{\selindex} \, : \, \selindexin\}}{\shortcatvariables} \, .
 		\]
-%	where we use the vectors $\actcoreof{\statenumerator} : \imageof{\sstatcoordinateof{\statenumerator}} \rightarrow \rr $ defined for $y \in \imageof{\sstatcoordinateof{\statenumerator}}$ by
+%	where we use the vectors $\actcoreof{\selindex} : \imageof{\sstatcoordinateof{\selindex}} \rightarrow \rr $ defined for $y \in \imageof{\sstatcoordinateof{\selindex}}$ by
 \end{theorem}
 \begin{proof}
 	We use an extended image of $\sstat$ by  %	which does not modify the statement of Theorem~\ref{the:tensorFunctionComposition} (since extension to cases, which are never met).
-		\[ \imageof{\sstat} = \bigtimes_{\statenumeratorin} \imageof{\sstatcoordinateof{\selindex}} \, . \]
+		\[ \imageof{\sstat} = \bigtimes_{\selindexin} \imageof{\sstatcoordinateof{\selindex}} \, . \]
 	Theorem~\ref{the:tensorFunctionComposition} implies
 		\[ \expof{\sbcontractionof{\sencsstat,\canparam}{\shortcatvariables}}
 		= \sbcontractionof{\rencodingof{\sstat}, \restrictionofto{\expof{\braket{\cdot, \weight}}}{\imageof{\sstat}}}{\shortcatvariables} \, . \]
@@ -949,11 +949,11 @@ A tensor network representation of an exponential family is thus a Markov Networ
 Computation cores are relational encodings of statistics $\rencodingof{\sstatcoordinateof{\selindex}}$.
 Our intuition is that they compute the hidden variable $\catvariableof{\sstatcoordinateof{\selindex}}$, based on Basis Calculus (see \charef{cha:basisCalculus}).
 Activation cores $\actcoreof{\selindex}$ exploit the computed variable and provide, when contracted with the relational encoding, a factor 
-	\[ \sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \actcoreofat{\statenumerator}{\catvariableof{\statenumerator}}}{\shortcatvariables}  \]
+	\[ \sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \actcoreofat{\selindex}{\catvariableof{\selindex}}}{\shortcatvariables}  \]
 to the Markov Network reduced to the visible coordinates $\shortcatvariables$.
 The activation cores are trivial, i.e. $\actcoreofat{\selindex}{\sstatcatof{\selindex}}=\onesat{\sstatcatof{\selindex}}$, when $\canparamat{\selvariable=\selindex}=0$.
 In that case 
-	\[  \sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \actcoreofat{\statenumerator}{\catvariableof{\statenumerator}}}{\shortcatvariables} 
+	\[  \sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \actcoreofat{\selindex}{\catvariableof{\selindex}}}{\shortcatvariables}
 	= \onesat{\shortcatvariables} \]
 and both the activation core and the corresponding computation core can be dropped from the network without changing its distribution.
 
@@ -992,18 +992,18 @@ We will follow these intuitions in the discussion of logical reasoning, starting
 %We can sum multiples of the trivial tensor on the head cores without changing the distribution as we show next.
 %
 %\begin{theorem}
-%	For any $\statenumeratorin$, the distribution is invariant under replacing $\actcoreofat{\statenumerator}{\selvariableof{\statenumerator}}$ by $\actcoreofat{\statenumerator}{\catvariableof{\statenumerator}}+\lambda\cdot \onesat{\catvariableof{\statenumerator}}$ where $\lambda\in\rr$
+%	For any $\selindexin$, the distribution is invariant under replacing $\actcoreofat{\selindex}{\selvariableof{\selindex}}$ by $\actcoreofat{\selindex}{\catvariableof{\selindex}}+\lambda\cdot \onesat{\catvariableof{\selindex}}$ where $\lambda\in\rr$
 %\end{theorem}
 %\begin{proof}
 %	Follows from linearity in each head core, trivialization by trivial heads and normation.
 %	
 %	By linearity we have
 %	\begin{align*}
-%		\sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, (\actcoreofat{\statenumerator}{\catvariableof{\statenumerator}}+\lambda\cdot \onesat{\catvariableof{\statenumerator}})}{\shortcatvariables}
+%		\sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, (\actcoreofat{\selindex}{\catvariableof{\selindex}}+\lambda\cdot \onesat{\catvariableof{\selindex}})}{\shortcatvariables}
 %		= 
-%		\sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \actcoreofat{\statenumerator}{\catvariableof{\statenumerator}}}{\shortcatvariables}
-%		+\lambda\cdot  \sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \onesat{\catvariableof{\statenumerator}}}{\shortcatvariables}
-%		=  \sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \actcoreofat{\statenumerator}{\catvariableof{\statenumerator}}}{\shortcatvariables}
+%		\sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \actcoreofat{\selindex}{\catvariableof{\selindex}}}{\shortcatvariables}
+%		+\lambda\cdot  \sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \onesat{\catvariableof{\selindex}}}{\shortcatvariables}
+%		=  \sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \actcoreofat{\selindex}{\catvariableof{\selindex}}}{\shortcatvariables}
 %		+ \lambda \cdot \onesat{\shortcatvariables} \, .
 %	\end{align*}
 %\end{proof}
@@ -1038,7 +1038,7 @@ Mean parameters are an alternative way to represent members of exponential famil
 		\[ \forwardmap :  \simpleparspace\rightarrow\simpleparspace\]
 	with $\forwardmapof{\canparam} = \sbcontractionof{\expdist,\sencsstat}{\selvariable}$ is called the forward map of the exponential family and any map
 		\[ \backwardmap : \imageof{\forwardmap} \rightarrow \simpleparspace\]
-	with $\expdistof{(\sstat,\backwardmapof{\forwardmapof{\canparam}},\basemeasure)} = \expdist$ for any $\canparam\in\rr^{\statorder}$ a backward map.
+	with $\expdistof{(\sstat,\backwardmapof{\forwardmapof{\canparam}},\basemeasure)} = \expdist$ for any $\canparam\in\rr^{\seldim}$ a backward map.
 \end{definition}
 
 
@@ -1176,7 +1176,7 @@ Let us now apply the formalism of probability distributions in tensor network re
 	Given a dataset $\dataset$ of samples of the factored system we define the sample selector map
 		\[ \datamap : [\datanum] \rightarrow \facstates \]
 	elementwise by 
-		\[ \datamapof{\dataindex} = (\catindicesof{\dataindex}) \, . \]
+		\[ \datamapof{\datindex} = (\catindicesof{\datindex}) \, . \]
 	%% Empirical Distribution
 	The empirical distribution to the sample selector map $\datamap$ is the probability distribution
 	\begin{align*}
@@ -1189,13 +1189,13 @@ Let us now apply the formalism of probability distributions in tensor network re
 % Sample Selector map (former data tensor)
 The relational encoding of the sample selector map is the sum 
 	\[ \datacoreat{\datvariable,\shortcatvariables} 
-	= \sum_{\dataindexin} \onehotmapofat{\dataindex}{\datvariable} \otimes \onehotmapofat{\catindicesof{\dataindex}}{\shortcatvariables} \, . \]
+	= \sum_{\datindexin} \onehotmapofat{\datindex}{\datvariable} \otimes \onehotmapofat{\catindicesof{\datindex}}{\shortcatvariables} \, . \]
 % Interpretation of the empirical distribution
 Each coordinate $\shortcatindices$ of the empirical distribution can be calculated by
 \begin{align*}
 	\empdistributionat{\indexedshortcatvariables} 
-	= \frac{1}{\sbcontraction{\datacore}} \left( \sum_{\dataindexin} \onehotmapofat{\catindicesof{\dataindex}}{\indexedshortcatvariables}  \right) 
-	= \frac{\cardof{\dataindexin \, : \, (\catindicesof{\dataindex}) = (\catindices)}}{\cardof{\dataindexin}}
+	= \frac{1}{\sbcontraction{\datacore}} \left( \sum_{\datindexin} \onehotmapofat{\catindicesof{\datindex}}{\indexedshortcatvariables}  \right)
+	= \frac{\cardof{\datindexin \, : \, (\catindicesof{\datindex}) = (\catindices)}}{\cardof{\datindexin}}
 \end{align*}
 and is thus interpreted as the frequency of the corresponding world in the data.
 
@@ -1223,7 +1223,7 @@ We now exploit this structure to find efficient tensor network decompositions (s
 	Given a data map $\datamap: [\datanum] \rightarrow \facstates$ we define for $\catenumeratorin$ its coordinate maps
 		\[ \datamap_{\catenumerator} : [\datanum] \rightarrow [\catdimof{\catenumerator}] \]
 	by
-		\[  \datamap_{\catenumerator}(\dataindex) = \catindexof{\catenumerator}^\dataindex \, .  \]
+		\[  \datamap_{\catenumerator}(\datindex) = \catindexof{\catenumerator}^\datindex \, .  \]
 	We then have
 	\begin{align*}
 		\rencodingofat{\datamap}{\datvariable,\shortcatvariables}  
@@ -1258,7 +1258,7 @@ We now exploit this structure to find efficient tensor network decompositions (s
 \end{proof}
 
 
-The cores $\datacoreof{\atomenumerator}$ are matrices storing the value of the categorical variable $\catvariableof{\atomenumerator}$ in the sample world indexed by $\dataindex$.
+The cores $\datacoreof{\atomenumerator}$ are matrices storing the value of the categorical variable $\catvariableof{\atomenumerator}$ in the sample world indexed by $\datindex$.
 
 % Interpretation
 From the proof of Theorem~\ref{the:empCPRep} we notice that the scalar $\frac{1}{\datanum}$ could be assigned with any core in a representation of $\empdistribution$, and the core $\onesat{\datvariable}$ is thus redundant in the contraction representation.
