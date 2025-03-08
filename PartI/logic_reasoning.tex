@@ -93,7 +93,7 @@ TELL(formula $\exformula$)
 \begin{algorithmic}
 	\If{ASK($\exformula$) returns Contingent:}
 %	\If{$\sbcontractionof{\kb,\exformula}>0$ and $\sbcontraction{\kb,\lnot\exformula}>0$} %Consistency + Redundancy check
-	\State $\kb \algdefsymbol \kb\land\exformula$%Add cores of formula tensor $\exformula$ to $\ftensorof{\kb}$ in order to represent $\ftensorof{\kb\cup\{\exformula\}}$
+	\State $\kb \algdefsymbol \kb\land\exformula$%Add cores of formula tensor $\exformula$ to $\rencodingof{\kb}$ in order to represent $\rencodingof{\kb\cup\{\exformula\}}$
 	\EndIf
 \end{algorithmic}
 
@@ -204,7 +204,7 @@ Conversely, when conditioning on the event $\formulavar=0$ we get a uniform dist
 The probability distribution in Equation~\eqref{eq:eventFormulaProb} is well defined except for the case that $\sbcontraction{\exformula}=0$.
 In this case we have $\exformula=0$ and call $\exformula$ unsatisfiable, since it has no models.
 
-%The probability tensor is well-defined except for the case that $\ftensor_{1,:}$ contains just $0$ coordinates (respectively for $\ftensor_{0,:}$).
+%The probability tensor is well-defined except for the case that $\theta_{1,:}$ contains just $0$ coordinates (respectively for $\theta_{0,:}$).
 %This is an exceptionous situation in logics and called unsatisfiability of the knowledge base.
 %\begin{definition}
 %	A propositional formula $\exformula$ with $\sbcontraction{\exformula}=0$ is called unsatisfiable.
@@ -269,7 +269,7 @@ Of special interest is the marginal probability of $\formulavar$ given that $\kb
 %	If $\kb$ entails $\lnot\exformula$ we say that $\kb$ contradicts $\exformula$.
 %	If the Knowledge Base $\kb$ is unsatisfiable, it entails any formula.
 %	%
-%	More generally, we say that a probability distribution $\probtensor$ entails a formula $\exformula$ if $\probof{\exformula=1}=1$.
+%	More generally, we say that a probability distribution $\probtensor$ entails a formula $\exformula$ if $\probat{\exformula=1}=1$.
 %\end{definition}
 
 
@@ -355,8 +355,8 @@ where $\nonzerofunction:\rr\rightarrow \rr$ is defined as $\nonzeroof{x}=1$ if $
 \end{theorem}
 \begin{proof}
 	Whenever $\probtensor$ does not entail $\exformula$ probabilistically we find a state $\shortcatindices\in\atomstates$ such that
-		\[ \probof{\shortcatvariables=\shortcatindices} >0 \quad\text{and} \quad \formulaat{\shortcatvariables=\shortcatindices} = 0 \, . \]
-	We further have $\probof{\shortcatvariables=\shortcatindices} >0$ if and only if $\kb^{\probtensor}[\shortcatvariables=\shortcatindices]=1$ and
+		\[ \probat{\shortcatvariables=\shortcatindices} >0 \quad\text{and} \quad \formulaat{\shortcatvariables=\shortcatindices} = 0 \, . \]
+	We further have $\probat{\shortcatvariables=\shortcatindices} >0$ if and only if $\kb^{\probtensor}[\shortcatvariables=\shortcatindices]=1$ and
 		\[ \big((\kb^{\probtensor}[\indexedcatvariableof{[\catorder]}]=1\big) \rightarrow \big(\formulaat{\indexedcatvariableof{[\catorder]}}=1\big) \, . \]
 	is not satisfied.
 	Together, $\probtensor\models\exformula$ does not holds if and only if
@@ -684,29 +684,29 @@ Since then the Knowledge Core has only two dimensions, there are only four possi
 %
 %\begin{corollary}\label{cor:SatisfiabilityCheck}
 %	A Knowledge Base $\kb$ is satisfiable, if and only if
-%		\[ \contractionof{\ftensorof{\kb}\cup\tbasis^{\kb}}{[]} \geq 0 \, .\]
+%		\[ \contractionof{\rencodingof{\kb}\cup\tbasis^{\kb}}{[]} \geq 0 \, .\]
 %	Here $\tbasis^{\kb}$ denotes the tensor with values $\tbasis$ and leg variable $\kb$.
 %\end{corollary}
 %\begin{proof}
-%	It would not be satisfiable if and only if $\formulaset\models\nothing$ and $\ftensorof{\nothing}=0$.
+%	It would not be satisfiable if and only if $\formulaset\models\nothing$ and $\rencodingof{\nothing}=0$.
 %\end{proof}
 %
-%More precisely, $\contractionof{\ftensorof{\kb}}{[]} $ is the count of models.
+%More precisely, $\contractionof{\rencodingof{\kb}}{[]} $ is the count of models.
 %
 %
 %%% Satisfaction Check
 %
 %\begin{theorem}\label{the:EntailmentCheck}
 %	We have $\kb\models\exformula$ if and only if
-%		\[ \contractionof{\ftensorof{\kb}\cup\tbasis^{\kb} \cup \ftensorof{\exformula} \cup \fbasis^{\exformula}}{[]} = 0 \, .\]
+%		\[ \contractionof{\rencodingof{\kb}\cup\tbasis^{\kb} \cup \rencodingof{\exformula} \cup \fbasis^{\exformula}}{[]} = 0 \, .\]
 %\end{theorem}
 %\begin{proof}
 %	It is known that $\kb\models\exformula$ if and only if $\kb\cup\{\lnot\exformula\}$ unsatisfiable (proof by contradiction).
 %	Using Corollary \ref{cor:SatisfiabilityCheck} we have $\kb\cup\{\lnot\exformula\}$ unsatisfiable if and only if
-%		\[  \contractionof{\ftensorof{\kb\cup\{\lnot\exformula\}}\cup\tbasis^{\kb\cup\{\lnot\exformula\}}}{[]} = 0 \, .\]
+%		\[  \contractionof{\rencodingof{\kb\cup\{\lnot\exformula\}}\cup\tbasis^{\kb\cup\{\lnot\exformula\}}}{[]} = 0 \, .\]
 %	The claim thus follows from noticing 
-%		\[ \contractionof{\ftensorof{\kb\cup\{\lnot\exformula\}}\cup\tbasis^{\kb\cup\{\lnot\exformula\}}}{[]}  = 
-%		\contractionof{\ftensorof{\kb}\cup\tbasis^{\kb} \cup \ftensorof{\exformula} \cup \fbasis^{\exformula}}{[]} \, . 
+%		\[ \contractionof{\rencodingof{\kb\cup\{\lnot\exformula\}}\cup\tbasis^{\kb\cup\{\lnot\exformula\}}}{[]}  =
+%		\contractionof{\rencodingof{\kb}\cup\tbasis^{\kb} \cup \rencodingof{\exformula} \cup \fbasis^{\exformula}}{[]} \, .
 %		\]
 %\end{proof}
 
@@ -714,12 +714,12 @@ Since then the Knowledge Core has only two dimensions, there are only four possi
 %% Contraction based criterion % But obvious from Monotonocity!! % Best when having a Markov Network definition of entailment.
 %\begin{theorem}[Local Contraction Criterion]\label{the:localEntailmentCriterion}
 %	For any subset $\seckb$ of the binary tensor cores of $\kb$, we have $\kb\models\exformula$ (respectively $\kb\models\lnot\exformula$), if the contraction of $\seckb$ with leaving $\atomlegindexof{\exformula}$ open is parallel to $\fbasis$ (respectively parallel to $\fbasis)$, denoted by 
-%		\[ \contractionof{\ftensorof{\seckb}}{[\atomlegindexof{\exformula}]}  \parallel \tbasis \quad \text{( respectively }\contractionof{\ftensorof{\seckb}}{[\atomlegindexof{\exformula}]}  \parallel \fbasis \text{)} \, . \]	
+%		\[ \contractionof{\rencodingof{\seckb}}{[\atomlegindexof{\exformula}]}  \parallel \tbasis \quad \text{( respectively }\contractionof{\rencodingof{\seckb}}{[\atomlegindexof{\exformula}]}  \parallel \fbasis \text{)} \, . \]
 %%	 whenever the contraction of the subset with leaving $\atomlegindexof{\exformula}$ open is parallel to $\fbasis$ (respectively parallel to $\fbasis)$, then $\kb\models\exformula$ (respectively $\kb\models\lnot\exformula)$.
 %\end{theorem}
 %\begin{proof}
 %	From the monotonicity of binary tensor contractions with respect to the partial ordering it follows with \theref{the:monotonicityBinaryContractions} that
-%		\[ \ftensorof{\kb} \prec \ftensorof{\seckb} \, . \]
+%		\[ \rencodingof{\kb} \prec \rencodingof{\seckb} \, . \]
 %	By \theref{the:orderingEntailmentCriterion} we further have $\kb\models\seckb$.
 %	Theorem~\ref{cor:parallelCriterion} now implies, that $\seckb\models\exformula$ (respectively $\seckb\models\lnot\exformula$), when the in the claim assumed contraction criterion is satisfied.
 %	By monotonicity of entailment we in that case further have $\kb\models\exformula$ (respectively $\seckb\models\lnot\exformula$).

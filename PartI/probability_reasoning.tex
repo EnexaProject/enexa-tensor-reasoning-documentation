@@ -28,11 +28,11 @@ We exploit basis calculus in defining categorical variables $\catvariableof{\exf
 More details on this scheme are provided in \charef{cha:basisCalculus}, see \defref{def:functionRelationEncoding} therein.
 
 \begin{definition}\label{def:queries}
-	The marginal query of a probability distribution $\probof{\shortcatvariables}$ by a tensor 
+	The marginal query of a probability distribution $\probat{\shortcatvariables}$ by a tensor
 		\[ \exfunction : \facstates \rightarrow \rr \]
-	is the vector $\probof{\catvariableof{\exfunction}} \in \rr^{\cardof{\imageof{\exfunction}}}$ defined as the contraction
+	is the vector $\probat{\catvariableof{\exfunction}} \in \rr^{\cardof{\imageof{\exfunction}}}$ defined as the contraction
 	\begin{align*}
-		\probof{\catvariableof{\exfunction}} = \contractionof{\probof{\shortcatvariables},\rencodingofat{\exfunction}{\shortcatvariables,\catvariableof{\exfunction}}}{\catvariableof{\exfunction}} \, . 
+		\probat{\catvariableof{\exfunction}} = \contractionof{\probat{\shortcatvariables},\rencodingofat{\exfunction}{\shortcatvariables,\catvariableof{\exfunction}}}{\catvariableof{\exfunction}} \, .
 	\end{align*}
 	
 	% Used in connection to mean parameters
@@ -42,11 +42,11 @@ More details on this scheme are provided in \charef{cha:basisCalculus}, see \def
 	\end{align*}
 	
 	% Used for sampling
-	Given another tensor $\secexfunction: \facstates \rightarrow \rr $ the conditional query of the probability distribution $\probof{\shortcatvariables}$ by the tensor $\exfunction$ conditioned on the tensor $\secexfunction$ is the matrix $\condprobof{\catvariableof{\exfunction}}{\catvariableof{\secexfunction}}\in\rr^{\cardof{\imageof{\exfunction}}}\otimes \rr^{\cardof{\imageof{\secexfunction}}}$ defined as the normation
+	Given another tensor $\secexfunction: \facstates \rightarrow \rr $ the conditional query of the probability distribution $\probat{\shortcatvariables}$ by the tensor $\exfunction$ conditioned on the tensor $\secexfunction$ is the matrix $\condprobof{\catvariableof{\exfunction}}{\catvariableof{\secexfunction}}\in\rr^{\cardof{\imageof{\exfunction}}}\otimes \rr^{\cardof{\imageof{\secexfunction}}}$ defined as the normation
 	\begin{align*}
 		\condprobof{\catvariableof{\exfunction}}{\catvariableof{\secexfunction}} 
 		= \normationofwrt{\{
-		\probof{\shortcatvariables},\rencodingofat{\exfunction}{\shortcatvariables,\catvariableof{\exfunction}},\rencodingofat{\secexfunction}{\shortcatvariables,\catvariableof{\secexfunction}}
+		\probat{\shortcatvariables},\rencodingofat{\exfunction}{\shortcatvariables,\catvariableof{\exfunction}},\rencodingofat{\secexfunction}{\shortcatvariables,\catvariableof{\secexfunction}}
 		\}}{
 		\catvariableof{\exfunction}}{\catvariableof{\secexfunction}
 		} \, . 
@@ -55,14 +55,14 @@ More details on this scheme are provided in \charef{cha:basisCalculus}, see \def
 
 %% Relation of queries and expectation queries
 Expectation queries are contractions of marginal queries with identities, that is
-	\[ \expectationof{\exfunction} = \sbcontraction{\probof{\catvariableof{\exfunction}} \idrestrictedto{\imageof{\exfunction}}{\catvariableof{\exfunction}} } \, . \]
+	\[ \expectationof{\exfunction} = \sbcontraction{\probat{\catvariableof{\exfunction}} \idrestrictedto{\imageof{\exfunction}}{\catvariableof{\exfunction}} } \, . \]
 This will be shown in more detail in \charef{cha:basisCalculus} in Corollary~\ref{cor:rhoToNormal}.
 
 %% Conditional Probabilities and conditional queries
 Conditional probabilities are queries, where the tensors $\exfunction$ and $\secexfunction$ are identity mappings in the respective variable state spaces.
 Conversely, we can understand the conditional query $\condprobof{\exfunction}{\secexfunction}$ as the conditional probability of $\exfunction$ conditioned on $\secexfunction$, of the underlying Markov Network with cores $\{\probtensor, \rencodingof{\exfunction}, \rencodingof{\secexfunction} \}$ and variables $\catvariableof{\exfunction},\catvariableof{\secexfunction}$ besides the variables distributed by $\probtensor$.
 
-%% Expectations as event queries -> Consistency with $\probof{X=i}$?
+%% Expectations as event queries -> Consistency with $\probat{X=i}$?
 We further denote event queries by
 	\[  \expectationof{\exfunction=z} = \sbcontraction{\probtensor,\rencodingof{\exfunction},\onehotmapof{z}}\]
 where by $\onehotmapof{z}$ be denote the one hot encoding of the state $z$ with respect to some enumeration.
@@ -70,7 +70,7 @@ Let us note that they are further contraction of the queries in \defref{def:quer
 \begin{align*}
 	 \expectationof{\exfunction=z} 
 	& =  \sbcontraction{ \sbcontractionof{\probtensor,\rencodingof{\exfunction}}{\catvariableof{\exfunction}} ,\onehotmapof{z}}\\
-	& =  \sbcontraction{ \probof{\exfunction} ,\onehotmapof{z}} \, . 
+	& =  \sbcontraction{ \probat{\exfunction} ,\onehotmapof{z}} \, .
 \end{align*}
 
 %% OLD: Defining queries by 
@@ -84,7 +84,7 @@ Let us note that they are further contraction of the queries in \defref{def:quer
 %When we have an unnormalized probability distribution $\phi$ the expectation is the quotient
 %\begin{align*}
 %	\expectationofwrt{\exfunction(\catvariables)}{\catvariables\sim\phi}  = \frac{
-%		\contractionof{\{\phi,\ftensorof{\exfunction}\}}{\{\exfunctiontargetvariables \}} 
+%		\contractionof{\{\phi,\rencodingof{\exfunction}\}}{\{\exfunctiontargetvariables \}}
 %	}{
 %		\contractionof{\{\phi\}}{\varnothing} 
 %	} \, . 
@@ -299,7 +299,7 @@ Given a datapoint $\datamapof{\dataindex}$ consisting of the images of the data 
 	
 % Independent assumption
 When all $\datamapof{\dataindex}$ are drawn independently from $\probat{\shortcatvariablelist}$, we can factorize into
-	\[ \probat{\data}  = \prod_{\dataindexin} \probof{\shortcatvariables=\datamapof{\dataindex}} \, . \]
+	\[ \probat{\data}  = \prod_{\dataindexin} \probat{\shortcatvariables=\datamapof{\dataindex}} \, . \]
 
 % Logarithm
 It is convenient to apply a logarithm on the objective, which does not influence the optimum when optimizing this quantity.
@@ -309,7 +309,7 @@ This is especially useful, when investigating the convergence of the objective f
 	We define the loss of a distribution $\probtensor$ as
 	\begin{align*}%\label{eq:defLikelihoodLossPL}
 		\lossof{\probtensor} 
-		= \frac{1}{\datanum} \lnof{\probof{\data}} 
+		= \frac{1}{\datanum} \lnof{\probat{\data}}
 	\end{align*}
 \end{definition}
 
@@ -327,9 +327,9 @@ We now state the Maximum Likelihood Problem in the form
 \begin{definition}[Shannon entropy]
 	The information content or the Shannon entropy of a distribution is defined as
 		\[ \sentropyof{\probtensor} 
-		:= \expectationofwrt{-\lnof{\probof{\shortcatvariables}}}{\shortcatvariables\sim\probtensor} 
+		:= \expectationofwrt{-\lnof{\probat{\shortcatvariables}}}{\shortcatvariables\sim\probtensor}
 		= \sbcontraction{\probtensor,-\lnof{\probtensor}} \, . \]
-	%	= - \sum_{\shortcatindices} \probof{\indexedshortcatvariables} \cdot \lnof{\probof{\indexedshortcatvariables}} \, . \]
+	%	= - \sum_{\shortcatindices} \probat{\indexedshortcatvariables} \cdot \lnof{\probat{\indexedshortcatvariables}} \, . \]
 	We depict this in a tensor network diagram with an ellipsis denoting a coordinatewise transform (see \charef{cha:coordinateCalculus}) with a natural logarithm $\ln$ as:
 	\begin{center}
 		\input{PartI/tikz_pics/probability_reasoning/shannon_entropy.tex}
@@ -341,7 +341,7 @@ We now state the Maximum Likelihood Problem in the form
 		\[ \centropyof{\probtensor}{\secprobtensor} 
 		:=  \expectationofwrt{-\lnof{\secprobtensor[\shortcatvariables]}}{\shortcatvariables\sim\probtensor} 
 		= \sbcontraction{\probtensor,-\lnof{\secprobtensor}} \, . \]
-		%- \sum_{\catindices}  \probof{\indexedcatvariables} \cdot \lnof{\secprobtensor[\indexedshortcatvariables]}  \, . \]
+		%- \sum_{\catindices}  \probat{\indexedcatvariables} \cdot \lnof{\secprobtensor[\indexedshortcatvariables]}  \, . \]
 	We depict this in a tensor network diagram with an ellipsis denoting a coordinatewise transform (here the $\ln$) as :
 	\begin{center}
 		\input{PartI/tikz_pics/probability_reasoning/cross_entropy.tex}
@@ -350,7 +350,7 @@ We now state the Maximum Likelihood Problem in the form
 
 %% Vanishing coordinates case
 We here use $\lnof{0}=-\infty$ and $0\cdot \lnof{0} = 0$. 
-Then we have $\centropyof{\probtensor}{\secprobtensor} = \infty$ if and only if there is a $\shortcatindices$ such that $\probof{\indexedshortcatvariables}>0$ and $\secprobtensor[\indexedshortcatvariables]=0$.
+Then we have $\centropyof{\probtensor}{\secprobtensor} = \infty$ if and only if there is a $\shortcatindices$ such that $\probat{\indexedshortcatvariables}>0$ and $\secprobtensor[\indexedshortcatvariables]=0$.
 
 
 % KL Divergence
@@ -375,8 +375,8 @@ We are now ready to provide an entropic interpretation of the loss introduced in
 	We have
 	\begin{align*}
 		\lossof{\probtensor} 
-		& = \frac{1}{\datanum} \lnof{\probof{\data}} 
-		= \frac{1}{\datanum} \sum_{\datain} \lnof{\probof{\shortcatvariables =\datamap(\dataindex)}} 
+		& = \frac{1}{\datanum} \lnof{\probat{\data}}
+		= \frac{1}{\datanum} \sum_{\datain} \lnof{\probat{\shortcatvariables =\datamap(\dataindex)}}
 		= \frac{1}{\datanum} \sum_{\datain} \contraction{\{\lnof{\probtensor},\onehotmapof{\datamap(\dataindex)}\}} \\ 
 		& = \sbcontraction{\empdistribution,\lnof{\probtensor}} \, .
 	\end{align*}
@@ -494,7 +494,7 @@ For the practicle usage of this theorem, we need a characterization of the inter
 		We define for $\epsilon\in\rr$
 		\begin{align*}
 			\probofat{\epsilon}{\shortcatvariables} 
-			= \sbnormationof{\probof{\shortcatvariables},\expof{\epsilon\cdot\contractionof{\sencsstatwith,\vectorat{\selvariable}}{\shortcatvariables}}}{\shortcatvariables}
+			= \sbnormationof{\probat{\shortcatvariables},\expof{\epsilon\cdot\contractionof{\sencsstatwith,\vectorat{\selvariable}}{\shortcatvariables}}}{\shortcatvariables}
 		\end{align*}
 		The derivation of this map at $\epsilon=0$ is 
 		\begin{align*}
@@ -1066,7 +1066,7 @@ The loss is the cross entropy between a distribution with $\meanparam$ and the d
 
 %% DONE BEFORE!
 %\begin{theorem}[\cite{wainwright_graphical_2008}]\label{the:parEstToBackwardMap}
-%	Given any probability distribution $\probof{\shortcatvariables}$ and a exponential family defined by the sufficient statistic $\sstat$, the M-Projection onto the family is the distribution $\probtensorof{(\sstat,\estcanparam,\basemeasure)}$ where
+%	Given any probability distribution $\probat{\shortcatvariables}$ and a exponential family defined by the sufficient statistic $\sstat$, the M-Projection onto the family is the distribution $\probtensorof{(\sstat,\estcanparam,\basemeasure)}$ where
 %	\begin{align*}
 %		\estcanparam = \backwardmapof{\contractionof{\probtensor,\sencsstat}{\selvariable}} \, .
 %	\end{align*}
