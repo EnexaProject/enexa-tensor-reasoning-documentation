@@ -1,0 +1,67 @@
+\newcommand{\horDistChapter}{6}
+\newcommand{\verDistChapter}{2.25}
+\newcommand{\parBlockDistance}{0.25}
+\newcommand{\drawchapter}[4]{
+    \coordinate (logRepStart) at (#1, #2);
+    \draw (logRepStart) rectangle ($(logRepStart) + (blockDiagonal)$);
+    \node[anchor=center] (text) at ($(logRepStart) + (toTop) +0.5*(blockDiagonal)$) {\small #3};
+    \node[anchor=center] (text) at ($(logRepStart) + (toBottom) +0.5*(blockDiagonal)$) {\small #4};
+}
+
+\begin{tikzpicture}[scale=1]
+    \coordinate (blockDiagonal) at (5,1.75);
+    \coordinate (toTop) at (0,0.35);
+    \coordinate (toBottom) at (0,-0.35);
+
+    % Representation
+    \node[anchor=center] (text) at (-0.5, 2*\verDistChapter+0.35) {Focus~I: Representation};
+    \draw[dashed]  (-0.25-1*\horDistChapter, 2*\verDistChapter+1) -- (1*\horDistChapter-0.75, 2*\verDistChapter+1) -- (1*\horDistChapter-0.75, -4*\verDistChapter-1)
+    -- (-0.25-1*\horDistChapter, -4*\verDistChapter-1) -- (-0.25-1*\horDistChapter, 2*\verDistChapter+1);
+
+    % Reasoning
+    \node[anchor=center] (text) at (-0.5+1.5*\horDistChapter, 2*\verDistChapter+0.35) {Focus~II: Reasoning};
+    \draw[dashed]  (-0.25+1*\horDistChapter, 2*\verDistChapter+1) -- (2*\horDistChapter-0.75, 2*\verDistChapter+1) -- (2*\horDistChapter-0.75, -4*\verDistChapter-1)
+    -- (-0.25+1*\horDistChapter, -4*\verDistChapter-1) -- (-0.25+1*\horDistChapter, 2*\verDistChapter+1);
+
+    % Part I
+    \node[anchor=center] (text) at (-0.5-0.5*\horDistChapter, 1*\verDistChapter-0.25) {\parref{par:one}: Factored Systems};
+    \draw (-0.5-1*\horDistChapter,-0.25) -- (2*\horDistChapter-0.5, -0.25) -- (2*\horDistChapter-0.5, 2*\verDistChapter-0.25) --
+    (-0.5-1*\horDistChapter, 2*\verDistChapter-0.25) -- (-0.5-1*\horDistChapter,-0.25);
+    \foreach \x/\y/\key/\name in {
+        0/1/cha:probRepresentation/Probability Representation,
+        0/0/cha:logicalRepresentation/Logical Representation,
+        1/1/cha:probReasoning/Probabilistic Reasoning,
+        1/0/cha:logicalReasoning/Logical Reasoning
+    } {
+        \drawchapter{\x * \horDistChapter}{\y *\verDistChapter}{\charef{\key}}{\name}
+    }
+
+    % Part II
+    \node[anchor=center] (text) at (-0.5-0.5*\horDistChapter, -1.5*\verDistChapter-0.5) {\parref{par:two}: Neuro-Symbolic AI};
+    \draw (-0.5-1*\horDistChapter,-0.5) -- (2*\horDistChapter-0.5, -0.5) -- (2*\horDistChapter-0.5, -2*\verDistChapter-0.5) --
+    (-0.5-1*\horDistChapter, -2*\verDistChapter-0.5) -- (-0.5-1*\horDistChapter,-0.5);
+    \foreach \x/\y/\key/\name in {
+        -1/-1/cha:formulaSelection/Formula Selecting Networks,
+        0/-1/cha:networkRepresentation/Logic Network Representation,
+        0/-2/cha:folModels/Statistical Models of FOL,
+        1/-1/cha:networkReasoning/Logic Network Reasoning,
+        1/-2/cha:mlnConcentration/Probabilistic Success Guarantees
+    } {
+        \drawchapter{\x * \horDistChapter}{\y *\verDistChapter - \parBlockDistance}{\charef{\key}}{\name}
+    }
+
+    % Part III
+    \node[anchor=center] (text) at (-0.5-0.5*\horDistChapter, -3.5*\verDistChapter-0.5) {\parref{par:three}: Contraction Calculus};
+    \draw (-0.5 - 1*\horDistChapter, -2*\verDistChapter-0.75) -- (2*\horDistChapter-0.5, -2*\verDistChapter-0.75) -- (2*\horDistChapter-0.5, -4*\verDistChapter-0.75) --
+    (-0.5-1*\horDistChapter, -4*\verDistChapter-0.75) -- (-0.5-1*\horDistChapter,-2*\verDistChapter-0.75);
+    \foreach \x/\y/\key/\name in {
+        -1/-3/cha:coordinateCalculus/Coordinate Calculus,
+        0/-3/cha:basisCalculus/Basis Calculus,
+        0/-4/cha:sparseCalculus/Sparse Calculus,
+        1/-3/cha:approximation/Approximation,
+        1/-4/cha:messagePassing/Message Passing
+    } {
+        \drawchapter{\x * \horDistChapter}{\y *\verDistChapter - 2 * \parBlockDistance}{\charef{\key}}{\name}
+    }
+
+\end{tikzpicture}
