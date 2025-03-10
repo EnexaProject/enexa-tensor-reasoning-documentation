@@ -22,31 +22,51 @@ The chosen tensor network formats are motivated from explainable learning archit
 Tensor networks appear as the natural numerical structures in probabilistic graphical models and logical knowledge bases.
 After presenting the probabilistic and logical approaches based on the tensor network formalism we develop novel applications schemes towards neuro-symbolic artificial intelligence.
 
+\subsection{Background}
 
+Before presenting an overview over the contents, we further motivate this work based on the broach approaches towards artificial intelligence and more recent developments.
 
-%Reasoning based on tensors has the advantage to
-%\begin{itemize}
-%    \item Provide a unifying approach to logical and probabilistic reasoning
-%    \item Careful selection of necessary contractions and their efficient processing.
-%\end{itemize}
+\subsubsection{Classical Approached towards AI}
 
-% Factored representations of systems -> Tensors
+We start with ontological commitments in the description of a system and follow the book \cite{russell_artificial_2021} distinguishing atomic, factored and structured representations.
+While in atomic representation, the states of a systems are enumerated and represented in a single variable, factored representations describe a systems state based on a collection of variables.
+In the tensor formalism, each state of a system corresponds with a coordinate of a representing tensor.
+The order of the tensor coincides therefore with the number of variables in a system.
+In an atomic representation, where there is a single coordinate, each state corresponds with a coordinate of the representing vector being a tensor of order one.
+Having a factored representation with two variables requires order two tensors or matrices, where a coordinate is specified by a row and a column index.
+Given larger numbers of coordinates now extends this representation picture to tensors of larger orders, which have more abstract axes besides rows and columns.
+The generalization of the atomic representation to a factored system thus corresponds with the generalization of vectors towards matrices and tensors of larger orders.
+Along this line, we can always transform a factored representation of a system to an atomic one, just by enumerating the states of the factored system and interpreting them by a single variable.
+This amounts to the flattening of a representing tensor to a vector.
+However, by doing so, we would loose much of the structure of the representation, which we would like to exploit in reasoning processes.
 
-%\subsection{Application of the tensor network approach}
-%
-%\subsubsection{Graphical Models}
-%
-%\red{Further sparsity schemes for factors, by exploiting structure inside them.}
+% Structured Representations
+A more generic representation of systems are structured representation.
+Structured representations involve objects of differing numbers and relations between them.
+As a consequence the numbers of variables can differ depending on the state of a system.
+This poses a challenge to the tensor representation, since a fixed number of variables is required to motivate a tensor space of representations.
+There are approaches to circumvent these difficulty by the development of template models such as Markov Logic Networks \cite{richardson_markov_2006}, which are instantiated on systems with differing number of objects.
+We will discuss those in \charef{cha:folModels}.
 
-\subsection{Related works}
+% Continous vs discrete
+In this work we treat discrete systems, where the number of states is finite.
+One can understand them as a discretization of continuous variables and many results will generalize by the converse limit to the situation of continuous variables.
 
-\subsubsection{Explainability and Structure in AI}
+% Epistemologic
+Besides ontological commitments in the choice of a representation scheme, modelling a system also requires epistemologic commitments, by defining what properties are to be reasoned about.
+In logical approaches the properties of states are boolean values representing whether a state is consistent with known constraints.
+Probabilistic approaches assign to the coordinates of the tensors numbers in $[0,1]$ encoding the probability of a state.
+Compared with logical approached to reasoning, probabilistic approaches thus bear a more expressive modelling.
+
+\subsubsection{Logic and Explainability in AI}
 
 \textbf{Inductive Logic Programming:}
 \begin{itemize}
     \item ILP is a classical task \cite{muggleton_inductive_1994}
     \item Amie \cite{galarraga_amie_2013} is a method of learning Horn clauses using a refinement operator.
-    \item Class Expression Learning \cite{lehmann_class_2011} is a more recent approach which has recently seen further popularity in combination with reinforcement learning \cite{demir_drill-_2021} and neural networks \cite{kouagou_neural_2022, pesquita_neural_2023}
+    \item Class Expression Learning \cite{lehmann_class_2011} is a more recent approach to assist in the design of reasoning capabilities in Knowledge Graphs.
+        However, problems arise from the expressivity of description logics and the efficient choice of formulas from exponentially large hypothesis sets.
+    \item CEL has therefore recently received further popularity in combination with reinforcement learning \cite{demir_drill-_2021} and neural networks \cite{kouagou_neural_2022, pesquita_neural_2023}, which are methods searching efficienctly in exponentially large spaces of formulas.
 \end{itemize}
 
 \textbf{Statistical Relational AI:} \cite{getoor_introduction_2019}
@@ -57,12 +77,12 @@ After presenting the probabilistic and logical approaches based on the tensor ne
 \textbf{Knowledge Graphs}
 \cite{hogan_knowledge_2021}
 \begin{itemize}
-    \item The advent of large Knowledge Graphs enables reasoning methods.
-    \item The bottleneck is the efficiency of methods to identify formulas from data.
+    \item The advent of large Knowledge Graphs enables explainable reasoning methods on structured data.
     \item Knowledge Graphs are stored in a sparse format, i.e. only true atoms instead of all + truth label.
 \end{itemize}
 
-\subsubsection{Generic applications of Tensor Networks}
+
+\subsubsection{Tensor Networks in AI}
 
 \textbf{Tensor Network formats}
 \begin{itemize}
@@ -70,154 +90,11 @@ After presenting the probabilistic and logical approaches based on the tensor ne
     \item CP Format
 \end{itemize}
 
-
 \textbf{Tensor Networks as Regressors}
 \begin{itemize}
     \item Dynamical Systems learning \cite{gels_multidimensional_2019, goesmann_tensor_2020}
+    \item Supervised learning CITE: Stoudenmire etc.
 \end{itemize}
-
-\subsubsection{Logical and Probabilistic Approaches}
-
-Besides ontological commitments in the choice of a representation scheme, one also needs to make epistomologic commitments, by defining what properties we can reason about.
-We can encode different properties of the system in the axes of the tensor representation.
-In logical approaches the properties of states are Boolean values representing, for example, whether a state is consistent with specific constraints.
-Probabilistic approaches represent on the coordinates of the tensors real numbers in $[0,1]$ which can be interpreted as probability of a state.
-Compared with logical approached to reasoning, probabilistic approaches thus bear a more expressive modelling.
-
-
-Tensor Networks can represent both probabilistic and logical reasoning on factored systems, since in the tensor space we can
-\begin{itemize}
-    \item Represent probability distributions by storing probabilistic values in each coordinate
-    \item Represent set of states by sums over different one-hot encodings (this enables logical calculus)
-\end{itemize}
-
-%\subsubsection{Comparison of Representation Frameworks}
-Both probability and logic provide a human-understandable interface to machine learning.
-As we will describe in the following sections, they can be combined in one formalism providing efficient reasoning.
-
-
-% Same thesises repeated??
-\textbf{Probability} represents the uncertainty of states.
-The categorical variables are called random variables and their joint distribution is represented by a probability tensor.
-Humans can interpret probabilities by Bayesian and frequentist approaches.
-Reasoning based on Bayes Theorem has an intuitive interpretation in terms of evidence based update of prior distributions to posterior distributions.
-However it is based on interpreting (large amounts) of numbers, which makes it hard for humans to assess the probabilistic reasoning process.
-
-\textbf{Logics} explains relations between sets of worlds in a human understandable way.
-Categorical variables have dimension $2$, where the first is interpreted as indicating a $\falsesymbol$ state and the second as a $\truesymbol$ state.
-We mainly restrict to propositional logics, where there are finite sets of such variables called atomic formulas.
-Using model-theoretic semantics it defines entailment of sets by other sets, which is understandable as a consequence relation.
-
-\textbf{Tensors} unify both approaches since they are natural mathematical structures to represent properties of states in factored systems.
-The potential is then based in employing efficient multilinear algorithms based on tensor network alternations to solve reasoning problems.
-Further, algorithms formulates in tensor networks have a high parallelization potential, which is why they are of central interest in the development of AI-dedicated software and hardware.
-
-
-The different areas have developed separated languages to describe similar objects.
-Here we want to provide a rough comparison of those in a dictionary.
-
-\begin{tabular}{l|l|l|l}
-    & \textbf{Probability Theory} & \textbf{Propositional Logic} & \textbf{Tensors}   \\
-    \hline
-    \textit{Atomic System}        & Random Variable             & Atomic Formula               & Vector             \\
-    \textit{Factored System}      & Joint Distribution          & Knowledge Base               & Tensor             \\
-    \textit{Categorical Variable} & Random Variable             & Atomic Formula               & Axis of the Tensor
-\end{tabular}
-
-While the probability theory lacks to provide an intuition about sets of events, propositional syntax has limited functionality to represent uncertainties.
-Tensors on the other side can build a bridge by representing both functionalities and relying on probability theory and logics for respective interpretations.
-
-\subsubsection{Infrastructure of AI}
-
-The formalism of tensors and their network decompositions and contractions bears the potential of parallel computations exploited in the AI-dedicated soft and hardware.
-\begin{itemize}
-    \item Hardware: TPUs beyond GPUs
-    \item Software: Tensors as basic data structure in TensorFlow, pyTorch etc., storing neural activations and model weights.
-\end{itemize}
-
-\subsection{Structure of the work}
-
-The chapters are structured into three parts, and two focuses, as sketched by:
-\input{./OtherContent/tikz_pics/introduction/chapter_overview.tikz}
-
-\textbf{\parref{par:one}: \partonetext} \\
-\ \\
-The probabilistic and logical approaches towards artificial intelligence are reviewed in the tensor network formalism. \\
-\ \\
-\textbf{\parref{par:two}: \parttwotext} \\
-\ \\
-Motivated by the classical approaches we apply the tensor network formalism towards learning and infering neuro-symbolic models. \\
-\ \\
-\textbf{\parref{par:three}: \partthreetext}\\
-\ \\
-The applied schemes of calculus using tensor network contractions are investigated in more detail.
-\ \\
-% Representation
-\textbf{\focusonespec}\\
-\\\
-Here we motivate and investigate the efficient representation of tensors based on tensor network decompositions. \\
-\ \\
-% Reasoning
-\textbf{\focustwospec}\\
-\ \\
-We develop schemes to efficiently perform inductive and deductive reasoning based on information stored in decomposed tensor.
-
-\subsection{\focusonespec}
-
-\red{Following the book \cite{russell_artificial_2021}: Atomic, Factored and Structured Representations, which are framed as ontological commitments.}
-
-Tensors have frequent appearance in machine learning.
-We show in this chapter how they are natural choices to encode states the states of factored systems, which are systems described by a collection of categorical variables.
-
-%\subsubsection{Ontological Commitments}
-% Atomic Representations
-Differing ontological commitments are made by atomic systems, where we just enumerate the state of a system and understand them as assignments to a single variable.
-We can always transform a factored representation of a system to an atomic one, just by enumerating the tuples of states of the factored system and interpreting them as a single variable.
-However, by doing so we would loose much of the structure of the representation, which we would like to exploit in reasoning processes.
-
-%% TO DO:
-% Factored Representations
-
-% Structured Representations
-A more generic representation of systems are structured representation.
-In structured systems the numbers of variables can differ depending on the state the system is in.
-\red{Limitation to factored representations:
-Dealing with structured representations would mean differing order of the representing tensors.}
-
-% Continous vs discrete
-In this work we treat discrete systems, where the number of states is finite.
-One can understand them as a discretization of continuous variables and many results will generalize by the converse limit to the situation of continuous variables.
-
-
-% Curse of dimensionality -> Tensor Networks
-The curse of dimensionality renders the representations of tensors by a list of basis elements infeasible.
-Therefore, sparse representation formats by tensor networks have been investigated.
-
-\subsection{\focustwospec}
-
-\subsection{\parref{par:one}: \partonetext}
-
-Tensors appear naturally in
-\begin{itemize}
-    \item Logics: Boolean tensors indicating models (propositional case) and interpretation tensors in first order logics
-    \item Probability theory: Truth tables, which are tensors of probabilities for joint distibutions of categorical variables.
-\end{itemize}
-
-% Classical usage of tensor network decompositions
-Tensor network decompositions as representation schemes appear in
-\begin{itemize}
-    \item Logics: Conjunctions of formulas are Hadamard products of the tensor representation of formulas (Coordinate Calculus/ Effective Calculus)
-    \item Probability theory: Graphical models are tensor networks of the factors. Further sparsity schemes apply, when placing restrictions on the structure of each factor.
-    \item Data bases: Relations encoded by lists as storage of nonvanishing coordinates of a relation encoding
-\end{itemize}
-
-% Classical usage of tensor network contractions
-Tensor network contractions as reasoning schemes appear in
-\begin{itemize}
-    \item Logics: Model counts, used for satisfiablility decisions and entailment
-    \item Probability theory: Marginal probability distributions, extended to conditional probability distributions through normations
-\end{itemize}
-
 
 \textbf{Tensor Representation of Logics}
 \begin{itemize}
@@ -238,7 +115,24 @@ Tensor network contractions as reasoning schemes appear in
     \item Expressivity studies \cite{glasser_expressive_2019}
 \end{itemize}
 
-\subsection{\parref{par:two}: \parttwotext}
+\subsubsection{Infrastructure of AI}
+
+The formalism of tensors and their network decompositions and contractions bears the potential of parallel computations exploited in the AI-dedicated soft and hardware.
+\begin{itemize}
+    \item Hardware: TPUs beyond GPUs
+    \item Software: Tensors as basic data structure in TensorFlow, pyTorch etc., storing neural activations and model weights.
+\end{itemize}
+
+
+
+\subsection{Structure of the work}
+
+The chapters are structured into three parts, and two focuses, as sketched by:
+\input{./OtherContent/tikz_pics/introduction/chapter_overview.tikz}
+
+\textbf{\parref{par:one}: \partonetext} \\
+\ \\
+The probabilistic and logical approaches towards artificial intelligence are reviewed in the tensor network formalism. \\
 
 \textbf{Neurosymbolic AI}
 \begin{itemize}
@@ -266,4 +160,54 @@ Sparsity means restriction to functions, which are decomposable into a small num
 Approximations of generic functions (see the universal approximation theorems) would require large amounts of neurons. % CITE!
 When restricting to functions based on a fixed architecture, we restrict to a certain set of functions called the inductive bias of the architecture.
 
-\subsection{\parref{par:three}: \partthreetext}
+\ \\
+\textbf{\parref{par:two}: \parttwotext} \\
+\ \\
+Motivated by the classical approaches we apply the tensor network formalism towards learning and infering neuro-symbolic models. \\
+
+Tensors appear naturally in
+\begin{itemize}
+    \item Logics: Boolean tensors indicating models (propositional case) and interpretation tensors in first order logics
+    \item Probability theory: Truth tables, which are tensors of probabilities for joint distibutions of categorical variables.
+\end{itemize}
+
+% Classical usage of tensor network decompositions
+Tensor network decompositions as representation schemes appear in
+\begin{itemize}
+    \item Logics: Conjunctions of formulas are Hadamard products of the tensor representation of formulas (Coordinate Calculus/ Effective Calculus)
+    \item Probability theory: Graphical models are tensor networks of the factors. Further sparsity schemes apply, when placing restrictions on the structure of each factor.
+    \item Data bases: Relations encoded by lists as storage of nonvanishing coordinates of a relation encoding
+\end{itemize}
+
+% Classical usage of tensor network contractions
+Tensor network contractions as reasoning schemes appear in
+\begin{itemize}
+    \item Logics: Model counts, used for satisfiablility decisions and entailment
+    \item Probability theory: Marginal probability distributions, extended to conditional probability distributions through normations
+\end{itemize}
+
+\ \\
+\textbf{\parref{par:three}: \partthreetext}\\
+\ \\
+The applied schemes of calculus using tensor network contractions are investigated in more detail.
+\ \\
+% Representation
+\textbf{\focusonespec}\\
+\\\
+Here we motivate and investigate the efficient representation of tensors based on tensor network decompositions. \\
+\ \\
+% Reasoning
+\textbf{\focustwospec}\\
+\ \\
+We develop schemes to efficiently perform inductive and deductive reasoning based on information stored in decomposed tensor.
+
+
+%\subsubsection{\focusonespec}
+%
+%\subsubsection{\focustwospec}
+%
+%\subsubsection{\parref{par:one}: \partonetext}
+%
+%\subsubsection{\parref{par:two}: \parttwotext}
+%
+%\subsubsection{\parref{par:three}: \partthreetext}
