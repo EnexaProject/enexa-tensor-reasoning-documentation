@@ -23,7 +23,7 @@ The expectation of this random tensor is
 The empirical distribution is then the average of independent random one-hot encodings, namely the random tensor
 \[ \empdistribution = \frac{1}{\datanum} \sum_{\datindexin}  \onehotmapofat{\datapoint}{\shortcatvariables} \, . \]
 To avoid confusion let us strengthen, that in this chapter we interpret $\empdistribution$ as a random tensor taking values in $\facspace$, whereas each supported value of $\empdistribution$ is an empirical distribution taking values in $\facstates$.
-The forwarding of $\facstates$ under the one-hot encoding is a multinomial random variable, see \defref{def:mulinomialVariable}.
+The forwarding of $\facstates$ under the one-hot encoding is a multinomial random variable, see \theref{the:multinomialEmpdistFluctuation}.
 
 
 % Expectation -> Does not make use of independence here!
@@ -88,12 +88,15 @@ Motivated by \theref{the:expectedMeanParameter}, we build our derivation of prob
 Let us first define the fluctuations of the empirical mean parameter, when drawing the data independently from a random distribution, as the noise tensor.
 
 \begin{definition}
+    \label{def:noiseTensor}
     Given a statistic $\sstat$, $\datanum\in\nn$ and a distribution $\gendistribution$, we call
-    \[ \sstatnoise = \sbcontractionof{(\empdistribution-\gendistribution),\sencsstat}{\selvariable} \]
+    \begin{align*}
+        \sstatnoise = \sbcontractionof{(\empdistribution-\gendistribution),\sencsstat}{\selvariable}
+    \end{align*}
     the \emph{noise tensor}, where $\datamap$ is a collection of $\datanum$ independent samples of $\gendistribution$.
 \end{definition}
 
-% Naive Ex
+% Minterm
 The fluctuation of the empirical distribution around the generating distribution corresponds in this notation with the minterm exponential family, taking the identity as statistics.
 % Appearances
 Besides this, fluctuation tensors appears in Markov Logic Networks as fluctuations of random mean parameters and in proposal distributions as fluctuation of random energy tensor.
@@ -111,12 +114,13 @@ In the following we will use the supremum of contractions with random tensors in
 Such quantities are called widths.
 
 \begin{definition}
-    Given a set $\canparamhypothesis\subset\facspace$ and $\noisetensor$ a random tensor taking values in $\facspace$ we define the width as the random variable
-    \[ \widthwrtof{\canparamhypothesis}{\noisetensor} = \sup_{\canparamin} \absof{\sbcontraction{\canparam,\noisetensor}} \, . \]
+    \label{def:width}
+    Given a set $\canparamhypothesis\subset\facspace$ and $\sstatnoise$ a random tensor taking values in $\facspace$ we define the width as the random variable
+    \[ \widthwrtof{\canparamhypothesis}{\sstatnoise} = \sup_{\canparamin} \absof{\sbcontraction{\canparam,\sstatnoise}} \, . \]
 \end{definition}
 
 % Uniform concentration events
-Bounds on the widths are also called uniform concentration bounds \cite{goessmann_uniform_2021} and generic probabilistic bounds will be provided in \secref{sec:directWidthBounds} and  \secref{sec:chainingWidthBounds}.
+Bounds on the widths are also called uniform concentration bounds \cite{goesmann_uniform_2021} and generic probabilistic bounds will be provided in \secref{sec:widthBounds}.
 
 \subsection{Error bounds based on the noise width}
 
@@ -148,7 +152,7 @@ To build intuition on the concentration we recall the expression of the backward
 \end{align*}
 where $\meanrepprob$ is any distribution reproducing the mean parameter.
 We want to compare the solutions $\backwardmapof{\datamean}$ and $\backwardmapof{\genmean}$, in which case $\meanrepprob$ can be chosen as $\empdistribution$ and $\gendistribution$.
-It is common to call the objectives $\centropyof{\empdistribution}{\stanexpdistof{\canparam}}$ and $\centropyof{\gendistribution}{\stanexpdistof{\canparam}}$ empirical and expected risk \cite{shalev-schwartz_understanding_2014,goesmann_uniform_2021}
+It is common to call the objectives $\centropyof{\empdistribution}{\stanexpdistof{\canparam}}$ and $\centropyof{\gendistribution}{\stanexpdistof{\canparam}}$ empirical and expected risk \cite{shalev-schwartz_shai_understanding_2014}
 Since the empirical risk has a linear dependence on $\datamean$, we have at each $\canparam$
 \begin{align*}
     \expectationof{\centropyof{\empdistribution}{\stanexpdistof{\canparam}}}
@@ -158,38 +162,41 @@ Since the empirical risk has a linear dependence on $\datamean$, we have at each
 \end{align*}
 By the law of large numbers, in the limit $\datanum\rightarrow\infty$ we thus have at each $\canparam$ a convergence of the empirical risk to the expected risk.
 However, since the backward map is defined by the minima of these risks, we need a uniform and non-asymptotical concentration guarantee to get more useful bounds.
-To this end, we now relate the supremum on the differences between expected and empirical risks with the width of the noise tensor.
+To this end, we now consider constrained parameter estimation and relate the supremum on the differences between expected and empirical risks with the width of the noise tensor.
 
 \begin{lemma}
     \label{lem:centropyWidthCharacterization}
     For any $\canparamhypothesis$ and $\datamap$ we have
     \begin{align*}
-        \widthwrtof{\canparamhypothesis}{\noisetensor}
-        = \sup_{\canparamin} \absof{\centropyof{\empdistribution}{\stanexpdistof{\canparam}} - \centropyof{\gendistribution}{\stanexpdistof{\canparam}}}
+        \widthwrtof{\canparamhypothesis}{\sstatnoise}
+        = \sup_{\canparamin} \absof{\centropyof{\empdistribution}{\stanexpdistof{\canparam}} - \centropyof{\gendistribution}{\stanexpdistof{\canparam}}} \, .
     \end{align*}
 \end{lemma}
 \begin{proof}
     For any $\canparam\in\canparamhypothesis$ and by $\meanrepprob$ realizable mean parameter $\meanparam$ we have
     \begin{align*}
         \centropyof{\meanrepprob}{\stanexpdistof{\canparam}}
-        = - \contraction{\meanparam,\canparam} -
+        = - \contraction{\meanparam,\canparam} + \cumfunctionof{\canparam} \, .
     \end{align*}
-
-    Using the decomposition of cross entropy in the exponential family
-    \[ \centropyof{\empdistribution}{\stanexpdistof{\canparam}}
-    =\contraction{\probtensor,\lnof{\gendistribution}} - \cumfunctionof{\lnof{\gendistribution}} \, . \]
+    It follows that
+    \begin{align*}
+        \centropyof{\empdistribution}{\stanexpdistof{\canparam}} - \centropyof{\gendistribution}{\stanexpdistof{\canparam}}
+        = -\contraction{(\datamean-\genmean),\canparam}
+    \end{align*}
+    and the claim follows from comparison with \defref{def:noiseTensor} and \defref{def:width}.
 \end{proof}
 
+% This is just useful for Constrained Parameter Estimation!
 As a direct consequence, we have at any $\canparam\in\canparamhypothesis$
 \begin{align*}
     \absof{\centropyof{\empdistribution}{\stanexpdistof{\canparam}} - \centropyof{\gendistribution}{\stanexpdistof{\canparam}}}
-    \leq \widthwrtof{\canparamhypothesis}{\noisetensor} \, .
+    \leq \widthwrtof{\canparamhypothesis}{\sstatnoise} \, .
 \end{align*}
 Thus, the absolute difference of the expected risk and the empirical risk is bounded by the width of the noise tensor.
 This is especially useful for the solution $\datamean$ of the empirical risk minimization, where we can state
 \begin{align*}
     \centropyof{\gendistribution}{\stanexpdistof{\datacanparam}}
-    \leq \centropyof{\empdistribution}{\stanexpdistof{\datacanparam}} + \widthwrtof{\canparamhypothesis}{\noisetensor} \, .
+    \leq \centropyof{\empdistribution}{\stanexpdistof{\datacanparam}} + \widthwrtof{\canparamhypothesis}{\sstatnoise} \, .
 \end{align*}
 At the solution of a empirical risk minimization problem over $\canparamhypothesis$, the expected risk exceeds the empirical risk at most by the noise tensor width.
 
@@ -200,7 +207,7 @@ When the generating distribution is in the hypothesis, we can further show the f
     Let us assume that for $\gencanparam\in\canparamhypothesis$ we have $\gendistribution=\stanexpdistof{\gencanparam}$. %and that $\partitionfunctionof{\canparam}$ is constant among $\canparamin$.
     Then for any solution $\datacanparam$ of the empirical problem we have
     \begin{align}
-        \kldivof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\datacanparam}} \leq 2\widthwrtof{\canparamhypothesis}{\noisetensor} \, .
+        \kldivof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\datacanparam}} \leq 2\widthwrtof{\canparamhypothesis}{\sstatnoise} \, .
     \end{align}
 \end{theorem}
 \begin{proof}
@@ -223,12 +230,42 @@ When the generating distribution is in the hypothesis, we can further show the f
     \begin{align*}
         \left(\centropyof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\datacanparam}} - \centropyof{\empdistribution}{\stanexpdistof{\datacanparam}}\right)
         - \left(\centropyof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\gencanparam}} - \centropyof{\empdistribution}{\stanexpdistof{\gencanparam}}\right)
-        \leq 2 \widthwrtof{\canparamhypothesis}{\noisetensor} \, .
+        \leq 2 \widthwrtof{\canparamhypothesis}{\sstatnoise} \, .
     \end{align*}
     Combined with the above inequality we arrive at
-    \begin{align}
-        \kldivof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\datacanparam}} \leq 2\widthwrtof{\canparamhypothesis}{\noisetensor} \, . \qedhere
-    \end{align}
+    \begin{align*}
+        \kldivof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\datacanparam}} \leq 2\widthwrtof{\canparamhypothesis}{\sstatnoise} \, .
+        \qedhere
+    \end{align*}
+\end{proof}
+
+% Unconstrained parameter estimation
+One technical issue arises from the fact, that when we allow for $\canparamhypothesis=\rr^{\seldim}$, then $\widthwrtof{\canparamhypothesis}{\sstatnoise}$ vanishes or is infinity.
+To apply the result on the unconstrained parameter estimation, we therefore need to argue on bounded sets for the canonical parameter.
+When restricting to the sphere $\subsphere\subset\rr^{\seldim}$ we have
+\begin{align*}
+    \normof{\datamean-\genmean} = \widthwrtof{\subsphere}{\mlnnoise} \, ,
+\end{align*}
+We apply this insight to state the following guarantee for unconstrained parameter estimation.
+\begin{theorem}
+    \label{the:detGuaranteeUnconstrained}
+    Let $\canparam$
+    \begin{align*}
+        \absof{\centropyof{\empdistribution}{\stanexpdistof{\datacanparam}}-\centropyof{\gendistribution}{\stanexpdistof{\datacanparam}}}
+        \leq \widthwrtof{\subsphere}{\mlnnoise} \cdot \normof{\datacanparam} \, .
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    As in the proof of \lemref{lem:centropyWidthCharacterization} we use that
+    \begin{align*}
+        \centropyof{\empdistribution}{\stanexpdistof{\datacanparam}}-\centropyof{\gendistribution}{\stanexpdistof{\datacanparam}}
+        = \sbcontraction{\datamean-\genmean,\datacanparam}  \, .
+    \end{align*}
+    By Cauchy-Schwartz we further have
+    \begin{align*}
+        \absof{\sbcontraction{\datamean-\genmean,\datacanparam}} \leq \normof{\datamean-\genmean}\cdot\normof{\datacanparam} \, .
+    \end{align*}
+    Using that $\normof{\datamean-\genmean}=\widthwrtof{\subsphere}{\mlnnoise}$ we arrive at the claim.
 \end{proof}
 
 \subsubsection{Structure Learning}
@@ -287,7 +324,6 @@ When comparing the gap with the noise width, we get the following guarantee.
     Thus, any mode of the empirical mean parameter is also a model of the expected mean parameter.
 \end{proof}
 
-
 \subsection{Fluctuations in Logic Networks}
 
 \red{In case of logical formulas being statistics, the coordiantes of the mean parameter are satisfaction rates to the formulas.}
@@ -295,13 +331,14 @@ When comparing the gap with the noise width, we get the following guarantee.
 For Logic Networks we have statistics consistent of boolean statistics $\enumformula$, which are logical formulas.
 In this case the marginal distributions of the coordinates of $\sstatnoise$ are scaled and centered binomials, which we show now.
 
-\begin{lemma}
-    Let $\sstat$ be a statistic of boolean features $\sstatcoordinate$ for all $\selindexin$, i.e. let $\imageof{\sstatcoordinate}\subset\ozset$.
-    Then, the marginal distribution of the coordinate $\sstatnoise[\indexedselvariable]$ is
-    \[\frac{1}{\datanum}\left(\bidistof{\fprobof{\selindex},\datanum}- \fprobof{\selindex}\right)  \, , \]
-    where by $\bidistof{\fprobof{\selindex},\datanum}$ we denote the binomial distribution with mean parameter
-    \[ \fprobof{\selindex} = \sbcontraction{\sstatcoordinate,\gendistribution} \, . \]
-\end{lemma}
+\begin{theorem}
+    \label{the:noiseTensorBinomial}
+    For any $\mlnstat$ the marginal distribution of the coordinate $\mlnnoiseat{\indexedselvariable}$ is the scaled and centered binomial distribution
+    \begin{align*}
+        \frac{1}{\datanum}\left(\bidistof{\datanum,\meanparamat{\indexedselvariable}}- \meanparamat{\indexedselvariable}\right)
+    \end{align*}
+    with parameters $\datanum$ and $\meanparamat{\indexedselvariable}$.
+\end{theorem}
 \begin{proof}
     We notice that when forwarding a random sample $\datapoint$ of $\gendistribution$ is the random tensor
     \[ \onehotmapofat{\datapoint}{\shortcatvariables} \, \]
@@ -309,12 +346,10 @@ In this case the marginal distributions of the coordinates of $\sstatnoise$ are 
     \[ \sbcontraction{\sstatcoordinate, \onehotmapofat{\datapoint}{\shortcatvariables}} \]
     is a random variable taking values in $\{0,1\}$.
     The variable therefore follows a Bernoulli distribution with mean parameter
-    \[ \fprobof{\selindex}
+    \[ \meanparamat{\indexedselvariable}
     = \expectationof{\sbcontraction{\sstatcoordinate, \onehotmapofat{\datapoint}{\shortcatvariables}}}
     = \sbcontraction{\sstatcoordinate, \gendistribution}  \, \qedhere\]
 \end{proof}
-
-%\subsubsection{Mean parameter in Markov Logic Networks}
 
 The mean parameter of the M-projection of the empirical distribution on the family of Markov Logic Networks with statistic $\fselectionmap$ is the random tensor
 \begin{align*}
@@ -353,31 +388,41 @@ and coincides with $\mlnnoise$.
 
 \subsubsection{Minterm Exponential Family} % Interesting, since here is the connection with probability tensors: Forwarding of each random datapoint by the one hot encoding to get a multinomial random tensor.
 
-In case of the minterm exponential family, we have $\sstat=\identityat{\shortcatvariables,\selvariable}$ and the fluctuation tensor is
-\[ \mintermnoise = \empdistribution - \gendistribution \, .  \]
 
-% Multinomial
-This fluctuation tensor is related to tensor encodings of multinomial distributions, which we now define as multinomial random tensors.
+In case of the minterm exponential family, we have $\sstat=\identityat{\shortcatvariables,\selvariable}$ and the noise tensor is
+\begin{align*}
+    \mintermnoise = \empdistribution - \gendistribution \, .
+\end{align*}
 
-\begin{definition}
-    \label{def:mulinomialVariable}
-    A multinomial random tensor is the sum of the one-hot encodings of independent identically distributed random states $x^\datindex$, drawn from a distribution $\probtensor$, that is
-    \[ Z^{\probtensor, \datanum} = \sum_{\datindexin} \onehotmapofat{x^\datindex}{\shortcatvariables} \, . \]
-\end{definition}
+% Multinomial as a more detailed characterization
+This noise tensor follows a multinomial distribution as we show next.
+To this end, we notice that a multinomial distribution can be defined as the average of one-hot encodings of independently and identically distributed datapoints.
+When drawing $\data$ independently from $\gendistribution$ we denote
+\begin{align*}
+    \sum_{\datindexin}\onehotmapofat{\datapointof{\datindex}}{\shortcatvariables}
+    \distassymbol \multidistof{\datanum,\gendistribution} \, .
+\end{align*}
 
-% Multinomial as a more general characterization
-In the case of minterm exponential families, the fluctuation tensor is a multinomial, as we show next.
-This characterization goes beyond the characterization of the marginal distributions as centered binomial variables, which holds for generic Markov Logic Networks.
-
-\begin{lemma}
-    \label{lem:multinomialEmpdistFluctuation}
-    The fluctuation $\empdistribution - \gendistribution$ is a by $\frac{1}{\datanum}$ rescaled centered multinomial random tensor with parameters $\gendistribution$ and $\datanum$. % Needs some more explanation based on one-hot encodings?
-\end{lemma}
+\begin{theorem}
+    \label{the:multinomialEmpdistFluctuation}
+    The noise tensor $\mintermnoise$ is a by $\frac{1}{\datanum}$ rescaled centered multinomial random tensor with parameters $\gendistribution$ and $\datanum$, that is
+    \begin{align*}
+        \mintermnoise \distassymbol \frac{1}{\datanum} \left( \multidistof{\datanum,\gendistribution} - \gendistribution \right) \, .
+    \end{align*}
+\end{theorem}
 \begin{proof}
     By the above construction we have
-    \[  \empdistribution - \gendistribution
-    = \frac{1}{\datanum}\sum_{\datindexin} \left( \onehotmapofat{\datapoint}{\shortcatvariables} - \expectationof{\onehotmapofat{\datapoint}{\shortcatvariables}} \right) \, .  \]
+    \begin{align*}
+        \empdistribution - \gendistribution
+        = \dataaverage \left( \onehotmapofat{\datapoint}{\shortcatvariables} - \expectationof{\onehotmapofat{\datapoint}{\shortcatvariables}} \right)
+    \end{align*}
+    We further have
+    \begin{align*}
+        \expectationof{\onehotmapofat{\datapoint}{\shortcatvariables}} = \gendistributionat{\shortcatvariables} \, .
+    \end{align*}
 \end{proof}
+
+The noise tensor characterization by multinomial distributions, which holds for minterm statistics, is a more detailed characterization compared to the characterization of its marginals by binomial distribution in \theref{the:noiseTensorBinomial}, which holds for generic statistics $\mlnstat$.
 
 \subsubsection{Guarantees for Mode of the Proposal Distribution}
 
@@ -386,13 +431,17 @@ Let us now derive probabilistic guarantees, that the mode of the proposal distri
 \begin{theorem}
     \label{the:probGuaranteeProposalDist}
     Whenever the energy tensor of the expected proposal distribution has a gap of $\maxgap$, then for every $\failprob>0$ any mode of the empirical proposal distribution coincides is also a mode of the expected proposal distribution with probability at least $1-\expof{-\frac{1}{\failprob^2}}$, provided that
-    \[ \datanum > C\frac{\left(\sum_{\atomenumeratorin}\lnof{\catdimof{\atomenumerator}}\right)}{\maxgap^2} \]
+    \begin{align*}
+        \datanum > C\frac{(1+\lnof{\seldim})}{\maxgap^2}
+    \end{align*}
     where $C$ is a universal constant.
 \end{theorem}
 \begin{proof}
-    To proof the theorem we combine the deterministic guarantee \theref{the:detGuaranteeProposalDist} with the width bound of \theref{the:basisTensorWidthBound}.
+    To proof the theorem we combine the deterministic guarantee \theref{the:detGuaranteeProposalDist} with the width bound of \theref{the:basisTensorWidthBound}, which we show in the next section.
     Given the assumed bound, the sub-gaussian norm of the width is upper bounded by $C_2\cdot \maxgap$, thus for any $\failprob>0$ we have
-    \[  \widthwrtof{\{\onehotmapof{\shortcatindices} :\shortcatindices\in\facstates\}}{\mlnnoise}  < 2 \maxgap \]
+    \begin{align*}
+        \widthwrtof{\selbasislong}{\mlnnoise}  < 2 \maxgap
+    \end{align*}
     with probability at least $1-\expof{-\frac{1}{\failprob^2}}$.
     The claim thus follows with \theref{the:detGuaranteeProposalDist}.
 \end{proof}
@@ -400,37 +449,24 @@ Let us now derive probabilistic guarantees, that the mode of the proposal distri
 
 \begin{example}[Gap of a MLNs with single formulas]
     Let there be the MLN of a maxterm $\formula$ with $\atomorder$ variables, and let $\formulaset$ be the maxterm selecting tensor, then
-    \[ \maxgap(
-    \energytensorof{(\formulaset, \expdistof{(\{\formula\},\weightof{\formula})} - \normationof{\ones}{\shortcatvariables} )}
-    ) = \frac{1}{2^{\atomorder}-1 + \expof{-\weightof{\formula}}}  \]
-    If $\weightof{\formula}>0$ we have an exponentially small gap.
+    \[ \maxgapof{
+    \energytensorof{(\formulaset, \expdistof{(\{\formula\},\singlecanparam)} - \normationof{\ones}{\shortcatvariables} )}
+    } = \frac{1}{2^{\atomorder}-1 + \expof{-\singlecanparam}}  \]
+    If $\singlecanparam>0$ we have an exponentially small gap.
     Thus, for the above Lemma to apply, the width needs to be exponentially in $\atomorder$ small.
 
 
     Let there be the MLN of a minterm $\formula$ with $\atomorder$ variables, then
     \[ \maxgap(
-    \energytensorof{(\formulaset, \expdistof{(\{\formula\},\weightof{\formula})} - \normationof{\ones}{\shortcatvariables} )}
-    ) = \frac{1}{1+(2^{\atomorder}-1)\cdot\expof{-\weightof{\formula}}}  \]
-    For large $\weightof{\formula}$ and $\atomorder$, the gap tends to $1$.
+    \energytensorof{(\formulaset, \expdistof{(\{\formula\},\singlecanparam)} - \normationof{\ones}{\shortcatvariables} )}
+    ) = \frac{1}{1+(2^{\atomorder}-1)\cdot\expof{-\singlecanparam}}  \]
+    For large $\singlecanparam$ and $\atomorder$, the gap tends to $1$.
 \end{example}
 
-\subsubsection{Guarantees for Parameter Estimation}
-
-\red{This is mean parameter fluctuation interpretation of the random tensor.}
-
-\begin{lemma}
-    \label{lem:meanParamDistance}
-    For any $\mlnstat$ and $\datamap$ drawn from $\gendistribution$ we have
-    \begin{align*}
-        \normof{\datamean - \genmean}
-        = \widthwrtof{\subsphere}{\mlnnoise} \, ,
-    \end{align*}
-    where $\datamean=\sbcontractionof{\sencmlnstat,\empdistribution}{\selvariable}$ and $\genmean=\sbcontractionof{\sencmlnstat,\gendistribution}{\selvariable}$.
-\end{lemma}
+\subsubsection{Guarantees for Unconstrained Parameter Estimation}
 
 %
-We can thus apply the sphere bounds.
-
+We here the sphere bounds and combine with \theref{the:detGuaranteeUnconstrained}.
 
 \begin{theorem}
     For any $\failprob\in(0,1)$ we have the following with probability at least $1-\failprob$.
@@ -440,28 +476,177 @@ We can thus apply the sphere bounds.
     \[ \datanum \geq \frac{\sbcontraction{\genmean}-\sbcontraction{(\genmean)^2}}{\failprob \precision^2} \, . \]
 \end{theorem}
 \begin{proof}
-    We have by Cauchy Schwartz
-    \[ \absof{\sbcontraction{\datamean - \genmean,\datacanparam}} \leq \normof{\datamean - \genmean} \cdot \normof{\datacanparam}\]
-    and with \lemref{lem:meanParamDistance}
-    \[ \absof{\sbcontraction{\datamean - \genmean,\datacanparam}} \leq \widthwrtof{\subsphere}{\mlnnoise} \cdot \normof{\datacanparam} \, . \]
-    We show in Part III that in \theref{the:sphereBoundVariance} that
-    \[  \widthwrtof{\subsphere}{\mlnnoise} \leq \tau \]
-    when $\datanum$ satisfies the assumed lower bound, from which the claim follows.
+    The claim follows from the deterministic guarantee \theref{the:detGuaranteeUnconstrained} with the probabilistic width bound \theref{the:sphereBoundVariance} to be shown in the next section.
 \end{proof}
 
 
 
 
+\subsection{Width bounds for the noise tensor}\label{sec:widthBounds}
+
+We here provide width bounds on the noise tensors $\mlnnoise$ to logic networks, which coordinates have marginal distributions by Binomials, as shown in \theref{the:noiseTensorBinomial}.
+All bounds hold for arbitrary statistics $\mlnstat$ of propositional formulas and number $\datanum$ of data and the appearing constants are universal, that is independent of particular choices of $\mlnstat$ and $\datanum$.
+
+\subsubsection{Basis Vectors}
+
+We first introduce the sub-Gaussian Norm and show how we can exploit it to state concentration inequalities.
+
+\begin{definition}[Sub-Gaussian Norm, see Def.~2.5.6 in \cite{vershynin_high-dimensional_2018}]
+    The sub-Gaussian norm of a random variable $X$ is defined as
+    \begin{align*}
+        \sgnormof{X} = \inf \left\{ C > 0 \, : \expectationof{\expof{\frac{X^2}{C^2}}} \leq 2 \right\} \, .
+    \end{align*}
+\end{definition}
+
+The moment bound used to define the sub-Gaussian norm can then be combined with Markovs inequality to state concentration bounds.
+% Relate with the contraction formalism, but not needed?
+Before showing the utility of these norm, let us first connect with the contraction formalism of this work.
+When $X$ is a random coordinate of $\hypercoreat{\shortcatvariables}$, selected by a probability tensor $\probat{\shortcatvariables}$ we have
+\begin{align*}
+    \expectationof{\expof{\frac{X^2}{C^2}}}
+    = \contraction{\probat{\shortcatvariables},\expof{\frac{1}{C^2}\cdot\hypercoreat{\shortcatvariables}}}
+\end{align*}
+and thus
+\begin{align*}
+    \sgnormof{X} = \inf \left\{ C > 0 \, : \contraction{\probat{\shortcatvariables},\expof{\frac{1}{C^2}\cdot\hypercoreat{\shortcatvariables}}} \leq 2 \right\} \, .
+\end{align*}
+
+We now show a sub-Gaussian norm bound on the coordinates of the noise tensor.
+
+\begin{lemma}
+    \label{lem:mlnMeanSubGaussianCoordinates}
+    The marginal distribution of any coordinate of $\mlnnoiseat{\selvariable}$ is sub-Gaussian with
+    \begin{align*}
+        \sgnormof{\mlnnoiseat{\indexedselvariable}} \leq C_0 \frac{1}{\sqrt{\datanum}} \,
+    \end{align*}
+    where $C_0>0$ is a universal constant .
+\end{lemma}
+\begin{proof}
+    Any centered Bernoulli variable is bounded and therefore sub-Gaussian with
+    \begin{align*}
+        \sgnormof{\contraction{\enumformulaat{\shortcatvariables},\onehotmapofat{\datapoint}{\shortcatvariables}}-\contraction{\enumformulaat{\shortcatvariables},\gendistribution}}
+        \leq \frac{1}{\sqrt{\lnof{2}}} \, .
+    \end{align*}
+    Binomial variables are sums of independent Bernoulli variables.
+    We apply the sub-Gaussian norm bound for sums from Proposition~2.6.1 in \cite{vershynin_high-dimensional_2018}, which states that for a universal constant $C>0$ we have
+    \begin{align*}
+        \sgnormof{\contraction{\enumformulaat{\shortcatvariables},\left(\sum_{\datindexin}\onehotmapofat{\datapoint}{\shortcatvariables} - \gendistribution\right)}}
+        \leq \frac{C\cdot\sqrt{\datanum}}{\sqrt{\lnof{2}}} \, .
+    \end{align*}
+    We therefore have
+    \begin{align*}
+        \sgnormof{\mlnnoiseat{\indexedselvariable}} =
+        \frac{1}{m}\sgnormof{\contraction{\enumformulaat{\shortcatvariables},\left(\sum_{\datindexin}\onehotmapofat{\datapoint}{\shortcatvariables} - \gendistribution\right)}}
+        \leq \frac{C}{\sqrt{\lnof{2} \cdot \datanum}} \, .
+    \end{align*}
+    We arrive at the claimed bound with a transform of the universal constant to $C_0=\frac{C}{\sqrt{\lnof{2}}}$.
+\end{proof}
+
+Based on this norm bound, we now show a bound on the sub-Gaussian norm of the width with respect to basis vectors.
+
+\begin{theorem}
+    \label{the:basisTensorWidthBound}
+    For the set of basis vectors
+    \begin{align*}
+        \selbasisshort = \selbasislong
+    \end{align*}
+    we have
+    \begin{align*}
+        \sgnormof{\widthatof{\selbasisshort}{\mlnnoise}} \leq C_1 \sqrt{\frac{1+\lnof{\seldim}}{\datanum}} \, ,
+    \end{align*}
+    where $C_1>0$ is a universal constant.
+\end{theorem}
+\begin{proof}
+    We first notice, that
+    \begin{align*}
+        \widthatof{\selbasisshort}{\noisetensor} = \max_{\selindexin} \absof{\mlnnoiseat{\indexedselvariable}}
+    \end{align*}
+    By a generic bound on the supremum of sub-Gaussian variables (see Exercise~2.5.10 in \cite{vershynin_high-dimensional_2018}) we have for a universal constant $C>0$
+    \begin{align*}
+        \sgnormof{\max_{\selindexin}\absof{\mlnnoiseat{\indexedselvariable}}}
+        \leq C \left(\max_{\selindexin}\sgnormof{\mlnnoiseat{\indexedselvariable}}\right) \sqrt{1 + \lnof{\seldim}} \, .
+    \end{align*}
+    We now apply \lemref{lem:mlnMeanSubGaussianCoordinates} and get with $C_1=C\cdot C_0$ that
+        \begin{align*}
+        \sgnormof{\widthatof{\selbasisshort}{\mlnnoise}} \leq C_1 \sqrt{\frac{1+\lnof{\seldim}}{\datanum}}  \, .
+    \end{align*}
+\end{proof}
+
+% Sharpness comment
+The bound in \theref{the:basisTensorWidthBound} is furthermore sharp, see the construction of an identically scaling lower bound in Exercise~2.5.11 in \cite{vershynin_high-dimensional_2018}.
+Note that the binomials used here tend to normal distributed variables used in the construction therein.
+
+\subsubsection{Sphere}
+
+For any tensor $\noiseat{\selvariable}$ and the sphere $\subsphere\subset\rr^{\seldim}$ we have
+\begin{align*}
+    \widthwrtof{\subsphere}{\noiseat{\selvariable}}
+    = \normof{\noiseat{\selvariable}} \, .
+\end{align*}
+To show probabilistic width bounds with respect to the sphere, we therefore apply in the following Chebyshevs inequality on the norm of random tensors.
+
+\begin{theorem}
+    \label{the:sphereBoundVariance}
+    Let $\meanparamat{\selvariable}$ be a deterministic vector with coordinates in $[0,1]$ and $\noiseat{\selvariable}$ a random vector, which coordiantes are for $\selindexin$ marginally distributed as
+    \begin{align*}
+        \noiseat{\indexedselvariable} \distassymbol \bidistof{\datanum,\meanparamat{\indexedselvariable}} \, .
+    \end{align*}
+    Then we have for any $\failprob>0$, $\precision>0$ and $\datanum\in\nn$ with probability at least $1-\failprob$
+    \begin{align*}
+        \normof{\frac{\noisetensor-\expectationof{\noisetensor}}{\datanum}} \leq \precision
+    \end{align*}
+    provided that
+    \begin{align*}
+        \datanum \geq \frac{\contraction{\meanparamat{\selvariable},(\onesat{\selvariable}-\meanparamat{\selvariable})}}{\failprob\cdot\precision^2} \, .
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    Since the squared norm of the noise is the sum of squared centered and averaged Binomials, we have
+    \begin{align*}
+        \expectationof{\normof{\noiseat{\selvariable}-\expectationof{\noiseat{\selvariable}}}^2}
+        = \datanum \cdot \left(\sum_{\selindexin} \meanparamat{\indexedselvariable}(1-\meanparamat{\indexedselvariable})\right)
+    \end{align*}
+    Here we used that the variance of a variable distributed by $\bidistof{\datanum,\meanparamat{\indexedselvariable}}$ is $\datanum\cdot\meanparamat{\indexedselvariable}(1-\meanparamat{\indexedselvariable})$.
+
+    If follows, that
+    \[ \expectationof{\left(\normof{\frac{\noisetensor-\expectationof{\noisetensor}}{\datanum}}\right)^2}
+    = \frac{ \contraction{\meanparamat{\selvariable},(\onesat{\selvariable}-\meanparamat{\selvariable})}}{\datanum} \, . \]
+
+    Then we apply a Chebyshev Bound to get for any $\precision>0$
+    \begin{align}
+        \probat{\normof{\frac{\noisetensor-\expectationof{\noisetensor}}{\datanum}} > \precision}
+        = \probat{\left(\normof{\frac{\noisetensor-\expectationof{\noisetensor}}{\datanum}}\right)^2 > \precision^2}
+        \leq \frac{ \contraction{\meanparamat{\selvariable},(\onesat{\selvariable}-\meanparamat{\selvariable})}}{\datanum \cdot \precision^2}
+    \end{align}
+    For a $\failprob>0$ we choose any $\datanum$ with
+    \[ \datanum \geq  \frac{ \contraction{\meanparamat{\selvariable},(\onesat{\selvariable}-\meanparamat{\selvariable})}}{\precision^2 \failprob} \, \]
+    and get
+    \begin{align}
+        \probat{\normof{\frac{\noisetensor-\expectationof{\noisetensor}}{\datanum}} > \precision} \leq \failprob \, .
+    \end{align}
+    Thus, we have
+    \begin{align}
+        \probat{\normof{\frac{\noisetensor-\expectationof{\noisetensor}}{\datanum}} \leq \precision}
+        = 1 - \probat{\normof{\frac{\noisetensor-\expectationof{\noisetensor}}{\datanum}} > \precision}  \geq 1-\failprob \, .
+    \end{align}
+\end{proof}
 
 
+% Multinomial
+For the minterm family where $\mlnstat = \naivestat$ the noise tensor is a rescaled and centered multinomial.
+In that case, the bound of \theref{the:sphereBoundVariance} can be simplified by
+\begin{align*}
+    \contraction{\meanparamat{\selvariable},(\onesat{\selvariable}-\meanparamat{\selvariable})} = 1- \contraction{\meanparamat{\selvariable}^2} \,.
+\end{align*}
 
 
+\section{Discussion}
 
+We in this chapter only provided probabilistic width bounds for logic networks, that are exponential families with boolean statistics.
+Similar recovery bounds for parameter estimation and structure learning for more general exponential families would require width bounds in these generic cases.
+A general approach towards width bounds are chaining techniques on stochastic processes, see \cite{talagrand_upper_2014}.
+While we showed bounds based on the sub-Gaussian norm, more general sub-exponential bounds could be used, see \cite{wainwright_high-dimensional_2019}.
 
-
-
-
-
-
-
-
+We further assumed that our random tensors to be projected are empirical distributions.
+More general random tensor networks and corresponding width bounds have been developed in \cite{goesmann_uniform_2021}.
+% Refer to FOL Models, extraction query stuff?
