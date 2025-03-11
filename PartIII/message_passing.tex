@@ -5,6 +5,162 @@ These message passing schemes provide tradeoffs between efficiency increases and
 We use the CP Decompositions to investigate the asymptotic behavior of the message passing algorithms.
 
 
+\red{The application of message passing schemata can be justified based on commutation and monotonous propoerties of large contractions.
+We first show these properties and then provide message passing schemata.
+}
+
+\subsection{Commutation of Contractions}
+
+We show in the next theorem, that a contractions can be performed by contracting a subnetwork first and then further contracting the result with the rest.
+
+\begin{theorem}\label{the:splittingContractions}
+	Let $\tnetof{\graph}$ be a tensor network on a hypergraph $\graph=(\nodes,\edges)$.
+	Let us now split the $\graph$ into two graphs $\graph_1=(\nodes_1,\edges_1)$ and $\graph_2=(\nodes_2,\edges_2)$, such that $\edges_1\dot{\cup}\edges_2=\edges$, $\nodes_1\cup\nodes_2=\nodes$ and all nodes in $\nodes_2$ are contained in an hyperedge of $\edges_2$.
+	We then have
+	\begin{align*}
+ \contractionof{\tnetof{\graph}}{\catvariableof{\secnodes}}
+		=
+		\contractionof{\tnetof{\graph_1} \cup \{
+			\contractionof{\tnetof{\graph_2}}{\catvariableof{\nodes_2\cap(\nodes_1\cup\secnodes)}}
+		\}}{\catvariableof{\secnodes}}   \, .
+\end{align*}
+\end{theorem}
+\begin{proof}
+	For any index $\catindexof{\secnodes}$ we show that
+			\[ \contractionof{\tnetof{\graph}}{\indexedcatvariableof{\secnodes}}
+		=
+		\contractionof{\tnetof{\graph_1} \cup \{
+			\contractionof{\tnetof{\graph_2}}{\catvariableof{\nodes_2\cap(\nodes_1\cup\secnodes)}}
+		\}}{\indexedcatvariableof{\secnodes}}   \, . \]
+	By definition we have
+	\begin{align*}
+		\contractionof{\tnetof{\graph}}{\indexedcatvariableof{\secnodes}}
+		& = \sum_{\catindexof{\nodes/\secnodes}} \prod_{\edge\in\edges} \hypercoreofat{\edge}{\indexedcatvariableof{\edge}} \\
+		& = \sum_{\catindexof{\nodes/\secnodes}}
+		 	\left( \prod_{\edge\in\edges_1} \hypercoreofat{\edge}{\indexedcatvariableof{\edge}} \right)
+		 	\cdot \left( \prod_{\edge\in\edges_2} \hypercoreofat{\edge}{\indexedcatvariableof{\edge}}  \right) \\
+		& =  \sum_{\catindexof{\nodes_1/\secnodes}} \sum_{\catindexof{\nodes_2/(\secnodes\cup\nodes_1)}}
+			\left( \prod_{\edge\in\edges_1} \hypercoreofat{\edge}{\indexedcatvariableof{\edge}} \right)
+		 	\cdot \left( \prod_{\edge\in\edges_2} \hypercoreofat{\edge}{\indexedcatvariableof{\edge}}  \right) \\
+		& =  \sum_{\catindexof{\nodes_1/\secnodes}}
+			\left( \prod_{\edge\in\edges_1} \hypercoreofat{\edge}{\indexedcatvariableof{\edge}} \right)
+		 	\cdot \left( \sum_{\catindexof{\nodes_2/(\secnodes\cup\nodes_1)}}  \prod_{\edge\in\edges_2} \hypercoreofat{\edge}{\indexedcatvariableof{\edge}}  \right) \, .
+	\end{align*}
+	When contracting the variables $\catvariableof{\nodes_2/(\secnodes\cup\nodes_1)}$ on $\tnetof{\graph_2}$, the variables $\catvariableof{\nodes_2\cap(\secnodes\cup\nodes_1)}$ are left open.
+	We therefore have for any $\catindexof{\nodes_2\cap(\secnodes\cup\nodes_1)}$
+	\begin{align*}
+		\sbcontractionof{\tnetof{\graph_2}}{\indexedcatvariableof{\nodes_2\cap(\secnodes\cup\nodes_1)}} =
+		 \left( \sum_{\catindexof{\nodes_2/(\secnodes\cup\nodes_1)}}  \prod_{\edge\in\edges_2} \hypercoreofat{\edge}{\indexedcatvariableof{\edge}}  \right) \, .
+	\end{align*}
+	It follows with the above, that
+	\begin{align*}
+		\contractionof{\tnetof{\graph}}{\indexedcatvariableof{\secnodes}}
+		& =  \sum_{\catindexof{\nodes_1/\secnodes}}  \left( \prod_{\edge\in\edges_1} \hypercoreofat{\edge}{\indexedcatvariableof{\edge}} \right) \cdot \sbcontractionof{\tnetof{\graph_2}}{\indexedcatvariableof{\nodes_2\cap(\secnodes\cup\nodes_1)}} \\
+		& = \contractionof{\tnetof{\graph_1} \cup \{
+			\contractionof{\tnetof{\graph_2}}{\catvariableof{\nodes_2\cap(\nodes_1\cup\secnodes)}}
+		\}}{\indexedcatvariableof{\secnodes}}   \, .
+	\end{align*}
+\end{proof}
+
+
+
+
+
+
+
+\subsection{Support of Contractions}\label{sec:supportContractionEquations}
+
+
+
+To state the next theorem we introduce the nonzero function $\nonzerofunction: \rr \rightarrow [2]$ by
+\begin{align}
+	\nonzeroof{x} = \begin{cases}
+	0 & \text{if }x=0 \\
+	1 & \text{else}
+	\end{cases}
+\end{align}
+Applied coordinatewise on tensors it marks the nonzero coordinates by $1$.
+
+We show that adding binary tensor cores to an contraction orders the results by the partial ordering introduced in \defref{def:partialFTOrder}
+
+\begin{theorem}[Monotonicity of Tensor Contractions]\label{the:monotonicityBinaryContractions}
+	Let $\extnet, \secextnet$ be tensor network of non-negative tensors and $\catvariableof{\secnodes}$ an arbitrary set of random variables. %, and $\tilde{\theta}$ another binary tensor.
+	Then we have
+		\[ \nonzeroof{\contractionof{\extnet\cup\secextnet}{\catvariableof{\secnodes}}} \prec
+		\nonzeroof{\contractionof{\extnet}{\catvariableof{\secnodes}}} \, .  \]
+\end{theorem}
+\begin{proof}
+	It suffices to show that for any $\catindexof{\secnodes}$ with
+		\[ \nonzeroof{\contractionof{\extnet\cup\secextnet}{\indexedcatvariableof{\secnodes}}}=1 \]
+	we also have
+		\[ \nonzeroof{\contractionof{\extnet}{\indexedcatvariableof{\secnodes}}}=1 \, . \]
+	For any $\catindexof{\secnodes}$ satisfying the first equation we find an extension $\catindexof{\nodes}$ to all variables of the tensor networks such that
+		\[ \contractionof{\extnet\cup\secextnet}{\indexedcatvariableof{\nodes}} > 0 \]
+	and it follows that
+		\[ \contractionof{\extnet}{\indexedcatvariableof{\nodes}} > 0 \quad\text{and}\quad  \contractionof{\secextnet}{\indexedcatvariableof{\nodes}} > 0  \, . \]
+	But this already implies, that
+		\[ \nonzeroof{\contractionof{\extnet}{\indexedcatvariableof{\secnodes}}}=1 \, . \]
+\end{proof}
+
+Let us now state an equivalence of the contraction, when we add the result of the same contraction
+\begin{theorem}[Invariance under adding subcontractions]\label{the:invarianceAddingSubcontractions}
+	Let $\extnet$ be a tensor network of non-negative tensors with variables $\catvariableof{\nodes}$ and let $\secextnet$ be a subset.
+	Then we have for any subset $\catvariableof{\secnodes}$ of $\catvariableof{\nodes}$
+		\[ \contractionof{\extnet \cup\{
+			\nonzeroof{
+			\contractionof{\secextnet}{\catvariableof{\secnodes}}
+			}
+		\}}{\catvariableof{\nodes}}
+		= \contractionof{\extnet}{\catvariableof{\nodes}}
+		\, . \]
+
+	%For any sets of leg variables $\randomxof{V},\randomxof{\tilde{V}}$ appearing in $\theta$  we have
+	%Then we have
+	%	\[ \contractionof{\theta\cup
+	%	\nonzeroof{\contractionof{\tilde{\theta}}{\randomxof{\tilde{V}}}}
+	%			}{\randomxof{V}} = \contractionof{\theta}{\randomxof{V}} \, . \]
+\end{theorem}
+\begin{proof}
+	For any $\catindexof{\nodes}$ with
+		\[ \contractionof{\extnet}{\indexedcatvariableof{\nodes}} = 0 \]
+	we also have
+		\[ \contractionof{\extnet \cup\{
+			\nonzeroof{
+			\contractionof{\secextnet}{\catvariableof{\secnodes}}
+			}
+		\}}{\indexedcatvariableof{\nodes}} = 0 \, . \]
+	For any $\catindexof{\nodes}$ with
+		\[ \contractionof{\extnet}{\indexedcatvariableof{\nodes}} \neq 0 \]
+	we have for the reduction $\catindexof{\secnodes}$ of the index $\catindexof{\nodes}$ that
+		\[  \contractionof{\secextnet}{\indexedcatvariableof{\secnodes}} \neq 0 \]
+	and thus
+	\begin{align*}
+		\contractionof{\extnet \cup\{
+			\nonzeroof{
+			\contractionof{\secextnet}{\catvariableof{\secnodes}}
+			}
+		\}}{\indexedcatvariableof{\nodes}}
+		= \contractionof{\extnet}{\indexedcatvariableof{\nodes}} \cdot \nonzeroof{
+			\contractionof{\secextnet}{\catvariableof{\secnodes}}
+			}[\indexedcatvariableof{\secnodes}]
+		= \contractionof{\extnet}{\indexedcatvariableof{\nodes}} \, .
+	\end{align*}
+%	When the subcore transformed by $\nonzeroof{\cdot}$ contains a zero slice, then this
+%	 zero slice is also appearing in the rest contraction.
+%	Multiplying a zero slice with zero does not affect the contraction, neither does multiplication with one on any slice.
+\end{proof}
+
+
+
+
+
+\begin{remark}
+	Similar statements hold, when dropping the non-negativity assumption on the, but demanding that all variables are left open.
+\end{remark}
+
+
+
+
 
 \subsection{Exact Contractions}
 
