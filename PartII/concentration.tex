@@ -106,8 +106,6 @@ We notice, that the fluctuation tensor $\sstatnoise$ is the centered mean parame
     \datamean - \expectationof{\datamean} =  \sbcontractionof{\sencsstat,\empdistribution-\gendistribution}{\selvariable} \, .
 \end{align*}
 
-%\subsubsection{Widths of random tensors}
-
 % Widths
 In the following we will use the supremum of contractions with random tensors in the derivation of success guarantees for learning problems.
 Such quantities are called widths.
@@ -127,6 +125,8 @@ When combined with probabilistic bounds on the noise width, they are probabilist
 
 \subsubsection{Parameter Estimation}
 
+\red{We in this section always assume, that $\empdistribution$ is representable by the base measure $\basemeasure$ of the respective exponential families.}
+
 Parameter Estimation is the M-projection of the empirical distribution onto an exponential family.
 In \charef{cha:probReasoning} we have characterized those by the backward map acting on the mean parameter.
 Thus, while we are interested in the expected canonical parameter
@@ -140,81 +140,112 @@ we get an estimation by the empirical canonical parameter
 
 % Nonlinearity
 Unfortunately, since the backward map is not linear, we in general do not have that $\expectationof{\backwardmapof{\datamean}}$ coincides with $\backwardmapof{\genmean}$.
-
+To build intuition on the concentration we recall the expression of the backward map as
 % Concentration
-\red{Since the cross-entropy has a linear dependence on the mean parameter:}
-We have at each hypothesis $\canparamin$
-\begin{align}
-    \expectationof{\centropyof{\empdistribution}{\stanexpdistof{\canparam}}} = \centropyof{\gendistribution}{\stanexpdistof{\canparam}}
-\end{align}
-and thus, the objective in Problem~\ref{prob:empEstimation} converges in the limit $\datanum\rightarrow\infty$ by the law of large numbers at each hypothesis $\canparamin$ to the objective in Problem~\ref{prob:expEstimation}.
-
-Again, to use this insight in the derivation of bounds of the distance of $\datacanparam$ and $\gencanparam$, we need to quantifying this convergence
-\begin{itemize}
-    \item Non-asymptotically: Since we typically have access to limited amounts of data, that is finite $\datamean$, we need to quantify the concentration in non-asymptotic cases.
-    \item Uniform: Since the problems are optimized at extreme situations, the convergence of the objective has to happen uniformally at multiply $\canparamin$.
-\end{itemize}
-
-\subsubsection{Recovery Guarantee based on Widths}
-
-\begin{theorem}
-    Let us assume $\gencanparam\in\canparamhypothesis$ and that $\partitionfunctionof{\canparam}$ is constant among $\canparamin$.
-    Then for any solution $\datacanparam$ of the empirical problem we have
-    \begin{align}
-        \kldivof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\datacanparam}} \leq \widthwrtof{\canparamhypothesis}{\noisetensor} \, .
-    \end{align}
-\end{theorem}
-\begin{proof}
-    First we notice
-    \begin{align}
-        \argmin_{\canparamin} \loss\canparam = \argmin_{\canparamin} \loss\canparam - \loss\gencanparam
-    \end{align}
-    When $\gencanparam\in\canparamhypothesis$ the minimum of the empirical loss with respect to $\gencanparam$ is negative since
-    \begin{align}
-        \loss\datacanparam - \loss\gencanparam \leq \loss\gencanparam-\loss\gencanparam \leq 0
-    \end{align}
-    We separate expectations and fluctuations and get
-    \begin{align}
-        \kllossof{\datacanparam} \leq \kllossof{\datacanparam} - (\loss\datacanparam - \loss\gencanparam) \leq \widthwrtof{\canparamhypothesis}{} \, .
-    \end{align}
-\end{proof}
-
-% Width
-The supremum of the differences between expected and empirical risks is the width of the fluctuation tensor, as we state next.
+\begin{align*}
+    \backwardmapof{\meanparam}
+    = \argmax_{\canparam} -\centropyof{\meanrepprob}{\stanexpdistof{\canparam}}
+\end{align*}
+where $\meanrepprob$ is any distribution reproducing the mean parameter.
+We want to compare the solutions $\backwardmapof{\datamean}$ and $\backwardmapof{\genmean}$, in which case $\meanrepprob$ can be chosen as $\empdistribution$ and $\gendistribution$.
+It is common to call the objectives $\centropyof{\empdistribution}{\stanexpdistof{\canparam}}$ and $\centropyof{\gendistribution}{\stanexpdistof{\canparam}}$ empirical and expected risk \cite{shalev-schwartz_understanding_2014,goesmann_uniform_2021}
+Since the empirical risk has a linear dependence on $\datamean$, we have at each $\canparam$
+\begin{align*}
+    \expectationof{\centropyof{\empdistribution}{\stanexpdistof{\canparam}}}
+    &= \expectationof{\contraction{\datamean,\canparam} - \cumfunctionof{\canparam}} \\
+    &= \contraction{\expectationof{\datamean},\canparam} - \cumfunctionof{\canparam} \\
+    &= \centropyof{\gendistribution}{\stanexpdistof{\canparam}}
+\end{align*}
+By the law of large numbers, in the limit $\datanum\rightarrow\infty$ we thus have at each $\canparam$ a convergence of the empirical risk to the expected risk.
+However, since the backward map is defined by the minima of these risks, we need a uniform and non-asymptotical concentration guarantee to get more useful bounds.
+To this end, we now relate the supremum on the differences between expected and empirical risks with the width of the noise tensor.
 
 \begin{lemma}
+    \label{lem:centropyWidthCharacterization}
     For any $\canparamhypothesis$ and $\datamap$ we have
     \begin{align*}
-        \widthwrtof{\canparamhypothesis}{\mintermnoise}
-        = \sup_{\canparamin} \centropyof{\empdistribution}{\stanexpdistof{\canparam}} - \centropyof{\gendistribution}{\stanexpdistof{\canparam}}
+        \widthwrtof{\canparamhypothesis}{\noisetensor}
+        = \sup_{\canparamin} \absof{\centropyof{\empdistribution}{\stanexpdistof{\canparam}} - \centropyof{\gendistribution}{\stanexpdistof{\canparam}}}
     \end{align*}
 \end{lemma}
 \begin{proof}
-    Using the decomposition of cross entropy in the naive exponential family
-    \[ \centropyof{\empdistribution}{\stanexpdistof{\canparam}}=\contractionof{\probtensor,\lnof{\gendistribution}} - \cumfunctionof{\lnof{\gendistribution}} \, . \]
+    For any $\canparam\in\canparamhypothesis$ and by $\meanrepprob$ realizable mean parameter $\meanparam$ we have
+    \begin{align*}
+        \centropyof{\meanrepprob}{\stanexpdistof{\canparam}}
+        = - \contraction{\meanparam,\canparam} -
+    \end{align*}
+
+    Using the decomposition of cross entropy in the exponential family
+    \[ \centropyof{\empdistribution}{\stanexpdistof{\canparam}}
+    =\contraction{\probtensor,\lnof{\gendistribution}} - \cumfunctionof{\lnof{\gendistribution}} \, . \]
 \end{proof}
 
+As a direct consequence, we have at any $\canparam\in\canparamhypothesis$
+\begin{align*}
+    \absof{\centropyof{\empdistribution}{\stanexpdistof{\canparam}} - \centropyof{\gendistribution}{\stanexpdistof{\canparam}}}
+    \leq \widthwrtof{\canparamhypothesis}{\noisetensor} \, .
+\end{align*}
+Thus, the absolute difference of the expected risk and the empirical risk is bounded by the width of the noise tensor.
+This is especially useful for the solution $\datamean$ of the empirical risk minimization, where we can state
+\begin{align*}
+    \centropyof{\gendistribution}{\stanexpdistof{\datacanparam}}
+    \leq \centropyof{\empdistribution}{\stanexpdistof{\datacanparam}} + \widthwrtof{\canparamhypothesis}{\noisetensor} \, .
+\end{align*}
+At the solution of a empirical risk minimization problem over $\canparamhypothesis$, the expected risk exceeds the empirical risk at most by the noise tensor width.
 
-\begin{corollary}
-    At the solution $\datacanparam$ of Problem~\ref{prob:empEstimation} we have
-    \[ \centropyof{\empdistribution}{\stanexpdistof{\datacanparam}} - \centropyof{\gendistribution}{\stanexpdistof{\datacanparam}}
-    \leq  \widthwrtof{\canparamhypothesis}{\mintermnoise} \, . \]
-\end{corollary}
+% Further KL divergence bound when assuming gendistribution in the hypothesis
+When the generating distribution is in the hypothesis, we can further show the following KL-divergence bound for the estimated distribution.
+
+\begin{theorem}
+    Let us assume that for $\gencanparam\in\canparamhypothesis$ we have $\gendistribution=\stanexpdistof{\gencanparam}$. %and that $\partitionfunctionof{\canparam}$ is constant among $\canparamin$.
+    Then for any solution $\datacanparam$ of the empirical problem we have
+    \begin{align}
+        \kldivof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\datacanparam}} \leq 2\widthwrtof{\canparamhypothesis}{\noisetensor} \, .
+    \end{align}
+\end{theorem}
+\begin{proof}
+    For the solution $\datacanparam$ of the empirical risk minimization on $\canparamhypothesis$ we have since $\gencanparam\in\canparamhypothesis$ that
+    \begin{align*}
+        \centropyof{\empdistribution}{\stanexpdistof{\datacanparam}}
+        \leq \centropyof{\empdistribution}{\stanexpdistof{\gencanparam}} \, .
+    \end{align*}
+    It follows that
+    \begin{align*}
+        \kldivof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\datacanparam}}
+        & \leq \kldivof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\datacanparam}}
+        + \centropyof{\empdistribution}{\stanexpdistof{\gencanparam}}
+        - \centropyof{\empdistribution}{\stanexpdistof{\datacanparam}} \\
+        & = \left(\centropyof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\datacanparam}} - \centropyof{\empdistribution}{\stanexpdistof{\datacanparam}}\right) \\
+        & \quad - \left(\centropyof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\gencanparam}} - \centropyof{\empdistribution}{\stanexpdistof{\gencanparam}}\right) \, ,
+    \end{align*}
+    where we expanded the KL-divergence as a difference of cross entropies.
+    We apply \lemref{lem:centropyWidthCharacterization} to estimate the terms in brackets and get
+    \begin{align*}
+        \left(\centropyof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\datacanparam}} - \centropyof{\empdistribution}{\stanexpdistof{\datacanparam}}\right)
+        - \left(\centropyof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\gencanparam}} - \centropyof{\empdistribution}{\stanexpdistof{\gencanparam}}\right)
+        \leq 2 \widthwrtof{\canparamhypothesis}{\noisetensor} \, .
+    \end{align*}
+    Combined with the above inequality we arrive at
+    \begin{align}
+        \kldivof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\datacanparam}} \leq 2\widthwrtof{\canparamhypothesis}{\noisetensor} \, . \qedhere
+    \end{align}
+\end{proof}
 
 \subsubsection{Structure Learning}
 
 In the gradient heuristic of structure learning, one selects the statistic to the maximal coordinate of the energy tensor of the proposal distribution.
 This tensor coincides with the mean parameter of a markov logic network and has thus a fluctuation by the noise tensor.
 We now use these insights to show a guarantee, that the formula chosen by grafting with respect to the empirical proposal distribution coincides with the formula chosen with respect to the expected proposal distribution.
-To this end, we need to define
+To this end, we need to define the max gap, which is the difference between the maximal coordinate of a tensor to the second maximal coordinate.
 
 \begin{definition}
     The max gap of a tensor $\hypercoreat{\shortcatvariables}$ is the quantity
-    \[ \maxgap(\hypercore)
-    = \min_{\shortcatindices \notin \argmax_{\shortcatindices} \hypercoreat{\indexedshortcatvariables}} \hypercoreat{\shortcatvariables
-        = \shortcatvariables^{max}} - \hypercoreat{\indexedshortcatvariables} \]
-    where
-    \[ \shortcatindices^{max} \in \argmax_{\shortcatindices} \hypercoreat{\indexedshortcatvariables} \, . \]
+    \begin{align*}
+        \maxgapof{\hypercore} =
+        \left(\max_{\shortcatindices} \hypercoreat{\indexedshortcatvariables}\right) -
+        \left(\max_{\shortcatindices\notin\argmax_{\shortcatindices}\hypercoreat{\indexedshortcatvariables}}
+        \hypercoreat{\indexedshortcatvariables}\right) \, .
+    \end{align*}
 \end{definition}
 
 When comparing the gap with the noise width, we get the following guarantee.
@@ -223,19 +254,43 @@ When comparing the gap with the noise width, we get the following guarantee.
     \label{the:detGuaranteeProposalDist}
     Whenever
     \begin{align*}
-        \maxgap(\sbcontractionof{\gendistribution,\sencsstat}{\selvariable})
-        > 2 \cdot  \widthwrtof{\{\onehotmapof{\shortcatindices} :\shortcatindices\in\facstates\}}{\sstatnoise} \, ,
+        \maxgapof{\genmean}
+        > 2 \cdot \widthwrtof{\{\onehotmapof{\shortcatindices}:\shortcatindices\in\facstates\}}{\sstatnoise} \, ,
     \end{align*}
     then any mode $\shortcatindices$ of the empirical proposal distribution is a mode of the expected proposal distribution.
 \end{theorem}
 \begin{proof}
-    If different, then the expected objective at the solutions of the empirical and expected is at least $\maxgap$.
-    But at the empirical, the difference it as most twice the width different, so that is a contradiction to the assumption.
+    Let us assume that for a mode $\selindex^{\datamap}\in\argmax_{\selindexin}\datameanat{\indexedselvariable}$ of the empirical mean parameter we have
+    \begin{align*}
+        \selindex^{\datamap}\notin\argmax_{\selindexin}\genmeanat{\indexedselvariable} \, .
+    \end{align*}
+    For a mode $\selindex^{*}\in\argmax_{\selindexin}\genmeanat{\indexedselvariable}$ of the expected mean parameter we then have
+    \begin{align*}
+        \genmeanat{\selvariable=\selindex^{\datamap}} \leq \genmeanat{\selvariable=\selindex^{*}} - \maxgapof{\genmean}
+    \end{align*}
+    and
+    \begin{align*}
+        \datameanat{\selvariable=\selindex^{\datamap}} \geq \datameanat{\selvariable=\selindex^{*}} \, .
+    \end{align*}
+    Comparing both intequalities we get
+    \begin{align*}
+        \left(\datameanat{\selvariable=\selindex^{\datamap}} - \genmeanat{\selvariable=\selindex^{\datamap}}\right)
+        + \left( - \datameanat{\selvariable=\selindex^{*}} + \genmeanat{\selvariable=\selindex^{*}} \right)
+        \geq \maxgapof{\genmean} \, .
+    \end{align*}
+    Estimating the terms in the bracket by the width of the noise tensor with respect to basis vectors, we get
+    \begin{align*}
+        2 \cdot  \widthwrtof{\{\onehotmapof{\shortcatindices}:\shortcatindices\in\facstates\}}{\sstatnoise}
+        \geq \maxgapof{\genmean} \, ,
+    \end{align*}
+    which is a contradiction to the assumption.
+    Thus, any mode of the empirical mean parameter is also a model of the expected mean parameter.
 \end{proof}
+
 
 \subsection{Fluctuations in Logic Networks}
 
-\red{Call mean parameter satisfaction rates.}
+\red{In case of logical formulas being statistics, the coordiantes of the mean parameter are satisfaction rates to the formulas.}
 
 For Logic Networks we have statistics consistent of boolean statistics $\enumformula$, which are logical formulas.
 In this case the marginal distributions of the coordinates of $\sstatnoise$ are scaled and centered binomials, which we show now.
