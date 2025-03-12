@@ -1,0 +1,190 @@
+%%% Font styles
+
+% Code
+\newcommand{\code}[1]{\texttt{#1}}
+% Definition
+\newcommand{\define}[1]{\emph{#1}}
+
+%%% Spacings
+
+\newcommand{\qspaced}[1]{\quad #1 \quad} % quad auf beiden Seiten
+
+%%% General Environments
+
+% draft environment
+\newenvironment{draft}{\color{red}\begin{enumerate}[label={$\vartriangleright$}]}{\end{enumerate}}
+\newcommand{\drafting}[1]{{\color{red}#1}}
+
+% Highlight environment
+\newenvironment{highlight}{\begin{quote}\itshape}{\end{quote}}
+
+%%% Enumerations
+
+\newenvironment{listing}
+{\begin{enumerate}[itemindent=0em,leftmargin=1.2em]}
+{\end{enumerate}}
+
+\newenvironment{listingroman}
+{\begin{enumerate}[label={(\roman*)}]}
+{\end{enumerate}}
+
+% Umgebung zu Aufzählung von Definitionen/Eigenschaften
+\newenvironment{properties}[2][2em]
+{\begin{enumerate}[label={\textsc{(#2\arabic*)}},leftmargin=#1]}
+{\end{enumerate}} 
+
+% Aufzählung in Bemerkungen (spezielle Einrückung)
+\newenvironment{rmklist}
+{\begin{enumerate}[label={(\arabic*)},itemindent=2em,leftmargin=0em]}
+{\end{enumerate}}
+
+% Paragraphen-ähnliche Aufzählung
+\newenvironment{paralist}
+{\begin{enumerate}[label={(\arabic*)},itemindent=1.7em,leftmargin=0em]}
+	{\end{enumerate}}
+
+% Liste in Sätzen (spezielle Einrückung)
+\newenvironment{thmlist}
+{\begin{enumerate}[label={(\arabic*)}]}
+{\end{enumerate}}
+% Aufzählung von Eigenschaften in Sätzen (spezielle Einrückung)
+\newenvironment{thmproperties}
+{\begin{enumerate}[label={(\roman*)}]}
+{\end{enumerate}}
+
+% Beweisschritte
+\newenvironment{proofsteps}
+{\begin{enumerate}[label={(\arabic*)},itemindent=2em,leftmargin=0em]}
+{\end{enumerate}}
+
+% Liste in Definitionen (spezielle Einrückung)
+\newenvironment{deflist}
+{\begin{enumerate}[label={(\arabic*)}]}
+{\end{enumerate}}
+
+% Experiments
+\newenvironment{expstep}
+{\begin{itemize}[label={$\blacktriangleright$},leftmargin=1.5em]}
+{\end{itemize}}
+\newenvironment{expsubstep}
+{\begin{itemize}[label={$\vartriangleright$},leftmargin=3em]}
+{\end{itemize}}
+
+\newcommand{\expkwd}[1]{\noindent\textbf{#1}}
+
+%%% Math Environments
+
+% QED-Boxes
+\renewcommand{\qedsymbol}{$_\blacksquare$}
+\newcommand{\qeddiamond}{\hfill$\Diamond$}
+\providecommand{\qedhere}{\hfill\qedsymbol}
+
+% Styles for mathematical statements
+\newtheoremstyle{claim}
+	{\topsep}{\topsep}%
+	{\itshape}%         Body font
+	{}%         Indent amount (empty = no indent, \parindent = para indent)
+	{}% Thm head font
+	{}%        Punctuation after thm head
+	{.5em}%     Space after thm head (\newline = linebreak)
+	{{\bfseries\boldmath\thmname{#1} \thmnumber{#2}} \thmnote{(#3)}}%         Thm head spec
+
+\newtheoremstyle{definition}
+	{\topsep}{\topsep}%
+	{}%         Body font
+	{}%         Indent amount (empty = no indent, \parindent = para indent)
+	{}% Thm head font
+	{}%        Punctuation after thm head
+	{.5em}%     Space after thm head (\newline = linebreak)
+	{\textbf{\thmname{#1} \thmnumber{#2}} \thmnote{(#3)}}%         Thm head spec
+	
+\newtheoremstyle{algorithm}
+	{\topsep}{\topsep}%
+	{}%         Body font
+	{}%         Indent amount (empty = no indent, \parindent = para indent)
+	{\bfseries\boldmath}% Thm head font
+	{}%        Punctuation after thm head
+	{\newline}%     Space after thm head (\newline = linebreak)
+	{\thmname{#1} \thmnumber{#2} \thmnote{(#3)}}%         Thm head spec
+
+
+% Stil für grauunterlegte Boxen
+\definecolor{shadecolor}{gray}{0.90}
+\mdfdefinestyle{shaded}{backgroundcolor=shadecolor, innertopmargin = 0pt, splittopskip = \topskip, skipbelow=6pt, skipabove=12pt, topline=false,bottomline=false,leftline=false,rightline=false}
+
+% Stil für schwarz umrahmte Boxen
+\mdfdefinestyle{emphframe}{linecolor=black, innertopmargin = 3pt, splittopskip = \topskip, skipbelow=6pt, skipabove=6pt}
+
+% Theorem
+\declaretheorem[style=claim,numberwithin=chapter,%
+	preheadhook={\begin{mdframed}[style=shaded] \setcounter{mpfootnote}{\value{footnote}}},%
+	postfoothook=\setcounter{footnote}{\value{mpfootnote}}\end{mdframed}]{theorem}
+% Proposition
+\declaretheorem[style=claim,sibling=theorem,%
+	preheadhook={\begin{mdframed}[style=shaded] \setcounter{mpfootnote}{\value{footnote}}},%
+	postfoothook=\setcounter{footnote}{\value{mpfootnote}}\end{mdframed}]{proposition}
+% Lemma
+\declaretheorem[style=claim,sibling=theorem,%
+	preheadhook={\begin{mdframed}[style=shaded] \setcounter{mpfootnote}{\value{footnote}}},%
+	postfoothook=\setcounter{footnote}{\value{mpfootnote}}\end{mdframed}]{lemma}
+% Corollary
+\declaretheorem[style=claim,sibling=theorem,%
+	preheadhook={\begin{mdframed}[style=shaded] \setcounter{mpfootnote}{\value{footnote}}},%
+	postfoothook=\setcounter{footnote}{\value{mpfootnote}}\end{mdframed}]{corollary}
+% Definition
+\declaretheorem[style=definition,sibling=theorem,%
+	preheadhook={\begin{mdframed}[style=shaded] \setcounter{mpfootnote}{\value{footnote}}},%
+	postfoothook=\setcounter{footnote}{\value{mpfootnote}}\end{mdframed}]{definition}
+% Assumption
+\declaretheorem[style=definition,sibling=theorem,%
+	preheadhook={\begin{mdframed}[style=shaded] \setcounter{mpfootnote}{\value{footnote}}},%
+	postfoothook=\setcounter{footnote}{\value{mpfootnote}}\end{mdframed}]{assumption}
+% Problem
+\declaretheorem[style=definition,sibling=theorem,%
+	preheadhook={\begin{mdframed}[style=shaded] \setcounter{mpfootnote}{\value{footnote}}},%
+	postfoothook=\setcounter{footnote}{\value{mpfootnote}}\end{mdframed}]{problem}
+% Remark
+\declaretheorem[style=definition,sibling=theorem,qed=$\Diamond$]{remark}
+\declaretheorem[style=definition,sibling=theorem,qed=$\Diamond$,name={Remark},
+	postheadhook={\begin{rmklist}},
+	prefoothook={\qedhere\end{rmklist}}]{remarks}
+% Example
+\declaretheorem[style=definition,sibling=theorem,qed=$\Diamond$]{example}
+\declaretheorem[style=definition,sibling=theorem,qed=$\Diamond$,name={Example},
+	postheadhook={\begin{rmklist}},
+	prefoothook={\qedhere\end{rmklist}}]{examples}
+% Algorithm
+%\declaretheorem[style=algorithm,sibling=theorem,%
+%	preheadhook={\begin{mdframed}[style=emphframe] \setcounter{mpfootnote}{\value{footnote}}},%
+%	postfoothook=\setcounter{footnote}{\value{mpfootnote}}\end{mdframed}]{algorithm}
+% Experiment
+\declaretheorem[style=algorithm,sibling=theorem,%
+	preheadhook={\begin{mdframed}[style=emphframe] \setcounter{mpfootnote}{\value{footnote}}},%
+	postfoothook=\setcounter{footnote}{\value{mpfootnote}}\end{mdframed}]{experiment}
+% Recipe
+\declaretheorem[style=definition,sibling=theorem,%
+	preheadhook={\begin{mdframed}[style=emphframe] \setcounter{mpfootnote}{\value{footnote}}},%
+	postfoothook=\setcounter{footnote}{\value{mpfootnote}}\end{mdframed}]{recipe}
+	
+	
+	
+%% NEW
+
+% Observation
+\declaretheorem[style=definition,sibling=theorem,%
+	preheadhook={\begin{mdframed}[style=shaded] \setcounter{mpfootnote}{\value{footnote}}},%
+	postfoothook=\setcounter{footnote}{\value{mpfootnote}}\end{mdframed}]{observation}
+% Research Question
+\declaretheorem[style=definition,sibling=theorem,%
+	preheadhook={\begin{mdframed}[style=shaded] \setcounter{mpfootnote}{\value{footnote}}},%
+	postfoothook=\setcounter{footnote}{\value{mpfootnote}}\end{mdframed}]{Research Question}
+% Chaining Scheme
+	\declaretheorem[style=definition,sibling=theorem,%
+	preheadhook={\begin{mdframed}[style=shaded] \setcounter{mpfootnote}{\value{footnote}}},%
+	postfoothook=\setcounter{footnote}{\value{mpfootnote}}\end{mdframed}]{Chaining Scheme}
+% Width Bound Scheme
+	\declaretheorem[style=definition,sibling=theorem,%
+	preheadhook={\begin{mdframed}[style=shaded] \setcounter{mpfootnote}{\value{footnote}}},%
+	postfoothook=\setcounter{footnote}{\value{mpfootnote}}\end{mdframed}]{Width Bound Scheme}
+
+%%

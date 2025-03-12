@@ -1,4 +1,4 @@
-\section{Implementation in the \tnreason package}\label{cha:implementation}
+\chapter{Implementation in the \tnreason package}\label{cha:implementation}
 
 We here document the implementation of the discussed concepts in the \python package \tnreason.
  
@@ -24,7 +24,7 @@ The package can be installed either by cloning \href{https://github.com/EnexaPro
 
 
 
-\subsection{Architecture}
+\sect{Architecture}
 
 \tnreason is structured in four subpackages and three layers
 \begin{itemize}
@@ -40,20 +40,20 @@ We sketch this structure by
 
 
 
-\subsection{Subpackage \spengine}
+\sect{Subpackage \spengine}
 
 The \spengine subpackage is for the storage and numerical manipulation of tensors and tensor networks.
 
 We think of it as the lowest layer, specializing in storage of Tensor Networks and performing the contractions.
 
-\subsubsection{Contraction Calculus} % -> To engine section?
+\subsect{Contraction Calculus} % -> To engine section?
 
 We have described two main encoding schemes of functions, by a direct interpretation of functions as tensors or a more relational encoding.
 Both come with a different calculus scheme, which we have framed coordiante calculus and basis calculus.
 
 
 
-\subsubsection{Cores and Contractions}
+\subsect{Cores and Contractions}
 
 \textbf{Cores}
 
@@ -185,7 +185,7 @@ basis calculus then based on contractions
 
 
 
-\subsection{Subpackage \spencoding}
+\sect{Subpackage \spencoding}
 
 In the \spencoding subpackage we encode maps 
 Here the relational encodings $\rencodingof{\exfunction}$ of various maps $\exfunction$ are created.
@@ -196,7 +196,7 @@ Given a specification of a formula $\exformula$ in script language $\synencoding
 We arrange the \spencoding subpackage into the second layer of the \tnreason architecture, since it specifies tensor cores which formats are specified in \spengine.
 
 
-\subsubsection{Script Language}\label{subsec:scriptLanguage} % To encoding?
+\subsect{Script Language}\label{subsec:scriptLanguage} % To encoding?
 
 To specify propositional sentences, neuro-symbolic architectures and Markov Logic Networks, we developed a script language.
 
@@ -430,7 +430,7 @@ In order to represent neuro-symbolic architectures, the grammar of $\synencoding
 
 
 
-\subsubsection{Core Nomenclature}
+\subsect{Core Nomenclature}
 
 In encoding.suffixes we defined suffixes for the names of cores and colors, which highlight their origin and purpose.
 
@@ -444,7 +444,7 @@ Cores are named with suffixes based on their funcitonality
 	\item \red{Add: Formula selecting cores}
 \end{itemize}
 
-\subsubsection{Color Nomenclature}
+\subsect{Color Nomenclature}
 
 Represent the three appearing types of variables:
 \begin{itemize}
@@ -454,7 +454,7 @@ Represent the three appearing types of variables:
 \end{itemize}
 
 
-\subsubsection{Relational encoding of formulas}
+\subsect{Relational encoding of formulas}
 
 Propositional formulas $\exformula$ are represented in three schemes:
 \begin{itemize}
@@ -484,7 +484,7 @@ When encoding formulas with hard interpretation, we furthermore add a head core 
 
 
 
-\subsubsection{Representation of MLNs}
+\subsect{Representation of MLNs}
 
 \textbf{Structure Cores} are binary cores relating the variables in a predefined way, which is not changing during reasoning.
 \begin{itemize}
@@ -501,7 +501,7 @@ They are modified during reasoning: Selection of activation cores in structure l
 
 
 
-\subsubsection{Formula Selecting Maps}
+\subsect{Formula Selecting Maps}
 
 Encoding of Neurons according to \defref{def:fsNeuron}:
 \begin{itemize}
@@ -517,13 +517,13 @@ Skeleton expression (\defref{def:skeleton}) are stored with placeholderkeys and 
 
 
 
-\subsection{Subpackage \spalgorithms}
+\sect{Subpackage \spalgorithms}
 
 The \spalgorithms subpackage implements basic tensor network algorithms with calls of specific execution in \spengine.
 As the \spencoding subpackage it is arranged in the second layer of the \tnreason architecture, since it specifies the manipulation of tensor networks in the \spengine subpackage.
 
 
-\subsubsection{Alternating Least Squares}
+\subsect{Alternating Least Squares}
 
 \begin{itemize}
 	\item Tensor Network of Structure Cores
@@ -535,7 +535,7 @@ As the \spencoding subpackage it is arranged in the second layer of the \tnreaso
 	algorithms.ALS
 \end{centeredcode}
 
-\subsubsection{Gibbs Sampling}
+\subsect{Gibbs Sampling}
 
 \begin{itemize}
 	\item Tensor Network of Structure Cores
@@ -548,14 +548,14 @@ As the \spencoding subpackage it is arranged in the second layer of the \tnreaso
 \end{centeredcode}
 
 
-\subsubsection{Knowledge Propagation}
+\subsect{Knowledge Propagation}
 
 \begin{centeredcode}
 	algorithms.ConstraintPropagator
 \end{centeredcode}
 
 
-\subsubsection{Energy-based Algorithms}
+\subsect{Energy-based Algorithms}
 
 \begin{centeredcode}
 	algorithms.NaiveMeanField
@@ -570,12 +570,12 @@ As the \spencoding subpackage it is arranged in the second layer of the \tnreaso
 \end{centeredcode}
 
 
-\subsection{Subpackage \spknowledge}
+\sect{Subpackage \spknowledge}
 
 With the \spknowledge subpackage we provide an interface for reasoning workload.
 It builds a third layer, since it used \spencoding to represent knowledge by tensor networks and \spalgorithms in the execution of reasoning tasks.
 
-\subsubsection{Distributions}
+\subsect{Distributions}
 
 
 We encode Markov Networks by specifying a set of tensor cores.
@@ -612,7 +612,7 @@ They are initialized with arguments
 \end{itemize}
 
 
-\subsubsection{Inference}
+\subsect{Inference}
 
 By
 \begin{centeredcode}
@@ -657,7 +657,7 @@ based on Gibbs sampling, where
 \end{itemize}
 
 
-\subsubsection{Parameter Estimation}
+\subsect{Parameter Estimation}
 
 \textbf{EntropyMaximizer} implements Algorithm~\ref{alg:AWO}, which is motivated by the maximum entropy principle (see \secref{sec:maxEntDuality}) to optimize Markov Logic Networks.
 The class  
@@ -675,7 +675,7 @@ The optimization is then performed by
 \end{centeredcode}
 method, where the iteration in Algorithm~\ref{alg:AWO} through the updateKeys is performed sweepNum times.
 
-\subsubsection{Structure Learning}
+\subsect{Structure Learning}
 
 \textbf{Formula Booster} chooses a formula given a formula selecting map.
 \begin{centeredcode}

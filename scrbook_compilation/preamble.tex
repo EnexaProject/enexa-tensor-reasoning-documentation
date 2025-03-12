@@ -1,0 +1,800 @@
+%%% ====================================================
+%%% --> KOMA-Settings <--
+
+%%% === Textbody ==============================================================
+\KOMAoptions{%
+%    DIV=11,% (Size of Text Body, higher values = greater textbody)
+   DIV=areaset, % (also calc/areaset/classic/current/default/last) 
+   % -> after setting of spacing necessary!   
+   BCOR=0mm,% (binding correction)
+}%
+%%% === Headings ==============================================================
+\KOMAoptions{%
+%	headings=small,  % Small Font Size, thin spacing above and below
+	headings=normal, % Medium Font Size, medium spacing above and below
+%	headings=big, % Big Font Size, large spacing above and below
+% 	headings=nochapterprefix,  % no prefix at chapters
+	headings=chapterprefix,    % inverse of 'nochapterprefix'
+%	headings=noappendixprefix, % chapter in appendix as in body text
+	headings=appendixprefix,   % inverse of 'noappendixprefix'
+%	headings=openany,   % Chapters start at any side
+%	headings=openleft,  % Chapters start at left side
+   headings=openright, % Chapters start at right side      
+   %%% Add/Dont/Auto Dot behind section numbers 
+   %%% (see DUDEN as reference)
+%   numbers=autoenddot,
+%   numbers=enddot,
+	numbers=noenddot,
+% 	secnumdepth=3, % depth of sections numbering (???)
+}%
+\setcounter{secnumdepth}{3}
+%%% === Page Layout ===========================================================
+\KOMAoptions{% (most options are for package typearea)
+	twoside=semi, % two side layout (alternating margins, standard in books)
+	% twoside=false, % single side layout 
+	% twoside=semi,  % two side layout (non alternating margins!)
+	twocolumn=false, % (true)
+	headinclude=true,%
+	footinclude=false,%
+	mpinclude=false,%
+% 	headlines=2.1,%
+% 	headheight=2em,%
+% 	headsepline=true,% calls headinclude automatically
+% 	footsepline=false,% calls footinclude automatically
+	cleardoublepage=empty, %plain, headings
+}%
+% Set type area manually, headlines/headheight/footlines/foothight are ignored!
+\areaset[0mm]{15cm}{25cm}
+%%% === Paragraph Separation ==================================================
+\KOMAoptions{%
+	parskip=relative, % change indentation according to fontsize (recommended)
+% 	parskip=absolute, % do not change indentation according to fontsize
+% 	parskip=false    % indentation of 1em
+% 	parskip=true   % parksip of 1 line - with free space in last line of 1em
+% 	parskip=full-  % parksip of 1 line - no adjustment
+% 	parskip=full+  % parksip of 1 line - with free space in last line of 1/4
+% 	parskip=full*  % parksip of 1 line - with free space in last line of 1/3
+% 	parskip=half   % parksip of 1/2 line - with free space in last line of 1em
+% 	parskip=half-  % parksip of 1/2 line - no adjustment
+% 	parskip=half+  % parksip of 1/2 line - with free space in last line of 1/3
+% 	parskip=half*  % parksip of 1/2 line - with free space in last line of 1em
+}%
+% Manuell
+% \setlength{\parskip}{4pt}
+% \setlength{\parindent}{0em}
+%%% === Table of Contents =====================================================
+% \setcounter{tocdepth}{3} % Depth of TOC Display
+\KOMAoptions{%
+   %%% Setting of 'Style' and 'Content' of TOC
+% 	toc=left,
+   toc=indented,
+% 	toc=bib,
+% 	toc=nobib,
+% 	toc=bibnumbered,
+% 	toc=index,
+% 	toc=noindex,
+% 	toc=listof,
+% 	toc=nolistof
+% 	toc=listofnumbered, 
+}%  
+\setcounter{tocdepth}{3} % Depth of TOC Display
+%%% === Lists of figures, tables etc. =========================================
+\KOMAoptions{%
+   %%% Setting of 'Style' and 'Content' of Lists 
+   %%% (figures, tables etc)
+	% --- General List Style ---
+   listof=left, % tabular styles
+%   listof=indented, % hierarchical style
+   % --- chapter highlighting ---
+%   listof=chapterentry, % ??? Chapter starts are marked in figure/table
+   % listof=chaptergapline, % New chapter starts are marked by a gap 
+      		  			   	 % of a single line
+	%listof=chaptergapsmall, % New chapter starts are marked by a gap 
+   	    					   % of a smallsingle line
+   % listof=nochaptergap, % No Gap between chapters
+   %
+   % listof=leveldown, % lists are moved one level down ???
+   % --- Appearance of Lists in TOC
+   % listof=notoc, % Lists are not part of the TOC
+   listof=totoc, % add Lists to TOC without number
+%    listof=totocnumbered, % add Lists to TOC with number
+}%  
+%%% === Bibliography ==========================================================
+%% Setting of 'Style' and 'Content' of Bibliography
+\KOMAoptions{%
+% 	bibliography=oldstyle,%
+   bibliography=openstyle,%
+%    bibliography=nottotoc, % Bibliography is not part of the TOC
+%    bibliography=totocnumbered, % add Bibliography to TOC with number
+   bibliography=totoc, % add Bibliography to TOC without number
+}%
+\bibliography{references}
+%%% === Index =================================================================
+%% Setting of 'Style' and 'Content' of Index in TOC
+\KOMAoptions{%
+%    index=nottotoc % index is not part of the TOC
+	index=totoc, % add index to TOC without number
+}%
+%%% === Titlepage =============================================================
+\KOMAoptions{%
+   titlepage=true %
+%    titlepage=false %
+}%
+%%% === Miscellaneous =========================================================
+\KOMAoptions{% 	
+% 	footnotes=multiple% nomultiple
+% 	open=any,%
+% 	open=left,%
+% 	open=right,%
+% 	chapterprefix=true,%
+% 	appendixprefix=true,%
+% 	chapteratlists=10pt,% entry
+}%
+
+%%% ====================================================
+%%% --> Packages: Programming <--
+
+\makeatletter
+% Mark packges that should be loaded later
+\newcommand{\LoadPackagesNow}{}
+\newcommand{\LoadPackageLater}[2][]{%
+   \g@addto@macro{\LoadPackagesNow}{%
+      \usepackage[#1]{#2}%
+   }%
+}
+\makeatother
+
+%%% XSPACE
+% Define commands that don't eat spaces.
+\usepackage{xspace}
+%%% XARGS
+% More than one optional argument
+\usepackage{xargs}
+%%% IFTHEN
+\usepackage{ifthen}
+%%% ETOOLBOX
+% Programming in LaTeX
+\usepackage{etoolbox}
+%%% CALC
+\usepackage{calc}
+
+%%% ====================================================
+%%% --> Packages: Layout <--
+
+% Recalculate type area
+\recalctypearea % use last
+% \KOMAoptions{DIV=calc} % specific way to calculate type area
+% Modification of length values (must be after calculation of type area!)
+% \setlength{\topmargin}{5cm} % Height of the headline (offset)
+
+
+%%% LAYOUT (print layout)
+\usepackage{layout}
+
+%%% TITLEPAGE
+% Modify titlepage
+\usepackage{scrbook_compilation/titlepage}
+%%% TITLESEC
+% \usepackage{titlesec}
+%%% FRAMED
+\usepackage{framed}
+%%% MDFRAMED
+% Draw fancy frames
+\usepackage{mdframed}
+%%% PBOX
+\usepackage{pbox}
+%%% ENUMITEM
+% Better than 'paralist' and 'enumerate' because it uses a keyvalue interface !
+% Do not load together with enumerate.
+\usepackage{enumitem}
+%%% TABULARX
+\usepackage{tabularx}
+\newcolumntype{Z}{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m}
+%%% ARRAY
+% tables and arrays
+\usepackage{array}
+%%% MULTIROW
+\usepackage{multirow}
+%%% LONGTABLE
+\usepackage{longtable}
+%%% HHLINE
+\usepackage{hhline}
+% Stretch the vertical spacing in tables
+% \renewcommand{\arraystretch}{1.1}
+%%% AFTERPAGE
+\usepackage{afterpage}
+%%% PDFLSCAPE
+\usepackage{pdflscape}
+%%% ROTATING
+\usepackage{rotating}
+%%% BOOKTABS
+% Better spacing in tablulars
+\usepackage{booktabs}
+%%% SETSPACE
+% Abstand zwischen den Zeilen
+\usepackage{setspace}
+% \onehalfspacing		% 1,5-facher Abstand
+% \doublespacing		% 2-facher Abstand
+%%% FOOTMISC
+% Modify footnotes
+\usepackage[
+   bottom,      % Footnotes appear always on bottom. This is necessary
+                % especially when floats are used
+   stable,      % Make footnotes stable in section titles
+%    perpage,     % Reset on each page
+   %para,       % Place footnotes side by side of in one paragraph.
+   %side,       % Place footnotes in the margin
+%    ragged,      % Use RaggedRight
+   %norule,     % suppress rule above footnotes
+   multiple,    % rearrange multiple footnotes intelligent in the text.
+   %symbol,     % use symbols instead of numbers
+   flushmargin,
+%   splitrule,
+   hang,
+]{footmisc}
+\interfootnotelinepenalty=10000 % avoid footnote breaks
+%%% FOOTNOTE
+\usepackage{footnote}
+\makesavenoteenv{mdframed}
+% Footnotestyle in theorem-environments
+\renewcommand*{\thempfootnote}{\arabic{mpfootnote}}
+% \renewcommand*{\multfootsep}{,\nobreakspace}
+%Fußnotenstil
+% \renewcommand*{\thefootnote}{\arabic{footnote})}
+
+%%% ANYFONTSIZE
+% Removes warnings on font style not available
+\usepackage{anyfontsize}
+
+%%% --> Font types <--
+% Different styles
+% \renewcommand\rmdefault{ptx} % pnc, ptm, phv, bch, cmss, put, ptx
+%%% MATHPAZO
+\usepackage{mathpazo}
+%%% MATHPTMX
+% \usepackage{mathptmx} % selects Times Roman as basic font
+%%% NEWTX
+% \usepackage{newtxtext}
+% Important: newtxmath is loaded below after amsmath and amsthm
+%%% NEWPX
+% \usepackage{newpxtext}
+% Important: newpxmath is loaded below after amsmath and amsthm
+%%% More fonts
+% \usepackage{helvet} % selects Helvetica as sans-serif font
+\usepackage{cabin} % selects Cabin as sans-serif font
+\usepackage{courier} % selects Courier as typewriter font
+% \usepackage{type1cm} % activate if the above 3 fonts are not available on your system
+
+
+%%% SCRPAGE2
+% Modify head- and footlines
+\usepackage[%
+%    headtopline,
+%    plainheadtopline,
+   headsepline,
+%    plainheadsepline,
+%    footsepline,
+%    plainfootsepline,
+%    footbotline,
+%    plainfootbotline,
+%    ilines,
+%    clines,
+%    olines,
+   automark,
+%    autooneside,% ignore optional argument in automark at oneside
+%    komastyle,
+%    standardstyle,
+%    markuppercase,
+%    markusedcase,
+%    nouppercase,
+]{scrlayer-scrpage}
+
+% clear default settings
+\clearscrheadings
+\clearscrplain
+% content
+\ohead{\pagemark}
+\ihead{\headmark}
+\ofoot[\pagemark]{}
+% Vollstaendige Liste der moeglichen Positionierungen
+% \lehead[scrplain-links-gerade]{scrheadings-links-gerade}
+% \cehead[scrplain-mittig-gerade]{scrheadings-mittig-gerade}
+% \rehead[scrplain-rechts-gerade]{scrheadings-rechts-gerade}
+% \lefoot[scrplain-links-gerade]{scrheadings-links-gerade}
+% \cefoot[scrplain-mittig-gerade]{scrheadings-mittig-gerade}
+% \refoot[scrplain-rechts-gerade]{scrheadings-rechts-gerade}
+% \lohead[scrplain-links-ungerade]{scrheadings-links-ungerade}
+% \cohead[scrplain-mittig-ungerade]{scrheadings-mittig-ungerade}
+% \rohead[scrplain-rechts-ungerade]{scrheadings-rechts-ungerade}
+% \lofoot[scrplain-links-ungerade]{scrheadings-links-ungerade}
+% \cofoot[scrplain-mittig-ungerade]{scrheadings-mittig-ungerade}
+% \rofoot[scrplain-rechts-ungerade]{scrheadings-rechts-ungerade}
+% \ihead[scrplain-innen]{scrheadings-innen}
+% \chead[scrplain-zentriert]{scrheadings-zentriert}
+% \ohead[scrplain-außen]{scrheadings-außen}
+% \ifoot[scrplain-innen]{scrheadings-innen}
+% \cfoot[scrplain-zentriert]{scrheadings-zentriert}
+% \ofoot[scrplain-außen]{scrheadings-außen}
+
+% what is displayed in headmark
+\automark[section]{chapter} %[rechts]{links}
+\automark*[chapter]{chapter}
+% modify sep lines
+% \setheadtopline{.4pt}     % modifiziert die Parameter fuer die Linie ueber dem
+% \setheadsepline{.4pt}[\color{black}]
+
+% width of the header
+%\setheadwidth[]{
+%   paper % width of paper
+%   page  % width of page (paper - BCOR)
+%   text  % \textwidth
+%   textwithmarginpar % width of text plus margin
+%   head  % current width of head
+%   foot  % current width of foot
+%}
+
+%%% ====================================================
+%%% --> Packages: Textprocessing <--
+
+%%% RELSIZE
+% relative change of font size
+\usepackage{relsize}
+%%% ULEM
+% Zum Unterstreichen
+\usepackage[normalem]{ulem}      
+%%% SOUL
+% Unterstreichen, Sperren
+\usepackage{soul}		           
+%%% URL
+% Setzen von URLs. In Verbindung mit hyperref sind diese auch aktive Links.
+\usepackage{url}
+%%% LIPSUM
+% dummy text
+\usepackage{lipsum}
+%%% CLEVEREF
+%\LoadPackageLater[nameinlink]{cleveref}
+\LoadPackageLater{nameref}
+
+%%% ====================================================
+%%% --> Packages: Images, Figures and Color <--
+
+%%% PSTRICKS
+% \usepackage{pstricks}
+% \usepackage{pst-plot, pst-node, pst-coil, pst-eps}
+%%% XCOLOR
+% Farben
+% Incompatible: Do not load when using pstricks !
+%\usepackage[table]{xcolor}
+% STANDALONE
+\usepackage{standalone}
+% TIKZ
+\usepackage{tikz}
+\usetikzlibrary{arrows,shapes,calc,decorations.pathreplacing,intersections,quotes,angles,positioning,fit,petri,through}
+%%% GRAPHICX
+% Bilder
+\usepackage[%
+	%final,
+	%draft % do not include images (faster)
+]{graphicx}
+% Float to page fraction (when does a figure get move to a separate page?)
+\renewcommand{\floatpagefraction}{.8}
+%%% EPSTOPDF
+% If an eps image is detected, epstopdf is automatically called to convert it to pdf format.
+% Requires: graphicx loaded
+\usepackage{epstopdf}
+%%% WRAPFIG
+% embed figures in text
+\usepackage{wrapfig}
+%%% SUBFIGURE
+% \usepackage{subfigure}
+% %%% CAPTION
+\usepackage{caption}
+%%% SUBCAPTION
+% Don't use this together with subfigure
+\usepackage{subcaption}
+% % Appearance of captions
+\captionsetup{
+   margin = 10pt,
+   font = {small},
+   labelfont = {small},
+   format = plain, % oder 'hang'
+   indention = 0em,  % Einruecken der Beschriftung
+   labelsep = colon, %period, space, quad, newline
+   justification = justified, % justified, centering
+   singlelinecheck = true, % false (true=bei einer Zeile immer zentrieren)
+   position = bottom, %top ,
+   subrefformat = simple,
+   labelformat=simple,
+}
+\captionsetup[subfigure]{labelformat=simple}
+\renewcommand\thesubfigure{(\alph{subfigure})}
+
+%%% ====================================================
+%%% --> Packages: Math <--
+
+% \let\openbox\relax % Fix for font packages
+%%% AMSMATH
+% Amsmath - Mathematik Basispaket
+% fuer pst-pdf displaymath Modus vor pst-pdf benoetigt.
+\usepackage[
+   %centertags, % (default) center tags vertically
+   tbtags,    % 'Top-or-bottom tags': For a split equation, place equation numbers level
+               % with the last (resp. first) line, if numbers are on the right (resp. left).
+   sumlimits,  %(default) Place the subscripts and superscripts of summation
+               % symbols above and below
+   %nosumlimits, % Always place the subscripts and superscripts of summation-type
+               % symbols to the side, even in displayed equations.
+   %intlimits,  % Like sumlimits, but for integral symbols.
+   nointlimits, % (default) Opposite of intlimits.
+   namelimits, % (default) Like sumlimits, but for certain 'operator names' such as
+               % det, inf, lim, max, min, that traditionally have subscripts placed underneath
+               % when they occur in a displayed equation.
+   %nonamelimits, % Opposite of namelimits.
+   %leqno,     % Place equation numbers on the left.
+   reqno,     % Place equation numbers on the right.
+%    fleqn,     % Position equations at a fixed indent from the left margin
+   			  % rather than centered in the text column.
+]{amsmath} %
+
+%%% AMSFONTS
+\usepackage{amsfonts}
+%%% MATHRSFS
+\usepackage{mathrsfs} %% Schreibschriftbuchstaben für den Mathematiksatz (nur Großbuchstaben)
+%%% DSFONT
+\usepackage{dsfont}
+%%% AMSSYMB
+\usepackage{amssymb}
+%%% UNITS
+\usepackage{units}
+%%% AMSTHM
+% Erst nach hyperref laden...
+\LoadPackageLater{amsthm}
+%%% THMTOOLS
+% Frontend für amsthm
+% Erst nach hyperref laden...
+\LoadPackageLater{thmtools}
+%%% MATHTOOLS
+% Erweitert amsmath und behebt einige Bugs
+\usepackage[fixamsmath,disallowspaces]{mathtools}
+% Formelnummern nur anzeigen, wenn auch eine Referenz existiert
+\mathtoolsset{showonlyrefs}
+\mathtoolsset{centercolon=true}
+%%% AUTONUM (replaces showonlyrefs)
+% \LoadPackageLater{autonum}
+% Break formulas when page break
+\allowdisplaybreaks[4]
+
+%%% NEWTXMATH
+% Load Math Font (important: this needs to be loaded after amsmath and amsthm, otherwise there will be an \openbox clash)
+% \LoadPackageLater{newtxmath}
+%%% NEWPXMATH (alternative)
+% \LoadPackageLater[smallerops,varbb]{newpxmath}
+%%% MATHALFA
+% \usepackage[scr=rsfso]{mathalfa}%
+%%% BOLDMATH
+% Load it after loading math fonts!
+\LoadPackageLater{bm}
+% \usepackage{bold-extra}
+% Boldface also for formulas
+\makeatletter
+\g@addto@macro\bfseries{\boldmath}
+\makeatother
+
+%%% ====================================================
+%%% --> Packages: Misc <--
+
+%%% MAKEIDX
+% \usepackage{makeidx}
+% Create Index
+% \makeindex
+
+%%% APPENDIX
+\usepackage[toc]{appendix}
+
+%%% BIBLATEX
+\usepackage{csquotes}
+%\usepackage[
+%	bibstyle=alphabetic,
+%%	bibstyle=draft,
+%	citestyle=alphabetic,
+%	sorting=ynt,
+%	sortcites=true,
+%	giveninits=true,
+%	maxbibnames=99,
+%	backend=biber,
+%	maxalphanames=5,
+%	backref=true,
+%]{biblatex}
+
+%\renewcommand*{\bibfont}{\raggedright}
+
+\renewbibmacro{in:}{}
+%%% Customize Biblography Style
+% \DeclareFieldFormat{title}{\mkbibquote{#1}}
+% \DeclareFieldFormat{volume}{\mkbibbold{#1}}
+% \DeclareFieldFormat[article]{volume}{\mkbibbold{#1}\space}
+% \DeclareFieldFormat[article]{number}{\mkbibparens{#1}}
+% \DeclareFieldFormat{journal}{\mkbibemph{#1}}
+\DeclareFieldFormat{pages}{#1}
+% \DeclareFieldFormat[misc]{year}{#1}
+% Authors in \textsc
+% \renewcommand{\mkbibnamefirst}[1]{\textsc{#1}}
+% \renewcommand{\mkbibnamelast}[1]{\textsc{#1}}
+% \renewcommand{\mkbibnameprefix}[1]{\textsc{#1}}
+% \renewcommand{\mkbibnameaffix}[1]{\textsc{#1}}
+% Style for misc
+% \DeclareBibliographyDriver{misc}{%
+%   \printnames{author}.%
+%   \newunit\newblock
+%   \printfield{title}%
+%   \newunit\newblock
+%   \printfield{year}%
+%   \newline
+%   \printfield{howpublished}%
+% %   \finentry
+% }
+
+%%% TODONOTES
+\usepackage[textsize=tiny,english,colorinlistoftodos,
+ 	disable,
+	]{todonotes}
+% ToDo-Marker
+\newcommand{\todocontent}[2][{}]{\todo[color=orange, #1]{Content: #2}\xspace}
+\newcommand{\todofig}[2][{}]{\todo[color=red, #1]{Fig: #2}\xspace}
+\newcommand{\todoref}[2][{}]{\todo[color=red, #1]{Ref: #2}\xspace}
+\newcommand{\todolang}[2][{}]{\todo[color=green, #1]{Language: #2}\xspace}
+\newcommand{\todolatex}[2][{}]{\todo[color=blue, #1]{Format: #2}\xspace}
+%%% HYPERREF
+% Hyperref
+% Colors for hyper-links
+\definecolor{pdfurlcolor}{rgb}{0,0,0.6}
+\definecolor{pdffilecolor}{rgb}{0.7,0,0}
+\definecolor{pdflinkcolor}{rgb}{0,0,0.6}
+\definecolor{pdfcitecolor}{rgb}{0,0,0.6}
+%\usepackage[
+%	% Farben fuer die Links
+%	colorlinks=true,         % Links erhalten Farben statt Kaeten
+%	urlcolor=pdfurlcolor,    % \href{...}{...} external (URL)
+%	filecolor=pdffilecolor,  % \href{...} local file
+%	linkcolor=pdflinkcolor,  %\ref{...} and \pageref{...}
+%	citecolor=pdfcitecolor,  %
+%	% Links
+%	raiselinks=true,			 % calculate real height of the link
+%	breaklinks,              % Links berstehen Zeilenumbruch
+%	%   backref=page,            % Backlinks im Literaturverzeichnis (section, slide, page, none)
+%	%   pagebackref=true,        % Backlinks im Literaturverzeichnis mit Seitenangabe
+%	verbose,
+%	hyperindex=true,         % backlinkex index
+%	linktocpage=true,        % Inhaltsverzeichnis verlinkt Seiten
+%	hyperfootnotes=false,     % Keine Links auf Fussnoten
+%	% Bookmarks
+%	bookmarks=true,          % Erzeugung von Bookmarks fuer PDF-Viewer
+%	bookmarksopenlevel=1,    % Gliederungstiefe der Bookmarks
+%	bookmarksopen=true,      % Expandierte Untermenues in Bookmarks
+%	bookmarksnumbered=true,  % Nummerierung der Bookmarks
+%	bookmarkstype=toc,       % Art der Verzeichnisses
+%	% Anchors
+%	plainpages=false,        % Anchors even on plain pages ?
+%	pageanchor=true,         % Pages are linkable
+%	%pdfproducer={pdfeTeX 1.10b-2.1} %Produzent
+%	pdfdisplaydoctitle=true, % Dokumententitel statt Dateiname im Fenstertitel
+%	pdfstartview=FitH,       % Dokument wird Fit Width geaefnet
+%	pdfpagemode=UseOutlines, % Bookmarks im Viewer anzeigen
+%	pdfpagelabels=true,           % set PDF page labels
+%	pdfpagelayout=OneColumn, % zweiseitige Darstellung: ungerade Seiten
+%										% rechts im PDF-Viewer
+%	%   pdfpagelayout=SinglePage, % einseitige Darstellung
+%]{hyperref}
+% PDF Informationen (hypersetup in main tex file)
+
+% BOOKMARK
+\usepackage{bookmark}
+% Bold chapters
+\bookmarksetup{
+	addtohook={%
+		\ifnum\bookmarkget{level}=0 %
+			\bookmarksetup{bold}%
+		\fi
+	}
+}
+
+% Load marked packages
+\LoadPackagesNow
+
+
+%%% ====================================================
+%%% --> General Macros <--
+
+% If #2 is defined/non-empty, write #3, otherwise #1
+\newcommand{\ifargdef}[3][{}]{\ifthenelse{\equal{#2}{}}{#1}{#3}}
+
+% hanging paragraphs
+\newlength{\hangind}
+\newcommand{\myhangindent}[1]{\settowidth{\hangind}{\widthof{#1}}\hangindent=\the\hangind}
+% \crefformat{equation}{(#2#1#3)}
+
+%%% ====================================================
+%%% --> KOMA-Fonts and Headings <--
+% \newcommand\SectionFontStyle{\rmfamily\boldmath}
+
+\setkomafont{sectioning}{\bfseries\rmfamily}
+\setkomafont{part}{\usekomafont{sectioning}}
+\setkomafont{chapter}{\huge\usekomafont{sectioning}}
+\setkomafont{section}{\large\usekomafont{sectioning}}
+\setkomafont{subsection}{\usekomafont{sectioning}}
+\setkomafont{subsubsection}{\usekomafont{sectioning}}
+\setkomafont{paragraph}{\usekomafont{sectioning}}
+\setkomafont{subparagraph}{\usekomafont{sectioning}}
+
+% \setkomafont{descriptionlabel}{\itshape}
+
+% \setkomafont{caption}{\normalfont}
+% \setkomafont{captionlabel}{\normalfont}
+% 
+% \setkomafont{dictum}{}
+% \setkomafont{dictumauthor}{}
+% \setkomafont{dictumtext}{}
+% \setkomafont{disposition}{}
+% \setkomafont{footnote}{}
+% \setkomafont{footnotelabel}{}
+% \setkomafont{footnotereference}{}
+% \setkomafont{minisec}{}
+% 
+% \setkomafont{partnumber}{\bfseries\SectionFontStyle}
+% \setkomafont{partentrynumber}{}
+% \setkomafont{chapterentrypagenumber}{}
+% \setkomafont{sectionentrypagenumber}{}
+
+% \setkomafont{pageheadfoot}{\smaller\scshape\rmfamily}
+\setkomafont{pageheadfoot}{\smaller\rmfamily}
+% \setkomafont{pagenumber}{\bfseries\usekomafont{sectioning}}
+% 
+% \setkomafont{partentry}{\usekomafont{sectioning}\large}
+% \setkomafont{chapterentry}{\usekomafont{sectioning}}
+% \setkomafont{sectionentry}{\usekomafont{sectioning}}
+
+% %%% Custom chapter format
+% \makeatletter
+% \renewcommand*\chapterformat{%
+%   \if@chapterprefix
+%     \smaller[2]{\chapapp~\thechapter}\vspace{-.5\baselineskip}
+%   \else
+%     \thechapter\autodot\enskip
+%   \fi
+% }
+% \makeatother
+% 
+% % Add a line over chapter heading
+% \newcommand*{\ORIGchapterheadstartvskip}{}%
+% \let\ORIGchapterheadstartvskip=\chapterheadstartvskip
+% \renewcommand*{\chapterheadstartvskip}{%
+%   \ORIGchapterheadstartvskip
+%   {%
+% 	\hfuzz=11pt % suppress badbox
+%     \setlength{\parskip}{0pt}%
+% 	\noindent\rule[-.5\baselineskip]{\linewidth}{3pt}\par
+%   }%
+% }
+
+
+\RedeclareSectionCommand[innerskip=-\baselineskip]{chapter}
+\renewcommand*{\chapterformat}{
+  \IfUsePrefixLine{
+    \begin{tikzpicture}
+%       \fill[black!60!gray] (0,0) rectangle (1,1);
+%       \node[draw=black!60!gray, text=white, fill=black!60!gray,rectangle] (0.5,0.5) (title) {\large\normalfont\textbf{\chapapp~\thechapter}};
+      \node[draw=black!60!gray, text=white, fill=black!60!gray,rectangle,inner sep=12] (0.5,0.5) (title) {\LARGE\normalfont\textbf{\thechapter}};
+      \fill[black!60!gray] (title.south west) rectangle ($(title.south west) + (\textwidth,2pt)$);
+    \end{tikzpicture}
+  }{
+   \mbox{\chapappifchapterprefix{\nobreakspace}
+   \thechapter\autodot\enskip}
+  }
+}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %
+% %  Adding lines above and below the chapter head
+% %
+%  
+% % 1st get a new command
+% \newcommand*{\ORIGchapterheadstartvskip}{}%
+% % 2nd save the original definition to the new command
+% \let\ORIGchapterheadstartvskip=\chapterheadstartvskip
+% % 3rd redefine the command using the saved original command
+% \renewcommand*{\chapterheadstartvskip}{%
+%   \ORIGchapterheadstartvskip
+%   {%
+%     \setlength{\parskip}{0pt}%
+%     \noindent\rule[.3\baselineskip]{\linewidth}{1pt}\par
+%   }%
+% }
+%  
+% % see above
+% \newcommand*{\ORIGchapterheadendvskip}{}%
+% \let\ORIGchapterheadendvskip=\chapterheadendvskip
+% \renewcommand*{\chapterheadendvskip}{%
+%   {%
+%     \setlength{\parskip}{0pt}%
+%     \noindent\rule[.3\baselineskip]{\linewidth}{1pt}\par
+%   }%
+%   \ORIGchapterheadendvskip
+% }
+% %
+% %  End of chapter head change
+% %
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% % --------------------------------------------------------------------------
+% % Originalcode von: <http://www.komascript.de/fncychap-Sonny>
+% % Copyright (c) Markus Kohm
+% % Version: 2017-05-24
+% % Changes:
+% % - 2016-09-02 erste Version
+% % - 2017-05-24 Anpassung von beforeskip an aktuelles KOMA-Script
+% % Weitergabe und Verwendung gestattet, solange dieser Hinsweiskommentar
+% % einschließlich Link und Copyrightinformation erhalten bleibt.
+%  
+% % 1. Emulation von fncychap mit KOMA-Script-Mitteln:
+% \newlength{\ChapterRuleWidth}\setlength{\ChapterRuleWidth}{.5pt}
+% \newcommand*{\ChRuleWidth}[1]{\setlength{\ChapterRuleWidth}{\dimexpr #1}}%
+% \newcommand*{\ChNameVar}{\setkomafont{chapterprefix}}%
+% \newcommand*{\ChTitleVar}{\setkomafont{chapter}}%
+% \newcommand*{\ChNumVar}{\setkomafont{chapternumber}}%
+% \newcommand*{\ChapterNameCase}[1]{#1}
+% \newcommand*{\ChNameUpperCase}{\let\ChapterNameCase\MakeUppercase}
+% \newcommand*{\ChNameIs}{\renewcommand*\ChapterNameCase[1]{##1}}
+% \newcommand*{\ChNameLowerCase}{\let\ChapterNameCase\MakeLowercase}
+% \newcommand*{\ChapterTitleCase}[1]{#1}
+% \newcommand*{\ChTitleUpperCase}{\let\ChapterTitleCase\MakeUppercase}
+% \newcommand*{\ChTitleIs}{\renewcommand*\ChapterTitleCase[1]{##1}}
+% \newcommand*{\ChTitleLowerCase}{\let\ChapterTitleCase\MakeLowercase}
+%  
+% % 2. Einstellungen für den Stil Sonny:
+% \KOMAoptions{chapterprefix}% Es ist ein Präfix-Stil
+% \ChNameUpperCase
+% \newkomafont{chapternumber}{\Huge}
+% \let\raggedchapter\raggedleft% Überschriften rechtsbündig
+% \RedeclareSectionCommand[%
+%   beforeskip=-5\baselineskip,% Abstand über der Präfixzeile bzw. der Linie
+%   innerskip=45pt,% Abstand zwischen Präfixzeile und Text
+%   afterskip=40pt,% Abstand unter dem Text
+%   font=\normalfont\sffamily\Large,% Schrift des Namens
+%   prefixfont=\Large,% Schrift der Präfixzeile
+% ]{chapter}
+% \renewcommand*{\chapterformat}{%
+%   \mbox{\ChapterNameCase{\chapappifchapterprefix{\nobreakspace}}%
+%     {\usekomafont{chapternumber}{%
+%         \rule{0pt}{.8\baselineskip}\thechapter\IfUsePrefixLine{}{\enskip}}}%
+%   }%
+% }
+% \renewcommand*{\chapterlineswithprefixformat}[3]{% Ebene, Nummer, Text
+%   \IfArgIsEmpty{#2}{}{%
+%     % Die Prefix-Zeile aus Argument 2 wird nur gesetzt, wenn sie vorhanden
+%     % ist.
+%     #2%
+%   }%
+%   \rule[5pt]{\linewidth}{\ChapterRuleWidth}\\*
+%   \ChapterTitleCase{#3}\nobreak
+%   \rule[-5pt]{\linewidth}{\ChapterRuleWidth}
+% }
+% % --------------------------------------------------------------------------
+
+%%% --> Titlesec Headers <--
+% % Chapter
+% \titleformat{\chapter}[block] % shape
+% 	{\usekomafont{chapter}} % format
+% 	{\rule{\textwidth}{4pt} \vspace{1ex} \thechapter} % label
+% 	{1em}{}[] % sep
+% \titleformat{name=\chapter,numberless}[block]
+% 	{\usekomafont{chapter}}
+% 	{\rule{\textwidth}{4pt} \vspace{1ex}}
+% 	{0em}{}
+% % Section
+% \titleformat{\section}[block] % shape
+% 	{\usekomafont{section}} % format
+% 	{\rule{\textwidth}{1pt} \vspace{1ex} \thesection} % label
+% 	{1em}{}[] % sep
+% 
+% % \titlespacing*{\chapter}{0pt}{*0}{0pt}
+% \titlespacing{\section}{0pt}{*0}{0pt}
