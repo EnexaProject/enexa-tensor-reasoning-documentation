@@ -13,11 +13,11 @@ While coordinate calculus is more expressive, basis calculus can be exploited in
 }
 \begin{itemize}
     \item Conditional probability tensors are directed tensors.
-    \item Logical formulas are binary tensors.
+    \item Logical formulas are boolean tensors.
 \end{itemize}
 
 \red{
-    Thus, the set of tensors, which are both directed and binary is of much interest.
+    Thus, the set of tensors, which are both directed and boolean is of much interest.
     We will show in this chapter, that they are equal to the set of relational encodings of functions.
 }
 
@@ -26,186 +26,203 @@ While coordinate calculus is more expressive, basis calculus can be exploited in
 		\input{PartIII/tikz_pics/basis_calculus/directed_binary_sketch.tex}
 	\end{center}
 	\caption{Sketch of the tensors with non-negative coordinates.
-	We investigate in this chapter tensors, which are directed and binary.}
+	We investigate in this chapter tensors, which are directed and boolean.}
 \end{figure}
 
 \sect{Encoding of Subsets and Relations}
 
 Based on the concept of one-hot encodings of states we in this chapter develop the construction of encodings to sets, relations and functions.
-
-
-
-
-Here we show how we can use binary numbers to encode the truth of set memberships.
+We start with the definition of subset encodings, which represent set memberships in their boolean coordinates.
 
 \begin{definition}[Subset Encoding]\label{def:subsetEncoding}
-	We say that an arbitrary set $\arbset$ is enumerated by a categorical variables $\individualvariableof{\arbset}$ taking values in $[\catdimof{\arbset}]$, when $\catdimof{\arbset}=\absof{\arbset}$ and there is a bijective function
-		\[ \indexinterpretationof{} : [\catdimof{\arbset}] \rightarrow \arbset \, . \]
-	Given an set $\arbset$ enumerated by the variable $\individualvariableof{\arbset}$, any subset $\arbsubset\subset\arbset$ is encoded by the tensor $\onehotmapto{\arbsubset}[\individualvariable]$ defined for $\catindex\in[\absof{\arbset}]$ as
-	%Let there be a set $\arbset$, which elements we enumerate by $x_{\catindex}$ for $\catindex\in[\absof{\arbset}]$, and let there be a categorical variable $\individualvariable$ taking values in $[\absof{\arbset}]$ selecting the members.
-	%We define the encoding of a subset $\arbsubset\subset\arbset$ as the tensor $\onehotmapto{\arbsubset}[\individualvariable]$ with coordinates
-% \[ \onehotmapto{\arbsubset}[\individualvariable] : \arbset \rightarrow \{0,1\}\]
-%	defined for $x\in\arbset$
-	\begin{align}
-	 	\onehotmapto{\arbsubset}[\individualvariable={\catindex}] = \begin{cases}
-		1 & \text{if } \indexinterpretationofat{}{\catindex} \in \arbsubset \\
+	We say that an arbitrary set $\arbset$ is enumerated by an enumeration variable $\indvariableof{\arbset}$ taking values in $[\inddimof{\arbset}]$, when $\inddimof{\arbset}=\absof{\arbset}$ and there is a bijective function
+	\begin{align*}
+		\indexinterpretation : [\inddimof{\arbset}] \rightarrow \arbset \, .
+	\end{align*}
+	Given an set $\arbset$ enumerated by the variable $\indvariableof{\arbset}$, any subset $\arbsubset\subset\arbset$ is encoded by the tensor $\onehotmapto{\arbsubset}[\indvariable]$ defined for $\indindex\in[\absof{\arbset}]$ as
+	\begin{align*}
+	 	\onehotmapofat{\arbsubset}{\indexedindvariable}
+		= \begin{cases}
+		1 & \text{if} \indexinterpretationat{\indindex} \in \arbsubset \\
 		0 & \text{else}
 		\end{cases} \, . 
-	\end{align}
+	\end{align*}
 \end{definition}
-
-%	a representation of the set as
-%		\[ \arbset = \left\{x_{\catindex} \, : \, \catindex\in[\absof{\arbset}] \right\} \, . \]
-
-
 
 % Decomposition
 In a one-hot basis decomposition we have
-	\[ \onehotmapto{\arbsubset}[\individualvariable] \coloneqq \sum_{\catindex\in[\cardof{\arbset}] \, : \, \indexinterpretationat{\catindex}\in\arbsubset}\onehotmapofat{\catindex}{\individualvariable} \, . \]
-%where $\onehotmapof{x}$ denotes the one-hot encoding of an element $x$ with respect to an enumeration of the elements $\arbset$ by $[\catdim]$ or $\facstates$.
+\begin{align*}
+	\onehotmapofat{\arbsubset}{\indvariable}
+	\coloneqq \sum_{\indindex\in[\cardof{\arbset}]\,:\,\indexinterpretationat{\indindex}\in\arbsubset}\onehotmapofat{\indindex}{\indvariable} \, .
+\end{align*}
 
 % Explanation
-Encoding of subsets as vectors: Each coordinate associated with a possible element, $\{0,1\}$ encoding whether in subset.
-The encodings is thus a binary tensor.
-Any subset encoding is a binary tensor.
+%Encoding of subsets as vectors: Each coordinate associated with a possible element, $\{0,1\}$ encoding whether in subset.
+%The encodings is thus a boolean tensor.
+%Any subset encoding is a boolean tensor.
+
+% Relation
+Since relations are subsets of cartesian products between two sets, their encoding is a straightforward generalization of \defref{def:subsetEncoding}.
 
 \begin{definition}[Relation Encoding]
-	Given two finite sets $\inset$, $\outset$, a relation is a subset of their cartesian product
-		\[ \exrelation \subset \inset \times \outset \, . \]
-	Given an enumeration of $\inset$ and $\outset$ by the categorical variables $\individualvariableof{\insymbol}$ and $\individualvariableof{\outsymbol}$ and interpretation maps 
-	$\indexinterpretationof{\insymbol}$, $\indexinterpretationof{\outsymbol}$
-	, we define the encoding of this subset as the tensor $\onehotmapto{\exrelation}[\individualvariableof{\insymbol},\individualvariableof{\outsymbol}]$ with the coordinates
-	\begin{align}
-		\onehotmapto{\exrelation}[\individualvariableof{\insymbol}=\catindexof{\insymbol},\individualvariableof{\outsymbol}=\catindexof{\outsymbol}]
+	A relation between two finite sets $\inset$ and $\outset$ is a subset of their cartesian product
+	\begin{align*}
+		 \exrelation \subset \inset \times \outset \, .
+	\end{align*}
+	Given an enumeration of $\inset$ and $\outset$ by the categorical variables $\indvariableof{\insymbol}$ and $\indvariableof{\outsymbol}$ and interpretation maps $\indexinterpretationof{\insymbol}$, $\indexinterpretationof{\outsymbol}$, we define the encoding of this subset as the tensor $\onehotmapto{\exrelation}[\indvariableof{\insymbol},\indvariableof{\outsymbol}]$ with the coordinates
+	\begin{align*}
+		\onehotmapofat{\exrelation}{\indexedindvariableof{\insymbol},\indexedindvariableof{\outsymbol}}
 		= \begin{cases}
-		1 & \text{if } (\indexinterpretationofat{\insymbol}{\catindexof{\insymbol}},\indexinterpretationofat{\outsymbol}{\catindexof{\outsymbol}}) \in \exrelation \\
+		1 & \text{if } (\indexinterpretationofat{\insymbol}{\indindexof{\insymbol}},\indexinterpretationofat{\outsymbol}{\indindexof{\outsymbol}}) \in \exrelation \\
 		0 & \text{else}
 		\end{cases} \, . 
-	\end{align}
+	\end{align*}
 \end{definition}
 
 % Decomposition
 The relation encoding has a decomposition into one-hot encodings as
-	\[ \onehotmapto{\exrelation}[\individualvariable_{\insymbol},\individualvariable_{\outsymbol}]
-	 = \sum_{\catindexof{\insymbol},\catindexof{\outsymbol} \, : \, (\indexinterpretationofat{\insymbol}{\catindexof{\insymbol}},\indexinterpretationofat{\outsymbol}{\catindexof{\outsymbol}}) \in \exrelation}
-	\onehotmapofat{\catindexof{\insymbol}}{\catvariableof{\insymbol}}  \otimes \onehotmapofat{\catindexof{\outsymbol}}{\catvariableof{\outsymbol}}  \, . \]
+\begin{align*}
+	\onehotmapofat{\exrelation}{\indvariableof{\insymbol},\indvariableof{\outsymbol}}
+	= \sum_{\indindexof{\insymbol},\indindexof{\outsymbol} \, : \, (\indexinterpretationofat{\insymbol}{\indindexof{\insymbol}},\indexinterpretationofat{\outsymbol}{\indindexof{\outsymbol}}) \in \exrelation}
+	\onehotmapofat{\indindexof{\insymbol}}{\indvariableof{\insymbol}}  \otimes \onehotmapofat{\indindexof{\outsymbol}}{\indvariableof{\outsymbol}}  \, .
+\end{align*}
 
-Relations are subsets of cartesian products and encodings of relations are the encodings of subsets by vectors.
-They have a matrix structure by the cartesian product, which can be further folded to tensors, when the sets itself are cartesian products.
+Relational encodings have a matrix structure by the cartesian product, which can be further folded to tensors, when the sets itself are cartesian products.
+The relational encoding is a bijection between the relations of two sets and the boolean tensors with their enumeration variables.
 
-
-\begin{theorem}
-	The relational encoding is a bijection between the set of relations and the set of binary tensors.
-\end{theorem}
-\begin{proof}
-	% =>
-	By definition, a relational encoding is the encoding of a subset and thus a binary tensor.
-	% <= 
-	Any matrification of a binary tensor marks by its $1$ coordinates the elements of a relation.
-\end{proof}
-
-% Significance
-We can thus understand any matrification of a binary tensor as the encoding of a relation and vice versa.
+%They provide representations of generic relations by boolean tensors, in the sense that each relation between two sets is represented
+%\begin{theorem}
+%	The relational encoding is a bijection between the set of relations and the set of boolean tensors.
+%\end{theorem}
+%\begin{proof}
+%	% =>
+%	By definition, a relational encoding is the encoding of a subset and thus a boolean tensor.
+%	% <=
+%	Any matrification of a boolean tensor marks by its $1$ coordinates the elements of a relation.
+%\end{proof}
+%
+%% Significance
+%We can thus understand any matrification of a boolean tensor as the encoding of a relation and vice versa.
 
 
 
 \subsect{Higher order relations}
 
-
 We can extend this contraction to relations of higher order, and arrive at encoding schemes usable for relational databases.
 
 \begin{definition}\label{def:daryRelation}
-	Given sets $\arbset^{\atomenumerator}$ for $\atomenumeratorin$, a $\atomorder$-ary relation is a subset of a their cartesian product, that is
-		\[ \exrelation \subset  \bigtimes_{\atomenumeratorin} \arbset^{\atomenumerator} \, . \]
-	Given an enumeration of each set $\arbset^{\atomenumerator}$ by a variable $\individualvariableof{\atomenumerator}$ and an interpretation map $\indexinterpretationof{\atomenumerator}$, we define the encoding of the relation as the tensor $\onehotmapto{\exrelation}[\individualvariableof{[\atomorder]}]$ with coordinates
-	\begin{align}
-		\onehotmapto{\exrelation}[\individualvariableof{0}=\catindexof{0},\ldots,\individualvariableof{\atomorder-1}=\catindexof{\atomorder-1}]
+	Given sets $\arbsetof{\atomenumerator}$ for $\atomenumeratorin$, a $\atomorder$-ary relation is a subset of a their cartesian product, that is
+	\begin{align*}
+		\exrelation \subset\bigtimes_{\atomenumeratorin} \arbsetof{\atomenumerator} \, .
+	\end{align*}
+	Given an enumeration of each set $\arbsetof{\atomenumerator}$ by a variable $\indvariableof{\atomenumerator}$ and an interpretation map $\indexinterpretationof{\atomenumerator}$, we define the encoding of the relation as the tensor $\onehotmapto{\exrelation}[\indvariableof{[\atomorder]}]$ with coordinates
+	\begin{align*}
+		\onehotmapofat{\exrelation}{\indexedindvariableof{[\catorder]}}
 		= \begin{cases}
-		1 & \text{if } (\indexinterpretationofat{0}{\catindexof{0}},\ldots,\indexinterpretationofat{\atomorder-1}{\catindexof{\atomorder-1}}) \in \exrelation \\
+		1 & \text{if} \quad (\indexinterpretationofat{0}{\indindexof{0}},\ldots,\indexinterpretationofat{\atomorder-1}{\indindexof{\atomorder-1}}) \in \exrelation \\
 		0 & \text{else}
-		\end{cases} \, . 
-	\end{align}
+		\end{cases} \, .
+	\end{align*}
 \end{definition}
 
-
 \begin{example}[Propositional Formulas]
-	Propositional formulas are equal to the subset encoding of their models.
-	The sets $\arbset^{\atomenumerator}$ are all $[2]$ and are interpreted as the possible assignments to the boolean atoms.
+	Let there be for $\atomenumeratorin$ sets $\arbsetof{\atomenumerator}$ of truth assignments to the $\atomenumerator$-th atom, which are all enumerated by $[2]$.
+	A propositional formula then corresponds with a $\atomorder$-ary relation and we directly defined them in \defref{def:formulas} by their relational encoding.
 \end{example}
-
 
 \begin{example}[Relational Databases]
 	Relational Databases can be encoded as tensors using the relation encoding scheme.
-	Each column is thereby understood as a categorical variable, which values form the sets $\arbsetof{\catenumerator}$.
+	Each column is thereby understood as an eunumeration variable, which values form the sets $\arbsetof{\catenumerator}$.
 \end{example}
 
 % Sparse Representations
-Let us notice, that the dimensionality of the tensor space used for representing a relation is 
-	\[ \prod_{\catenumeratorin} \cardof{\arbsetof{\catenumerator}} \]
+Let us notice, that the dimensionality of the tensor space used for representing a relation is
+\begin{align*}
+	\prod_{\catenumeratorin} \cardof{\arbsetof{\catenumerator}}
+\end{align*}
 and therefore growing exponentially with the number of variables.
-Relations are however often sparse, in the sense that 
-	\[ \cardof{\exrelation} << \prod_{\catenumeratorin} \cardof{\arbsetof{\catenumerator}} \, . \]
+Relations are however often sparse, in the sense that
+\begin{align*}
+	 \cardof{\exrelation} << \prod_{\catenumeratorin} \cardof{\arbsetof{\catenumerator}} \, .
+\end{align*}
 It is therefore often benefitially to choose sparse encoding schemes, for example by restricted CP formats (see \charef{cha:sparseCalculus}) to represent $\onehotmapof{\exrelation}$.
+
 
 \sect{Encoding of Functions}
 
-Real valued functions are directly tensors by definition.
+Let us now restrict to relations, which have an expression by functions.
+We in this section then show, how contractions of their encodings can be exploited in function evaluation.
 
 \subsect{Relational Encoding of Functions}
 
-% Reference to first definition
-In \defref{def:functionRepresentation} we have introduced the relational encoding of functions between the states of factored systems.
-We now generalize the representation scheme towards maps between arbitrary unstructured sets.
+%We now generalize the representation scheme towards maps between arbitrary unstructured sets.
 
 \begin{definition}[Relational Encoding of Maps]\label{def:functionRelationEncoding}
 	Any map
-		\[ \exfunction : \inset \rightarrow \outset \]
+	\begin{align*}
+		\exfunction : \inset \rightarrow \outset
+	\end{align*}
 	can be represented by a relation
-		\[ \exrelationof{\exfunction} \coloneqq \left\{ (x,\exfunction(x) \, : \, x \in \inset )\right\} \subset \inset \times \outset \, . \]
-	Given a enumeration of the sets by $\individualvariableof{\insymbol}$ and $\individualvariableof{\outsymbol}$ we define the relational encoding of $\exfunction$ as the tensor
-		\[ \rencodingofat{\exfunction}{\individualvariableof{\insymbol},\individualvariableof{\outsymbol}} = \onehotmapto{\exrelationof{\exfunction}}\left[\individualvariableof{\inset},\individualvariableof{\outset}\right]  \, . \]
+	\begin{align*}
+		\exrelationof{\exfunction} \coloneqq \left\{ (x,\exfunction(x) \, : \, x \in\inset )\right\} \subset \inset \times \outset \, .
+	\end{align*}
+	Given a enumeration of the sets by $\indvariableof{\insymbol}$ and $\indvariableof{\outsymbol}$ we define the relational encoding of $\exfunction$ as the tensor
+	\begin{align*}
+		\rencodingofat{\exfunction}{\indvariableof{\insymbol},\indvariableof{\outsymbol}}
+		= \onehotmapofat{\exrelationof{\exfunction}}{\indvariableof{\insymbol},\indvariableof{\outsymbol}}  \, .
+	\end{align*}
 \end{definition}
 
 \begin{remark}[Reduction to images]
 	% Image enumeration
-	When $\exfunction$ maps into a set of infinite cardinality, we restrict $\outset$ to the image of $\exfunction$ and enumerate the image by a variable $\catvariableof{\exfunction}$.
+	When $\exfunction$ maps into a set of infinite cardinality, we restrict $\outset$ to the image of $\exfunction$ and enumerate the image by a variable $\indvariableof{\exfunction}$.
 	This scheme is applied, when $\exfunction$ is itself a tensor, i.e. $\outset=\rr$.
-	While the variable $\catvariableof{\exfunction}$ can in general be of the same cardinality as the domain set $\inset$, it will be in $[2]$ when considering binary tensors.
+	While the variable $\indvariableof{\exfunction}$ can in general be of the same cardinality as the domain set $\inset$, it will be valued in $[2]$ when considering boolean tensors.
 \end{remark}
 
-% Characterization of the directed and binary tensors
+% Characterization of the directed and boolean tensors
 We notice, that any relational representation of a function is also a directed tensor with incoming variables to the domain and outgoing variables to the image.
-It furthermore holds, that the set of directed and binary tensors is characterized by the relational encoding of functions.
-This is shown in the next theorem, by the claim that any binary tensor which is directed is the relational representation of a function.
+It furthermore holds, that the set of directed and boolean tensors is characterized by the relational encoding of functions.
+This is shown in the next theorem, by the claim that any boolean tensor which is directed is the relational representation of a function.
 
 \begin{theorem}\label{the:rencodingDirected}
 	Let $\inset,\outset$ be sets and $\exrelation\subset\inset\times\outset$ a relation.
-	If and only if there exists a map $\exfunction:\inset\rightarrow\outset$ such that $\exrelation=\exrelationof{\exfunction}$, the relational encoding $\rencodingof{\exfunction}$ is a directed tensor with $\individualvariableof{\insymbol}$ incoming and $\individualvariableof{\outsymbol}$ outgoing.
-%	If and only if the relation is a function between domain and image set, its encoding is directed with domain incoming and image outgoing.
+	If and only if there exists a map $\exfunction:\inset\rightarrow\outset$ such that $\exrelation=\exrelationof{\exfunction}$, the relational encoding $\rencodingof{\exfunction}$ is a directed tensor with $\indvariableof{\insymbol}$ incoming and $\indvariableof{\outsymbol}$ outgoing.
 \end{theorem}
 \begin{proof}
-	% =>
+	\proofrightsymbol:
 	When $\exfunction$ is a function, we have for any $\indindexofin{\insymbol}$
-		\[ \sum_{\indindexofin{\outsymbol}} \rencodingofat{\exfunction}{\indexedindvariableof{\insymbol},\indexedindvariableof{\outsymbol}}
-		=  \rencodingof{\exfunction}[\indexedindvariableof{\insymbol},\indvariableof{\outsymbol}=\exfunction(\indindexof{\insymbol})] = 1 \, . \]
-	% <=
-	Conversely let there be a relation $\exrelation$, such that $\rencodingof{\exrelation}$ is directed. %, we construct a map $\exfunction$ with $\exrelation=\exrelationof{\exfunction}$.
+	\begin{align*}
+		\sum_{\indindexofin{\outsymbol}} \rencodingofat{\exfunction}{\indexedindvariableof{\insymbol},\indexedindvariableof{\outsymbol}}
+		=  \rencodingofat{\exfunction}{\indexedindvariableof{\insymbol},\indvariableof{\outsymbol}=\invindexinterpretationofat{\outsymbol}{\exfunctionat{\indexinterpretationofat{\insymbol}{\indindexof{\insymbol}}}}}
+		= 1 \, .
+	\end{align*}
+	Thus, $\rencodingofat{\exfunction}{\indvariableof{\outsymbol},\indvariableof{\insymbol}}$ is a directed tensor with variables $\indvariableof{\insymbol}$ incoming and $\indvariableof{\outsymbol}$ outgoing.
+
+	\proofleftsymbol:
+	Conversely let there be a relation $\exrelation$, such that $\rencodingof{\exrelation}$ is directed.
 	To this end, we observe that for any $\indindexofin{\insymbol}$ the tensor
-		\[  \onehotmapofat{\exrelation}{\indexedindvariableof{\insymbol},\indvariableof{\outsymbol}} \]
-	is a binary tensor with coordinate sum one and therefore a basis vector.
-	It follows that the function $\exfunction : \inset \rightarrow \outset $ 
-		\[ \exfunction(\indindexof{\insymbol}) = \invonehotmapof{\onehotmapofat{\exrelation}{\indexedindvariableof{\insymbol},\indvariableof{\outsymbol}} } \]
+	\begin{align*}
+		\onehotmapofat{\exrelation}{\indexedindvariableof{\insymbol},\indvariableof{\outsymbol}}
+	\end{align*}
+	is a boolean tensor with coordinate sum one and therefore a basis vector.
+	It follows that the function $\exfunction : \inset \rightarrow \outset $ defined for $x\in\inset$ as
+	\begin{align*}
+		\exfunctionat{x}
+		= \indexinterpretationofat{\outsymbol}{\invonehotmapof{\onehotmapofat{\exrelation}{\indvariableof{\insymbol}=\indexinterpretationofat{\insymbol}{x},\indvariableof{\outsymbol}}}}
+	\end{align*}
 	is well-defined.
 	We then have by construction
 	\begin{align*}
-		\rencodingof{\exfunction} 
-		= \sum_{\indindexofin{\insymbol}} \onehotmapof{\indindexof{\insymbol}} \otimes \onehotmapof{\exfunction(\indindexof{\insymbol})}
-		=  \sum_{\indindexofin{\insymbol}} \onehotmapof{\indindexof{\insymbol}} \otimes \onehotmapofat{\exrelation}{\indexedindvariableof{\insymbol},\indvariableof{\outsymbol}} 
-		= \onehotmapof{\exrelation}
+		\rencodingofat{\exfunction}{\indvariableof{\outsymbol},\indvariableof{\insymbol}}
+		& = \sum_{\indindexofin{\insymbol}}
+		\onehotmapofat{\exfunction(\indindexof{\insymbol})}{\indvariableof{\outsymbol}} \otimes
+		\onehotmapofat{\indindexof{\insymbol}}{\indvariableof{\insymbol}} \\
+		& =  \sum_{\indindexofin{\insymbol}} \onehotmapofat{\exrelation}{\indexedindvariableof{\insymbol},\indvariableof{\outsymbol}} \otimes
+		\onehotmapofat{\indindexof{\insymbol}}{\indvariableof{\insymbol}} \\
+		& = \onehotmapofat{\exrelation}{\indvariableof{\outsymbol},\indvariableof{\insymbol}}
 	\end{align*}
-	and therefore $\exrelation = \exrelationof{\exfunction}$.
-%	 with a directed encoding, directionality implies that for any $\incatindex$ there is exactly one $\outcatindex$ such that $\onehotmapto{\exrelation}[\indexedcatvariableof{\insymbol}\indexedcatvariableof{\outsymbol}]=1	
-%	Then we define a function $\exfunction$ as the mapping of $\incatindex$ to the corresponding $\outcatindex$ with $\onehotmapto{\exrelation}[\incatindex\outcatindex]=1$ and observe $\exrelation=\exrelationof{\exfunction}$.
+	and therefore by \defref{def:functionRelationEncoding} $\exrelation=\exrelationof{\exfunction}$.
 \end{proof}
 
 % Grid sets
@@ -215,108 +232,118 @@ Those state sets have a decomposition into a cartesian product of $\atomorder$ s
 The most obvious enumeration of the set $\arbset$ is therefore by the collection of state variables $\{\catvariableof{\atomenumerator} \, : \, \atomenumeratorin \}$.
 Functions between states of factored systems with $\atomorder_{\insymbol}$ and $\atomorder_{\outsymbol}$ state variables can be represented by $\atomorder_{\insymbol}+\atomorder_{\outsymbol}$-ary relations and \defref{def:functionRelationEncoding} has an obvious generalization to this case with multiple enumeration variables.
 
-
-% Conditional 
-Since the relational encoding of any map between factored systems is directed, it can be interpreted by a conditional probability tensor, as we state next.
-
-%% Maps
-\begin{corollary}%\label{the:condProbFunctionRepresentation}
-	The relational encoding $\rencodingof{\exfunction}$ (see \defref{def:functionRepresentation}) of a function $\exfunction$ between factored systems is a conditional probability tensor, where the legs to the image system are the conditions and the legs to the target system the distribution legs.
-\end{corollary}
-%\begin{proof}
-%	To proof the claim we need to show that contracting the trivial tensor to the target legs results in the trivial tensor of the image legs, that is
-%		\[ \onesof{\shortcatvariables} = \contractionof{\{\rencodingof{\exfunction}\}}{\shortcatvariables} \, . \]
-%	This can be shown coordinatewise by sums over the target legs as
-%	\begin{align*}
-%		\sum_{\seccatindices} \rencodingof{\exfunction}_{\seccatindices,:}
-%		 	= &  \sum_{\seccatindices} \sum_{\catindices}  \left(\onehotmapof{\exfunction(\catindices)}\right)_{\seccatindices} \otimes \onehotmapof{\catindices} \\
-%			= &  \sum_{\catindices} \onehotmapof{\catindices}  \\
-%			= &  \onesof{\shortcatvariables}  \, .
-%	\end{align*}
-%	Here we used in the second equality, that the function $\exfunction$ maps each index pair $(\catindices)$ of the image system to exactly one index pair $(\seccatindices)$ in the target system.
-%	In the third equality we further used that the sum of the one-hot encodings of all states is the trivial tensor.
-%\end{proof}
-
-%% Deterministic by construction
-These are deterministic conditional probability tensors, in the sense that any slice with respect to the input variables is a basis tensor.
-Through contractions with distribution tensors (e.g. distributions in domain systems) they get stochastic.
-This is for example the case in the empirical distribution, which can be understood as the forwarding of the uniform distribution on the sample enumeration.
-
-
-
-
-
-
-
-
-\sect{Calculus of relational encodings}
-
-
+%% NOT NEEDED -> Done in propositional logics
+%% Conditional
+%Since the relational encoding of any map between factored systems is directed, it can be interpreted by a conditional probability tensor, as we state next.
+%
+%%% Maps
+%\begin{corollary}%\label{the:condProbFunctionRepresentation}
+%	The relational encoding $\rencodingof{\exfunction}$ (see \defref{def:functionRepresentation}) of a function $\exfunction$ between factored systems is a conditional probability tensor, where the legs to the image system are the conditions and the legs to the target system the distribution legs.
+%\end{corollary}
+%
+%%% Deterministic by construction
+%These are deterministic conditional probability tensors, in the sense that any slice with respect to the input variables is a basis tensor.
+%Through contractions with distribution tensors (e.g. distributions in domain systems) they get stochastic.
+%This is for example the case in the empirical distribution, which can be understood as the forwarding of the uniform distribution on the sample enumeration.
 
 \subsect{Function Evaluation}
 
+We now justify the nomenclature of basis calculus, by showing that contraction with basis elements produce the one-hot encoded function evaluation.
+
 \begin{theorem}[Basis Calculus]\label{the:basisCalculus}
-	Retrieving the value of the function at a specific state is then the contraction of the tensor representation with the one-hot encoded state.
-	For any state indexed by $(\catindices)$ we have
-		\[ \onehotmapofat{\exformula(\catindices)}{\catvariableof{\exformula}} 
-		= \contractionof{\{\rencodingof{\exformula},\onehotmapof{\catindices}\}}{\catvariableof{\exformula}} \, .\]
+	Retrieving the value of the function $\exfunction$ at a specific state is then the contraction of the tensor representation with the one-hot encoded state.
+	For any $\arbelement\in\inset$ we have
+	\begin{align*}
+		\onehotmapofat{\invindexinterpretationofat{\outsymbol}{\exfunctionat{\arbelement}}}{\indvariableof{\outsymbol}}
+		= \contractionof{
+			\rencodingofat{\exformula}{\indvariableof{\outsymbol},\indvariableof{\insymbol}},
+			\onehotmapofat{\indexinterpretationofat{\insymbol}{\arbelement}}{\indvariableof{\insymbol}}
+		}{\indvariableof{\outsymbol}} \, .
+	\end{align*}
 	Thus, we can retrieve the function evaluation by the inverse one-hot mapping as
-		\[ \exformula(\catindices) 
-		= \invonehotmapof{\contractionof{\{\rencodingof{\exformula},\onehotmapof{\catindices}\}}{\catvariableof{\exformula}}} \, . \]
-	This generalizes Example~\ref{exa:atomicFunction} to arbitrary maps between factored systems.
+	\begin{align*}
+		\exfunctionat{\arbelement} = \invonehotmapof{\contractionof{
+			\rencodingofat{\exformula}{\indvariableof{\outsymbol},\indvariableof{\insymbol}},
+			\onehotmapofat{\indexinterpretationofat{\insymbol}{\arbelement}}{\indvariableof{\insymbol}}
+		}{\indvariableof{\outsymbol}}} \, .
+\end{align*}
 \end{theorem}
 \begin{proof}
-	By doing the summation in tensor product notation.
+	From the representation
+	\begin{align*}
+		\rencodingofat{\exfunction}{\indvariableof{\outsymbol},\indvariableof{\insymbol}}
+		& =  \sum_{\indindexofin{\insymbol}}
+			\onehotmapofat{(\invindexinterpretationof{\outsymbol} \circ \exfunction \circ \indexinterpretationof{\insymbol}) \indindexof{\insymbol}
+				}{\indvariableof{\insymbol}}
+			\otimes
+			\onehotmapofat{\indindexof{\insymbol}}{\indvariableof{\insymbol}}
+	\end{align*}
+	and the orthonormality of the one-hot encodings of the input enumeration we get
+	\begin{align*}
+		 \contractionof{
+			\rencodingofat{\exformula}{\indvariableof{\outsymbol},\indvariableof{\insymbol}},
+			\onehotmapofat{\indexinterpretationofat{\insymbol}{\arbelement}}{\indvariableof{\insymbol}}
+		}{\indvariableof{\outsymbol}}
+		= \onehotmapofat{\invindexinterpretationofat{\outsymbol}{\exfunctionat{\arbelement}}}{\indvariableof{\outsymbol}} \, .
+	\end{align*}
 \end{proof}
 
 %% Usage: Basis Calculus
 We can thus use tensor contractions to calculate the values of functions.
 Since basis vectors being the one-hot encoding of the domain system are mapped to basis vectors being the encoding of the image system, we call these contraction basis calculus.
 
+
+
+\sect{Calculus of relational encodings}
+
+We now show the utility of relational encodings for functions, by developing tensor network representation to composed functions.
+
 \subsect{Composition of function}
 
-We have already used, that combination of propositional formulas by connectives can be represented by contractions.
-In a more general perspective, any composition of functions between factored systems is in its relational encoding the contraction of the encoded functions.
+We have already used (see \theref{the:compositionByContraction}), that combination of propositional formulas by connectives can be represented by contractions.
+We now show in a more general perspective, that in basis calculus, any composition of functions in its relational encoding the contraction of the encoded functions.
 
 \begin{theorem}[Composition of Functions]\label{the:compositionByContraction}
 	Let there be two maps between factored systems 
-		\[ \exfunction : \bigtimes_{\node\in\nodes_1} [\catdimof{\node}] \rightarrow \bigtimes_{\node\in\nodes_2} [\catdimof{\node}] \]
+		\[ \exfunction : \bigtimes_{\node\in\nodesone} [\catdimof{\node}] \rightarrow \bigtimes_{\node\in\nodestwo} [\catdimof{\node}] \]
 	and 
-		\[ \secexfunction : \bigtimes_{\node\in\nodes_2} [\catdimof{\node}] \rightarrow \bigtimes_{\node\in\nodes_3} [\catdimof{\node}] \]
+		\[ \secexfunction : \bigtimes_{\node\in\nodestwo} [\catdimof{\node}] \rightarrow \bigtimes_{\node\in\nodes_3} [\catdimof{\node}] \]
 	with the image system of $\exfunction$ is the domain system of $\secexfunction$.
 	Then the relational encoding of the composition 
-		\[ \secexfunction(\exfunction) :  \bigtimes_{\node\in\nodes_1} [\catdimof{\node}] \rightarrow \bigtimes_{\node\in\nodes_3} [\catdimof{\node}] \]
+		\[ \secexfunction(\exfunction) :  \bigtimes_{\node\in\nodesone} [\catdimof{\node}] \rightarrow \bigtimes_{\node\in\nodes_3} [\catdimof{\node}] \]
 	satisfies
-		\[ \rencodingof{\secexfunction(\exfunction)} = \contractionof{\{\rencodingof{\exfunction},\rencodingof{\secexfunction}\}}{\nodes_1\cup\nodes_3} \, .  \]
+		\[ \rencodingof{\secexfunction(\exfunction)} = \contractionof{\{\rencodingof{\exfunction},\rencodingof{\secexfunction}\}}{\nodesone\cup\nodes_3} \, .  \]
 \end{theorem}
 \begin{proof}
 	By definition we have
 	\begin{align*}
-		\rencodingof{\secexfunction(\exfunction)} = \sum_{i_1 \in \bigtimes_{\node\in\nodes_1} [\catdimof{\node}]} \onehotmapof{i_1} \otimes \onehotmapof{\secexfunction(\exfunction(i_1))} \, ,
+		\rencodingof{\secexfunction(\exfunction)} = \sum_{\catindexof{\nodesone} \in \bigtimes_{\node\in\nodesone} [\catdimof{\node}]} \onehotmapof{\catindexof{\nodesone}} \otimes \onehotmapof{\secexfunction(\exfunction(\catindexof{\nodesone}))} \, ,
 	\end{align*}
-	where by $i_1$ we denote in a slide abuse of notation the tuple indexing the state of the domain factored systems of $\exfunction$.
+	where by $\catindexof{\nodesone}$ we denote in a slide abuse of notation the tuple indexing the state of the domain factored systems of $\exfunction$.
 	On the other side, we have that
 	\begin{align*}
-	 	\contractionof{\{\rencodingof{\exfunction},\rencodingof{\secexfunction}\}}{\catvariableof{\nodes_1}\catvariableof{\nodes_3}} 
+	 	\contractionof{\{\rencodingof{\exfunction},\rencodingof{\secexfunction}\}}{\catvariableof{\nodesone}\catvariableof{\nodes_3}}
 		& =
-		\sum_{\tilde{i}_2 \in \bigtimes_{\node\in\nodes_2}[\catdimof{\node}]} 
-		\left( \sum_{i_1 \in \bigtimes_{\node\in\nodes_1}[\catdimof{\node}]}  \onehotmapof{i_1} \cdot \left(\onehotmapof{\exfunction(i_1)}\right)_{\tilde{i}_2} \right)
-		\left( \sum_{i_2 \in \bigtimes_{\node\in\nodes_2}[\catdimof{\node}]}  \left(\onehotmapof{i_2}\right)_{\tilde{i}_2} \cdot \onehotmapof{\secexfunction(i_2)} \right) \\
+		\sum_{\seccatindexof{\nodestwo} \in \bigtimes_{\node\in\nodestwo}[\catdimof{\node}]}
+		\left( \sum_{\catindexof{\nodesone} \in \bigtimes_{\node\in\nodesone}[\catdimof{\node}]}  \onehotmapof{\catindexof{\nodesone}} \cdot \left(\onehotmapof{\exfunction(\catindexof{\nodesone})}\right)_{\seccatindexof{\nodestwo}} \right)
+		\left( \sum_{\catindexof{\nodestwo} \in \bigtimes_{\node\in\nodestwo}[\catdimof{\node}]}  \left(\onehotmapof{\catindexof{\nodestwo}}\right)_{\seccatindexof{\nodestwo}} \cdot \onehotmapof{\secexfunction(\catindexof{\nodestwo})} \right) \\
 		& = 
-		\sum_{\tilde{i}_2 \in \bigtimes_{\node\in\nodes_2}[\catdimof{\node}]} 
-		\left( \sum_{i_1 \in \bigtimes_{\node\in\nodes_1}[\catdimof{\node}]}  \onehotmapof{i_1} \cdot \delta_{\exfunction(i_1),\tilde{i}_2} \right)
-		\left( \sum_{i_2 \in \bigtimes_{\node\in\nodes_2}[\catdimof{\node}]}  \delta_{i_2 \tilde{i}_2} \cdot \onehotmapof{\secexfunction(i_2)} \right) \\
+		\sum_{\seccatindexof{\nodestwo} \in \bigtimes_{\node\in\nodestwo}[\catdimof{\node}]}
+		\left( \sum_{\catindexof{\nodesone} \in \bigtimes_{\node\in\nodesone}[\catdimof{\node}]}  \onehotmapof{\catindexof{\nodesone}} \cdot \delta_{\exfunction(\catindexof{\nodesone}),\seccatindexof{\nodestwo}} \right)
+		\left( \sum_{\catindexof{\nodestwo} \in \bigtimes_{\node\in\nodestwo}[\catdimof{\node}]}  \delta_{\catindexof{\nodestwo} \seccatindexof{\nodestwo}} \cdot \onehotmapof{\secexfunction(\catindexof{\nodestwo})} \right) \\
 		& = 
-		\sum_{i_1 \in \bigtimes_{\node\in\nodes_1}[\catdimof{\node}]}
-		\sum_{\tilde{i}_2 \in \bigtimes_{\node\in\nodes_2}[\catdimof{\node}]}  \delta_{\exfunction(i_1),\tilde{i}_2} \cdot \left(  \onehotmapof{i_1}   \otimes \onehotmapof{\secexfunction(i_2)} \right) \\
+		\sum_{\catindexof{\nodesone} \in \bigtimes_{\node\in\nodesone}[\catdimof{\node}]}
+		\sum_{\seccatindexof{\nodestwo} \in \bigtimes_{\node\in\nodestwo}[\catdimof{\node}]}  \delta_{\exfunction(\catindexof{\nodesone}),\seccatindexof{\nodestwo}} \cdot \left(  \onehotmapof{\catindexof{\nodesone}}   \otimes \onehotmapof{\secexfunction(\catindexof{\nodestwo})} \right) \\
 		& = 
-		\sum_{i_1 \in \bigtimes_{\node\in\nodes_1} [\catdimof{\node}]} 
-		\onehotmapof{i_1} \otimes \onehotmapof{\secexfunction(\exfunction(i_1))} \, .
+		\sum_{\catindexof{\nodesone} \in \bigtimes_{\node\in\nodesone} [\catdimof{\node}]}
+		\onehotmapof{\catindexof{\nodesone}} \otimes \onehotmapof{\secexfunction(\exfunction(\catindexof{\nodesone}))} \, .
 	\end{align*}
-	Here we represented the contraction of the variables in $\nodes_2$ by the summation over another index $i_2$.
-	In the last equation we used that the delta tensor does not vanish only for $\tilde{i}_2= \exfunction(i_1)$.
+	Here we represented the contraction of the variables in $\nodestwo$ by the summation over another index $\catindexof{\nodestwo}$.
+	In the last equation we used that the delta tensor does not vanish only for $\seccatindexof{\nodestwo}= \exfunction(\catindexof{\nodesone})$.
 	The claim follows, since both expressions are equal.
 \end{proof}
+
+%\red{This shows, that tensor network contractions of relational encodings commute with function compositions.}
 
 % Iterative usage
 We can use \theref{the:compositionByContraction} iteratively to further decompose the function $\secexfunction$.
@@ -329,29 +356,31 @@ The relational encoding of propositional formulas for instance can in this way b
 
 \subsect{Compositions with real functions}
 
-\red{Follows from composition calculus above with the usage of }
-	\[ \hypercore = \sbcontractionof{\rencodingof{\hypercore}, \restrictionofto{Id}{\imageof{\hypercore}} }{\shortcatvariables} \, . \]
-
-We here investigate how the composition of a tensor 
-	\[ \hypercore : \facstates \rightarrow \rr \]
-with arbitrary functions 
-	\[ \chainingfunction: \rr \rightarrow \rr \]
+We here investigate how the composition of a tensor
+\begin{align*}
+	\hypercore : \facstates \rightarrow \rr
+\end{align*}
+with arbitrary functions
+\begin{align*}
+	\chainingfunction: \rr \rightarrow \rr
+\end{align*}
 can be represented.
-This is for example relevant, when representing the distributions of an exponential family.
+This is for example relevant, when representing coordinatewise tensor transforms (see \secref{sec:coordinatewiseTransforms}) based on tensor network contractions.
 
 % Strategy
 Our main strategy is in understanding the tensor $\hypercore$ as a map to its finite image, seen as the enumerated states of a categorical variable building a factored system.
 We then use the relational encoding $\rencodingof{\hypercore}$ of this map between factored systems. 
 
 By $\restrictionofto{\chainingfunction}{\mathcal{M}}$ we further denote the restriction of a real function $\chainingfunction$ to an enumerated set $\mathcal{M} =\{x_i \, : \, i \in [\cardof{\mathcal{M}}]\} \subset \rr$, i.e. the vector
-	\[ \restrictionofto{\chainingfunction}{\mathcal{M}} : [\cardof{\mathcal{M}}] \rightarrow \rr \]
+	\[ \restrictionofto{\chainingfunction}{\mathcal{M}} : [\cardof{\mathcal{M}}] \rightarrow \rr \]
 defined for $i \in [\cardof{\mathcal{M}}]$ as
 	\[ \restrictionofto{\chainingfunction}{\mathcal{M}}(i) = \chainingfunction(x_i) \, . \]
 
 
 \begin{theorem}\label{the:tensorFunctionComposition}
-	We have for any tensor $\hypercore$ and real function $\chainingfunction$ (see Figure~\ref{fig:tensorFunctionComposition})
-		\[ \chainingfunction\circ\hypercore = \contractionof{\{\rencodingof{\hypercore}, \restrictionofto{\chainingfunction}{\imageof{\hypercore}}\}}{\shortcatvariables} \, . \]
+	We have for any tensor $\hypercore$ and real function $\chainingfunction$ (see \figref{fig:tensorFunctionComposition})
+		\[ (\chainingfunction\circ\hypercore)[\shortcatvariables]
+		= \contractionof{\rencodingof{\hypercore},\restrictionofto{\chainingfunction}{\imageof{\hypercore}}}{\shortcatvariables} \, . \]
 \end{theorem}
 \begin{proof}
 	We enumerate the image $\mathrm{im}(\hypercore)$ by $\{x_i \, : \, i \in [\cardof{\mathrm{im}(\hypercore)}]\}$.
@@ -383,7 +412,6 @@ defined for $i \in [\cardof{\mathcal{M}}]$ as
 	Directly by using $\chainingfunction=\mathrm{Id}$.
 \end{proof}
 
-
 \begin{corollary}\label{cor:onesHead}
 	For any tensor $\hypercore$, which is directed with $\shortcatvariables$ incoming, we have
 		\[ \onesat{\shortcatvariables} = \contractionof{\rencodingof{\hypercore}}{\shortcatvariables} \, . \]
@@ -394,21 +422,21 @@ defined for $i \in [\cardof{\mathcal{M}}]$ as
 
 % Replacement of Slicing Theorem
 \begin{corollary}\label{cor:directedTrafo}
-	Let $\basisslices$ be a directed and binary tensor with incoming variables being $\shortcatvariables$, and $\gentensor$ a tensor, which variables are the outgoing variables of $\basisslices$.
+	Let $\basisslices$ be a directed and boolean tensor with incoming variables being $\shortcatvariables$, and $\gentensor$ a tensor, which variables are the outgoing variables of $\basisslices$.
 	Let further $\coordinatetrafo:\rr\rightarrow\rr$ be any real function.
 	Then
-		\[ \coordinatetrafo \circ \contractionof{\{\basisslices,\gentensor\}}{\shortcatvariables} 
-		= \contractionof{\{\basisslices,\coordinatetrafo\circ \gentensor\}}{\shortcatvariables} \, . \]
+		\[ \coordinatetrafo \circ \contractionof{\basisslices,\gentensor}{\shortcatvariables}
+		= \contractionof{\basisslices,\coordinatetrafo\circ\gentensor}{\shortcatvariables} \, . \]
 \end{corollary}
 \begin{proof}
-	Since $\basisslices$ is a directed and binary tensor, we find a map
+	Since $\basisslices$ is a directed and boolean tensor, we find a map
 		\[ \exfunction : \facstates \rightarrow \secfacstates \]
 	such that $\basisslices=\rencodingof{\exfunction}$ and a map $V$ such that $\gentensor=\restrictionofto{V}{\imageof{\exfunction}}$.
 	Then \theref{the:tensorFunctionComposition} implies that
-		\[ \contractionof{\{\basisslices,\gentensor\}}{\shortcatvariables} = V \circ \exfunction \, . \]
+		\[ \contractionof{\basisslices,\gentensor}{\shortcatvariables} = V \circ \exfunction \, . \]
 	It follows that 
 	\begin{align*}
-		\coordinatetrafo \circ \contractionof{\{\basisslices,\gentensor\}}{\shortcatvariables} = \coordinatetrafo \circ V \circ \exfunction 
+		\coordinatetrafo \circ \contractionof{\basisslices,\gentensor}{\shortcatvariables} = \coordinatetrafo \circ V \circ \exfunction
 	\end{align*}
 	and by another application of Theorem~\ref{the:tensorFunctionComposition} that
 	\begin{align*}
@@ -637,10 +665,10 @@ The neural paradigm of Machine Learning describes the relevance of sparse functi
 
 % Neural Paradigm by Tensor Network Decompositions
 Our model of the neural paradigm are tensor network decompositions, seen as decomposition of functions into smaller functions, which take each other as input.
-Summations along input axis are avoided, when having directed and binary tensor networks with basis calculus interpretation.
+Summations along input axis are avoided, when having directed and boolean tensor networks with basis calculus interpretation.
 
 % Basis Calculus
-We have already observed in Theorem~\ref{the:basisCalculus}, that the value of discrete maps can be calculated by contractions of the directed binary relation encodings.
+We have already observed in Theorem~\ref{the:basisCalculus}, that the value of discrete maps can be calculated by contractions of the directed boolean relation encodings.
 This has been framed as Basis Calculus.
-What is more, tensor network decompositions into directed binary tensors correspond with representation of functions as compositions of smaller functions.
-We can understand each composition as marking a neuron in an architecture and thus have established a neural perspective on binary directed tensor networks.
+What is more, tensor network decompositions into directed boolean tensors correspond with representation of functions as compositions of smaller functions.
+We can understand each composition as marking a neuron in an architecture and thus have established a neural perspective on boolean directed tensor networks.

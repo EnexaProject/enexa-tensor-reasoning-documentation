@@ -444,13 +444,21 @@ Allowing for trivial leg vectors can decrease the CP rank, as we show next.
 
 \begin{theorem}
 	We have
-		\[ \baspluscprankof{\rencodingof{\exfunction}} \leq  \sum_{y \in \imageof{\exfunction}} \baspluscprankof{\ones_{\exfunction == y} } \, , \]
-	where by $\ones_{\exfunction == y} $ we denote the indicator, whether the function $\exfunction$ evaluates to $y$.
+		\[ \baspluscprankof{\rencodingof{\exfunction}} \leq  \sum_{\exfunctionimageelement\in\imageof{\exfunction}} \baspluscprankof{\onesof{\exfunction=\exfunctionimageelement} } \, , \]
+	where by $\onesof{\exfunction=\exfunctionimageelement}$ we denote the indicator, whether the function $\exfunction$ evaluates to $\exfunctionimageelement$, that is the tensor
+	\begin{align*}
+		\onesofat{\exfunction=\exfunctionimageelement}{\shortcatvariables} =
+		\begin{cases}
+			1 & \text{if} \quad \exfunctionat{\shortcatindices}=y \\
+			0 & \text{else} \, .
+		\end{cases}
+	\end{align*}
 \end{theorem}
 \begin{proof}
 	We have
-		\[ \rencodingof{\exfunction} = \sum_{y \in \imageof{\exfunction}} \ones_{\exfunction == y}[\catvariable]  \otimes \onehotmapofat{y}{\catvariableof{\exfunction}} \, . \]
-	For each $y \in \imageof{\exfunction}$ we represent $\onehotmapofat{y}{\catvariableof{\exfunction}}$ in an basis+ CP format with $\baspluscprankof{\ones_{\exfunction == y} } $ summands and arrive at a basis+ CP decomposition of $\rencodingof{\exfunction}$ with $\sum_{y \in \imageof{\exfunction}} \baspluscprankof{\ones_{\exfunction == y} } $ summands.
+		\[ \rencodingof{\exfunction} = \sum_{\exfunctionimageelement\in\imageof{\exfunction}} \onesof{\exfunction=\exfunctionimageelement}[\catvariable]
+		\otimes \onehotmapofat{\indexinterpretationat{\exfunctionimageelement}}{\headvariableof{\exfunction}} \, . \]
+	For each $\exfunctionimageelement\in\imageof{\exfunction}$ we represent $\onehotmapofat{\indexinterpretationat{\exfunctionimageelement}}{\headvariableof{\exfunction}}$ in an basis+ CP format with $\baspluscprankof{\onesof{\exfunction=\exfunctionimageelement} } $ summands and arrive at a basis+ CP decomposition of $\rencodingof{\exfunction}$ with $\sum_{\exfunctionimageelement\in\imageof{\exfunction}} \baspluscprankof{\onesof{\exfunction=\exfunctionimageelement} } $ summands.
 \end{proof}
 
 The above claim still holds when replacing $\baspluscprankof{\cdot}$ with the ranks $\bascprankof{\cdot}$ or $\bincprankof{\cdot}$.
@@ -861,13 +869,13 @@ We prove this claim more formally in the next theorem.
 	if and only if the indices $\seccatindex_{[\catorder+\decdim]}$ are feasible.
 	
 	Now, for any $\shortcatindices$, there is exactly one feasible index $\seccatindex_{[\catorder+\decdim]}$ extending $\shortcatindices$, and the objective takes for this index the value 
-	\begin{align}
+	\begin{align*}
 	 	 \sbcontraction{c[\selvariable], \statevectorofat{\shortcatindices}{\selvariable}} 
 		 &= \sum_{\decindexin} \slicescalarof{\decindex} \cdot \slackindexof{\decindex} \\
 		 &= \sum_{\decindexin} \slicescalarof{\decindex} \cdot \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 0} (1 - \catindexof{\seccatenumerator}^\decindex) \right)
 		\cdot \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 1}  \catindexof{\seccatenumerator}^\decindex \right)  \\
 		& = \hypercoreat{\indexedshortcatvariables} \, . 
-	 \end{align}
+	 \end{align*}
 	 Therefore, any solution of the ILP reduced to the first $\catorder$ indices corresponding with the axis of $\hypercore$, is a solution of the binary optimization problem to $\hypercore$.
 \end{proof}
 
@@ -890,7 +898,8 @@ We here provide a subspace perspective for the sparse representation of decompos
 
 \begin{definition}
 	Given any function $\exfunction$ on $\facstates$ we define its value subspace as 
-		\[ \subspaceof{\exfunction} = \left\{\sbcontractionof{\rencodingofat{\exfunction}{\catvariableof{\exfunction},\shortcatvariables},W[\catvariableof{\exfunction}]}{\shortcatvariables} \, : \, W[\catvariableof{\exfunction}] \in \rr^{\cardof{\imageof{\exfunction}}} \right\} \]
+		\[ \subspaceof{\exfunction}
+		= \left\{\sbcontractionof{\rencodingofat{\exfunction}{\headvariableof{\exfunction},\shortcatvariables},W[\headvariableof{\exfunction}]}{\shortcatvariables} \, : \, W[\headvariableof{\exfunction}] \in \rr^{\cardof{\imageof{\exfunction}}} \right\} \]
 \end{definition}
 
 Composition of functions $\exformula,\secexformula$ on distinct variables is then a choice of a subspace in the tensor product of the two function subspaces, that is
