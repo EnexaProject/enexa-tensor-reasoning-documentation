@@ -297,62 +297,72 @@ Since basis vectors being the one-hot encoding of the domain system are mapped t
 \sect{Calculus of relational encodings}
 
 We now show the utility of relational encodings for functions, by developing tensor network representation to composed functions.
+\red{We in this section use the notation of factored system representation, as developed in \parref{par:one} and enumerate states of factored systems by variables $\catvariable$ with states in $[\catdim]$, instead of combinations of variables $\indvariable$ with index interpretation functions $\indexinterpretation$ enumerating arbitrary sets.}
 
 \subsect{Composition of function}
 
-We have already used (see \theref{the:compositionByContraction}), that combination of propositional formulas by connectives can be represented by contractions.
+We have already used (see \theref{the:formulaDecomposition}), that combination of propositional formulas by connectives can be represented by contractions.
 We now show in a more general perspective, that in basis calculus, any composition of functions in its relational encoding the contraction of the encoded functions.
 
 \begin{theorem}[Composition of Functions]\label{the:compositionByContraction}
-	Let there be two maps between factored systems 
-		\[ \exfunction : \bigtimes_{\node\in\nodesone} [\catdimof{\node}] \rightarrow \bigtimes_{\node\in\nodestwo} [\catdimof{\node}] \]
-	and 
-		\[ \secexfunction : \bigtimes_{\node\in\nodestwo} [\catdimof{\node}] \rightarrow \bigtimes_{\node\in\nodes_3} [\catdimof{\node}] \]
+	Let there be two maps between factored systems
+	\begin{align*}
+		\exfunction : \nodestatesof{\nodesone} \rightarrow \nodestatesof{\nodestwo}
+	\end{align*}
+	and
+	\begin{align*}
+		\secexfunction : \nodestatesof{\nodestwo} \rightarrow \nodestatesof{\nodesthree}
+	\end{align*}
 	with the image system of $\exfunction$ is the domain system of $\secexfunction$.
-	Then the relational encoding of the composition 
-		\[ \secexfunction(\exfunction) :  \bigtimes_{\node\in\nodesone} [\catdimof{\node}] \rightarrow \bigtimes_{\node\in\nodes_3} [\catdimof{\node}] \]
-	satisfies
-		\[ \rencodingof{\secexfunction(\exfunction)} = \contractionof{\{\rencodingof{\exfunction},\rencodingof{\secexfunction}\}}{\nodesone\cup\nodes_3} \, .  \]
+	Then the relational encoding of the composition
+	\begin{align*}
+		\compositionof{\secexfunction}{\exfunction} : \nodestatesof{\nodesone} \rightarrow \nodestatesof{\nodesthree}
+	\end{align*}
+	is the contraction
+	\begin{align*}
+		\rencodingofat{\compositionof{\secexfunction}{\exfunction}}{\catvariableof{\nodesthree},\catvariableof{\nodesone}}
+		= \contractionof{
+			\rencodingofat{\secexfunction}{\catvariableof{\nodesthree},\catvariableof{\nodestwo}},
+			\rencodingofat{\exfunction}{\catvariableof{\nodestwo},\catvariableof{\nodesone}},
+		}{\catvariableof{\nodesthree},\catvariableof{\nodesone}} \, .
+	\end{align*}
 \end{theorem}
 \begin{proof}
-	By definition we have
+	By definition we have the relational encoding of the composition as
 	\begin{align*}
-		\rencodingof{\secexfunction(\exfunction)} = \sum_{\catindexof{\nodesone} \in \bigtimes_{\node\in\nodesone} [\catdimof{\node}]} \onehotmapof{\catindexof{\nodesone}} \otimes \onehotmapof{\secexfunction(\exfunction(\catindexof{\nodesone}))} \, ,
+		\rencodingofat{\compositionof{\secexfunction}{\exfunction}}{\catvariableof{\nodesthree},\catvariableof{\nodesone}}
+		= \sum_{\catindexof{\nodesone}\in\nodestatesof{\nodesone}}
+		\onehotmapofat{\compositionofat{\secexfunction}{\exfunction}{\catindexof{\nodesone}}}{\catvariableof{\nodesthree}} \otimes
+		\onehotmapofat{\catindexof{\nodesone}}{\catvariableof{\nodesone}}  \, .
 	\end{align*}
-	where by $\catindexof{\nodesone}$ we denote in a slide abuse of notation the tuple indexing the state of the domain factored systems of $\exfunction$.
-	On the other side, we have that
+	By using a similar representation for $\rencodingof{\secexfunction}$ and $\rencodingof{\exfunction}$ we now show, that this coincides with the contraction of these relational encodings with closed variables $\catvariableof{\nodestwo}$.
+	By the linearity of the contraction operation we get
 	\begin{align*}
-	 	\contractionof{\{\rencodingof{\exfunction},\rencodingof{\secexfunction}\}}{\catvariableof{\nodesone}\catvariableof{\nodes_3}}
-		& =
-		\sum_{\seccatindexof{\nodestwo} \in \bigtimes_{\node\in\nodestwo}[\catdimof{\node}]}
-		\left( \sum_{\catindexof{\nodesone} \in \bigtimes_{\node\in\nodesone}[\catdimof{\node}]}  \onehotmapof{\catindexof{\nodesone}} \cdot \left(\onehotmapof{\exfunction(\catindexof{\nodesone})}\right)_{\seccatindexof{\nodestwo}} \right)
-		\left( \sum_{\catindexof{\nodestwo} \in \bigtimes_{\node\in\nodestwo}[\catdimof{\node}]}  \left(\onehotmapof{\catindexof{\nodestwo}}\right)_{\seccatindexof{\nodestwo}} \cdot \onehotmapof{\secexfunction(\catindexof{\nodestwo})} \right) \\
-		& = 
-		\sum_{\seccatindexof{\nodestwo} \in \bigtimes_{\node\in\nodestwo}[\catdimof{\node}]}
-		\left( \sum_{\catindexof{\nodesone} \in \bigtimes_{\node\in\nodesone}[\catdimof{\node}]}  \onehotmapof{\catindexof{\nodesone}} \cdot \delta_{\exfunction(\catindexof{\nodesone}),\seccatindexof{\nodestwo}} \right)
-		\left( \sum_{\catindexof{\nodestwo} \in \bigtimes_{\node\in\nodestwo}[\catdimof{\node}]}  \delta_{\catindexof{\nodestwo} \seccatindexof{\nodestwo}} \cdot \onehotmapof{\secexfunction(\catindexof{\nodestwo})} \right) \\
-		& = 
-		\sum_{\catindexof{\nodesone} \in \bigtimes_{\node\in\nodesone}[\catdimof{\node}]}
-		\sum_{\seccatindexof{\nodestwo} \in \bigtimes_{\node\in\nodestwo}[\catdimof{\node}]}  \delta_{\exfunction(\catindexof{\nodesone}),\seccatindexof{\nodestwo}} \cdot \left(  \onehotmapof{\catindexof{\nodesone}}   \otimes \onehotmapof{\secexfunction(\catindexof{\nodestwo})} \right) \\
-		& = 
-		\sum_{\catindexof{\nodesone} \in \bigtimes_{\node\in\nodesone} [\catdimof{\node}]}
-		\onehotmapof{\catindexof{\nodesone}} \otimes \onehotmapof{\secexfunction(\exfunction(\catindexof{\nodesone}))} \, .
+		\contractionof{\rencodingof{\exfunction},\rencodingof{\secexfunction}}{\catvariableof{\nodesthree},\catvariableof{\nodesone}}
+		& = \sum_{\catindexof{\nodesone}\in\bigtimes_{\node\in\nodesone}[\catdimof{\node}]}
+			\sum_{\catindexof{\nodestwo} \in \bigtimes_{\node\in\nodestwo}[\catdimof{\node}]}
+			\breakablecontractionof{
+				\left( \onehotmapofat{\secexfunctionat{\catindexof{\nodestwo}}}{\catvariableof{\nodesthree}} \otimes
+				\onehotmapofat{\catindexof{\nodestwo}}{\catvariableof{\nodestwo}} \right), \\
+				& \hspace{4.5cm} \left( \onehotmapofat{\exfunctionat{\catindexof{\nodesone}}}{\catvariableof{\nodestwo}} \otimes
+				\onehotmapofat{\catindexof{\nodesone}}{\catvariableof{\nodesone}} \right)
+			}{\catvariableof{\nodesthree},\catvariableof{\nodesone}} \\
+		& = \sum_{\catindexof{\nodesone}\in\bigtimes_{\node\in\nodesone}[\catdimof{\node}]}
+			\delta_{\catindexof{\nodestwo},\catindexof{\nodesone}} \, \cdot \,
+			\onehotmapofat{\secexfunctionat{\catindexof{\nodestwo}}}{\catvariableof{\nodesthree}} \otimes
+			\onehotmapofat{\catindexof{\nodesone}}{\catvariableof{\nodesone}} \\
+		& = \sum_{\catindexof{\nodesone}\in\nodestatesof{\nodesone}}
+		\onehotmapofat{\compositionofat{\secexfunction}{\exfunction}{\catindexof{\nodesone}}}{\catvariableof{\nodesthree}} \otimes
+		\onehotmapofat{\catindexof{\nodesone}}{\catvariableof{\nodesone}} \\
+		& = \rencodingofat{\compositionof{\secexfunction}{\exfunction}}{\catvariableof{\nodesthree},\catvariableof{\nodesone}} \, ,
 	\end{align*}
-	Here we represented the contraction of the variables in $\nodestwo$ by the summation over another index $\catindexof{\nodestwo}$.
-	In the last equation we used that the delta tensor does not vanish only for $\seccatindexof{\nodestwo}= \exfunction(\catindexof{\nodesone})$.
-	The claim follows, since both expressions are equal.
+	where we exploited the orthonormality of the one-hot encodings to the states of $\catvariableof{\nodestwo}$, which contraction thus results in the delta symbol $\delta$ applied on the respective states.
 \end{proof}
-
-%\red{This shows, that tensor network contractions of relational encodings commute with function compositions.}
 
 % Iterative usage
 We can use \theref{the:compositionByContraction} iteratively to further decompose the function $\secexfunction$.
 In this way, the relational encoding of a function consistent of multiple compositions can be represented as the contractions of all the functions.
-The relational encoding of propositional formulas for instance can in this way be represented as a contraction of the encodings of its logical connectives applied on the respective formula spaces. 
-%It is thereby of central importance that for any connective a respective variable is added, which then disappears in the contractions.
-
-
-
+This has been applied in \theref{the:formulaDecomposition} to efficiently represent propositional formulas, for which syntactical expressions are given.
 
 \subsect{Compositions with real functions}
 
@@ -366,33 +376,37 @@ with arbitrary functions
 \end{align*}
 can be represented.
 This is for example relevant, when representing coordinatewise tensor transforms (see \secref{sec:coordinatewiseTransforms}) based on tensor network contractions.
-
 % Strategy
-Our main strategy is in understanding the tensor $\hypercore$ as a map to its finite image, seen as the enumerated states of a categorical variable building a factored system.
-We then use the relational encoding $\rencodingof{\hypercore}$ of this map between factored systems. 
+%Our main strategy is in understanding the tensor $\hypercore$ as a map to its finite image, seen as the enumerated states of a categorical variable building a factored system.
+To this end we understand the tensor $\hypercoreat{\shortcatvariables}$ as a map of the states $\facstates$ onto its by a variable $\indvariableof{\hypercore}$ and index interpretation $\indexinterpretation$ enumerated image $\imageof{\hypercore}$.
+We then define the restriction of $\chainingfunction$ onto $\imageof{\hypercore}$ as the tensor $\restrictionofto{\chainingfunction}{\imageof{\hypercore}}\left[\indvariableof{\hypercore}\right]$ with coordinates $\indindexof{\hypercore}$
+\begin{align*}
+	\restrictionofto{\chainingfunction}{\imageof{\hypercore}}\left[\indexedindvariableof{\hypercore}\right]
+	= \compositionofat{\chainingfunction}{\indexinterpretation}{\indindexof{\hypercore}} \, .
+\end{align*}
 
-By $\restrictionofto{\chainingfunction}{\mathcal{M}}$ we further denote the restriction of a real function $\chainingfunction$ to an enumerated set $\mathcal{M} =\{x_i \, : \, i \in [\cardof{\mathcal{M}}]\} \subset \rr$, i.e. the vector
-	\[ \restrictionofto{\chainingfunction}{\mathcal{M}} : [\cardof{\mathcal{M}}] \rightarrow \rr \]
-defined for $i \in [\cardof{\mathcal{M}}]$ as
-	\[ \restrictionofto{\chainingfunction}{\mathcal{M}}(i) = \chainingfunction(x_i) \, . \]
+%By $\restrictionofto{\chainingfunction}{\mathcal{M}}$ we further denote the restriction of a real function $\chainingfunction$ to an enumerated set $\mathcal{M} =\{x_i \, : \, i \in [\cardof{\imageof{\hypercore}}]\} \subset \rr$, i.e. the vector
+%	\[ \restrictionofto{\chainingfunction}{\mathcal{M}} : [\cardof{\mathcal{M}}] \rightarrow \rr \]
+%defined for $i \in [\cardof{\mathcal{M}}]$ as
+%	\[ \restrictionofto{\chainingfunction}{\mathcal{M}}(i) = \chainingfunction(x_i) \, . \]
 
 
 \begin{theorem}\label{the:tensorFunctionComposition}
-	We have for any tensor $\hypercore$ and real function $\chainingfunction$ (see \figref{fig:tensorFunctionComposition})
-		\[ (\chainingfunction\circ\hypercore)[\shortcatvariables]
-		= \contractionof{\rencodingof{\hypercore},\restrictionofto{\chainingfunction}{\imageof{\hypercore}}}{\shortcatvariables} \, . \]
+	The coordinatewise transform of any tensor $\hypercore$ (see \defref{def:coordinatewiseTransform}) by a real function $\chainingfunction$ is the contraction (see \figref{fig:tensorFunctionComposition})
+	\begin{align*}
+		\chainingfunction(\hypercore)[\shortcatvariables]
+		= \contractionof{\rencodingofat{\hypercore}{\indvariableof{\hypercore},\shortcatvariables},\restrictionofto{\chainingfunction}{\imageof{\hypercore}}\left[\indvariableof{\hypercore}\right] }{\shortcatvariables} \, .
+	\end{align*}
 \end{theorem}
 \begin{proof}
-	We enumerate the image $\mathrm{im}(\hypercore)$ by $\{x_i \, : \, i \in [\cardof{\mathrm{im}(\hypercore)}]\}$.
-	For arbitrary but fixed $\catindices\in\facstates$ let $\tilde{i}$ be such that $\hypercore(\catindices) = x_i$.
-	Then we have for $\randomxof{\hypercore}$ denoting the image variable of $\rencodingof{\hypercore}$ that
-		\[ \contractionof{\{\rencodingof{\hypercore},\onehotmapof{\catindices}\}}{\{\randomxof{\hypercore}\}} = \onehotmapof{\tilde{i}} \]
-	and
-		\[ \contractionof{\{\rencodingof{\hypercore}, \restrictionofto{\chainingfunction}{\imageof{\hypercore}}, \onehotmapof{\catindices}\}}{\varnothing} = 
-		\contractionof{\{\restrictionofto{\chainingfunction}{\imageof{\hypercore}}, \onehotmapof{\tilde{i}}\}}{\varnothing} = 
-		\chainingfunction(\hypercore(\catindices)) \, . 
-		\]
-	Since $\catindices$ was chosen arbitrarly form $\facstates$, this shows that $\chainingfunction\circ\hypercore$ and $ \contractionof{\{\rencodingof{\hypercore}, \restrictionofto{\chainingfunction}{\imageof{\hypercore}}\}}{\shortcatvariables}$ coincide on all inputs and are thus equal.
+	By the basis calculus \theref{the:basisCalculus} we have for any state $\shortcatindices\in\facstates$, that
+	\begin{align*}
+		\contractionof{\rencodingofat{\hypercore}{\indvariableof{\hypercore},\shortcatvariables},\restrictionofto{\chainingfunction}{\imageof{\hypercore}}\left[\indvariableof{\hypercore}\right]}{\indexedshortcatvariables}
+		&= \contraction{\rencodingofat{\hypercore}{\indvariableof{\hypercore},\indexedshortcatvariables},\restrictionofto{\chainingfunction}{\imageof{\hypercore}}\left[\indvariableof{\hypercore}\right]} \\
+		& = \contraction{\onehotmapofat{\indexinterpretationof{\hypercoreat{\indexedshortcatvariables}}}{\indvariableof{\hypercore}},\restrictionofto{\chainingfunction}{\imageof{\hypercore}}\left[\indvariableof{\hypercore}\right]} \\
+		& = \chainingfunction(\hypercore)[\indexedshortcatvariables] \, .
+	\end{align*}
+	Since both tensors coincide on all coordinates, they are equal.
 \end{proof}
 
 \begin{figure}[h]
@@ -406,10 +420,16 @@ defined for $i \in [\cardof{\mathcal{M}}]$ as
 
 \begin{corollary}\label{cor:rhoToNormal}
 	For any tensor $\hypercoreat{\shortcatvariables}$ we have
-		\[ \hypercoreat{\shortcatvariables} = \contractionof{\rencodingof{\hypercore},\idrestrictedto{\imageof{\hypercore}}}{\shortcatvariables} \, . \]
+	\begin{align*}
+		\hypercoreat{\shortcatvariables}
+		= \contractionof{\rencodingofat{\hypercore}{\indvariableof{\hypercore},\shortcatvariables},\idrestrictedto{\imageof{\hypercore}}\left[\indvariableof{\hypercore}\right]}{\shortcatvariables} \, .
+	\end{align*}
 \end{corollary}
 \begin{proof}
-	Directly by using $\chainingfunction=\mathrm{Id}$.
+	This follows from \theref{the:tensorFunctionComposition} using $\chainingfunction=\idsymbol$ and by noticing that
+	\begin{align*}
+		\hypercoreat{\shortcatvariables} = \idsymbol(\hypercore)[\shortcatvariables] \, .
+	\end{align*}
 \end{proof}
 
 \begin{corollary}\label{cor:onesHead}
@@ -417,161 +437,127 @@ defined for $i \in [\cardof{\mathcal{M}}]$ as
 		\[ \onesat{\shortcatvariables} = \contractionof{\rencodingof{\hypercore}}{\shortcatvariables} \, . \]
 \end{corollary}
 \begin{proof}
-	Directly by using $\chainingfunction=\ones$.
-\end{proof}
-
-% Replacement of Slicing Theorem
-\begin{corollary}\label{cor:directedTrafo}
-	Let $\basisslices$ be a directed and boolean tensor with incoming variables being $\shortcatvariables$, and $\gentensor$ a tensor, which variables are the outgoing variables of $\basisslices$.
-	Let further $\coordinatetrafo:\rr\rightarrow\rr$ be any real function.
-	Then
-		\[ \coordinatetrafo \circ \contractionof{\basisslices,\gentensor}{\shortcatvariables}
-		= \contractionof{\basisslices,\coordinatetrafo\circ\gentensor}{\shortcatvariables} \, . \]
-\end{corollary}
-\begin{proof}
-	Since $\basisslices$ is a directed and boolean tensor, we find a map
-		\[ \exfunction : \facstates \rightarrow \secfacstates \]
-	such that $\basisslices=\rencodingof{\exfunction}$ and a map $V$ such that $\gentensor=\restrictionofto{V}{\imageof{\exfunction}}$.
-	Then \theref{the:tensorFunctionComposition} implies that
-		\[ \contractionof{\basisslices,\gentensor}{\shortcatvariables} = V \circ \exfunction \, . \]
-	It follows that 
+	This follows from \theref{the:tensorFunctionComposition} using $\chainingfunction=\ones$ and by noticing that
 	\begin{align*}
-		\coordinatetrafo \circ \contractionof{\basisslices,\gentensor}{\shortcatvariables} = \coordinatetrafo \circ V \circ \exfunction
+		\onesat{\shortcatvariables} = \ones(\hypercore)[\shortcatvariables] \, .
 	\end{align*}
-	and by another application of Theorem~\ref{the:tensorFunctionComposition} that
-	\begin{align*}
-		\coordinatetrafo \circ V \circ \exfunction
-		& = \contractionof{\rencodingof{\exfunction}, \restrictionofto{\coordinatetrafo \circ V}{\imageof{\exfunction}}}{\shortcatvariables} \\
-		& = \contractionof{\{\basisslices,\coordinatetrafo\circ\gentensor\}}{\shortcatvariables} \, . 
-	\end{align*}
-	The claim follows as a combination of both equations.
 \end{proof}
 
 
-
-\begin{example}[Shannon entropy of empirical distribution]
+%% COULD STATE SLICING THEOREM AS A COMPOSITION OF CHAININGS! But unclear, wheter needed
 %\begin{theorem}
-	The Shannon entropy of an empirical distribution can be efficiently computed by contraction of the datatensor with itself along the atom indices, then applying a coordinatewise $\ln$ and averaging.
+%	\begin{align*}
+%		\coordinatetrafowrtofat{\chainingfunction}{\contractionof{\exvector[\indvariableof{\exfunction}],\rencodingofat{\hypercore}{\indvariableof{\exfunction},\shortcatvariables}}{\shortcatvariables}}{\shortcatvariables}
+%		= \coordinatetrafowrtofat{\left(\coordinatetrafowrtofat{\chainingfunction}{\exvector}{\indvariableof{\exfunction}}\right)}{\hypercore}{\shortcatvariables}
+%	\end{align*}
 %\end{theorem}
-
 %\begin{proof}
-	This follows from commutations of contraction and coordinatewise contraction (see Corollary~\ref{cor:directedTrafo}), using that the datacores are directed. 
-	%Theorem~\ref{the:CoordinateTransform}, since the datatensor is a slicewise basis tensor.
-	To be more precise, let $\secdatamap$ be a copy of $\datamap$ with identical image space and copied domain space.
-	Then $\secdatacoreof{\atomenumerator}$ are tensor cores with identical outgoing legs to $\datacoreof{\atomenumerator}$, but different incoming legs.
-	We have that
-	\begin{align*}
-		\sentropyof{\empdistribution} 
-		& = \contractionof{\{\datacoreof{\atomenumerator}\, : \, \atomenumeratorin\} \cup \{\frac{1}{\datanum}\ones \} \cup \{-\ln \contractionof{\{\secdatacoreof{\atomenumerator}\, : \, \atomenumeratorin\} \cup \{\frac{1}{\datanum}\ones \}}{\shortcatvariables} \} }{\varnothing} \\
-		& = \contractionof{
-		 \left\{\frac{1}{\datanum}\ones, -\ln \contractionof{\{\datacoreof{\atomenumerator},\secdatacoreof{\atomenumerator}\, : \, \atomenumeratorin\} \cup \{\frac{1}{\datanum}\ones \}}{\shortcatvariables} \right\}
-		}{\varnothing}
-	\end{align*}
-	where in the second equation we used Corollary~\ref{cor:directedTrafo}.
+%	Simply by compositions of transforms.
 %\end{proof}
-\end{example}
+%
+%
+%% Replacement of Slicing Theorem
+%\begin{corollary}\label{cor:directedTrafo}
+%	Let $\basisslices$ be a directed and boolean tensor with incoming variables being $\shortcatvariables$, and $\gentensor$ a tensor, which variables are the outgoing variables of $\basisslices$.
+%	Let further $\chainingfunction:\rr\rightarrow\rr$ be any real function.
+%	Then
+%		\[ \chainingfunction \circ \contractionof{\basisslices,\gentensor}{\shortcatvariables}
+%		= \contractionof{\basisslices,\chainingfunction\circ\gentensor}{\shortcatvariables} \, . \]
+%\end{corollary}
+%\begin{proof}
+%	Since $\basisslices$ is a directed and boolean tensor, we find a map
+%		\[ \exfunction : \facstates \rightarrow \secfacstates \]
+%	such that $\basisslices=\rencodingof{\exfunction}$ and a map $V$ such that $\gentensor=\restrictionofto{V}{\imageof{\exfunction}}$.
+%	Then \theref{the:tensorFunctionComposition} implies that
+%		\[ \contractionof{\basisslices,\gentensor}{\shortcatvariables} = V \circ \exfunction \, . \]
+%	It follows that
+%	\begin{align*}
+%		\chainingfunction \circ \contractionof{\basisslices,\gentensor}{\shortcatvariables} = \chainingfunction \circ V \circ \exfunction
+%	\end{align*}
+%	and by another application of Theorem~\ref{the:tensorFunctionComposition} that
+%	\begin{align*}
+%		\chainingfunction \circ V \circ \exfunction
+%		& = \contractionof{\rencodingof{\exfunction}, \restrictionofto{\chainingfunction \circ V}{\imageof{\exfunction}}}{\shortcatvariables} \\
+%		& = \contractionof{\basisslices,\chainingfunction\circ\gentensor}{\shortcatvariables} \, .
+%	\end{align*}
+%	The claim follows as a combination of both equations.
+%\end{proof}
+
+
+
+
 
 \subsect{Decomposition in case of structured images}
 
-\red{Here the introduction of multiple head variables, i.e. when}
-	\[ \outset = \bigtimes_{\catenumeratorin} \arbsetof{\catenumerator}\]
-\red{This is the case for the empirical distributions!}
+When a set is structured as the cartesian product of other sets, that is
+\begin{align*}
+	\outset = \bigtimes_{\catenumeratorin} \arbsetof{\catenumerator} \, ,
+\end{align*}
+we can enumerate it by a collection $\{\indvariableof{\catenumerator} \, : \, \catenumeratorin\}$ of enumeration variables, each with respective index interpretation maps.
+When the image of a function admits such a cartesian representation, we now show that the relational encoding can be represented by a contraction of relational encodings to each image coordinate.
 
-
-When the image admits a cartesian representation, the relational encoding can be represented by a contraction of relational encodings to each image coordinate.
-
-\begin{theorem}\label{the:functionDecompositionBasisCP}
+\begin{theorem}\label{the:functionImageDecompositionContraction}
 	Let $\exfunction$ be a function between factored systems
-		\[ \exfunction : [\catdim] \rightarrow  \facstates \]
-	and denote by
-		\[ \exfunction^\atomenumerator : [\catdim] \rightarrow [\catdimof{\atomenumerator}]\]
-	the restrictions of $\exfunction$ to axes of $\facstates$.
-	We assign the variable $\catvariable$ to the factored system in the domain system of $\exfunction$ and the variables $\catvariableof{\atomenumerator}$ for $\atomenumeratorin$ to the image system of $\exfunction$.
-	
-	We then have
 	\begin{align*}
-		\rencodingofat{\exfunction}{\catvariable,\shortcatvariables}  
-		= \contractionof{
-		\{\rencodingofat{\exfunction^{\atomenumerator}}{\catvariable,\catvariableof{\atomenumerator}} : \atomenumeratorin \} 
-		}{\catvariable,\shortcatvariables} \, . 
+		\exfunction : [\catdim] \rightarrow  \facstates
 	\end{align*}
-%	and 
-%		\[ \baspluscprankof{\rencodingof{\exfunction}} \leq \catdim \, . \]
+	and denote by
+	\begin{align*}
+		\exfunctionof{\catenumerator} : [\catdim] \rightarrow [\catdimof{\catenumerator}]
+	\end{align*}
+	the image coordinate restrictions of $\exfunction$, that is we have $\exfunction=(\exfunctionof{0},\ldots,\exfunctionof{\catorder-1})$.
+	Let us assign the variable $\catvariable$ to the factored system in the domain system of $\exfunction$ and the variables $\catvariableof{\atomenumerator}$ for $\atomenumeratorin$ to the image system of $\exfunction$.
+	We can then decompose the relational encoding of $\exfunction$ into the relational encodings of its image coordinate restrictions, that is
+	\begin{align*}
+		\rencodingofat{\exfunction}{\shortcatvariables,\catvariable}
+		= \contractionof{
+		\{\rencodingofat{\exfunctionof{\atomenumerator}}{\catvariableof{\atomenumerator},\catvariable} : \atomenumeratorin \} 
+		}{\shortcatvariables,\catvariable} \, .
+	\end{align*}
 \end{theorem}
 \begin{proof}
-	
-	We have 
+	For any $\catindexin$ we have
 	\begin{align*}
-		\rencodingofat{\exfunction}{\catvariable,\shortcatvariables}  
-		= \contractionof{
-		\{\rencodingofat{\exfunction^{\atomenumerator}}{\catvariable,\catvariableof{\atomenumerator}} : \atomenumeratorin \} 
-		}{\catvariable,\shortcatvariables}
+		\rencodingofat{\exfunction}{\shortcatvariables,\indexedcatvariable}
+		&= \onehotmapofat{\exfunctionat{\catindex}}{\shortcatvariables} \\
+		&= \bigotimes_{\atomenumeratorin} \rencodingofat{\exfunctionof{\atomenumerator}}{\catvariableof{\atomenumerator},\indexedcatvariable} \\
+		&= \contractionof{
+		\{\rencodingofat{\exfunctionof{\atomenumerator}}{\catvariableof{\atomenumerator},\indexedcatvariable} : \atomenumeratorin\}
+		}{\shortcatvariables} \\
+		&= \contractionof{
+		\{\rencodingofat{\exfunctionof{\atomenumerator}}{\catvariableof{\atomenumerator},\catvariable} : \atomenumeratorin\}
+		}{\shortcatvariables,\indexedcatvariable}
 	\end{align*}
-	since for any $\catindex\in[\catdim]$ 
-	\begin{align*}
-		\rencodingofat{\exfunction}{\catvariable=\catindex,\shortcatvariables}  
-		= \bigotimes_{\atomenumeratorin} \rencodingofat{\exfunction^{\atomenumerator}}{\catvariable=\catindex,\catvariableof{\atomenumerator}}
-		= \contractionof{
-		\{\rencodingofat{\exfunction^{\atomenumerator}}{\catvariable,\catvariableof{\atomenumerator}} : \atomenumeratorin \} 
-		}{\catvariable=\catindex,\shortcatvariables} \, . 
-	\end{align*}
-	
-	To get a representation in the basis CP format, we rename the variable $\catvariable$ in the cores $\rencodingofat{\exfunction^{\atomenumerator}}{\catvariable,\catvariableof{\atomenumerator}}$ by $\decvariable$ and observe that for a trivial scalar core $\onesat{\decvariable}$ 
-	\begin{align*}
-		\contractionof{
-		\{\rencodingofat{\exfunction^{\atomenumerator}}{\catvariable,\catvariableof{\atomenumerator}} : \atomenumeratorin \} 
-		}{\catvariable,\shortcatvariables} 
-		=
-		\contractionof{ 
-		\{\onesat{\decvariable}\} \cup \{\rencodingofat{\exfunction^{\atomenumerator}}{\decvariable,\catvariableof{\atomenumerator}} : \atomenumeratorin \} \cup \{\identityat{\catvariable,\decvariable}\}
-		}{\catvariable,\shortcatvariables}  \, . 
-	\end{align*}
-	
-%	It suffices to show for any $\catindex\in[\catdim]$ we have
-%		\[ \contractionof{\{\rencodingof{\exfunction},\onehotmapof{\catindex}\}}{\shortcatvariables} =
-%		 	\contractionof{\{\rencodingof{\exfunction^\atomenumerator} \, : \, \atomenumeratorin\}\cup\{\onehotmapof{\catindex}\}}{\shortcatvariables} \, .
-%		  \]
-%	But this holds, since
-%	\begin{align*} 
-%		\contractionof{\{\rencodingof{\exfunction},\onehotmapof{\catindex}\}}{\shortcatvariables}
-%			& = \bigotimes_{\atomenumeratorin} \onehotmapof{\exfunction^{\atomenumerator}(\catindex)} \\
-%			& = \bigotimes_{\atomenumeratorin} \contractionof{\{\rencodingof{\exfunction^\atomenumerator},\onehotmapof{\catindex}\}}{\randomxof{\atomenumerator}} \\
-%			& = \contractionof{\{\rencodingof{\exfunction^\atomenumerator} \, : \, \atomenumeratorin \}\cup\{\onehotmapof{\catindex}\}}{\shortcatvariables} \, .
-%	\end{align*}
+	and therefore equality of both tensors.
 \end{proof}
 
-
-
+% Continue discussion in Sparse TC
+In \charef{cha:sparseTC} we will apply \theref{the:functionImageDecompositionContraction} in \theref{the:functionDecompositionBasisCP} to show sparse basis CP decompositions to $\rencodingof{\exfunction}$.
+These decompositions are then applied for efficient the representation of empirical distribution, which involve the relational encoding of data maps (see \exaref{exa:empDistCP}), and for exponential families, which statistics have images, which are included in cartesian products of the images to each coordinate (see \exaref{exa:expFamCP}).
 
 
 \sect{Effective Coordinate Calculus}\label{sec:effectiveCalculus} % -> Part III
 
 % Motivation: Effective Coordinate Calculus
-\red{In some situations, we can perform basis calculus by coordinate calculus (see \defref{def:coordinateCalculus}).
-This includes conjunctions, which correspond with coordiantewise multiplication, and negation, which correspond with coordinatewise substraction from 1.}
-
-\red{These schemes are applied for example in \cite{tsilionis_tensor-based_2024}.}
-
-% Calculus against the direction
-\red{In an alternative perspective, effective calculus amounts to an contraction against the directionality of the relational encodings.}
-For specific functions, slices of the relational encodings with respect to head variables are basis vectors.
-In that case, we can perform basis calculus in the inverse direction than suggested by the directions of the tensors.
-We examplify this situation in the following theorem for relational encodings of logical conjunctions and negations.
+In some situations, we can perform basis calculus more effectively by avoiding image enumeration variables, and instead apply coordinatewise transforms on tensors (see \defref{def:coordinatewiseTransform}).
+As we show here, these include conjunctions, which correspond with coordinatewise multiplication, and negation, which correspond with coordinatewise substraction from 1.
+Such schemes are applied for example in \cite{tsilionis_tensor-based_2024} in batchwise logical inference.
 
 \begin{figure}
 \begin{center}
 	\input{./PartIII/tikz_pics/basis_calculus/skeleton_elements.tex}
 \end{center}
-\caption{Decomposition schemes by effecitve calculus. a) Conjunction, b) Negations.}\label{fig:ConNegDecomposition}
+\caption{Decomposition schemes by effective calculus, using coordinatewise transforms of tensors (see \defref{def:coordinatewiseTransform}).
+	a) Conjunction performed by coordinatewise multiplications, b) Negations performed by coordinatewise substraction from one.}\label{fig:ConNegDecomposition}
 \end{figure}
 
 \begin{theorem}\label{the:effectiveConjunction}
 	For any formulas $\exformula,\secexformula$ we have
 	\begin{align*}
 		\sbcontractionof{
-			\rencodingofat{\land}{\catvariableof{\exformula\land\secexformula},\catvariableof{\exformula},\catvariableof{\secexformula}},\onehotmapofat{1}{\catvariableof{\exformula\land\secexformula}}
+			\rencodingofat{\land}{\headvariableof{\exformula\land\secexformula},\catvariableof{\exformula},\catvariableof{\secexformula}},\tbasisat{\headvariableof{\exformula\land\secexformula}}
 		}{\catvariableof{\exformula},\catvariableof{\secexformula}}
-		= \onehotmapofat{1}{\catvariableof{\exformula}} \otimes \onehotmapofat{1}{\catvariableof{\secexformula}} \, . 
+		= \tbasisat{\catvariableof{\exformula}} \otimes \tbasisat{\catvariableof{\secexformula}} \, . 
 	\end{align*}
 	In particular, it holds that (see Figure~\ref{fig:ConNegDecomposition}a)
 	\begin{align*}
@@ -581,19 +567,19 @@ We examplify this situation in the following theorem for relational encodings of
 \begin{proof}
 	We decompose 
 	\begin{align*}
-		\rencodingofat{\land}{\catvariableof{\exformula\land\secexformula},\catvariableof{\exformula},\catvariableof{\secexformula}}
-		= \onehotmapofat{1}{\catvariableof{\exformula\land\secexformula}} \otimes \onehotmapofat{1}{\catvariableof{\exformula}} \otimes \onehotmapofat{1}{\catvariableof{\secexformula}}
-		+ \onehotmapofat{0}{\catvariableof{\exformula\land\secexformula}} \left( \onesat{\catvariableof{\exformula},\onesat{\catvariableof{\secexformula}}} -  \onehotmapofat{1}{\catvariableof{\exformula}} \otimes \onehotmapofat{1}{\catvariableof{\secexformula}} \right) 
+		\rencodingofat{\land}{\headvariableof{\exformula\land\secexformula},\catvariableof{\exformula},\catvariableof{\secexformula}}
+		= \tbasisat{\headvariableof{\exformula\land\secexformula}} \otimes \tbasisat{\catvariableof{\exformula}} \otimes \tbasisat{\catvariableof{\secexformula}}
+		+ \fbasisat{\headvariableof{\exformula\land\secexformula}} \left( \onesat{\catvariableof{\exformula},\catvariableof{\secexformula}} -  \tbasisat{\catvariableof{\exformula}} \otimes \tbasisat{\catvariableof{\secexformula}} \right)
 	\end{align*}
 	and get the first claim as
 	\begin{align*}
 		\sbcontractionof{
-			\rencodingofat{\land}{\catvariableof{\exformula\land\secexformula},\catvariableof{\exformula},\catvariableof{\secexformula}},\onehotmapofat{1}{\catvariableof{\exformula\land\secexformula}}
+			\rencodingofat{\land}{\headvariableof{\exformula\land\secexformula},\catvariableof{\exformula},\catvariableof{\secexformula}},\tbasisat{\headvariableof{\exformula\land\secexformula}}
 		}{\catvariableof{\exformula},\catvariableof{\secexformula}}
 		& = \sbcontractionof{
-			\onehotmapofat{1}{\catvariableof{\exformula\land\secexformula}} \otimes \onehotmapofat{1}{\catvariableof{\exformula}} \otimes \onehotmapofat{1}{\catvariableof{\secexformula}},\onehotmapofat{1}{\catvariableof{\exformula\land\secexformula}}
+			\tbasisat{\headvariableof{\exformula\land\secexformula}} \otimes \tbasisat{\catvariableof{\exformula}} \otimes \tbasisat{\catvariableof{\secexformula}},\tbasisat{\headvariableof{\exformula\land\secexformula}}
 		}{\catvariableof{\exformula},\catvariableof{\secexformula}} \\
-		& = \onehotmapofat{1}{\catvariableof{\exformula}} \otimes \onehotmapofat{1}{\catvariableof{\secexformula}} \, . 
+		& = \tbasisat{\catvariableof{\exformula}} \otimes \tbasisat{\catvariableof{\secexformula}} \, . 
 	\end{align*}
 	To show the second claim we use
 	\begin{align*}
@@ -601,14 +587,14 @@ We examplify this situation in the following theorem for relational encodings of
 		&= \sbcontractionof{
 			\rencodingofat{\exformula}{\catvariableof{\exformula},\shortcatvariables},
 			\rencodingofat{\secexformula}{\catvariableof{\secexformula},\shortcatvariables},
-			\rencodingofat{\land}{\catvariableof{\exformula\land\secexformula},\catvariableof{\exformula},\catvariableof{\secexformula}},
-			\onehotmapofat{1}{\catvariableof{\exformula\land\secexformula}}
+			\rencodingofat{\land}{\headvariableof{\exformula\land\secexformula},\catvariableof{\exformula},\catvariableof{\secexformula}},
+			\tbasisat{\headvariableof{\exformula\land\secexformula}}
 			}{\shortcatvariables} \\
 		&  = \sbcontractionof{
 			\rencodingofat{\exformula}{\catvariableof{\exformula},\shortcatvariables},
 			\rencodingofat{\secexformula}{\catvariableof{\secexformula},\shortcatvariables},
-			(\onehotmapofat{1}{\catvariableof{\exformula}}\otimes \onehotmapofat{1}{\catvariableof{\secexformula}})
-			%\rencodingofat{\land}{\catvariableof{\exformula},\catvariableof{\secexformula},\catvariableof{\exformula\land\secexformula}}
+			(\tbasisat{\catvariableof{\exformula}}\otimes \tbasisat{\catvariableof{\secexformula}})
+			%\rencodingofat{\land}{\catvariableof{\exformula},\catvariableof{\secexformula},\headvariableof{\exformula\land\secexformula}}
 			}{\shortcatvariables} \\
 		&= \sbcontractionof{\exformula,\secexformula}{\shortcatvariables} \, . 
 	\end{align*}
@@ -620,16 +606,16 @@ A similar decomposition holds for negations, as we show next.
 	For any formula $\exformula$ we have
 	\begin{align*}
 		\sbcontractionof{
-			\rencodingofat{\lnot}{\catvariableof{\exformula},\catvariableof{\lnot\exformula}},\onehotmapofat{1}{\catvariableof{\lnot\exformula}}
+			\rencodingofat{\lnot}{\headvariableof{\lnot\exformula},\catvariableof{\exformula}},\tbasisat{\headvariableof{\lnot\exformula}}
 		}{\catvariableof{\exformula}}
-		= \onehotmapofat{0}{\catvariableof{\exformula}} =  \onesat{\catvariableof{\exformula}} - \onehotmapofat{1}{\catvariableof{\exformula}} \, . 
+		= \fbasisat{\catvariableof{\exformula}} =  \onesat{\catvariableof{\exformula}} - \tbasisat{\catvariableof{\exformula}} \, .
 	\end{align*}
 	and
 	\begin{align*}
 		\sbcontractionof{
-			\rencodingofat{\lnot}{\catvariableof{\exformula},\catvariableof{\lnot\exformula}},\onehotmapofat{0}{\catvariableof{\lnot\exformula}}
+			\rencodingofat{\lnot}{\catvariableof{\exformula},\headvariableof{\lnot\exformula}},\fbasisat{\headvariableof{\lnot\exformula}}
 		}{\catvariableof{\exformula}}
-		= \onehotmapofat{1}{\catvariableof{\exformula}} \, . 
+		= \tbasisat{\catvariableof{\exformula}} \, . 
 	\end{align*}
 	In particular, it holds that (see Figure~\ref{fig:ConNegDecomposition}b)
 	\begin{align*}
@@ -637,7 +623,7 @@ A similar decomposition holds for negations, as we show next.
 	\end{align*}
 \end{theorem}
 \begin{proof}
-	Using that for two dimensional variables we have $\onesat{\catvariable}=\onehotmapofat{0}{\catvariable}+\onehotmapofat{1}{\catvariable}\, .$
+	Using that for two dimensional variables we have $\onesat{\catvariable}=\fbasisat{\catvariable}+\tbasisat{\catvariable}\, .$
 \end{proof}
 
 % Usage
@@ -655,6 +641,13 @@ In Figure~\ref{fig:DecompositionExample} we provide an example of this decomposi
 	Example of a decomposition by effective calculus of a formula $\exformula(\catvariableof{1},\catvariableof{2}) = \textcolor{blue}{\lnot} \secexformula^{(1)}(\catvariableof{1},\catvariableof{2}) \textcolor{red}{\land}  \secexformula^{(2)}(\catvariableof{1},\catvariableof{2})$ into a sum of contractions.}
 	\label{fig:DecompositionExample}
 \end{figure}
+
+
+% Calculus against the direction
+\red{In an alternative perspective, effective calculus amounts to an contraction against the directionality of the relational encodings.}
+For specific functions, slices of the relational encodings with respect to head variables are basis vectors.
+In that case, we can perform basis calculus in the inverse direction than suggested by the directions of the tensors.
+We examplify this situation in the following theorem for relational encodings of logical conjunctions and negations.
 
 
 
