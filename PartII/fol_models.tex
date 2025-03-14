@@ -1,7 +1,7 @@
 \chapter{\chatextfolModels}\label{cha:folModels}
 
-We now extend the tensor representation to structured representations, whereas the above was on factored representation of systems.
-The models/events in this situation are precise relations between objects.
+We now extend the tensor representation from to structured representations, whereas we previously focused on factored representation of systems.
+%The models/events in this situation are precise relations between objects.
 
 
 \red{We observe that the more expressive first-order logic bears another tensor structure:
@@ -52,11 +52,7 @@ We then formalize a world in the following based on a selection variable $\selva
 	\begin{align}
 		\dataworldwith : [\catorder] \times \left( \symindstates\right) \rightarrow [2] \, . % ! Selvariable gets catorder !
 	\end{align}
-	
 	We interpret the world tensor as encoding in the coordinate $\dataworldat{\selvariable=\catenumerator,\indexedshortindvariables}$, whether the $\catenumerator$-th predicate is satisfied on the object tuple $\invindexinterpretationat{\indindexof{0}},\ldots,\invindexinterpretationat{\indindexof{\indorder-1}}$.
-	%\begin{align*}
-	%	\folpredicateof{\folpredicateenumerator}(\individuals) = \dataworldat{\indexedselvariable,\indexedshortindvariables} \, .
-	%\end{align*}
 \end{definition}
 
 
@@ -69,20 +65,19 @@ This can be done by a tensor product with $\onehotmapofat{0}{\indvariable}$, whe
 % Finite worlds -> By database semantics?
 While in first order logics, depending on the chosen semantics, worlds can have infinite sets of objects, we here only treat worlds with finite objects.
 
-%\red{Support only Worlds with finite objects!}
+\subsect{Case of Propositional Logics}
 
-\subsect{Special Case of Propositional Logics}
-
-% 
-Propositional Logics is the case of $\indorder=0$.
-In that case, worlds are
-	\[ \dataworld: [\catorder] \rightarrow [2] \]
-and represented by the tuples $\catindexof{\atomenumerator} = \dataworld(\atomenumerator)$ as before.
+%
+Before continuing with the one-hot encoding of first-order logic worlds, let us show that the previously discussed formalism of propositional logics (see \charef{cha:logicalRepresentation}) is a special case of first-order logics, namely when demanding $\indorder=0$.
+Consistent with \defref{def:folWorld} we have a propositional logic world by
+\begin{align*}
+	\dataworld: [\catorder] \rightarrow [2] \, ,
+\end{align*}
+which we have in \charef{cha:logicalRepresentation} represented by the assignments $\catindexof{\atomenumerator} = \dataworldat{\selvariable=\atomenumerator}$ to the categorical variables $\catvariableof{\atomenumerator}$.
 
 % Comparison with PL
-Compared with propositional formulas, the grounding tensor does not take as input a specific world, but is defined on a given world.
-We show in this chapter, how both tensor interpretations can be transformed, i.e. by extracting samples from a FOL world $\dataworld$ interpretated as an empirical distribution over PL worlds, and by generating FOL worlds by a set of samples generated from a PL distribution.
-
+%Compared with propositional formulas, the grounding tensor does not take as input a specific world, but is defined on a given world.
+%We show in this chapter, how both tensor interpretations can be transformed, i.e. by extracting samples from a FOL world $\dataworld$ interpretated as an empirical distribution over PL worlds, and by generating FOL worlds by a set of samples generated from a PL distribution.
 
 % One-hot maps
 To represent logical formulas as sets of possible worlds, and distributions of worlds, we applied in \parref{par:one} one-hot encodings of possible worlds.
@@ -182,60 +177,68 @@ We are specifically interested in the tensor network decomposition of first orde
 The evaluation of a first-order formula on a specific world is therefore different to the case in propositional logics, where the evaluation was a boolean in $\ozset$ indicating whether the world is a model.
 %\red{Here we investigate grounding tensors to formulas with variables, and calculate them in a fixed world.}
 % Arbitrary formulas
+
+\subsect{Grounding tensors}
+
 Given a first-order logic world $\dataworldwith$, arbitrary formulas are interpreted in terms of the satisfactions of their groundings.
 We define their semantic first, and then relate their syntactical decomposition to tensor networks, similar to our approach to propositional logics in \charef{cha:logicalRepresentation}.
 
 \begin{definition}[Grounding of a first-order formula given a world]
-	Given a specific world $\dataworld$, with an domain $\worlddomain$ enumerated by $[\inddim]$, the grounding of a formula $\folexformula$ with variables $\individualorder_{\folexformula}$  is the tensor
+	Given a specific world $\dataworld$, with an domain $\worlddomain$ enumerated by $[\inddim]$, the grounding of a formula $\folexformula$ with variables $\indvariableof{\folexformula}$  is the tensor
 	\begin{align*}
-		\groundingofat{\folexformula}{\indvariableof{\folexformula}} :  \bigtimes_{\indenumerator\in[\individualorder_{\folexformula}]} [\inddim] \rightarrow [2] \, .
+		\groundingofat{\folexformula}{\indvariableof{\folexformula}} :
+		\bigtimes_{\indenumerator\in[\indvariableof{\folexformula}]} [\inddim] \rightarrow \ozset \, .
 	\end{align*}
 	Each coordinate represents thereby the boolean, whether the substitution of the variables in the formula is satisfied given a world $\dataworld$, that is
 	\begin{align*}
-		\groundingofat{\folexformula}{\indexedindvariableof{0},\ldots,\indexedindvariableof{\individualorder_{\folexformula}-1}} =
+		\groundingofat{\folexformula}{\indexedindvariableof{\folexformula}} =
 			\begin{cases}
-				1 & \quad \text{if the formula $\folexformula$ is satisfied on the world $\dataworld$, when substituing its variables with the objects $\indexinterpretationat{\indindexof{\indenumerator}}$.} \\
-				%$\folexformula\left(\exindividualof{\indindexof{0}},\ldots,\exindividualof{\indindexof{\individualorder_{\folexformula}-1}}\right)=1$ given the world $\dataworld$}  \\
+				1 & \quad \text{if the substitution of $\folexformula$ with the variables $\indvariableof{\folexformula}$ replaced by the objects $\indexinterpretationat{\indindexof{\indenumerator}}$ is satisfied on the world $\dataworld$.} \\
 				0 &  \text{else}
 			\end{cases} \, . 
 	\end{align*}
 \end{definition}
 
-% Slicing interpretation
-Slicing the grounding tensor of a FOL Formula amounts to substitution of the respective variable by the constant at the enumeration index.
-
-% Generic formulas
-The above definition of formulas can be interpreted as a map from worlds to grounding tensors
-	\[ \folexformula : \dataworld \rightarrow \groundingof{\folexformula} \, . \]
-When interpreting this map as a basis encoding, formulas are tensors in the tensor space 
+% Comment: Formulas as maps to
+The grounding tensor formalism can be used to define formulas as a map
 \begin{align*}
- 	\left(\bigotimes_{\atomenumeratorin, \indindexlist\in[\inddim]} \rr^{2} \right) \otimes 
-	\left(  \bigotimes_{\atomenumeratorin, \indindexof{0},\ldots,\indindexof{\individualorder_{\folexformula}}\in[\inddim]} \rr^{2} \right) \, . 
+	\folexformula : \left(\bigotimes_{\atomenumeratorin,\shortindindices\in[\inddim]^{\indorder}}\rr^{2}\right)
+	\rightarrow \left(\bigotimes_{\atomenumeratorin,\indindexof{\folexformula}\in[\inddim]^{\cardof{\indvariableof{\folexformula}}}}\rr^{2}\right)
 \end{align*}
+where each world $\dataworld$ is mapped to a grounding tensor
+\begin{align*}
+	\folexformula(\dataworld) = \groundingof{\folexformula} \, .
+\end{align*}
+This would involve the second level of tensor interpretation, namely
 
+%% Basis encoding
+%When interpreting this map as a basis encoding, formulas are tensors in the tensor space
+%\begin{align*}
+% 	\left(\bigotimes_{\atomenumeratorin, \indindexlist\in[\inddim]} \rr^{2} \right) \otimes
+%	\left(  \bigotimes_{\atomenumeratorin, \indindexof{0},\ldots,\indindexof{\individualorder_{\folexformula}}\in[\inddim]} \rr^{2} \right) \, .
+%\end{align*}
 
+\subsect{Predicates}
 
-
+The predicates itself are the simplest cases of first-order formulas with term variables.
 % Atomic
-Atomic formulas are stored in the slices to the first axis of $\dataworld$ and we have
+They are stored in the slices to the first axis of $\dataworld$ and we have
 \begin{align}
-	\groundingof{\folpredicateof{\folpredicateenumerator}} = 
+	\groundingof{\folpredicateof{\folpredicateenumerator}} =
 	\contractionof{\dataworldat{\selvariable,\shortindvariablelist},\onehotmapofat{\folpredicateenumerator}{\selvariable}}{\shortindvariablelist} \, .
 \end{align}
 
+What is more abstract, we can understand the predicate itself as an object, then take the first-order world as a grounding tensor of a more abstract formula.
+We will follow this thought in the ternary representation of Knowledge Graphs in \secref{subsec:knowledgeGraphTernaryRep}.
 
+\subsect{Substitution by slicing}
 
-%\begin{figure}[h]
-%	\begin{center}
-%		\input{./PartII/tikz_pics/fol_models/grounding_tensor.tex}
-%	\end{center}
-%	\caption{Grounding tensor to a formula $\folexformula$ with $\variableorder$ arguments on world $\dataworld$. }
-%	\label{fig:groundingTensor}
-%\end{figure}
+% Slicing interpretation
+Slicing the grounding tensor of a formula a first-order formula amounts to substitution of the respective variable by the constant at the enumeration index.
 
+%\subsect{Syntactical Decomposition of quantifier-free formulas}
 
-
-\subsect{Syntactical Decomposition of quantifier-free formulas}
+\subsect{Formuly synthesis by connectives}
 
 In order to have a sound semantic, the grounding of FOL formulas is determined by the syntax of the formula, i.e. a decomposition of the formula into connectives and quantifiers acting on atomic formulas.
 
@@ -244,23 +247,24 @@ Quantifier-free formulas are connectives acting on atomic formulas.
 We can describe them as in the case of propositional logics in the $\rencodingof{}$-formalism.
 While the atomic formulas where delta tensors copying states, they are more involved here.
 
-
+\red{To Do: Head variables}
 
 \begin{theorem}
 	For any connective $\exconnective$ and formulas $\folexformula_1$ and $\folexformula_2$ we have
 	\begin{align}
-		\groundingof{(\folexformula_1\exconnective\folexformula_2)}[\shortindvariablelist] = 
+		\groundingofat{(\folexformula_1\exconnective\folexformula_2)}{\shortindvariablelist} =
 			\contractionof{
-			\rencodingofat{\groundingof{\folexformula_1}}{\shortindvariablelist,\catvariableof{\folexformula_1}},
-			\rencodingofat{\groundingof{\folexformula_2}}{\shortindvariablelist,\catvariableof{\folexformula_2}},
-			\rencodingofat{\exconnective}{\catvariableof{\folexformula_1\exconnective\folexformula_2}, \catvariableof{\folexformula_1}, \catvariableof{\folexformula_2}}, 
-			\onehotmapofat{1}{\catvariableof{\folexformula_1\exconnective\folexformula_2}}			
+			\rencodingofat{\groundingof{\folexformula_1}}{\headvariableof{\folexformula_1},\shortindvariablelist},
+			\rencodingofat{\groundingof{\folexformula_2}}{\headvariableof{\folexformula_2},\shortindvariablelist},
+			\rencodingofat{\exconnective}{\headvariableof{\folexformula_1\exconnective\folexformula_2}, \headvariableof{\folexformula_1}, \headvariableof{\folexformula_2}},
+			\tbasisat{\headvariableof{\folexformula_1\exconnective\folexformula_2}}
 			}
 			{\shortindvariablelist} \, . 
 	\end{align}
 \end{theorem}
 \begin{proof}
-	By the semantic interpretation of the groundings, which has to be sound.
+	This directly follows from \theref{the:compositionByContraction}.
+%	By the semantic interpretation of the groundings, which has to be sound.
 \end{proof}
 
 % Shared variables
@@ -274,294 +278,315 @@ When interpreting the head variables of relational encoded atomic formulas as th
 
 \begin{definition}\label{def:propositionalEquivalent}
 	Given a formula $\folexformula$ in first order logic, we say that a propositional formula $\formulaat{\shortcatvariables}$ is the propositional equivalent to $\folexformula$ given atomic formulas $\extformulaof{\atomenumerator}$ in first order logic, when for any world $\dataworld$ we have
-	\begin{align}
+	\begin{align*}
 		\groundingofat{\folexformula}{\indvariableof{\folexformula}}
 		= \contractionof{ 
-		\{\rencodingofat{\groundingof{\extformulaof{\atomenumerator}}}{\indvariableof{\extformulaof{\atomenumerator}}, \catvariableof{\atomenumerator}} : \atomenumeratorin\} 
-		\cup \{\formulaat{\shortcatvariables} \}
-		}{\indvariableof{\folexformula}}
-	\end{align}
+		\{\rencodingofat{\groundingof{\extformulaof{\atomenumerator}}}{\catvariableof{\atomenumerator},\indvariableof{\extformulaof{\atomenumerator}}} : \atomenumeratorin\}
+		\cup \{\formulaat{\shortcatvariables}\}
+		}{\indvariableof{\folexformula}} \, .
+	\end{align*}
+	We here denote the head variables of the relational encoding to $\rencodingof{\groundingof{\extformulaof{\atomenumerator}}}$ by $\catvariableof{\atomenumerator}$ to highlight their interpretation as propositional atoms.
 \end{definition}
 
-
-
-We depict the relation of a grounding tensor to a propositional formula 
+We depict the relation of a grounding tensor to a propositional formula as:
 \begin{center}
 	\input{./PartII/tikz_pics/fol_models/propositionalization.tex}
 \end{center}
 
 
-
-
 \subsect{Quantifiers}
 
-%\red{The variables quantified over are dropped i.e. $\indvariableof{\exists_{\indvariableof{\exists}} \folexformula} =\indvariableof{\folexformula}/\indvariableof{\exists}$.}
+Existential and universal quantifiers appear in generic first order logic and are besides substitutions further means to reduce the number of variables in a formula.
+%They are not representable as linear transform of the respective quantifier-free formula.
 
-Existential and universal quantifiers appear in generic first order logic.
-They are not representable as linear transform of the respective quantifier-free formula.
-Here we represent them as a compositions of contractions with the greater zero function $\greaterzerofunction$ defined as
+
+% Definition of existential and universal quantifiction needed!
+The semantics of existential quantification consists in a formula being true, if at least one state of the quantified variable is true, as we define next.
+
+\begin{definition}
+	Given a grounding tensor
+	\begin{align*}
+		\groundingofat{\folexformula}{\indvariableof{0},\ldots,\indvariableof{\indorder-1}} \,
+	\end{align*}
+	the existential and universal quantification with respect to the first variable are the tensors
+	\begin{align*}
+		\groundingofat{\left(\exists_{\indindexof{0}}\folexformula\right)}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}} \quad \text{and} \quad
+		\groundingofat{\left(\forall_{\indindexof{0}}\folexformula\right)}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}} \,
+	\end{align*}
+	with coordinates as follows.
+	For an assignment $\indindexof{1},\ldots,\indindex$ to the non-quantified variables we have
+	\begin{align*}
+		\groundingofat{\left(\exists_{\indindexof{0}}\folexformula\right)}{\indexedindvariableof{1},\ldots,\indexedindvariableof{\indorder-1}} = 1
+	\end{align*}
+	if and only if there is an assignment $\indindexofin{0}$ such that
+	\begin{align*}
+		\groundingofat{\folexformula}{\indexedindvariableof{0},\indexedindvariableof{1},\ldots,\indexedindvariableof{\indorder-1}} = 1 \, .
+	\end{align*}
+	Conversely, we have for the universal quantification that
+	\begin{align*}
+		\groundingofat{\left(\forall_{\indindexof{0}}\folexformula\right)}{\indexedindvariableof{1},\ldots,\indexedindvariableof{\indorder-1}} = 1
+	\end{align*}
+	if and only if for any assignment $\indindexofin{0}$ we have
+	\begin{align*}
+		\groundingofat{\folexformula}{\indexedindvariableof{0},\indexedindvariableof{1},\ldots,\indexedindvariableof{\indorder-1}} = 1 \, .
+	\end{align*}
+\end{definition}
+
+
+Let us now show, that existential and universal quantification are coordinatewise transforms (see \defref{def:coordinatewiseTransform}) of contracted grounding tensors.
+To this end, let us introduce the greater-$z$ indicator $\greaterthanfunction{z}$, where $z\in\rr$, as the function
 \begin{align*}
-	\greaterzerofunction : \rr \rightarrow [2] \quad, \quad \greaterzeroof{x} = 
+	\greaterthanfunction : \rr \rightarrow \ozset
+	\quad, \quad \greaterthanfunctionof{z}{x} =
 	\begin{cases}
-		1 &  \text{if  } x > 0\\
+		1 & \quad  \text{if} \quad x > z\\
 		0 & else
 	\end{cases} \, .
 \end{align*}
 
-
 \begin{theorem}
 	For any formula $\folexformula$ with variables $\shortindvariablelist$ we have
-%	\begin{itemize}
-%		\item existential quantification 
-		\begin{align}
-			\groundingofat{\left(\exists_{\exindividualof{\indindexof{0}}}  \folexformula\right)}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}} = 
-			\greaterzeroof{
-			\sbcontractionof{\groundingof{\folexformula}}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}
-			}
-		\end{align}
+	\begin{align*}
+			\groundingofat{\left(\exists_{\indindexof{0}}\folexformula\right)}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}} =
+			\coordinatetrafowrtofat{\existquanttrafo}{\contractionof{\groundingof{\folexformula}}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}
+	\end{align*}
 	and
-%	\item universal quantification 
-		\begin{align}
-			\groundingofat{\left(\forall_{\exindividualof{\indindexof{0}}} \folexformula\right)}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}= 
-			\greaterzeroof{
-			\sbcontractionof{\groundingof{\folexformula}}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}
-			- \inddim \cdot \onesat{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}
-			} \, . 
-		\end{align}
-%\end{itemize}
+	\begin{align*}
+			\groundingofat{\left(\forall_{\exindividualof{\indindexof{0}}} \folexformula\right)}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}=
+			\coordinatetrafowrtofat{\universalquanttrafo}{\contractionof{\groundingof{\folexformula}}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}
+%			\greaterzeroof{
+%			\sbcontractionof{\groundingof{\folexformula}}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}
+%			- \inddim \cdot \onesat{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}
+%			} \, .
+	\end{align*}
 \end{theorem}
 \begin{proof}
-
-%	Coordinatewise: Exists is true, when the slice leaving only the zeroth axis has at least one entry, i.e. its sum is greater than equal.
-%	Universal is true, when all are one, i.e. the sum is maximal $\inddim$.
-	
 	We proof the claimed equalities to arbitrary slices of the remaining variables, which amount to arbitrary substitutions of the formulas.
-	For any indices $\indindexof{1},\ldots,\indindexof{\indorder-1}$ we have
+	For any indices $\indindexofin{1},\ldots,\indindexofin{\indorder-1}$ we notice, that
 	\begin{align*}
 		\sbcontractionof{\groundingof{\folexformula}}{\indexedindvariableof{1},\ldots,\indexedindvariableof{\indorder-1}}
-		= \sum_{\indindexofin{0}} \groundingof{\folexformula}[\indexedindvariableof{0},\ldots,\indexedindvariableof{\indorder-1}] \, . 
+		&= \sum_{\indindexofin{0}} \groundingofat{\folexformula}{\indexedindvariableof{0},\ldots,\indexedindvariableof{\indorder-1}} \\
+		&= \cardof{\indindexofin{0} \, : \, \groundingofat{\folexformula}{\indexedindvariableof{0},\ldots,\indexedindvariableof{\indorder-1}}=1} \, .
 	\end{align*}
-	The existential quantification with respect to the zeroth variable is satified, when for at least one $\indindexofin{0}$ we have $\groundingof{\folexformula}[\indexedindvariableof{0},\ldots,\indexedindvariableof{\indorder-1}]=1$, which is equal to 
+	We can thus understand the contracted grounding tensor as storing in its coordinates the count of the coordinate extensions to the zeroth variable, such that the grounding tensor is satisfied.
+	This is analogous to our interpretation of contracted propositional formulas as world counts.
+	From this it is obvious, that the existential quantification is satisfied, if the count is different from zero, which is captured by the coordinatewise transform with $\existquanttrafo$.
+	We therefore arrive at
 	\begin{align*}
-		 \sum_{\indindexofin{0}} \groundingof{\folexformula}[\indexedindvariableof{0},\ldots,\indexedindvariableof{\indorder-1}]  \geq 1
+		\groundingofat{\left(\exists_{\indindexof{0}}\folexformula\right)}{\indexedindvariableof{1},\ldots,\indexedindvariableof{\indorder-1}} =
+		\coordinatetrafowrtofat{\existquanttrafo}{\contractionof{\groundingof{\folexformula}}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}}{\indexedindvariableof{1},\ldots,\indexedindvariableof{\indorder-1}} \, .
 	\end{align*}
-	and
+	The first claim follows, since the assignment to the non-quantified variables was arbitrary.
+	The universal quantification is satisfied, when all extensions are satisfied, and the count is $\inddim$.
+	Since $\inddim$ is the maximal count, this is captured by the coordinatewise transform with $\universalquanttrafo$ and we get
 	\begin{align*}
-		\greaterzeroof{\sum_{\indindexofin{0}} \groundingof{\folexformula}[\indexedindvariableof{0},\ldots,\indexedindvariableof{\indorder-1}] } = 1 \, . 
+		\groundingofat{\left(\forall_{\indindexof{0}}\folexformula\right)}{\indexedindvariableof{1},\ldots,\indexedindvariableof{\indorder-1}} =
+		\coordinatetrafowrtofat{\universalquanttrafo}{\contractionof{\groundingof{\folexformula}}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}}{\indexedindvariableof{1},\ldots,\indexedindvariableof{\indorder-1}} \, .
 	\end{align*}
-	Combining both equations we get
-	\begin{align*}
-		\left(\groundingof{\exists_{\exindividualof{\indindexof{0}}}  \folexformula}\right)[\indexedindvariableof{1},\ldots,\indexedindvariableof{\indorder-1}] 
-		= \greaterzeroof{
-			\sbcontractionof{\groundingof{\folexformula}}{\indexedindvariableof{1},\ldots,\indexedindvariableof{\indorder-1}}
-			}
-	\end{align*}
-	and arrive at the first claim.
-	
-	To show the second claim, we notice that the universal quantification with respect to the zeroth variable is satisfied, when for all $\indindexofin{0}$ we have $\groundingof{\folexformula}[\indexedindvariableof{0},\ldots,\indexedindvariableof{\indorder-1}]=1$.
-	This is equal to 
-	\begin{align*}
-		 \sum_{\indindexofin{0}} \groundingof{\folexformula}[\indexedindvariableof{0},\ldots,\indexedindvariableof{\indorder-1}]  = \inddim
-	\end{align*}
-	and 
-	\begin{align*}
-		\greaterzeroof{\sum_{\indindexofin{0}} \groundingof{\folexformula}[\indexedindvariableof{0},\ldots,\indexedindvariableof{\indorder-1}] - \inddim} = 1 \, . 
-	\end{align*} 
-	It follows that
-	\begin{align*}
-		& \left(\groundingof{\forall_{\exindividualof{\indindexof{0}}} \folexformula}\right)[\indexedindvariableof{1},\ldots,\indexedindvariableof{\indorder-1}] \\
-			& \quad \quad =  \greaterzeroof{
-			\sbcontractionof{\groundingof{\folexformula}}{\indexedindvariableof{1},\ldots,\indexedindvariableof{\indorder-1}}
-			- \inddim \cdot \onesat{\indexedindvariableof{1},\ldots,\indexedindvariableof{\indorder-1}}
-			}
-	\end{align*}
-	which establishes the second claim.
+	With the same argument, the second claim is established.
 \end{proof}
 
+% Customized quantifiers
+We can extend this discussion towards more generic counting quantifiers, of which the existential and the universal quantifier are extreme cases.
+One can define quantifiers by demanding that at least $z\in\nn$ compatible groundings are satisfied, and show that they amount to coordinatewise transforms with $\greaterthanfunction{z}$.
+What is more, quantifiers demanding that at most $z\in\nn$ are satisfied would be representable by transforms with an analogously defined function $\ones_{\leq z}$.
+Such customized quantifiers appear for example in the $\mathrm{OWL\,2}$ standard of description logics (see \cite{rudolph_foundations_2011} and \secref{sec:kgRepresentation}).
+
+% Relational encodings
+As will be discussed in \charef{cha:basisCalculus}, any coordinatewise transform can be performed by a contraction of a relational encoding of the tensor with a head vector prepared by the transform function (see \theref{the:tensorFunctionComposition}).
+In the case here, a direct implementation would require a dimension of these head variables by $\inddim$, which can be infeasible when having large object sets.
 
 
+\subsect{Storage in basis CP decomposition}\label{sec:basisCPgrounding}
 
-\subsect{Basis CP Decomposition}\label{sec:basisCPgrounding}
-
-In many situations grounding cores are sparse and representations as single tensor cores comes with a drastic overhead.
-We often encounter sparse grounding, that is
-	\[ \sparsityof{\groundingof{\folexformula}} \leq \inddim^{\variableorder_\folexformula} \, . \]
-%We notice, that the number of nonzero coordinates in a datacore constructed from a set of $\datanum$ samples (assuming complete observations) satsifies
-%	\[ \sparsityof{\datacore} \leq \datanum \, . \]
-%Typically we have
-%	\[ \datanum <  2^{\atomorder} \]
-In this case the basis CP decomposition (see \secref{sec:basisCP}) enables a representation of the grounding with significantly smaller storage demand, see \theref{the:sparseBasisCP}.
-We depict the CP decomposition of a formula grounding in Figure~\ref{fig:groundingCP}.
-
+In many situations, grounding cores are sparse and representations as single tensor cores comes with a drastic overhead.
+We often encounter sparse grounding tensors, where the number of non-zero coordinates (to be investigated by basis CP ranks in \charef{cha:sparseCalculus}) satisfies
+\begin{align*}
+	\sparsityof{\groundingof{\folexformula}} << \inddim^{\cardof{\indvariableof{\folexformula}}} \, .
+\end{align*}
+In this case, since most coordinates vanish, the basis CP decomposition (see \secref{sec:basisCP}) enables a representation of the grounding with significantly lower storage demand, see \theref{the:sparseBasisCP}.
+This is particularly useful for representing large relational databases, where each object has only a few relations with others, while the majority of possible relations remains unsatisfied.
+We depict such CP decomposition of a formula grounding in \theref{fig:groundingCP}.
 
 % Standard KB Encoding and Assumptions
-Most logical syntaxes make use of the $\ell_0$-sparsity and explicitly store only the known assertions.
-The not specified assertions have different interpretation based on the assumptions made.
-Under the Closed World Assumption all unspecified assertions are assumed to be false.
+Most logical syntaxes exploit $\ell_0$-sparsity, explicitly storing only known assertions.
+The interpretation of unspecified assertions depends on the underlying assumptions.
+Under the Closed World Assumption, for example, all unspecified assertions are assumed to be false.
 
 \begin{figure}[h]
 \begin{center}
 	\input{./PartII/tikz_pics/fol_models/grounding_decomposition.tex}
 \end{center}
-\caption{Basis CP Decomposition of the grounding of $\folexformula$.}
+\caption{Basis CP Decomposition of the grounding of $\folexformula$, following the scheme of \theref{the:sparseBasisCP}.
+		Instead of direct storage of the grounding tensor $\groundingof{\folexformula}$, the non-zero coordinates are enumerated by a variable $\datvariable$ and the corresponding coordinates stored in leg-matrices $\legcoreof{\folexformula,\indenumerator}$.}
 	\label{fig:groundingCP}
 \end{figure}
 
+\subsect{Queries}
 
+A database is understood as a specific fist order logic world, and are operations on such a single world.
+Queries are described by a formula $\impformula$, which are asked against a specific world $\dataworld$ to retrieve the grounding $\groundingof{\impformula}$.
+The variables of such formulas are called projection variables.
+The answer $\groundingof{\impformula}$ of a query is most conveniently represented as a list of solution mappings from the projection variables to objects in the world, such that the query formula is satisfied.
+Answering a query by solution mappings corresponds with finding the basis CP Decomposition (see \secref{sec:basisCP}) of $\groundingof{\impformula}$.
+We can understand these solution mappings as stored in the leg-matrices $\legcoreof{\folexformula,\indenumerator}$ (see \figref{fig:gorundingCP}).
 
+Let us give with the outer join an example of a popular operation to define queries, which efficient execution and storage can be improved based on considerations in the tensor network formalism.
 
+\begin{definition}[Outer join]
+	Let there be a world $\dataworld$ and formulas $\extformulaof{\selindex}$ depending on variables $\indvariableof{\nodesof{\selindex}}$, which have grounding tensors by
+	\begin{align*}
+		\groundingofat{\extformulaof{\selindex}}{\indvariableof{\node}} \, : \,  \bigtimes_{\node\in\nodesof{\selindex}}[\inddimof{\node}] \rightarrow \ozset \, .
+	\end{align*}
+	Then their (outer) $\joinsymbol$ is defined as the grounding of their conjunctions, as
+	\begin{align*}
+		\groundingofat{\joinsymbol\left(\extformulaof{0},\ldots,\extformulaof{\seldim-1}\right)}{\bigcup_{\selindexin}\indvariableof{\nodesof{\selindex}}}
+		= \contractionof{\groundingofat{\extformulaof{\selindex}}{\indvariableof{\nodesof{\selindex}}}\,:\,\selindexin}{\bigcup_{l\in[p]}\indvariableof{\nodesof{\selindex}}} \, .
+	\end{align*}
+\end{definition}
 
-%% MISLEADING? Groundings assume single worlds, whereas Database Semantics a distribution over worlds with fixed set of objects.
-%\subsect{Database Semantics}
-%
-%We here employ the DataBase Semantics and assume a finite list of individuals (constants).
-%Then the probability distribution is still over all possible worlds (which are in database semantics those with bijections between the constants of the Knowledge Base and objects in the world).
-%
-%For each model of a FOL we have the following assumptions of Database Semantics:
-%\begin{itemize}
-%	\item Unique Name Assumption: Injectivity of the interpretation map of constants.
-%	\item Domain Closure: Surjectivity of the interpretation map of constants.
-%\end{itemize}
-%Thus we assume that the interpretation map of each model is a bijection between constants and objects.
-%
-%
-%Given Database Semantics it is thus ensured, that grounding tensors represent all of the semantics of universally quantified formulas.
-%
-%\begin{remark}[Closed World Assumption]
-%	In this approach we typically further assume that the groundings of the formulas are known.
-%	This corresponds with the closed world assumption, where any zero entry in the formula tensor is interpreted as a false corresponding substitution.
+%Visualization and efficiency
+We can understand the $\joinsymbol$ of groundings by a factor graph, where each grounding tensor decorates the hyperedge to the node set $\nodesof{\selindex}$.
+The projection variable assignment to each formula combined in a $\joinsymbol$ operation provide a basic tensor network format to store the output of the operation.
+There are thus situations, in which the solution map storage corresponding with a CP Decomposition comes with unnecessary overheads compared with other formats.
+
+% Coordinatewise transform
+We can also understand the $\joinsymbol$ operation as a coordinatewise transform (see \defref{def:coordinatewiseTransform}) with the product as transform function.
+To make this connection solid, one would need to extend each joined formula trivially to the variables appearing in other formulas.
+
+% Evaluation similar constraint propagation
+The efficiency of evaluating the contraction to a $\joinsymbol$ operation might be improved by understanding it as an Constraint Satisfaction Problem (see \charef{cha:logicalReasoning}).
+When applying efficient Message Passing algorithms such as Knowledge Propagation (see \algoref{alg:KP}), the groundings can be sparsified by local constraint propagation operations before turning to more global and more demanding contraction operations.
+Here the groundings $\groundingof{\extformulaof{\selindex}}$ would be used to initialize Knowledge Cores $\kcoreof{\edge}$ and sequentially sparsified during the algorithm.
+
+%\begin{example} % WOULD NEED OVERWORK: DRAW!
+%	For example take a query with many basic graph patterns with pairwise different projection variables.
+%	The global CP Decomposition would come here with an exponential storage overhead compared with storage as a tensor product of CP Decompositions to each Basic graph pattern.
+%\end{example}
+
+%% CONFUSING?
+%\begin{remark}[Distinguishing from probabilistic queries]
+%	Let us distinguish the discussion here from those of queries in probabilistic reasoning, which have two main differences.
+%	First, we ask queries against all possible pairs of variables, instead of asking the probability of satisfaction of a specific formula.
+%	Second, since we made the epistemologic assumption of knowing possibilities and not probabilities in logics, a query is answered by a truth value.
+%	We then only output in the shape of solution mappings the variable assignments where the query formula is true.
+% 	Thus, the queries here can be thought of as a batch of probabilistic queries with Boolean answers.
+%	% Alternative -> Later?
+%	Probabilistic queries can furthermore be understood in terms of the data extraction process described in this section.
+%	We can ask the query in probabilistic form (decomposed into atomic formulas) on the resulting empirical distribution.
+%	This results in the ratio of the worlds satisfying the query among those worlds satisfying the extraction query $\impformula$.
 %\end{remark}
 
 
+\sect{Representation of Knowledge Graphs}\label{sec:kgRepresentation}
 
-\subsect{Example: Queries}
-
-\red{A database is understood as a specific fist order logic world.
-Querying is an operation on such a single world and therefore exploits the first level of tensor representation.}
-
-Queries are formulas $\impformula$, which are asked against a specific world $\dataworld$.
-Each argument is of such formulas are called projection variables.
-The answer of a query is a list of solution mappings from the projection variables to objects in the world, such that the query formula is true.
-
-% CP Decomposition
-Answering a query thus corresponds with finding the basis CP Decomposition (see \secref{sec:basisCP}).
-
-% Inefficiency
-There are situations, in which the CP Decomposition comes with unnecessary storage overhead compared with other formats.
-To be more precise, let us show how Join operations on groundings are represented by contractions.
-
-\begin{definition}
-	Let there be a world with individual sets $\indexset_\node$ for $\node\in\nodes$ and groundings $\groundingof{\extformulaof{l}}$ 
-		\[ \groundingof{\extformulaof{l}}: \bigtimes_{\node\in\nodes_l} [\inddimof{\node}]\rightarrow [2] \]
-	defined on subsets of the individuals sets $\bigtimes_{\node\in\nodes}\indexset_\node$.
-	Then their $\mathrm{Join}$ is defined as
-		\[ \groundingof{\mathrm{Join}\left(\extformulaof{0},\ldots,\extformulaof{p-1} \right)} = \prod_{l\in[p]} \groundingof{\extformulaof{l}} \, .\]
-\end{definition}
-
-%Visualization
-We can thus understand the $\mathrm{Join}$ of groundings by a factor graph, where each grounding is a factor connecting the variables decorating node sets $\nodes_l$.
-The $\mathrm{Join}$ can be stored by at most linear in the number of joined formulas demand.
-Storing the result by solution maps on the other side can create storage overheads as we show next.
-
-%\begin{theorem}[Joins by Hadamard products]
-%	For any $\mathrm{Join}$ of grounded formulas we have
-%		\[ \groundingofat{\mathrm{Join}\left(\extformulaof{0},\ldots,\extformulaof{p-1} \right)}{\indvariableof{\nodes}} =
-%		\sbcontractionof{\groundingof{\extformulaof{0}},\ldots,\groundingof{\extformulaof{p-1}}}{\indvariableof{\nodes}} \, . \]
-%\end{theorem}
-%\begin{proof}
-%	Direct
-%\end{proof}
-
-
-
-%\begin{theorem}
-%	Given a grounding $\groundingof{\folexformula}$ on a world then the minimal rank of a basis CP Decomposition storing $\groundingof{\folexformula}$  is the number of tuples $\{\exindividualof{\node} \, : \, \node\in\nodes \}$ such that
-%		\[ \groundingof{\folexformula}(\{\exindividualof{\node} \, : \, \node\in\nodes \}) = 1\, . \]
-%\end{theorem}
-%\begin{proof}
-%	Later in binary+directed Contraction Calculus, where we also define $\ell_0$-norm
-%\end{proof}
-
-\begin{example}
-	For example take a query with many basic graph patterns with pairwise different projection variables. 
-	The global CP Decomposition would come here with an exponential storage overhead compared with storage as a tensor product of CP Decompositions to each Basic graph pattern.
-\end{example}
-
-
-\begin{remark}[Distinguishing from probabilistic queries]
-	Let us distinguish the discussion here from those of queries in probabilistic reasoning, which have two main differences.
-	First, we ask queries against all possible pairs of variables, instead of asking the probability of satisfaction of a specific formula. 
-	Second, since we made the epistemologic assumption of knowing possibilities and not probabilities in logics, a query is answered by a truth value.
-	We then only output in the shape of solution mappings the variable assignments where the query formula is true.
- 	Thus, the queries here can be thought of as a batch of probabilistic queries with Boolean answers.
-	% Alternative -> Later?
-	Probabilistic queries can furthermore be understood in terms of the data extraction process described in this section.
-	We can ask the query in probabilistic form (decomposed into atomic formulas) on the resulting empirical distribution.
-	This results in the ratio of the worlds satisfying the query among those worlds satisfying the extraction query $\impformula$.
-\end{remark}
-
-
-\sect{Representation of Knowledge Graphs}
-
-Let us now represent a specific fragment of FOL, namely Description Logics which Knowledge Bases are often refered to as Knowledge Graphs.
+Let us now represent a specific fragment of first-order logic, namely Description Logics which Knowledge Bases are often refered to as Knowledge Graphs.
+We here use the $\mathrm{OWL\,2}$ standard, which encodes the syntax of the description logic $\mathcal{SROIQ(D)}$ \cite{rudolph_foundations_2011}.
 
 \subsect{Representation as unary and binary predicates}
 
 % Reduction to binary
-Atomic formulas in knowledge bases following the OWL standard (thus, especially knowledge graphs) are binary (owl:ObjectProperties) and unary (owl:Class).
+Predicates in knowledge graphs are binary (owl:ObjectProperties) and unary (owl:Class).
 %Larger formulas are created by logical connections of these atomic formulas using disjunctions, conjunctions etc.
-We enumerate the predicates by $[\folpredicateorder]$, the objects in the domain $\worlddomain$ by $[\inddim]$, and extend the unary predicates to binaries by tensor product with $\onehotmapofat{0}{\indvariable}$ (see discussion above)
-A Knowledge Graph on the set $\worlddomain$ of constants (owl:NamedIndividuals) is the tensor
+We enumerate the predicates by $[\folpredicateorder]$, the objects in the domain $\worlddomain$ by $[\inddim]$, and extend the unary predicates to binaries by tensor product with $\onehotmapofat{0}{\indvariableof{1}}$.
+A Knowledge Graph on the set $\worlddomain$ of constants (owl:NamedIndividuals) is then the tensor
 \begin{align*}
-	\kg :  [\folpredicateorder] \times [\inddim] \times [\inddim] \rightarrow [2] \, . 
+	\kgat{\selvariable,\indvariableof{0},\indvariableof{1}} : [\folpredicateorder] \times [\inddim] \times [\inddim] \rightarrow \ozset \, .
 \end{align*}
 
 
-\subsect{Representation as ternary predicate}
+\subsect{Representation as ternary predicate}\label{subsec:knowledgeGraphTernaryRep}
+
+It has been particulary convenient to represent a Knowledge Graph instead as a grounding of a single ternary predicate $\rdf$.
+To this end, the predicates $\folpredicateof{\catenumerator}$ and another object $\mathrdftype$ are added to a domain $\worlddomain$, by extending the $\inddim$ and the index interpretation function accordingly.
+
 
 % RDF triple: Alternative viewpoint to collection of unary and binary predicates!
 Following our notation we understand a Knowledge Graph as a grounding of the rdf triple relation $\rdf$ (being a formula of order 3) on a specific world $\kg$ with individuals $\worlddomain$
+
+We then construct a grounding tensor $\kggroundingof{\rdf}$ out of the world $\kgat{\selvariable,\indvariableof{0},\indvariableof{1}}$ by
 \begin{align*}
-	\kggroundingof{\rdf} : [\inddim] \times [\inddim] \times [\inddim] \rightarrow [2]
+	\kggroundingof{\rdf} : [\inddim] \times [\inddim] \times [\inddim] \rightarrow \ozset
 \end{align*}
 where
 \begin{align*}
-	\kggroundingof{\rdf}(\indindexof{s}, \indindexof{p}, \indindexof{o}) =
+	\kggroundingofat{\rdf}{\indexedindvariableof{s}, \indexedindvariableof{p}, \indexedindvariableof{o}} =
 	\begin{cases}
-	1 \quad & \text{if triple $\braket{\indindexof{s}, \indindexof{p}, \indindexof{o}}$ is in Knowledge Graph $\kg$} \\
-	0  \quad & \text{else}
+		\kgat{\selvariable=\indindexof{s},\indvariableof{0}=\indindexof{o},\indvariableof{1}=0}
+		& \text{if} \quad \indindexof{p} = \invindexinterpretationat{\mathrdftype} \\
+		\kgat{\selvariable=\indindexof{p},\indvariableof{0}=\indindexof{s},\indvariableof{1}=\indindexof{o}}
+		& \text{if} \quad \indindexof{p} = \invindexinterpretationat{\folpredicateof{\catenumerator}} \quad \text{for some} \quad \catenumerator \\
+		0  \quad & \text{else}
 	\end{cases} \, .
 \end{align*} 
 
 
-% Sparse representation
-Sparse representation of the grounding tensor to a knowledge graph is of central importance, as investigated in \cite{bigerl_tentris_2020}.
-We here do basis CP for sparse representation.
-Slicing the tensor $\gtensorof{\kg}$ along the predicate axis retrieves specific information about roles and can be efficiently be performed on these formats.
- 
-The role \rdftype has a specific meaning, since it contains from a DL perspective classifications (memberships of named concepts).
+Slicing the tensor $\kggroundingof{\rdf}$ along the predicate axis retrieves specific information about roles and can be efficiently be performed on these formats.
+The role $\mathrdftype$ has a specific meaning, since it contains from a DL perspective classifications (memberships of named concepts).
 Further slicing the tensor along object axis therefore results in membership lists for specific classes (concepts).
-One can thus regard \rdftype as a placeholder for unitary formulas in a space of binary formulas. 
+One can thus regard $\mathrdftype$ as a placeholder for unitary formulas in a space of binary formulas.
 
+% Triple Stores, sparsity
+Exploiting the $\ell_0$-sparsity now leads to a so-called triple store, where $\kggroundingof{\rdf}$ is stored by a listing of those triples $\indindexof{s},\indindexof{p},\indindexof{o}$ such that $\kggroundingofat{\rdf}{\indexedindvariableof{s}, \indexedindvariableof{p}, \indexedindvariableof{o}}=1$
+A recent implementation of a triple store exploiting these intuitions is $\mathrm{TENTRIS}$, see \cite{bigerl_tentris_2020}.
+In this work, such decompositions are generalized into more generic CP formats, see \charef{cha:sparseCalculus}.
 % Approximation of KG Groundings
-Approximations of grounding tensors by decompositions leads to embeddings of the individuals such as Tucker, Complex, RESCAL (see \cite{nickel_review_2016}).
+Approximations of grounding tensors by decompositions leads to embeddings of the individuals such as $\mathrm{Tucker}$, $\mathrm{ComplEx}$ and $\mathrm{RESCAL}$ (see \cite{nickel_review_2016}).
+
+% Sparse representation
+%Sparse representation of the grounding tensor to a knowledge graph is of central importance, as investigated in \cite{bigerl_tentris_2020}.
+%We here do basis CP for sparse representation.
+
 
 % Relational Encoding
-For  our purposes of evaluating logical formulas such as $\sparql$ queries we use the relational encoding of the groundings, which are depicted by
+For our purposes of evaluating logical formulas such as $\sparql$ queries we use the relational encoding of the groundings, which are depicted by
  \begin{center}
 	\input{./PartII/tikz_pics/fol_models/kg_formula_tensor.tex}
 \end{center}
- 
- 
- 
- 
-%\subsect{Graph Patterns}
+
+
+
+
 \subsect{$\sparql$ Queries}
 
-The $\sparql$ query language is a syntax to express first order logic formulas $\folexformula$.
-Given a specific world $\dataworld$, the execution of query is the interpretation $\groundingof{\folexformula}$, typical represented in a sparse basis CP format where each slice represents a solution mapping.
+The $\sparql$ query language is a syntax to express first-order logic formulas $\folexformula$ and intended to be evaluated given a Knowledge Graph.
+Given a specific knowledge graph $\kggroundingof{\rdf}$, the execution of query is the interpretation $\groundingof{\folexformula}$, typical represented in a sparse basis CP format where each slice represents a solution mapping.
 
-\paragraph{Triple Patterns}
+\subsubsect{Triple Patterns}
+
+\red{Central to $\sparql$ queries are triple patterns, which we understand as slicings of the tensor $\kggroundingof{\rdf}$.}
+To each so-called triple pattern we define a corresponding pattern tensor.
+
+% By
+These slicing operations are performed by contractions with tensors, for unary triple patterns of the shape
+\begin{align*}
+	\patterncreatorofat{\kgtriple{\provariable}{\mathrdftype}{\folpredicateof{\catenumerator}}}{
+		\indvariableof{s}, \indvariableof{p}, \indvariableof{o}, \provariable
+	}
+	= \identityat{\indvariableof{s},\provariable}
+	\otimes \onehotmapofat{\invindexinterpretationat{\mathrdftype}}{\indvariableof{p}}
+	\otimes \onehotmapofat{\invindexinterpretationat{\folpredicateof{\atomenumerator}}}{\indvariableof{o}}
+\end{align*}
+
+Binary triple patterns come with two projection variables.
+The pattern tensor to the $\catenumerator$-th predicate is then
+\begin{align*}
+	\patterncreatorofat{\kgtriple{\provariableof{0}}{\folpredicateof{\catenumerator}}{\provariableof{1}}}{
+		\indvariableof{s}, \indvariableof{p}, \indvariableof{o}, \provariableof{0}, \provariableof{1}
+	}
+	= \identityat{\indvariableof{s},\provariableof{0}}
+	\otimes \onehotmapofat{\invindexinterpretationat{\folpredicateof{\atomenumerator}}}{\indvariableof{p}}
+	\otimes \identityat{\indvariableof{o},\provariableof{1}} \, .
+\end{align*}
+
+Contraction with these pattern tensor evaluated the specific triple pattern, and outputs in a boolean tensor the indicator, which objects are members of a specific class (for unary patterns) or which pair of objects are related by a specific relation.
+Again, the output of such contractions is a subset encodings of the set of solutions (see \defref{def:subsetEncoding}).
+
+%%%%%%%%%%%% END OF FRIDAY
+%%%%%%%%%%%%
+
+
+
 
 Formulas which are of specific importance are triple patterns:
 \begin{itemize}
@@ -574,12 +599,14 @@ Formulas which are of specific importance are triple patterns:
 These triples are compositions of slicing operation, here seen as a map from single or two projection variables to the triples $(\exindividualof{\indindexof{s}}, \exindividualof{\indindexof{p}}, \exindividualof{\indindexof{o}})$, with the $\rdf$ formula.
 
 
-% By 
-These slicing operations are performed by contractions with tensors $\psi^{\braket{...}}$, for unary triple patterns of the shape
-	\[ \psi : \left( [\folpredicateorder] \times [\inddim] \times [\inddim] \right) \times [\inddim] \rightarrow [2] \]
-and for binary
-	\[ \psi : \left( [\folpredicateorder] \times [\inddim] \times [\inddim] \right) \times [\inddim] \times [\inddim] \rightarrow [2] \]
-defined by identity and basis vectors depending on the type of triple.
+
+
+
+
+%	\[ \psi : \left( [\folpredicateorder] \times [\inddim] \times [\inddim] \right) \times [\inddim] \rightarrow [2] \]
+%and for binary
+%	\[ \psi : \left( [\folpredicateorder] \times [\inddim] \times [\inddim] \right) \times [\inddim] \times [\inddim] \rightarrow [2] \]
+%defined by identity and basis vectors depending on the type of triple.
 
 In the example $\exunarytriple$ we have
 	\[ \psi^{\exunarytriple} = \identity^{\exindividualof{\sindex},?\exindividualof{0}} \otimes \onehotmapof{0} \otimes \identity^{\exindividualof{\oindex},?\exindividualof{1}}   \]
@@ -604,7 +631,7 @@ That means that applying $\psi (\psi^T)$ is the same map as applying once.
 
 
 
-\paragraph{Basic Graph Patterns}
+\subsubsect{Basic Graph Patterns}
 
 Generic $\sparql$ queries are compositions of triple patterns by logical connectives. % Except for some stuff like regex
 Statements in $\sparql$ can be translated into Propositional Logics combining the triple patterns:
@@ -816,36 +843,7 @@ We in the next section present assumptions on the tuples satisfying $\impformula
 
 
 
-%% OLD Likelihood simplification
-%The Markov Logic Network is then simplified by the fact that $\impformula\Rightarrow\folexformula$ is satisfied, once $\impformula$ is not.
-%We split the product over individual pairs into
-%	\begin{align*}
-%		\probtensor^{\folformulaset,\weight,\worlddomain,\fixedimpformula} 
-%		= & \frac{1}{\partitionfunctionof{\folformulaset,\weight,\worlddomain,\fixedimpformula}} 
-%		\left( \prod_{\individuals\in\worlddomain \, : \, \impformula(\individuals)=0} \prod_{\folexformulain} \expof{\weightof{\folexformula}} \right) \\
-%		& \quad \cdot \left( \prod_{\individuals\in\worlddomain \, : \, \impformula(\individuals)=1} 
-%		\prod_{\folexformulain} \expof{\weightof{\folexformula} \folexformula(\individuals)} \right) \, . 
-%	\end{align*}
 
-%% Dropping the not matching individual pairs
-%Since all supported worlds coincide in $\groundingof{\impformula}$ the likelihood does not depend on the constant factor rising from the pairs of individuals not satisfying $\impformula$. 
-%We drop this factor from the partition function and define
-%	\[ \secpartitionfunctionof{\folformulaset,\weight,\worlddomain,\fixedimpformula} = \frac{\partitionfunctionof{\folformulaset,\weight,\worlddomain,\fixedimpformula}}{ \left( \prod_{\individuals\in\worlddomain \, : \, \impformula(\individuals)=0} \prod_{\folexformulain} \expof{\weightof{\folexformula}} \right)} \, .  \]
-%We then have that
-%\begin{align*}
-%	\probtensor^{\folformulaset,\weight,\worlddomain,\fixedimpformula}[\dataworld] = \frac{1}{\secpartitionfunctionof{\folformulaset,\weight,\worlddomain,\fixedimpformula}}
-%	\prod_{\individuals\in\worlddomain \, : \, \impformula(\individuals)=1} \left( \prod_{\folexformulain} \expof{\weightof{\folexformula}\groundingof{\folexformula}(\individuals)} \right) \, . 
-%\end{align*}
-	
-%% Log-likelihood
-%The by the number of data
-%	\[ \datanum = \# \{ \individuals\in\worlddomain \, : \, \impformula(\individuals)=1 \} \]
-%averaged log-likelihood is then given by
-%\begin{align}\label{eq:dataworldLogProb}
-%%	\lossof{\formulaset,\weight} 
-%	\frac{1}{\datanum}\lnof{\probtensor^{\folformulaset,\weight,\worlddomain,\fixedimpformula} }
-%	= & \frac{1}{\datanum} \sum_{\individuals\in\worlddomain \, : \, \impformula(\individuals)=1} \left(\sum_{\exformula\in\formulaset} \weightof{\exformula} \exformula(\individuals)\right) -  \frac{1}{\datanum}\lnof{\secpartitionfunctionof{\folformulaset,\weight,\worlddomain,\fixedimpformula}} \, . 
-%\end{align} %! This is the contraction with $\impformula$ -> Write that here?
 
 
 
@@ -973,74 +971,6 @@ Situations where atom base $\atombasemeasure$ measures are not uniform:
 \end{itemize}
 
 
-%%% OLD
-
-%\begin{definition}
-%	We say that $\impformula,\extformulas$ do not influence each other, when for any pair $\individuals$, $\atomenumerator,\datindex$ and $\sigma : [\atomorder] \times [\datanum] \rightarrow [2]$ the formula
-%		\[ \left( \land_{\datindexin} \impformula(\individualsof{\datindex}) \right)
-%		\land 
-%		\left( \land_{\atomenumeratorin, \datindexin, \datindex\neq\secdataindex, \atomenumerator\neq\secatomenumerator} (\lnot)^{\sigma(\atomenumerator,\datindex)}\extformulaof{\atomenumerator}(\individualsof{\datindex})  \right)
-%		\Rightarrow
-%		 (\lnot)^{\sigma(\secatomenumerator,\secdataindex)} \extformulaof{\secatomenumerator}(\individualsof{\secdataindex}) 
-%		 \]
-%	is not a tautology.
-%\end{definition}
-%This is satisfied, when different predicates are in $\impformula$ and $\extformulas$, both are quantor and constant free, and all individual pairs with $\impformula(\individuals)=1$ are disjoint.
-%
-%
-%%
-%In the case of disjoint constant pairs answering the query $\impformula$ the probability of a data world is thus the likelihood of a dataset given a propositional logics MLN, as we show next.
-
-%\begin{theorem}
-%	When $\impformula,\extformulas$ do not influence each other we have
-%		\[ \frac{1}{\datanum}\lnof{\probtensor^{\folformulaset,\weight,\worlddomain,\fixedimpformula}[\dataworld]} = 
-%		\lossof{\formulaset,\weight} \]
-%%		\prod_{\datindexin} \left( \probtensor^{\formulaset,\weight}[\extformulaof{0}(\individualsof{\datindex})] \right)   \]
-%	where 
-%		\[ \datamap(\datindex) = \{(\groundingof{\extformulaof{0}}(\individualsof{\datindex}),\ldots, \groundingof{\extformulaof{\atomorder-1}}(\individualsof{\datindex}) ) : \datindexin \}\]
-%	and $\individualsof{\datindex}$ is the enumeration of the pairs satisfying $\impformula(\individuals)=1$.
-%\end{theorem}
-%\begin{proof}
-%	Based on our semantic assumptions, we only consider worlds with $\groundingof{\impformula}=\fixedimpformula$ and $\groundingof{\extformulaof{\atomenumerator}}(\individuals)=0$ for any pair with $\impformula(\individuals)=0$.
-%	We can thus represent each worlds by the Boolean tensor
-%		\[ T^\dataworld: [\atomorder] \times [\datanum] \rightarrow [2] \]
-%	defined as
-%		\[ T^\dataworld(\atomenumerator,\datindex) = \groundingof{\extformulaof{\atomenumerator}}(\individualsof{\datindex}) \, .  \]
-%	By the assumption, that $\impformula,\extformulas$ do not influence each other, each boolean tensor $T: [\atomorder] \times [\datanum] \rightarrow [2]$ has a world $\dataworld$ with $T^{\dataworld}=T$.
-%	
-%	The partition function is then factorized into
-%	\begin{align*}
-%		\secpartitionfunctionof{\folformulaset,\weight,\worlddomain,\fixedimpformula} 
-%		=&  \sum_{\groundingof{\extformulaof{\atomenumerator}}(\individualsof{\datindex})\in[2],\atomenumeratorin,\datindexin}
-%			\prod_{\datindexin} \expof{\sum_{\folexformulain} \folexformula(\individualsof{\datindex}) \cdot \weightof{\folexformula}}
-%		 \\
-%		=& \prod_{\datindexin} \left( \sum_{\groundingof{\extformulaof{\atomenumerator}}(\individualsof{\datindex}) \in [2], \atomenumeratorin}
-%			\expof{\sum_{\folexformulain} \folexformula(\individualsof{\datindex}) \cdot \weightof{\folexformula}}
-%		\right) \\
-%		=& \left(  \sum_{\groundingof{\extformulaof{\atomenumerator}}(\individuals) \in [2], \atomenumeratorin} 
-%			\expof{\sum_{\folexformulain} \folexformula(\individuals) \cdot \weightof{\folexformula}}
-%		\right)^\datanum \\
-%		=& \left(  \sum_{\groundingof{\extformulaof{\atomenumerator}}(\individuals) \in [2], \atomenumeratorin} 
-%			\expof{\sum_{\exformulain} \contractionof{\{\exformula,\onehotmapof{\groundingof{\extformulaof{0}}(\individuals)},\ldots,\onehotmapof{\groundingof{\extformulaof{\atomorder-1}}(\individuals)}\}}{\varnothing}  \cdot \weightof{\exformula}}
-%		\right)^\datanum \\
-%		=& \left(  \sum_{\atomlegindexof{\atomenumerator} \in [2], \atomenumeratorin} 
-%			\expof{\sum_{\folexformulain} \exformula(\atomindices)  \cdot \weightof{\exformula}}
-%		\right)^\datanum \\
-%		= & \left(\partitionfunctionof{\formulaset,\weight} \right)^\datanum \, . 
-%	\end{align*}
-%	
-%	It follows that
-%	\begin{align*}
-%		\frac{1}{\datanum}\lnof{\probtensor^{\folformulaset,\weight,\worlddomain,\fixedimpformula}[\dataworld]}
-%		=& \frac{1}{\datanum} \left[ \sum_{\datindexin} \sum_{\folexformulain} \folexformula(\individualsof{\datindex}) \cdot \weightof{\folexformula} + \lnof{\secpartitionfunctionof{\folformulaset,\weight,\worlddomain,\fixedimpformula}} \right] \\
-%		=& \frac{1}{\datanum}\sum_{\datindexin} \sum_{\folexformulain} \contractionof{\{\exformula,\onehotmapof{\groundingof{\extformulaof{0}}(\individualsof{\datindex})},\ldots,\onehotmapof{\groundingof{\extformulaof{\atomorder-1}}(\individualsof{\datindex})}\}}{\varnothing}  \cdot \weightof{\folexformula}
-%		+ \frac{1}{\datanum} \left( \datanum \cdot \lnof{\partitionfunctionof{\formulaset,\weight}}  \right) \\
-%		=& \frac{1}{\datanum} \left[ \sum_{\datindexin} \sum_{\exformulain} \exformula\big(\groundingof{\extformulaof{0}}(\individualsof{\datindex}),\ldots, \groundingof{\extformulaof{\atomorder-1}}(\individualsof{\datindex})\big) \cdot \weightof{\folexformula} \right]
-%		+\lnof{\partitionfunctionof{\formulaset,\weight}}  \\
-%		=& \lossof{\formulaset,\weight} \, , 
-%	\end{align*}
-%	where we compared with the likelihood of a dataset given a propositional logics markov logic network defined in \eqref{eq:defLikelihoodLossPL}.
-%\end{proof}
 
 
 
@@ -1234,57 +1164,13 @@ We propose to
 
 
 
-%%% From Probability Decomposition Chapter: Just a comment on not doing the CP Decomposition.
-
-%\subsect{Construction of Empirical Distributions from groundings of Sentences}
-%
-%When taking groundings of sentences instead, we have multiple data axis then $\datindex$, one for each variable in the sentence.
-%
-%\begin{remark}[Datacores as groundings of FOL sentences]
-%	We can also alternative parametrizations of data, such as a represention of groundings of first order sentences.
-%	To this end we can introduce indices enumerating specific objects and which combination enumerates pairs of objects, on which a formula is grounded.
-%	For any relation between a pair of objects and an index assignment to the arguments we can define a data core, where the object enumerating indices are treated as data indices and the relation with assignment as an atomic index.
-%	Example: versandterBeleg(x,y) where x a Beleg and y a Mandant, evaluated at a Knowledge Graph (thus x, y indexing all possible Beleg and Mandant instances).
-%\end{remark}
-%
-%We thus build a Hadamard product respecting the colors by the arguments over all atomic grounding cores and normalize by the number of pairs.
-
-
-
-%% Older: But FOL formulas with universal quantifiers are already done by MLN in FOL -> Comment on other formulas?
-
-%\subsect{Comments}
-%
-%We can interpret our model in terms of FOL formulas with universal quantifiers only (i.e. no existential quantifiers, otherwise need Skolem constants and batch interpretation breaks down).
-%Each atom might contain variables, which we can substitute with possible individuals.
-%We define to each atom such a list of variables.
-%
-%We can place the grounding cores on the respective edges of the Bayesian propositional tensor network. 
-%For each pair of constants substituting the variables we then get the consistency by contraction with the rest network.
-%
-%To connect with the developments of the above sections, we need to translate the FOL Formulas into propositional logic.
-%
-%Instead, 
-
-%%% Merge to above!
-%\begin{remark}[Restriction of Groundings]
-%	Here, we do not do full propositionalization, which would understand each possible property of each constant and each relation between constants as an atom.
-%	This would also leave us with a single world containing a lot of atoms, which is not suitable for learning without additional assumptions.
-%	However, we can understand the approach taken here as learning FOL Formulas in full propositionalization, but of a restricted format.
-%	When only maximizing the number of satisfaction, our approach corresponds with fitting fully grounded FOL formulas of the format
-%		\[ \forall a_1,...,a_n : \impformula(a_1,...,a_n) \Rightarrow F(a_1,...,a_n) \]
-%	where Q is the extraction query and F is restricted to match relations with the allowed ones for each argument.
-%	Enumerating the individual tuples $a_1,...,a_n$ satisfying the query introduced the dataindex $\datindex$, which is averaged over.
-%\end{remark} 
-
-
 
 \sect{Generation of FOL worlds}
 
 
 \begin{definition}[Reproduction of Empirical Distributions]
 	Given an empirical distribution $\empdistribution\in\atomspace$, we say that a triple $(\dataworld,\impformula,\extformulaof{[\atomorder]})$ of a FOL world $\dataworld$ an importance formula $\impformula$ and extraction formulas $\extformulaof{\atomorder}$ reproduces $\empdistribution$, when 
-		\[ \empdistribution = \normationof{\{\groundingof{\impformula}\}\cup\{\rencodingof{\kggroundingof{\extformulaof{\atomenumerator}}\, : \, \atomenumeratorin}\}}{\shortcatvariables} \, .  \]
+		\[\empdistribution = \normationof{\{\groundingof{\impformula}\}\cup\{\rencodingof{\kggroundingof{\extformulaof{\atomenumerator}}\, : \, \atomenumeratorin}\}}{\shortcatvariables} \, .  \]
 \end{definition}
 
 
@@ -1325,7 +1211,7 @@ This amounts to an "inversion" of the data generation process described in the s
 % Formalization
 \begin{definition}[Reproduction of Empirical Distributions]
 	Given an empirical distribution $\empdistribution\in\bigotimes_{\atomenumeratorin}\rr^2$, we say that a tuple $(\kg,\impformula,\{\extformulas\})$ of a Knowledge Graph $\kg$ and queries $\impformula,\extformulaof{\atomenumerator}$ reproduces $\empdistribution$, when
-		\[ \empdistribution = \normationof{\{\kggroundingof{\impformula}\}\cup\{\rencodingof{\kggroundingof{\extformulaof{\atomenumerator}}\, : \, \atomenumeratorin}\}}{\shortcatvariables} \, .  \]
+		\[\empdistribution = \normationof{\{\kggroundingof{\impformula}\}\cup\{\rencodingof{\kggroundingof{\extformulaof{\atomenumerator}}\, : \, \atomenumeratorin}\}}{\shortcatvariables} \, .  \]
 \end{definition}
 
 %
@@ -1357,10 +1243,10 @@ Their sub-class memberships corresponding with the categorical variables of the 
 		) :  j \in [\datanum\cdot\empdistribution(\atomindices)], \atomenumeratorin , \atomlegindexof{\atomenumerator}=1\} 
 	\end{align}
 	\begin{centeredcode}
-		\impformula = SELECT \{ ?x \} WHERE \{ ?x \quad \rdftype \quad C \, .\}
+		\impformula = SELECT \{ ?x \} WHERE \{ ?x \quad \rdftype\quad C \, .\}
 	\end{centeredcode}
 	\begin{centeredcode}
-		$\extformulaof{\atomenumerator}$ = SELECT \{ ?x \} WHERE \{ ?x \quad \rdftype \quad $C_\atomenumerator$ \, .\}
+		$\extformulaof{\atomenumerator}$ = SELECT \{ ?x \} WHERE \{ ?x \quad \rdftype \quad $C_\atomenumerator$ \, .\}
 	\end{centeredcode}
 	reproduces $\empdistribution$.
 \end{theorem}
@@ -1460,28 +1346,7 @@ One reproducing KG is then the sum of the projection of any reproducing KG.
 From this perspective, it is obvious that any triple in the orthogonal complement of all projections can be added and the KG stays reproducing.
 
 
-%% OLD: Do 
-%\subsect{FOL grounding tensors as Knowledge Graphs}
-%
-%We can represent any grounding tensor as a knowledge graph where the individuals are enumerated by $\datindex$ and the classes are the arguments enumerated by $\indenumerator$.
-%Given the naive CP decomposition (Figure~\ref{fig:groundingCP}) of a grounding tensor we define for any $\datindex$ and $\indenumerator$
-%\begin{align}
-%	\gtensorof{\kg}_{\datindex,0,\indenumerator} := \gtensorof{\indenumerator}_{\datindex,1} \, .
-%\end{align}
-%
-%\begin{example}[Knowledge Graphs out of samples]
-%	We might have a single data index $\datindex$ marking different sample worlds.
-%	The Markov network then represents universal quantification over all the sample worlds and all Evidence Cores would just have the single data index as additional axis.
-%	In the interpretation by a Knowledge Graph, the ABox would consist in abstract nodes corresponding with worlds, which are classified by the atom classes.
-%\end{example}
 
-
-
-
-%\begin{remark}[Possibly Undirected Binary CP]
-%	% Extension to binary CP Decomposition
-%	When we drop the assumption of directed CP Decomposition and allow for generic binary CP Decomposition, we can interpret the failure of leg vectors being basis as an uncertainty about the sub-class membership.
-%\end{remark}
 
 
 
