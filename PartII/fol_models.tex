@@ -813,13 +813,14 @@ The base measure restricts the HFLN to be those worlds, where $\groundingof{\imp
 Intuitively, $\groundingof{\impformula}$ represents certain evidence about a first-order logic world, whereas other formulas are uncertain.
 
 
-\begin{assumption}\label{ass:importanceBasemeasure}
+\begin{assumption}
+    \label{ass:importanceBasemeasure}
     Given a base measure $\fixedimpbm$, we assume that there is an importance formula $\impformulaat{\shortindvariables}$ such that
     \begin{align*}
         \fixedimpbm
         = \begin{cases}
-          1 & \text{if} \quad \groundingofat{\impformula}{\indvariableof{\impformula}} = \fixedimpformula \\
-          0 & \text{else}
+              1 & \text{if} \quad \groundingofat{\impformula}{\indvariableof{\impformula}} = \fixedimpformula \\
+              0 & \text{else}
         \end{cases} \, .
     \end{align*}
 \end{assumption}
@@ -843,16 +844,17 @@ When this assumption holds, we can think of the importance formula as a conditio
 
 Towards connecting with propositional logics, we further make the assumption, that we can decompose the formula $\headfolformulaof{\selindex}$ in what we will call extraction formulas.
 
-\begin{assumption}\label{ass:propositionalHeads}
+\begin{assumption}
+    \label{ass:propositionalHeads}
     We assume that there exist formulas $\{\extformulaofat{\catenumerator}{\shortindvariables} \, : \, \catenumeratorin\}$, which we refer to as atom extraction formulas, and an importance formula $\impformulaat{\shortindvariables}$ such that the following holds.
     To each first-order logic formula $\enumfolformula$ there is another first-order logic formula $\headfolformulaofat{\selindex}{\indvariableof{\enumfolformula}}$ and a propositional formula $\enumformulaat{\shortcatvariables}$ such that
     \begin{align*}
-            \enumfolformulaat{\indvariableof{\enumfolformula}}
-             = \left( \impformulaat{\shortindvariables} \Rightarrow \headfolformulaofat{\selindex}{\indvariableof{\enumfolformula}} \right)
+        \enumfolformulaat{\indvariableof{\enumfolformula}}
+        = \left( \impformulaat{\shortindvariables} \Rightarrow \headfolformulaofat{\selindex}{\indvariableof{\enumfolformula}} \right)
     \end{align*}
     and
     \begin{align*}
-       \headfolformulaofat{\selindex}{\indvariableof{\enumfolformula}} =
+        \headfolformulaofat{\selindex}{\indvariableof{\enumfolformula}} =
         \contractionof{
             \{\enumformulaat{\shortcatvariables}\} \cup \{\rencodingofat{\extformulaof{\catenumerator}}{\catvariableof{\catenumerator},\shortindvariables} \, : \, \catenumeratorin\}
         }{\indvariableof{\enumformula}} \, .
@@ -940,7 +942,8 @@ We in the next section present assumptions on the tuples satisfying $\impformula
 
 We now make additional assumptions to decompose the partition function of an HFLN as a product of HLN partition functions.
 
-\begin{assumption}\label{ass:independentTuples}
+\begin{assumption}
+    \label{ass:independentTuples}
     Let $\fixedimpbm$ be a base measure of worlds such that the vectors
     \begin{align}
         \label{eq:data}
@@ -995,19 +998,20 @@ To show the theorem, we show first in the following lemma the factorization of t
             \prod_{\datindexin} \expof{ \sum_{\folexformulain} \weightof{\folexformula} \cdot \groundingofat{\headfolexformula}{\datshortindvariables} }
         }{\dataworld\sim\fixedimpbm}
     \end{align*}
-    Since the substitutions of the atom formulas at the respective object tuples are independent, also the variables     
+    Since the substitutions of the atom formulas at the respective object tuples are independent, also the variables
     \begin{align*}
         \expof{\weightof{\folexformula}  \cdot \groundingofat{\headfolexformula}{\datshortindvariables}  }
     \end{align*}
     for $\datindexin$ are independent.
     We therefore get
-    \begin{align}\label{eq:independentSamplesFOL}
+    \begin{align}
+        \label{eq:independentSamplesFOL}
         \partitionfunctionof{\folmlnparameters}
         &= \expof{\contraction{\weight} \cdot \contraction{\groundingof{\lnot\impformula}}} \cdot
         \prod_{\datindexin}
         \expectationofwrt{
             \expof{ \sum_{\folexformulain} \weightof{\folexformula} \cdot \groundingofat{\headfolexformula}{\datshortindvariables} }
-        }{\dataworld\sim\fixedimpbm} 
+        }{\dataworld\sim\fixedimpbm}
     \end{align}
     Each $\groundingofat{\headfolexformula}{\datshortindvariables}$ depends by \assref{ass:propositionalHeads} only on the random tuple $\{\extformulaof{\atomenumerator}[\datshortindvariables] \, : \, \catenumeratorin\}$.
     We build the expectation over all possible values $\shortcatindices$ of this tuple at any $\datindexin$ and get
@@ -1062,7 +1066,7 @@ With this lemma, we are now show \theref{the:FOLworldToPLdataset}.
 %%%%%%%%%%%%%%%%%%%%%%
 
 % Independent data investigation
-Let us now investigate, when the assumptions of independent data can be matched.
+Let us now investigate, in which cases the \assref{ass:independentTuples} of independent data can be matched.
 
 \begin{lemma}
     Let $\impformula$ and $\extformulas$ be quantor and constant free and let the index tuples of the support of $\fixedimpformula$ be pairwise disjoint.
@@ -1074,38 +1078,32 @@ Let us now investigate, when the assumptions of independent data can be matched.
 \end{proof}
 
 
+There are situations, where \assref{ass:independentTuples} is violated.
+For example, when two object tuples are not disjoint, then some formulas might always coincide on both datapoints, which would violate independence.
 
-Situations where atom base $\atombasemeasure$ measures are not uniform:
+In further situations the atom base $\atombasemeasure$ are not the uniform $\ones$:
 \begin{itemize}
     \item extraction formula being a) conjunctions of predicates: Probability that they are satisfied decreases
     b) disjunctions of predicates: Probability that they are satisfied increases
-    \item extraction formula coinciding with importance formula: Always satisfied
+    \item extraction formula coinciding with importance formula: Always satisfied, in this case still boolean
     \item extraction formulas contradicting each other, more general not independent from each other
 \end{itemize}
 
+Let us notice, that non-boolean base measures could be treated in a same manner, but several developments in this work, such as cross-entropy decompositions in \charef{cha:probReasoning} would receive further terms.
 
 
 
+\begin{remark}[Approximation by Independent Samples]
+    As observed above, we do not have independent samples in general.
+    As a consequence, we cannot apply \lemref{lem:FOLpartitionfunctionfactorization} to decompose the partition function term of the log-probability into factors to each solution map of $\impformula$.
+    In this case, it might be still benefitial to use the reduction to the likelihood of a HLN, but needs to understand it as a approximation to the true world probability.
 
+    %
+    If the expectations of each sample with respect to the marginalized distributions coincide, the average of empirical distribution also coincides with these (by linearity).
+    When the creation of samples has sufficient mixing properties, the empirical distribution converges to this expectation in the asymptotic case of large numbers of samples.
 
+\end{remark}
 
-
-\subsect{Approximation by Independent Samples}
-
-In general, we cannot assume that the $\impformula,\extformulas$ do not influence each other.
-
-We approximate the partition function into factors to each solution map of $\impformula$.
-This amounts to the assumption, that the atoms created to each tuple are independent.
-
-%
-For example, when solution maps share the resources, which form the arguments of an atom extraction query, they coincide on this atom and are thus dependent.
-
-% 
-If the expectations of each sample with respect to the marginalized distributions coincide, the average of empirical distribution also coincides with these (by linearity).
-When the creation of samples has sufficient mixing properties, the empirical distribution converges to this expectation in the asymptotic case of large numbers of samples.
-
-% 
-%In that case, the probability of a world $\dataworld$ corresponds with the likelihood of a dataset $\datamap$ where each sample corresponds with a solution of the query $\impformula$.
 
 
 \sect{Sample extraction from first-order logic worlds}
@@ -1113,34 +1111,41 @@ When the creation of samples has sufficient mixing properties, the empirical dis
 The decomposition of the likelihood suggests the following approach to generate samples from groundings:
 %We propose the following approach to generate datacores from groundings:
 \begin{itemize}
-    \item Define a query formula $\impformula$, which we decompose in the basis CP decomposition for later interpretation of datapoints
+    \item Define a query formula $\impformula$, which we decompose in the basis CP decomposition and interpret each slice as the one-hot encoding of the datapoint.
     \item Define for $\atomenumeratorin$ queries $\extformulaof{\atomenumerator}$ generating the the atoms $\atomicformulaof{\atomenumerator}$:
     Predicates along with assignment of variables / constants to its positions.
-    \item Contract the groundings of each formula $\exformula^{\atomenumerator}$ with the grounding of $\impformula$ to build a data core
+    \item Contract the groundings of each formula $\extformulaof{\atomenumerator}$ with the grounding of $\impformula$ to build a data core
 \end{itemize}
+
 
 \subsect{Representation by Tensor Networks}
 
-Let us now understand the extraction process as a relation between a tuple of individuals and the extracted world in the factored system of atoms $\atomicformulaof{\atomenumerator}$.
-\[ \extractionrelation
-= \{ (\individuals, \enumeratedatoms)
-\, : \,  \impformula(\individuals) = 1 \, , \, \forall_{\atomenumeratorin} : \,  \atomicformulaof{\atomenumerator} = \extformulaof{\atomenumerator}(\individuals) \}\]
+We model the extraction process as a relation between a tuple of individuals and the extracted world in the factored system of atoms $\catvariableof{\atomenumerator}$.
 
-Towards constructing the encoding of this we enumerate the individuals in the set $\worlddomain$ and use in the following the respective one-hot encoding
-\[ \onehotmap : \worlddomain \rightarrow \rr^{\cardof{\worlddomain}} \, . \]
-The combination of the queries $\impformula$ and $\{\extformulas\}$ by the relational encoding
-\[\rencodingof{\extractionrelation} \subset \left(\indspace\right) \otimes \left(\atomspace\right) \]
-defined by
-\[ \rencodingof{\extractionrelation}
-= \left\{ (\onehotmapof{\individuals}, \enumeratedatoms)
-\, : \, \impformula(\individuals) = 1 \, , \, \forall_{\atomenumeratorin} : \,  \atomicformulaof{\atomenumerator} = \extformulaof{\atomenumerator}(\individuals) \right\} \, . \]
+\begin{definition}
+    \label{def:extractionRelation}
+    Given a first-order logic world $\dataworld$, an importance formula $\impformula$ and extraction formulas $\extformulaof{\catenumerator}$ for $\catenumeratorin$, we define the extraction relation
+    \begin{align*}
+        \extractionrelation \subset \left(\symindstates\right) \otimes \left(\atomstates\right)
+    \end{align*}
+    by
+    \begin{align*}
+        \extractionrelation
+        = \{ (\shortindindices, \shortcatindices)
+        \, : \,  \groundingofat{\impformula}{\indexedshortindvariables} = 1 \, , \, \forall {\catenumeratorin} : \,  \catindexof{\atomenumerator} = \extformulaofat{\atomenumerator}{\indexedshortindvariables} \} \, .
+    \end{align*}
+\end{definition}
 
-%
-We can represent the encoding $\rencodingof{\extractionrelation}$ by the diagram
+The encoding of an extraction relation is
+\begin{align*}
+    \rencodingofat{\extractionrelation}{\shortindvariables,\shortcatvariables} \subset \left(\indspace\right) \otimes \left(\atomspace\right) \,
+\end{align*}
+and drawn in a contraction diagram by
 \begin{center}
     \input{./PartII/tikz_pics/fol_models/extraction_relation.tex}
 \end{center}
 Here the contraction of $\rencodingof{\impformula}$ with the truth vector $\tbasis$ represents the matching condition posed by $\impformula$ when extracting pairs of individuals.
+
 
 %% Empirical Distribution
 The empirical distribution is then the normalized contraction leaving only the legs to the extracted atomic formulas open, that is
@@ -1153,7 +1158,11 @@ The empirical distribution is then the normalized contraction leaving only the l
     }  \, .
 \end{align*}
 Here the number of extracted data is the denominator
-\[ \datanum = \contraction{\rencodingof{\extractionrelation}} \, .  \]
+\begin{align*}
+    \datanum
+    = \contraction{\rencodingof{\extractionrelation}}
+    = \contraction{\rencodingofat{\impformula}{\headvariableof{\impformula},\shortindvariables},\tbasisat{\headvariableof{\impformula}}}\, .
+\end{align*}
 
 We depict this by
 \begin{center}
@@ -1165,32 +1174,129 @@ We depict this by
 
 \subsect{Basis CP Decomposition of extracted data}
 
-To connect with the empirical distribution introduced in \secref{sec:empDistribution} we now show how the dataset $\datamap$ extracted from the interpretations of the formulas $\impformula,\extformulas$ on a FOL world $\dataworld$ can be represented by tensor networks.
+To connect with the empirical distribution introduced in \secref{sec:empDistribution} we now show how the empirical distribution extracted from the interpretations of the formulas $\impformula,\extformulas$ on a first-order logic world $\dataworld$ can be represented by tensor networks.
 
-
-Each datacore is then a contraction with the grounding of a formula, which is contracted with the grounding of the extraction query in the basis CP decomposition,
+First of all, we decompose the importance formula into a basis CP format (see \charef{cha:sparseCalculus}), that is a decomposition
 \begin{align*}
-    \datacoreof{\atomenumerator} = \sbcontractionof{\rencodingof{\groundingof{\extformulaof{\atomenumerator}}},\groundingof{\impformula}}{\datvariable,\catvariableof{\atomenumerator}}
+    \groundingofat{\impformula}{\shortindvariables}
+    = \contractionof{
+        \{\legcoreofat{\indenumerator}{\indvariableof{\indenumerator},\datvariable} \, : \, \indenumeratorin \}
+    }{\shortindvariables}
 \end{align*}
-see Figure~\ref{fig:datacoreGeneration}.
+such that all $\legcoreofat{\indenumerator}{\indvariableof{\indenumerator},\datvariable}$ are directed and boolean tensors.
+Here an auxiliary variables $\datvariable$ taking values in $[\datanum]$ is introduced, which we call the data variable, which enumerates the non-vanishing coordinates of $\groundingof{\impformula}$.
+With this decomposition, we can understand the decomposition of $\groundingofat{\impformula}{\shortindvariables}$ as a relational encoding of an term selection map $\secdatamap$ with coordinate maps defined such that
+\begin{align*}
+    \rencodingofat{\secdatamap_{\indenumerator}}{\indvariableof{\indenumerator},\datvariable}
+    = \legcoreofat{\indenumerator}{\indvariableof{\indenumerator},\datvariable} \, .
+\end{align*}
+We depict this decomposition by:
+\begin{center}
+    \input{./PartII/tikz_pics/fol_models/impformula_cp.tex}
+\end{center}
+
+Based on these construction, we now provide a tensor network decomposition of the extracted empirical distribution.
 
 \begin{theorem}
-    We have
-    \[    \sbcontractionof{\rencodingof{\extractionrelation}}{\shortcatvariables}
-    = \contractionof{\{\datacoreofat{\atomenumerator}{\datvariable,\catvariableof{\atomenumerator}} \, : \, \atomenumeratorin\}}{\shortcatvariables} \]
+    Given a first-order logic world $\dataworld$, an importance formula $\impformula$ and extraction formulas $\extformulaof{\catenumerator}$ for $\catenumeratorin$, we have
+    \begin{align*}
+        \rencodingofat{\extractionrelation}{\shortindvariables,\shortcatvariables} =
+        \contractionof{
+            \{\rencodingofat{\groundingof{\extformulaof{\atomenumerator}}}{\catvariableof{\catenumerator},\shortindvariables} \, : \, \catenumeratorin\}
+            \cup \{\rencodingofat{\secdatamap_{\indenumerator}}{\indvariableof{\indenumerator},\datvariable} \, : \, \indenumeratorin\}
+        }{\shortindvariables,\shortcatvariables}
+    \end{align*}
     and thus
-    \[  \empdistribution = \normationof{\{\datacoreofat{\atomenumerator}{\datvariable,\catvariableof{\atomenumerator}}  \, : \, \atomenumeratorin\}}{\shortcatvariables} \, . \]
+    \begin{align*}
+        \empdistributionat{\shortcatvariables} =
+        \frac{1}{\datanum}  \contractionof{
+            \{\rencodingofat{\groundingof{\extformulaof{\atomenumerator}}}{\catvariableof{\catenumerator},\shortindvariables} \, : \, \catenumeratorin\}
+            \cup \{\rencodingofat{\secdatamap_{\indenumerator}}{\indvariableof{\indenumerator},\datvariable} \, : \, \indenumeratorin\}
+        }{\shortcatvariables} \, .
+    \end{align*}
 \end{theorem}
 \begin{proof}
-    Using that $\groundingof{\impformula}$ is binary and the core can be copied (ref to theorem in binary calculus).
+    To show the first claim, let us choose arbitrary state tuples $\shortindindices$ and $\shortcatindices$.
+    We then have
+    \begin{align*}
+        &\contractionof{
+            \{\rencodingofat{\groundingof{\extformulaof{\atomenumerator}}}{\catvariableof{\catenumerator},\shortindvariables} \, : \, \catenumeratorin\}
+            \cup \{\rencodingofat{\secdatamap_{\indenumerator}}{\indvariableof{\indenumerator},\datvariable} \, : \, \indenumeratorin\}
+        }{\indexedshortindvariables,\indexedshortcatvariables} \\
+        & \quad  =  \contraction{
+            \{\rencodingofat{\groundingof{\extformulaof{\atomenumerator}}}{\indexedcatvariableof{\catenumerator},\indexedshortindvariables} \, : \, \catenumeratorin\}
+            \cup \{\rencodingofat{\secdatamap_{\indenumerator}}{\indexedindvariableof{\indenumerator},\datvariable} \, : \, \indenumeratorin\}
+        } \, .
+    \end{align*}
+    This contraction evaluates to $1$, if and only if for all $\catenumeratorin$ we have $\rencodingofat{\groundingof{\extformulaof{\atomenumerator}}}{\catvariableof{\catenumerator},\shortindvariables}=1$ and
+    \begin{align*}
+        \contraction{\{\rencodingofat{\secdatamap_{\indenumerator}}{\indexedindvariableof{\indenumerator},\datvariable} \, : \, \indenumeratorin\}}  = 1 \, .
+    \end{align*}
+    The first condition is equal to $\catindexof{\atomenumerator} = \extformulaofat{\atomenumerator}{\indexedshortindvariables}$ for all $\catenumeratorin$ and the second to $\groundingofat{\impformula}{\indexedshortindvariables} = 1$.
+    Comparing with the definition of the extraction relation (see \defref{def:extractionRelation}), we notice that these conditions are equal to $(\shortindindices,\shortcatindices)\in\extractionrelation$ and therefore to
+    \begin{align*}
+        \rencodingofat{\extractionrelation}{\indexedshortindvariables,\indexedshortcatvariables} \, .
+    \end{align*}
+    The first claim follows, since $\rencodingof{\extractionrelation}$ is boolean, as is the contraction of the cores $\rencodingof{\groundingof{\extformulaof{\atomenumerator}}}$ with the cores $\rencodingof{\secdatamap_{\indenumerator}}$, which leaves the outgoing variables $\shortcatvariables$ open.
+    The second claim follows from the first using that $\empdistributionat{\shortcatvariables}=\frac{1}{\datanum}\contractionof{\rencodingof{\extractionrelation}}{\shortcatvariables}$.
+\end{proof}
+
+To connect with the representation of empirical distributions based on data cores (see \secref{sec:empDistribution}), we now form data cores by contractions with the grounding of extraction formulas with the cores $\rencodingof{\secdatamap_{\indenumerator}}$ (see \figref{fig:datacoreGeneration}),
+\begin{align*}
+    \datacoreofat{\atomenumerator}{\catvariableof{\catenumerator},\datvariable}
+    = \sbcontractionof{
+        \{\rencodingofat{\groundingof{\extformulaof{\atomenumerator}}}{\catvariableof{\catenumerator},\shortindvariables}\}
+        \cup \{ \legcoreofat{\indenumerator}{\indvariableof{\indenumerator},\datvariable} \, : \, \indenumeratorin\}
+    }{\catvariableof{\atomenumerator},\datvariable} \, .
+\end{align*}
+
+% Empirical distribution
+The empirical distribution is then a tensor network of these tensors, as we show next.
+
+\begin{theorem}
+    \label{the:extractionDataCores}
+    We have
+    \begin{align*}
+        \sbcontractionof{\rencodingof{\extractionrelation}}{\shortcatvariables}
+        = \contractionof{\{\datacoreofat{\atomenumerator}{\datvariable,\catvariableof{\atomenumerator}} \, : \, \atomenumeratorin\}}{\shortcatvariables}
+    \end{align*}
+    and thus
+    \begin{align*}
+        \empdistributionat{\shortcatvariables}
+        = \frac{1}{\datanum} \contractionof{\{\datacoreofat{\atomenumerator}{\datvariable,\catvariableof{\atomenumerator}}  \, : \, \atomenumeratorin\}}{\shortcatvariables} \, .
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    By \theref{the:extractionrelationDecomposition} we have
+    \begin{align*}
+        \rencodingofat{\extractionrelation}{\shortindvariables,\shortcatvariables} =
+        \contractionof{
+            \{\rencodingofat{\groundingof{\extformulaof{\atomenumerator}}}{\catvariableof{\catenumerator},\shortindvariables} \, : \, \catenumeratorin\}
+            \cup \{\rencodingofat{\secdatamap_{\indenumerator}}{\indvariableof{\indenumerator},\datvariable} \, : \, \indenumeratorin\}
+        }{\shortindvariables,\shortcatvariables} \, .
+    \end{align*}
+    Since $\rencodingofat{\secdatamap_{\indenumerator}}{\indvariableof{\indenumerator},\datvariable}$ are directed and boolean, they can be copied and separately contracted with each $\groundingof{\extformulaof{\atomenumerator}}$, without changing the contraction.
+    We arrive at
+    \begin{align*}
+        &\rencodingofat{\extractionrelation}{\shortindvariables,\shortcatvariables} \\
+        &\quad = \contractionof{
+            \big\{\contractionof{
+                \{\rencodingofat{\groundingof{\extformulaof{\atomenumerator}}}{\catvariableof{\catenumerator},\shortindvariables}\}
+                \cup \{\rencodingofat{\secdatamap_{\indenumerator}}{\indvariableof{\indenumerator},\datvariable} \, : \, \indenumeratorin\}
+            }{\catvariableof{\catenumerator},\datvariable} \, : \, \catenumeratorin \big\}
+        }{\shortindvariables,\shortcatvariables} \\
+        & \quad =  \contractionof{\{\datacoreofat{\atomenumerator}{\datvariable,\catvariableof{\atomenumerator}}  \, : \, \atomenumeratorin\}}{\shortcatvariables} \, ,
+    \end{align*}
+    which established the claim.
 \end{proof}
 
 % Efficient contraction: Do also basis decomposition of the extraction query and use efficient contraction!
-Towards efficient calculation of the data cores, we build a basis CP decomposition of $\groundingof{\impformula}$, where we further demand $\scalarcore=\ones$.
-This is a collection of basis leg cores $\legcoreof{\fixedimpformula,\indenumerator}$ such that
-\begin{align*}
-    \fixedimpformula[\shortindvariablelist] = \contractionof{ \left\{ \legcoreofat{\fixedimpformula,\indenumerator}{\datvariable,\indvariableof{\indenumerator}} \, : \, \indenumeratorin \right\} }{\shortindvariablelist} \, .
-\end{align*}
+%Towards efficient calculation of the data cores, we build a basis CP decomposition of $\groundingof{\impformula}$, where we further demand $\scalarcore=\ones$.
+%This is a collection of basis leg cores $\legcoreof{\fixedimpformula,\indenumerator}$ such that
+%\begin{align*}
+%    \fixedimpformula[\shortindvariablelist]
+%    = \contractionof{ \left\{ \legcoreofat{\fixedimpformula,\indenumerator}{\datvariable,\indvariableof{\indenumerator}} \, : \, \indenumeratorin \right\} }{\shortindvariablelist} \, .
+%\end{align*}
 
 % Data enumeration -> To representation
 %We can further utilize any decomposition of $\impformula$ into a directed and binary CP Format to enumerate the datapoints by the slice index $\datindex$. % Approaches like SPARQL directly give us these by solution mappings.
@@ -1201,250 +1307,370 @@ This is a collection of basis leg cores $\legcoreof{\fixedimpformula,\indenumera
     \begin{center}
         \input{./PartII/tikz_pics/fol_models/datacore_generation.tex}
     \end{center}
-    \caption{Generation of Datacores given a formula $\exformula$, whose variables (here $\exindividualof{1},\exindividualof{2},\exindividualof{3}$) are selected from an extraction query $\impformula$.
-    Variables, which are not appearing in the formula $\exformula$ are trivialized over (here $\exindividualof{4},\ldots,\exindividualof{\variableorder})$.
-    For consistency we denoted the index $\atomlegindexof{\exformulaof{\atomenumerator}}$ by $\atomlegindexof{\atomenumerator}$.}
+    \caption{Generation of a data core for the variable $\catvariableof{\catenumerator}$ given an extraction formula $\extformulaof{\catenumerator}$ and an importance formula, which grounding is decomposed into a basis CP format with leg vectors $\rencodingofat{\secdatamap_{\indenumerator}}{\indvariableof{\indenumerator},\datvariable}$.
+    Term variables, which are appearing in the importance formula, but not in the extraction formula $\extformulaof{\catenumerator}$ can be treated trivally by contraction with the trivial tensor (here $\indvariableof{4},\ldots,\indvariableof{\indorder-1})$.
+    }
     \label{fig:datacoreGeneration}
 \end{figure}
 
-% Log-likelihood
-The log-likelihood of a MLN is then the contraction of the data cores with the representation of the MLN wrt the atomic formulas $\extformulaof{\atomenumerator}$.
+
+% Comment: Exploitation of common structure
+When many atom extraction formulas differ only by a constant, we can replace the constant by an auxiliary term variable.
+The atoms are then the atomizations of this variable (see \secref{sec:categoricalTN}), treated as a categorical variable, with respect to the constant in the extraction query.
+The advantages are that we can avoid the $\rencodingof{}$-formalism and directly model the categorical distributions.
+
+This also enables a batchwise computation of multiple $\sparql$ queries, which differ only in one constant.
 
 
-
-\subsect{Representation with auxiliary term variables}
-
-
-\red{
-    When many atom extraction formulas differ only by a constant, we can replace the constant by an auxiliary term variable.
-    The atoms are then the atomizations of this variable (see \secref{sec:categoricalTN}), treated as a categorical variable, with respect to the constant in the extraction query.
-    The advantages are that we can avoid the $\rencodingof{}$-formalims and directly model the categorical distributions.
-}
-
-
-
-
-\subsect{Generic Tensor Network Decomposition of Extracted Data}
-
-\red{
-    More naturally: Formulas are compositions of predicates.
-    When quantor free then a tensor network.
-}
-
-
-% 
-\begin{remark}[Alternative Representation of empirical distributions]
-    In many applications such as the computation of log-likelihoods we can use any representation of the empirical distribution by tensor networks.
-    It is thus not necessary to compute the data cores as above, unless one requires a list of the extracted samples.
-\end{remark}
-
-
-
-
-
-\subsect{Design of the Formulas}
-
-Most intuitive when labeling individuals by classes.
-Extraction formulas $\extformulas$ can then be defined by subclasses of the member of a class and relations between objects of different classes. % Koller calls atomic formulas the template attributes
-We then choose $\formulaset$ as more involved formulas decomposed into connectives acting on these atoms.
-The extraction query $\impformula$ is then designed based on class memberships to ensure, that the arguments of the formulas are always of specific classes. % Koller specifies to each argument of the attributes a class 
-
-% Approach
-We propose to
-\begin{itemize}
-    \item Execute an extraction query to get pairs of individuals (the pairDf).
-    \item Propositionalize the FOL Formulas independently on each tuple taking the individuals as a set of constant and filtering on the possible properties of each individuals.
-    (Can understand as adding knowledge that most of the relations do not hold)
-    \item Understand each such generated knowledge base as datapoint and average over them to get the empirical distribution to be fit.
-    \item Fit a MLN describing the statistical relations of unseen results of the extraction query, based on likelihood maximation.
-\end{itemize}
+%\subsect{Design of the Formulas}
+%
+%Most intuitive when labeling individuals by classes.
+%Extraction formulas $\extformulas$ can then be defined by subclasses of the member of a class and relations between objects of different classes. % Koller calls atomic formulas the template attributes
+%We then choose $\formulaset$ as more involved formulas decomposed into connectives acting on these atoms.
+%The importance formula $\impformula$ is then designed based on class memberships to ensure, that the arguments of the formulas are always of specific classes. % Koller specifies to each argument of the attributes a class
+%
+%% Approach
+%We propose to
+%\begin{itemize}
+%    \item Execute an extraction query to get pairs of individuals (the pairDf).
+%    \item Propositionalize the FOL Formulas independently on each tuple taking the individuals as a set of constant and filtering on the possible properties of each individuals.
+%    (Can understand as adding knowledge that most of the relations do not hold)
+%    \item Understand each such generated knowledge base as datapoint and average over them to get the empirical distribution to be fit.
+%    \item Fit a MLN describing the statistical relations of unseen results of the extraction query, based on likelihood maximation.
+%\end{itemize}
 
 
 
 
 \sect{Generation of first-order logic worlds}
 
+\red{
+    So far we have discussed, how MLNs for FOL Knowledge Bases such as Knowledge Graphs can be built by extracting data.
+    Conversely, any binary tensor can be interpreted as a Knowledge Graph.
+    To be more precise, we follow the intuition that the ones coordinates mark possible worlds compatible with the knowledge about a factored system.
+    Each possible world can then be encoded in a subgraph of the Knowledge Graph representing the world.
+%
+    This amounts to an "inversion" of the data generation process described in the subsection above.
+}
+
 In the previous section we have described a way to extract an effective empirical distribution for the likelihood of a first-order logic world given a HFLN.
 We now want to investigate methods to reproduce an empirical distribution based on a constructed first-order logic world.
 
 \begin{definition}[Reproduction of Empirical Distributions]
-    Given an empirical distribution $\empdistribution\in\atomspace$, we say that a triple $(\dataworld,\impformula,\extformulaof{[\atomorder]})$ of a FOL world $\dataworld$ an importance formula $\impformula$ and extraction formulas $\extformulaof{\atomorder}$ reproduces $\empdistribution$, when
+    Given an empirical distribution $\empdistribution\in\atomspace$, we say that a triple $(\dataworld,\impformula,\shortextformulas)$ of a FOL world $\dataworld$ an importance formula $\impformula$ and extraction formulas $\shortextformulas=\{\extformulaof{\atomenumerator}\,:\,\atomenumeratorin\}$ reproduces $\empdistribution$, when
     \begin{align*}
         \empdistribution
         = \normationof{\{\groundingof{\impformula}\}\cup\{\rencodingof{\kggroundingof{\extformulaof{\atomenumerator}}\, : \, \atomenumeratorin}\}}{\shortcatvariables} \, .
     \end{align*}
 \end{definition}
 
+% If \datamap is not known
+Note that for distribution $\probtensor$ to be reproducable, it needs to have rational coordinates. %, since each coordinate can be interpreted as the frequency of the respective world in the data $\datamap$.
+If any only if all coordinates are rational, we find a $\datanum\in\nn$ such that $\imageof{\datanum\cdot\probtensor}\subset\nn$.
+We can then interpret $\datanum$ as the number of samples, and construct a sample selector map by understanding each coordinate of $\datanum\cdot\probtensor$ as the number of appearances of the respective world in the samples.
 
-\subsect{Samples by single objects}
-
-The first reproduction scheme identifies the datapoints with objects $\worlddomain=[\datdim]$
-
-\begin{theorem}
-    Given a dataset $\datamap$ the world $\dataworld[\selvariable,\indvariable]$
-    \begin{align*}
-        \dataworld[\selvariable,\indvariable] = \sum_{\atomenumeratorin} \sum_{\datindexin \, : \datamap_{\atomenumerator}(\datindex)=1} \onehotmapofat{\atomenumerator}{\selvariable} \otimes \onehotmapofat{\datindex}{\indvariable}
-    \end{align*}
-    reproduces with the trivial importance query and extraction queries coinciding with the predicates the dataset $\datamap$.
-\end{theorem}
+We show different schemes and give examples on Knowledge Graphs, where we provide examples for importance and extraction formulas by $\sparql$ queries.
 
 
-\subsect{Samples by pairs of objects}
-
-We instantiate multiple objects for each datapoint, one for each variable of the importance formula, i.e. $\worlddomain=[\datdim]\times[\indorder]$
-
-
-
-\sect{Example: Generation of Knowledge Graphs} % To generation of FOL worlds?
-
-So far we have discussed, how MLNs for FOL Knowledge Bases such as Knowledge Graphs can be built by extracting data.
-Conversely, any binary tensor can be interpreted as a Knowledge Graph.
-To be more precise, we follow the intuition that the ones coordinates mark possible worlds compatible with the knowledge about a factored system.
-Each possible world can then be encoded in a subgraph of the Knowledge Graph representing the world.
-
-%
-This amounts to an "inversion" of the data generation process described in the subsection above.
-
+%\subsect{Example: Generation of Knowledge Graphs} % To generation of FOL worlds?
 %
 % Having a directed and binary CP decomposition of $\exformula$, each possible world is encoded by a slice.
 
 
 % Formalization
-\begin{definition}[Reproduction of Empirical Distributions]
-    Given an empirical distribution $\empdistribution\in\bigotimes_{\atomenumeratorin}\rr^2$, we say that a tuple $(\kg,\impformula,\{\extformulas\})$ of a Knowledge Graph $\kg$ and queries $\impformula,\extformulaof{\atomenumerator}$ reproduces $\empdistribution$, when
-    \[\empdistribution = \normationof{\{\kggroundingof{\impformula}\}\cup\{\rencodingof{\kggroundingof{\extformulaof{\atomenumerator}}\, : \, \atomenumeratorin}\}}{\shortcatvariables} \, .  \]
-\end{definition}
+%\begin{definition}[Reproduction of Empirical Distributions]
+%    Given an empirical distribution $\empdistribution\in\bigotimes_{\atomenumeratorin}\rr^2$, we say that a tuple $(\kg,\impformula,\{\extformulas\})$ of a Knowledge Graph $\kg$ and queries $\impformula,\extformulaof{\atomenumerator}$ reproduces $\empdistribution$, when
+%    \[\empdistribution = \normationof{\{\kggroundingof{\impformula}\}\cup\{\rencodingof{\kggroundingof{\extformulaof{\atomenumerator}}\, : \, \atomenumeratorin}\}}{\shortcatvariables} \, .  \]
+%\end{definition}
 
 %
-Any distribution with rational coordinates is an empirical distribution, since each coordinate can be interpreted as the frequency of the respective world in the data $\datamap$.
+
 %In a frequentist interpretation we instantiate each world according to the rate $\probtensor(\atomindices)$.
 %This interpretation requires a rounding of the real probabilities by rational numbers.
 
 
-\subsect{Samples by single resources}
+\subsect{Samples by single objects}
 
-\paragraph{TBox:} The categorical variables of the factored system are the coarsest classes.
-We define atomic formulas by the state indicators of each categorical variable as in \secref{sec:categoricalTN}.
-Each such atomic formula corresponds with a sub-class of the classes.
-By definition, each collection of state indicators define thus pairwise disjoint subclasses.
+%\subsect{Samples by single objects}
 
-\paragraph{ABox:} The samples are represented by single individuals in the Knowledge Graph.
-Their sub-class memberships corresponding with the categorical variables of the system are instantiated whenever the atom is true in the sample.
-
+In the first reproduction scheme we construct datapoints by dedicated objects, which represent a sample, that is we choose a domain $\worlddomain=[\datdim]$.
 
 \begin{theorem}
-    Let there any empirical distribution $\empdistribution\in\bigotimes_{\atomenumeratorin}\rr^2$ and $\datanum\in\nn$ such that $\imageof{\datanum\cdot\empdistribution}\subset\nn$.
-    Then the tuple $(\kg,\impformula,\{\extformulas\})$ defined by
-    \begin{align}
-        \kg =
-        & \bigcup_{\atomindicesin}  \{(
-        s_{j, \atomindices} \quad \mathrm{rdf:type} \quad C ) : j \in [\datanum\cdot\empdistribution(\atomindices)] \}  \\
-        &\bigcup_{\atomindicesin}  \{(
-        s_{j, \atomindices} \quad \mathrm{rdf:type} \quad C_\atomenumerator
-        ) : j \in [\datanum\cdot\empdistribution(\atomindices)], \atomenumeratorin , \atomlegindexof{\atomenumerator}=1\}
-    \end{align}
+    \label{the:reproducingSingleObjects}
+    Let there be an empirical distribution $\empdistribution$ to a sample selector map $\datamap$ (see \defref{def:dataMap}), we construct a world $\dataworld[\selvariable,\indvariable]$ with $\atomorder$ unary predicates by
+    \begin{align*}
+        \dataworldat{\selvariable,\indvariable}
+        = \sum_{\atomenumeratorin} \sum_{\datindexin \, : \datamap_{\atomenumerator}(\datindex)=1} \onehotmapofat{\atomenumerator}{\selvariable} \otimes \onehotmapofat{\datindex}{\indvariable} \, .
+    \end{align*}
+    We further choose a trivial importance query, that is
+    \begin{align*}
+        \groundingofat{\impformula}{\indvariable} = \onesat{\indvariable} \, ,
+    \end{align*}
+    and extraction queries coinciding with the unary predicates, that is for $\atomenumeratorin$
+    \begin{align*}
+        \extformulaof{\atomenumerator} = \folpredicateof{\atomenumerator} \, .
+    \end{align*}
+    Then, the triple $(\dataworld,\impformula,\shortextformulas)$ reproduces $\empdistribution$.
+%    reproduces with the trivial importance query and extraction queries coinciding with the predicates the dataset $\datamap$.
+\end{theorem}
+\begin{proof}
+    By \theref{the:extractionDataCores} it is enough to show, that the data cores constructed from the data extraction process coincide with those of $\empdistribution$.
+    We enumerate to this end the non-vanishing coordinates of $\groundingof{\impformula}$ by the data variable $\datvariable$ taking values $\datindexin$, as
+    \begin{align*}
+        \groundingofat{\impformula}{\indvariable=\datindex} = 1 \,
+    \end{align*}
+    and choose
+    \begin{align*}
+        \secdatamap = \identity \, .
+    \end{align*}
+    For arbitrary $\atomenumeratorin$ and $\datindexin$ we now have
+    \begin{align*}
+        \datacoreofat{\atomenumerator}{\catvariableof{\catenumerator},\indexeddatvariable}
+        = \contractionof{
+            \rencodingofat{\groundingof{\extformulaof{\atomenumerator}}}{\catvariableof{\catenumerator},\indvariable},
+            \legcoreofat{0}{\indvariable,\indexeddatvariable}
+        }{\catvariableof{\atomenumerator},\datvariable}
+        = \contractionof{
+            \rencodingofat{\groundingof{\extformulaof{\atomenumerator}}}{\catvariableof{\catenumerator},\indvariable},
+            \onehotmapofat{\secdatamap(\datindex)}{\indvariable}
+        }{\catvariableof{\atomenumerator},\indexeddatvariable}
+        = \onehotmapofat{\datamap_\atomenumerator(\datindex)}{\catvariableof{\catenumerator}} \, .
+    \end{align*}
+    This coincides with the slice of the data core of the CP representation of empirical distributions used in \theref{the:empCPRep}.
+    Since the slice and the core was arbitrary, the tensor network representations in \theref{the:empCPRep} and \theref{the:extractionDataCores} are equal and thus the triple $(\dataworld,\impformula,\shortextformulas)$ reproduces $\empdistribution$.
+\end{proof}
+
+
+We now give by the next theorem an example of a Knowledge Graph with $\sparql$ queries reproducing and arbitrary empirical distribution.
+
+\begin{theorem}\label{the:reproducingKGSingelObjects}
+    Let $\empdistribution$ be an empirical distribution to the sample selector $\datamap$.
+    We construct a Knowledge Graph of the resources $\worlddomain = \{s_\datindex \, : \, \datindexin\} \cup \{C\} \cup \{C_\atomenumerator \, : \, \atomenumeratorin\}$, where $s_{\datindex}$ represent samples and $C_\atomenumerator$ unary predicates, by
+    \begin{align*}
+        \kggroundingof{\rdf}
+        =
+        \sum_{\datindexin}
+        \onehotmapof{\indexinterpretationof{s_\datindex}}{\sindvariable}
+        \otimes \onehotmapof{\indexinterpretationof{\mathrdftype}}{\pindvariable}
+        \otimes \onehotmapof{\indexinterpretationof{C}}{\oindvariable}
+        +
+        \sum_{\datindexin} \sum_{\atomenumeratorin \, : \, \datamap_{\atomenumerator}(\datindex)=1}
+        \onehotmapof{\indexinterpretationof{s_\datindex}}{\sindvariable}
+        \otimes \onehotmapof{\indexinterpretationof{\mathrdftype}}{\pindvariable}
+        \otimes \onehotmapof{\indexinterpretationof{C_\atomenumerator}}{\oindvariable} \, .
+    \end{align*}
+    We further define an importance formula by the $\sparql$ query
     \begin{centeredcode}
         \impformula = SELECT \{ ?x \} WHERE \{ ?x \quad \rdftype\quad C \, .\}
     \end{centeredcode}
+    and for each $\atomenumeratorin$ an extraction formula by the query
     \begin{centeredcode}
-        $\extformulaof{\atomenumerator}$ = SELECT \{ ?x \} WHERE \{ ?x \quad \rdftype \quad $C_\atomenumerator$ \, .\}
+        $\extformulaof{\atomenumerator}$ = SELECT \{ ?x \} WHERE \{ ?x \quad \rdftype \quad $C_\atomenumerator$ \, .\} \, .
     \end{centeredcode}
-    reproduces $\empdistribution$.
+    Then the triple $(\kg,\impformula,\shortextformulas)$ reproduces $\empdistribution$.
 \end{theorem}
 \begin{proof}
-    With respect to any enumeration of the resources of $\kg$ we have
-    \begin{align}
-        \kggroundingof{\impformula}
-        = \sum_{\atomindicesin} \sum_{j \in [\datanum\cdot\empdistribution(\atomindices)]} \onehotmapof{s_{j, \atomindices} }
-    \end{align}
-    and
-    \begin{align}
-        \kggroundingof{\extformulaof{\atomenumerator}}
-        = \sum_{\atomindicesin \, : \, \atomlegindexof{\atomenumerator} = 1} \sum_{j \in [\datanum\cdot\empdistribution(\atomindices)]} \onehotmapof{s_{j, \atomindices} } \, .
-    \end{align}
-    Summing over the resource variables of these tensors in a contraction we get
-    \begin{align}
-        \contractionof{\{\kggroundingof{\impformula}\}\cup\{\rencodingof{\kggroundingof{\extformulaof{\atomenumerator}}\, : \, \atomenumeratorin}\}}{\shortcatvariables}
-        & = \sum_{\atomenumeratorin}  \datanum\cdot\empdistribution(\atomindices) \cdot \onehotmapof{\atomindices} = \datanum \cdot \empdistribution
-    \end{align}
-    and therefore
-    \begin{align}
-        \normationof{\{\kggroundingof{\impformula}\}\cup\{\rencodingof{\kggroundingof{\extformulaof{\atomenumerator}}}\, : \, \atomenumeratorin\}}{\shortcatvariables} = \empdistribution \, .
-    \end{align}
+    We show the theorem analogously to \theref{the:reproducingSingleObjects}, with the slide difference in the importance formula.
+    We have for the grounding of $\impformula$ on $\kg$ that
+    \begin{align*}
+        \kggroundingofat{\impformula}{\indvariable} = \sum_{\datindexin}  \onehotmapof{\indexinterpretationof{s_\datindex}}{\indvariable}
+    \end{align*}
+    and enumerate the non-vanishing coordinates by $\datvariable$.
+
+    For each extraction formula we have
+    \begin{align*}
+        \kggroundingofat{\extformulaof{\atomenumerator}}{\indvariable} = \sum_{\datindexin \, : \, \datamap_{\atomenumerator}(\datindex)=1} \onehotmapof{\indexinterpretationof{s_\datindex}}{\indvariable} \,.
+    \end{align*}
+    It follows that the data cores used in \theref{the:extractionDataCores} are
+    \begin{align*}
+        \rencodingofat{\datamap_\atomenumerator}{\catvariableof{\atomenumerator},\datindex}
+        = \onehotmapofat{0}{\catvariableof{\atomenumerator}} \otimes \left(\sum_{\datindexin \, : \, \datamap_{\atomenumerator}(\datindex)=0} \onehotmapofat{\datindex}{\datvariable}\right)
+        +\onehotmapofat{1}{\catvariableof{\atomenumerator}} \otimes \left(\sum_{\datindexin \, : \, \datamap_{\atomenumerator}(\datindex)=1} \onehotmapofat{\datindex}{\datvariable}\right)
+    \end{align*}
+    and they thus coincide with those in the decomposition in \theref{the:empCPRep}.
+    The claim follows therefore with the same argumentation as in the proof of \theref{the:reproducingSingleObjects}.
 \end{proof}
 
+%
+Let us provide some more insights on the construction of the reproducing Knowledge Graph in \theref{the:reproducingKGSingelObject}.
+By the insertions to the one-hot encodings $\onehotmapof{\indexinterpretationof{s_\datindex}}{\sindvariable} \otimes \onehotmapof{\indexinterpretationof{\mathrdftype}}{\pindvariable} \otimes \onehotmapof{\indexinterpretationof{C}}{\oindvariable}$ we mark each sample representing resource by a class and ensure its appearance as a $\mathrm{owl:NamedIndividual}$ in the graph.
+The insertions $\onehotmapof{\indexinterpretationof{s_\datindex}}{\sindvariable}\otimes \onehotmapof{\indexinterpretationof{\mathrdftype}}{\pindvariable} \otimes \onehotmapof{\indexinterpretationof{C_\atomenumerator}}{\oindvariable}$ on the other side encode the sample selecting map, by inserting exactly the assertions corresponding with the respective sample.
 % 
 In this simple Knowledge Graph, Description Logic is expressive enough to represent any formula $\folexformula$ composed of the formulas $\extformulas$.
 
+%
+%\begin{theorem}
+%    Let there any empirical distribution $\empdistribution\in\bigotimes_{\atomenumeratorin}\rr^2$ and $\datanum\in\nn$ such that $\imageof{\datanum\cdot\empdistribution}\subset\nn$.
+%    Then the tuple $(\kg,\impformula,\{\extformulas\})$ defined by a Knowledge Graph
+%    \begin{align}
+%        \kg =
+%        & \bigcup_{\atomindicesin}  \{(
+%        s_{j, \atomindices} \quad \mathrm{rdf:type} \quad C ) : j \in [\datanum\cdot\empdistribution(\atomindices)] \}  \\
+%        &\bigcup_{\atomindicesin}  \{(
+%        s_{j, \atomindices} \quad \mathrm{rdf:type} \quad C_\atomenumerator
+%        ) : j \in [\datanum\cdot\empdistribution(\atomindices)], \atomenumeratorin , \atomlegindexof{\atomenumerator}=1\}
+%    \end{align}
+%    further an importance formula by the query
+%    \begin{centeredcode}
+%        \impformula = SELECT \{ ?x \} WHERE \{ ?x \quad \rdftype\quad C \, .\}
+%    \end{centeredcode}
+%    and extraction formulas for each $\atomenumeratorin$ by the query
+%    \begin{centeredcode}
+%        $\extformulaof{\atomenumerator}$ = SELECT \{ ?x \} WHERE \{ ?x \quad \rdftype \quad $C_\atomenumerator$ \, .\}
+%    \end{centeredcode}
+%    reproduces $\empdistribution$.
+%\end{theorem}
+%\begin{proof}
+%    With respect to any enumeration of the resources of $\kg$ we have
+%    \begin{align}
+%        \kggroundingof{\impformula}
+%        = \sum_{\atomindicesin} \sum_{j \in [\datanum\cdot\empdistribution(\atomindices)]} \onehotmapof{s_{j, \atomindices} }
+%    \end{align}
+%    and
+%    \begin{align}
+%        \kggroundingof{\extformulaof{\atomenumerator}}
+%        = \sum_{\atomindicesin \, : \, \atomlegindexof{\atomenumerator} = 1} \sum_{j \in [\datanum\cdot\empdistribution(\atomindices)]} \onehotmapof{s_{j, \atomindices} } \, .
+%    \end{align}
+%    Summing over the resource variables of these tensors in a contraction we get
+%    \begin{align}
+%        \contractionof{\{\kggroundingof{\impformula}\}\cup\{\rencodingof{\kggroundingof{\extformulaof{\atomenumerator}}\, : \, \atomenumeratorin}\}}{\shortcatvariables}
+%        & = \sum_{\atomenumeratorin}  \datanum\cdot\empdistribution(\atomindices) \cdot \onehotmapof{\atomindices} = \datanum \cdot \empdistribution
+%    \end{align}
+%    and therefore
+%    \begin{align}
+%        \normationof{\{\kggroundingof{\impformula}\}\cup\{\rencodingof{\kggroundingof{\extformulaof{\atomenumerator}}}\, : \, \atomenumeratorin\}}{\shortcatvariables} = \empdistribution \, .
+%    \end{align}
+%\end{proof}
 
 
 
 
 
-\subsect{Samples by pairs of resources}
 
 
+\subsect{Samples by pairs of objects}
 
-
-\begin{remark}[Refinement of the Samples]
-    We can split each sample node into a pair of individuals.
-    For this we need to specify, which each class membership will be encoded in a unary or binary attribute of the splitted individuals.
-    This specification is possible based on the extraction query and the atomic formulas.
-\end{remark}
-
-% 
-Taking any importance query $\impformula$, which has no permutation symmetries, we can instantiate each projection variable for each sample and prepare the links according to the triple patterns.
-When the atom queries $\extformulas$ have different triple patterns compared with $\impformula$, we instantiate those in cases where $\atomlegindexof{\atomenumerator}=1$.
+%\paragraph{TBox:} The categorical variables of the factored system are the classes.
+%We define atomic formulas by the state indicators of each categorical variable as in \secref{sec:categoricalTN}.
+%Each such atomic formula corresponds with a sub-class of the classes.
+%By definition, each collection of state indicators define thus pairwise disjoint subclasses.
+%
+%\paragraph{ABox:} The samples are represented by single individuals in the Knowledge Graph.
+%Their sub-class memberships corresponding with the categorical variables of the system are instantiated whenever the atom is true in the sample.
+%%\subsubsect{Samples by pairs of resources}
+%
+%\begin{remark}[Refinement of the Samples]
+%    We can split each sample node into a pair of individuals.
+%    For this we need to specify, which each class membership will be encoded in a unary or binary attribute of the splitted individuals.
+%    This specification is possible based on the extraction query and the atomic formulas.
+%\end{remark}
+%
+%%
+%Taking any importance query $\impformula$, which has no permutation symmetries, we can instantiate each projection variable for each sample and prepare the links according to the triple patterns.
+%When the atom queries $\extformulas$ have different triple patterns compared with $\impformula$, we instantiate those in cases where $\atomlegindexof{\atomenumerator}=1$.
 
 
 %
-Label individuals $a_{\datindex,\indenumerator}$ by dataindex and variable index and
+We now instantiate multiple objects for each datapoint, one for each variable of the importance formula, i.e. $\worlddomain=[\datdim]\times[\indorder]$
+Label individuals $s_{\datindex,\indenumerator}$ by data index and variable index.
 
-\begin{theorem}
-    Let there be queries $\impformula,\extformulas$, a Knowledge Graph $\kg$ containing individuals $a_{\datindex,\indenumerator}$ and a data map $\datamap$.
+\begin{lemma}
+    Let there a data map $\datamap$, queries $\impformula,\shortextformulas$ and a first-order logic world containing objects $s_{\datindex,\indenumerator}$ for $\datindexin$ and $\indenumeratorin$
     If
-    \[ \kggroundingof{\impformula} = \sum_{\datindex} \bigotimes_{\indenumeratorin} \onehotmapof{\datindex,\indenumerator} \]
+    \begin{align*}
+        \kggroundingof{\impformula}
+        = \sum_{\datindexin} \bigotimes_{\indenumeratorin} \onehotmapofat{\indexinterpretationof{s_{\datindex,\indenumerator}}}{\indvariableof{\indenumerator}}
+    \end{align*}
     and for any $\atomenumeratorin$
-    \[ \kggroundingof{\extformulaof{\atomenumerator}}
-    = \sum_{\datindex : \datamap^{\atomenumerator}(\datindex)=1} \bigotimes_{\indenumerator \in \extformulaof{\atomenumerator}} \onehotmapof{\datindex,\indenumerator} \, . \]
+    \begin{align*}
+        \kggroundingof{\extformulaof{\atomenumerator}}
+        = \sum_{\datindex : \datamap_{\atomenumerator}(\datindex)=1} \bigotimes_{\indvariableof{\indenumerator} \in \indvariableof{\extformulaof{\atomenumerator}}}
+        \onehotmapofat{\indexinterpretationof{s_{\datindex,\indenumerator}}}{\indvariableof{\indenumerator}} \, .
+    \end{align*}
+%    \[ \kggroundingof{\extformulaof{\atomenumerator}}
+%    = \sum_{\datindex : \datamap^{\atomenumerator}(\datindex)=1} \bigotimes_{\indenumerator \in \extformulaof{\atomenumerator}} \onehotmapof{\datindex,\indenumerator} \, . \]
     Then the tuple $(\kg,\impformula,\{\extformulas\})$ reproduces $\empdistribution$.
-\end{theorem}
+\end{lemma}
 \begin{proof}
-    It can be shown that the contraction is
-    \[ \sum_{\datindex} \bigotimes_{\atomenumeratorin} \onehotmapof{\datamap^{\atomenumerator}(\datindex)} \, . \]
+    We notice, that the grounding of the importance formula is in a basis CP format, since by assumption
+    \begin{align*}
+        \kggroundingof{\impformula}
+        = \sum_{\datindexin} \bigotimes_{\indenumeratorin} \onehotmapofat{\indexinterpretationof{s_{\datindex,\indenumerator}}}{\indvariableof{\indenumerator}} \, .
+    \end{align*}
+    We choose $\datvariable$ to enumerate the non-vanishing entries and get a term selecting map
+    \begin{align*}
+        \secdatamap_{\indenumerator}(\datindex) = \indexinterpretationof{s_{\datindex,\indenumerator}} \, .
+    \end{align*}
+    From this we have
+    \begin{align*}
+        \contractionof{
+        \{\rencodingofat{\kggroundingof{\extformulaof{\atomenumerator}}}{\catvariableof{\atomenumerator},\indvariableof{\extformulaof{\atomenumerator}}}\} \cup
+        \{\rencodingofat{\secdatamap_{\indenumerator}}{\indvariableof{\indenumerator},\datvariable} \, : \, \indenumeratorin\}
+        }{\catvariableof{\catenumerator},\datvariable}
+        = \rencodingofat{\datamap_{\atomenumerator}}{\catvariableof{\catenumerator},\datvariable}
+    \end{align*}
+    and the claim follows with the same argumentation as in the proof of \theref{the:reproducingSingleObjects}.
 \end{proof}
 
-\begin{theorem}
-    The Knowledge Graph
-    \[ \kggroundingof{\rdf} = \sum_{t \in \impformula} \sum_{\datindex} t(a_{\datindex,\indenumerator})
-    + \sum_{\atomenumeratorin} \sum_{t \in \extformulaof{\atomenumeratorin}} \sum_{\datindex : \datamap^{\atomenumerator}(\datindex)=1} t(a_{\datindex,\indenumerator})\]
-    reproduces the data, if the summed tensors are pairwise orthogonal.
-    \red{Here we denote by t(..) the one-hot encoding of the tuple when mapping the corresponding individuals on the projection variables of the triple pattern t.}
-\end{theorem}
 
-\subsect{General orthogonal projection approach}
+%Let us construct a Knowledge Graph
+%\begin{align*}
+%        \kggroundingof{\rdf}
+%        =
+%        \sum_{\datindexin}\sum_{\indenumeratorin}
+%        \onehotmapof{\indexinterpretationof{s_{\datindex,\indenumerator}}}{\sindvariable}
+%        \otimes \onehotmapof{\indexinterpretationof{\mathrdftype}}{\pindvariable}
+%        \otimes \onehotmapof{\indexinterpretationof{C}}{\oindvariable}
+%        +
+%        \sum_{\datindexin} \sum_{\atomenumeratorin \, : \, \datamap_{\atomenumerator}(\datindex)=1} \sum_{\indvariableof{\indenumerator}\in\indvariableof{}}
+%        \onehotmapof{\indexinterpretationof{s_{\datindex,\indenumerator}}}{\sindvariable}
+%        \otimes \onehotmapof{\indexinterpretationof{\mathrdftype}}{\pindvariable}
+%        \otimes \onehotmapof{\indexinterpretationof{C_\atomenumerator}}{\oindvariable} \, .
+%\end{align*}
+%    We further define an importance formula by the $\sparql$ query
+%\begin{centeredcode}
+%        \impformula = SELECT \{ ?x_0 \cdots ?x_{\indorder-1} \} WHERE \{ ?x_0 \quad \rdftype\quad C \, .\}
+%\end{centeredcode}
+%    and for each $\atomenumeratorin$ an extraction formula by the query
+%\begin{centeredcode}
+%        $\extformulaof{\atomenumerator}$ = SELECT \{ ?x \} WHERE \{ ?x \quad \rdftype \quad $C_\atomenumerator$ \, .\} \, .
+%\end{centeredcode}
+%    Then the triple $(\kg,\impformula,\shortextformulas)$ reproduces $\empdistribution$.
 
-Given any triples, such that their composed projections to pairwise different triple patterns vanish.
-One reproducing KG is then the sum of the projection of any reproducing KG.
+
+%\begin{theorem}
+%    The Knowledge Graph
+%    \[ \kggroundingof{\rdf} = \sum_{t \in \impformula} \sum_{\datindex} t(a_{\datindex,\indenumerator})
+%    + \sum_{\atomenumeratorin} \sum_{t \in \extformulaof{\atomenumeratorin}} \sum_{\datindex : \datamap^{\atomenumerator}(\datindex)=1} t(a_{\datindex,\indenumerator})\]
+%    reproduces the data, if the summed tensors are pairwise orthogonal.
+%    \red{Here we denote by t(..) the one-hot encoding of the tuple when mapping the corresponding individuals on the projection variables of the triple pattern t.}
+%\end{theorem}
+
+%\subsect{General orthogonal projection approach}
+%
+%Given any triples, such that their composed projections to pairwise different triple patterns vanish.
+%One reproducing KG is then the sum of the projection of any reproducing KG.
+%
+%
+%
+%\begin{theorem}
+%    Let  $\impformula,\extformulas$ contain of triple patterns such that for $t\neq \tilde{t}$
+%    \[ P_t \circ P_{\tilde{t}} = 0 \, . \]
+%    For any KG reproducing the data $\datamap$ also the KG
+%    \[ \sum_{t} P_t \kggroundingof{\rdf} \]
+%    is a reproducing KG.
+%\end{theorem}
+%\begin{proof}
+%    By coinciding on all triple patterns $t$ since
+%    \[ P_t \left( \sum_{\tilde{t}} P_{\tilde{t}} \kggroundingof{\rdf}  \right)
+%    = P_t P_t \kggroundingof{\rdf}
+%    = P_t \kggroundingof{\rdf}  \, .   \]
+%    Then the extraction contraction on $\kg$ and $ \sum_{t} P_t\kggroundingof{\rdf} $ coincides.
+%\end{proof}
+%
+%From this perspective, it is obvious that any triple in the orthogonal complement of all projections can be added and the KG stays reproducing.
 
 
-
-\begin{theorem}
-    Let  $\impformula,\extformulas$ contain of triple patterns such that for $t\neq \tilde{t}$
-    \[ P_t \circ P_{\tilde{t}} = 0 \, . \]
-    For any KG reproducing the data $\datamap$ also the KG
-    \[ \sum_{t} P_t \kggroundingof{\rdf} \]
-    is a reproducing KG.
-\end{theorem}
-\begin{proof}
-    By coinciding on all triple patterns $t$ since
-    \[ P_t \left( \sum_{\tilde{t}} P_{\tilde{t}} \kggroundingof{\rdf}  \right)
-    = P_t P_t \kggroundingof{\rdf}
-    = P_t \kggroundingof{\rdf}  \, .   \]
-    Then the extraction contraction on $\kg$ and $ \sum_{t} P_t\kggroundingof{\rdf} $ coincides.
-\end{proof}
-
-From this perspective, it is obvious that any triple in the orthogonal complement of all projections can be added and the KG stays reproducing.
 
 
 
@@ -1458,5 +1684,13 @@ Extensions are models that also handle structural uncertainty, i.e. distribution
 
 %\subsect{Network Science}
 
-\red{Statistical Models of Knowledge Graphs going beyond the typical single edge type perspective of network science \cite{barabasi_network_2016, giovanni_russo_vito_latora_complex_2017}.}
+\red{Statistical Models of Knowledge Graphs go beyond the typical single edge type perspective of network science \cite{barabasi_network_2016, giovanni_russo_vito_latora_complex_2017}.}
 
+
+%
+\begin{remark}[Alternative Representation of empirical distributions]
+    So far, we have motivated the representation of empirical distributions based on basis CP decompositions based on data maps.
+    In this section, based on the extraction queries, we have observed that empirical distributions might have more efficient representation formats.
+    In many applications such as the computation of log-likelihoods we can use any representation of the empirical distribution by tensor networks.
+    It is thus not necessary to compute the data cores as above, unless one requires a list of the extracted samples.
+\end{remark}
