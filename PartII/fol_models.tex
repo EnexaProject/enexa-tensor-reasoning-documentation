@@ -159,21 +159,22 @@ However, due to the large state dimensions, we will in the following sections ch
 \subsect{Two levels of tensor representation}
 
 In comparison with propositional logics, first-order logic bears two levels of natural tensor representations.
-In the first level, each world (see \defref{def:folWorld}) has a natural structure by a tensor, since it encodes relations between objects chosen by assignments to term variables.
+In the first level, which we call the structured level, each world (see \defref{def:folWorld}) has a natural structure by a tensor, since it encodes relations between objects chosen by assignments to term variables.
 This is different to the worlds of a propositional logic theory, which are represented by a boolean vector instead of a tensor.
 The second level arises as in propositional logics, by understanding each world as a uncertain state and studying distributions over states, which are understood themself as a tensor (see \defref{def:probabilityDistribution}).
-As argued above, the assumption of database semantics is central to exploit the tensor structure of the first level.
+We call this the factored level, since it arises in general in the discussion of factored representations.
+As argued above, the assumption of database semantics is central to exploit the tensor structure of the substitution level.
 Under this assumption, representation of an uncertain state, or a collection of possible states, is done in the tensor space
 \begin{align*}
     \bigotimes_{\atomenumeratorin,\shortindindices\in[\inddim]^{\indorder}} \rr^2 \,
 \end{align*}
-where the enumeration of the $2$-dimensional axes contains the tensor structure of the first level.
+where the enumeration of the $2$-dimensional axes contains the tensor structure of the substitution level.
 
 
 
 \sect{Formulas in a fixed first-order logic world}
 
-Following the argumentation above, we in this section restrict to the exploitation of the first level tensor structure, namely a fixed world represented as a tensor $\dataworldwith$, see \defref{def:folWorld}.
+Following the argumentation above, we in this section restrict to the exploitation of tensors in the structured level, namely a fixed world represented as a tensor $\dataworldwith$, see \defref{def:folWorld}.
 We are specifically interested in the tensor network decomposition of first order formulas, which contain in full generality variables and therefore also have a tensor.
 The evaluation of a first-order formula on a specific world is therefore different to the case in propositional logics, where the evaluation was a boolean in $\ozset$ indicating whether the world is a model.
 %\red{Here we investigate grounding tensors to formulas with variables, and calculate them in a fixed world.}
@@ -210,7 +211,7 @@ where each world $\dataworld$ is mapped to a grounding tensor
 \begin{align*}
     \folexformula(\dataworld) = \groundingof{\folexformula} \, .
 \end{align*}
-This would involve the second level of tensor interpretation, namely
+This would involve the factored level of tensor interpretation, namely representation of all possible worlds.
 
 %% Basis encoding
 %When interpreting this map as a basis encoding, formulas are tensors in the tensor space
@@ -219,23 +220,49 @@ This would involve the second level of tensor interpretation, namely
 %	\left(  \bigotimes_{\atomenumeratorin, \indindexof{0},\ldots,\indindexof{\individualorder_{\folexformula}}\in[\inddim]} \rr^{2} \right) \, .
 %\end{align*}
 
-\subsect{Predicates}
+\subsect{Atomic Formulas}
 
-The predicates itself are the simplest cases of first-order formulas with term variables.
+Atomic formulas in first-order logic are predicates, which are applied on terms.%, that is constants or variables.
+We restrict in this chapter to function-free logic, therefore terms are either constants or variables.
+%The predicates itself are the simplest cases of first-order formulas with term variables.
 % Atomic
-They are stored in the slices to the first axis of $\dataworld$ and we have
+If all arguments of a predicate are assigned by free variables, the corresponding grounding tensor is stored in the slices to the first axis of $\dataworld$ and we have
 \begin{align}
     \groundingof{\folpredicateof{\folpredicateenumerator}} =
     \contractionof{\dataworldat{\selvariable,\shortindvariablelist},\onehotmapofat{\folpredicateenumerator}{\selvariable}}{\shortindvariablelist} \, .
 \end{align}
+In contrast, when a constant object $\indexinterpretationof{\indindex}$ is assigned to an argument of a predicate, the grounding tensor reduced to a slice of the grounding with exclusively free variables.
+We capture such slicings by contractions with one-hot encodings of the corresponding constant.
 
+We formalize this approach by atom creating tensors, which contraction with the world tensor results in the grounding of the corresponding atomic formula.
+
+\begin{definition}\label{def:atomCreatingTensor}
+    Let there be an atomic formula $\folexformula$, which is constructed using the $\selindex$-th predicate and has constants assigned on the arguments $\arbsetof{C}\subset[\indorder]$ and free variables to the arguments $\arbsetof{V}=[\indorder]/\arbsetof{C}$.
+    Let the constant map $C: \arbsetof{C}\subset[\indorder] \rightarrow [\inddim]$ map to the specific objects represented by the constant and $V: \arbsetof{V}\subset[\indorder] \rightarrow \nodes$ to free variables labeled by a set $\nodes$.
+    Then the atom creating tensor to $\folexformula$ is
+    \begin{align*}
+        \atomcreatorofat{\folexformula}{\indvariableof{V(\arbsetof{V})}}
+        = \onehotmapofat{\selindex}{\selvariable} \otimes
+        \left( \bigotimes_{\indenumerator\in\arbsetof{C}} \onehotmapofat{C(\indenumerator)}{\indvariableof{\indenumerator}} \right) \otimes
+        \left( \bigotimes_{\indenumerator\in\arbsetof{V}} \identityat{\indvariableof{V(\indenumerator)},\indvariableof{\indenumerator}} \right) \, .
+    \end{align*}
+\end{definition}
+
+The ground of the atom is then the contraction of the atom creating tensor with the world tensor, that is
+\begin{align*}
+    \groundingofat{\folexformula}{\indvariableof{V(\arbsetof{V})}}
+    = \contractionof{\dataworldwith, \atomcreatorofat{\folexformula}{\indvariableof{\nodes}}}{\indvariableof{V(\arbsetof{V})}} \, .
+\end{align*}
+
+
+% Predicates as objects
 What is more abstract, we can understand the predicate itself as an object, then take the first-order world as a grounding tensor of a more abstract formula.
 We will follow this thought in the ternary representation of Knowledge Graphs in \secref{subsec:knowledgeGraphTernaryRep}.
 
-\subsect{Substitution by slicing}
+%\subsect{Substitution by slicing}
 
 % Slicing interpretation
-Slicing the grounding tensor of a formula a first-order formula amounts to substitution of the respective variable by the constant at the enumeration index.
+%Slicing the grounding tensor of a formula a first-order formula amounts to substitution of the respective variable by the constant at the enumeration index.
 
 %\subsect{Syntactical Decomposition of quantifier-free formulas}
 
@@ -356,10 +383,6 @@ To this end, let us introduce the greater-$z$ indicator $\greaterthanfunction{z}
     \begin{align*}
         \groundingofat{\left(\forall_{\exindividualof{\indindexof{0}}} \folexformula\right)}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}=
         \coordinatetrafowrtofat{\universalquanttrafo}{\contractionof{\groundingof{\folexformula}}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}
-%			\greaterzeroof{
-%			\sbcontractionof{\groundingof{\folexformula}}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}
-%			- \inddim \cdot \onesat{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}
-%			} \, .
     \end{align*}
 \end{theorem}
 \begin{proof}
@@ -397,6 +420,16 @@ Such customized quantifiers appear for example in the $\mathrm{OWL\,2}$ standard
 % Relational encodings
 As will be discussed in \charef{cha:basisCalculus}, any coordinatewise transform can be performed by a contraction of a relational encoding of the tensor with a head vector prepared by the transform function (see \theref{the:tensorFunctionComposition}).
 In the case here, a direct implementation would require a dimension of these head variables by $\inddim$, which can be infeasible when having large object sets.
+
+% Prenex
+To summarize, let us assume a formula is in its prenex normal form, that is a collection of quantifiers are acting on a qantifier free part.
+We can represent its grounding tensor by
+\begin{itemize}
+    \item Instantiations of the tom groundings with the assigned variables, as contractions of the relational encoding of the world tensor with atom selecting tensors.
+    \item Propositional formula acting on the head variables of the predicate instantiations, representing the connectives combining the formula.
+    \item Quantifiers as a composition of contractions closing the quantified variable and coordinatewise transforms with the respective greater-than indicators.
+\end{itemize}
+
 
 
 \subsect{Storage in basis CP decomposition}\label{sec:basisCPgrounding}
@@ -558,14 +591,14 @@ Given a specific knowledge graph $\kggroundingof{\rdf}$, the execution of query 
 \subsubsect{Triple Patterns}
 
 \red{Central to $\sparql$ queries are triple patterns, which we understand as slicings of the tensor $\kggroundingof{\rdf}$.}
-To each so-called triple pattern we define a corresponding pattern tensor.
-The triple pattern is then evaluated by contraction of the pattern tensor with $\kggroundingof{\rdf}$.
+To each so-called triple pattern we build a corresponding atom creating tensor (see \defref{def:atomCreatingTensor}).
+The triple pattern is then evaluated by contraction of the atom creating tensor with $\kggroundingof{\rdf}$.
 
 Let us now provide examples of such pattern tensors.
 A unary triple patterns contains a single projection variable, typically related with the subject variable $\sindvariable$ of $\kggroundingof{\rdf}$.
 The corresponding pattern tensor is then
 \begin{align*}
-    \patterncreatorofat{\kgtriple{\provariable}{\mathrdftype}{\folpredicateof{\catenumerator}}}{
+    \atomcreatorofat{\kgtriple{\provariable}{\mathrdftype}{\folpredicateof{\catenumerator}}}{
         \sindvariable, \pindvariable, \oindvariable, \provariable
     }
     = \identityat{\sindvariable,\provariable}
@@ -576,7 +609,7 @@ The corresponding pattern tensor is then
 Binary triple patterns come with two projection variables, typically related with the subject and the object variables $\sindvariable$ and $\oindvariable$.
 The pattern tensor to the $\catenumerator$-th predicate is then
 \begin{align*}
-    \patterncreatorofat{\kgtriple{\provariableof{0}}{\folpredicateof{\catenumerator}}{\provariableof{1}}}{
+    \atomcreatorofat{\kgtriple{\provariableof{0}}{\folpredicateof{\catenumerator}}{\provariableof{1}}}{
         \sindvariable, \pindvariable, \oindvariable, \provariableof{0}, \provariableof{1}
     }
     = \identityat{\sindvariable,\provariableof{0}}
@@ -596,7 +629,7 @@ Examples of triple patterns, drawn in \figref{fig:triplePatterns} are
     \item Unary triple pattern with one variable, representing a formula with a single projection variable.
     For the example $\exunarytriple$ see Figure~\ref{fig:triplePatterns}a.
     \begin{align*}
-        \patterncreatorofat{\kgtriple{\provariable}{\mathrdftype}{\folpredicateof{\catenumerator}}}{
+        \atomcreatorofat{\kgtriple{\provariable}{\mathrdftype}{\folpredicateof{\catenumerator}}}{
             \sindvariable, \pindvariable, \oindvariable, \provariable
         }
         = \identityat{\sindvariable,\provariable}
@@ -701,7 +734,7 @@ In FOL they define probability distributions over relations in worlds with a fix
 More generally, such models are probabilistic relational models (see for an overview \cite{getoor_introduction_2019}.
 
 
-We in this section treat random worlds in first-order logics with fixed domains $\worlddomain$
+We in this section treat random worlds in first-order logics with fixed domains $\worlddomain$.
 
 %
 We in this section show, when and how we can interpret likelihoods of Markov Logic Networks in First Order Logic in terms of samples of a Markov Logic Network in Propositional Logics.
@@ -1443,7 +1476,8 @@ In the first reproduction scheme we construct datapoints by dedicated objects, w
 
 We now give by the next theorem an example of a Knowledge Graph with $\sparql$ queries reproducing and arbitrary empirical distribution.
 
-\begin{theorem}\label{the:reproducingKGSingelObjects}
+\begin{theorem}
+    \label{the:reproducingKGSingelObjects}
     Let $\empdistribution$ be an empirical distribution to the sample selector $\datamap$.
     We construct a Knowledge Graph of the resources $\worlddomain = \{s_\datindex \, : \, \datindexin\} \cup \{C\} \cup \{C_\atomenumerator \, : \, \atomenumeratorin\}$, where $s_{\datindex}$ represent samples and $C_\atomenumerator$ unary predicates, by
     \begin{align*}
@@ -1604,8 +1638,8 @@ Label individuals $s_{\datindex,\indenumerator}$ by data index and variable inde
     From this we have
     \begin{align*}
         \contractionof{
-        \{\rencodingofat{\kggroundingof{\extformulaof{\atomenumerator}}}{\catvariableof{\atomenumerator},\indvariableof{\extformulaof{\atomenumerator}}}\} \cup
-        \{\rencodingofat{\secdatamap_{\indenumerator}}{\indvariableof{\indenumerator},\datvariable} \, : \, \indenumeratorin\}
+            \{\rencodingofat{\kggroundingof{\extformulaof{\atomenumerator}}}{\catvariableof{\atomenumerator},\indvariableof{\extformulaof{\atomenumerator}}}\} \cup
+            \{\rencodingofat{\secdatamap_{\indenumerator}}{\indvariableof{\indenumerator},\datvariable} \, : \, \indenumeratorin\}
         }{\catvariableof{\catenumerator},\datvariable}
         = \rencodingofat{\datamap_{\atomenumerator}}{\catvariableof{\catenumerator},\datvariable}
     \end{align*}
@@ -1638,53 +1672,17 @@ Label individuals $s_{\datindex,\indenumerator}$ by data index and variable inde
 %    Then the triple $(\kg,\impformula,\shortextformulas)$ reproduces $\empdistribution$.
 
 
-%\begin{theorem}
-%    The Knowledge Graph
-%    \[ \kggroundingof{\rdf} = \sum_{t \in \impformula} \sum_{\datindex} t(a_{\datindex,\indenumerator})
-%    + \sum_{\atomenumeratorin} \sum_{t \in \extformulaof{\atomenumeratorin}} \sum_{\datindex : \datamap^{\atomenumerator}(\datindex)=1} t(a_{\datindex,\indenumerator})\]
-%    reproduces the data, if the summed tensors are pairwise orthogonal.
-%    \red{Here we denote by t(..) the one-hot encoding of the tuple when mapping the corresponding individuals on the projection variables of the triple pattern t.}
-%\end{theorem}
-
-%\subsect{General orthogonal projection approach}
-%
-%Given any triples, such that their composed projections to pairwise different triple patterns vanish.
-%One reproducing KG is then the sum of the projection of any reproducing KG.
-%
-%
-%
-%\begin{theorem}
-%    Let  $\impformula,\extformulas$ contain of triple patterns such that for $t\neq \tilde{t}$
-%    \[ P_t \circ P_{\tilde{t}} = 0 \, . \]
-%    For any KG reproducing the data $\datamap$ also the KG
-%    \[ \sum_{t} P_t \kggroundingof{\rdf} \]
-%    is a reproducing KG.
-%\end{theorem}
-%\begin{proof}
-%    By coinciding on all triple patterns $t$ since
-%    \[ P_t \left( \sum_{\tilde{t}} P_{\tilde{t}} \kggroundingof{\rdf}  \right)
-%    = P_t P_t \kggroundingof{\rdf}
-%    = P_t \kggroundingof{\rdf}  \, .   \]
-%    Then the extraction contraction on $\kg$ and $ \sum_{t} P_t\kggroundingof{\rdf} $ coincides.
-%\end{proof}
-%
-%From this perspective, it is obvious that any triple in the orthogonal complement of all projections can be added and the KG stays reproducing.
-
-
-
-
-
-
-
 
 \sect{Discussion}
 
-Models of FOL are called Probabilistic Relational Models. % (RUSSELL - Chapter Probabilistic Programming).
+
+% Probabilistic Relational Models
+Statistical Models are called Probabilistic Relational Models. % (RUSSELL - Chapter Probabilistic Programming).
 Extensions are models that also handle structural uncertainty, i.e. distributions of worlds with varying $\worlddomain$.
 
-%\subsect{Network Science}
-
-\red{Statistical Models of Knowledge Graphs go beyond the typical single edge type perspective of network science \cite{barabasi_network_2016, giovanni_russo_vito_latora_complex_2017}.}
+% Comparison with network science
+In the emerging area of network science \cite{barabasi_network_2016, giovanni_russo_vito_latora_complex_2017}, statistical models for random graphs are investigated.
+Statistical Models of first-order logic go beyond the typical single edge type perspective of network science.
 
 
 %
