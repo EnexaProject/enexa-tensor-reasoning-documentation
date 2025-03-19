@@ -13,6 +13,8 @@ Propositional logic amounts to reason about boolean variables, which are categor
 
 Before discussing the semantics and syntax of propositional formulas, we first investigate how Boolean can be represented by vectors in order to mechanize their processing based on contractions.
 
+
+
 \sect{Encoding of Booleans}
 
 Booleans are variables valued by $\truthset$ and consist a basic data structure.
@@ -20,9 +22,14 @@ Booleans are variables valued by $\truthset$ and consist a basic data structure.
 \subsect{Representation by coordinates}
 
 To represent Booleans by categorical variables $\catvariable$ with two states we use the index interpretation function
-	\[ \indexinterpretation:\truthset\rightarrow\ozset \]
+\begin{align*}
+	\indexinterpretation:\truthset\rightarrow\ozset
+\end{align*}
 defined as
-    	\[ \indexinterpretationat{\truesymbol} = 1 \quad \text{and} \quad \indexinterpretationat{\falsesymbol} = 0 \, . \]
+\begin{align*}
+	\indexinterpretationat{\truesymbol} = 1 \quad \text{and} \quad \indexinterpretationat{\falsesymbol} = 0 \, .
+\end{align*}
+
 % Outlook: General interpretation maps
 In \defref{def:subsetEncoding} in \parref{par:three} will define encodings of arbitrary sets based on index interpretation maps.
 
@@ -30,13 +37,17 @@ In \defref{def:subsetEncoding} in \parref{par:three} will define encodings of ar
 One motivation for this particular choice of the interpretation function $\indexinterpretation$ is the effective execution of the conjunction as we show in the next Lemma.
 
 \begin{lemma}
-	$\indexinterpretation$ is a homomorphism between the groups	
-		\[ \big(\truthset,\land\big) \quad \text{and} \quad \big(\ozset,\cdot\big) \, . \]
+	$\indexinterpretation$ is a homomorphism between the groups
+	\begin{align*}
+		\big(\truthset,\land\big) \quad \text{and} \quad \big(\ozset,\cdot\big) \, .
+	\end{align*}
 \end{lemma}
 \begin{proof}
 	It suffices to notice, that for arbitrary $\truthstateof{0},\truthstateof{1}\in\truthset$ we have
-		\[ \indexinterpretationat{\truthstateof{0}\land \truthstateof{1}} 
-		= \indexinterpretationat{\truthstateof{0}} \cdot \indexinterpretationat{\truthstateof{1}}  \, . \]
+	\begin{align*}
+		\indexinterpretationat{\truthstateof{0} \land \truthstateof{1}}
+		= \indexinterpretationat{\truthstateof{0}} \cdot \indexinterpretationat{\truthstateof{1}}  \, .
+	\end{align*}
 \end{proof}
 	
 % Interpretation of boolean contraction and type conversion application
@@ -125,11 +136,15 @@ Logics is especially useful in interpreting boolean tensors representing Proposi
 To make this more precise, we associate each such tensor is associated with a formula $\exformula$ being a composition of the atomic variables with logical connectives as we proof next.
 
 \begin{definition}\label{def:formulas}
-	A propositional formula $\formulaat{\shortcatvariables}$ depending on $\atomorder$ atoms $\catvariableof{\atomenumerator}$ is a tensor
-		\[ \formulaat{\shortcatvariables} : \atomstates \rightarrow [2] \subset \rr \, . \]
-	We call $\shortcatindices \in \atomstates$ a model of a propositional formula $\formula$, if 
-		\[ \formulaat{\indexedcatvariables}=1 \].
-	If there is a model to a propositional formula, say the formula is satisfiable.
+	A propositional formula $\formulaat{\shortcatvariables}$ depending on $\atomorder$ atoms $\catvariableof{\atomenumerator}$ is a boolean-valued tensor
+	\begin{align*}
+		\formulaat{\shortcatvariables} : \atomstates \rightarrow \ozset \subset \rr \, .
+	\end{align*}
+	We call a state $\shortcatindices \in \atomstates$ a model of a propositional formula $\formula$, if
+	\begin{align*}
+		\formulaat{\indexedshortcatvariables}=1 \, .
+	\end{align*}
+	If there is a model to a propositional formula, we say the formula is satisfiable.
 \end{definition}
 
 % Boolean Tensors
@@ -198,7 +213,9 @@ We can then build the relational encoding (\defref{def:functionRepresentation}) 
 
 %\begin{definition}[Relation Encoding of Formulas] % Own definition, since a reinterpretation of the formula
 Given a factored system with $\atomorder$ atoms $\shortcatvariables$ and a propositional formula $\formula$, the relational encoding of $\formula$ (see \defref{def:functionRepresentation}) is the tensor
-	\[ \rencodingofat{\formula}{\formulavar,\shortcatvariables} \in  \left(\atomspace \right) \otimes \rr^2 \]
+\begin{align*}
+	\rencodingofat{\formula}{\formulavar,\shortcatvariables} \in  \left(\atomspace \right) \otimes \rr^2
+\end{align*}
 decomposable as
 \begin{align} 
 	\rencodingofat{\formula}{\formulavar,\shortcatvariables} 
@@ -213,14 +230,17 @@ Exactly for propositional formulas, this construction will lead to Boolean image
 
 \begin{lemma}\label{lem:formulaEncodingDecomposition}
 	For any formula $\formula$ we have
-		\[ \rencodingofat{\formula}{\formulavar,\shortcatvariables} 
-		= \formulaat{\shortcatvariables} \otimes \tbasisat{\formulavar} 
-		+ \lnot\formulaat{\shortcatvariables} \otimes  \fbasisat{\formulavar} \, . 
-		 \]
+	\begin{align*}
+		\rencodingofat{\formula}{\formulavar,\shortcatvariables}
+		= \formulaat{\shortcatvariables} \otimes \tbasisat{\formulavar}
+		+ \lnot\formulaat{\shortcatvariables} \otimes  \fbasisat{\formulavar} \, .
+	\end{align*}
 	In particular
-		\[ \formulaat{\shortcatvariables} = \contractionof{
+	\begin{align*}
+		 \formulaat{\shortcatvariables} = \contractionof{
 		\rencodingofat{\formula}{\formulavar,\shortcatvariables},\tbasisat{\formulavar}
-		}{\shortcatvariables} \, . \]
+		}{\shortcatvariables} \, .
+	\end{align*}
 \end{lemma}
 \begin{proof}
 %% Decomposition
@@ -238,17 +258,16 @@ Exactly for propositional formulas, this construction will lead to Boolean image
 Compared with the direct interpretation of a formula as a tensor and the decomposition into models in Equation~\ref{eq:formulaModelDecomposition}, we notice that the relational encoding also represents encoding of worlds where the formula is not satisfied.
 This representation is required to represent arbitrary propositional formulas by contracted tensor networks of its components, as will be investigated in the following sections.
 
-
 %% Coordinatewise 
-The relational coordinate $\rencodingof{\exformula}$ has slices
-\begin{align}
+The relational encoding $\rencodingof{\exformula}$ has slices
+\begin{align*}
 	\contractionof{\rencodingof{\exformula},\onehotmapof{\shortcatindices}}{\formulavar} 
 		\rencodingofat{\exformula}{\indexedshortcatvariables,\formulavar}
 	= \begin{cases}
 		\tbasis[\formulavar] & \text{if the world $\shortcatindices$ is a model of $\exformula$}  \\
 		\fbasis[\formulavar] & \text{else}\, .
 		\end{cases}
-\end{align} 
+\end{align*}
 The contractions of the relational encoding therefore calculate whether an assignment of atoms is a model of the formula, using basis calculus (see \theref{the:basisCalculus}).
 
 \begin{figure}[h]
@@ -263,14 +282,6 @@ The tensor is directed, since any contraction with an encoded state results in t
 \end{figure}
 
 
-
-
-
-
-
-
-
-
 \sect{Syntax of Propositional Formulas}
 
 Relational encodings of propositional formulas are especially useful when representing function compositions by the representation of their components (see \theref{the:compositionByContraction}).
@@ -283,9 +294,11 @@ We call atomic formulas the most granular formulas, which are not splitted into 
 Our syntactic decomposition of propositional formulas will then investigate, how any propositional formula can be represented by these.
 
 \begin{definition}
-	The tensors $\formulaofat{\atomenumerator}{\shortcatvariables}$ defined for $\catindices$ as
-		\[ \formulaofat{\atomenumerator}{\indexedshortcatvariables} 
-		= \catindexof{\atomenumerator} \]
+	The tensors $\formulaofat{\atomenumerator}{\shortcatvariables}$ defined for $\shortcatindices\in\atomstates$ as
+	\begin{align*}
+		\formulaofat{\atomenumerator}{\indexedshortcatvariables}
+		= \catindexof{\atomenumerator}
+	\end{align*}
 	are called atomic formulas.
 \end{definition}
 
@@ -293,14 +306,18 @@ Atomic formulas and their relational encodings have an especially compelling rep
 
 \begin{theorem}
 	Any atomic formula $\formulaofat{\atomenumerator}{\shortcatvariables}$ is represented as
-		\[ \formulaofat{\atomenumerator}{\indexedshortcatvariables} 
+	\begin{align*}
+		\formulaofat{\atomenumerator}{\indexedshortcatvariables}
 		= \contractionof{\tbasisat{\catvariableof{\atomenumerator}}}{\shortcatvariables}
-		= \tbasisat{\catvariableof{\atomenumerator}} \otimes \onesat{\catvariableof{[\catorder]/\{\atomenumerator\}}}  \, . \]	
+		= \tbasisat{\catvariableof{\atomenumerator}} \otimes \onesat{\catvariableof{[\catorder]/\{\atomenumerator\}}}  \, .
+	\end{align*}
 
 	The relational encoding of any atomic formula $\atomicformulaofat{\atomenumerator}{\shortcatvariables}$ has a tensor decomposition by
-		\[ \rencodingofat{\atomicformulaof{\atomenumerator}}{\headvariableof{\atomorder},\shortcatvariables}
+	\begin{align*}
+		\rencodingofat{\atomicformulaof{\atomenumerator}}{\headvariableof{\atomorder},\shortcatvariables}
 		= \contractionof{\identityat{\catvariableof{\atomenumerator},\headvariableof{\atomenumerator}}}{\shortcatvariables}
-		= \identityat{\catvariableof{\atomenumerator},\headvariableof{\atomenumerator}} \otimes \onesat{\catvariableof{[\catorder]/\{\atomenumerator\}}} \, . \]
+		= \identityat{\catvariableof{\atomenumerator},\headvariableof{\atomenumerator}} \otimes \onesat{\catvariableof{[\catorder]/\{\atomenumerator\}}} \, .
+	\end{align*}
 	The decomposition is depicted in a network diagram as
 	\begin{center}
 		\input{./PartI/tikz_pics/logic_representation/atomic_ft.tex}
@@ -321,7 +338,9 @@ Atomic formulas and their relational encodings have an especially compelling rep
 
 Propositional formulas are elements of tensor spaces with $\atomorder$ axis. 
 The number of coordinates thus grows exponentially with the number of atoms, which is
-	\[ \dimof{\atomspace} = 2^{\atomorder} \, . \]
+\begin{align*}
+	\dimof{\atomspace} = 2^{\atomorder} \, .
+\end{align*}
 When the number of atoms is large, the naive representation of formula tensors will be thus intractable.
 In contrast, typcial logical formulas appearing in practical knowledge bases are sparse in the sense that they have short representations in a logical syntax.
 Motivated by this consideration we now discuss propositional syntax and investigate the sparse decomposition of formula tensors along their formula structure to avoid the curse of dimensionality.
@@ -394,6 +413,7 @@ Let us first provide in \exaref{exa:connectives} unary ($\atomorder=1$) and bina
 	\label{fig:unaryBinaryComposition} 
 \end{figure}
 
+We now show how formulas consisting of connectives acting on other formulas can be represented by basis calculus.
 Let there be formulas $\exformula$ and $\secexformula$ depending on categorical variables $\shortcatvariables$ and a binary connective
 	\[ \exconnective: [2]\times[2] \rightarrow[2] \, . \]
 Then we can show as a special case of the next theorem, that (see \figref{fig:unaryBinaryComposition})
@@ -422,19 +442,21 @@ Let us now generalize this observation to arbitrary arity of connectives and pro
 
 % CLASH OF NOTATION: HEADVARIABLES - CATVARIABLES
 \begin{theorem}[Composition of Formulas]\label{the:formulaDecomposition}
-	Let there be a set of binary variables $\catvariableof{\nodes}$ including atoms $\shortcatvariables$ and image variables to some formulas.
-	For any formula $\formulaat{\catvariables}$, which has a syntactical composition into connectives $\{\connectiveofat{\selindex}{\catvariableof{\nodesof{\selindex}}} : \selindexin\}$ taking their inputs by variables $\catvariableof{\nodesof{\selindex}}\subset \catvariableof{\nodes}$ and output by a variable $\headvariableof{\connectiveof{\selindex}}$
-	we have that
+	Let there be a formula $\formulaat{\shortcatvariables}$, which has a syntactical decomposition into connectives $\{\connectiveofat{\selindex}{\headvariableof{\nodesof{\selindex}}} : \selindexin\}$ taking their inputs by variables $\headvariableof{\nodesof{\selindex}}\subset \headvariableof{\nodes}$ and output by a variable $\headvariableof{\connectiveof{\selindex}}$
+	%Let there be a set of boolean variables $\headvariableof{\formulaset}$, where $\formulaset$ is  and boolean atom variables $\shortcatvariables$.
+	We here denote by $\formulaset$ the set of sub-formulas and use a boolean variable $\headvariableof{\secexformula}$ for each $\secexformula\in\formulaset$.
+	In particular, we denote for each atom in $\formulaset$ the corresponding boolean variable by $\headvariableof{\atomenumerator}$.
+	It then holds
 	\begin{align*}
 		\rencodingofat{\formula}{\formulavar,\shortcatvariables} =
 		\contractionof{\left\{
-		\rencodingofat{\connectiveof{\selindex}}{\headvariableof{\connectiveof{\selindex}},\catvariableof{\nodesof{\selindex}}} : \selindexin
-		\right\} }
+		\rencodingofat{\connectiveof{\selindex}}{\headvariableof{\connectiveof{\selindex}},\headvariableof{\nodesof{\selindex}}} : \selindexin
+		\right\} \cup \{\identityat{\headvariableof{\atomenumerator},\catvariableof{\atomenumerator}} \, : \, \atomenumeratorin\}}
 		{\formulavar,\shortcatvariables} \, . 
 	\end{align*}
 \end{theorem}
 \begin{proof}
-	When a variable in $\nodevariables$ appears multiple times as input to connectives, we replace it by a set of copies (which wont change the contraction, since all tensors are binary and \theref{the:invarianceAddingSubcontractions} can be applied).
+	When a variable in $\headvariableof{\formulaset}$ appears multiple times as input to connectives, we replace it by a set of copies (which wont change the contraction, since all tensors are binary and \theref{the:invarianceAddingSubcontractions} can be applied).
 	This follows from an iterative application of \theref{the:compositionByContraction} to be shown in \charef{cha:basisCalculus}.
 \end{proof}
 

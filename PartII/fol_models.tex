@@ -17,8 +17,6 @@ The representation of each world is a boolean tensor.
 %
 \sect{World Tensors}
 
-%\red{We introduce here object enumerating variables $\indvariable$ are valued in $[\inddim]$, with $\cardof{\worlddomain} = \inddim$ and an enumeration of $\worlddomain$ by $\exindividualof{\indindex}$.}
-
 % Index interpretation of world domain
 Since first-order logic follows structured representations of a system, a first-order logic world consists in objects and relations between them.
 To each world there is a world domain $\worlddomain$ of objects, which we assume to be finite (this is a restrictive assumption).
@@ -61,7 +59,7 @@ We then formalize a world in the following based on a selection variable $\selva
 When the assumptions of function-free and constant variable order are not met, we can do the following tricks.
 Functions are turned to predicates by their relation interpretation.
 If there are predicates of different arity in the theory, we can trivially extend them to $\variableorder$ary predicates by tensor products with the trivial tensor $\ones$.
-This can be done by a tensor product with $\onehotmapofat{0}{\indvariable}$, where we add an object $\exindividualof{0}$ as a placeholder for predicates with smaller arity.
+This can be done by a tensor product with $\onehotmapofat{\inddim}{\indvariable}$, where we add an auxiliary object $\indexinterpretationof{\inddim}$ as a placeholder for predicates with smaller arity.
 
 % Finite worlds -> By database semantics?
 While in first order logics, depending on the chosen semantics, worlds can have infinite sets of objects, we here only treat worlds with finite objects.
@@ -376,12 +374,12 @@ To this end, let us introduce the greater-$z$ indicator $\greaterthanfunction{z}
 \begin{theorem}
     For any formula $\folexformula$ with variables $\shortindvariablelist$ we have
     \begin{align*}
-        \groundingofat{\left(\exists_{\indindexof{0}}\folexformula\right)}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}} =
+        \groundingofat{\left(\exists{\indindexof{0}}\folexformula\right)}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}} =
         \coordinatetrafowrtofat{\existquanttrafo}{\contractionof{\groundingof{\folexformula}}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}
     \end{align*}
     and
     \begin{align*}
-        \groundingofat{\left(\forall_{\exindividualof{\indindexof{0}}} \folexformula\right)}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}=
+        \groundingofat{\left(\forall{{\indindexof{0}}} \folexformula\right)}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}=
         \coordinatetrafowrtofat{\universalquanttrafo}{\contractionof{\groundingof{\folexformula}}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}
     \end{align*}
 \end{theorem}
@@ -405,7 +403,7 @@ To this end, let us introduce the greater-$z$ indicator $\greaterthanfunction{z}
     The universal quantification is satisfied, when all extensions are satisfied, and the count is $\inddim$.
     Since $\inddim$ is the maximal count, this is captured by the coordinatewise transform with $\universalquanttrafo$ and we get
     \begin{align*}
-        \groundingofat{\left(\forall_{\indindexof{0}}\folexformula\right)}{\indexedindvariableof{1},\ldots,\indexedindvariableof{\indorder-1}} =
+        \groundingofat{\left(\forall{\indindexof{0}}\folexformula\right)}{\indexedindvariableof{1},\ldots,\indexedindvariableof{\indorder-1}} =
         \coordinatetrafowrtofat{\universalquanttrafo}{\contractionof{\groundingof{\folexformula}}{\indvariableof{1},\ldots,\indvariableof{\indorder-1}}}{\indexedindvariableof{1},\ldots,\indexedindvariableof{\indorder-1}} \, .
     \end{align*}
     With the same argument, the second claim is established.
@@ -642,13 +640,6 @@ Examples of triple patterns, drawn in \figref{fig:triplePatterns} are
     If and only if the output slice is $\tbasis$, then the corresponding object tuple encoded by the input indices has a relation $\exabinaryrelation$.
 \end{itemize}
 
-%These triples are compositions of slicing operation, here seen as a map from single or two projection variables to the triples $(\exindividualof{\indindexof{s}}, \exindividualof{\indindexof{p}}, \exindividualof{\indindexof{o}})$, with the $\rdf$ formula.
-%	\[ \psi : \left( [\folpredicateorder] \times [\inddim] \times [\inddim] \right) \times [\inddim] \rightarrow [2] \]
-%and for binary
-%	\[ \psi : \left( [\folpredicateorder] \times [\inddim] \times [\inddim] \right) \times [\inddim] \times [\inddim] \rightarrow [2] \]
-%defined by identity and basis vectors depending on the type of triple.
-
-
 % Projection picture
 The composition $\psi (\psi^T)$ of the matrification of the tensor $\psi$ is an orthogonal projection.
 That means that applying $\psi (\psi^T)$ is the same map as applying once.
@@ -659,10 +650,11 @@ That means that applying $\psi (\psi^T)$ is the same map as applying once.
         \input{./PartII/tikz_pics/fol_models/kg_triple_patterns.tex}
     \end{center}
     \caption{Triple patterns of $\sparql$ as tensor networks.
-    a) Example of unary triple pattern $\exunarytriple$ specifying whether an individual $\exindividualof{1}$ is a member of class $C$.
-    Here by $0$ we denote the element $\invindexinterpretationat{\mathrdftype}$
-        b) Example of a binary triple pattern $\exbinarytriple$ specifying whether individuals $\exindividualof{1}$ and $\exindividualof{2}$ have a relation $R$.
-        By $\onehotmapof{0},\onehotmapof{C},\onehotmapof{R}$ we denote the one-hot encodings of the enumeration of the resources $rdf:type, C$ and $R$.}
+    a) Example of unary triple pattern $\exunarytriple$ specifying whether an individual $\indexinterpretationof{\indindexof{1}}$ is a member of class $C$.
+    %Here by $0$ we denote the element $\invindexinterpretationat{\mathrdftype}$
+        b) Example of a binary triple pattern $\exbinarytriple$ specifying whether individuals $\indexinterpretationof{\indindexof{1}}$ and $\indexinterpretationof{\indindexof{2}}$ have a relation $R$.
+        By $\onehotmapof{\invrdftypesymbol},\onehotmapof{\exaunaryrelation},\onehotmapof{\exabinaryrelation}$ we denote the one-hot encodings of the enumeration of the resources $rdf:type, C$ and $R$.
+    }
     \label{fig:triplePatterns}
 \end{figure}
 
@@ -683,7 +675,7 @@ Statements in $\sparql$ can be translated into Propositional Logics combining th
         \hline
         $\mathrm{UNION}\{f_1, f_2\} $     & $f_1\lor f_2$                 & $\rencodingofat{\lor}{\headvariableof{f_1\lor f_2},\headvariableof{f_1},\headvariableof{f_2}}$   \\
         \hline
-        $\mathrm{FILTER NOT EXISTS\{f\}}$ & $\lnot f$                     & $\rencodingofat{\lnot}{\headvariableof{\lnot f},\headvariableof{f}}$                             \\
+        $\mathrm{FILTER}\,\,\mathrm{NOT}\,\,\mathrm{EXISTS}\{f\}$ & $\lnot f$                     & $\rencodingofat{\lnot}{\headvariableof{\lnot f},\headvariableof{f}}$                             \\
         \hline
     \end{tabular}
 \end{center}
@@ -719,10 +711,6 @@ To find the expression, one can transform a given formula into its conjunctive o
 %    Besides that, we can understand it as formulas and include it in compositions.
 %    \item $\mathrm{OPTIONAL}\{\cdot\}$ would result in $\ones$ leg vectors, when there is a missing variable assignment resulting.
 %\end{itemize}
-
-
-
-
 
 
 
