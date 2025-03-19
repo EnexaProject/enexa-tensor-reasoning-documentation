@@ -1,18 +1,18 @@
 \documentclass[aps,onecolumn,nofootinbib,pra]{article}
 
-\usepackage{../../arxiv}
+\usepackage{../../article_compilation/spec_files/arxiv}
 \usepackage{amsmath,amsfonts,amssymb,amsthm,bbm,graphicx,enumerate,times}
 \usepackage{mathtools}
 \usepackage[usenames,dvipsnames]{color}
 \usepackage{hyperref}
 \hypersetup{
-	breaklinks,
-	colorlinks,
-	linkcolor=gray,
-	citecolor=gray,
-	urlcolor=gray,
-	pdftitle={The Tensor Network Approach to Efficient and Explainable AI},
-	pdfauthor={Alex Goessmann}
+    breaklinks,
+    colorlinks,
+    linkcolor=gray,
+    citecolor=gray,
+    urlcolor=gray,
+    pdftitle={The Tensor Network Approach to Efficient and Explainable AI},
+    pdfauthor={Alex Goessmann}
 }
 
 \usepackage{tikz}
@@ -28,13 +28,13 @@
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage[T1]{fontenc}
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{amssymb}
-\usepackage{amsthm}
+%\usepackage{amsmath}
+%\usepackage{amsfonts}
+%\usepackage{amssymb}
+%\usepackage{amsthm}
 \usepackage{titlesec}
-\usepackage{tikz}
-\usepackage{mathtools}
+%\usepackage{tikz}
+%\usepackage{mathtools}
 \usepackage{fancyhdr}
 \usepackage{bbm}
 \usepackage{bm}
@@ -49,115 +49,190 @@
 \newtheorem{definition}{Definition}
 \newtheorem{example}{Example}
 
+\input{../../macros/organization_macros.tex}
 \input{../../macros/general_macros.tex}
 \input{../../macros/tc_macros.tex}
 \input{../../macros/tikz_macros.tex}
 
 \pretolerance=500
-\tolerance=100 
+\tolerance=100
 \emergencystretch=10pt
 
 % Bibliography
 \DeclareUnicodeCharacter{FB01}{fi}
 \usepackage[round]{natbib}
+\usepackage{wasysym}
 
 
 \newcommand{\red}[1]{\textcolor{red}{#1}}
 
 \begin{document}
-\title{\tnreason for portfolio optimization}
+    \title{\tnreason for portfolio optimization}
 
-\maketitle
-\date{\today}
+    \maketitle
+    \date{\today}
 
-We here investigate the portfolio optimization problem described in the tutorial \url{https://qiskit-community.github.io/qiskit-finance/tutorials/01_portfolio_optimization.html}.
-
-\section{The portfolio optimization problem}
-
-\newcommand{\productsnum}{n}
+    We here investigate the portfolio optimization problem described in the tutorial \url{https://qiskit-community.github.io/qiskit-finance/tutorials/01_portfolio_optimization.html}.
 
 
-Given $\productsnum$ products and the covariance matrices $\Sigma[\selvariableof{0},\selvariableof{1}]\in\rr^{\catorder\times\catorder}$, the expectations $\mu[\selvariableof{0}]$, the risk appetite parameter $q>0$ and the budget $B\in\nn$, we state the portfolio optimization problem
-\begin{align}
-	\argmin_{\shortcatindices} &
-	q \left(\sum_{\selindexof{0},\selindexof{1}\in[\productsnum] , \, \selindexof{0}\neq\selindexof{1}} 
-	\Sigma[\indexedselvariableof{0},\indexedselvariableof{1}] \cdot \onehotmapofat{1}{\catvariableof{\selindexof{0}}}\cdot \onehotmapofat{1}{\catvariableof{\selindexof{1}}}\right) 
-	- \sum_{\selindex\in[\productsnum]} \mu[\indexedselvariable] \cdot \onehotmapofat{1}{\catvariableof{\selindex}} \, , \\
-	& \quad \text{subject to } \quad \sum_{\catenumeratorin}\catindexof{\catenumerator} = B\, . 
-\end{align}
+    \section{The portfolio optimization problem}
 
-\begin{remark}[Connection with \tnreason]
-A few comments on this problem to be elaborated on in the following:
-\begin{itemize}
-	\item	The portfolio optimization problem is a mode search in an exponential family of atomic variables and terms of pairs, with a base measure ensuring the budget constraint.
-	\item The objective of the optimization is the (negative of its) energy tensor $\energytensor$.
-	\item The energy tensor has a monomial decomposition with order constraint $\sliceorder=2$.
-\end{itemize}
-\end{remark}
-
-\section{Connection with \tnreason}
-
-Let us now show the connection with \tnreason in more precision.
-
-\subsection{Exponential family of features}
-
-The portfolio optimization problem is a mode search in an exponential family, which statistic is a set of formulas consisting in 
-\begin{itemize}
-	\item atomic variables: To capture the expectations, i.e. the coordinates of $\mu$
-	\item terms of variable pairs: To capture the correlations, i.e. the coordinates of $\Sigma$
-\end{itemize}
-
-The budget constraint can be captured by a boolean base measure
-\begin{align*}
-	\basemeasureofat{B}{\indexedshortcatvariables}
-	=\begin{cases}
-	1 & \text{if } \sum_{\catenumeratorin}\catindexof{\catenumerator} = B \\
-	0 & \text{else}
-	\end{cases}
-\end{align*}
-
-\subsection{Energy Tensor and corresponding distribution}
-
-The energy tensor to be maximized is
-	\[ \energytensor = - q \left(\sum_{\selindexof{0},\selindexof{1}\in[\productsnum] , \, \selindexof{0}\neq\selindexof{1}} 
-	\Sigma[\indexedselvariableof{0},\indexedselvariableof{1}] \cdot \onehotmapofat{1}{\catvariableof{\selindexof{0}}}\cdot \onehotmapofat{1}{\catvariableof{\selindexof{1}}}\right) 
-	+ \sum_{\selindex\in[\productsnum]} \mu[\indexedselvariable] \cdot \onehotmapofat{1}{\catvariableof{\selindex}} \, . \]
-
-We can reconstruct a member of the corresponding Markov Logic Network to the by the temperature $\invtemp>0$ scaled energy as
-\begin{align*}
-	\probofat{\invtemp}{\shortcatvariables} = \normationof{\expof{\invtemp\cdot\energytensor}}{\shortcatvariables} \, . 
-\end{align*}
-
-Sampling from these members in the low temperature limit $\invtemp\rightarrow 0$ is equivalent to the portfolio optimization problem.
-
-\subsection{Representation by a monomial selection architecture}
-
-The energy tensor $\energytensor$ has a monomial decomposition with order constraint $\sliceorder=2$, see Section 17.3 in the main report.
-For the representation we take the slice selection tensor to $\catorder=\productsnum$ and order $\sliceorder=2$ (see Definition~77 in 17.3) and define a canonical parameter $\canparamat{\selvariableof{0,0},\selvariableof{1,0},\selvariableof{0,1},\selvariableof{1,1}}$ by 
-\begin{align*}
-	\canparamat{\selvariableof{0,0},\selvariableof{0,1},\selvariableof{1,0},\selvariableof{1,1}}
-	= & \sum_{\selindexof{0},\selindexof{1}\in[\productsnum], \, \selindexof{0}\neq\selindexof{1}}	
-	-q \cdot \Sigma[\indexedselvariableof{0},\indexedselvariableof{1}]  \cdot \onehotmapofat{1,1}{\selvariableof{0,0},\selvariableof{1,0}} \otimes \onehotmapofat{\selindexof{0},\selindexof{1}}{\selvariableof{0,1},\selvariableof{1,1}}\\
-	& + \sum_{\selindex\in[\productsnum]}  \mu[\indexedselvariable] \cdot  \onehotmapofat{1,2}{\selvariableof{0,0},\selvariableof{1,0}} \otimes \onehotmapofat{\selindex,0}{\selvariableof{0,1},\selvariableof{1,1}}
-\end{align*}
+    \newcommand{\productsnum}{n}
 
 
-Then we have
-\begin{align*}
-	\energytensorat{\shortcatvariables} 
-	= \contractionof{\canparamat{\selvariableof{0,0},\selvariableof{1,0},\selvariableof{0,1},\selvariableof{1,1}},\sliceselectionmapat{\shortcatvariables,\selvariableof{0,0},\selvariableof{1,0},\selvariableof{0,1},\selvariableof{1,1}}}{\shortcatvariables} \, . 
-\end{align*}
+    Given $\productsnum$ products and the covariance matrices $\Sigma[\selvariableof{0},\selvariableof{1}]\in\rr^{\catorder\times\catorder}$, the expectations $\mu[\selvariableof{0}]$, the risk appetite parameter $q>0$ and the budget $B\in\nn$, we state the portfolio optimization problem
+    \begin{align}
+        \argmin_{\shortcatindices} &
+        q \left(\sum_{\selindexof{0},\selindexof{1}\in[\productsnum] , \, \selindexof{0}\neq\selindexof{1}}
+        \Sigma[\indexedselvariableof{0},\indexedselvariableof{1}] \cdot \onehotmapofat{1}{\catvariableof{\selindexof{0}}}\cdot \onehotmapofat{1}{\catvariableof{\selindexof{1}}}\right)
+        - \sum_{\selindex\in[\productsnum]} \mu[\indexedselvariable] \cdot \onehotmapofat{1}{\catvariableof{\selindex}} \, , \\
+        & \quad \text{subject to } \quad \basemeasureofat{B}{\indexedshortcatvarialbes} = 1 \, ,%\sum*_{\catenumeratorin}\catindexof{\catenumerator} \leq B\, .
+    \end{align}
+    where
+    \begin{align*}
+        \basemeasureofat{B}{\indexedshortcatvariables} =
+        \begin{cases}
+            1 & \text{if} \quad \contraction{\shortcatindices} \leq B \\
+            0 & \text{else}
+        \end{cases} \, .
+    \end{align*}
 
-\section{Outlook}
+    \begin{remark}[Connection with \tnreason]
+        A few comments on this problem to be elaborated on in the following:
+        \begin{itemize}
+            \item  The portfolio optimization problem is a mode search in an exponential family of atomic variables and terms of pairs, with a base measure ensuring the budget constraint.
+            \item The objective of the optimization is the (negative of its) energy tensor $\energytensor$.
+            \item The energy tensor has a monomial decomposition with order constraint $\sliceorder=2$.
+        \end{itemize}
+    \end{remark}
 
-We can use the theory developed in the main documentation for
-\begin{itemize}
-	\item \textbf{Approximation by sparse energies:} Use either the cross-entropy or the squares risk approach in combination with sparsity enhancing algorithms (here the greedy algorithms implemented in \tnreason)
-	\item \textbf{Extension to higher order porfolio models:} Instead of restricting to $\sliceorder=2$ we could allow for larger orders of correlation models.
-		To enhance (numerical and statistical) efficiency and maintain explainability, we could describe influences based on generic propositional formulas instead of the term restriction done here (which is more a brute force way).
-	\item \textbf{Usage of classical optimization algorithms:} We could use the algorithms implemented in the \tnreason library to solve the optimization problem or more general sample from the tempered distribution.
-		Here, variational inference algorithms such as mean field approaches and classical optimization such as integer linear programs are available.
-\end{itemize}
+
+    \section{Connection with \tnreason}
+
+    Let us now show the connection with \tnreason in more precision.
+
+    \subsection{Exponential family of features}
+
+    The portfolio optimization problem is a mode search in an exponential family, which statistic is a set of formulas consisting in
+    \begin{itemize}
+        \item atomic variables: To capture the expectations, i.e. the coordinates of $\mu$
+        \item terms of variable pairs: To capture the correlations, i.e. the coordinates of $\Sigma$
+    \end{itemize}
+
+    The budget constraint can be captured by a boolean base measure
+    \begin{align*}
+        \basemeasureofat{B}{\indexedshortcatvariables}
+        =\begin{cases}
+             1 & \text{if } \sum_{\catenumeratorin}\catindexof{\catenumerator} \leq B \\
+             0 & \text{else}
+        \end{cases}
+    \end{align*}
+
+    \subsection{Energy Tensor and corresponding distribution}
+
+    The energy tensor to be maximized is
+    \[ \energytensor = - q \left(\sum_{\selindexof{0},\selindexof{1}\in[\productsnum] , \, \selindexof{0}\neq\selindexof{1}}
+    \Sigma[\indexedselvariableof{0},\indexedselvariableof{1}] \cdot \onehotmapofat{1}{\catvariableof{\selindexof{0}}}\cdot \onehotmapofat{1}{\catvariableof{\selindexof{1}}}\right)
+    + \sum_{\selindex\in[\productsnum]} \mu[\indexedselvariable] \cdot \onehotmapofat{1}{\catvariableof{\selindex}} \, . \]
+
+    We can reconstruct a member of the corresponding Markov Logic Network to the by the temperature $\invtemp>0$ scaled energy as
+    \begin{align*}
+        \probofat{\invtemp}{\shortcatvariables} = \normationof{\expof{\invtemp\cdot\energytensor}}{\shortcatvariables} \, .
+    \end{align*}
+
+    Sampling from these members in the low temperature limit $\invtemp\rightarrow 0$ is equivalent to the portfolio optimization problem.
+
+    \subsection{Representation by a monomial selection architecture}
+
+    The energy tensor $\energytensor$ has a monomial decomposition with order constraint $\sliceorder=2$, see Section 17.3 in the main report.
+    For the representation we take the slice selection tensor to $\catorder=\productsnum$ and order $\sliceorder=2$ (see Definition~77 in 17.3) and define a canonical parameter $\canparamat{\selvariableof{0,0},\selvariableof{1,0},\selvariableof{0,1},\selvariableof{1,1}}$ by
+    \begin{align*}
+        \canparamat{\selvariableof{0,0},\selvariableof{0,1},\selvariableof{1,0},\selvariableof{1,1}}
+        = & \sum_{\selindexof{0},\selindexof{1}\in[\productsnum], \, \selindexof{0}\neq\selindexof{1}}
+        -q \cdot \Sigma[\indexedselvariableof{0},\indexedselvariableof{1}]  \cdot \onehotmapofat{1,1}{\selvariableof{0,0},\selvariableof{1,0}} \otimes \onehotmapofat{\selindexof{0},\selindexof{1}}{\selvariableof{0,1},\selvariableof{1,1}}\\
+        & + \sum_{\selindex\in[\productsnum]}  \mu[\indexedselvariable] \cdot  \onehotmapofat{1,2}{\selvariableof{0,0},\selvariableof{1,0}} \otimes \onehotmapofat{\selindex,0}{\selvariableof{0,1},\selvariableof{1,1}}
+    \end{align*}
+
+
+    Then we have
+    \begin{align*}
+        \energytensorat{\shortcatvariables}
+        = \contractionof{\canparamat{\selvariableof{0,0},\selvariableof{1,0},\selvariableof{0,1},\selvariableof{1,1}},\sliceselectionmapat{\shortcatvariables,\selvariableof{0,0},\selvariableof{1,0},\selvariableof{0,1},\selvariableof{1,1}}}{\shortcatvariables} \, .
+    \end{align*}
+
+
+    \section{Using the mean parameter polytope}
+
+    We understand the portfolio optimization problem as a mode search problem to a member of the exponential family $\expfamilyof{\sstat,\canparam,\basemeasureof{B}}$, where
+    \begin{itemize}
+        \item The statistics consists of
+        \begin{align*}
+            \sencsstatat{\shortcatvariables,\indexedselvariableof{0},\indexedselvariableof{1}}
+            = \tbasisat{\catvariableof{\selindexof{0}}} \otimes \tbasisat{\catvariableof{\selindexof{1}}} \otimes \onesat{\catvariableof{[\catorder]/\{\selindexof{0},\selindexof{1}\}}}
+        \end{align*}
+        \item The canonical parameter is
+        \begin{align*}
+            \canparamat{\selvariableof{0},\selvariableof{1}}
+            = \Sigma[\selvariableof{0},\selvariableof{1}]
+        \end{align*}
+        \item The base measure capturing the constraints
+        \begin{align*}
+        \basemeasureofat{B}{\indexedshortcatvariables}
+        =\begin{cases}
+             1 & \text{if } \sum_{\catenumeratorin}\catindexof{\catenumerator} = B \\
+             0 & \text{else}
+        \end{cases}
+    \end{align*}
+    \end{itemize}
+
+    From this we have the mean parameter polytope
+    \begin{align*}
+        \meansetof{\sstat} = \left\{ \shortcatindices^T\shortcatindices \, : \, \shortcatindices\in\atomstates\right\} \, .
+    \end{align*}
+    This polytope is the correlation polytope in $\catorder$ dimensions.
+    It is isomorphic to the cut polytope (see [Ziegler - Lectures on 0/1 polytopes]).
+
+    When placing a nontrivial base measure $\basemeasureof{B}$ we have the restiction
+    \begin{align*}
+        \meansetof{\sstat,\basemeasureof{B}} = \left\{ \shortcatindices^T\shortcatindices \, : \, \shortcatindices\in\atomstates, \, \contraction{\shortcatindices} \leq B\right\} \, .
+    \end{align*}
+
+    The portfolio optimization problem is then equal to
+    \begin{align*}
+        \argmax_{\meanparam\in\meansetof{\Sigma,\basemeasureof{B}}} \contraction{\Sigma,\meanparam} \, .
+    \end{align*}
+
+    This problem representation is especially useful, when the mean parameter polytope has a representation by intersecting halspaces.
+    In that case, it directly translates into an integer linear problem.
+    The drawback is the large number of halfspaces required for a polytope representation.
+
+    When $\Sigma$ is sparse, we can drop coordinates of the mean parameter polytope corresponding with vanishing coordinates.
+    The polytope characterization by halfspaces can be kept by a Fourier-Motzkin elimination, which, however, increases the number of halfspaces.
+
+    \section{Outlook}
+
+    We can use the theory developed in the main documentation for
+    \begin{itemize}
+        \item \textbf{Approximation by sparse energies:} Use either the cross-entropy or the squares risk approach in combination with sparsity enhancing algorithms (here the greedy algorithms implemented in \tnreason)
+        \item \textbf{Extension to higher order porfolio models:} Instead of restricting to $\sliceorder=2$ we could allow for larger orders of correlation models.
+        To enhance (numerical and statistical) efficiency and maintain explainability, we could describe influences based on generic propositional formulas instead of the term restriction done here (which is more a brute force way).
+        \item \textbf{Usage of classical optimization algorithms:} We could use the algorithms implemented in the \tnreason library to solve the optimization problem or more general sample from the tempered distribution.
+        Here, variational inference algorithms such as mean field approaches and classical optimization such as integer linear programs are available.
+        \item \textbf{Design of custom portfolio constraints:} So far only the constraint has been that $B$ products are applied.
+        More custom constraints could be formulated based on propositional logics.
+        For example, the constraint
+        \begin{center}
+            "If product A is active, then also product B has to be active."
+        \end{center}
+        corresponds with the boolean tensor
+        \begin{align*}
+            \Rightarrow \left[\catvariableof{A},\catvariableof{B}\right]
+        \end{align*}
+        refining the base measure by contractions
+        \begin{align*}
+            \secbasemeasureat{\shortcatvariables} = \contractionof{\basemeasureat{\shortcatvariables},\Rightarrow\left[\catvariableof{A},\catvariableof{B}\right]}{\shortcatvariables} \, .
+        \end{align*}
+    \end{itemize}
 
 
 \end{document}
