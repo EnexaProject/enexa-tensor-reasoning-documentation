@@ -1,426 +1,568 @@
 \chapter{\chatextsparseCalculus}\label{cha:sparseCalculus}
 
-We in this chapter investigate, which sparsity notations enable tensors to be representable as contractions of tensor networks.
+We in this chapter develop sparse tensor representation formats based on constrained $\cpformat$ formats.
+Our motivation for these formats result from the connection to encoding mechanisms, which we have applied in \parref{par:one} and \parref{par:two}, and to sparse optimization formats.
+%We further provide constructive bounds on the corresponding tensor ranks.
 
 
-\sect{CP Formats}
+\sect{$\cpformat$ Decomposition}
 
-The CP Decomposition is one way to generalize the ranks of matrices to tensors.
+% Motivation by Singular Value Decomposition
+The $\cpformat$ decomposition is one way to generalize the ranks of matrices to tensors.
 It is oriented on the Singular Value Decomposition of matrices, providing a representation of the matrix as a weighed sum of the tensor product of singular vectors.
-Given a tensor of higher order, each such tensor product is over multiple vectors, 
+Given a matrix $\matrixat{\catvariableof{0},\catvariableof{1}}$, we enumerate its singular values by $\decvariable$ taking values in $[\decdim]$ and store them in a vector $\scalarcoreat{\decvariable}$.
+With the corresponding singular vectors by $\legcoreofat{0}{\catvariableof{0},\decvariable}$ and $\legcoreofat{1}{\catvariableof{1},\decvariable}$, the singular value decomposition of $\exmatrix$ is
+\begin{align*}
+    \matrixat{\catvariableof{0},\catvariableof{1}}
+    &= \sum_{\decindexin} \scalarcoreat{\indexeddecvariable} \cdot \legcoreofat{0}{\catvariableof{0},\indexeddecvariable} \otimes \legcoreofat{1}{\catvariableof{1},\indexeddecvariable} \, .
+\end{align*}
+Here the smallest $\decdim$ such that this decomposition exists, is the matrix rank $\cprankof{\exmatrix}$.
+In contraction notation we abbreviate this to
+\begin{align*}
+    \matrixat{\catvariableof{0},\catvariableof{1}}
+    &= \contractionof{\scalarcoreat{\decvariable},\legcoreofat{0}{\catvariableof{0},\decvariable},\legcoreofat{1}{\catvariableof{1},\decvariable}}{\catvariableof{0},\catvariableof{1}} \, .
+\end{align*}
+Given a tensor of higher order, a generalization of this decomposition is a tensor product over multiple vectors, as we define next.
+%% REPETITION
+%\begin{align*}
+%	\hypercorewith
+%	&= \sum_{\decindexin} \scalarcoreat{\indexeddecvariable} \cdot \bigotimes_{\catenumeratorin}\legcoreofat{\catenumerator}{\catvariableof{\catenumerator},\indexeddecvariable} \, .
+%	& = \contractionof{
+%		\{\scalarcoreat{\decvariable}\} \cup \{ \legcoreofat{\atomenumerator}{\decvariable,\catvariableof{\atomenumerator}} \, : \, \atomenumeratorin \}
+%		}{\shortcatvariables} \, .
+%\end{align*}
 
-\begin{definition}\label{def:cpFormats}
-	A CP Decomposition of rank $\decdim$ of a tensor $\hypercore\in\facspace$ is a collections of tensors $\scalarcoreat{\decvariable}$ and $\legcoreofat{\atomenumerator}{\decvariable,\catvariableof{\atomenumerator}}$ for $\atomenumeratorin$, where $\decvariable$ takes values in $[\decdim]$, such that
-		\[  \hypercoreat{\shortcatvariables}
-		= \contractionof{
-		\{\scalarcoreat{\decvariable}\} \cup \{ \legcoreofat{\atomenumerator}{\decvariable,\catvariableof{\atomenumerator}} \, : \, \atomenumeratorin \}
-		}{\shortcatvariables} \, . 
-		\]
+
+\begin{definition}
+    \label{def:cpFormats}
+    A $\cpformat$ decomposition of size $\decdim$ of a tensor $ \hypercorewithin$ is a collections of a scalar core $\scalarcoreat{\decvariable}$ and leg cores $\legcoreofat{\atomenumerator}{\decvariable,\catvariableof{\atomenumerator}}$ for $\atomenumeratorin$, where $\decvariable$ is an enumeration variable taking values in $[\decdim]$, such that
+    \begin{align*}
+        \hypercorewith
+        = \contractionof{
+            \{\scalarcoreat{\decvariable}\} \cup \{ \legcoreofat{\atomenumerator}{\catvariableof{\atomenumerator},\decvariable} \, : \, \atomenumeratorin \}
+        }{\shortcatvariables} \, .
+    \end{align*}
 %	where for each $\decindexin$ and $\atomenumeratorin$ we have $\scalarcoreat{\decindex} \in \rr$ and $\legcoreof{\atomenumerator,\decindex}\in\rr^{\catindexof{\atomenumerator}}$.
-	We say that the CP Decomposition is
-	\begin{itemize}
-		\item directed, when for each $\atomenumerator$ the core $\legcoreof{\atomenumerator}$ is directed with $\decvariable$ incoming and $\catvariableof{\atomenumerator}$ outgoing.
-		\item binary, when for each $\atomenumerator$ the core $\legcoreof{\atomenumerator}$ is binary.
-		\item basis, where we demand both properties, that is for each $\atomenumeratorin$ and $\decindexin$ 
-			\[ \legcoreofat{\atomenumerator}{\inddecvar,\catvariableof{\atomenumerator}}\in \{\onehotmapofat{[\catindexof{\atomenumerator}]}{\catvariableof{\atomenumerator}} \catindexof{\atomenumerator}\in[\catdimof{\atomenumerator}] \}\, . \]
-		\item basis+, when for each $\atomenumeratorin$ and $\decindexin$  %$\legcoreof{\atomenumerator,\decindex}\in\onehotmapof{[\catindexof{\atomenumerator}]}$ or $\legcoreof{\atomenumerator,\decindex}=\ones$.
-			\[ \legcoreofat{\atomenumerator}{\inddecvar,\catvariableof{\atomenumerator}}\in \{\onehotmapofat{[\catindexof{\atomenumerator}]}{\catvariableof{\atomenumerator}} \catindexof{\atomenumerator}\in[\catdimof{\atomenumerator}] \} \cup \{\onesat{\catvariableof{\atomenumerator}}\}\, . \]
-	\end{itemize}
-	We denote by $\cprankof{\hypercore}$, respectively $\bincprankof{\hypercore}$, $\bascprankof{\hypercore}$ and $\baspluscprankof{\hypercore}$ the minimal cardinality such that $\hypercore$ has a CP Decomposition with directed cores, respectively binary cores, basis cores and basis+ cores.
+    We say that the $\cpformat$ Decomposition is
+    \begin{itemize}
+        \item directed, when for each $\atomenumerator$ the core $\legcoreof{\atomenumerator}$ is directed with $\decvariable$ incoming and $\catvariableof{\atomenumerator}$ outgoing.
+        \item boolean, when for each $\atomenumerator$ the core $\legcoreof{\atomenumerator}$ is boolean.
+        \item basis, where we demand both properties, that is for each $\atomenumeratorin$ and $\decindexin$
+        \begin{align*}
+            \legcoreofat{\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariable}\in \{\onehotmapofat{[\catindexof{\atomenumerator}]}{\catvariableof{\atomenumerator}} \catindexof{\atomenumerator}\in[\catdimof{\atomenumerator}] \}\, .
+        \end{align*}
+        \item basis+, when for each $\atomenumeratorin$ and $\decindexin$  %$\legcoreof{\atomenumerator,\decindex}\in\onehotmapof{[\catindexof{\atomenumerator}]}$ or $\legcoreof{\atomenumerator,\decindex}=\ones$.
+        \begin{align*}
+            \legcoreofat{\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariable}\in \{\onehotmapofat{[\catindexof{\atomenumerator}]}{\catvariableof{\atomenumerator}} \catindexof{\atomenumerator}\in[\catdimof{\atomenumerator}] \} \cup \{\onesat{\catvariableof{\atomenumerator}}\}\, .
+        \end{align*}
+    \end{itemize}
+    We denote by $\cprankof{\hypercore}$, respectively $\bincprankof{\hypercore}$, $\bascprankof{\hypercore}$ and $\baspluscprankof{\hypercore}$ the minimal cardinality such that $\hypercore$ has a $\cpformat$ Decomposition, respectively with directed cores, boolean cores, basis cores and basis+ cores.
 \end{definition}
 
-% Sum of elementary tensors
-We have by definition
-	\[ \hypercoreat{\shortcatvariables} = \sum_{\decindexin} \scalarcoreat{\inddecvar} \left( \bigotimes_{\atomenumeratorin} \legcoreofat{\atomenumerator}{\inddecvar,\catvariableof{\atomenumerator}} \right) \, . \]
-The right side can be seen as an alternative definition of CP Decompositions by summations of elementary tensors.
+%To see that all ranks are finite, we can easily
+All ranks have a naive bound by the space dimension, which is obvious from the coordinate decomposition (see \charef{cha:coordinateCalculus})
+\begin{align*}
+    \hypercorewith
+    = \sum_{\shortcatindices\in\facstates} \hypercoreat{\indexedshortcatvariables} \cdot \bigotimes_{\catenumeratorin} \onehotmapofat{\catenumerator}{\catvariableof{\catenumerator}} \, .
+\end{align*}
+If we construct $\decindex$ as an enumeration of the coordinates in $\facstates$, that is $\decdim=\prod_{\catenumeratorin}\catdimof{\catenumerator}$, this is a $\cpformat$ decomposition, which is basis and therefore also directed, boolean and basis+.
+
+%
+$\cpformat$ decomposition as a tensor network format come with some drawbacks.
+The set of tensors with a fixed rank are not closed \cite{beylkin_algorithms_2005} and approximation problems are often ill posed \cite{de_silva_tensor_2008}.
+Since as a consequence their numerical treatment comes with many problems \cite{espig_variational_2012}, alternative formats have gained popularity.
+Common formats are the $\mathrm{TUCKER}$-format originally introduced in \cite{hitchcock_expression_1927}, and often refered to as higher-order singular value decomposition, and the more recently developed $\ttformat$ and $\htformat$ decomposition formats (see \charef{cha:introduction}).
+
+
+%% Sum of elementary tensors
+%We have by definition
+%	\[ \hypercorewith
+%	= \sum_{\decindexin} \scalarcoreat{\inddecvar} \left( \bigotimes_{\atomenumeratorin} \legcoreofat{\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariable} \right) \, . \]
+%The right side can be seen as an alternative definition of $\cpformat$ decompositions by summations of elementary tensors.
 
 
 \begin{figure}[h]
-	\begin{center}
-		\input{PartIII/tikz_pics/sparse_calculus/cp_decomposition.tex}
-	\end{center}
-	\caption{Tensor Network diagram of a generic CP decomposition (see \defref{def:cpFormats})}
+    \begin{center}
+        \input{PartIII/tikz_pics/sparse_calculus/cp_decomposition.tex}
+    \end{center}
+    \caption{Tensor Network diagram of a generic $\cpformat$ decomposition (see \defref{def:cpFormats})}
 \end{figure}
 
-We introduce different notions of sparsities based on CP Decomposition with different properties of their leg cores.
+%We introduce different notions of sparsities based on $\cpformat$ decomposition with different properties of their leg cores.
 
 \subsect{Directed Leg Cores}
 
-This is the canonical CP Decomposition, where the vectors $\legcoreof{\atomenumerator,\decindex}$ are interpreted as generalized singular vectors.
-Any CP decomposition can be transformed into a directed CP decomposition without enlarging the index set $\indexset$, simply by diving the vectors by their norms and multiplying it to $\scalarcoreat{\inddecvar}$.
+The contraint of directionality of the leg cores does not influence decomposablitiy of a tensor, as we show next.
 
-% Directionality
-We then have a partially directed Tensor Network representing the decomposed tensor.
-The only undirected core is $\scalarcore$, since we do not demand it to be normed.
-In many applications applications, however, also the $\scalarcore$ is directed with a single outgoing leg (see for example the empirical distributions as discussed in \secref{sec:empDistribution}).
-In that case, also the decomposed tensor is directed with outgoing legs.
+\begin{lemma}\label{lem:cprankEqualsDir}
+    For any tensor $\hypercorewith$ we have
+    \begin{align*}
+        \cprankof{\hypercore} = \dircprankof{\hypercore} \, .
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    Let there be a $\cpformat$ decomposition of $\hypercore$ by
+    \begin{align*}
+        \hypercorewith
+        = \contractionof{
+            \{\scalarcoreat{\decvariable}\} \cup \{ \legcoreofat{\atomenumerator}{\catvariableof{\atomenumerator},\decvariable} \, : \, \atomenumeratorin \}
+        }{\shortcatvariables} \, .
+    \end{align*}
+    We then transform the scalar core to another core $\tilde{\scalarcore}[\decvariable]$ with coordinates to $\decindexin$ by
+    \begin{align*}
+        \tilde{\scalarcore}[\indexeddecvariable]
+        = \scalarcoreat{\indexeddecvariable} \cdot \prod_{\catenumeratorin} \contraction{\legcoreofat{\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariable}} \, .
+    \end{align*}
+    It follows for any $\decindexin$, that
+    \begin{align*}
+        \scalarcoreat{\indexeddecvariable} \cdot \bigotimes_{\catenumeratorin}\legcoreofat{\catenumerator}{\catvariableof{\catenumerator},\indexeddecvariable}
+        = \tilde{\scalarcore}[\indexeddecvariable] \cdot \bigotimes_{\catenumeratorin}\normationof{\legcoreofat{\catenumerator}{\catvariableof{\catenumerator},\indexeddecvariable}}{\catvariableof{\catenumerator}}
+    \end{align*}
+    and thus
+    \begin{align*}
+        \hypercorewith
+        = \contractionof{
+            \{\tilde{\scalarcore}[\decvariable] \cup \{ \normationof{\legcoreofat{\atomenumerator}{\catvariableof{\atomenumerator},\decvariable}}{\catvariableof{\atomenumerator},\decvariable} \, : \, \atomenumeratorin \}
+        }{\shortcatvariables} \, .
+    \end{align*}
+    We have thus constructed a directed $\cpformat$ decomposition of same size $\decdim$ to an arbitrary $\cpformat$ decomposition and conclude that $\cprankof{\hypercore} = \dircprankof{\hypercore}$.
+\end{proof}
+
+%This is the canonical $\cpformat$ decomposition, where the vectors $\legcoreof{\atomenumerator,\decindex}$ are interpreted as generalized singular vectors.
+%Any $\cpformat$ decomposition can be transformed into a directed $\cpformat$ decomposition without enlarging the index set $\indexset$, simply by diving the vectors by their norms and multiplying it to $\scalarcoreat{\inddecvar}$.
+
+%% Directionality
+%We then have a partially directed Tensor Network representing the decomposed tensor.
+%The only undirected core is $\scalarcore$, since we do not demand it to be normed.
+%In many applications applications, however, also the $\scalarcore$ is directed with a single outgoing leg (see for example the empirical distributions as discussed in \secref{sec:empDistribution}).
+%In that case, also the decomposed tensor is directed with outgoing legs.
 
 
 
-\subsect{Basis Leg Cores}\label{sec:basisCP}
+\subsect{Basis $\cpformat$ decompositions and the $\ell_0$-norm}\label{sec:basisCP}
 
 % From FOL Chapter: Bayesian Network interpretation of Basis CP
 %	The basis CP can further be understood as a Bayesian network, where we understand $\datindex$ as condition and each decomposition core as a conditional probability distribution.
 %	We notice that in this interpretation the direction of the dependency is inversed compared with previous representation of grounding tensors in Figure~\ref{fig:groundingCP}. 
 
 
-Directed and binary leg cores have incoming slices being basis vectors, we thus call them basis CP Decomposition.
-This allows the interpretation of the directed and binary CP decomposition in terms of mapping to nonzero coordinates.
-We start by defining the number of nonzero coordinates of tensors by the $\ell_0$-norm.
+The slices of directed and boolean tensors with respect to incoming variables are basis tensors.
+We have thus called $\cpformat$ decomposition with the restiction of directed an boolean leg vectors basis $\cpformat$ decomposition.
+Based on this intuition, we can interpret basis $\cpformat$ decomposition by mappings to non-vanishing coordinates of the decomposed tensor.
+To start, let us define the number of nonzero coordinates of tensors by the $\ell_0$-norm.
 
 \begin{definition}
-	The $\ell_0$-norm counts the nonzero coordinates of a tensor by
-		\[ \sparsityof{\hypercore} = \#\big\{ \catindices \, : \, \hypercore_{\catindices }\neq 0 \big\} \, . \]
+    The $\ell_0$-norm counts the nonzero coordinates of a tensor by
+    \begin{align*}
+        \sparsityof{\hypercore} = \#\big\{ \catindices \, : \, \hypercore_{\catindices }\neq 0 \big\} \, .
+    \end{align*}
 \end{definition}
 
-The $\ell_0$-norm is not a proper norm itself, but the limit of $\ell_p$-norms (where $p \rightarrow 0$) of the flattened tensor (which are norms for $p\geq1$).
+The $\ell_0$-norm is not a norm, but at each tensor the limit of $\ell_p$-norms (which are norms for $p\geq1$) for $p \rightarrow 0$.
+
+%%%%%%%%%%%%%%%%%%
 
 % Interpretation
-The $\ell_0$ norm is the number of nonzero coordinates. 
+The $\ell_0$ norm is the number of non-vanishing coordinates of a tensor.
 We understand the leg cores as the relational encoding of functions mapping to the slices of these coordinates given an enumeration.
 This is consistent with the previous analysis of \charef{cha:basisCalculus}, where we characterized binary and directed cores by the encoding of associated functions.
-Based on this idea, we can proof, that any tensor has a directed and binary CP decomposition with rand $\sparsityof{\hypercore}$.
+Based on this idea, we can proof, that any tensor has a directed and binary $\cpformat$ decomposition with rand $\sparsityof{\hypercore}$.
 
 
-\begin{theorem}\label{the:sparseBasisCP}
-	For any tensor $\hypercore$ we have
-		\[ \bascprankof{\hypercore} = \sparsityof{\hypercore} \, .  \]	
+\begin{theorem}
+    \label{the:sparseBasisCP}
+    For any tensor $\hypercorewith$ we have
+    \begin{align*}
+        \bascprankof{\hypercore} = \sparsityof{\hypercore} \, .
+    \end{align*}
 \end{theorem}
 \begin{proof}
-	We find a map 
-		\[ \exfunction : [\sparsityof{\hypercore}] \rightarrow  \facstates \, , \] 
-	which image is the set of nonzero coordinates of $\hypercore$.
-	Denoting its image coordinate maps by $\exfunction^{\atomenumerator}$ we have
-		\[ \hypercore = \sum_{\datindexin} \scalarcoreof{\exfunction(\datindex)} \left( \bigotimes_{\atomenumeratorin} \onehotmapof{\exfunction^\atomenumerator(\datindex)} \right) \, . \]
-	This is a basis CP Decomposition with rank $\sparsityof{\hypercore}$.
-	Conversely, any basis CP Decomposition of $\hypercore$ with dimension $r$ would have at most $r$ coordinates different from zero and thus $\sparsityof{\hypercore}\leq r$.
-	Thus, there cannot be a CP Decomposition with a dimension $r\leq\sparsityof{\hypercore}$.
+    Let us first show, that $\bascprankof{\hypercore} \leq \sparsityof{\hypercore}$.
+    We find a map
+    \begin{align*}
+        \datamap : [\sparsityof{\hypercore}] \rightarrow  \facstates
+    \end{align*}
+    which image is the set of non-vanishing coordinates of $\hypercorewith$.
+    Denoting its image coordinate maps by $\datamapof{\catenumerator}$ we have
+    \begin{align*}
+        \hypercorewith
+        = \sum_{\datindexin} \scalarcoreof{\datamapat(\datindex)} \left(\bigotimes_{\atomenumeratorin} \onehotmapofat{\datamapof{\atomenumerator}(\datindex)}{\catvariableof{\catenumerator}} \right) \, .
+    \end{align*}
+    This is a basis $\cpformat$ decomposition of size $\sparsityof{\hypercore}$ and we thus have $\bascprankof{\hypercore}\leq\sparsityof{\hypercore}$.
+
+    Conversely, let us show $\bascprankof{\hypercore} \geq \sparsityof{\hypercore}$.
+    Any basis $\cpformat$ decomposition of $\hypercore$ with size $r$ would has at most $r$ coordinates different from zero and thus $\sparsityof{\hypercore}\leq r$.
+    Thus, there cannot be a $\cpformat$ decomposition with a dimension $r\leq\sparsityof{\hypercore}$.
 \end{proof}
 
 %
-The next theorem relates the basis CP decomposition with encodings of $\atomorder$-ary relations (see \defref{def:daryRelation}).
+The next theorem relates the basis $\cpformat$ decomposition with encodings of $\atomorder$-ary relations (see \defref{def:daryRelation}).
 
 \begin{theorem}
-	If any only if $\hypercore\in\facspace$ has a basis decomposition with slices $\{\catindex_{[\atomorder]}^{\decindex} \, : \, \decindexin \}$ and trivial cores, it coincides with the encoding of the $\atomorder$-ary relation 
-		\[ \exrelation = \{\catindex_{[\atomorder]}^{\decindex} \, : \, \decindexin \} \, . \]
-%	To each basis CP decompositions with pairwise different slices and trivial scalar cores we find a $d$-ary relation, such that 
-\end{theorem}
-
-
-If in addition $\catdimof{\atomenumerator}=2$, we can interpret basis CP decompositions as propositional formulas.
-
-% Knowledge Bases
-\begin{theorem}
-	If $\hypercore\in\atomspace$ has a basis decomposition with slices $\{\catindex_{[\atomorder]}^{\decindex} \, : \, \decindexin \}$ and trivial cores, it coincides with the propositional formula
-		\[ \formulaat{\shortcatvariables} = 
-		\bigvee_{\decindexin} \termof{\catindex_{[\atomorder]}^{\decindex}} \, . \]
+    Any boolean tensor $ \hypercorewithin$ is the encoding of a $\atomorder$-ary relation $\exrelation\subset\facstates$ with cardinality
+    \begin{align*}
+        \cardof{\exrelation} = \bascprankof{\hypercore} \, .
+    \end{align*}
 \end{theorem}
 \begin{proof}
-	This is a generalization of \theref{the:maximalClausesRepresentation}, which follows from \theref{the:tensorToMaxMinTerms}.
+    We fine a basis $\cpformat$ decomposition of $\hypercorewith$ with $\decdim=\bascprankof{\hypercore}$.
+    Since $\hypercorewith$ is boolean, and since each $\decindex$ labels a disjoint non-vanishing coordinate (see proof of \theref{the:sparseBasisCP}), the decomposition has a trivial scalar core $\scalarcoreat{\decvariable}=\onesat{\decvariable}$.
+    It follows, that
+    \begin{align*}
+        \hypercorewith = \sum_{\decindexin} \left(\bigotimes_{\catenumeratorin}\legcoreofat{\catenumerator}{\catvariableof{\catenumerator},\indexeddecvariable}\right)
+    \end{align*}
+    Since the $\cpformat$ decomposition is basis, the slice $\legcoreofat{\catenumerator}{\catvariableof{\catenumerator},\indexeddecvariable}$ is for any $\catenumeratorin$ and $\decindexin$ a basis vector.
+    We then define
+    \begin{align*}
+        \catindexof{\catenumerator}^{\decindex} = \invonehotmapof{\legcoreofat{\catenumerator}{\catvariableof{\catenumerator},\indexeddecvariable}}
+    \end{align*}
+    and notice, that for the relation
+    \begin{align*}
+        \exrelation = \{ \shortcatindices^{\decindex}  \, : \, \decindexin\} \subset \facstates \,
+    \end{align*}
+    we have
+    \begin{align*}
+        \onehotmapofat{\exrelation}{\shortcatvariables} = \sum_{\decindexin} \left(\bigotimes_{\catenumeratorin}\legcoreofat{\catenumerator}{\catvariableof{\catenumerator},\indexeddecvariable}\right) \, .
+    \end{align*}
+    This coincides with the above $\cpformat$ decomposition of $\hypercorewith$ and the claim is established.
 \end{proof}
 
 
-% Storage
-The storage demand of any CP decomposition is at most linear in the dimension and the sum of its leg dimension.
-When we have a basis CP decomposition, this demand can be further improved.
-The basis vectors can be stored by its preimage of the one hot encoding $\onehotmapof{\cdot}$, that is the number of the basis vector in $[\catdim]$.
-This reduces the storage demand of each basis vector to the logarithms of the space dimension without the need of storing the full vector.
 
+\begin{remark}[Matrix Storage of basis $\cpformat$ decompositions]
+    \label{rem:matStorageBas}
+    % Storage
+    The storage demand of any $\cpformat$ decomposition is at most linear in the size and the sum of its leg dimension.
+    When we have a basis $\cpformat$ decomposition, this demand can be further improved.
+    The basis vectors can be stored by its preimage of the one hot encoding $\onehotmapof{\cdot}$, that is the number of the basis vector in $[\catdim]$.
+    This reduces the storage demand of each basis vector to the logarithms of the space dimension without the need of storing the full vector.
 % Matrix Representation
-More precisely, we can store the CP Decomposition by the matrix
-	\[ \matrixat{\decvariable,\selvariable} \in \rr^{\datanum \times (\atomorder+1)} \]
-defined for $\atomenumeratorin$
-	\[ \matrixat{\inddecvar,\selvariable=\atomenumerator} 
-	= \invonehotmapof{\legcoreofat{\atomenumerator}{\inddecvar,\catvariableof{\atomenumerator}}}\]
-and
-	\[ \matrixat{\inddecvar,\selvariable=\atomorder}  
-	= \scalarcoreat{\inddecvar} \, . \]
-	
-This is a typical tabular format to store relational databases.
+    More precisely, we can define a leg selecting variable $\selvariable$ taking values in $[\catorder+1]$ and store a basis $\cpformat$ decomposition of size $\decdim$ by the matrix
+    \begin{align*}
+        \matrixat{\decvariable,\selvariable} \in \rr^{\datanum \times (\atomorder+1)}
+    \end{align*}
+    defined for $\decindexin$ and $\atomenumeratorin$ by
+    \begin{align*}
+        \matrixat{\inddecvar,\selvariable=\atomenumerator} =
+        \begin{cases}
+            \scalarcoreat{\inddecvar} & \text{if} \quad \atomenumerator = \catorder \\
+            \invonehotmapof{\legcoreofat{\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariable}} & \text{else} \\% \quad \atomenumerator < \catorder \\
+        \end{cases} \, .
+    \end{align*}
+    This is a common trick to store relational databases.
+\end{remark}
 
-\subsect{Basis+ Leg Cores}
 
-The minimal rank of CP Decompositon is closely related to polynomial sparsity of the map $\hypercore$, which we will define next.
+\subsect{Basis+ $\cpformat$ decompositions and polynomials}
 
-\begin{definition}\label{def:polynomialSparsity}
-	A monomial decomposition of a tensor $\hypercore\in\facspace$ is a set $\sliceset$ of tuples $\slicetupleof{}$ where $\slicescalar\in\rr, \variableset\subset[\atomorder]$ and $\catindexof{\variableset}\in\bigtimes_{\atomenumerator\in\variableset} [\catdimof{\atomenumerator}]$ such that
-	\begin{align}\label{eq:decIntoMonomials}
-		\hypercoreat{\shortcatvariables} = \sum_{\slicetupleof{}\in\sliceset} \slicescalar \cdot \contractionof{\onehotmapof{\catindexof{\variableset}}}{\shortcatvariables} \, .
-	\end{align}
-	For any tensor $\hypercore\in\facspace$ we define its polynomial sparsity of order $\sliceorder$ as
-	\begin{align*}
-		\slicerankwrtof{\sliceorder}{\hypercore} =
-		 \min \left\{ \cardof{\sliceset} \, : \, 
-		 	\hypercoreat{\shortcatvariables} = \sum_{\slicetupleof{}\in\sliceset} \slicescalar \cdot \contractionof{\onehotmapof{\catindexof{\variableset}}}{\shortcatvariables} \, , \, \forall_{\slicetupleof{}\in\sliceset} \cardof{\variableset} \leq \sliceorder \, . 
-		 \right\}
-	\end{align*}
+The basis+ $\cpformat$ decompositions are closely related to monomial decompositions of a tensor, which we will define next.
+
+\begin{definition}
+    \label{def:polynomialSparsity}
+    A monomial decomposition of a tensor $ \hypercorewithin$ is a set $\sliceset$ of tuples $\slicetupleof{}$ where $\slicescalar\in\rr, \variableset\subset[\atomorder]$ and $\catindexof{\variableset}\in\bigtimes_{\atomenumerator\in\variableset} [\catdimof{\atomenumerator}]$ such that
+    \begin{align}
+        \label{eq:decIntoMonomials}
+        \hypercorewith
+        = \sum_{\slicetupleof{}\in\sliceset} \slicescalar \cdot \contractionof{\onehotmapofat{\catindexof{\variableset}}{\catvariableof{\variableset}}}{\shortcatvariables} \, .
+    \end{align}
+    For any tensor $ \hypercorewithin$ we define its polynomial sparsity of order $\sliceorder$ as
+    \begin{align*}
+        \slicerankwrtof{\sliceorder}{\hypercore} =
+        \min \left\{ \cardof{\sliceset} \, : \,
+        \hypercorewith = \sum_{\slicetupleof{}\in\sliceset} \slicescalar \cdot \contractionof{\onehotmapofat{\catindexof{\variableset}}{\catvariableof{\variableset}}}{\shortcatvariables} \, , \, \forall_{\slicetupleof{}\in\sliceset} \cardof{\variableset} \leq \sliceorder \, .
+        \right\}
+    \end{align*}
 \end{definition}
 
 
 % Explanation of monomials
-We refer to the terms in a decomposition \eqref{eq:decIntoMonomials} in \defref{def:polynomialSparsity} as monomials of binary variables, which are enumerated by pairs $(\atomenumerator,\catindexof{\atomenumerator})$ and indicate whether the variable $\catvariableof{\atomenumerator}$ is in state $\catindexof{\atomenumerator}\in[\catdimof{\atomenumerator}]$.
-Such indicators are represented by the one-hot encodings
-	\[ \onehotmapofat{\catindexof{\atomenumerator}}{\catvariableof{\atomenumerator}} \, . \]
-The monomial of multiple such binary variables indicated, whether all variables labelled by a set $\variableset$ are in the state $\catvariableof{\variableset}$, which is represented by
-	\[ \onehotmapofat{\catindexof{\variableset}}{\catvariableof{\variableset}} = \bigotimes_{\atomenumerator\in\variableset} \onehotmapofat{\catindexof{\atomenumerator}}{\catvariableof{\atomenumerator}}  \, . \]
-The states of the variables labeled by $\atomenumerator\in[\atomorder]/\variableset$ are not specified in the monomial and the monomial is trivially extended to
-	\[ \contractionof{\onehotmapof{\catindexof{\variableset}}}{\shortcatvariables}  = \onehotmapofat{\catindexof{\variableset}}{\catvariableof{\variableset}} \otimes \onesat{\catvariableof{[\atomorder]/\variableset}} \, .   \]
-
+We refer to the terms in a decomposition \eqref{eq:decIntoMonomials} in \defref{def:polynomialSparsity} as monomials of boolean features, which are enumerated by pairs $(\atomenumerator,\catindexof{\atomenumerator})$ and indicate whether the variable $\catvariableof{\atomenumerator}$ is in state $\catindexof{\atomenumerator}\in[\catdimof{\atomenumerator}]$.
+Each such boolean features is represented by the indicator
+\begin{align*}
+    \indicatorofat{\indexedcatvariableof{\atomenumerator}}{\catvariableof{\atomenumerator}} =
+    \onehotmapofat{\catindexof{\atomenumerator}}{\catvariableof{\atomenumerator}} \, .
+\end{align*}
+The monomial of multiple such boolean features indicates, whether all variables labelled by a set $\variableset$ are in the state $\catvariableof{\variableset}$.
+We have
+\begin{align*}
+    \indicatorofat{\forall{\atomenumerator\in\variableset}: \, \indexedcatvariableof{\atomenumerator}}{\catvariableof{\variableset}}
+    = \onehotmapofat{\catindexof{\variableset}}{\catvariableof{\variableset}} = \bigotimes_{\atomenumerator\in\variableset} \onehotmapofat{\catindexof{\atomenumerator}}{\catvariableof{\atomenumerator}}  \, .
+\end{align*}
+The states of the variables labeled by $\atomenumerator\in[\atomorder]/\variableset$ are not specified in the monomial and the indicators are trivially extended to
+\begin{align*}
+    \contractionof{\onehotmapofat{\catindexof{\variableset}}{\catvariableof{\variableset}}}{\shortcatvariables}
+    = \onehotmapofat{\catindexof{\variableset}}{\catvariableof{\variableset}} \otimes \onesat{\catvariableof{[\atomorder]/\variableset}} \, .
+\end{align*}
+Since we are working with boolean features, there is no need to consider higher-order powers of individual features, since for any $n\in\nn, \, n\geq1$ and any boolean value $z\in\ozset$ we have $z^n=z$.
 
 % Infinity
-For some $\sliceorder<\catorder$ there are tensors $\hypercoreat{\shortcatvariables}$, which do not have a monomial decomposition of order $\sliceorder$.
-In that case we the minimum is over an empty set and we define $\slicerankwrtof{\sliceorder}{\hypercore}=\infty$.
-We characterize in the next theorem the set of tensors with monomial decompositions.
+For some monomial orders $\sliceorder<\catorder$ there are tensors $\hypercorewith$, which do not have a monomial decomposition of order $\sliceorder$.
+In that case the minimum is over an empty set and we define $\slicerankwrtof{\sliceorder}{\hypercore}=\infty$.
+We characterize in the next theorem the set of tensors with monomial decompositions of order $\sliceorder$.
 
-
-\begin{theorem}\label{the:polynomialSubspaces}
-	For any $\atomorder, \sliceorder$, the set of tensors of $\catorder$ variables with leg dimension $\catdim$, which have a monomial decomposition of order $\sliceorder$, is a linear subspace $\subspaceof{\atomorder,\sliceorder}$ with dimension
-		\[ \subspacedimof{\subspaceof{\atomorder,\sliceorder}} \leq  \sum_{s \in [\sliceorder]} \catdim^s \binom{\catorder}{s} \, .  \]
+\begin{theorem}
+    \label{the:polynomialSubspaces}
+    For any $\atomorder, \sliceorder$, the set of tensors of $\catorder$ variables with leg dimension $\catdim$, which have a monomial decomposition of order $\sliceorder$, is a linear subspace $\subspaceof{\atomorder,\sliceorder}$ with dimension
+    \begin{align*}
+        \subspacedimof{\subspaceof{\atomorder,\sliceorder}} \leq  \sum_{s \in [\sliceorder]} \catdim^s \binom{\catorder}{s} \, .
+    \end{align*}
 \end{theorem}
 \begin{proof}
-	Any sum of tensors with a monomial decomposition of order $\sliceorder$ admits again a monomial decomposition, which is the concatenation of both.
-	The same holds for a scalar multiplication, and thus, the sets of such tensors form a linear subspace.
+    The set of tensors admitting a monomial decomposition of order $\sliceorder$ is closed under addition and scalar multiplication.
+    Specifically, the sum of two such tensors retains a monomial decomposition, formed by concatenating their respective decompositions.
+    Scalar multiplication can be performed by a rescaling of each scalar $\slicescalar$ and therefore preserves the decomposition structure.
+    Hence, these tensors form a linear subspace.
 
-	The number of different tensors $\contractionof{\onehotmapof{\catindexof{\variableset}}}{\shortcatvariables}$ is
-		\[  \sum_{s \in [\sliceorder]} \catdim^s \binom{\catorder}{s}  \]
-	Since any tensor with a monomial decomposition is a weighted sum of those, 
-	
-	We notice, that the set of slices is in general not linear independent, and therefore forms a frame and not a linear basis \cite{casazza_introduction_2013}.
-	The number of elements in the frame is therefore an upper bound on the dimension.
+%    Any sum of tensors with a monomial decomposition of order $\sliceorder$ admits again a monomial decomposition, which is the concatenation of both.
+%    The same holds for a scalar multiplication, and thus, the sets of such tensors form a linear subspace.
+
+    To bound the dimension of this subspace, we consider tensors of the form $\contractionof{\onehotmapof{\catindexof{\variableset}}}{\shortcatvariables}$.
+    The number of such tensors is given by
+    \begin{align*}
+        \sum_{s \in [\sliceorder]} \catdim^s \binom{\catorder}{s}  \, .
+    \end{align*}
+    Since any tensor with a monomial decomposition is a weighted sum of those, this provides an upper bound on the dimension.
+
+    We notice, that the set of slices is in general not linear independent, and therefore forms a frame instead of a linear basis \cite{casazza_introduction_2013}.
+    The number of elements in the frame is therefore in general a loose upper bound on the dimension.
 \end{proof}
 
 
 % Infinite rank
-\theref{the:polynomialSubspaces} implies, that the tensors admiitting a monomial decomposition of a small order build a low-dimensional subspace in the $\catdim^\catorder$ dimensional space of tensors, since for $\sliceorder << \catorder $ we have
-	\[ \subspacedimof{\subspaceof{\atomorder,\sliceorder}} << \catdim^{\catorder} \, . \]
+\theref{the:polynomialSubspaces} states, that the tensors admitting a monomial decomposition of a small order build a low-dimensional subspace in the $\catdim^\catorder$ dimensional space of tensors, since for $\sliceorder << \catorder $ we have
+\begin{align*}
+    \subspacedimof{\subspaceof{\atomorder,\sliceorder}} << \catdim^{\catorder} \, .
+\end{align*}
 If $\sliceorder\geq\catorder$, we always find a monomial decomposition by an enumeration of nonzero coordinates.
-In the next theorem, we show that in that case the $\slicerankwrtof{\sliceorder}{\hypercore}$ furthermore coincides with the basis+ CP rank $\baspluscprankof{\hypercore}$.
+In the next theorem, we show that in that case the $\slicerankwrtof{\sliceorder}{\hypercore}$ furthermore coincides with the basis+ $\cpformat$ rank $\baspluscprankof{\hypercore}$.
 
 \begin{theorem}
-	For any tensor $\hypercore\in\facspace$ we have
-		\[ \slicesparsityof{\hypercore} = \baspluscprankof{\hypercore} \, . \]
-	When $\catindexof{\atomenumerator}=2$ for all $\atomenumeratorin$, we also have
-		\[ \bincprankof{\hypercore} = \slicesparsityof{\hypercore}  \, . \]
+    For any tensor $\hypercorewithin$ we have
+    \begin{align*}
+         \slicesparsityof{\hypercore} = \baspluscprankof{\hypercore} \, .
+    \end{align*}
+    In case of two-dimensional legs, that is $\catdimof{\atomenumerator}=2$ for all $\atomenumeratorin$, we also have
+    \begin{align*}
+        \bincprankof{\hypercore} = \slicesparsityof{\hypercore}  \, .
+    \end{align*}
 \end{theorem}
 \begin{proof}
-	To proof the first claim, we construct a basis+ CP decomposition given a monomial decomposition and vice versa.
-	Let there be a tensor $\hypercoreat{\shortcatvariables}$ with a monomial decomposition by $\sliceset$ with $\cardof{\sliceset}=m$ and let us enumerate the elements in $\sliceset$ by $\slicetupleof{\decindex}$ for $\decindexin$.
-	 We define for each $\atomenumeratorin$ the tensors
-	 \begin{align*}
-		\legcoreofat{\atomenumerator}{\decvariable,\catvariableof{\atomenumerator}}
-		 = \left( \sum_{\decindexin \, : \, \atomenumerator\in\variableset} \onehotmapofat{\decindex}{\decvariable} \otimes \onehotmapofat{\catindexof{\atomenumerator}^{\decindex}}{\catvariableof{\atomenumerator}} \right)
-		 + \left(\sum_{\decindexin \, : \, \atomenumerator\notin\variableset} \onehotmapofat{\decindex}{\decvariable} \otimes \onesat{\catvariableof{\atomenumerator}} \right)
-	\end{align*}
-	and 
-	\begin{align*}
-		\scalarcoreat{\decvariable} = \sum_{\decindexin} \slicescalar^{\decindex} \cdot \onehotmapofat{\decindex}{\decvariable}
-	\end{align*}
-	 and notice that	 
-	\begin{align*}
-		\hypercoreat{\shortcatvariables} 
-		& = \sum_{\decindexin} \slicescalar^{\decindex} \cdot \contractionof{\onehotmapof{\catindexof{\variableset}^{\decindex}}}{\shortcatvariables} \\
-		& = \sum_{\decindexin} \left(  \scalarcoreat{\inddecvar} \cdot \bigotimes_{\atomenumeratorin} \legcoreofat{\atomenumerator}{\inddecvar, \catvariableof{\atomenumerator}} \right) \\
-		& = \contractionof{
-		\{\scalarcoreat{\decvariable}\} \cup \{\legcoreofat{\atomenumerator}{\decvariable,\catvariableof{\atomenumerator}} \, : \, \atomenumeratorin \}
-		}{\shortcatvariables} \, . 
-	\end{align*}
-	By construction this is a basis+ CP decomposition with rank $\decdim$.
-	Since any monomial decomposition can be transformed into a basis+ CP decomposition with same rank we have
-	\begin{align*}
-		\slicesparsityof{\hypercore} \geq \baspluscprankof{\hypercore} \, . 
-	\end{align*}
-	
-	Let there now be a basis+ CP decomposition we define for each $\decindexin$ 
-	\begin{align*}
-		\variableset^{\decindex} = \{\atomenumeratorin : \legcoreofat{\atomenumerator}{\inddecvar, \catvariableof{\atomenumerator}} \neq \onesat{\catvariableof{\atomenumerator}} \}
-		 \quad \text{and} \quad 
-		 \catindexof{\variableset}^{\decindex} = \{\invonehotmapof{\legcoreofat{\atomenumerator}{\inddecvar, \catvariableof{\atomenumerator}} } \, : \atomenumerator\in\variableset\}
-	\end{align*}
-	where by $\invonehotmapof{\cdot}$ we denote the inverse of the one-hot encoding.
-	
-	We notice that this is a monomial decomposition of $\hypercoreat{\shortcatvariables}$ to the tuple set
-	\begin{align*}
-		\sliceset = \{(\scalarcoreat{\inddecvar}, \variableset^{\decindex}, \catindexof{\variableset^{\decindex}}^{\decindex} ) \, : \, \decindexin \} \, . 
-	\end{align*}
-	It follows from this that
-	\begin{align*}
-		\slicesparsityof{\hypercore} \leq \baspluscprankof{\hypercore} \, 
-	\end{align*}
-	and the first claim is shown.
-	
-	The second claim follows from the observation, that whenever $\catindexof{\atomenumerator}=2$ for all $\atomenumeratorin$ the binary CP decompositions with non-vanishing slices $\legcoreofat{\atomenumerator}{\inddecvar, \catvariableof{\atomenumerator}}$ for $\atomenumeratorin$ and $\decindexin$ are also basis+ CP decompositions and vice versa.
-%
-%	
-%
-%	We proof the claim by establishing a one-to-one map between any binary CP decomposition of a a tensor $\hypercore$ and a monomial decomposition of $\hypercore$.
-%	% CP Decomposition to monomial decomposition
-%	Let there be a binary CP Decomposition of $\hypercore$ with the leg tensors $\{\legcoreof{\atomenumerator}\, :\, \atomenumeratorin\}$ and the scalar core $\scalarcore$.
-%	For any index $\decindexin$ and $\atomenumeratorin$ we have
-%		\[ \legcoreof{\atomenumerator}_{\decindex} \in \{\onehotmapof{0},\onehotmapof{1},\ones\} \, . \]
-%	We define for any $\decindexin$ the sets 
-%		\[ \variableset^{\decindex}=\big\{\atomenumerator \, : \, \legcoreof{\atomenumerator}_{\decindex} \in \{\onehotmapof{0},\onehotmapof{1}\}  \big\}\]
-%	and an index tuple $\catindexof{\variableset}^\decindex \in \bigotimes_{\atomenumerator\in\variableset}[2]$ by
-%	\begin{align*}
-%		(\catindexof{\variableset}^\decindex)_\atomenumerator = 
-%		\begin{cases} 
-%			0 & \text{  if  } \legcoreof{\atomenumerator}_{\decindex} = \onehotmapof{0} \\1 & \text{  if  } \legcoreof{\atomenumerator}_{\decindex} = \onehotmapof{1} 
-%		\end{cases} \, . 
-%	\end{align*}   
-%	Then we have by construction that 
-%	\begin{align*}
-%		\hypercore = \sum_{\decindexin} \scalarcoreat{\decindex} \cdot \left( \onehotmapof{\catindexof{\variableset}^\decindex} \otimes \onesof{[\atomorder]/\variableset^{\decindex}} \right) \, . 
-%	\end{align*}
-%	When regrouping the sum over the decomposition index by a sum over possible sets $\variableset\subset[\atomorder]$ and a sum over appearing index tuples $\catindexof{\variableset}$, this is a monomial decomposition of $\hypercore$ with
-%		\[ \#\left(\indexset\right) = \# \left( \bigcup_{\variableset\subset[\atomorder]} \indexsetof{\variableset} \right) \, . \]
-%	 % Monomial decomposition to CP Decomposition
-%	 Vise versa we can construct a binary CP Decomposition given any monomial decomposition of $\hypercore$ 
-%	 	\[ \hypercore 
-%			= \sum_{\variableset\subset[\atomorder]} \sum_{\catindexof{\variableset}\in \indexsetof{\variableset}}  
-%			\scalarcoreat{\variableset, \catindexof{\variableset}} \cdot \left( \onehotmapof{\catindexof{\variableset}} \otimes \onesof{[\atomorder]/\variableset} \right)  \, . \]
-%	 To this end, we enumerate the set $\bigcup_{\variableset\subset[\atomorder]} \indexsetof{\variableset}$ by an additional index $\decindexin$ and define leg cores by
-%	\begin{align*}
-%		\legcoreof{\atomenumerator}_{\decindex} = 
-%		\begin{cases} 
-%			\onehotmapof{0} & \text{  if  }  \atomenumerator \in \variableset^{\decindex} \text{  and  } (\catindexof{\variableset}^\decindex)_\atomenumerator = 0 \\
-%			\onehotmapof{1} & \text{  if  } \atomenumerator \in \variableset^{\decindex} \text{  and  } (\catindexof{\variableset}^\decindex)_\atomenumerator = 1 \\
-%			\ones & \text{  if   } \atomenumerator \notin \variableset^{\decindex}
-%		\end{cases} 
-%	\end{align*}   
-%	and a scalar core by coordinates
-%		\[ \scalarcoreat{\decindex} = \scalarcoreat{\variableset^{\decindex},\catindexof{\variableset}^\decindex} \, . \]
-%	Then, the monomial decomposition coincides with a basis CP Decomposition with the same dimension.
-%	Thus, both $\bincprankof{\hypercore}$ and $\slicesparsityof{\hypercore}$ are the minima of identical sets and thus identical.
+    To proof the first claim, we construct a basis+ $\cpformat$ decomposition given a monomial decomposition and vice versa.
+    To show $\slicesparsityof{\hypercore} \geq \baspluscprankof{\hypercore}$, let there be an arbitrary tensor $\hypercorewith$ with a monomial decomposition by $\sliceset$ with $\cardof{\sliceset}=m$ and let us enumerate the elements in $\sliceset$ by $\slicetupleof{\decindex}$ for $\decindexin$.
+    We define for each $\atomenumeratorin$ the tensors
+    \begin{align*}
+        \legcoreofat{\atomenumerator}{\decvariable,\catvariableof{\atomenumerator}}
+        = \left( \sum_{\decindexin \, : \, \atomenumerator\in\variableset} \onehotmapofat{\decindex}{\decvariable} \otimes \onehotmapofat{\catindexof{\atomenumerator}^{\decindex}}{\catvariableof{\atomenumerator}} \right)
+        + \left(\sum_{\decindexin \, : \, \atomenumerator\notin\variableset} \onehotmapofat{\decindex}{\decvariable} \otimes \onesat{\catvariableof{\atomenumerator}} \right)
+    \end{align*}
+    and
+    \begin{align*}
+        \scalarcoreat{\decvariable} = \sum_{\decindexin} \slicescalar^{\decindex} \cdot \onehotmapofat{\decindex}{\decvariable}
+    \end{align*}
+    and notice that
+    \begin{align*}
+        \hypercorewith
+        & = \sum_{\decindexin} \slicescalar^{\decindex} \cdot \contractionof{\onehotmapof{\catindexof{\variableset}^{\decindex}}}{\shortcatvariables} \\
+        & = \sum_{\decindexin} \left(  \scalarcoreat{\inddecvar} \cdot \bigotimes_{\atomenumeratorin} \legcoreofat{\atomenumerator}{\inddecvar, \catvariableof{\atomenumerator}} \right) \\
+        & = \contractionof{
+            \{\scalarcoreat{\decvariable}\} \cup \{\legcoreofat{\atomenumerator}{\decvariable,\catvariableof{\atomenumerator}} \, : \, \atomenumeratorin \}
+        }{\shortcatvariables} \, .
+    \end{align*}
+    By construction this is a basis+ $\cpformat$ decomposition with rank $\decdim$.
+    Since any monomial decomposition can be transformed into a basis+ $\cpformat$ decomposition with same rank we have
+    \begin{align*}
+        \slicesparsityof{\hypercore} \geq \baspluscprankof{\hypercore} \, .
+    \end{align*}
+
+    To show $\slicesparsityof{\hypercore} \leq \baspluscprankof{\hypercore}$, let there now be a basis+ $\cpformat$ decomposition of an arbitrary $\hypercorewith$.
+    We define for each $\decindexin$
+    \begin{align*}
+        \variableset^{\decindex} = \{\atomenumeratorin : \legcoreofat{\atomenumerator}{\inddecvar, \catvariableof{\atomenumerator}} \neq \onesat{\catvariableof{\atomenumerator}} \}
+        \quad \text{and} \quad
+        \catindexof{\variableset}^{\decindex} = \{\invonehotmapof{\legcoreofat{\atomenumerator}{\inddecvar, \catvariableof{\atomenumerator}} } \, : \atomenumerator\in\variableset\}
+    \end{align*}
+    where by $\invonehotmapof{\cdot}$ we denote the inverse of the one-hot encoding.
+
+    We notice that this is a monomial decomposition of $\hypercorewith$ to the tuple set
+    \begin{align*}
+        \sliceset = \{(\scalarcoreat{\inddecvar}, \variableset^{\decindex}, \catindexof{\variableset^{\decindex}}^{\decindex} ) \, : \, \decindexin \} \, .
+    \end{align*}
+    It follows from this that
+    \begin{align*}
+        \slicesparsityof{\hypercore} \leq \baspluscprankof{\hypercore} \,
+    \end{align*}
+    and the first claim is shown.
+
+    The second claim follows from the observation, that the set of non-vanishing boolean vectors coincides with the set of one-hot encodings extended by the trivial vector.
+    Thus, a $\cpformat$ decomposition with non-vanishing slices is boolean if and only if it is basis+.
+    This establishes, that both ranks are equal, since a $\cpformat$ decomposition of minimal rank cannot contain non-vanishing slices.
 \end{proof}
 
+\begin{remark}[Sparse representation of propositional formulas]
+    When all leg dimensions of a binary tensor $\hypercore$ are $2$, we can further interpret $\hypercore$ as a logical formula.
+    We can use the binary $\cpformat$ decomposition of any tensor $\sechypercore$ with $\nonzeroof{\sechypercore}=\hypercore$ as a CNF of $\hypercore$.
+    Finding the sparsest CNF thus amounts to finding the $\sechypercore$ with minimal $\slicesparsityof{\sechypercore}$ such that $\nonzeroof{\sechypercore}=\hypercore$.
+\end{remark}
 
-
-\begin{example}[Propositional Formulas]
-	When all leg dimensions of a binary tensor $\hypercore$ are $2$, we can interpret $\hypercore$ as a logical formula.
-	We can use the binary CP decomposition of any tensor $\sechypercore$ with $\nonzeroof{\sechypercore}=\hypercore$ as a CNF of $\hypercore$.
-	Finding the sparsest CNF thus amounts to finding the $\sechypercore$ with minimal $\slicesparsityof{\sechypercore}$ such that $\nonzeroof{\sechypercore}=\hypercore$.
-\end{example}
-
-
-
-
-
-
-
-
+\begin{remark}[Matrix Storage of basis+ $\cpformat$ decompositions]
+    \label{rem:matStorageBasPlus}
+    We can adapt the storage format of \remref{rem:matStorageBas} from basis to basis+ $\cpformat$ decompositions.
+    To this end, let there be a basis+ $\cpformat$ decomposition of a tensor with scalar core $\scalarcoreof{\decvariable}$ and leg cores $\{\legcoreofat{\atomenumerator}{\catvariableof{\atomenumerator},\decvariable} \, : \, \atomenumeratorin\}$.
+    We use a value $z\in\rr/\imageof{\scalarcore}$ distinguished from the coordinates of the scalar core and define a matrix
+    \begin{align*}
+        \matrixofat{z}{\decvariable,\selvariable} \,
+    \end{align*}
+    where $\selvariable$ takes values in $[\catorder]$, coordinatewise as
+    \begin{align*}
+        \matrixofat{z}{\inddecvar,\selvariable=\atomenumerator} =
+        \begin{cases}
+            \scalarcoreat{\inddecvar} & \text{if} \quad \atomenumerator = \catorder \\
+            z & ^\text{if} \quad \legcoreofat{\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariable} = \onesat{\catvariableof{\atomenumerator}} \\
+            \invonehotmapof{\legcoreofat{\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariable}} & \text{else}
+        \end{cases} \, .
+    \end{align*}
+\end{remark}
 
 
 
 \sect{Constructive Bounds on CP Ranks}
 
-After having defined three CP Decompositions, let us investigate bounds on their ranks which proofs come with constructions of the cores.
+After having defined different $\cpformat$ decompositions, let us investigate bounds on their ranks, which proofs rely on explicit core constructions.
 
 
-\subsect{Format Transformations}
+\subsect{Cascade of ranks}
 
-%% Case of binary legs
-Especially useful, when the leg dimensions are two, where the slice decomposition shows decomposition of the tensor into monomials.
+%% ? Case of binary legs
+%Especially useful, when the leg dimensions are two, where the slice decomposition shows decomposition of the tensor into monomials.
 
+We start by showing a cascade of bounds of $\cpformat$ ranks, when demanding different leg restrictions as in \defref{def:cpFormats}.
 
-\begin{theorem}\label{the:sliceToCP}
-	For any tensor $\hypercoreat{\shortcatvariables}\in\facspace$ we have
-		\[ \cprankof{\hypercore} 
-		\leq \bincprankof{\hypercore} 
-		\leq \baspluscprankof{\hypercore} 
-		\leq \bascprankof{\hypercore} \, . \]
-\end{theorem}	
+\begin{theorem}
+    \label{the:sliceToCP}
+    For any tensor $ \hypercorewithin$ we have
+    \begin{align*}
+        \cprankof{\hypercore} = \dircprankof{\hypercore} \leq \bincprankof{\hypercore} \leq \baspluscprankof{\hypercore} \leq \bascprankof{\hypercore} \, .
+    \end{align*}
+\end{theorem}
 \begin{proof}
-	% First bound
-	Since any CP decomposition into binary leg cores can be normed to a CP decomposition with directed leg cores, the first bound holds.
-	% Second bound
-	The second bound holds analogously, since any CP decomposition with basis leg cores is also a CP decomposition with binary leg cores.
+    The equality $\cprankof{\hypercore} = \dircprankof{\hypercore}$ has been established in \lemref{lem:cprankEqualsDir}.
+    The further inequalities follow by consecutive subset relations of the set of allowed leg slices in the respective $\cpformat$ decompositions.
+    These imply, that any basis $\cpformat$ decomposition of a tensor $\hypercorewith$ is also a basis+ $\cpformat$ decomposition, further that any basis+ $\cpformat$ decomposition is also a boolean $\cpformat$ decomposition and that any boolean $\cpformat$ decomposition is trivially an unrestricted $\cpformat$ decomposition.
+    Thus, the ranks are minima of enlarging sets and the claimed rank cascade is established.
 \end{proof}
-
-	%Taking only $\variableset=[\atomorder]$ and the index set being the nonzero coordinates of $\hypercore$ we get 
-	%	\[ \slicesparsityof{\hypercore} \leq \#{\catindices: \hypercore_{\catindices}\neq 0} = \sparsityof{\hypercore} \, . \]
 
 %% Tightness of the Bounds
-Consider for example the tensor $\ones$ having maximal $\ell_0$-norm being the dimension of the tensor space, but, since it is elementary, a CP decomposition with rank $1$.
+Let us notice, that the stated bounds are not tight in general.
+To give an example, let us consider the tensor $\hypercorewith=\oneswith$, for which we have
+\begin{align*}
+    \bascprankof{\hypercore} = \sparsityof{\hypercore} = \prod_{\catenumeratorin}\catdimof{\catenumerator} \, .
+\end{align*}
+Since in the other restricted $\cpformat$ formats we can choose trivial slices to the leg cores, we have
+\begin{align*}
+    \baspluscprankof{\hypercore} = 1 = \bincprankof{\hypercore} = \dircprankof{\hypercore} = \cprankof{\hypercore} \, .
+\end{align*}
+The trivial tensor serves thus as an example, where the demand of the the storage format in \remref{rem:matStorageBas} has an exponential overhead compared to the storage format in \remref{rem:matStorageBasPlus}.
 
 
-\subsect{Summation of CP Decompositions}
+\subsect{Operations on $\cpformat$ decompositions}
 
-\begin{theorem}\label{the:CPrankSumBound}
-	For any collections of tensors $\{T^{l}[\catvariableof{\nodes}] : l \in [n]\}$ with identical variables and scalars $\lambda^{l} \in \rr$ for $l\in[n]$  we have
-		\[ \cprankof{\sum_{l \in [n]} \lambda^{l} \cdot T^{l}} \leq \sum_{l\in[n]}  \cprankof{T^{l}}  \, . \]
-	The bound still holds, when we replace on both sides $\cprankof{\cdot}$ by $\bincprankof{\cdot}$, by $\bascprankof{\cdot}$ or by $\baspluscprankof{\cdot}$.
+When using $\cpformat$ decompositons of tensors in practicle applications, such as those investigated in \parref{par:one} and \parref{par:two}, we have to perform numerical manipulations in the form of summations, contractions and normations of the represented tensors.
+Let us here investigate, how these operations influence the decomposition.
+
+\subsubsect{Summation}
+
+We start with the sum of tensors in a $\cpformat$ decomposition, which can be captured by a concatenation of the slices.
+
+\begin{theorem}
+    \label{the:CPrankSumBound}
+    For any collections of tensors $\{T^{l}[\catvariableof{\nodes}] : l \in [n]\}$ with identical variables and scalars $\lambda^{l} \in \rr$ for $l\in[n]$  we have
+    \[ \cprankof{\sum_{l \in [n]} \lambda^{l} \cdot T^{l}} \leq \sum_{l\in[n]}  \cprankof{T^{l}}  \, . \]
+    The bound still holds, when we replace on both sides $\cprankof{\cdot}$ by $\bincprankof{\cdot}$, by $\bascprankof{\cdot}$ or by $\baspluscprankof{\cdot}$.
 \end{theorem}
 \begin{proof}
-	Products with scalars do not change the rank, since they just rescale the core $\scalarcore$.
-	The sum of CP Decomposition is just the combination of all slices, thus the rank is at most additive.
+    Products with scalars do not change the rank, since they just rescale the core $\scalarcore$.
+    The sum of $\cpformat$ decomposition is just the combination of all slices, thus the rank is at most additive.
 \end{proof}
 
-\subsect{Contractions of CP Decompositions}
+% Loose upper bounds
+Let us notice, that the upper bound is loose in many applications.
+For example, if two slice tuples of two decomposed tensors agree on $\catindexof{\variableset},\variableset$, then their sum can be performed by a sum of the corresponding scalar.
 
-More general, we can bound the sparsity of any contraction by the product of sparsities of affected tensors.
+%%%%%%%%%%
+% 20.3. noon
+%%%%%%%%%%
 
-\begin{theorem}\label{the:CPrankContractionBound}
-	For any tensor network with variables $\nodes$ and edges $\edges$ we have for any subset $\secnodes\subset\nodes$
-		\[ \cprankof{\contractionof{\{\hypercoreof{\edge} : \edge\in\edges \}}{\secnodes}} \leq 
-		\prod_{\edge\in\edges \, : \, \secnodes\cap\edge \neq \varnothing} \cprankof{\hypercoreof{\edge}} \, . \]
-	The bound still holds, when we replace on both sides $\cprankof{\cdot}$ by $\bincprankof{\cdot}$, by $\bascprankof{\cdot}$ or by $\baspluscprankof{\cdot}$.
+\subsubsect{Contraction}
+
+We continue to show rank bounds for arbitrary contractions by the product of the ranks of contracted tensors.
+
+\begin{theorem}
+    \label{the:CPrankContractionBound}
+    For any tensor network with variables $\nodes$ and edges $\edges$ we have for any subset $\secnodes\subset\nodes$
+    \begin{align*}
+        \cprankof{\contractionof{\{\hypercoreofat{\edge}{\catvariableof{\edge}} : \edge\in\edges \}}{\catvariableof{\secnodes}}} \leq
+        \prod_{\edge\in\edges \, : \, \secnodes\cap\edge \neq \varnothing} \cprankof{\hypercoreof{\edge}} \, .
+    \end{align*}
+    The bound still holds, when we replace on both sides $\cprankof{\cdot}$ by $\bincprankof{\cdot}$, by $\bascprankof{\cdot}$ or by $\baspluscprankof{\cdot}$.
 \end{theorem}
 
-
 Remarkably, in \theref{the:CPrankContractionBound} the upper bound on the CP rank is build only by the ranks of the tensor cores, which have remaining open edges.
-We prepare for its proof by first showing the following Lemmata.
+We prepare for its proof by first showing the following lemmata.
 
-\begin{lemma}\label{lem:sparsityGeneralContraction}
-	For any tensors $\hypercoreofat{1}{\catvariableof{\nodes_1}}$ and $\hypercoreofat{2}{\catvariableof{\nodes_2}}$ and any set of variables $\secnodes\subset\nodes_1\cup\nodes_2$ we have
-		\[ \cprankof{\contractionof{\{\hypercoreof{1},\hypercoreof{2}\}}{\secnodes}} \leq \cprankof{\hypercoreof{1}} \cdot \cprankof{\hypercoreof{2}} \, . \]
-	The bound still holds, when we replace on both sides $\cprankof{\cdot}$ by $\bincprankof{\cdot}$, by $\bascprankof{\cdot}$ or by $\baspluscprankof{\cdot}$.
+\begin{lemma}
+    \label{lem:sparsityGeneralContraction}
+    For any tensors $\hypercoreofat{1}{\catvariableof{\nodes_1}}$ and $\hypercoreofat{2}{\catvariableof{\nodes_2}}$ and any set of variables $\secnodes\subset\nodes_1\cup\nodes_2$ we have
+    \[ \cprankof{\contractionof{\{\hypercoreof{1},\hypercoreof{2}\}}{\secnodes}} \leq \cprankof{\hypercoreof{1}} \cdot \cprankof{\hypercoreof{2}} \, . \]
+    The bound still holds, when we replace on both sides $\cprankof{\cdot}$ by $\bincprankof{\cdot}$, by $\bascprankof{\cdot}$ or by $\baspluscprankof{\cdot}$.
 \end{lemma}
 \begin{proof}
-	By connecting the cores and restoring the binary or basis properties.
+    By connecting the cores and restoring the binary or basis properties.
 \end{proof}
 
 When one core of the contracted tensor network does not contain variables which are left open, we can drastically sharpen the bound provided by \lemref{lem:sparsityGeneralContraction} as we show next.
 
-\begin{lemma}\label{lem:sparsityDisjointContraction}
-	For any tensor network consistent of two tensors $\hypercoreofat{1}{\catvariableof{\nodes_1}}$ and $\hypercoreofat{2}{\catvariableof{\nodes_2}}$ and any set $\secnodes$ with $\secnodes\cap\nodes_2=\varnothing$ we have
-		\[ \cprankof{\contractionof{\{\hypercoreof{1},\hypercoreof{2}\}}{\secnodes}} \leq \cprankof{\hypercoreof{1}} \, . \]
-	The bound still holds, when we replace on both sides $\cprankof{\cdot}$ by $\bincprankof{\cdot}$ or by $\bascprankof{\cdot}$.
+\begin{lemma}
+    \label{lem:sparsityDisjointContraction}
+    For any tensor network consistent of two tensors $\hypercoreofat{1}{\catvariableof{\nodes_1}}$ and $\hypercoreofat{2}{\catvariableof{\nodes_2}}$ and any set $\secnodes$ with $\secnodes\cap\nodes_2=\varnothing$ we have
+    \[ \cprankof{\contractionof{\{\hypercoreof{1},\hypercoreof{2}\}}{\secnodes}} \leq \cprankof{\hypercoreof{1}} \, . \]
+    The bound still holds, when we replace on both sides $\cprankof{\cdot}$ by $\bincprankof{\cdot}$ or by $\bascprankof{\cdot}$.
 \end{lemma}
 \begin{proof}
-	We show the lemma by constructing a CP decomposition of $\cprankof{\contractionof{\{\hypercoreof{1},\hypercoreof{2}\}}{\secnodes}} $ for any CP decomposition of $\hypercoreof{1}$.
-	Let therefore take any CP decomposition of $\hypercoreof{1}$ consistent of the leg cores $\{\legcoreof{\node} \, : \, \node \in \nodes_1 \}$ and a scalar core $\scalarcore$.
-	Then we define a new $\scalarcore$ by
-		\[ \tilde{\scalarcore} = \contractionof{\{\scalarcore\}\cup \{\legcoreof{\node} \, : \, \node \in \nodes_1 , \node \notin \secnodes \} \cup \{\hypercoreof{2}\} }{\decvariable} \, . \]
-	Then, the leg cores $\{\legcoreof{\node} \, : \, \node \in \secnodes \}$ build with the scalar core $\tilde{\scalarcore}$ a CP decomposition of $\contractionof{\{\hypercoreof{1},\hypercoreof{2}\}}{\secnodes}$.
-	% Binary of basis
-	When the CP decomposition of $\hypercoreof{1}$ was binary, basis or basis+, this property is also satisfied by the constructed CP decomposition.
-	Thus the bound also holds for the ranks $\bincprankof{\cdot}$ or $\bascprankof{\cdot}$.
+    We show the lemma by constructing a $\cpformat$ decomposition of $\cprankof{\contractionof{\{\hypercoreof{1},\hypercoreof{2}\}}{\secnodes}} $ for any $\cpformat$ decomposition of $\hypercoreof{1}$.
+    Let therefore take any $\cpformat$ decomposition of $\hypercoreof{1}$ consistent of the leg cores $\{\legcoreof{\node} \, : \, \node \in \nodes_1 \}$ and a scalar core $\scalarcore$.
+    Then we define a new $\scalarcore$ by
+    \[ \tilde{\scalarcore} = \contractionof{\{\scalarcore\}\cup \{\legcoreof{\node} \, : \, \node \in \nodes_1 , \node \notin \secnodes \} \cup \{\hypercoreof{2}\} }{\decvariable} \, . \]
+    Then, the leg cores $\{\legcoreof{\node} \, : \, \node \in \secnodes \}$ build with the scalar core $\tilde{\scalarcore}$ a $\cpformat$ decomposition of $\contractionof{\{\hypercoreof{1},\hypercoreof{2}\}}{\secnodes}$.
+% Binary of basis
+    When the $\cpformat$ decomposition of $\hypercoreof{1}$ was binary, basis or basis+, this property is also satisfied by the constructed $\cpformat$ decomposition.
+    Thus the bound also holds for the ranks $\bincprankof{\cdot}$ or $\bascprankof{\cdot}$.
 \end{proof}
 
 \begin{proof}[Proof of \theref{the:CPrankContractionBound}]
-	Use delta tensor representation to represent contractions by graphs.
-	We then iterate through the cores and contract them to the previously contracted tensor, where we apply \lemref{lem:sparsityGeneralContraction} when the tensor core has variables left open and \lemref{lem:sparsityDisjointContraction} if not.
+    Use delta tensor representation to represent contractions by graphs.
+    We then iterate through the cores and contract them to the previously contracted tensor, where we apply \lemref{lem:sparsityGeneralContraction} when the tensor core has variables left open and \lemref{lem:sparsityDisjointContraction} if not.
 \end{proof}
 
 
 \begin{example}[Composition of formulas with connectives]
-	For any formula $\exformula$ we have $1-\exformula$ = $\lnot\exformula$.
-	The CP rank bound brings an increase by at most factor $2$ when taking the contraction with $\rencodingof{\lnot}$ which has slice sparsity of $2$.
-	This is not optimal, since $\lnot\exformula$ has at most an absolute slice sparsity increase of $1$.
-	
-	For any formulas $\exformula$ and $\secexformula$ we have $\exformula\cdot\secexformula = \exformula\land\secexformula$.
-	Here the CP rank bounds on contractions can also be further tightened.
+    For any formula $\exformula$ we have $1-\exformula$ = $\lnot\exformula$.
+    The CP rank bound brings an increase by at most factor $2$ when taking the contraction with $\rencodingof{\lnot}$ which has slice sparsity of $2$.
+    This is not optimal, since $\lnot\exformula$ has at most an absolute slice sparsity increase of $1$.
+
+    For any formulas $\exformula$ and $\secexformula$ we have $\exformula\cdot\secexformula = \exformula\land\secexformula$.
+    Here the CP rank bounds on contractions can also be further tightened.
 \end{example}
 
 
 \begin{example}[Distributions of independent variables]
-	Independence means factorization, conditional independence means sum over factorizations.
-	Again, the $\ell_0$ norm is bounded by the product of the $\ell_0$ norm of the factors.
+    Independence means factorization, conditional independence means sum over factorizations.
+    Again, the $\ell_0$ norm is bounded by the product of the $\ell_0$ norm of the factors.
 \end{example}
 
 
-\subsect{Normations of CP Decompositions}
+\subsect{Normations}
 
-\red{As a theorem: If any of the above CP Decomposition is normable, the normation has the same CP ranks.
+\red{As a theorem: If any of the above $\cpformat$ decomposition is normable, the normation has the same CP ranks.
 Especially interesting when learning Bayesian Networks, where each core has a CP bound by the number of datapoints.}
 
 \subsect{Sparse Encoding of Functions}
@@ -430,49 +572,50 @@ Especially interesting when learning Bayesian Networks, where each core has a CP
 We now state that the basis CP rank of relational encodings is equal to the cardinality of the domain.
 The basis CP format can therefore not provide a sparse representation when the factored system contains many categorical variables.
 
-\begin{theorem}\label{the:rencodingBasCP}
-	For any function
-		\[ \exfunction : \facstates \rightarrow  \secfacstates \]
-	between factored systems we have
-		\[ \bascprankof{\rencodingof{\exfunction}} =  \facdim \, . \]
+\begin{theorem}
+    \label{the:rencodingBasCP}
+    For any function
+    \[ \exfunction : \facstates \rightarrow  \secfacstates \]
+    between factored systems we have
+    \[ \bascprankof{\rencodingof{\exfunction}} =  \facdim \, . \]
 \end{theorem}
 \begin{proof}
-	With \theref{the:sparseBasisCP}, the basis CP rank coincides with the number of not vanishing coordinates, which is the cardinality of the domain of $\exfunction$.
+    With \theref{the:sparseBasisCP}, the basis CP rank coincides with the number of not vanishing coordinates, which is the cardinality of the domain of $\exfunction$.
 \end{proof}
 
-Allowing for trivial leg vectors can decrease the CP rank, as we show next.
+%Allowing for trivial leg vectors can decrease the CP rank, as we show next.
 
 \begin{theorem}
-	We have
-		\[ \baspluscprankof{\rencodingof{\exfunction}} \leq  \sum_{\exfunctionimageelement\in\imageof{\exfunction}} \baspluscprankof{\onesof{\exfunction=\exfunctionimageelement} } \, , \]
-	where by $\onesof{\exfunction=\exfunctionimageelement}$ we denote the indicator, whether the function $\exfunction$ evaluates to $\exfunctionimageelement$, that is the tensor
-	\begin{align*}
-		\onesofat{\exfunction=\exfunctionimageelement}{\shortcatvariables} =
-		\begin{cases}
-			1 & \text{if} \quad \exfunctionat{\shortcatindices}=y \\
-			0 & \text{else} \, .
-		\end{cases}
-	\end{align*}
+    We have
+    \[ \baspluscprankof{\rencodingof{\exfunction}} \leq  \sum_{\exfunctionimageelement\in\imageof{\exfunction}} \baspluscprankof{\onesof{\exfunction=\exfunctionimageelement} } \, , \]
+    where by $\onesof{\exfunction=\exfunctionimageelement}$ we denote the indicator, whether the function $\exfunction$ evaluates to $\exfunctionimageelement$, that is the tensor
+    \begin{align*}
+        \onesofat{\exfunction=\exfunctionimageelement}{\shortcatvariables} =
+        \begin{cases}
+            1 & \text{if} \quad \exfunctionat{\shortcatindices}=y \\
+            0 & \text{else} \, .
+        \end{cases}
+    \end{align*}
 \end{theorem}
 \begin{proof}
-	We have
-		\[ \rencodingof{\exfunction} = \sum_{\exfunctionimageelement\in\imageof{\exfunction}} \onesof{\exfunction=\exfunctionimageelement}[\catvariable]
-		\otimes \onehotmapofat{\indexinterpretationat{\exfunctionimageelement}}{\headvariableof{\exfunction}} \, . \]
-	For each $\exfunctionimageelement\in\imageof{\exfunction}$ we represent $\onehotmapofat{\indexinterpretationat{\exfunctionimageelement}}{\headvariableof{\exfunction}}$ in an basis+ CP format with $\baspluscprankof{\onesof{\exfunction=\exfunctionimageelement} } $ summands and arrive at a basis+ CP decomposition of $\rencodingof{\exfunction}$ with $\sum_{\exfunctionimageelement\in\imageof{\exfunction}} \baspluscprankof{\onesof{\exfunction=\exfunctionimageelement} } $ summands.
+    We have
+    \[ \rencodingof{\exfunction} = \sum_{\exfunctionimageelement\in\imageof{\exfunction}} \onesof{\exfunction=\exfunctionimageelement}[\catvariable]
+    \otimes \onehotmapofat{\indexinterpretationat{\exfunctionimageelement}}{\headvariableof{\exfunction}} \, . \]
+    For each $\exfunctionimageelement\in\imageof{\exfunction}$ we represent $\onehotmapofat{\indexinterpretationat{\exfunctionimageelement}}{\headvariableof{\exfunction}}$ in an basis+ CP format with $\baspluscprankof{\onesof{\exfunction=\exfunctionimageelement} } $ summands and arrive at a basis+ $\cpformat$ decomposition of $\rencodingof{\exfunction}$ with $\sum_{\exfunctionimageelement\in\imageof{\exfunction}} \baspluscprankof{\onesof{\exfunction=\exfunctionimageelement} } $ summands.
 \end{proof}
 
 The above claim still holds when replacing $\baspluscprankof{\cdot}$ with the ranks $\bascprankof{\cdot}$ or $\bincprankof{\cdot}$.
 For the rank $\bascprankof{\cdot}$ it leads to the bound of \theref{the:rencodingBasCP}, since summing the number of non zero coordinators of the indicators is the cardinality of the domain.
 
 \begin{example}{Conjunction of variables}
-	For the propositional formula $\exformula = \catvariableof{0} \land \catvariableof{1}$ we have
-		\[ \rencodingofat{\exformula}{\catvariableof{0},\catvariableof{1}}
-		 = \onehotmapofat{1,1}{\catvariableof{0},\catvariableof{1}} \otimes \onehotmapofat{1}{\catvariableof{\exformula}}
-		  +  (\onesat{\catvariableof{0},\catvariableof{1}} - \onehotmapofat{1,1}{\catvariableof{0},\catvariableof{1}}) \otimes \onehotmapofat{0}{\catvariableof{\exformula}}  \]
-	and thus 
-		\[ \baspluscprankof{\rencodingof{\exformula}} \leq 3\]
-	while $\bascprankof{\rencodingof{\exformula}} = 4$.
-	\red{Especially useful for $d$-ary conjunctions, see Remark~\ref{rem:naryConnectives}!}
+    For the propositional formula $\exformula = \catvariableof{0} \land \catvariableof{1}$ we have
+    \[ \rencodingofat{\exformula}{\catvariableof{0},\catvariableof{1}}
+    = \onehotmapofat{1,1}{\catvariableof{0},\catvariableof{1}} \otimes \onehotmapofat{1}{\catvariableof{\exformula}}
+    +  (\onesat{\catvariableof{0},\catvariableof{1}} - \onehotmapofat{1,1}{\catvariableof{0},\catvariableof{1}}) \otimes \onehotmapofat{0}{\catvariableof{\exformula}}  \]
+    and thus
+    \[ \baspluscprankof{\rencodingof{\exformula}} \leq 3\]
+    while $\bascprankof{\rencodingof{\exformula}} = 4$.
+    \red{Especially useful for $d$-ary conjunctions, see Remark~\ref{rem:naryConnectives}!}
 \end{example}
 
 
@@ -480,47 +623,48 @@ For the rank $\bascprankof{\cdot}$ it leads to the bound of \theref{the:rencodin
 
 \subsect{Construction by averaging the incoming legs}
 
-We restate \theref{the:functionImageDecompositionContraction} as a basis CP decomposition bound.
+We restate \theref{the:functionImageDecompositionContraction} as a basis $\cpformat$ decomposition bound.
 
-\begin{theorem}\label{the:functionDecompositionBasisCP}
-	Let $\exfunction$ and be a function between factored systems
-	\begin{align*}
-		\exfunction : [\catdim] \rightarrow  \facstates
-	\end{align*}
-	and $\exfunctionof{\atomenumerator}$ as in \theref{the:functionImageDecompositionContraction}.
-	Then $\rencodingofat{\exfunction}{\shortcatvariables,\catvariable}$ has a basis CP decomposition with decomposition index $\catvariable$, trivial slices $\onesat{\catvariable}$ leg vectors $\rencodingofat{\exfunctionof{\atomenumerator}}{\catvariableof{\atomenumerator},\catvariable}$.
+\begin{theorem}
+    \label{the:functionDecompositionBasisCP}
+    Let $\exfunction$ and be a function between factored systems
+    \begin{align*}
+        \exfunction : [\catdim] \rightarrow  \facstates
+    \end{align*}
+    and $\exfunctionof{\atomenumerator}$ as in \theref{the:functionImageDecompositionContraction}.
+    Then $\rencodingofat{\exfunction}{\shortcatvariables,\catvariable}$ has a basis $\cpformat$ decomposition with decomposition index $\catvariable$, trivial slices $\onesat{\catvariable}$ leg vectors $\rencodingofat{\exfunctionof{\atomenumerator}}{\catvariableof{\atomenumerator},\catvariable}$.
 \end{theorem}
 \begin{proof}
-	Reinterpretation of the contractions in the decomposition claimed in \theref{the:functionImageDecompositionContraction}.
+    Reinterpretation of the contractions in the decomposition claimed in \theref{the:functionImageDecompositionContraction}.
 \end{proof}
 
-Basis CP Decompositions can be constructed by understanding the variable $\indvariableof{\insymbol}$ of the relational encoding of a function $\exfunction:\inset \rightarrow \outset$ as the slice selection variable.
+Basis $\cpformat$ decompositions can be constructed by understanding the variable $\indvariableof{\insymbol}$ of the relational encoding of a function $\exfunction:\inset \rightarrow \outset$ as the slice selection variable.
 
-\begin{example}{Empirical distributions, see \theref{the:empCPRep}}\label{exa:empDistCP}
-	Let there be a data map 
-		\[ \datamap : [\datanum] \rightarrow \facstates \, . \]
-	We can use \theref{the:functionDecompositionBasisCP} to find a tensor network representation fo $\rencodingof{\datamap}$ as
-	\begin{align*}
-		\rencodingofat{\datamap}{\catvariable,\shortcatvariables}  
-		= \contractionof{
-		\{\rencodingofat{\datamap^{\atomenumerator}}{\catvariable,\catvariableof{\atomenumerator}} : \atomenumeratorin \} 
-		}{\catvariable,\shortcatvariables} \, . 
-	\end{align*}
-	This representation is in the CP format, when adding trivial scalar core and and delta tensor to the data index.
-	It is furthermore in a basis CP format, since all $\rencodingof{\datamap^{\catenumerator}}$ are directed and binary tensors.
-	Normation to get the empirical distribution amounts to setting a slice core with coordinates $\frac{1}{\datanum}$.
+\begin{example}{Empirical distributions, see \theref{the:empCPRep}}
+    \label{exa:empDistCP}
+    Let there be a data map
+    \[ \datamap : [\datanum] \rightarrow \facstates \, . \]
+    We can use \theref{the:functionDecompositionBasisCP} to find a tensor network representation fo $\rencodingof{\datamap}$ as
+    \begin{align*}
+        \rencodingofat{\datamap}{\catvariable,\shortcatvariables}
+        = \contractionof{
+            \{\rencodingofat{\datamap^{\atomenumerator}}{\catvariable,\catvariableof{\atomenumerator}} : \atomenumeratorin \}
+        }{\catvariable,\shortcatvariables} \, .
+    \end{align*}
+    This representation is in the CP format, when adding trivial scalar core and and delta tensor to the data index.
+    It is furthermore in a basis CP format, since all $\rencodingof{\datamap^{\catenumerator}}$ are directed and binary tensors.
+    Normation to get the empirical distribution amounts to setting a slice core with coordinates $\frac{1}{\datanum}$.
 \end{example}
 
-\begin{example}{Exponential families}\label{exa:expFamCP}
-	The statistic has a CP decomposition with rank by the cardinality of states
+\begin{example}{Exponential families}
+    \label{exa:expFamCP}
+    The statistic has a $\cpformat$ decomposition with rank by the cardinality of states.
 \end{example}
 
 
-
-
-%\sect{Manipulations of Binary CP Decomposition}\label{sec:BinaryCPManipulation}
+%\sect{Manipulations of Binary $\cpformat$ decomposition}\label{sec:BinaryCPManipulation}
 %
-%Since the coordinates on the legs are binary, operations like contractions, slicing and marginalization are especially efficient given binary CP Decompositions.
+%Since the coordinates on the legs are binary, operations like contractions, slicing and marginalization are especially efficient given binary $\cpformat$ decompositions.
 
 
 
@@ -534,73 +678,76 @@ The set of slice-sparse tensors coincides with the expressivity of specific sele
 We first define a slice selecting tensor and then show its decomposition into a formula selecting neural network.
 
 \begin{definition}
-	Given a set of atomic variables $\shortcatvariables$, a slice selecting tensor of maximal cardinality $\sliceorder$ is the tensor
-		\[ \sliceselectionmapat{\shortcatvariables,\selvariableof{0,0},\ldots,\selvariableof{\sliceorder-1,0},\selvariableof{0,1},\ldots,\selvariableof{\sliceorder-1,1}} \]
-	with dimensions
-		\[ \seldimof{\selenumerator,0} = 2, \seldimof{\selenumerator,1} = \atomorder \]
-	and coordinates
-	\begin{align*}
-		& \sliceselectionmapat{\shortcatvariables=\shortcatindices,\indexedselvariableof{0,0},\ldots,\indexedselvariableof{\sliceorder-1,0},\indexedselvariableof{0,1},\ldots,\indexedselvariableof{\sliceorder-1,1}} \\
-		& \quad = \begin{cases}
-			1 & \text{if} \quad 
-			\forall_{\atomenumerator,\selenumerator} : \big(  \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \big) \Rightarrow  (\selindexof{\selenumerator,0} = \catindexof{\atomenumerator})  \\
-			0
-		\end{cases} \, . 
-	\end{align*}
+    Given a set of atomic variables $\shortcatvariables$, a slice selecting tensor of maximal cardinality $\sliceorder$ is the tensor
+    \[ \sliceselectionmapat{\shortcatvariables,\selvariableof{0,0},\ldots,\selvariableof{\sliceorder-1,0},\selvariableof{0,1},\ldots,\selvariableof{\sliceorder-1,1}} \]
+    with dimensions
+    \[ \seldimof{\selenumerator,0} = 2, \seldimof{\selenumerator,1} = \atomorder \]
+    and coordinates
+    \begin{align*}
+        & \sliceselectionmapat{\shortcatvariables=\shortcatindices,\indexedselvariableof{0,0},\ldots,\indexedselvariableof{\sliceorder-1,0},\indexedselvariableof{0,1},\ldots,\indexedselvariableof{\sliceorder-1,1}} \\
+        & \quad = \begin{cases}
+                      1 & \text{if} \quad
+                      \forall_{\atomenumerator,\selenumerator} : \big(  \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \big) \Rightarrow  (\selindexof{\selenumerator,0} = \catindexof{\atomenumerator})  \\
+                      0
+        \end{cases} \, .
+    \end{align*}
 \end{definition}
 
 In the next two Lemmata we first show that the defined slice selecting tensors indeed selects slices and then provide a representation as a formula selecting network.
 
-\begin{lemma}\label{lem:sliceFromSliceSelector}
-	If all input neurons with same selection index are agreeing on the connective index, the selected formula does not vanish and coincides with a slice to the set
-		\[ \variableset = \{ \atomenumerator \, : \, \exists_{\selenumeratorin}: \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \} \]
-	and for $\atomenumerator\in\variableset$
-		\[ \catindexof{\atomenumerator} = \selindexof{\selenumerator,0} \quad \text{if} \quad \selindexof{\selenumerator,1} = \atomenumerator \, . \]
+\begin{lemma}
+    \label{lem:sliceFromSliceSelector}
+    If all input neurons with same selection index are agreeing on the connective index, the selected formula does not vanish and coincides with a slice to the set
+    \[ \variableset = \{ \atomenumerator \, : \, \exists_{\selenumeratorin}: \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \} \]
+    and for $\atomenumerator\in\variableset$
+    \[ \catindexof{\atomenumerator} = \selindexof{\selenumerator,0} \quad \text{if} \quad \selindexof{\selenumerator,1} = \atomenumerator \, . \]
 \end{lemma}
 \begin{proof}
-	We need to show that 
-	\begin{align}\label{eq:sliceFromSliceSelector}
-	  	\sliceselectionmapat{\shortcatvariables,\indexedselvariableof{0,0},\ldots,\indexedselvariableof{\sliceorder-1,0},\indexedselvariableof{0,1},\ldots,\indexedselvariableof{\sliceorder-1,1}} = \onehotmapofat{\catindexof{\variableset}}{\shortcatvariables} \, . 
-	\end{align}
-	If and only if an index $\tilde{\catindex}_{[\atomorder]}$ reduced on $\variableset$ does not coincide with $\catindexof{\variableset}$, we have $\onehotmapofat{\catindexof{\variableset}}{\shortcatvariables=\tilde{\catindex}_{[\atomorder]}}=0$ and otherwise $\onehotmapofat{\catindexof{\variableset}}{\shortcatvariables=\tilde{\catindex}_{[\atomorder]}}=1$ .
-	Let us notice, that this condition is equivalent to 
-		\[ \forall_{\atomenumerator,\selenumerator} : \big(  \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \big) \Rightarrow  (\selindexof{\selenumerator,0} = \catindexof{\atomenumerator}) \]
-	and thus \eqref{eq:sliceFromSliceSelector} holds.
+    We need to show that
+    \begin{align}
+        \label{eq:sliceFromSliceSelector}
+        \sliceselectionmapat{\shortcatvariables,\indexedselvariableof{0,0},\ldots,\indexedselvariableof{\sliceorder-1,0},\indexedselvariableof{0,1},\ldots,\indexedselvariableof{\sliceorder-1,1}} = \onehotmapofat{\catindexof{\variableset}}{\shortcatvariables} \, .
+    \end{align}
+    If and only if an index $\tilde{\catindex}_{[\atomorder]}$ reduced on $\variableset$ does not coincide with $\catindexof{\variableset}$, we have $\onehotmapofat{\catindexof{\variableset}}{\shortcatvariables=\tilde{\catindex}_{[\atomorder]}}=0$ and otherwise $\onehotmapofat{\catindexof{\variableset}}{\shortcatvariables=\tilde{\catindex}_{[\atomorder]}}=1$ .
+    Let us notice, that this condition is equivalent to
+    \[ \forall_{\atomenumerator,\selenumerator} : \big(  \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \big) \Rightarrow  (\selindexof{\selenumerator,0} = \catindexof{\atomenumerator}) \]
+    and thus \eqref{eq:sliceFromSliceSelector} holds.
 \end{proof}
 
 
-\begin{lemma}\label{lem:fsnnRepresentingSliceSelector}
-	The slice selection tensor coincides with a formula selecting neural network with neurons (see Figure~\ref{fig:sliceSelectingNN}):
-	\begin{itemize}
-		\item unary input neuron enumerated by $\selenumerator$, selecting one of the $\shortcatvariables$ with the variable $\selvariableof{\selenumerator,1}$ and selecting a connective in $\{\lnot, \mathrm{Id}, \mathrm{True}\}$ by $\selvariableof{\selenumerator,0}$
-		\item $\sliceorder$-ary output neuron fixed to the $\land$ connective.
-	\end{itemize}
+\begin{lemma}
+    \label{lem:fsnnRepresentingSliceSelector}
+    The slice selection tensor coincides with a formula selecting neural network with neurons (see Figure~\ref{fig:sliceSelectingNN}):
+    \begin{itemize}
+        \item unary input neuron enumerated by $\selenumerator$, selecting one of the $\shortcatvariables$ with the variable $\selvariableof{\selenumerator,1}$ and selecting a connective in $\{\lnot, \mathrm{Id}, \mathrm{True}\}$ by $\selvariableof{\selenumerator,0}$
+        \item $\sliceorder$-ary output neuron fixed to the $\land$ connective.
+    \end{itemize}
 \end{lemma}
 \begin{proof}
-	This can be easily checked on each coordinate.
+    This can be easily checked on each coordinate.
 \end{proof}
 
 It follows, that the expressivity of the slice selecting neural network coincides with the set of tensors with a bound on their slice sparsity, when $\sliceorder\geq\atomorder$.
 For arbitrary $\sliceorder$, the following theorem holds.
 
 \begin{theorem}
-	Let $\sliceselectionmapat{\shortcatvariables,\selvariable}$ be a slice selecting tensor.
-	For any parameter tensor $\canparamat{\selvariable}$ we have
-		\[ \baspluscprankof{\contractionof{\sliceselectionmapat{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables}} \leq \bascprankof{\canparamat{\selvariable}} \, . \]
+    Let $\sliceselectionmapat{\shortcatvariables,\selvariable}$ be a slice selecting tensor.
+    For any parameter tensor $\canparamat{\selvariable}$ we have
+    \[ \baspluscprankof{\contractionof{\sliceselectionmapat{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables}} \leq \bascprankof{\canparamat{\selvariable}} \, . \]
 \end{theorem}
 \begin{proof}
-	Each non-vanishing coordinate of $\canparam$ represents by \lemref{lem:fsnnRepresentingSliceSelector} a slice and their weighted sum is thus a monomial decomposition.
+    Each non-vanishing coordinate of $\canparam$ represents by \lemref{lem:fsnnRepresentingSliceSelector} a slice and their weighted sum is thus a monomial decomposition.
 %	\red{Use the above lemma for that on each slice.}
 %	Show, how a coordinate of $\canparam$ corresponds with a slice determining tuple: $\sliceset$ determined by the selection indices.
 \end{proof}
 
 
 \begin{figure}[h]
-	\begin{center}
-		\input{PartIII/tikz_pics/sparse_calculus/slice_selecting_nn.tex}
-	\end{center}
-	\caption{Representation of a basis+ Tensor by the contraction of a parameter tensor $\canparam$ with a slice selecting architecture $\fselectionmap$, which has a decomposition as a formula selecting neural network (see \lemref{lem:fsnnRepresentingSliceSelector}).
-	The nonzero coordinates of $\canparam$ represent the (see \lemref{lem:sliceFromSliceSelector}).}
+    \begin{center}
+        \input{PartIII/tikz_pics/sparse_calculus/slice_selecting_nn.tex}
+    \end{center}
+    \caption{Representation of a basis+ Tensor by the contraction of a parameter tensor $\canparam$ with a slice selecting architecture $\fselectionmap$, which has a decomposition as a formula selecting neural network (see \lemref{lem:fsnnRepresentingSliceSelector}).
+    The nonzero coordinates of $\canparam$ represent the (see \lemref{lem:sliceFromSliceSelector}).}
 \end{figure}\label{fig:sliceSelectingNN}
 
 
@@ -610,15 +757,15 @@ One application is as a parametrization scheme in the approximation of a tensor 
 
 
 \red{
-The approximated parameter can then be used as a proxy energy to be maximized.
-When choosing $\sliceorder=2$, the approximating tensor contains only quadratic slices, which then poses a QUBO problem.
+    The approximated parameter can then be used as a proxy energy to be maximized.
+    When choosing $\sliceorder=2$, the approximating tensor contains only quadratic slices, which then poses a QUBO problem.
 }
 
 \begin{remark}[Extension to arbitrary CP-formats]
-	Select at each input neuron a specific leg.
-	For finite number of legs, as it is the case in the binary, basis and basis+ formats, we can enumerate all possibilities by the selection variable.
-	For the basis+ format, in case of binary leg dimensions, we here exemplified the approach, by enumerating the three possibilities $\onehotmapof{0},\onehotmapof{1},\onesat{1}$.
-	This approach, however, fails as a generic representation of the directed format, since the directed legs are continuous and there therefore are infinite choosable legs.
+    Select at each input neuron a specific leg.
+    For finite number of legs, as it is the case in the binary, basis and basis+ formats, we can enumerate all possibilities by the selection variable.
+    For the basis+ format, in case of binary leg dimensions, we here exemplified the approach, by enumerating the three possibilities $\onehotmapof{0},\onehotmapof{1},\onesat{1}$.
+    This approach, however, fails as a generic representation of the directed format, since the directed legs are continuous and there therefore are infinite choosable legs.
 \end{remark}
 
 
@@ -627,23 +774,23 @@ When choosing $\sliceorder=2$, the approximating tensor contains only quadratic 
 
 \sect{Optimization of sparse tensors}
 
-Let us now study the problem of searching for the maximal coordinate in a tensor represented by a monomial decomposition. 
+Let us now study the problem of searching for the maximal coordinate in a tensor represented by a monomial decomposition.
 
 
 \subsect{Mode search in exponential families}
 
-Mode search 
+Mode search
 \begin{align*}
-	\max_{\shortcatindices\in\atomstates} \sbcontraction{\sencsstatat{\indexedshortcatvariables,\selvariable},\canparam} 
-	= \max_{\meanparam\in\meanset} \sbcontraction{\meanparamat{\selvariable},\canparamat{\selvariable}}
+    \max_{\shortcatindices\in\atomstates} \sbcontraction{\sencsstatat{\indexedshortcatvariables,\selvariable},\canparam}
+    = \max_{\meanparam\in\meanset} \sbcontraction{\meanparamat{\selvariable},\canparamat{\selvariable}}
 \end{align*}
 
 
 % Appearance of mode search
 The search for maximal coordinates appears in various reasoning tasks:
 \begin{itemize}
-	\item MAP query as mode search of MLN: $\hypercore$ is the contraction of evidence with the distribution, leaving the query variables open.
-	\item Grafting as mode search of proposal distribution: $\hypercore$ is the contraction of the gradient of the likelihood with the relational encoding of the hypothesis.
+    \item MAP query as mode search of MLN: $\hypercore$ is the contraction of evidence with the distribution, leaving the query variables open.
+    \item Grafting as mode search of proposal distribution: $\hypercore$ is the contraction of the gradient of the likelihood with the relational encoding of the hypothesis.
 \end{itemize}
 Both tasks have been formulated as mode search problems in exponential families.
 
@@ -652,26 +799,27 @@ Both tasks have been formulated as mode search problems in exponential families.
 \subsect{Higher-Order Unconstrained Binary Optimization (HUBO)}
 
 \red{
-Here binary refers to the leg dimensions $\catdimof{\atomenumerator}$ being 2, not to binary coordinates as often refered to in this work.
+    Here binary refers to the leg dimensions $\catdimof{\atomenumerator}$ being 2, not to binary coordinates as often refered to in this work.
 }
 
 
 \begin{definition}
-	The binary optimization of a tensor $\hypercoreat{\shortcatvariables}\in\atomstates$ is the problem
-	\begin{align}\tag{$\mathrm{P}_{\hypercore}$}\label{prob:HUBO}
-		\argmax_{\shortcatindices\in\atomstates} \quad \hypercoreat{\indexedshortcatvariables} 
-	\end{align}
-	
-	We call Problem~\ref{prob:HUBO} a Higher Order Unconstrained Binary Optimization (HUBO) problem of order $\sliceorder$ and sparsity $\slicerankwrtof{\sliceorder}{\hypercore}$, when $\hypercore$ has a monomial decomposition (see \defref{def:polynomialSparsity}) with $\cardof{\variablesetof{\decindex}}\leq\sliceorder$ for all $\decindexin$, that is when $\slicerankwrtof{\sliceorder}{\hypercore}<\infty$.
-	
-	
+    The binary optimization of a tensor $\hypercorewith\in\atomstates$ is the problem
+    \begin{align}
+        \tag{$\mathrm{P}_{\hypercore}$}\label{prob:HUBO}
+        \argmax_{\shortcatindices\in\atomstates} \quad \hypercoreat{\indexedshortcatvariables}
+    \end{align}
+
+    We call Problem~\ref{prob:HUBO} a Higher Order Unconstrained Binary Optimization (HUBO) problem of order $\sliceorder$ and sparsity $\slicerankwrtof{\sliceorder}{\hypercore}$, when $\hypercore$ has a monomial decomposition (see \defref{def:polynomialSparsity}) with $\cardof{\variablesetof{\decindex}}\leq\sliceorder$ for all $\decindexin$, that is when $\slicerankwrtof{\sliceorder}{\hypercore}<\infty$.
+
+
 \end{definition}
 
 
 \begin{remark}[Leg dimensions larger than 2]
 % Leg dimension needs to be 2
-	We demanded leg dimensions $\catdimof{\atomenumerator}=2$ to have binary valued variables $\catvariableof{\catenumerator}$, which is required to connect with the formalism of binary optimization.
-	Categorical variables with larger dimensions can be represented by atomization variables, which are created by contractions with categorical constraint tensors (see \secref{sec:categoricalTN}).
+    We demanded leg dimensions $\catdimof{\atomenumerator}=2$ to have binary valued variables $\catvariableof{\catenumerator}$, which is required to connect with the formalism of binary optimization.
+    Categorical variables with larger dimensions can be represented by atomization variables, which are created by contractions with categorical constraint tensors (see \secref{sec:categoricalTN}).
 \end{remark}
 
 
@@ -689,21 +837,20 @@ Thus we interpret Problem~\ref{prob:HUBO} as searching for the maximum in a poly
 We refine the monomial decomposition of tensors (see \defref{def:polynomialSparsity}) by demanding that monomials consist of at most two variables.
 
 \begin{definition}
-	We call a monomial decomposition $\sliceset$ of a tensor $\hypercore\in\atomspace$ a quadratic decomposition, if $\cardof{\variableset}\leq 2$ for all $(\lambda,\variableset,\catindexof{\variableset}) \in \sliceset$.
-	We denote the smallest cardinality $\cardof{\sliceset}$ among quadratic decompositions of $\hypercore$ by $\quacprankof{\hypercore}$.
+    We call a monomial decomposition $\sliceset$ of a tensor $\hypercore\in\atomspace$ a quadratic decomposition, if $\cardof{\variableset}\leq 2$ for all $(\lambda,\variableset,\catindexof{\variableset}) \in \sliceset$.
+    We denote the smallest cardinality $\cardof{\sliceset}$ among quadratic decompositions of $\hypercore$ by $\quacprankof{\hypercore}$.
 
-	If a tensor $\hypercore\in\bigotimes_{\atomenumeratorin}\rr^2$ has a quadratic decomposition, we call Problem~\ref{prob:HUBO} a Quadratic Unconstrained Binary Optimization (QUBO) problem of sparsity $\quacprankof{\hypercore}$.
+    If a tensor $\hypercore\in\bigotimes_{\atomenumeratorin}\rr^2$ has a quadratic decomposition, we call Problem~\ref{prob:HUBO} a Quadratic Unconstrained Binary Optimization (QUBO) problem of sparsity $\quacprankof{\hypercore}$.
 \end{definition}
 
-% CP Decompositions
-%Analogously to monomial decompositions, quadratic decompositions have an equivalence in a CP decomposition of $\hypercore$.
+% $\cpformat$ decompositions
+%Analogously to monomial decompositions, quadratic decompositions have an equivalence in a $\cpformat$ decomposition of $\hypercore$.
 %Beyond being binary tensors, the leg cores are further restricted that for each slice $\decindexin$ at most two of them are basis vectors and the rest trivial vectors $\ones$.
 
 %% REPETITION Existence
 %We notice, that there are tensors, for which no quadratic decomposition exists.
 %This is already obvious from the fact, that the tensors with a quadratic decomposition build a subspace of dimensions bounded by $2 \atomorder + 2^2 \cdot \binom{\atomorder}{2}$ dimensional submanifold in the $2^\atomorder$ dimensional tensor space.
 %This is in contrast with monomial decompositions of order $\sliceorder=\atomorder$, where one can always construct a decomposition.
-
 
 
 %% OLD THEOREM: FALSE!
@@ -723,24 +870,25 @@ We refine the monomial decomposition of tensors (see \defref{def:polynomialSpars
 We can transform certain HUBO problems in QUBO problems with the usage of auxiliary variables, as we show in the next lemma.
 
 %% Slack variables
-\begin{lemma}\label{lem:monomialToQUBO}
-	For any $\atomindices\in[2]$ and $\variableset\subset[\atomorder]$ we have 
-		\[ \left( \prod_{\atomenumerator\in\variableset} \atomlegindexof{\atomenumerator } \right)  \left(  \prod_{\atomenumerator\notin\variableset} (1- \atomlegindexof{\atomenumerator }) \right)
-		=
-		\max_{\slackvariable\in[2]} \slackvariable \cdot 2 \cdot \left( \sum_{\atomenumerator\in\variableset}\atomlegindexof{\atomenumerator}  - \cardof{\variableset} - \sum_{\atomenumerator\notin\variableset}\atomlegindexof{\atomenumerator} + \frac{1}{2} \right) \, . % Alternative: no factor 2, but + 1 instead of +1/2 (->pyqubo)
- 		\]
+\begin{lemma}
+    \label{lem:monomialToQUBO}
+    For any $\atomindices\in[2]$ and $\variableset\subset[\atomorder]$ we have
+    \[ \left( \prod_{\atomenumerator\in\variableset} \atomlegindexof{\atomenumerator } \right)  \left(  \prod_{\atomenumerator\notin\variableset} (1- \atomlegindexof{\atomenumerator }) \right)
+    =
+    \max_{\slackvariable\in[2]} \slackvariable \cdot 2 \cdot \left( \sum_{\atomenumerator\in\variableset}\atomlegindexof{\atomenumerator}  - \cardof{\variableset} - \sum_{\atomenumerator\notin\variableset}\atomlegindexof{\atomenumerator} + \frac{1}{2} \right) \, . % Alternative: no factor 2, but + 1 instead of +1/2 (->pyqubo)
+    \]
 \end{lemma}
 \begin{proof} %Proof by case distinction
-	Only if $\atomlegindexof{\atomenumerator}=1$ for $\atomenumerator\in\variableset$ and $\atomlegindexof{\atomenumerator}=0$ else we have
-		\[ \left( \sum_{\atomenumerator\in\variableset}\atomlegindexof{\atomenumerator}  - \cardof{\variableset} - \sum_{\atomenumerator\notin\variableset}\atomlegindexof{\atomenumerator} + \frac{1}{2} \right) \geq 0 \, . \]
-	In this case the maximum is taken for $\slackvariable=1$ and we have
-		\[ \max_{\slackvariable\in[2]} \slackvariable \cdot 2 \cdot \left( \sum_{\atomenumerator\in\variableset}\atomlegindexof{\atomenumerator}  - \cardof{\variableset} - \sum_{\atomenumerator\notin\variableset}\atomlegindexof{\atomenumerator} + \frac{1}{2} \right) 
-		= 1 = \left( \prod_{\atomenumerator\in\variableset} \atomlegindexof{\atomenumerator } \right)  \left(  \prod_{\atomenumerator\notin\variableset} (1- \atomlegindexof{\atomenumerator }) \right) \, . \]
-	In all other cases, the maximum is taken for $\slackvariable=0$ and thus vanishes, that is 
-		\[ \max_{\slackvariable\in[2]} \slackvariable \cdot 2 \cdot \left( \sum_{\atomenumerator\in\variableset}\atomlegindexof{\atomenumerator}  - \cardof{\variableset} - \sum_{\atomenumerator\notin\variableset}\atomlegindexof{\atomenumerator} + \frac{1}{2} \right) 
-		= 0 = \left( \prod_{\atomenumerator\in\variableset} \atomlegindexof{\atomenumerator } \right)  \left(  \prod_{\atomenumerator\notin\variableset} (1- \atomlegindexof{\atomenumerator }) \right) \, . \]
-	Thus, the claim holds in all cases.
-\end{proof}	
+    Only if $\atomlegindexof{\atomenumerator}=1$ for $\atomenumerator\in\variableset$ and $\atomlegindexof{\atomenumerator}=0$ else we have
+    \[ \left( \sum_{\atomenumerator\in\variableset}\atomlegindexof{\atomenumerator}  - \cardof{\variableset} - \sum_{\atomenumerator\notin\variableset}\atomlegindexof{\atomenumerator} + \frac{1}{2} \right) \geq 0 \, . \]
+    In this case the maximum is taken for $\slackvariable=1$ and we have
+    \[ \max_{\slackvariable\in[2]} \slackvariable \cdot 2 \cdot \left( \sum_{\atomenumerator\in\variableset}\atomlegindexof{\atomenumerator}  - \cardof{\variableset} - \sum_{\atomenumerator\notin\variableset}\atomlegindexof{\atomenumerator} + \frac{1}{2} \right)
+    = 1 = \left( \prod_{\atomenumerator\in\variableset} \atomlegindexof{\atomenumerator } \right)  \left(  \prod_{\atomenumerator\notin\variableset} (1- \atomlegindexof{\atomenumerator }) \right) \, . \]
+    In all other cases, the maximum is taken for $\slackvariable=0$ and thus vanishes, that is
+    \[ \max_{\slackvariable\in[2]} \slackvariable \cdot 2 \cdot \left( \sum_{\atomenumerator\in\variableset}\atomlegindexof{\atomenumerator}  - \cardof{\variableset} - \sum_{\atomenumerator\notin\variableset}\atomlegindexof{\atomenumerator} + \frac{1}{2} \right)
+    = 0 = \left( \prod_{\atomenumerator\in\variableset} \atomlegindexof{\atomenumerator } \right)  \left(  \prod_{\atomenumerator\notin\variableset} (1- \atomlegindexof{\atomenumerator }) \right) \, . \]
+    Thus, the claim holds in all cases.
+\end{proof}
 
 
 %\begin{proof}[Proof of \theref{the:HUBOtoQUBO}]
@@ -755,71 +903,74 @@ Let us now show how optimization problems can be represented as linear programmi
 
 % State vector
 We define for each index tuple $\shortcatindices\in\facstates$ a vector $\statevectorofat{\shortcatindices}{\selvariable}\in\rr^{\catorder}$ with coordinates
-	\[ \statevectorofat{\shortcatindices}{\selvariable=\catenumerator} = \catindexof{\catenumerator} \, .  \]
+\[ \statevectorofat{\shortcatindices}{\selvariable=\catenumerator} = \catindexof{\catenumerator} \, .  \]
 
 \begin{definition}
-	The integer linear program (ILP) of $\matrixat{\datvariable,\selvariable}\in\rr^{n \times d}$, $b[\datvariable]\in\rr^{n}$ and $c\in\rr^{\catorder}$ is the problem
-	\begin{align*}
-		\argmax_{\shortcatindices\in\facstates} \sbcontraction{c[\selvariable], \statevectorofat{\shortcatindices}{\selvariable}}
-		 \quad \text{subject to } \quad \sbcontraction{\matrixat{\datvariable,\selvariable},\statevectorofat{\shortcatindices}{\selvariable}} \prec b[\datvariable] \, ,
-	\end{align*}
-	where by $\prec$ we denote partial ordering of tensors (see \defref{def:partialFTOrder}).
+    The integer linear program (ILP) of $\matrixat{\datvariable,\selvariable}\in\rr^{n \times d}$, $b[\datvariable]\in\rr^{n}$ and $c\in\rr^{\catorder}$ is the problem
+    \begin{align*}
+        \argmax_{\shortcatindices\in\facstates} \sbcontraction{c[\selvariable], \statevectorofat{\shortcatindices}{\selvariable}}
+        \quad \text{subject to } \quad \sbcontraction{\matrixat{\datvariable,\selvariable},\statevectorofat{\shortcatindices}{\selvariable}} \prec b[\datvariable] \, ,
+    \end{align*}
+    where by $\prec$ we denote partial ordering of tensors (see \defref{def:partialFTOrder}).
 \end{definition}
 
 
-We now show that any binary optimization problem of a tensor can be transformed into a integer linear program, given a monomial decomposition of the tensor $\hypercoreat{\shortcatvariables}$ by $\sliceset=\enumeratedslices$.
+We now show that any binary optimization problem of a tensor can be transformed into a integer linear program, given a monomial decomposition of the tensor $\hypercorewith$ by $\sliceset=\enumeratedslices$.
 For this we choose state indices by vectors
 \begin{align*}
-	\seccatindex_{[\catorder+\decdim]} = \catindexof{0},\ldots,\catindexof{\catorder-1},\slackindexof{0},\ldots\slackindexof{\decdim-1} \in \left(\bigtimes_{\catenumeratorin}[2]\right) \times  \left(\bigtimes_{\decindexin}[2]\right) \, ,
+    \seccatindex_{[\catorder+\decdim]} = \catindexof{0},\ldots,\catindexof{\catorder-1},\slackindexof{0},\ldots\slackindexof{\decdim-1} \in \left(\bigtimes_{\catenumeratorin}[2]\right) \times  \left(\bigtimes_{\decindexin}[2]\right) \, ,
 \end{align*}
 that is we added for each monomial an index $\slackindexof{\decindex}$, which will represent the evaluations of the respective monomial.
 
 
 We furthermore define a vector $c[\selvariable]$, where $\selvariable$ takes values in $[\catorder+\decdim]$, as
-\begin{align}\label{eq:ilpPotential}
-	c[\indexedselvariable] =
-	\begin{cases}
-		\slicescalarof{\decindex} & \text{if for a } \decindexin \text{ we have } \selindex = \catorder + \decindex \\
-		0 & \text{else} 
-	\end{cases} \, . 
+\begin{align}
+    \label{eq:ilpPotential}
+    c[\indexedselvariable] =
+    \begin{cases}
+        \slicescalarof{\decindex} & \text{if for a } \decindexin \text{ we have } \selindex = \catorder + \decindex \\
+        0 & \text{else}
+    \end{cases} \, .
 \end{align}
 
 To construct a matrix $\matrixat{\datvariable,\selvariable}$ and a vector $b[\datvariable]$ to the monomial decomposition $\sliceset$, we now introduce a variable $\datvariable$ enumerating linear inequalities, which takes values in $[\datanum]$, where
-	\[ \datanum =  \sum_{\decindexin} \left(\cardof{\variablesetof{\decindex}} +1\right) \, . \]
+\[ \datanum =  \sum_{\decindexin} \left(\cardof{\variablesetof{\decindex}} +1\right) \, . \]
 We define for each $\decindexin$ an auxiliary number
-	\[ \datanum_{\decindex} = \sum_{\tilde{\decindex}=0}^{\decindex} \left(\cardof{\variablesetof{\tilde{\decindex}}} +1\right) \]
-enumerate by $\seccatenumerator$ the set $\variablesetof{\decindex}$ and set for $\selindex\in[\catorder+\decdim]$ the coordinates 
-\begin{align}\label{eq:ilpMatrix}
-	\matrixofat{\sliceset}{\datvariable=\datanum_{\decindex}+\datindex,\indexedselvariable} =
-	\begin{cases}
-		1 - 2 \cdot  \catindexof{\seccatenumerator}^{\decindex} & \text{if }  \datindex = \selindex  \text{ and } \selindex = \seccatenumerator   \\ % First $\catorder$ conditions, on x 
-		1 & \text{if } \datindex < \catorder  \text{ and } \selindex=\catorder+\decindex \\ % First $\catorder$ conditions on $z$
-		-\catindexof{\seccatenumerator}^{\decindex} & \text{if }  \datindex = \cardof{\variablesetof{\decindex}} + 1   \text{ and }  \selindex=\seccatenumerator  \\ % Last condition on $x$
-		-1 & \text{if }  \datindex = \cardof{\variablesetof{\decindex}} + 1  \text{ and }  \selindex = \catorder + \decindex \\ % Last condition on $x$
-	\end{cases} \, . 
+\[ \datanum_{\decindex} = \sum_{\tilde{\decindex}=0}^{\decindex} \left(\cardof{\variablesetof{\tilde{\decindex}}} +1\right) \]
+enumerate by $\seccatenumerator$ the set $\variablesetof{\decindex}$ and set for $\selindex\in[\catorder+\decdim]$ the coordinates
+\begin{align}
+    \label{eq:ilpMatrix}
+    \matrixofat{\sliceset}{\datvariable=\datanum_{\decindex}+\datindex,\indexedselvariable} =
+    \begin{cases}
+        1 - 2 \cdot  \catindexof{\seccatenumerator}^{\decindex} & \text{if }  \datindex = \selindex  \text{ and } \selindex = \seccatenumerator   \\ % First $\catorder$ conditions, on x
+        1 & \text{if } \datindex < \catorder  \text{ and } \selindex=\catorder+\decindex \\ % First $\catorder$ conditions on $z$
+        -\catindexof{\seccatenumerator}^{\decindex} & \text{if }  \datindex = \cardof{\variablesetof{\decindex}} + 1   \text{ and }  \selindex=\seccatenumerator  \\ % Last condition on $x$
+        -1 & \text{if }  \datindex = \cardof{\variablesetof{\decindex}} + 1  \text{ and }  \selindex = \catorder + \decindex \\ % Last condition on $x$
+    \end{cases} \, .
 \end{align}
 All further coordinates of $\matrixofat{\sliceset}{\datvariable,\selvariable}$ not reached by this construction are set to $0$.
 Similarly, we define $\rhsofat{\sliceset}{\datvariable}$ as the vector which nonvanishing coordinates are for $\decindexin$ at
-\begin{align}\label{eq:ilpRhs}
-	\rhsofat{\sliceset}{\datvariable=\datanum_{\decindex}+\datindex} =
-	\begin{cases}
-		1 & \text{if }  \datindex = \seccatenumerator \text{ and } \catindexof{\seccatenumerator}^{\decindex} = 0 \\ % First $\catorder$ conditions, on x 
-		-1 + \cardof{\{\seccatenumerator\in\variablesetof{\decindex} \, : \,  \catindexof{\seccatenumerator}^{\decindex} = 1\}}  & \text{if }  \datindex = \cardof{\variablesetof{\decindex}} + 1  \text{ and }  \selindex = \catorder + \decindex \\ % Last condition on $x$
-	\end{cases} \, . 
+\begin{align}
+    \label{eq:ilpRhs}
+    \rhsofat{\sliceset}{\datvariable=\datanum_{\decindex}+\datindex} =
+    \begin{cases}
+        1 & \text{if }  \datindex = \seccatenumerator \text{ and } \catindexof{\seccatenumerator}^{\decindex} = 0 \\ % First $\catorder$ conditions, on x
+        -1 + \cardof{\{\seccatenumerator\in\variablesetof{\decindex} \, : \,  \catindexof{\seccatenumerator}^{\decindex} = 1\}}  & \text{if }  \datindex = \cardof{\variablesetof{\decindex}} + 1  \text{ and }  \selindex = \catorder + \decindex \\ % Last condition on $x$
+    \end{cases} \, .
 \end{align}
 
 
 % Intuition
-Informally, we pose for each slice $\cardof{\variableset}+1$ linear equations. 
+Informally, we pose for each slice $\cardof{\variableset}+1$ linear equations.
 The first $\cardof{\variableset}$ enforce, that the slice representing variable $\slackvariable$ is zero once a leg is $0$.
-The last enforces that the slice representing variable is $1$. 
+The last enforces that the slice representing variable is $1$.
 We prove this claim more formally in the next theorem.
 
 \begin{theorem}
-	Given a monomial decomposition $\sliceset=\enumeratedslices$ of a tensor $\hypercore$, let  $\catindex^{ILP,\sliceset}$ be a solution of the integer linear program defined by the matrix and vectors in equations \eqref{eq:ilpPotential}, \eqref{eq:ilpMatrix} and \eqref{eq:ilpRhs}.
-	Then we have
-		\[ \restrictionofto{\catindex^{ILP,\sliceset}}{[\catorder]} \in \argmax_{\shortcatindices\in\atomstates} \quad \hypercoreat{\indexedshortcatvariables} \, ,\]
-	where by  $\restrictionofto{\catindex^{ILP,\sliceset}}{[\catorder]}$ we denote the vector of the first $\catorder$ indices of $\catindex^{ILP,\sliceset}$.
+    Given a monomial decomposition $\sliceset=\enumeratedslices$ of a tensor $\hypercore$, let  $\catindex^{ILP,\sliceset}$ be a solution of the integer linear program defined by the matrix and vectors in equations \eqref{eq:ilpPotential}, \eqref{eq:ilpMatrix} and \eqref{eq:ilpRhs}.
+    Then we have
+    \[ \restrictionofto{\catindex^{ILP,\sliceset}}{[\catorder]} \in \argmax_{\shortcatindices\in\atomstates} \quad \hypercoreat{\indexedshortcatvariables} \, ,\]
+    where by  $\restrictionofto{\catindex^{ILP,\sliceset}}{[\catorder]}$ we denote the vector of the first $\catorder$ indices of $\catindex^{ILP,\sliceset}$.
 %	we define an Binary ILP as the maximation of 
 %	\begin{align*}
 %		\sum_{\decindexin} \slicescalar^{\decindex} \slackvariable^{\decindex} 
@@ -847,63 +998,62 @@ We prove this claim more formally in the next theorem.
 % The solution $\catindex^{ILP,\sliceset}$ of this ILP and the solution $\catindex^{HUBO,\sliceset}$ of the HUBO coincide on the variables of hypercore, i.e.
 \end{theorem}
 \begin{proof}
-	We show that the constraints by 
-		\[ \sbcontraction{\matrixofat{\sliceset}{\datvariable,\selvariable},\statevectorofat{\shortcatindices}{\selvariable}} \prec \rhsofat{\sliceset}{\datvariable} \]
-	are satisfied, if and only if for all $\decindexin$
-		\[ \slackindexof{\decindex} 
-		= \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 0} (1 - \catindexof{\seccatenumerator}^\decindex) \right)
-		\cdot \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 1}  \catindexof{\seccatenumerator}^\decindex \right) \, . 
-		 \]
-	For any $\decindexin$ the constraints $\datanum_{\decindex}+\seccatenumerator$ for $\seccatenumerator\in\cardof{\variablesetof{\decindex}}$ are 
-	\begin{align*}
-		\slackindexof{\decindex} \leq 
-		\begin{cases}
-			\catindexof{\seccatenumerator}^\decindex  & \text{if } \catindexof{\seccatenumerator}^\decindex = 1 \\
-			(1- \catindexof{\seccatenumerator}^\decindex ) & \text{if } \catindexof{\seccatenumerator}^\decindex = 0 \\			
-		\end{cases}
-	\end{align*}
-	and thus $\slackindexof{\decindex}=0$ if we have a mismatch on one leg, which establishes 
-		\[ \slackindexof{\decindex} 
-		\leq \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 0} (1 - \catindexof{\seccatenumerator}^\decindex) \right)
-		\cdot \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 1}  \catindexof{\seccatenumerator}^\decindex \right) \, . 
-		 \]
-	The constraint $\datanum_{\decindex}+\cardof{\variablesetof{\decindex}}$ is
-	\begin{align*}
-		\slackindexof{\decindex} \geq 1 -
-		 \left( \sum_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 0} \catindexof{\seccatenumerator}^\decindex \right)
-		 + \left( \sum_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 1}  (\catindexof{\seccatenumerator}^\decindex - 1 )\right)
-	\end{align*}
-	which enforces 
-		\[ \slackindexof{\decindex} 
-		\geq \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 0} (1 - \catindexof{\seccatenumerator}^\decindex) \right)
-		\cdot \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 1}  \catindexof{\seccatenumerator}^\decindex \right)  \, . 
-		 \]
-	In summary we arrive at 
-		\[ \slackindexof{\decindex} 
-		= \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 0} (1 - \catindexof{\seccatenumerator}^\decindex) \right)
-		\cdot \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 1}  \catindexof{\seccatenumerator}^\decindex \right)  
-		 \]
-	if and only if the indices $\seccatindex_{[\catorder+\decdim]}$ are feasible.
-	
-	Now, for any $\shortcatindices$, there is exactly one feasible index $\seccatindex_{[\catorder+\decdim]}$ extending $\shortcatindices$, and the objective takes for this index the value 
-	\begin{align*}
-	 	 \sbcontraction{c[\selvariable], \statevectorofat{\shortcatindices}{\selvariable}} 
-		 &= \sum_{\decindexin} \slicescalarof{\decindex} \cdot \slackindexof{\decindex} \\
-		 &= \sum_{\decindexin} \slicescalarof{\decindex} \cdot \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 0} (1 - \catindexof{\seccatenumerator}^\decindex) \right)
-		\cdot \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 1}  \catindexof{\seccatenumerator}^\decindex \right)  \\
-		& = \hypercoreat{\indexedshortcatvariables} \, . 
-	 \end{align*}
-	 Therefore, any solution of the ILP reduced to the first $\catorder$ indices corresponding with the axis of $\hypercore$, is a solution of the binary optimization problem to $\hypercore$.
-\end{proof}
+    We show that the constraints by
+    \[ \sbcontraction{\matrixofat{\sliceset}{\datvariable,\selvariable},\statevectorofat{\shortcatindices}{\selvariable}} \prec \rhsofat{\sliceset}{\datvariable} \]
+    are satisfied, if and only if for all $\decindexin$
+    \[ \slackindexof{\decindex}
+    = \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 0} (1 - \catindexof{\seccatenumerator}^\decindex) \right)
+    \cdot \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 1}  \catindexof{\seccatenumerator}^\decindex \right) \, .
+    \]
+    For any $\decindexin$ the constraints $\datanum_{\decindex}+\seccatenumerator$ for $\seccatenumerator\in\cardof{\variablesetof{\decindex}}$ are
+    \begin{align*}
+        \slackindexof{\decindex} \leq
+        \begin{cases}
+            \catindexof{\seccatenumerator}^\decindex  & \text{if } \catindexof{\seccatenumerator}^\decindex = 1 \\
+            (1- \catindexof{\seccatenumerator}^\decindex ) & \text{if } \catindexof{\seccatenumerator}^\decindex = 0 \\
+        \end{cases}
+    \end{align*}
+    and thus $\slackindexof{\decindex}=0$ if we have a mismatch on one leg, which establishes
+    \[ \slackindexof{\decindex}
+    \leq \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 0} (1 - \catindexof{\seccatenumerator}^\decindex) \right)
+    \cdot \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 1}  \catindexof{\seccatenumerator}^\decindex \right) \, .
+    \]
+    The constraint $\datanum_{\decindex}+\cardof{\variablesetof{\decindex}}$ is
+    \begin{align*}
+        \slackindexof{\decindex} \geq 1 -
+        \left( \sum_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 0} \catindexof{\seccatenumerator}^\decindex \right)
+        + \left( \sum_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 1}  (\catindexof{\seccatenumerator}^\decindex - 1 )\right)
+    \end{align*}
+    which enforces
+    \[ \slackindexof{\decindex}
+    \geq \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 0} (1 - \catindexof{\seccatenumerator}^\decindex) \right)
+    \cdot \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 1}  \catindexof{\seccatenumerator}^\decindex \right)  \, .
+    \]
+    In summary we arrive at
+    \[ \slackindexof{\decindex}
+    = \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 0} (1 - \catindexof{\seccatenumerator}^\decindex) \right)
+    \cdot \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 1}  \catindexof{\seccatenumerator}^\decindex \right)
+    \]
+    if and only if the indices $\seccatindex_{[\catorder+\decdim]}$ are feasible.
 
+    Now, for any $\shortcatindices$, there is exactly one feasible index $\seccatindex_{[\catorder+\decdim]}$ extending $\shortcatindices$, and the objective takes for this index the value
+    \begin{align*}
+        \sbcontraction{c[\selvariable], \statevectorofat{\shortcatindices}{\selvariable}}
+        &= \sum_{\decindexin} \slicescalarof{\decindex} \cdot \slackindexof{\decindex} \\
+        &= \sum_{\decindexin} \slicescalarof{\decindex} \cdot \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 0} (1 - \catindexof{\seccatenumerator}^\decindex) \right)
+        \cdot \left( \prod_{\seccatenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\seccatenumerator}^\decindex = 1}  \catindexof{\seccatenumerator}^\decindex \right)  \\
+        & = \hypercoreat{\indexedshortcatvariables} \, .
+    \end{align*}
+    Therefore, any solution of the ILP reduced to the first $\catorder$ indices corresponding with the axis of $\hypercore$, is a solution of the binary optimization problem to $\hypercore$.
+\end{proof}
 
 
 % Sparsity
 In order to achieve a sparse linear program it is benefitial to use a monomial decomposition with small order and rank.
 Beside this sparsity, the matrix $\matrixofat{\sliceset}{\datvariable,\selvariable}$ is often $\ell_0$-sparse, and has thus an efficient representation in a basis CP format.
-More precisely we have by the above construction 
+More precisely we have by the above construction
 \begin{align*}
-	\sparsityof{\matrixofat{\sliceset}{\datvariable,\selvariable}} \leq \sum_{\decindexin} 3 \cdot \cardof{\variablesetof{\decindex}} +1 \, . 
+    \sparsityof{\matrixofat{\sliceset}{\datvariable,\selvariable}} \leq \sum_{\decindexin} 3 \cdot \cardof{\variablesetof{\decindex}} +1 \, .
 \end{align*}
 
 
@@ -914,15 +1064,15 @@ More precisely we have by the above construction
 We here provide a subspace perspective for the sparse representation of decomposable functions as tensor networks in the $\rencodingof{\cdot}$ relational encoding scheme of basis calculus.
 
 \begin{definition}
-	Given any function $\exfunction$ on $\facstates$ we define its value subspace as 
-		\[ \subspaceof{\exfunction}
-		= \left\{\sbcontractionof{\rencodingofat{\exfunction}{\headvariableof{\exfunction},\shortcatvariables},W[\headvariableof{\exfunction}]}{\shortcatvariables} \, : \, W[\headvariableof{\exfunction}] \in \rr^{\cardof{\imageof{\exfunction}}} \right\} \]
+    Given any function $\exfunction$ on $\facstates$ we define its value subspace as
+    \[ \subspaceof{\exfunction}
+    = \left\{\sbcontractionof{\rencodingofat{\exfunction}{\headvariableof{\exfunction},\shortcatvariables},W[\headvariableof{\exfunction}]}{\shortcatvariables} \, : \, W[\headvariableof{\exfunction}] \in \rr^{\cardof{\imageof{\exfunction}}} \right\} \]
 \end{definition}
 
 Composition of functions $\exformula,\secexformula$ on distinct variables is then a choice of a subspace in the tensor product of the two function subspaces, that is
 \begin{align}
-	\subspaceof{\exformula\exconnective\secexformula} 
-	\subset \subspaceof{\exformula} \otimes \subspaceof{\secexformula} \, . 
+    \subspaceof{\exformula\exconnective\secexformula}
+    \subset \subspaceof{\exformula} \otimes \subspaceof{\secexformula} \, .
 \end{align}
 
 
@@ -939,8 +1089,8 @@ Composition of functions $\exformula,\secexformula$ on distinct variables is the
 
 Each formula defines by its relational encoding the subspace of $\atomspace$
 \begin{align}
-	\subspaceof{\exformula} = \spanof{\lnot\exformula,\exformula} %=  \mathrm{im}\left(\rencodingof{\exformula} \right)
-	%\mathrm{span} \left\{ \braket{\atombasisvector_1,\rencodingof{\exformula}}, \braket{\atombasisvector_0,\rencodingof{\exformula}} \right\}
+    \subspaceof{\exformula} = \spanof{\lnot\exformula,\exformula} %=  \mathrm{im}\left(\rencodingof{\exformula} \right)
+%\mathrm{span} \left\{ \braket{\atombasisvector_1,\rencodingof{\exformula}}, \braket{\atombasisvector_0,\rencodingof{\exformula}} \right\}
 \end{align}
 
 Let us notice that the spanning vector of the subspace $\subspaceof{\exformula}$ are binary tensors summing up to the tensor of ones.
@@ -948,18 +1098,18 @@ Let us notice that the spanning vector of the subspace $\subspaceof{\exformula}$
 %\subsect{Atomic Tensor Spaces}
 
 For each atom $\atomicformulaof{\atomenumerator}$ we have
-	\[ \subspaceof{\atomicformulaof{\atomenumerator}} = \rr^2 \, . \]
+\[ \subspaceof{\atomicformulaof{\atomenumerator}} = \rr^2 \, . \]
 The tensor space carrying the factored representation of the worlds is thus
 \begin{align}
-	\bigotimes_{\atomenumeratorin}\subspaceof{\atomicformulaof{\atomenumerator}} \, .
+    \bigotimes_{\atomenumeratorin}\subspaceof{\atomicformulaof{\atomenumerator}} \, .
 \end{align}
 
 \subsect{Formula Decomposition as a Subspace Choice}
 
 Given a formula $\exformula\exconnective\secexformula$ composed of formulas $\exformula$ and $\secexformula$ containing different atoms we have
 \begin{align}
-	\subspaceof{\exformula\exconnective\secexformula} 
-	\subset \subspaceof{\exformula} \otimes \subspaceof{\secexformula}
+    \subspaceof{\exformula\exconnective\secexformula}
+    \subset \subspaceof{\exformula} \otimes \subspaceof{\secexformula}
 \end{align}
 
 A connective $\exconnective$ thus determines the selection of a two-dimensional subspace in the four-dimensional tensor product of subspaces to both subformulas.
@@ -972,11 +1122,9 @@ Given a set of positive and negative examples of a formula poses further an appr
 
 Advantages of this perspective are
 \begin{itemize}
-	\item Given a $\htformat$ the best approximation always exists (Theorem 11.58 in \cite{hackbusch_tensor_2012}), but need to further restrict to cores given by logical connectives 
-	\item Apply Approximation algorithms: ALS or HOSVD
+    \item Given a $\htformat$ the best approximation always exists (Theorem 11.58 in \cite{hackbusch_tensor_2012}), but need to further restrict to cores given by logical connectives
+    \item Apply Approximation algorithms: ALS or HOSVD
 \end{itemize}
-
-
 
 
 %%% NEEDED? This would be a description of the relational encoding of decompositions
