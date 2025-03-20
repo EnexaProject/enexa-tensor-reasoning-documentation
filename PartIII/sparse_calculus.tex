@@ -186,7 +186,7 @@ Based on this idea, we can proof, that any tensor has a directed and binary $\cp
     Denoting its image coordinate maps by $\datamapof{\catenumerator}$ we have
     \begin{align*}
         \hypercorewith
-        = \sum_{\datindexin} \scalarcoreof{\datamapat(\datindex)} \left(\bigotimes_{\atomenumeratorin} \onehotmapofat{\datamapof{\atomenumerator}(\datindex)}{\catvariableof{\catenumerator}} \right) \, .
+        = \sum_{\datindexin} \scalarcoreat{\datamapat(\datindex)} \left(\bigotimes_{\atomenumeratorin} \onehotmapofat{\datamapof{\atomenumerator}(\datindex)}{\catvariableof{\catenumerator}} \right) \, .
     \end{align*}
     This is a basis $\cpformat$ decomposition of size $\sparsityof{\hypercore}$ and we thus have $\bascprankof{\hypercore}\leq\sparsityof{\hypercore}$.
 
@@ -407,7 +407,7 @@ In the next theorem, we show that in that case the $\slicerankwrtof{\sliceorder}
 \begin{remark}[Matrix Storage of basis+ $\cpformat$ decompositions]
     \label{rem:matStorageBasPlus}
     We can adapt the storage format of \remref{rem:matStorageBas} from basis to basis+ $\cpformat$ decompositions.
-    To this end, let there be a basis+ $\cpformat$ decomposition of a tensor with scalar core $\scalarcoreof{\decvariable}$ and leg cores $\{\legcoreofat{\atomenumerator}{\catvariableof{\atomenumerator},\decvariable} \, : \, \atomenumeratorin\}$.
+    To this end, let there be a basis+ $\cpformat$ decomposition of a tensor with scalar core $\scalarcoreat{\decvariable}$ and leg cores $\{\legcoreofat{\atomenumerator}{\catvariableof{\atomenumerator},\decvariable} \, : \, \atomenumeratorin\}$.
     We use a value $z\in\rr/\imageof{\scalarcore}$ distinguished from the coordinates of the scalar core and define a matrix
     \begin{align*}
         \matrixofat{z}{\decvariable,\selvariable} \,
@@ -417,7 +417,7 @@ In the next theorem, we show that in that case the $\slicerankwrtof{\sliceorder}
         \matrixofat{z}{\inddecvar,\selvariable=\atomenumerator} =
         \begin{cases}
             \scalarcoreat{\inddecvar} & \text{if} \quad \atomenumerator = \catorder \\
-            z & ^\text{if} \quad \legcoreofat{\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariable} = \onesat{\catvariableof{\atomenumerator}} \\
+            z & \text{if} \quad \legcoreofat{\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariable} = \onesat{\catvariableof{\atomenumerator}} \\
             \invonehotmapof{\legcoreofat{\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariable}} & \text{else}
         \end{cases} \, .
     \end{align*}
@@ -438,8 +438,8 @@ After having defined different $\cpformat$ decompositions, let us investigate bo
 We start by showing a cascade of bounds of $\cpformat$ ranks, when demanding different leg restrictions as in \defref{def:cpFormats}.
 
 \begin{theorem}
-    \label{the:sliceToCP}
-    For any tensor $ \hypercorewithin$ we have
+    \label{the:rankCascade}
+    For any tensor $\hypercorewithin$ we have
     \begin{align*}
         \cprankof{\hypercore} = \dircprankof{\hypercore} \leq \bincprankof{\hypercore} \leq \baspluscprankof{\hypercore} \leq \bascprankof{\hypercore} \, .
     \end{align*}
@@ -475,8 +475,10 @@ We start with the sum of tensors in a $\cpformat$ decomposition, which can be ca
 
 \begin{theorem}
     \label{the:CPrankSumBound}
-    For any collections of tensors $\{T^{l}[\catvariableof{\nodes}] : l \in [n]\}$ with identical variables and scalars $\lambda^{l} \in \rr$ for $l\in[n]$  we have
-    \[ \cprankof{\sum_{l \in [n]} \lambda^{l} \cdot T^{l}} \leq \sum_{l\in[n]}  \cprankof{T^{l}}  \, . \]
+    For any collections of tensors $\{\hypercoreofat{\selindex}{\catvariableof{\nodes}} : \selindexin\}$ with identical variables and scalars $\lambda^{\selindex} \in \rr$ for $\selindexin$ we have
+    \begin{align*}
+        \cprankof{\sum_{\selindexin} \lambda^{\selindex} \cdot \hypercoreof{\selindex}} \leq \sum_{\selindexin} \cprankof{\hypercoreof{\selindex}}  \, .
+    \end{align*}
     The bound still holds, when we replace on both sides $\cprankof{\cdot}$ by $\bincprankof{\cdot}$, by $\bascprankof{\cdot}$ or by $\baspluscprankof{\cdot}$.
 \end{theorem}
 \begin{proof}
@@ -498,9 +500,9 @@ We continue to show rank bounds for arbitrary contractions by the product of the
 
 \begin{theorem}
     \label{the:CPrankContractionBound}
-    For any tensor network with variables $\nodes$ and edges $\edges$ we have for any subset $\secnodes\subset\nodes$
+    For any tensor network $\extnetat{\catvariableof{\nodes}}$ on a graph $\graph=(\nodes,\edges)$, we have for any subset $\secnodes\subset\nodes$
     \begin{align*}
-        \cprankof{\contractionof{\{\hypercoreofat{\edge}{\catvariableof{\edge}} : \edge\in\edges \}}{\catvariableof{\secnodes}}} \leq
+        \cprankof{\contractionof{\extnet}{\catvariableof{\secnodes}}} \leq
         \prod_{\edge\in\edges \, : \, \secnodes\cap\edge \neq \varnothing} \cprankof{\hypercoreof{\edge}} \, .
     \end{align*}
     The bound still holds, when we replace on both sides $\cprankof{\cdot}$ by $\bincprankof{\cdot}$, by $\bascprankof{\cdot}$ or by $\baspluscprankof{\cdot}$.
@@ -511,36 +513,115 @@ We prepare for its proof by first showing the following lemmata.
 
 \begin{lemma}
     \label{lem:sparsityGeneralContraction}
-    For any tensors $\hypercoreofat{1}{\catvariableof{\nodes_1}}$ and $\hypercoreofat{2}{\catvariableof{\nodes_2}}$ and any set of variables $\secnodes\subset\nodes_1\cup\nodes_2$ we have
-    \[ \cprankof{\contractionof{\{\hypercoreof{1},\hypercoreof{2}\}}{\secnodes}} \leq \cprankof{\hypercoreof{1}} \cdot \cprankof{\hypercoreof{2}} \, . \]
+    For any tensors $\hypercoreofat{1}{\catvariableof{\nodesone}}$ and $\hypercoreofat{2}{\catvariableof{\nodestwo}}$ and any set of variables $\secnodes\subset\nodesone\cup\nodestwo$ we have
+    \begin{align*}
+        \cprankof{\contractionof{\hypercoreof{1},\hypercoreof{2}}{\catvariableof{\secnodes}}} \leq \cprankof{\hypercoreof{1}} \cdot \cprankof{\hypercoreof{2}} \, .
+    \end{align*}
     The bound still holds, when we replace on both sides $\cprankof{\cdot}$ by $\bincprankof{\cdot}$, by $\bascprankof{\cdot}$ or by $\baspluscprankof{\cdot}$.
 \end{lemma}
 \begin{proof}
-    By connecting the cores and restoring the binary or basis properties.
+    Let there be $\cpformat$ decompositions of $\hypercoreofat{1}{\catvariableof{\nodesone}}$ and $\hypercoreofat{2}{\catvariableof{\nodestwo}}$ by
+    \begin{align*}
+        \hypercoreofat{1}{\catvariableof{\nodesone}}
+        = \contractionof{\{\scalarcoreofat{1}{\decvariableof{1}}\}\cup\{\legcoreofat{1,\atomenumerator}{\catvariableof{\atomenumerator},\decvariableof{1}} \, : \, \atomenumerator\in\nodesone\}}{\catvariableof{\nodesone}}
+    \end{align*}
+    and
+    \begin{align*}
+        \hypercoreofat{2}{\catvariableof{\nodesone}}
+        = \contractionof{\{\scalarcoreofat{2}{\decvariableof{2}}\}\cup\{\legcoreofat{2,\secatomenumerator}{\catvariableof{\secatomenumerator},\decvariableof{2}} \, : \, \secatomenumerator\in\nodestwo\}}{\catvariableof{\nodestwo}} \, .
+    \end{align*}
+    By linearity of contractions we have
+    \begin{align*}
+        \contractionof{\hypercoreof{1},\hypercoreof{2}}{\catvariableof{\secnodes}}
+        &= \sum_{\decindexof{1}\in\decdimof{1}} \sum_{\decindexof{2}\in\decdimof{2}}
+        \scalarcoreofat{1}{\indexeddecvariableof{1}} \cdot \scalarcoreofat{2}{\indexeddecvariableof{2}} \\
+        & \quad\quad \cdot \contractionof{\{\legcoreofat{1,\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariableof{1}} \, : \, \atomenumerator\in\nodesone\} \cup \{\legcoreofat{2,\secatomenumerator}{\catvariableof{\secatomenumerator},\indexeddecvariableof{2}} \, : \, \secatomenumerator\in\nodestwo\}}{\catvariableof{\secnodes}} \\
+        &= \sum_{\decindexof{1}\in\decdimof{1}} \sum_{\decindexof{2}\in\decdimof{2}}
+        \scalarcoreofat{1}{\indexeddecvariableof{1}} \cdot \scalarcoreofat{2}{\indexeddecvariableof{2}} \cdot \\
+        & \quad\quad \contraction{\{\legcoreofat{1,\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariableof{1}} \, : \, \atomenumerator\in\nodesone/\secnodes\} \cup \{\legcoreofat{2,\secatomenumerator}{\catvariableof{\secatomenumerator},\indexeddecvariableof{2}} \, : \, \secatomenumerator\in\nodestwo/\secnodes\}} \cdot \\
+        & \quad\quad \bigotimes_{\atomenumerator\in\secnodes} \legcoreofat{\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariableof{1},\indexeddecvariableof{2}} \, ,
+    \end{align*}
+    where we denote
+    \begin{align*}
+        \legcoreofat{\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariableof{1},\indexeddecvariableof{2}}
+        = \begin{cases}
+              \legcoreofat{1,\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariableof{1}}  & \text{if} \quad \atomenumerator \notin \nodestwo \\
+              \legcoreofat{2,\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariableof{2}}  & \text{if} \quad \atomenumerator \notin \nodesone \\
+              \contractionof{\legcoreofat{1,\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariableof{1}}, \legcoreofat{2,\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariableof{2}}}{\catvariableof{\atomenumerator}}  & \text{else}
+        \end{cases} \, .
+    \end{align*}
+    Note, that since $\atomenumerator\in\secnodes\subset\nodesone\cup\nodestwo$, these slices are well-defined.
+    We build a new decomposition variable $\decvariable$ enumerating the summands to indices $[\decdimof{1}]\times[\decdimof{2}]$ and have thus found a $\cpformat$ decomposition of $\contractionof{\hypercoreof{1},\hypercoreof{2}}{\catvariableof{\secnodes}}$ of size $\decdim=\decdimof{1}\cdot\decdimof{2}$.
+    This shows the claim in the case of $\cprankof{\cdot}$.
+
+    When the $\cpformat$ decompositions of $\hypercoreof{1}$ and $\hypercoreof{2}$ are boolean, basis or basis+, then the property is preserved in the constructed $\cpformat$ decomposition, since the constructed slices $\legcoreofat{\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariableof{1},\indexeddecvariableof{2}}$ are either copies of the leg cores or their contractions and the respective property is preserved in both cases.
+    Thus, the constructive rank bounds hold also for $\bincprankof{\cdot}$, $\bascprankof{\cdot}$ and $\baspluscprankof{\cdot}$.
 \end{proof}
 
 When one core of the contracted tensor network does not contain variables which are left open, we can drastically sharpen the bound provided by \lemref{lem:sparsityGeneralContraction} as we show next.
 
 \begin{lemma}
     \label{lem:sparsityDisjointContraction}
-    For any tensor network consistent of two tensors $\hypercoreofat{1}{\catvariableof{\nodes_1}}$ and $\hypercoreofat{2}{\catvariableof{\nodes_2}}$ and any set $\secnodes$ with $\secnodes\cap\nodes_2=\varnothing$ we have
-    \[ \cprankof{\contractionof{\{\hypercoreof{1},\hypercoreof{2}\}}{\secnodes}} \leq \cprankof{\hypercoreof{1}} \, . \]
-    The bound still holds, when we replace on both sides $\cprankof{\cdot}$ by $\bincprankof{\cdot}$ or by $\bascprankof{\cdot}$.
+    For any two tensors $\hypercoreofat{1}{\catvariableof{\nodesone}}$, $\hypercoreofat{2}{\catvariableof{\nodestwo}}$ and any set $\secnodes$ with $\secnodes\cap\nodestwo=\varnothing$ we have
+    \begin{align*}
+    \cprankof{\contractionof{\{\hypercoreof{1},\hypercoreof{2}\}}{\catvariableof{\secnodes}}} \leq \cprankof{\hypercoreof{1}} \, .
+    \end{align*}
+    The bound still holds, when we replace on both sides $\cprankof{\cdot}$ by $\bincprankof{\cdot}$, by $\bascprankof{\cdot}$ or by $\baspluscprankof{\cdot}$.
 \end{lemma}
 \begin{proof}
-    We show the lemma by constructing a $\cpformat$ decomposition of $\cprankof{\contractionof{\{\hypercoreof{1},\hypercoreof{2}\}}{\secnodes}} $ for any $\cpformat$ decomposition of $\hypercoreof{1}$.
-    Let therefore take any $\cpformat$ decomposition of $\hypercoreof{1}$ consistent of the leg cores $\{\legcoreof{\node} \, : \, \node \in \nodes_1 \}$ and a scalar core $\scalarcore$.
-    Then we define a new $\scalarcore$ by
-    \[ \tilde{\scalarcore} = \contractionof{\{\scalarcore\}\cup \{\legcoreof{\node} \, : \, \node \in \nodes_1 , \node \notin \secnodes \} \cup \{\hypercoreof{2}\} }{\decvariable} \, . \]
-    Then, the leg cores $\{\legcoreof{\node} \, : \, \node \in \secnodes \}$ build with the scalar core $\tilde{\scalarcore}$ a $\cpformat$ decomposition of $\contractionof{\{\hypercoreof{1},\hypercoreof{2}\}}{\secnodes}$.
-% Binary of basis
-    When the $\cpformat$ decomposition of $\hypercoreof{1}$ was binary, basis or basis+, this property is also satisfied by the constructed $\cpformat$ decomposition.
-    Thus the bound also holds for the ranks $\bincprankof{\cdot}$ or $\bascprankof{\cdot}$.
+    As in the proof of \lemref{lem:sparsityGeneralContraction} we assume a $\cpformat$ decomposition of $\hypercoreofat{1}{\catvariableof{\nodesone}}$ and $\hypercoreofat{2}{\catvariableof{\nodestwo}}$ and use the linearity of contractions to get
+    \begin{align*}
+        \contractionof{\hypercoreof{1},\hypercoreof{2}}{\catvariableof{\secnodes}}
+        %&= \sum_{\decindexof{1}\in\decdimof{1}} \sum_{\decindexof{2}\in\decdimof{2}}
+        %\scalarcoreofat{1}{\indexeddecvariableof{1}} \cdot \scalarcoreofat{2}{\indexeddecvariableof{2}} \\
+        %& \quad\quad \cdot \contractionof{\{\legcoreofat{1,\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariableof{1}} \, : \, \atomenumerator\in\nodesone\} \cup \{\legcoreofat{2,\secatomenumerator}{\catvariableof{\secatomenumerator},\indexeddecvariableof{2}} \, : \, \secatomenumerator\in\nodestwo\}}{\catvariableof{\secnodes}} \\
+        &= \sum_{\decindexof{1}\in\decdimof{1}} \sum_{\decindexof{2}\in\decdimof{2}}
+        \scalarcoreofat{1}{\indexeddecvariableof{1}} \cdot \scalarcoreofat{2}{\indexeddecvariableof{2}} \cdot \\
+        & \quad\quad \contraction{\{\legcoreofat{1,\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariableof{1}} \, : \, \atomenumerator\in\nodesone/\secnodes\} \cup \{\legcoreofat{2,\secatomenumerator}{\catvariableof{\secatomenumerator},\indexeddecvariableof{2}} \, : \, \secatomenumerator\in\nodestwo/\secnodes\}} \cdot \\
+        & \quad\quad \bigotimes_{\atomenumerator\in\secnodes} \legcoreofat{1,\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariableof{1}} \, ,
+    \end{align*}
+    where we used that $\secnodes\cup\nodestwo=\varnothing$.
+    By rearranging the sum of $\decindexof{2}$, we have a $\cpformat$ decomposition with decomposition variable $\decvariableof{1}$ and slices
+    \begin{align*}
+        \scalarcoreat{\indexeddecvariableof{1}}
+        & = \sum_{\decindexof{2}\in\decdimof{2}}  \scalarcoreofat{1}{\indexeddecvariableof{1}} \cdot \scalarcoreofat{2}{\indexeddecvariableof{2}} \cdot \\
+        & \quad \quad \contraction{\{\legcoreofat{1,\atomenumerator}{\catvariableof{\atomenumerator},\indexeddecvariableof{1}} \, : \, \atomenumerator\in\nodesone/\secnodes\} \cup \{\legcoreofat{2,\secatomenumerator}{\catvariableof{\secatomenumerator},\indexeddecvariableof{2}} \, : \, \secatomenumerator\in\nodestwo/\secnodes\}} \, .
+    \end{align*}
+    This shows the rank bound for $\cprankof{\cdot}$.
+    The properties of the $\cpformat$ decomposition are trivially inherited by the constructed decomposition, since the leg cores of the decomposition of $\hypercoreofat{1}{\catvariableof{\nodesone}}$ are chosen.
+    Thus, the rank bounds hold also for any other rank in the claim.
+%    We show the lemma by constructing a $\cpformat$ decomposition of $\cprankof{\contractionof{\{\hypercoreof{1},\hypercoreof{2}\}}{\catvariableof{\secnodes}}} $ for any $\cpformat$ decomposition of $\hypercoreof{1}$.
+%    Let therefore take any $\cpformat$ decomposition of $\hypercoreof{1}$ consistent of the leg cores $\{\legcoreof{\node} \, : \, \node \in \nodesone \}$ and a scalar core $\scalarcore$.
+%    Then we define a new $\scalarcore$ by
+%    \[ \tilde{\scalarcore} = \contractionof{\{\scalarcore\}\cup \{\legcoreof{\node} \, : \, \node \in \nodesone , \node \notin \secnodes \} \cup \{\hypercoreof{2}\} }{\decvariable} \, . \]
+%    Then, the leg cores $\{\legcoreof{\node} \, : \, \node \in \secnodes \}$ build with the scalar core $\tilde{\scalarcore}$ a $\cpformat$ decomposition of $\contractionof{\{\hypercoreof{1},\hypercoreof{2}\}}{\catvariableof{\secnodes}}$.
+%% Binary of basis
+%    When the $\cpformat$ decomposition of $\hypercoreof{1}$ was binary, basis or basis+, this property is also satisfied by the constructed $\cpformat$ decomposition.
+%    Thus the bound also holds for the ranks $\bincprankof{\cdot}$ or $\bascprankof{\cdot}$.
 \end{proof}
 
 \begin{proof}[Proof of \theref{the:CPrankContractionBound}]
-    Use delta tensor representation to represent contractions by graphs.
-    We then iterate through the cores and contract them to the previously contracted tensor, where we apply \lemref{lem:sparsityGeneralContraction} when the tensor core has variables left open and \lemref{lem:sparsityDisjointContraction} if not.
+    We partition the edges into the set $\edgesof{1}= \{\edge\in\edges \, : \, \edge\cup\secnodes\neq\varnothing\}$ and $\edgesof{2}= \{\edge\in\edges \, : \, \edge\cup\secnodes=\varnothing\}$.
+    We then have
+    \begin{align}\label{eq:cprankContractionPartition}
+        \contractionof{\extnet}{\catvariableof{\secnodes}}
+        = \contractionof{
+            \contractionof{\{\hypercoreofat{\edge}{\catvariableof{\edge}} \, : \, \edge\in\edgesof{1}\}}{\catvariableof{\bigcup_{\edge\in\edgesof{1}}\edge}},
+            \contractionof{\{\hypercoreofat{\edge}{\catvariableof{\edge}} \, : \, \edge\in\edgesof{2}\}}{\catvariableof{\bigcup_{\edge\in\edgesof{2}}\edge}}
+        }{\catvariableof{\secnodes}}
+    \end{align}
+    By an iterative application of \lemref{lem:sparsityGeneralContraction} when including the cores to $\edge\in\edgesof{1}$ after each other to the contraction, we get the bound
+    \begin{align*}
+        \cprankof{\contractionof{\{\hypercoreofat{\edge}{\catvariableof{\edge}} \, : \, \edge\in\edgesof{1}\}}{\catvariableof{\bigcup_{\edge\in\edgesof{1}}\edge}}}
+        \leq \prod_{\edge\in\edgesof{1}} \cprankof{\hypercoreof{\edge}} \, .
+    \end{align*}
+    With the decomposition \eqref{eq:cprankContractionPartition} and \lemref{lem:sparsityDisjointContraction} we then arrive at the claim
+    \begin{align*}
+        \contractionof{\extnet}{\catvariableof{\secnodes}} \leq \prod_{\edge\in\edgesof{1}} \cprankof{\hypercoreof{\edge}} \, .
+    \end{align*}
+    Since the applied lemmata hold also for the restricted $\cpformat$ ranks in the claim, the derived bound is also for those valid.
+    %Use delta tensor representation to represent contractions by graphs.
+    %We then iterate through the cores and contract them to the previously contracted tensor, where we apply \lemref{lem:sparsityGeneralContraction} when the tensor core has variables left open and \lemref{lem:sparsityDisjointContraction} if not.
 \end{proof}
 
 
@@ -565,12 +646,14 @@ When one core of the contracted tensor network does not contain variables which 
 \red{As a theorem: If any of the above $\cpformat$ decomposition is normable, the normation has the same CP ranks.
 Especially interesting when learning Bayesian Networks, where each core has a CP bound by the number of datapoints.}
 
-\subsect{Sparse Encoding of Functions}
+\sect{Sparse Encoding of Functions}
 
 %Using the proof idea of \theref{the:sparseBasisCP}, we can state a more general CP bound on the encoding of functions.
 
 We now state that the basis CP rank of relational encodings is equal to the cardinality of the domain.
 The basis CP format can therefore not provide a sparse representation when the factored system contains many categorical variables.
+
+%\subsect{}
 
 \begin{theorem}
     \label{the:rencodingBasCP}
@@ -580,28 +663,79 @@ The basis CP format can therefore not provide a sparse representation when the f
     \[ \bascprankof{\rencodingof{\exfunction}} =  \facdim \, . \]
 \end{theorem}
 \begin{proof}
-    With \theref{the:sparseBasisCP}, the basis CP rank coincides with the number of not vanishing coordinates, which is the cardinality of the domain of $\exfunction$.
+    The bound follows from \theref{the:sparseBasisCP}, using that $\sparsityof{\rencodingof{\exfunction}}=\facdim$.
 \end{proof}
 
-%Allowing for trivial leg vectors can decrease the CP rank, as we show next.
+Let us further provide a construction scheme to find a basis $\cpformat$ decomposition of $\rencodingof{\exfunction}$ of size $\facdim$.
+We notice that
+\begin{align*}
+    \rencodingofat{\exfunction}{\secshortcatvariables,\shortcatvariables}
+     = \sum_{\shortcatindices\in\facstates} \onehotmapofat{\shortcatindices}{\shortcatvariables} \otimes \onehotmapofat{\exfunctionat{\indexedshortcatvariables}}{\secshortcatvariables} \, .
+\end{align*}
+We build for $\catenumeratorin$ decomposition variables $\decvariableof{[\atomorder]}$ with $\decdimof{\atomenumerator}=\catdimof{\atomenumerator}$ and define leg cores %a function $\indexinterpretation$ and define leg cores by
+\begin{align*}
+    \legcoreofat{\catenumerator}{\catvariableof{\catenumerator},\decvariableof{[\atomorder]}} = \identityat{\catvariableof{\catenumerator},\decvariableof{\atomenumerator}}
+\end{align*}
+and for $\seccatenumerator\in[\secatomorder]$ and $\decindexof{[\atomorder]}$
+\begin{align*}
+    \legcoreofat{\seccatenumerator}{\seccatvariableof{\seccatenumerator},\indexeddecvariableof{[\atomorder]}}
+    = \onehotmapof{\exfunction_{\seccatenumerator}[\shortcatvariables=\decindexof{[\atomorder]}]}{\seccatvariableof{\seccatenumerator}} \, .
+\end{align*}
+We then have with a trivial scalar core
+\begin{align*}
+    \rencodingofat{\exfunction}{\secshortcatvariables,\shortcatvariables}
+    = \contractionof{
+   \{\onesat{\decvariableof{[\atomorder]}}\}\cup
+   \{\legcoreofat{\catenumerator}{\catvariableof{\atomenumerator},\decvariableof{[\atomorder]}} \, : \, \catenumeratorin\} \cup
+    \{\legcoreofat{\seccatenumerator}{\seccatvariableof{\seccatenumerator},\decvariableof{[\atomorder]}} \, : \, \seccatenumerator\in[\secatomorder]\}
+    }{\secshortcatvariables,\shortcatvariables} \, .
+\end{align*}
+This is a basis $\cpformat$ decomposition of size $\facdim$.
+
+% Extension by rank cascade
+In combination with \theref{the:rankCascade}, \theref{the:rencodingBasCP} also provides bounds on all other $\cpformat$ ranks defined in \defref{def:cpFormats}.
+This is obvious, since basis leg slices are the most restrictive properties compared with boolean, directed or basis+.
+
+While \theref{the:rencodingBasCP} provides a $\cpformat$ rank bound based on the domain factored system, we can also show in the next theorem a bound using the structure of the image.
 
 \begin{theorem}
-    We have
-    \[ \baspluscprankof{\rencodingof{\exfunction}} \leq  \sum_{\exfunctionimageelement\in\imageof{\exfunction}} \baspluscprankof{\onesof{\exfunction=\exfunctionimageelement} } \, , \]
-    where by $\onesof{\exfunction=\exfunctionimageelement}$ we denote the indicator, whether the function $\exfunction$ evaluates to $\exfunctionimageelement$, that is the tensor
+    Let $\exfunction : \inset \rightarrow \outset$ be an arbitrary function and let us consider for each $\exfunctionimageelement\in\imageof{\exfunction}$ the indicator
     \begin{align*}
-        \onesofat{\exfunction=\exfunctionimageelement}{\shortcatvariables} =
+        \onesofat{\exfunction=\exfunctionimageelement}{\indvariableof{\insymbol}} =
         \begin{cases}
-            1 & \text{if} \quad \exfunctionat{\shortcatindices}=y \\
+            1 & \text{if} \quad \exfunctionat{\indexedindvariableof{\insymbol}}=y \\
             0 & \text{else} \, .
         \end{cases}
     \end{align*}
+    The basis+ rank of the relational encoding of $\exfunction$ then obeys the bound
+    \begin{align*}
+        \cprankof{\rencodingof{\exfunction}} \leq \sum_{\exfunctionimageelement\in\imageof{\exfunction}} \cprankof{\onesof{\exfunction=\exfunctionimageelement} } \, .
+    \end{align*}
+    The bound still holds, when we replace on both sides $\cprankof{\cdot}$ by $\bincprankof{\cdot}$, by $\bascprankof{\cdot}$ or by $\baspluscprankof{\cdot}$.
 \end{theorem}
 \begin{proof}
     We have
-    \[ \rencodingof{\exfunction} = \sum_{\exfunctionimageelement\in\imageof{\exfunction}} \onesof{\exfunction=\exfunctionimageelement}[\catvariable]
-    \otimes \onehotmapofat{\indexinterpretationat{\exfunctionimageelement}}{\headvariableof{\exfunction}} \, . \]
-    For each $\exfunctionimageelement\in\imageof{\exfunction}$ we represent $\onehotmapofat{\indexinterpretationat{\exfunctionimageelement}}{\headvariableof{\exfunction}}$ in an basis+ CP format with $\baspluscprankof{\onesof{\exfunction=\exfunctionimageelement} } $ summands and arrive at a basis+ $\cpformat$ decomposition of $\rencodingof{\exfunction}$ with $\sum_{\exfunctionimageelement\in\imageof{\exfunction}} \baspluscprankof{\onesof{\exfunction=\exfunctionimageelement} } $ summands.
+    \begin{align*}
+        \rencodingofat{\exfunction}{\indvariableof{\outsymbol},\indvariableof{\insymbol}}
+        = \sum_{\exfunctionimageelement\in\imageof{\exfunction}} \onehotmapofat{\indexinterpretationat{\exfunctionimageelement}}{\indvariableof{\outsymbol}}
+        \otimes \onesofat{\exfunction=\exfunctionimageelement}{\indvariableof{\insymbol}} \, .
+    \end{align*}
+    For any $\exfunctionimageelement\in\imageof{\exfunction}$ it is obvious that
+    \begin{align*}
+        \cprankof{\onehotmapofat{\indexinterpretationat{\exfunctionimageelement}}{\indvariableof{\outsymbol}}
+        \otimes \onesofat{\exfunction=\exfunctionimageelement}{\indvariableof{\insymbol}}}
+        = \cprankof{\onesofat{\exfunction=\exfunctionimageelement}{\indvariableof{\insymbol}}} \, ,
+    \end{align*}
+    which also holds true for the other bounds in the claim.
+    We then use the summation bound of \theref{the:CPrankSumBound} to get
+    \begin{align*}
+        \cprankof{\rencodingofat{\exfunction}{\indvariableof{\outsymbol},\indvariableof{\insymbol}}}
+        &\leq \sum_{\exfunctionimageelement\in\imageof{\exfunction}} \cprankof{\onehotmapofat{\indexinterpretationat{\exfunctionimageelement}}{\indvariableof{\outsymbol}}
+        \otimes \onesofat{\exfunction=\exfunctionimageelement}{\indvariableof{\insymbol}}} \\
+        &\leq  \sum_{\exfunctionimageelement\in\imageof{\exfunction}} \cprankof{\onesofat{\exfunction=\exfunctionimageelement}{\indvariableof{\insymbol}}} \, .
+    \end{align*}
+    Again, the bound still hold for the other ranks in the claim.
+    % For each $\exfunctionimageelement\in\imageof{\exfunction}$ we represent $\onehotmapofat{\indexinterpretationat{\exfunctionimageelement}}{\headvariableof{\exfunction}}$ in an basis+ CP format with $\baspluscprankof{\onesof{\exfunction=\exfunctionimageelement} } $ summands and arrive at a basis+ $\cpformat$ decomposition of $\rencodingof{\exfunction}$ with $\sum_{\exfunctionimageelement\in\imageof{\exfunction}} \baspluscprankof{\onesof{\exfunction=\exfunctionimageelement} } $ summands.
 \end{proof}
 
 The above claim still holds when replacing $\baspluscprankof{\cdot}$ with the ranks $\bascprankof{\cdot}$ or $\bincprankof{\cdot}$.
@@ -620,8 +754,7 @@ For the rank $\bascprankof{\cdot}$ it leads to the bound of \theref{the:rencodin
 
 
 
-
-\subsect{Construction by averaging the incoming legs}
+%\subsubsect{Construction by averaging the incoming legs}
 
 We restate \theref{the:functionImageDecompositionContraction} as a basis $\cpformat$ decomposition bound.
 
