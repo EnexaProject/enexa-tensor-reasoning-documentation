@@ -1,0 +1,150 @@
+\documentclass[aps,onecolumn,nofootinbib,pra]{article}
+
+\usepackage{../../article_compilation/spec_files/arxiv}
+\usepackage{amsmath,amsfonts,amssymb,amsthm,bbm,graphicx,enumerate,times}
+\usepackage{mathtools}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{hyperref}
+\hypersetup{
+    breaklinks,
+    colorlinks,
+    linkcolor=gray,
+    citecolor=gray,
+    urlcolor=gray,
+    pdftitle={The Tensor Network Approach to Efficient and Explainable AI},
+    pdfauthor={Alex Goessmann}
+}
+
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{comment}
+\usepackage{csquotes}
+
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{etoolbox}
+\usepackage{braket}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{bbm}
+\usepackage{bm}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{lipsum}
+
+\newtheorem{remark}{Remark}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+
+\input{../../macros/organization_macros.tex}
+\input{../../macros/general_macros.tex}
+\input{../../macros/tc_macros.tex}
+\input{../../macros/tikz_macros.tex}
+
+\pretolerance=500
+\tolerance=100
+\emergencystretch=10pt
+
+% Bibliography
+\DeclareUnicodeCharacter{FB01}{fi}
+\usepackage[round]{natbib}
+\usepackage{wasysym}
+
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+\begin{document}
+    \title{\tnreason for Constraint Satisfaction Problems}
+
+    \maketitle
+    \date{\today}
+
+
+We show, how Constraint Satisfaction Problems can be formalized by boolean tensor networks in the \tnreason notation, and how their solution can be approached by tree search, possible in combination with monte carlo approaches. 
+
+\section{Formalization}
+
+\begin{definition}
+	Let there be a hypergraph $\graph=(\nodes,\edges)$ and $\extnet$ be a tensor network of boolean constraint tensors $ \hypercoreofat{\edge}{\catvariableof{\edge}}$ to each $\edgein$, that is 
+	\[ \extnet = \{ \hypercoreofat{\edge}{\catvariableof{\edge}} \, : \, \edge\in\edges \} \, .\]
+	The Constraint Satisfaction Problem CSP to $\extnet$ is the decision whether there is a state $\catindexof{\nodes}$ such that
+	\[ \contractionof{\extnet}{\indexedcatvariableof{\nodes}} = 1 \, . \]
+	We say the CSP is satisfiable, when there is such a state, and unsatisfiable if not.
+\end{definition}
+
+
+\section{Solution}
+
+\subsection{Global contraction}
+
+The most obvious solution is to contract the tensor network and decide the CSP based on 
+\[ \contraction{\extnet} > 0 \, . \]
+This can be demanding, when having a large and densely connected tensor network.
+
+\subsection{Message passing}
+
+Local contractions instead of global provide a tradeoff between generality and efficiency.
+Their results can be passed to further contractions by message passing.
+Whenever a local contraction vanishes, the CSP is unsatisfiable.
+However, the converse is not true: In general, we cannot conclude that the CSP is satisfiable, when a message-passing scheme does converge without vanishing.
+
+\subsection{Guessing}
+
+To decide a CSP it is enough to construct a state $\catindexof{\nodes}$ which satisfies all constraint tensors.
+One procedure is to consecutively guess the state of some variables $\node\in\nodes$ and check, whether the guess can satisfy the constraint tensor.
+
+\subsection{Orchestration in a Search Tree}
+
+We build a search tree for a constructive solution of the CSP, where each node represents a guess of a variables state.
+After a guess, a message passing scheme of varying complexity  is performed to calculate the imediate consequences of the guess.
+Then an intelligent agent decides whether to
+\begin{itemize}
+	\item stop the message passing scheme
+	\item increase the complexity of the scheme by extending the set of communicated variables, or the size of the contraction
+	\item continue with a further guess of another variable
+	\item undo the previous guess (e.g. necessary when reached a vanishing message indicating inconsistency)
+\end{itemize}
+
+
+\section{Examples}
+
+\subsection{Temporal Clue Game}
+
+\begin{itemize}
+	\item Nodes $\nodes$: To each characteristic of a murder (who, when, where, how etc) there is a categorical variable $\catvariableof{\node}$ with finite possibilities
+	\item Edges $\edges$: To each clue and accusation, there is a constraint tensor storing the possible states consistent with the clue
+\end{itemize}
+
+\subsection{Graph Coloring}
+
+Given a graph $\graph=(\nodes,\edges)$ we design
+\begin{itemize}
+	\item a variable to each nodes $\node\in\nodes$ carrying the color
+	\item a constraint to each edge $\edge\in\edges$ by differing colors, i.e. $\hypercoreofat{(\node_1,\node_2)}{\catvariableof{\node_1},\catvariableof{\node_2}} = \onesofat{\catindexof{\node_1}\neq\catindexof{\node_2}}{\catvariableof{\node_1},\catvariableof{\node_2}} $
+\end{itemize}
+
+\subsection{Knowledge Base Satisfiability}
+
+As described in the main report.
+
+\subsection{Sudoku}
+
+As described in the main report.
+
+
+
+
+
+
+
+
+
+
+\end{document}

@@ -696,7 +696,59 @@ This is a basis $\cpformat$ decomposition of size $\facdim$.
 In combination with \theref{the:rankCascade}, \theref{the:rencodingBasCP} also provides bounds on all other $\cpformat$ ranks defined in \defref{def:cpFormats}.
 This is obvious, since basis leg slices are the most restrictive properties compared with boolean, directed or basis+.
 
-While \theref{the:rencodingBasCP} provides a $\cpformat$ rank bound based on the domain factored system, we can also show in the next theorem a bound using the structure of the image.
+
+We restate \theref{the:functionImageDecompositionContraction} as a basis $\cpformat$ decomposition bound.
+
+\begin{theorem}
+    \label{the:functionDecompositionBasisCP}
+    Let $\exfunction$ and be a function between factored systems
+    \begin{align*}
+        \exfunction : [\catdim] \rightarrow  \facstates
+    \end{align*}
+    and $\exfunctionof{\atomenumerator}$ as in \theref{the:functionImageDecompositionContraction}.
+    Then $\rencodingofat{\exfunction}{\shortcatvariables,\catvariable}$ has a basis $\cpformat$ decomposition with decomposition index $\catvariable$, trivial slices $\onesat{\catvariable}$ leg vectors $\rencodingofat{\exfunctionof{\catenumerator}}{\catvariableof{\catenumerator},\catvariable}$, that is
+    \begin{align*}
+        \rencodingofat{\exfunction}{\catvariable,\shortcatvariables}
+        = \contractionof{\{\onesat{\catvariable}\} \cup \{\rencodingofat{\exfunctionof{\catenumerator}}{\catvariableof{\catenumerator},\catvariable}\,:\,\catenumeratorin}{\shortcatvariables}
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    The claimed decomposition directly follows from \theref{the:functionImageDecompositionContraction}, since the trivial scalar core $\scalarcoreat{\catvariable}=\onesat{\catvariable}$ does not influence the contraction and can be omitted.
+%    We interpret the decompositon as a basis $\cpformat$ decomposition, after adding a trivial scalar core $\scalarcoreat{\catvariable}=\onesat{\catvariable}$ to the contraction.
+\end{proof}
+
+Basis $\cpformat$ decompositions can be constructed by understanding the variable $\indvariableof{\insymbol}$ of the relational encoding of a function $\exfunction:\inset \rightarrow \outset$ as the slice selection variable.
+
+\begin{example}[Empirical distributions, see \theref{the:empCPRep}]
+    \label{exa:empDistCP}
+    Let there be a data map
+    \begin{align*}
+        \datamap : [\datanum] \rightarrow \facstates \, .
+    \end{align*}
+    We can use \theref{the:functionDecompositionBasisCP} to find a tensor network representation fo $\rencodingof{\datamap}$ as
+    \begin{align*}
+        \rencodingofat{\datamap}{\shortcatvariables,\datvariable}
+        = \contractionof{
+            \{\rencodingofat{\datamapof{\atomenumerator}}{\catvariableof{\atomenumerator},\datvariable} : \atomenumeratorin \}
+        }{\shortcatvariables,\datvariable} \, .
+    \end{align*}
+    This representation is a basis $\cpformat$ decomposition, when adding trivial scalar core.
+    This provides also a basis $\cpformat$ decomposition for the empirical distribution, since normation can be done by setting a slice core to $\frac{1}{\datanum}\onesat{\datvariable}$.
+\end{example}
+
+\begin{example}{Exponential families}
+    \label{exa:expFamCP}
+    The statistic has a $\cpformat$ decomposition with rank by the cardinality of states.
+    \begin{align*}
+        \rencodingofat{\sstat}{\headvariableof{[\seldim]},\shortcatvariables}
+        = \contractionof{
+            \{ \rencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables} \, : \, \selindexin \}
+        }{\headvariableof{[\seldim]},\shortcatvariables}
+    \end{align*}
+\end{example}
+
+% Now a image central bound
+While \theref{the:rencodingBasCP} and \theref{the:functionDecompositionBasisCP} provide $\cpformat$ rank bounds based on the domain factored system, we can also show in the next theorem a bound using the structure of the image.
 
 \begin{theorem}
     Let $\exfunction : \inset \rightarrow \outset$ be an arbitrary function and let us consider for each $\exfunctionimageelement\in\imageof{\exfunction}$ the indicator
@@ -741,110 +793,137 @@ While \theref{the:rencodingBasCP} provides a $\cpformat$ rank bound based on the
 The above claim still holds when replacing $\baspluscprankof{\cdot}$ with the ranks $\bascprankof{\cdot}$ or $\bincprankof{\cdot}$.
 For the rank $\bascprankof{\cdot}$ it leads to the bound of \theref{the:rencodingBasCP}, since summing the number of non zero coordinators of the indicators is the cardinality of the domain.
 
-\begin{example}{Conjunction of variables}
-    For the propositional formula $\exformula = \catvariableof{0} \land \catvariableof{1}$ we have
-    \[ \rencodingofat{\exformula}{\catvariableof{0},\catvariableof{1}}
-    = \onehotmapofat{1,1}{\catvariableof{0},\catvariableof{1}} \otimes \onehotmapofat{1}{\catvariableof{\exformula}}
-    +  (\onesat{\catvariableof{0},\catvariableof{1}} - \onehotmapofat{1,1}{\catvariableof{0},\catvariableof{1}}) \otimes \onehotmapofat{0}{\catvariableof{\exformula}}  \]
+\begin{example}[Propositional formulas]
+    Let us now illustrate how the above representation scheme can be leveraged for the sparse representation of propositional formulas.
+    For an arbitrary propositional formula $\exformula$ we have $\imageof{\exformula}\subset\ozset$ and the indicators
+    \begin{align*}
+        \onesofat{\exformula=1}{\shortcatvariables} = \formulaat{\shortcatvariables} \quad \text{and} \quad
+        \onesofat{\exformula=0}{\shortcatvariables} = \lnot\formulaat{\shortcatvariables} = \onesat{\shortcatvariables} - \formulaat{\shortcatvariables} \, .
+    \end{align*}
+
+    For the conjunction $\land[\catvariableof{0},\catvariableof{1}] = \catvariableof{0} \land \catvariableof{1}$ we have
+    \begin{align*}
+        \rencodingofat{\land}{\catvariableof{0},\catvariableof{1}}
+        = \tbasisat{\headvariableof{\land}} \otimes \onehotmapofat{1,1}{\catvariableof{0},\catvariableof{1}}
+        + \fbasisat{\headvariableof{\land}} \otimes (\onesat{\catvariableof{0},\catvariableof{1}} - \onehotmapofat{1,1}{\catvariableof{0},\catvariableof{1}})
+    \end{align*}
     and thus
-    \[ \baspluscprankof{\rencodingof{\exformula}} \leq 3\]
-    while $\bascprankof{\rencodingof{\exformula}} = 4$.
-    \red{Especially useful for $d$-ary conjunctions, see Remark~\ref{rem:naryConnectives}!}
-\end{example}
-
-
-
-%\subsubsect{Construction by averaging the incoming legs}
-
-We restate \theref{the:functionImageDecompositionContraction} as a basis $\cpformat$ decomposition bound.
-
-\begin{theorem}
-    \label{the:functionDecompositionBasisCP}
-    Let $\exfunction$ and be a function between factored systems
     \begin{align*}
-        \exfunction : [\catdim] \rightarrow  \facstates
+        \baspluscprankof{\rencodingof{\land}} \leq 3
     \end{align*}
-    and $\exfunctionof{\atomenumerator}$ as in \theref{the:functionImageDecompositionContraction}.
-    Then $\rencodingofat{\exfunction}{\shortcatvariables,\catvariable}$ has a basis $\cpformat$ decomposition with decomposition index $\catvariable$, trivial slices $\onesat{\catvariable}$ leg vectors $\rencodingofat{\exfunctionof{\atomenumerator}}{\catvariableof{\atomenumerator},\catvariable}$.
-\end{theorem}
-\begin{proof}
-    Reinterpretation of the contractions in the decomposition claimed in \theref{the:functionImageDecompositionContraction}.
-\end{proof}
+    while $\bascprankof{\rencodingof{\land}} = 4$.
 
-Basis $\cpformat$ decompositions can be constructed by understanding the variable $\indvariableof{\insymbol}$ of the relational encoding of a function $\exfunction:\inset \rightarrow \outset$ as the slice selection variable.
-
-\begin{example}{Empirical distributions, see \theref{the:empCPRep}}
-    \label{exa:empDistCP}
-    Let there be a data map
-    \[ \datamap : [\datanum] \rightarrow \facstates \, . \]
-    We can use \theref{the:functionDecompositionBasisCP} to find a tensor network representation fo $\rencodingof{\datamap}$ as
+    We can even generalize this observation to $\catorder$-ary conjunctions $\land\left[\shortcatvariables\right]=\catvariableof{0}\land\ldots\land\catvariableof{\catorder-1}$ (see \remref{rem:naryConnectives})
     \begin{align*}
-        \rencodingofat{\datamap}{\catvariable,\shortcatvariables}
-        = \contractionof{
-            \{\rencodingofat{\datamap^{\atomenumerator}}{\catvariable,\catvariableof{\atomenumerator}} : \atomenumeratorin \}
-        }{\catvariable,\shortcatvariables} \, .
+        {\land}[\shortcatvariables] = \bigotimes_{\catenumeratorin} \tbasisat{\catvariableof{\catenumerator}}
+        \quad \text{and} \quad
+        {\lnot\land}[\shortcatvariables] = \onesat{\shortcatvariables} - \bigotimes_{\catenumeratorin} \tbasisat{\catvariableof{\catenumerator}}
     \end{align*}
-    This representation is in the CP format, when adding trivial scalar core and and delta tensor to the data index.
-    It is furthermore in a basis CP format, since all $\rencodingof{\datamap^{\catenumerator}}$ are directed and binary tensors.
-    Normation to get the empirical distribution amounts to setting a slice core with coordinates $\frac{1}{\datanum}$.
+    and thus
+    \begin{align*}
+        \rencodingofat{\land}{\shortcatvariables} =
+        \tbasisat{\headvariableof{\land}} \otimes \left(\bigotimes_{\catenumeratorin} \tbasisat{\catvariableof{\catenumerator}}\right)
+        + \fbasisat{\headvariableof{\land}} \otimes \left(\bigotimes_{\catenumeratorin} \tbasisat{\catvariableof{\catenumerator}}\right)
+    \end{align*}
+    Thus, while the basis $\cpformat$ rank is $\bascprankof{\rencodingof{\land}}=2^{\catorder}$, the basis+ rank is bounded by $3$, independently of $\catorder$.
 \end{example}
-
-\begin{example}{Exponential families}
-    \label{exa:expFamCP}
-    The statistic has a $\cpformat$ decomposition with rank by the cardinality of states.
-\end{example}
-
 
 
 
 \sect{Representation by slice selection architectures}
 
-The set of slice-sparse tensors coincides with the expressivity of specific selection architecture.
+In this section, we show that the set of tensors respresentable in specific $\cpformat$ formats coincides with the expressivity of tailored selection architectures (see \charef{cha:formulaSelection}).
 We first define a slice selecting tensor and then show its decomposition into a formula selecting neural network.
 
-\begin{definition}
-    Given a set of atomic variables $\shortcatvariables$, a slice selecting tensor of maximal cardinality $\sliceorder$ is the tensor
-    \[ \sliceselectionmapat{\shortcatvariables,\selvariableof{0,0},\ldots,\selvariableof{\sliceorder-1,0},\selvariableof{0,1},\ldots,\selvariableof{\sliceorder-1,1}} \]
+\begin{definition}\label{def:cpSelection}
+    Given a set of categorical variables $\shortcatvariables$ with $\catdim=\max_{\catenumeratorin}\catdimof{\catenumerator}$, a slice selecting tensor of maximal cardinality $\sliceorder$ is the tensor
+    \begin{align*}
+        \sliceselectionmapat{\shortcatvariables,\selvariableof{0,0},\ldots,\selvariableof{\sliceorder-1,0},\selvariableof{0,1},\ldots,\selvariableof{\sliceorder-1,1}}
+    \end{align*}
     with dimensions
-    \[ \seldimof{\selenumerator,0} = 2, \seldimof{\selenumerator,1} = \atomorder \]
+    \begin{align*}
+         \seldimof{\selenumerator,0} = \catdim+1, \seldimof{\selenumerator,1} = \atomorder \quad \text{for} \quad \selenumerator\in[\sliceorder]
+    \end{align*}
     and coordinates
     \begin{align*}
         & \sliceselectionmapat{\shortcatvariables=\shortcatindices,\indexedselvariableof{0,0},\ldots,\indexedselvariableof{\sliceorder-1,0},\indexedselvariableof{0,1},\ldots,\indexedselvariableof{\sliceorder-1,1}} \\
         & \quad = \begin{cases}
                       1 & \text{if} \quad
-                      \forall_{\atomenumerator,\selenumerator} : \big(  \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \big) \Rightarrow  (\selindexof{\selenumerator,0} = \catindexof{\atomenumerator})  \\
-                      0
+                      \forall{\atomenumeratorin,\selenumerator\in[\sliceorder]} : \, \big(\selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq \catdim \big) \Rightarrow  (\selindexof{\selenumerator,0} = \catindexof{\atomenumerator})  \\
+                      0 & \text{else}
         \end{cases} \, .
     \end{align*}
 \end{definition}
 
-In the next two Lemmata we first show that the defined slice selecting tensors indeed selects slices and then provide a representation as a formula selecting network.
+% Variable and State selectors
+Intuitively, the selection variables $\selvariableof{\selenumerator,1}$ of $\sliceselectionmapof{\catorder,\sliceorder}$ select a variable out of $[\atomorder]$ to be included in $\variableset$ and the selection variables $\selvariableof{\selenumerator,0}$ select a corresponding state to that variable.
+As in \charef{cha:formulaSelectiong} we refer to variables $\selvariableof{\selenumerator,1}$ as variable selectors and $\selvariableof{\selenumerator,0}$ as state selectors.
+When $\selvariableof{\selenumerator,0}=\catdim$, the slice is left trivial, that is the selected variable is effectively not included in $\variableset$.
+This then allows to also represent slices where $\cardof{\variableset}<\sliceorder$.
+We in the following prove this more formally.
 
-\begin{lemma}
-    \label{lem:sliceFromSliceSelector}
-    If all input neurons with same selection index are agreeing on the connective index, the selected formula does not vanish and coincides with a slice to the set
-    \[ \variableset = \{ \atomenumerator \, : \, \exists_{\selenumeratorin}: \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \} \]
-    and for $\atomenumerator\in\variableset$
-    \[ \catindexof{\atomenumerator} = \selindexof{\selenumerator,0} \quad \text{if} \quad \selindexof{\selenumerator,1} = \atomenumerator \, . \]
-\end{lemma}
+\begin{theorem}
+    Let the non-vanishing indices of $\canparamat{\selvariableof{[\sliceorder]\times[\catdim+1]}}$ denote by $\{\selindexof{[\sliceorder]\times[\catdim+1]}^{\decindex} \, : \, \decindexin\}$.
+    Let further $\mathcal{M}\subset[\decdim]$ be the set of agreeing selection indices, that is
+    \begin{align*}
+        \mathcal{M} = \{ \decindex \, : \, \decindexin,\,
+        \forall{\selenumerator,\secselenumerator\in[\sliceorder]} : \big( \selindexof{\selenumerator,1}^\decindex= \selindexof{\secselenumerator,1}^\decindex  \land \selindexof{\selenumerator,1}^\decindex\neq\catdim \land \selindexof{\secselenumerator,1}^\decindex \neq \catdim \big)
+        \Rightarrow \big(\selindexof{\selenumerator,1}^\decindex = \selindexof{\secselenumerator,1}^\decindex \big)
+        \}
+    \end{align*}
+    Then
+    \begin{align*}
+        \contractionof{\sliceselectionmapat{\shortcatvariables,\selvariableof{[\sliceorder]\times[\catdim+1]}},\canparamat{\selvariableof{[\sliceorder]\times[\catdim+1]}}}{\shortcatvariables}
+        = \sum_{\decindex\in\mathcal{M}} \canparamat{\selvariableof{[\sliceorder]\times[\catdim+1]}=\selindexof{[\sliceorder]\times[\catdim+1]}^{\decindex}}
+        \contractionof{\{\onehotmapofat{\selindexof{\selenumerator,0}}{\catvariableof{\selindexof{\selenumerator,1}}} \, : \, \selenumerator\in[\sliceorder], \, \selindexof{\selenumerator,0}\neq\catdim \}}{\shortcatvariables}
+    \end{align*}
+    Further we have
+    \begin{align*}
+        \baspluscprankof{\contractionof{\sliceselectionmapat{\shortcatvariables,\selvariableof{[\sliceorder]\times[\catdim+1]}},\canparamat{\selvariableof{[\sliceorder]\times[\catdim+1]}}}{\shortcatvariables}}
+        \leq \sparsityof{\canparam} \, .
+    \end{align*}
+    %Thus, the slice selecting network represents $\cpformat$ decompositions of size $\cardof{\mathcal{M}}\leq \sparsityof{\canparam}$.
+\end{theorem}
 \begin{proof}
-    We need to show that
-    \begin{align}
-        \label{eq:sliceFromSliceSelector}
-        \sliceselectionmapat{\shortcatvariables,\indexedselvariableof{0,0},\ldots,\indexedselvariableof{\sliceorder-1,0},\indexedselvariableof{0,1},\ldots,\indexedselvariableof{\sliceorder-1,1}} = \onehotmapofat{\catindexof{\variableset}}{\shortcatvariables} \, .
-    \end{align}
-    If and only if an index $\tilde{\catindex}_{[\atomorder]}$ reduced on $\variableset$ does not coincide with $\catindexof{\variableset}$, we have $\onehotmapofat{\catindexof{\variableset}}{\shortcatvariables=\tilde{\catindex}_{[\atomorder]}}=0$ and otherwise $\onehotmapofat{\catindexof{\variableset}}{\shortcatvariables=\tilde{\catindex}_{[\atomorder]}}=1$ .
-    Let us notice, that this condition is equivalent to
-    \[ \forall_{\atomenumerator,\selenumerator} : \big(  \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \big) \Rightarrow  (\selindexof{\selenumerator,0} = \catindexof{\atomenumerator}) \]
-    and thus \eqref{eq:sliceFromSliceSelector} holds.
+    Let us notice, that whenever $\decindex\notin\mathcal{M}$ then
+    \begin{align*}
+        \sliceselectionmapat{\shortcatvariables,\indexedselvariableof{[\sliceorder]\times[\catdim+1]}}
+        = \zerosat{\shortcatvariables} \, ,
+    \end{align*}
+    since the condition for non-vanishing coordinates
+    \begin{align*}
+        \forall{\atomenumeratorin,\selenumerator\in[\sliceorder]} : \, \big(\selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq \catdim \big) \Rightarrow  (\selindexof{\selenumerator,0} = \catindexof{\atomenumerator})
+    \end{align*}
+    in \defref{def:cpSelection} cannot be satisfied for any $\shortcatindices$.
+    For $\decindex\notin\mathcal{M}$ we have
+    \begin{align*}
+        \sliceselectionmapat{\shortcatvariables,\indexedselvariableof{[\sliceorder]\times[\catdim+1]}}
+        =  \contractionof{\{\onehotmapofat{\selindexof{\selenumerator,0}}{\catvariableof{\selindexof{\selenumerator,1}}} \, : \, \selenumerator\in[\sliceorder], \, \selindexof{\selenumerator,0}\neq\catdim \}}{\shortcatvariables} \, .
+    \end{align*}
+    We now use these insights and linearity of contraction to get
+    \begin{align*}
+        \contractionof{\sliceselectionmapat{\shortcatvariables,\selvariableof{[\sliceorder]\times[\catdim+1]}},\canparamat{\selvariableof{[\sliceorder]\times[\catdim+1]}}}{\shortcatvariables}
+        &= \sum_{\decindexin} \canparamat{\selvariableof{[\sliceorder]\times[\catdim+1]}=\selindexof{[\sliceorder]\times[\catdim+1]}^{\decindex}}
+        \sliceselectionmapat{\shortcatvariables,\indexedselvariableof{[\sliceorder]\times[\catdim+1]}} \\
+        &= \sum_{\decindex\in\mathcal{M}} \canparamat{\selvariableof{[\sliceorder]\times[\catdim+1]}=\selindexof{[\sliceorder]\times[\catdim+1]}^{\decindex}}
+        \contractionof{\{\onehotmapofat{\selindexof{\selenumerator,0}}{\catvariableof{\selindexof{\selenumerator,1}}} \, : \, \selenumerator\in[\sliceorder], \, \selindexof{\selenumerator,0}\neq\catdim \}}{\shortcatvariables}
+    \end{align*}
+    This shows the decomposition claim.
+    We notice, that this is a basis+ $\cpformat$ decomposition of size $\mathcal{M}$ and thus
+    \begin{align*}
+        \baspluscprankof{\contractionof{\sliceselectionmapat{\shortcatvariables,\selvariableof{[\sliceorder]\times[\catdim+1]}},\canparamat{\selvariableof{[\sliceorder]\times[\catdim+1]}}}{\shortcatvariables}}
+        \leq \cardof{\mathcal{M}} \leq \sparsityof{\canparam} \, .
+    \end{align*}
 \end{proof}
 
+Towards a practicle usage of this representation scheme for basis+ $\cpformat$ decompositions, let us show that the slice selecting tensor coincides with a formula selecting network.
 
 \begin{lemma}
     \label{lem:fsnnRepresentingSliceSelector}
     The slice selection tensor coincides with a formula selecting neural network with neurons (see Figure~\ref{fig:sliceSelectingNN}):
     \begin{itemize}
-        \item unary input neuron enumerated by $\selenumerator$, selecting one of the $\shortcatvariables$ with the variable $\selvariableof{\selenumerator,1}$ and selecting a connective in $\{\lnot, \mathrm{Id}, \mathrm{True}\}$ by $\selvariableof{\selenumerator,0}$
+        \item unary state selecting neurons enumerated by $\selenumerator$, selecting one of the $\shortcatvariables$ with the variable $\selvariableof{\selenumerator,1}$ and selecting a state, extended by a possible choice of trivial legs $\ones$
+%        \item unary input neuron enumerated by $\selenumerator$, selecting one of the $\shortcatvariables$ with the variable $\selvariableof{\selenumerator,1}$ and selecting a connective in $\{\lnot, \mathrm{Id}, \mathrm{True}\}$ by $\selvariableof{\selenumerator,0}$
         \item $\sliceorder$-ary output neuron fixed to the $\land$ connective.
     \end{itemize}
 \end{lemma}
@@ -852,19 +931,49 @@ In the next two Lemmata we first show that the defined slice selecting tensors i
     This can be easily checked on each coordinate.
 \end{proof}
 
-It follows, that the expressivity of the slice selecting neural network coincides with the set of tensors with a bound on their slice sparsity, when $\sliceorder\geq\atomorder$.
-For arbitrary $\sliceorder$, the following theorem holds.
+% Case of leg-dimension 2
+If $\catdimof{\catenumerator}=2$ for $\catenumeratorin$, the state selector chooses between the connectives $\{\lnot, \mathrm{Id}, \mathrm{True}\}$.
+We can in that case understand each slice by a logical term.
 
-\begin{theorem}
-    Let $\sliceselectionmapat{\shortcatvariables,\selvariable}$ be a slice selecting tensor.
-    For any parameter tensor $\canparamat{\selvariable}$ we have
-    \[ \baspluscprankof{\contractionof{\sliceselectionmapat{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables}} \leq \bascprankof{\canparamat{\selvariable}} \, . \]
-\end{theorem}
-\begin{proof}
-    Each non-vanishing coordinate of $\canparam$ represents by \lemref{lem:fsnnRepresentingSliceSelector} a slice and their weighted sum is thus a monomial decomposition.
-%	\red{Use the above lemma for that on each slice.}
-%	Show, how a coordinate of $\canparam$ corresponds with a slice determining tuple: $\sliceset$ determined by the selection indices.
-\end{proof}
+%
+%
+%In the next two lemmata we first show that the defined slice selecting tensors indeed selects slices and then provide a representation as a formula selecting network.
+%
+%\begin{lemma}
+%    \label{lem:sliceFromSliceSelector}
+%    If all input neurons with same selection index are agreeing on the connective index, the selected formula does not vanish and coincides with a slice to the set
+%    \[ \variableset = \{ \atomenumerator \, : \, \exists_{\selenumeratorin}: \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \} \]
+%    and for $\atomenumerator\in\variableset$
+%    \[ \catindexof{\atomenumerator} = \selindexof{\selenumerator,0} \quad \text{if} \quad \selindexof{\selenumerator,1} = \atomenumerator \, . \]
+%\end{lemma}
+%\begin{proof}
+%    We need to show that
+%    \begin{align}
+%        \label{eq:sliceFromSliceSelector}
+%        \sliceselectionmapat{\shortcatvariables,\indexedselvariableof{0,0},\ldots,\indexedselvariableof{\sliceorder-1,0},\indexedselvariableof{0,1},\ldots,\indexedselvariableof{\sliceorder-1,1}} = \onehotmapofat{\catindexof{\variableset}}{\shortcatvariables} \, .
+%    \end{align}
+%    If and only if an index $\tilde{\catindex}_{[\atomorder]}$ reduced on $\variableset$ does not coincide with $\catindexof{\variableset}$, we have $\onehotmapofat{\catindexof{\variableset}}{\shortcatvariables=\tilde{\catindex}_{[\atomorder]}}=0$ and otherwise $\onehotmapofat{\catindexof{\variableset}}{\shortcatvariables=\tilde{\catindex}_{[\atomorder]}}=1$ .
+%    Let us notice, that this condition is equivalent to
+%    \[ \forall_{\atomenumerator,\selenumerator} : \big(  \selindexof{\selenumerator,1} = \atomenumerator \land \selindexof{\selenumerator,0} \neq 2 \big) \Rightarrow  (\selindexof{\selenumerator,0} = \catindexof{\atomenumerator}) \]
+%    and thus \eqref{eq:sliceFromSliceSelector} holds.
+%\end{proof}
+%
+%
+
+%
+%It follows, that the expressivity of the slice selecting neural network coincides with the set of tensors with a bound on their slice sparsity, when $\sliceorder\geq\atomorder$.
+%For arbitrary $\sliceorder$, the following theorem holds.
+%
+%\begin{theorem}
+%    Let $\sliceselectionmapat{\shortcatvariables,\selvariable}$ be a slice selecting tensor.
+%    For any parameter tensor $\canparamat{\selvariable}$ we have
+%    \[ \baspluscprankof{\contractionof{\sliceselectionmapat{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables}} \leq \bascprankof{\canparamat{\selvariable}} \, . \]
+%\end{theorem}
+%\begin{proof}
+%    Each non-vanishing coordinate of $\canparam$ represents by \lemref{lem:fsnnRepresentingSliceSelector} a slice and their weighted sum is thus a monomial decomposition.
+%%	\red{Use the above lemma for that on each slice.}
+%%	Show, how a coordinate of $\canparam$ corresponds with a slice determining tuple: $\sliceset$ determined by the selection indices.
+%\end{proof}
 
 
 \begin{figure}[h]
@@ -872,7 +981,8 @@ For arbitrary $\sliceorder$, the following theorem holds.
         \input{PartIII/tikz_pics/sparse_calculus/slice_selecting_nn.tex}
     \end{center}
     \caption{Representation of a basis+ Tensor by the contraction of a parameter tensor $\canparam$ with a slice selecting architecture $\fselectionmap$, which has a decomposition as a formula selecting neural network (see \lemref{lem:fsnnRepresentingSliceSelector}).
-    The nonzero coordinates of $\canparam$ represent the (see \lemref{lem:sliceFromSliceSelector}).}
+    The nonzero coordinates of $\canparam$ represent slices.
+    }
 \end{figure}\label{fig:sliceSelectingNN}
 
 
