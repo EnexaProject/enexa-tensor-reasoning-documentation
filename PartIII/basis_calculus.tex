@@ -769,6 +769,115 @@ This theorem shows, that while relation encodings can represent any composition 
 To see this, we interpret $\sstat$ and $\exfunction$ in Theorem~\ref{the:linCompSelEncoding} as basis decompositions of linear maps.
 
 
+\sect{Value subspaces of functions}\label{sec:HT}
+
+We here provide a subspace perspective for the sparse representation of decomposable functions as tensor networks in the $\rencodingof{\cdot}$ relational encoding scheme of basis calculus.
+
+\begin{definition}
+    Given any function $\exfunction:\inset\rightarrow\outset$
+    \begin{align*}
+        \subspaceof{\exfunction}
+        = \left\{ \contractionof{
+            \rencodingofat{\exfunction}{\indvariableof{\outsymbol},\indvariableof{\insymbol}},\headcoreat{\indvariableof{\outsymbol}}
+            }{\indvariableof{\outsymbol},\indvariableof{\insymbol}} \, : \, \headcoreat{\indvariableof{\outsymbol}} \in \rr^{\inddimof{\outsymbol}}
+        \right\}
+    \end{align*}
+    %Given any function $\exfunction$ on $\facstates$ we define its value subspace as
+    %\[ \subspaceof{\exfunction}
+    %= \left\{\sbcontractionof{\rencodingofat{\exfunction}{\headvariableof{\exfunction},\shortcatvariables},W[\headvariableof{\exfunction}]}{\shortcatvariables} \, : \, W[\headvariableof{\exfunction}] \in \rr^{\cardof{\imageof{\exfunction}}} \right\} \]
+\end{definition}
+We always have $\onesat{\shortcatvariables}\in\subspaceof{\exfunction}$, when choosing $W=\onesat{\headvariableof{\exfunction}}$.
+
+A value subspace of its function
+\begin{align*}
+    \subspaceof{\exfunction}
+    = \spanof{\onesofat{\exfunction=\exfunctionimageelement}{\indvariableof{\insymbol}} \, : \, \exfunctionimageelement\in\imageof{\exfunction}}
+\end{align*}
+
+We further define contractions of subspaces.
+
+\begin{definition}
+    Given two subspaces $\subspaceof{1},\subspaceof{2}$ of tensors with variables $\catvariableof{\nodesone}$, $\catvariableof{\nodestwo}$, their contraction is
+    \begin{align*}
+        \contractionof{\subspaceof{1},\subspaceof{2}}{\catvariableof{\secnodes}}
+        = \left\{ \contractionof{\hypercoreofat{1}{\nodesone},\hypercoreofat{2}{\nodestwo}}{\catvariableof{\secnodes}}
+        \, : \, \hypercoreofat{1}{\nodesone}\in\subspaceof{1}, \, \hypercoreofat{2}{\nodesone}\in\subspaceof{2} \right\} \, .
+    \end{align*}
+\end{definition}
+
+Importantly, the contraction of two subspaces is in general not a subspace.
+
+\subsect{Cartesian products of functions}
+
+Since always $\onesat{\shortcatvariables}\in\subspaceof{\exfunction}$, we have
+\begin{align*}
+    \contractionof{\subspaceof{1}} \subset \contractionof{\subspaceof{1},\subspaceof{\exfunction}}{\catvariableof{\secnodes}}
+\end{align*}
+
+We define the cartesian product of functions on the same input set $\inset$ and output sets $\arbsetof{1,\outsymbol}$, $\arbsetof{2,\outsymbol}$ as the function
+\begin{align*}
+    (\exfunction,\secexfunction) : \inset \rightarrow \arbsetof{1,\outsymbol} \times \arbsetof{2,\outsymbol}
+\end{align*}
+with
+\begin{align*}
+    (\exfunction,\secexfunction)(z) = (\exfunctionat{z},\secexfunctionat{z}) \, .
+\end{align*}
+For its subspace we have
+\begin{align*}
+    \subspaceof{(\exfunction,\secexfunction)}
+    = \spanof{\contractionof{\subspaceof{\exfunction},\subspaceof{\secexfunction}}{\shortcatvariables}} \, .
+\end{align*}
+
+% Application on exponential families
+We now apply this developments in the characterization of distributions realizable by an exponential family.
+
+\begin{example}[Subspace of statistics]
+    The realizable distributions defined in \defref{def:realizableStatDistributions} given a statistic function are then
+    \begin{align*}
+        \realizabledistsof{\sstat,\elgraph} = \contractionof{\subspaceof{\sstatcoordinateof{\selindex}} \, : \, \selindexin}{\shortcatvariables} \, .
+    \end{align*}
+    The set of realizable distributions therefore increases with each added coordinate of the statistic.
+
+    Conversely, taking the $\sstat$ as the function to be represented, we have
+    \begin{align*}
+        \realizabledistsof{\sstat,\maxgraph} = \subspaceof{\sstat} = \spanof{\realizabledistsof{\sstat,\elgraph}} \, .
+    \end{align*}
+\end{example}
+
+\subsect{Composition of functions}
+
+Composition of functions are then understood as contractions of their corresponding subspaces.
+The subspace of a composition satisfied an inclusion relation, which is the opposite of those for cartesian products, that is
+\begin{align}
+    \subspaceof{\exfunction\exconnective\secexfunction}
+    \subset \subspaceof{(\exfunction,\secexfunction)} \, .
+\end{align}
+
+\begin{example}[Propositional Formulas]
+    Each formula defines by its relational encoding the subspace of $\atomspace$
+    \begin{align*}
+        \subspaceof{\exformula} = \spanof{\lnot\formulaat{\shortcatvariables},\formulaat{\shortcatvariables}} \, .
+    \end{align*}
+    For composition of formulas $\exformula,\secexformula$ with a connective $\exconnective$ acting on their images we have % is then a choice of a subspace %\contractionof{\subspaceof{(\exformula,\secexformula)}}
+    \begin{align*}
+        \subspaceof{\exformula\exconnective\secexformula}
+        \subset\subspaceof{(\exformula,\secexformula)} \, .
+    \end{align*}
+    A connective $\exconnective$ can thus be understood as a selection of a two-dimensional subspace in the four-dimensional subspace of the cartesian product of the connected formulas.
+    The contraction of atomic subspaces further span the space
+    \begin{align*}
+	    \atomspace = \spanof{\contractionof{
+		    \subspaceof{\atomicformulaof{\atomenumerator}} \, : \, \atomenumeratorin
+	    }{\shortcatvariables}} \, .
+    \end{align*}
+\end{example}
+
+%\subsect{Approximation problems}
+%Reconstruction of a formula given its formula tensor amounts to finding the HT Decomposition under the constraints of subspace choices according to the allowed logical connectives.
+%Given a set of positive and negative examples of a formula poses further an approximation problem of the examples by a HT Decomposition.
+
+
+
 \sect{Effective Coordinate Calculus}\label{sec:effectiveCalculus}
 
 % Motivation: Effective Coordinate Calculus
