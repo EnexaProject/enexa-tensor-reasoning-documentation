@@ -6,16 +6,16 @@ We in this chapter investigate methods, to replace hard to be sampled tensor net
 
 \sect{Approximation of Energy tensors}
 
-\subsect{Direct Approximation}
-
-Direct approximation is the problem
-	\[ \argmin_{\canparam\in\Gamma^{\graph}} \|\energytensorat{\shortcatvariables} - \canparamat{\shortcatvariables}\|^2 \, . \]
-
-
-\subsect{Approximation involving Selection Architectures}
+The Hilbert-Schmidt norm of a tensor is the contraction of the coordinatewise transform with the square function
+\begin{align*}
+	\|\hypercorewith\|_2= \sqrt{\contraction{\left(\hypercorewith\right)2}} \, .
+\end{align*}
 
 Approximation involving a selection architecture $\fselectionmap$ is the problem
 	\[ \argmin_{\canparam\in\Gamma^{\graph}} \|\energytensor - \sbcontractionof{\sencodingof{\fselectionmap},\canparam}{\shortcatvariables}\|^2 \, . \]
+
+Direct approximation is then the choice of the minterm statistic
+	\[ \argmin_{\canparam\in\Gamma^{\graph}} \|\energytensorat{\shortcatvariables} - \canparamat{\shortcatvariables}\|^2 \, . \]
 
 In a tensor network diagram we depict this as
 \begin{center}
@@ -40,7 +40,7 @@ This trick can be applied in MAP inference of MLN and the proposal distribution.
 \subsect{Weighted Squares Loss Trick}
 
 \begin{lemma}
-	Let $\hypercore$ be a Boolean tensor, that is $\imageof{\hypercore}\subset\{0,1\}$.
+	Let $\hypercore$ be a boolean tensor, that is $\imageof{\hypercore}\subset\{0,1\}$.
 	Then
 		\[ \hypercoreat{\shortcatvariables} = \onesat{\shortcatvariables} - \left( \hypercoreat{\shortcatvariables} - \onesat{\shortcatvariables} \right)^2  \]
 	where $\ones$ is a tensor with same shape as $\hypercore$ and all coordinates being $1$.
@@ -102,14 +102,27 @@ In many situations (e.g. disjoint model sets supported at positive data) the obj
 As a result, we do not solve the previously posed one-hot encoding problem, when allowing such an hypothesis embedding.
 
 
-\begin{example}[Fitting a tensor by a formula tensor]\label{exa:formulaFitting}
-	Task: Given a tensor $\hypercore$, find a formula $\exformula\in\formulaset$ such that it coincides with $\hypercore$.
+\begin{example}[Fitting a boolean tensor by a formula tensor]\label{exa:formulaFitting}
+	Given a tensor $\hypercore$, we want to find a formula $\exformula\in\formulaset$ such that it approximates $\hypercore$.
 
 	If $\hypercore$ is a binary tensor, we understand it as a formula and want to find an $\exformula$ such that its number of worlds is maximal, that is solve the problem
 		\[ \argmax_{\exformula\in\formulaset}\sbcontraction{\exformula\Leftrightarrow\hypercore}  \, . \]
 
 	We can use the squares risk trick and get an equivalent problem
-		\[ \argmin_{\exformula\in\formulaset} \| \sbcontractionof{\exformula\Leftrightarrow\hypercore}{\shortcatvariables}  - \onesat{\shortcatvariables} \|^2 \, . \]
+		\[ \argmin_{\exformula\in\formulaset} \|\sbcontractionof{\exformula\Leftrightarrow\hypercore}{\shortcatvariables}  - \onesat{\shortcatvariables} \|^2 \, . \]
+
+	We have since $\hypercore$ and $\exformula$ are boolean
+	\begin{align*}
+		\|\sbcontractionof{\exformula\Leftrightarrow\hypercore}{\shortcatvariables}  - \onesat{\shortcatvariables} \|^2
+		= 	\|\sbcontractionof{\exformula}{\shortcatvariables}  - \hypercoreat{\shortcatvariables} \|^2
+	\end{align*}
+
+	Now, when representing $\formulaset$ in a formula selecting architecture we have
+		\[ \argmin_{\canparam\in\Gamma_1} \|\sbcontractionof{\fselectionmap,\canparam}{\shortcatvariables}  - \hypercoreat{\shortcatvariables}\|^2 \, . \]
+	where $\Gamma_1$ is the set of basis tensors.
+
+	When we extend $\Gamma_1$ to a set including the trivial tensor $\onesat{\selvariable}$, when the formulas $\exformula$ are pairwise disjoint and $\hypercorewith=\onesat{\shortcatvariables}$, then the solution would be $\onesat{\selvariable}$.
+
 \end{example}
 
 %\begin{remark}{Least Squares Loss by Tensor Fitting}
@@ -158,14 +171,14 @@ Hidden variables, that is variables only present in $\graph$, but not in the sen
 When there are no hidden variables, the maximum of $\canparam$ can be found by maximum calibration through a message passing algorithm, since no hidden variable has to marginalized.}
 
 
-In case of skeleton expressions with many placeholders further decomposition for algorithmic efficiency are required.
-\begin{itemize}
-	\item Elementary Format ($\elformat$-Format): 
-	\item $\cpformat$-Format: Closest to sum of formula tensors (when all vectors are basis, then have a sum).
-	\item $\ttformat$-Format: Showed better heuristic performance in optimization
-\end{itemize}
+%In case of skeleton expressions with many placeholders further decomposition for algorithmic efficiency are required.
+%\begin{itemize}
+%	\item Elementary Format ($\elformat$-Format):
+%	\item $\cpformat$-Format: Closest to sum of formula tensors (when all vectors are basis, then have a sum).
+%	\item $\ttformat$-Format: Showed better heuristic performance in optimization
+%\end{itemize}
 
-For any tensor network decomposition into cores $\canparamof{\selenumerator}$ have the derivative $\frac{\partial}{\partial \canparamof{\selenumerator}} \canparam$ as the tensor network with out the core $\canparamof{\selenumerator}$.
+%For any tensor network decomposition into cores $\canparamof{\selenumerator}$ have the derivative $\frac{\partial}{\partial \canparamof{\selenumerator}} \canparam$ as the tensor network with out the core $\canparamof{\selenumerator}$.
 
 %\begin{remark}[Parametercores being basis tensors]
 %	When the parameter core is a basis tensor, the contraction with the parametercore coincides with the respective formula tensor.
@@ -214,7 +227,7 @@ Here the sensing matrices are deterministic, since constructed as selection tens
 
 
 
-\begin{example}[Propositional Formulas]
+\begin{example}[Sensing matrix for propositional Formulas]
 	Let there be a set $\formulaset$ of formulas, then we have
 	\begin{align*}
 		\sbcontractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariableof{\insymbol}},\sencodingofat{\formulaset}{\shortcatvariables,\selvariableof{\outsymbol}}}{\indexedselvariableof{\insymbol},\indexedselvariableof{\outsymbol}}
@@ -228,21 +241,22 @@ Here the sensing matrices are deterministic, since constructed as selection tens
 			0 & \text{else} 
 		\end{cases} \, . 
 	\end{align*}
+	In that case, the sensing matrix is a restricted isometry, in the sense that the norm of any mapped vector is its norm mutliplied by a factor between the smallest and the largest $\sbcontraction{\formulaof{\insymbol}}$.
 \end{example}
 
 
-\begin{example}[Slice selection networks]
-	
+\begin{example}[Sensing matrix for slice selection networks]
+
 	For the slice selection network
 	\begin{align*}
-		\sbcontractionof{\sliceselectionmapat{\shortcatvariables,\selvariableof{\insymbol}},\sliceselectionmapat{\shortcatvariables,\selvariableof{\outsymbol}}}{\indexedselvariableof{\insymbol},\indexedselvariableof{\outsymbol}}
-		= \begin{cases}
+		& \sbcontractionof{\sliceselectionmapat{\shortcatvariables,\selvariableof{\insymbol}},\sliceselectionmapat{\shortcatvariables,\selvariableof{\outsymbol}}}{\indexedselvariableof{\insymbol},\indexedselvariableof{\outsymbol}} \\
+		& \quad = \begin{cases}
 			0 & \text{if for a }\seccatenumerator\in\variablesetof{\selindexof{\insymbol}}\cap\variablesetof{\selindexof{\outsymbol}}\text{ we have }\catindexof{\seccatenumerator}^{\selindexof{\insymbol}}\neq\catindexof{\seccatenumerator}^{\selindexof{\outsymbol}} \\
 			\prod_{\seccatenumerator\notin\variablesetof{\selindexof{\insymbol}}\cup\variablesetof{\selindexof{\outsymbol}}} \catdimof{\seccatenumerator}& \text{else} 
 		\end{cases} \, . 
 	\end{align*}
 
-	Given a fixed $\selindexof{\insymbol}$, the maximum value in the respective slice is thus taken at $\selindexof{\insymbol}=\selindexof{\outsymbol}$
+	Given a fixed $\selindexof{\insymbol}$, the maximum value in the respective slice is thus taken at $\selindexof{\insymbol}=\selindexof{\outsymbol}$.
 \end{example}
 
 
