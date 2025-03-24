@@ -5,21 +5,10 @@ Logical approaches pay here special attention to situations of certainty, where 
 In this situation, we say that the corresponding formula is entailed.
 %Such situations are called entailment, and we will investigate how we can find these by contractions.
 
-
 % From Probabilistic 
-We start the discussion by showing how formulas can be interpreted by distributions and define logical entailment based on corresponding probabilistic queries.
-This enables us to define logical entailment based on the resulting conditional distributions.
-
-
-%% Where to put?
-\begin{remark}[Interpretation of Contractions in Logical Reasoning]
-	The coordinates of contracted boolean tensor networks describe whether the by the coordinate indexed world is a model of the Knowledge Base at hand.
-	Contractions, which only leave a part variables open, store the counts of the world respecting conditions given by the choice of slices. 
-	When contracting without open variables, we thus get the total world count.
-	
-	This is consistent with the probabilistic interpretation of contractions, when applying the frequentist interpretation of probability and defining normed worldcounts as probabilities.
-\end{remark}
-
+We start the discussion with the derivation of contraction criteria for logical entailment.
+We interpret formulas by distributions and extend logical entailment towards probabilistic reasoning.
+%This enables us to define logical entailment based on the resulting conditional distributions.
 
 \sect{Entailment in Propositional Logics}
 
@@ -29,13 +18,13 @@ Let us define this relation first based on the models of a knowledge base and a 
 \begin{definition}[Entailment of propositional formulas]\label{def:logicalEntailment}
 	Given two propositional formulas $\kb$ and $\exformula$ we say that $\kb$ entails $\exformula$, denoted by $\kb\models\exformula$, if any model of $\kb$ is also a model of $\exformula$, that is
 	\begin{align*}
-		\uniquantwrtof{\shortcatindices\in\atomstates}{\imppremhead{\kbat{\indexedshortcatvariables}=1}{\formulaat{\indexedshortcatvariables}=1}} \, .
+		\uniquantwrtof{\shortatomindicesin}{\imppremhead{\kbat{\indexedshortcatvariables}=1}{\formulaat{\indexedshortcatvariables}=1}} \, .
 	\end{align*}
 	If $\kb\models\lnot\exformula$ holds, we say that $\kb$ contradicts $\exformula$.
 \end{definition}
 
 % Connection with tensor formalism
-To use the tensor network formalism for the decision of entailment, we will in the following explore three equivalent criteria based.
+To use the tensor network formalism for the decision of entailment, we will in the following develop three equivalent criteria for entailment. %, based on contractions.
 
 \subsect{Deciding Entailment by contractions}
 
@@ -54,7 +43,11 @@ First of all, we can decide entailment based on vanishing contractions with the 
 		\contraction{\kb,\lnot\exformula} =
 		\sum_{\shortatomindicesin} \kbat{\indexedshortcatvariables} \cdot \exformulaat{\indexedshortcatvariables} > 1 \, .
 	\end{align*}
-	Thus, whenever the contraction vanishes, we have for all $\shortatomindicesin$ that $\big(\kbat{\indexedshortcatvariables}=1\big) \rightarrow \big(\formulaat{\indexedshortcatvariables}=1\big)$.
+	Thus, whenever the contraction vanishes, we have
+	\begin{align*}
+		\uniquantwrtof{\shortatomindicesin}{\imppremhead{\kbat{\indexedshortcatvariables}=1}{\formulaat{\indexedshortcatvariables}=1}} \, .
+	\end{align*}
+	%for all $\shortatomindicesin$ that $\big(\kbat{\indexedshortcatvariables}=1\big) \rightarrow \big(\formulaat{\indexedshortcatvariables}=1\big)$.
 
 	\proofrightsymbol:
 	Conversely, if the contraction $\contraction{\kb,\lnot\exformula}$ does not vanish, we would find $\shortatomindicesin$ with $\kbat{\indexedshortcatvariables}=1$ and $\lnot\formulaat{\indexedshortcatvariables}=1$, therefore $\formulaat{\indexedshortcatvariables}=0$.
@@ -69,7 +62,6 @@ Therefore, entailment and contradiction can be decided simultaneously by a singl
 %\begin{align*}
 %	\hypercore = \sbcontractionof{\kbat{\shortcatvariables},\formulaat{\shortcatvariables,\exformulavar}}{\exformulavar}
 %\end{align*}
-
 
 \begin{theorem}\label{the:entailmentContradictionContraction}
 	Given propositional formulas $\kb$ and $\exformula$ we build
@@ -109,7 +101,10 @@ For two propositional formulas, we denote to this end $\exformula\prec\secexform
 	We have $\kb\models\exformula$ if and only if $\kbat{\shortcatvariables}\prec\exformulaat{\shortcatvariables}$.
 \end{theorem}
 \begin{proof}
-	Since both $\kb$ and $\exformula$ are boolean tensors, we have for any $\shortatomindicesin$ that $\kbat{\indexedshortcatvariables},\formulaat{\indexedshortcatvariables}\in\ozset$.
+	Since both $\kb$ and $\exformula$ are boolean tensors, we have for any $\shortatomindicesin$ that
+	\begin{align*}
+		\kbat{\indexedshortcatvariables},\formulaat{\indexedshortcatvariables}\in\ozset \, .
+	\end{align*}
 	Thus,
 	\begin{align*}
 		\uniquantwrtof{\shortatomindicesin}{\kbat{\indexedshortcatvariables}\leq\formulaat{\indexedshortcatvariables}}
@@ -154,7 +149,6 @@ This is especially interesting for the sparse representation of Knowledge Bases.
 \end{proof}
 
 %This provides us with another interpretation of the entailment relation, in terms of redundant formulas.
-
 %\begin{remark}[Sparsest Description of a Knowledge Base]
 %	Given a set of worlds indexed by $\hypercore$, find the sparsest set of formulas $\kb$ such that
 %		\[ \hypercore = {\kb} \]
@@ -173,10 +167,6 @@ Exploiting \theref{the:entailmentContradictionContraction} we decide these situa
 The function $\mathrm{TELL}(\exformula)$ incorporates an additional formula $\exformula$ into a Knowledge Base $\kb$.
 Here we exploit \theref{the:ReduncancyOfEntailed} and do not add a formula, which is entailed in order to maintain a sparse representation. %(in which case it returns Incons).
 The function further refuses to add a formula, which would make the Knowledge Base inconsistent (returns Refused) and only changes the Knowledge Base in case of a contingent formula (returns Added).
-
-%
-
-%We now show how to implement a propositional Knowledge Base with the TELL and ASK operations based on \theref{cor:parallelCriterion}, in \algoref{alg:contractionKB}
 
 % Works also for Markov Networks!
 \begin{algorithm}[hbt!]
@@ -216,62 +206,94 @@ TELL($\kb$, $\exformula$)
 \end{algorithm}
 
 
+
 \sect{Formulas as Random Variables}
 
 %\red{Aim here: Relate with the probabilistic reasoning concepts of marginal and conditional distributions.}
 %\red{Given a probability distribution $\probtensor$ of atoms we add a variable by building the Markov Network of $\probtensor$ and $\rencodingof{\exformula}$ to get a joint distribution of the atoms and a query formula $\exformula$}
 
 In order to present logical entailment as extreme cases of more generic probabilistic reasoning, we now provide probabilistic interpretations of propositional formulas.
-There are two ways of interpreting formulas as conditional probabilities.
+% Interpretation of relational encoding as conditional probabilities
+In the next sections, we will investigate two ways of interpreting relational encodings of formulas as conditional probabilities.
 The atom centric one, which understands the atomic legs as conditions and calculates the truth of the formula, leads to a direct interpretation of $\rencodingof{\exformula}$ as a conditional probability distribution.
 When instead taking the formula itself centric, we get uniform distributions of its models and the complement, when conditioning on the satisfaction of the formula.
 
-\subsect{Conditioning on the atoms}
+\subsect{Probabilistic queries by formulas}
+
+Let $\probat{\shortcatvariables}$ be a joint distribution of atomic variables $\catvariableof{\atomenumerator}$, where $\atomenumeratorin$, taking variables in $\catdimof{\atomenumerator}=2$.
+Let us then ask a query in the formalism of \defref{def:queries}, where the query function is assumed to be a propositional formula.
+The joint distribution can be extended to a variable $\exformulavar$ representing the satisfaction of a formula $\exformula$ given an assignment to the atoms, by adding its relational encoding as
+\begin{align*}
+	\probat{\exformulavar,\shortcatvariables}
+	= \contractionof{\rencodingofat{\exformula}{\exformulavar,\shortcatvariables},\probat{\shortcatvariables}}{\shortcatvariables} \, .
+\end{align*}
+Let us note, that this is a normed probability distribution, since $\contractionof{\rencodingofat{\exformula}{\exformulavar,\shortcatvariables}}{\shortcatvariables}=\onesat{\shortcatvariables}$ and $\probat{\shortcatvariables}$ is normed.
+
+Conditioning this probability distribution on the atoms, we get
+\begin{align*}
+	\condprobof{\formulavar}{\shortcatvariables}
+	= \rencodingofat{\exformula}{\shortcatvariables} \, .
+\end{align*}
+We thus interpret the relational encoding of a formula as a conditional probability of $\exformula$ given the assignments to the atoms $\shortcatvariables$ and depict this by
+	\begin{center}
+		\input{./PartI/tikz_pics/logic_reasoning/atoms_as_condition.tex}
+	\end{center}
+To be more precise, we have for any $\shortcatindices$
+\begin{align*}
+	\condprobof{\formulavar}{\indexedshortcatvariables} = 
+	\begin{cases}
+		\fbasisat{\formulavar} & \text{if} \quad \exformulaat{\indexedshortcatvariables} = 0 \text{, i.e. $\shortcatindices$ is not a model of $\exformula$} \\
+		\tbasisat{\formulavar} & \text{if} \quad \exformulaat{\indexedshortcatvariables} = 1 \text{, i.e. $\shortcatindices$ is a model of $\exformula$}
+	\end{cases} \, .
+\end{align*}
+
+% Interpretation of directionality as
+Since the conditional query $\condprobof{\formulavar}{\shortcatvariables}$ provides an interpretation of $\rencodingof{\exformula}$ as a conditional probability, we interpret $\probat{\exformulavar}$ as a marginal distribution inherited by $\probat{\shortcatvariables}$.
+This is also reflected in the fact that both $\condprobof{\formulavar}{\shortcatvariables}$ and $\rencodingofat{\exformula}{\exformulavar,\shortcatvariables}$ are directed, since the first is a normation by \defref{def:queries} and the second an relational encoding of a formula.
+Probabilistic queries (see \defref{def:queries}), which functions are propositional formulas are thus answered by the satisfaction rate of a propositional formula given a joint distribution of the corresponding atoms.
+
+
+%This trivialization is depicted as:
+%\begin{center}
+%	\input{./PartI/tikz_pics/logic_reasoning/ones_property_ft.tex}
+%\end{center}
 
 %% Conditional interpretation -> Formulas as conditional probability ("local")
-Our main interpretation understands each tuple of indices $\atomindices$ as conditions of a probability tensor.
-Given a truth assignment to the atomic variables $\atomicformulaof{\atomenumerator}$, that is a choice of indices $\atomlegindexof{\atomenumerator}$, determines the truth of the formula.
-We thus interpret the formula tensors as defining a conditional probability of $\exformula$ given the atoms $\atomicformulaof{\atomenumerator}$ indexed by $\atomlegindexof{\atomenumerator}$.
-
-\begin{theorem}\label{the:conditionByAtoms}
-	The relational encoding of any propositional formula $\exformula$ coincides with the conditional probability of that formula conditioned on the identity on the atoms, that is
-		\[ \rencodingof{\exformula} = \condprobof{\formulavar}{\atomicformulas} \, . \]
-	We depict this by
-	\begin{center}
-		\input{./PartI/tikz_pics/logic_representation/atoms_as_condition.tex}
-	\end{center}
-\end{theorem}
-\begin{proof}
-	The distribution $\probtensor$ does not influence the conditional query, since the normation acts on any state.
-\end{proof}
+%Our main interpretation understands each tuple of indices $\shortcatindices$ as conditions of a probability tensor.
+%Since the satisfaction of a formula is determined by $\shortcatindices$,
+%Given a truth assignment to the atomic variables $\atomicformulaof{\atomenumerator}$, that is a choice of indices $\atomlegindexof{\atomenumerator}$, the truth of the formula.
 
 
-% Interpretation of directionality as 
-The conditional query $\condprobof{\formulavar}{\shortcatvariables}$ provides an interpretation of $\rencodingof{\exformula}$ as a conditional probability. 
-This is also reflected in the fact that both $\condprobof{\formulavar}{\shortcatvariables}$ and $\rencodingof{\exformula}$ are directed, since the first is a normation by Defintion~\ref{def:queries} and the second a encoding of a function.
+%\begin{theorem}\label{the:conditionByAtoms}
+%	Given any distribution $\probat{\shortcatvariables}$ of atomic variables, we extend the joint distribution to a formula variable $\exformulavar$ by contraction with the relational encoding $\rencodingofat{\exformula}{\exformulavar,\shortcatvariables}$.
+%	Then the relational encoding $\rencodingofat{\exformula}{\exformulavar,\shortcatvariables}$ coincides with the conditional probability of that formula conditioned on the atoms, that is
+%	\begin{align*}
+%		\rencodingofat{\exformula}{\shortcatvariables}
+%		= \condprobof{\formulavar}{\shortcatvariables} \, .
+%	\end{align*}
+%	We depict this by
+%	\begin{center}
+%		\input{./PartI/tikz_pics/logic_representation/atoms_as_condition.tex}
+%	\end{center}
+%\end{theorem}
+%\begin{proof}
+%	The distribution $\probtensor$ does not influence the conditional query, since the normation acts on any state.
+%
+%\end{proof}
 
-%The direction of the legs in the formula tensor diagram in Figure~\ref{fig:FormulaTensor} is chosen to highlight the conditional probability interpretation.
-
-
-This directly implies using \theref{the:conditionalMarginalization}  the trivialization of the formula tensor when contracting its head axis indexed by $\atomlegindexof{\exformula}$ with the trivial vector $\ones$, depicted as
-\begin{center}
-	\input{./PartI/tikz_pics/logic_reasoning/ones_property_ft.tex}
-\end{center}
-
-
-
-\subsect{Conditioning on the formula}
+\subsect{Uniform distributions of the models}
 
 % Defining probability distribution by formulas
-Let us now converse the order of conditioning from $\condprobof{\exformula}{\atomicformulas}$ to $\condprobof{\atomicformulas}{\exformula}$.
-In this way, we have propositonal formulas defining probability distributions on the factored system of atoms.
-
-Given a Markov Network $\probtensor$ with a single core $\rencodingof{\exformula}$ for a propositional formula $\exformula$.
+Let us now converse the order of conditioning from $\condprobof{\exformulavar}{\shortcatvariables}$ to $\condprobof{\shortcatvariables}{\exformulavar}$.
+In this way, we understand a propositional formula as a definition of a joint probability distributions of the atoms, instead of a formulation of a probabilistic query against a joint distribution.
+To this end, we define by the single tensor core $\{\rencodingofat{\exformula}{\exformulavar,\shortcatvariables}\}$ a Markov Network $\probofat{\{\exformula\}\cup[\catorder]}{\exformulavar,\shortcatvariables}$.
+%Given a Markov Network $\probtensor$ with a single core $\rencodingof{\exformula}$ for a propositional formula $\exformula$.
 By definition we have
 \begin{align*}
-	\condprobof{\shortcatvariables}{\formulavar} 
-	= \sbnormationofwrt{\rencodingof{\exformula}}{\shortcatvariables}{\formulavar} \, .  
+	\condprobwrtof{\{\exformula\}\cup[\catorder]}{\shortcatvariables}{\exformulavar}
+	= \sbnormationofwrt{\rencodingof{\exformula}}{\shortcatvariables}{\exformulavar} \, .
 \end{align*}
+We depict this construction by:
 \begin{center}
 	\input{./PartI/tikz_pics/logic_reasoning/kb_as_condition.tex}
 \end{center}
@@ -280,163 +302,147 @@ By definition we have
 Let us further investigate the slices of $\condprobof{\shortcatvariables}{\exformula}$ with respect to $\exformula$, which define distributions of the states of the factored system.
 To this end, let us condition on the event of $\exformula=1$, for which we have the distribution
 \begin{align}\label{eq:eventFormulaProb}
-	\condprobof{\shortcatvariables}{\formulavar=1} = \frac{1}{\sbcontraction{\exformula}} \sum_{\shortatomindicesin \, : \, \formulaat{\indexedshortcatvariables}=1} \onehotmapofat{\shortcatindices}{\shortcatvariables} \, .
+	\condprobof{\shortcatvariables}{\formulavar=1} = \frac{1}{\sbcontraction{\exformula}}
+	\sum_{\shortatomindicesin \, : \, \formulaat{\indexedshortcatvariables}=1} \onehotmapofat{\shortcatindices}{\shortcatvariables} \, .
 \end{align}
-With $\sbcontraction{\exformula}$ being the number of models of $\exformula$,  this is the uniform distribution among the models of $\exformula$.
+With $\sbcontraction{\exformula}$ being the number of models of $\exformula$, this is the uniform distribution among the models of $\exformula$.
 Conversely, when conditioning on the event $\formulavar=0$ we get a uniform distribution of the models of $\lnot\exformula$.
 
 % 
 The probability distribution in Equation~\eqref{eq:eventFormulaProb} is well defined except for the case that $\sbcontraction{\exformula}=0$.
-In this case we have $\exformula=0$ and call $\exformula$ unsatisfiable, since it has no models.
-
-%The probability tensor is well-defined except for the case that $\theta_{1,:}$ contains just $0$ coordinates (respectively for $\theta_{0,:}$).
-%This is an exceptionous situation in logics and called unsatisfiability of the knowledge base.
-%\begin{definition}
-%	A propositional formula $\exformula$ with $\sbcontraction{\exformula}=0$ is called unsatisfiable.
-%\end{definition}
-%If the Knowledge Base is inconsistent, the probabilistic interpretation breaks down.
-%Thus we will always assume a consistent Knowledge Base when doing probabilistic reasoning.
-%An alternative interpretation of formula tensors is the conditional probability of the atomic formulas given the formula at hand.
-%To derive the conditional probability tensor we apply the Bayes Theorem
-%\begin{align}
-%	\condprobof{\{\atomicformulaof{\atomenumerator} = \atomlegindexof{\atomenumerator}\}}{\exformula=\atomlegindexof{\exformula}} 
-%	=\frac{
-%	\condprobof{\exformula}{\{\atomicformulaof{\atomenumerator} = \atomlegindexof{\atomenumerator}\}}
-%	}
-%	{
-%	\sum_{\atomindices}\condprobof{\exformula}{\{\atomicformulaof{\atomenumerator} = \atomlegindexof{\atomenumerator}\}} \, .
-%	}
-%\end{align}
-
-
+In that case we would have $\exformulaat{\shortcatvariables}=\zerosat{\shortcatvariables}$ and call $\exformula$ unsatisfiable, since it has no models.
 
 %% Uniform interpretation -> KB as probability distribution over its models ("global")
 From an epistemological point of view, probability theory is a generalization of logics, since we allow for probability values in the interval $[0,1]$.
-The set of distributions being constructed by conditioning on propositional formulas as in Equation~\eqref{eq:eventFormulaProb} correspond within the set of probability distributions with those having constant coordinates on their support.
+The set of distributions being constructed by conditioning on propositional formulas as in Equation~\eqref{eq:eventFormulaProb} correspond within the set of probability distributions with those being constant on their support.
 % More specific
-While the probability tensors with nonvanishing coordinates build a $2^\atomorder-1$-dimensional manifold, where the formulas parametrize $2^{2^\atomorder}$ probability tensors, most of which having vanishing coordinates.
+While the distributions build a $2^\atomorder-1$-dimensional manifold, the formulas parametrize by this construction $2^{\left(2^\atomorder\right)}$.%, most of which having vanishing coordinates.
 
 
 
 
-\subsect{Probability of a function given a Knowledge Base}
+\subsect{Probability of a formula given a Knowledge Base}
 
 % Both directions for entailment
-We can now combine the ideas of the previous two subsections and define probabilities of formulas $\exformula$ given the satisfaction of another formula $\kb$, which we call a Knowledge Base.
+We now combine the ideas of the previous two subsections and define probabilities of formulas $\exformula$ given the satisfaction of another formula $\kb$, which we call a knowledge base.
 We have by \theref{the:conditionByAtoms} % Again, Markov Network with rencoding of \exformula, \kb build the precise \probtensor
 \begin{align*}
 	\condprobof{\formulavar}{\kbvar} 
 	& = \sbcontractionof{
 	\condprobof{\formulavar}{\atomicformulas}, \condprobof{\atomicformulas}{\kbvar}
 	}{\formulavar,\kbvar} \\
-	& = \sbnormationofwrt{\rencodingof{\exformula} , \rencodingof{\kb}}{\formulavar}{\kbvar}
+	& = \sbnormationofwrt{\rencodingof{\exformula},\rencodingof{\kb}}{\formulavar}{\kbvar} \, .
 \end{align*}
+We notice, that we have to assume a satisfiable knowledge base $\kb$ for this construction to be well-defined.
 
 % 
-Of special interest is the marginal probability of $\formulavar$ given that $\kbvar$ is satisfied, that is
+Of special interest is the conditional probability of $\formulavar$ given that $\kbvar$ is satisfied, that is
 \begin{align*}
 	\condprobof{\formulavar}{\kbvar=1} 
 	& = \normationof{\{\rencodingof{\exformula} ,\kb\}}{\formulavar}\\
 	& = \frac{\contractionof{\{\rencodingof{\exformula},\kb\}}{\formulavar}}{\contraction{\{\kb\}}} \, . 
 \end{align*}
+This conditional probability establishes a connection with the entailment relation of propositional formulas, as we show next.
 
-
-% Knowledge Base as Probability
-\begin{remark}[Case of Unsatisfiable Knowledge Bases]
-	When the Knowledge Base is not satisfiable, one cannot normate it and the probability distribution is not dedfined.
-%	We notice, that by the criterion provided by \theref{cor:parallelCriterion} we can decide entailment also in the cases where $\kb$ is unsatisfiable.
-%	In that case the contraction is the zero tensor, which is parallel to $\tbasis$ and $\fbasis$ and thus entailed and contradicting at the same time.
-\end{remark}
-
-%We will now define entailment based on this quantity. 
-%\begin{definition}[Entailment]
-%	We say that a not unsatisfiable Knowledge Base $\kb$ entails a formula $\exformula$, denoted by $\kb\models\exformula$, if $\condprobof{\formulavar=1}{\kbvar=1}=1$. 
-%	If $\kb$ entails $\lnot\exformula$ we say that $\kb$ contradicts $\exformula$.
-%	If the Knowledge Base $\kb$ is unsatisfiable, it entails any formula.
-%	%
-%	More generally, we say that a probability distribution $\probtensor$ entails a formula $\exformula$ if $\probat{\exformula=1}=1$.
-%\end{definition}
-
-
-
-% 
+%
 \begin{theorem}\label{the:probEntailment}
-	Given a satisfiable formula $\kb$, we have $\kb\models\exformula$, if and only if 
-		\[ \condprobof{\formulavar=0}{\kbvar=1} = 0 \, .  \]
+	Given a satisfiable formula $\kb$, we have $\kb\models\exformula$, if and only if
+	\begin{align*}
+		\condprobof{\formulavar=0}{\kbvar=1} = 0 \, .
+	\end{align*}
 \end{theorem}
 \begin{proof}
 	Since $\kb$ is satisfiable, we have $\sbcontraction{\kb}>0$ and
-		\[ \condprobof{\formulavar=0}{\kbvar=1} = \frac{\sbcontraction{\lnot\exformula, \kb}}{\sbcontraction{\kb}} \, .  \]
-	This term vanishes if and only if $\sbcontraction{\lnot\exformula, \kb}$ vanish.
-	Thus, the condition is equivalent to the condition in \theref{the:contCriterionLogEntailment}.
+		\[ \condprobof{\formulavar=0}{\kbvar=1} = \frac{\sbcontraction{\lnot\exformula,\kb}}{\sbcontraction{\kb}} \, .  \]
+	This term vanishes if and only if $\sbcontraction{\lnot\exformula,\kb}$ vanish.
+	Now, by \theref{the:contCriterionLogEntailment} we have $\kb\models\exformula$ if and only if $\contraction{\kb,\lnot\exformula}=0$, which is therefore equal to $\condprobof{\formulavar=0}{\kbvar=1}=0$.
 \end{proof}
 
-Given that $\kb$ is satisfiable, we therefore have $\kb\models\exformula$ if and only if
+Since any conditional distribution is directed, we have
 \begin{align}
 	\condprobof{\formulavar}{\kbvar=1} = %\begin{cases}
-	\tbasis \, .  %& \text{if }\kb \models \lnot\exformula \\
+	\fbasisat{\formulavar}  & \text{if} \quad \kb\models\lnot\exformula \\
+	\tbasisat{\formulavar}  & \text{if} \quad \kb\models\exformula \\
 	%\tbasis & \text{if }\kb \models \exformula \\
-	%\notin \{\fbasis,\tbasis\} & \text{else}
-	%\end{cases} \, .
+	\notin \{\fbasisat{\formulavar},\tbasisat{\formulavar}\} & \text{else}
+	\, .
 \end{align}
-We depict this condition by the contraction diagram
+We depict the case of entailment $\kb\models\exformula$ by the contraction diagram
 %It suffices to check, whether the contraction with the normed Knowledge Base is the basis vector $\tbasis$, respectively $\fbasis$, that is
 \begin{center}
 	\input{./PartI/tikz_pics/logic_reasoning/entailment_check.tex}
 \end{center}
 
+We can further omit the normation by $\sbcontraction{\kb}$ when deciding entailment, and thus drop the assumption of satisfiability of $\kb$, as we state next.
 
-We can omit the normation by $\sbcontraction{\kb}$ when deciding entailment, as we state next.
-
-\begin{corollary}\label{cor:parallelCriterion}
-	Given a satisfiable formula $\kb$, we have $\kb\models\exformula$ (respectively $\kb\models\lnot\exformula$), if and only if 
-		\[ \sbcontractionof{\kb,\rencodingof{\exformula}}{\formulavar=0} = 0 
+% Not needed?
+\begin{theorem}
+	Given a formula $\kb$, we have $\kb\models\exformula$ (respectively $\kb\models\lnot\exformula$), if and only if
+	\begin{align*}
+		\sbcontractionof{\kb,\rencodingof{\exformula}}{\formulavar=0} = 0
 		 \quad \text{( respectively }
-		 \sbcontractionof{\kb,\rencodingof{\exformula}}{\formulavar=1} = 0 \, . \]
-\end{corollary}
-
-
-
-
-%We will draw on this interpretation in the following, when investigating contraction equation equivalent to entailment.
+		 \sbcontractionof{\kb,\rencodingof{\exformula}}{\formulavar=1} = 0 \, .
+	\end{align*}
+\end{theorem}
+\begin{proof}
+	This follows from \theref{the:contCriterionLogEntailment} using that
+	\begin{align*}
+		\rencodingofat{\exformula}{\exformulavar=0,\shortcatvariables} = \lnot\exformulaat{\shortcatvariables} \quad \text{and} \quad \rencodingofat{\exformula}{\exformulavar=1,\shortcatvariables} = \exformulaat{\shortcatvariables} \, .
+	\end{align*}
+\end{proof}
 
 
 %
-Relating entailment to probability distributions motivates an extension of Definition\ref{def:logicalEntailment} of entailment to arbitrary probability distributions.
-
+Relating entailment to probability distributions motivates an extension of the entailment provided by \defref{def:logicalEntailment} to arbitrary probability distributions.
 
 \begin{definition}\label{def:probEntailment}
-	For any propositional formula $\exformula$ and a probability distribution $\probtensor$ we say that $\probtensor$ probabilistically entails $\exformula$, denoted as $\probtensor\models\exformula$, if
-		\[ \sbcontractionof{\probtensor,\rencodingof{\exformula}}{\formulavar=0} = 0 . \]
-	If $\probtensor\models\lnot\exformula$ we say that $\probtensor$ probabilistically contradicts $\exformula$.
-%	Conversely, we 
-%		\[ \sbcontractionof{\probtensor,\rencodingof{\exformula}}{\formulavar=1} = 0 . \]
+	For any propositional formula $\exformulaat{\shortcatvariables}$ we say that a probability distribution $\probof{\shortcatvariables}$ probabilistically entails $\exformula$, denoted as $\probtensor\models\exformula$, if
+	\begin{align*}
+		 \sbcontractionof{\probat{\shortcatvariables},\rencodingofat{\exformula}{\exformulavar,\shortcatvariables}}{\exformulavar=0} = 0 .
+	\end{align*}
+	If $\probtensor\models\lnot\exformula$, that is $\sbcontractionof{\probat{\shortcatvariables},\rencodingofat{\exformula}{\exformulavar,\shortcatvariables}}{\exformulavar=1} = 0$, we say that $\probtensor$ probabilistically contradicts $\exformula$.
 \end{definition}
 
 %
-By \theref{the:probEntailment} the definition of entailment reduces to propositional formulas by choosing $\probtensor=\sbnormationof{\kb}{\shortcatvariables}$
-
+We note, that when choosing for a formula $\kb$ the uniform distribution $\probat{\shortcatvariables}=\sbnormationof{\shortcatvariables}{\kbvar=1}$ among its models, then probabilistic entailment $\probtensor\models\exformula$ of a propositional formula $\exformula$ is by \theref{the:probEntailment} equivalent to $\kb\models\exformula$.
 
 \subsect{Knowledge Bases as Base Measures for Probability Distributions}
 
 % Generic Probability Tensors
-Let us now relate the probabilistic entailment definition \ref{def:probEntailment} with the logical entailment.
-Given a generic probability distribution $\probtensor$ we can build a Knowledge Base by the indicator function of the support as 
-	\[ \kb^{\probtensor} = \nonzerofunction \circ \probtensor \]
-where $\nonzerofunction:\rr\rightarrow \rr$ is defined as $\nonzeroof{x}=1$ if $x\neq0$ and $\nonzeroof{x}=0$ else.
+Let us now further relate the probabilistic entailment provided by \defref{def:probEntailment} with logical entailment, by constructing a corresponding propositional formula to an arbitrary distribution.
+Given a generic probability distribution $\probtensor$ we can build a Knowledge Base by
+\begin{align*}
+	 \kb^{\probtensor} = \nonzerofunction \circ \probtensor \, ,
+\end{align*}
+where $\nonzerofunction:\rr\rightarrow \rr$ denotes the indicator function of the support defined as
+\begin{align}
+	\nonzeroof{x} = \begin{cases}
+	0 & \text{if} \quad x=0 \\
+	1 & \text{else}
+	\end{cases} \, .
+\end{align}
+
+Probabilistic entailment with respect to $\probtensor$ is then equivalent to entailment with respect to $\kb^{\probtensor}$, as we show next.
 
 % Generic case of distributions
 \begin{theorem}\label{the:entailmentProbToLogical}
-	Any probability distribution $\probtensor$ probabilistically entails a formula $\exformula$, if and only if the Knowledge Base $\kb^{\probtensor}$ logically entails $\exformula$.
+	Any probability distribution $\probat{\shortcatvariables}$ probabilistically entails a formula $\exformulaat{\shortcatvariables}$, if and only if $\kb^{\probtensor}\models\exformula$.
 \end{theorem}
 \begin{proof}
 	Whenever $\probtensor$ does not entail $\exformula$ probabilistically we find a state $\shortatomindicesin$ such that
-		\[ \probat{\indexedshortcatvariables} >0 \quad\text{and} \quad \formulaat{\indexedshortcatvariables} = 0 \, . \]
-	We further have $\probat{\indexedshortcatvariables} >0$ if and only if $\kb^{\probtensor}[\indexedshortcatvariables]=1$ and
-		\[ \big((\kb^{\probtensor}[\indexedshortcatvariables]=1\big) \rightarrow \big(\formulaat{\indexedshortcatvariables}=1\big) \, . \]
+	\begin{align*}
+		 \probat{\indexedshortcatvariables} >0 \quad\text{and} \quad \formulaat{\indexedshortcatvariables} = 0 \, .
+	\end{align*}
+	We further have $\probat{\indexedshortcatvariables}>0$ if and only if $\kb^{\probtensor}[\indexedshortcatvariables]=1$.
+	Therefore the statement
+	\begin{align*}
+		\imppremhead{\kb^{\probtensor}[\indexedshortcatvariables]=1}{\formulaat{\indexedshortcatvariables}=1}
+	\end{align*}
 	is not satisfied.
 	Together, $\probtensor\models\exformula$ does not holds if and only if
-		\[ \forall \shortcatindices (\kb^{\probtensor}[\indexedshortcatvariables]=1) \rightarrow \big(\formulaat{\indexedshortcatvariables}=1\big) \,  \]
+	\begin{align*}
+		\uniquantwrtof{\shortatomindicesin}{\imppremhead{\kb^{\probtensor}[\indexedshortcatvariables]=1}{\formulaat{\indexedshortcatvariables}=1}}
+	\end{align*}
 	is not satisfied. 
 	Therefore, probabilistic entailment of $\exformula$ by $\probtensor$ is equivalent to logical entailment of $\exformula$ by $\kb^{\probtensor}$.
 \end{proof}
@@ -444,23 +450,32 @@ where $\nonzerofunction:\rr\rightarrow \rr$ is defined as $\nonzeroof{x}=1$ if $
 Let us use this to connect the entailment formalism with the representability (see \defref{def:representationBaseMeasure}) and positivity (see \defref{def:positivityBaseMeasure}) of distributions with respect to boolean base measures.
 
 \begin{theorem}\label{the:minimalRepPosBaseMeasure}
-	A distribution $\probtensor$ of boolean variables is representable with respect to $\basemeasure$, if and only if $\nonzerofunction\circ\probtensor\models\basemeasure$.
-	A distribution $\probtensor$ of boolean variables is positive with respect to $\basemeasure$, if and only if $\basemeasure=\nonzerofunction\circ\probtensor$.
+	Let $\probtensor$ be a distribution of boolean variables and let $\basemeasure$ be a boolean base measure.
+	Then, $\probtensor$ is representable with respect to $\basemeasure$, if and only if $\nonzerofunction\circ\probtensor\models\basemeasure$.
+	Further, $\probtensor$ is positive with respect to $\basemeasure$, if and only if $\basemeasure=\nonzerofunction\circ\probtensor$.
 \end{theorem}
 \begin{proof}
 	To show the first claim, let $\probtensor$ be a distribution and $\basemeasure$ be a base measure.
 	With \defref{def:representationBaseMeasure}, $\probtensor$ is representable with respect to $\basemeasure$, if and only if
-		\[ \forall_{\shortatomindicesin} \big(\basemeasureat{\indexedshortcatvariables}=0\big) \rightarrow \big(\probat{\indexedshortcatvariables}=0\big) \, .  \]
+	\begin{align*}
+		\uniquantwrtof{\shortatomindicesin}{\imppremhead{\basemeasureat{\indexedshortcatvariables}=0}{\probat{\indexedshortcatvariables}=0}}
+	\end{align*}
 	This is equal to
-		\[ \forall_{\shortatomindicesin} \big(\nonzerofunction\circ\probat{\indexedshortcatvariables}=1\big) \rightarrow \big(\basemeasureat{\indexedshortcatvariables}=1\big)    \]
+	\begin{align*}
+		\uniquantwrtof{\shortatomindicesin}{\imppremhead{\nonzerofunction\circ\probat{\indexedshortcatvariables}=1}{\basemeasureat{\indexedshortcatvariables}=1}}
+	\end{align*}
 	and by definition \defref{def:logicalEntailment} equal to $\basemeasure\models\nonzerofunction\circ\probtensor$.
 	
-	To show the second claim, we show that when $\probtensor$ is in addition positive with respect to $\basemeasure$, then also $\basemeasure\models\nonzerofunction\circ\probtensor$ and thus $\basemeasure=\nonzerofunction\circ\probtensor$.
+	To proof the second claim, we show that when $\probtensor$ is in addition positive with respect to $\basemeasure$, then also $\basemeasure\models\nonzerofunction\circ\probtensor$ and thus $\basemeasure=\nonzerofunction\circ\probtensor$.
 	Let $\probtensor$ be a distribution, which is representable with respect to $\basemeasure$.
 	Then $\probtensor$ is positive with respect to $\basemeasure$, if and only if
-		\[ \forall_{\shortatomindicesin} \big(\basemeasureat{\indexedshortcatvariables}=1\big) \rightarrow \big(\probat{\indexedshortcatvariables}>0\big)   \]
+	\begin{align*}
+		\uniquantwrtof{\shortatomindicesin}{\imppremhead{\basemeasureat{\indexedshortcatvariables}=1}{\probat{\indexedshortcatvariables}>0}}
+	\end{align*}
 	This is equal to
-		\[ \forall_{\shortatomindicesin} \big(\basemeasureat{\indexedshortcatvariables}=1\big) \rightarrow \big(\nonzerofunction\circ\probat{\indexedshortcatvariables}=1\big)   \]
+	\begin{align*}
+		\uniquantwrtof{\shortatomindicesin}{\imppremhead{\basemeasureat{\indexedshortcatvariables}=1}{\nonzerofunction\circ\probat{\indexedshortcatvariables}=1}}
+	\end{align*}
 	and thus $\basemeasure\models\nonzerofunction\circ\probtensor$.
 \end{proof}
 
@@ -952,6 +967,16 @@ Let us examplify the usage of Knowledge Propagation on Constraint Satisfaction P
 \end{example}
 
 \sect{Discussion}
+
+%% Where to put?
+\begin{remark}[Interpretation of Contractions in Logical Reasoning]
+	The coordinates of contracted boolean tensor networks describe whether the by the coordinate indexed world is a model of the Knowledge Base at hand.
+	Contractions, which only leave a part variables open, store the counts of the world respecting conditions given by the choice of slices.
+	When contracting without open variables, we thus get the total world count.
+
+	This is consistent with the probabilistic interpretation of contractions, when applying the frequentist interpretation of probability and defining normed worldcounts as probabilities.
+\end{remark}
+
 
 \begin{remark}{Tradeoff between generality and efficiency}
 	While generic entailment decision algorithms (those by the full network) can decide any entailment, local algorithms as presented here can only perform some, but therefore more effectively as operating batchwise (dynamically deciding entailment for many leg variables).
