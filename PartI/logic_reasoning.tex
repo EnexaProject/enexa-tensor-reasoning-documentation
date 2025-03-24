@@ -13,7 +13,7 @@ This enables us to define logical entailment based on the resulting conditional 
 
 %% Where to put?
 \begin{remark}[Interpretation of Contractions in Logical Reasoning]
-	The coordinates of contracted binary tensor networks describe whether the by the coordinate indexed world is a model of the Knowledge Base at hand.
+	The coordinates of contracted boolean tensor networks describe whether the by the coordinate indexed world is a model of the Knowledge Base at hand.
 	Contractions, which only leave a part variables open, store the counts of the world respecting conditions given by the choice of slices. 
 	When contracting without open variables, we thus get the total world count.
 	
@@ -23,124 +23,208 @@ This enables us to define logical entailment based on the resulting conditional 
 
 \sect{Entailment in Propositional Logics}
 
+Entailment is the central consequence relation among logical formulas.
+Let us define this relation first based on the models of a knowledge base and a test formula.
+
 \begin{definition}[Entailment of propositional formulas]\label{def:logicalEntailment}
 	Given two propositional formulas $\kb$ and $\exformula$ we say that $\kb$ entails $\exformula$, denoted by $\kb\models\exformula$, if any model of $\kb$ is also a model of $\exformula$, that is
-		\[ \forall_{\shortcatindices\in\atomstates} \big(\kbat{\indexedcatvariableof{[\catorder]}}=1\big) \rightarrow \big(\formulaat{\indexedcatvariableof{[\catorder]}}=1\big) \, . \]
+	\begin{align*}
+		\uniquantwrtof{\shortcatindices\in\atomstates}{\imppremhead{\kbat{\indexedshortcatvariables}=1}{\formulaat{\indexedshortcatvariables}=1}} \, .
+	\end{align*}
 	If $\kb\models\lnot\exformula$ holds, we say that $\kb$ contradicts $\exformula$.
 \end{definition}
 
-%
-\red{Entailment can be understood by subset relations of the models of formulas.
-This perspective can be applied with subset encodings in \charef{cha:basisCalculus}.
-}
-
-
-
-
+% Connection with tensor formalism
+To use the tensor network formalism for the decision of entailment, we will in the following explore three equivalent criteria based.
 
 \subsect{Deciding Entailment by contractions}
 
+First of all, we can decide entailment based on vanishing contractions with the negated test formula.
+
 \begin{theorem}[Contraction Criterion of Entailment]\label{the:contCriterionLogEntailment}
 	We have $\kb\models\exformula$ if and only if
-		\[ \sbcontraction{\kb,\lnot\exformula} = 0 \, . \]
+	\begin{align*}
+		\contraction{\kb,\lnot\exformula} = 0 \, .
+	\end{align*}
 \end{theorem}
 \begin{proof}
 	\proofleftsymbol:
-	If for a $\atomindices$ we have $\kbat{\indexedcatvariableof{[\catorder]}}=1$ but not $\big(\exformula(\atomindices)=1\big)$, the contraction would be at least $1$.
+	If for a $\shortatomindicesin$ we have $\kbat{\indexedshortcatvariables}=1$ but not $\big(\exformulaat{\indexedshortcatvariables}=1\big)$, we would have $\big(\lnot\exformulaat{\indexedshortcatvariables}=1\big)$ and
+	\begin{align*}
+		\contraction{\kb,\lnot\exformula} =
+		\sum_{\shortatomindicesin} \kbat{\indexedshortcatvariables} \cdot \exformulaat{\indexedshortcatvariables} > 1 \, .
+	\end{align*}
+	Thus, whenever the contraction vanishes, we have for all $\shortatomindicesin$ that $\big(\kbat{\indexedshortcatvariables}=1\big) \rightarrow \big(\formulaat{\indexedshortcatvariables}=1\big)$.
 
 	\proofrightsymbol:
-	Conversely, if the contraction is at least one, we would find $\atomindices$ with $\kbat{\indexedcatvariableof{[\catorder]}}=1$ and $\lnot\formulaat{\indexedcatvariableof{[\catorder]}}=1$, therefore $\formulaat{\indexedcatvariableof{[\catorder]}}=0$. 
+	Conversely, if the contraction $\contraction{\kb,\lnot\exformula}$ does not vanish, we would find $\shortatomindicesin$ with $\kbat{\indexedshortcatvariables}=1$ and $\lnot\formulaat{\indexedshortcatvariables}=1$, therefore $\formulaat{\indexedshortcatvariables}=0$.
 	It follows that $\kb\models\exformula$ does not hold.
 \end{proof}
 
+
 % Can use relational encoding
-To decide whether a formula is entailed, or its negation is entailed (in which case one says that the formula is contradicted) by a single contraction, one can perform the contraction
+The contraction criterion can be extended to the decision of contradiction as well, since $\kb\models\lnot\exformula$ is equivalent to $\sbcontraction{\kb,\exformula}=0$.
+Therefore, entailment and contradiction can be decided simultaneously by a single contraction, as we state next.
+%To decide whether a formula is entailed, or its negation is entailed (in which case one says that the formula is contradicted) by a single contraction, one can perform the contraction
+%\begin{align*}
+%	\hypercore = \sbcontractionof{\kbat{\shortcatvariables},\formulaat{\shortcatvariables,\exformulavar}}{\exformulavar}
+%\end{align*}
+
+
+\begin{theorem}\label{the:entailmentContradictionContraction}
+	Given propositional formulas $\kb$ and $\exformula$ we build
+	\begin{align*}
+		\hypercoreat{\exformulavar}
+		= \sbcontractionof{\kbat{\shortcatvariables},\formulaat{\shortcatvariables,\exformulavar}}{\exformulavar} \, .
+	\end{align*}
+	Then $\kb\models\exformula$ is equivalent to $\hypercoreat{\exformulavar=0}=0$, and $\kb\models\lnot\exformula$ is equivalent to $\hypercoreat{\exformulavar=1}=0$ \, .
+\end{theorem}
+\begin{proof}
+	This follows from \theref{the:contCriterionLogEntailment} using that
+	\begin{align*}
+		 \sbcontraction{\kb,\lnot\exformula} = \hypercoreat{\exformulavar=0}
+	\end{align*}
+	and
+	\begin{align*}
+		 \sbcontraction{\kb,\exformula} = \hypercoreat{\exformulavar=1} \, .
+	\end{align*}
+\end{proof}
+
+
+
+
+
+\subsect{Deciding Entailment by partial ordering}
+
+% Subset relation
+Logical entailment can be understood by subset relations of the models of the respective formulas.
+This perspective can be applied with subset encodings in \charef{cha:basisCalculus}.
+The subset relation corresponds with partial ordering of its encoded tensors, as will be shown in \theref{the:subsetRelationSubsetEncoding}.
+For two propositional formulas, we denote to this end $\exformula\prec\secexformula$ (see \defref{def:partialOrder}), if and only if for all $\shortatomindicesin$
 \begin{align*}
-	\hypercore = \sbcontractionof{\kbat{\shortcatvariables},\formulaat{\shortcatvariables,\exformulavar}}{\exformulavar}
-\end{align*}
-and use that
-\begin{align*}
-	 \sbcontraction{\kb,\lnot\exformula} = \hypercoreat{\exformulavar=0} 
-\end{align*}
-and 
-\begin{align*}
-	 \sbcontraction{\kb,\exformula} = \hypercoreat{\exformulavar=1} \, .  
+	\exformulaat{\indexedshortcatvariables} \leq \secexformulaat{\shortcatindices}  \, .
 \end{align*}
 
+\begin{theorem}[Partial Ordering Criterion of Entailment] \label{the:orderingEntailmentCriterion}
+	We have $\kb\models\exformula$ if and only if $\kbat{\shortcatvariables}\prec\exformulaat{\shortcatvariables}$.
+\end{theorem}
+\begin{proof}
+	Since both $\kb$ and $\exformula$ are boolean tensors, we have for any $\shortatomindicesin$ that $\kbat{\indexedshortcatvariables},\formulaat{\indexedshortcatvariables}\in\ozset$.
+	Thus,
+	\begin{align*}
+		\uniquantwrtof{\shortatomindicesin}{\kbat{\indexedshortcatvariables}\leq\formulaat{\indexedshortcatvariables}}
+	\end{align*}
+	is equivalent to
+	\begin{align*}
+		\uniquantwrtof{\shortatomindicesin}{\imppremhead{\kbat{\indexedshortcatvariables}=1}{\formulaat{\indexedshortcatvariables}=1}} \, .
+	\end{align*}
+	This states that $\kbat{\shortcatvariables}\prec\exformulaat{\shortcatvariables}$ is equivalent to $\kb\models\exformula$.
+\end{proof}
 
 
 
+\subsect{Redundancy of entailed formulas}
 
+Another interpretation of entailment is by redundancy of a formula in a Knowledge Base.
+This is especially interesting for the sparse representation of Knowledge Bases.
+%Towards getting insights on this we first show that entailed formulas can be dropped from the Knowledge Base.
+
+\begin{theorem}[Redundancy Criterion of Entailment]\label{the:ReduncancyOfEntailed}
+	If and only if $\kb\models\exformula$ we have
+	\begin{align*}
+		\kbat{\shortcatvariables}= \contractionof{\kb,\exformula}{\shortcatvariables}  \, . 
+	\end{align*}
+\end{theorem}
+\begin{proof}
+	For any formula $\exformula$ we have
+	\begin{align*}
+		\onesat{\shortcatvariables} = \exformulaat{\shortcatvariables} + \lnot\exformulaat{\shortcatvariables}
+	\end{align*}
+	and thus
+	\begin{align*}
+		\kbat{\shortcatvariables} 
+		= \contractionof{\kbat{\shortcatvariables},\onesat{\shortcatvariables}}{\shortcatvariables}
+		= \contractionof{\kbat{\shortcatvariables},\exformulaat{\shortcatvariables}}{\shortcatvariables} +  \contractionof{\kbat{\shortcatvariables},\lnot\exformulaat{\shortcatvariables}}{\shortcatvariables} \, .
+	\end{align*}
+	Now, by \theref{the:contCriterionLogEntailment} we have $\kb\models\exformula$, if and only if $\contractionof{\kbat{\shortcatvariables},\lnot\exformulaat{\shortcatvariables}}{\shortcatvariables}=0$, which is thus equal to
+	\begin{align*}
+		\kbat{\shortcatvariables}
+		= \contractionof{\kbat{\shortcatvariables},\exformulaat{\shortcatvariables}}{\shortcatvariables} \, .
+	\end{align*}
+\end{proof}
+
+%This provides us with another interpretation of the entailment relation, in terms of redundant formulas.
+
+%\begin{remark}[Sparsest Description of a Knowledge Base]
+%	Given a set of worlds indexed by $\hypercore$, find the sparsest set of formulas $\kb$ such that
+%		\[ \hypercore = {\kb} \]
+%	would be benefitial for small computational complexity.
+%	Since the formula tensors are invariant under entailment, we can drop entailed formulas.
+%\end{remark}
 
 \subsect{Contraction Knowledge Base}
 
-We now show how to implement a propositional Knowledge Base with the TELL and ASK operations based on \theref{cor:parallelCriterion}.
+We exploit the contraction and redundancy criteria of entailment to sketch an implementation of a propositional Knowledge Base in \algoref{alg:contractionKB}.
+Here the function $\mathrm{ASK}(\exformula)$ returns, whether a formula $\exformula$ is entailed or contradicted by a Knowledge Base.
+If the formula is neither entailed or contradicted, we say it is contingent.
+If it is both, we have $\kbat{\shortcatvariables}=0$ and thus an inconsistent Knowledge Base.
+Exploiting \theref{the:entailmentContradictionContraction} we decide these situations based on a single contraction.
+
+The function $\mathrm{TELL}(\exformula)$ incorporates an additional formula $\exformula$ into a Knowledge Base $\kb$.
+Here we exploit \theref{the:ReduncancyOfEntailed} and do not add a formula, which is entailed in order to maintain a sparse representation. %(in which case it returns Incons).
+The function further refuses to add a formula, which would make the Knowledge Base inconsistent (returns Refused) and only changes the Knowledge Base in case of a contingent formula (returns Added).
+
+%
+
+%We now show how to implement a propositional Knowledge Base with the TELL and ASK operations based on \theref{cor:parallelCriterion}, in \algoref{alg:contractionKB}
 
 % Works also for Markov Networks!
 \begin{algorithm}[hbt!]
-\caption{Contraction Knowledge Base}\label{alg:TensorKB}
-ASK(formula $\exformula$)
+\caption{Contraction Knowledge Base}\label{alg:contractionKB}
+ASK($\kb$, $\exformula$)
 \begin{algorithmic}
-	\State{$\hypercoreat{\formulavar} \algdefsymbol \sbcontractionof{\kb,\rencodingof{\exformula}}{\formulavar}$}
-	\If{$\hypercoreat{\formulavar=0}=0$} 
+	\State{$\hypercoreat{\formulavar} \algdefsymbol \contractionof{\{\secexformulaat{\shortcatvariables} \, : \, \secexformula\in\kb\},\rencodingofat{\exformula}{\formulavar,\shortcatvariables}}{\formulavar}$}
+	\If{$\hypercoreat{\formulavar=0}=0$ and $\hypercoreat{\formulavar=1}=0$ }
+		\State{return Inconsistent}
+	\EndIf
+	\If{$\hypercoreat{\formulavar=0}=0$}
 		\State{return Entailed}
 	\EndIf
-	\If{$\hypercoreat{\formulavar=1}=0$} 
+	\If{$\hypercoreat{\formulavar=1}=0$}
 		\State{return Contradicted}
 	\EndIf
 	\State{return Contingent}
 \end{algorithmic}
-TELL(formula $\exformula$)
+TELL($\kb$, $\exformula$)
 \begin{algorithmic}
-	\If{ASK($\exformula$) returns Contingent:}
-%	\If{$\sbcontractionof{\kb,\exformula}>0$ and $\sbcontraction{\kb,\lnot\exformula}>0$} %Consistency + Redundancy check
-	\State $\kb \algdefsymbol \kb\land\exformula$%Add cores of formula tensor $\exformula$ to $\rencodingof{\kb}$ in order to represent $\rencodingof{\kb\cup\{\exformula\}}$
+	\State{answer $\algdefsymbol$ ASK($\exformula$)}
+	\If{answer is Inconsistent:}
+		\State{return Inconsistent}
+	\EndIf
+	\If{answer is Entailed:}
+		\State{return Redundant}
+	\EndIf
+	\If{answer is Inconsistent or Contradicted:}
+		\State{return Refused}
+	\EndIf
+	\If{answer is Inconsistent or Contradicted:}
+		\State $\kb \algdefsymbol \kb\cup\{\exformula\}$
+		\State{return Added}
 	\EndIf
 \end{algorithmic}
 
 \end{algorithm}
 
-\red{
-Comment: TELL checks whether the formula to be added is entailed, in which case it is redundant to add, and whether the formula to be added is contradicted, in which case the knowledge base would become unsatisfiable.
-}
-
-
-
-\subsect{Sparse Representation of a Knowledge Base}
-
-Let us now investigate how to sparsely represent a Knowledge Base.
-Towards getting insights on this we first show that entailed formulas can be dropped from the Knowledge Base.
-
-\begin{theorem}\label{the:ReduncancyOfEntailed}
-	If and only if $\kb \models \exformula$ we have
-		\[ \kbat{\shortcatvariables}= \sbcontractionof{\kb,\exformula}{\shortcatvariables}  \, . \]
-\end{theorem}
-\begin{proof}
-	For any world indexed by a coordinate $\atomindices$, $\kbat{\indexedcatvariableof{[\catorder]}}$ indicates whether the world is a model of $\kb$.
-	We have entailment, when the models of $\kb\cup\exformula$ coincide with those of $\kb$.
-\end{proof}
-
-
-\begin{remark}[Sparsest Description of a Knowledge Base]
-	Given a set of worlds indexed by $\hypercore$, find the sparsest set of formulas $\kb$ such that
-		\[ \hypercore = {\kb} \]
-	would be benefitial for small computational complexity.
-	Since the formula tensors are invariant under entailment, we can drop entailed formulas.
-\end{remark}	
-
-
-
-
 
 \sect{Formulas as Random Variables}
 
-\red{Aim here: Relate with the probabilistic reasoning concepts of marginal and conditional distributions.}
+%\red{Aim here: Relate with the probabilistic reasoning concepts of marginal and conditional distributions.}
+%\red{Given a probability distribution $\probtensor$ of atoms we add a variable by building the Markov Network of $\probtensor$ and $\rencodingof{\exformula}$ to get a joint distribution of the atoms and a query formula $\exformula$}
 
-\red{Given a probability distribution $\probtensor$ of atoms we add a variable by building the Markov Network of $\probtensor$ and $\rencodingof{\exformula}$ to get a joint distribution of the atoms and a query formula $\exformula$}
-
-There are two ways of interpreting formula tensors as conditional probabilities.
-The standard one, which we also used above, understands the atomic legs as conditions and calculates the truth of the formula.
-Another understands a formula as a condition.
+In order to present logical entailment as extreme cases of more generic probabilistic reasoning, we now provide probabilistic interpretations of propositional formulas.
+There are two ways of interpreting formulas as conditional probabilities.
+The atom centric one, which understands the atomic legs as conditions and calculates the truth of the formula, leads to a direct interpretation of $\rencodingof{\exformula}$ as a conditional probability distribution.
+When instead taking the formula itself centric, we get uniform distributions of its models and the complement, when conditioning on the satisfaction of the formula.
 
 \subsect{Conditioning on the atoms}
 
@@ -196,7 +280,7 @@ By definition we have
 Let us further investigate the slices of $\condprobof{\shortcatvariables}{\exformula}$ with respect to $\exformula$, which define distributions of the states of the factored system.
 To this end, let us condition on the event of $\exformula=1$, for which we have the distribution
 \begin{align}\label{eq:eventFormulaProb}
-	\condprobof{\shortcatvariables}{\formulavar=1} = \frac{1}{\sbcontraction{\exformula}} \sum_{\shortcatindices\in\atomstates \, : \, \formulaat{\indexedshortcatvariables}=1} \onehotmapofat{\shortcatindices}{\shortcatvariables} \, .
+	\condprobof{\shortcatvariables}{\formulavar=1} = \frac{1}{\sbcontraction{\exformula}} \sum_{\shortatomindicesin \, : \, \formulaat{\indexedshortcatvariables}=1} \onehotmapofat{\shortcatindices}{\shortcatvariables} \, .
 \end{align}
 With $\sbcontraction{\exformula}$ being the number of models of $\exformula$,  this is the uniform distribution among the models of $\exformula$.
 Conversely, when conditioning on the event $\formulavar=0$ we get a uniform distribution of the models of $\lnot\exformula$.
@@ -333,16 +417,7 @@ Relating entailment to probability distributions motivates an extension of Defin
 By \theref{the:probEntailment} the definition of entailment reduces to propositional formulas by choosing $\probtensor=\sbnormationof{\kb}{\shortcatvariables}$
 
 
-
-
-
-
-
-
-
 \subsect{Knowledge Bases as Base Measures for Probability Distributions}
-
-
 
 % Generic Probability Tensors
 Let us now relate the probabilistic entailment definition \ref{def:probEntailment} with the logical entailment.
@@ -355,13 +430,13 @@ where $\nonzerofunction:\rr\rightarrow \rr$ is defined as $\nonzeroof{x}=1$ if $
 	Any probability distribution $\probtensor$ probabilistically entails a formula $\exformula$, if and only if the Knowledge Base $\kb^{\probtensor}$ logically entails $\exformula$.
 \end{theorem}
 \begin{proof}
-	Whenever $\probtensor$ does not entail $\exformula$ probabilistically we find a state $\shortcatindices\in\atomstates$ such that
-		\[ \probat{\shortcatvariables=\shortcatindices} >0 \quad\text{and} \quad \formulaat{\shortcatvariables=\shortcatindices} = 0 \, . \]
-	We further have $\probat{\shortcatvariables=\shortcatindices} >0$ if and only if $\kb^{\probtensor}[\shortcatvariables=\shortcatindices]=1$ and
-		\[ \big((\kb^{\probtensor}[\indexedcatvariableof{[\catorder]}]=1\big) \rightarrow \big(\formulaat{\indexedcatvariableof{[\catorder]}}=1\big) \, . \]
+	Whenever $\probtensor$ does not entail $\exformula$ probabilistically we find a state $\shortatomindicesin$ such that
+		\[ \probat{\indexedshortcatvariables} >0 \quad\text{and} \quad \formulaat{\indexedshortcatvariables} = 0 \, . \]
+	We further have $\probat{\indexedshortcatvariables} >0$ if and only if $\kb^{\probtensor}[\indexedshortcatvariables]=1$ and
+		\[ \big((\kb^{\probtensor}[\indexedshortcatvariables]=1\big) \rightarrow \big(\formulaat{\indexedshortcatvariables}=1\big) \, . \]
 	is not satisfied.
 	Together, $\probtensor\models\exformula$ does not holds if and only if
-		\[ \forall \shortcatvariables (\kb^{\probtensor}[\shortcatvariables=\shortcatindices]=1) \rightarrow \big(\formulaat{\indexedcatvariableof{[\catorder]}}=1\big) \,  \]
+		\[ \forall \shortcatindices (\kb^{\probtensor}[\indexedshortcatvariables]=1) \rightarrow \big(\formulaat{\indexedshortcatvariables}=1\big) \,  \]
 	is not satisfied. 
 	Therefore, probabilistic entailment of $\exformula$ by $\probtensor$ is equivalent to logical entailment of $\exformula$ by $\kb^{\probtensor}$.
 \end{proof}
@@ -375,43 +450,99 @@ Let us use this to connect the entailment formalism with the representability (s
 \begin{proof}
 	To show the first claim, let $\probtensor$ be a distribution and $\basemeasure$ be a base measure.
 	With \defref{def:representationBaseMeasure}, $\probtensor$ is representable with respect to $\basemeasure$, if and only if
-		\[ \forall_{\shortcatindices\in\atomstates} \big(\basemeasureat{\indexedshortcatvariables}=0\big) \rightarrow \big(\probat{\indexedshortcatvariables}=0\big) \, .  \]
+		\[ \forall_{\shortatomindicesin} \big(\basemeasureat{\indexedshortcatvariables}=0\big) \rightarrow \big(\probat{\indexedshortcatvariables}=0\big) \, .  \]
 	This is equal to
-		\[ \forall_{\shortcatindices\in\atomstates} \big(\nonzerofunction\circ\probat{\indexedshortcatvariables}=1\big) \rightarrow \big(\basemeasureat{\indexedshortcatvariables}=1\big)    \]
+		\[ \forall_{\shortatomindicesin} \big(\nonzerofunction\circ\probat{\indexedshortcatvariables}=1\big) \rightarrow \big(\basemeasureat{\indexedshortcatvariables}=1\big)    \]
 	and by definition \defref{def:logicalEntailment} equal to $\basemeasure\models\nonzerofunction\circ\probtensor$.
 	
 	To show the second claim, we show that when $\probtensor$ is in addition positive with respect to $\basemeasure$, then also $\basemeasure\models\nonzerofunction\circ\probtensor$ and thus $\basemeasure=\nonzerofunction\circ\probtensor$.
 	Let $\probtensor$ be a distribution, which is representable with respect to $\basemeasure$.
 	Then $\probtensor$ is positive with respect to $\basemeasure$, if and only if
-		\[ \forall_{\shortcatindices\in\atomstates} \big(\basemeasureat{\indexedshortcatvariables}=1\big) \rightarrow \big(\probat{\indexedshortcatvariables}>0\big)   \]
+		\[ \forall_{\shortatomindicesin} \big(\basemeasureat{\indexedshortcatvariables}=1\big) \rightarrow \big(\probat{\indexedshortcatvariables}>0\big)   \]
 	This is equal to
-		\[ \forall_{\shortcatindices\in\atomstates} \big(\basemeasureat{\indexedshortcatvariables}=1\big) \rightarrow \big(\nonzerofunction\circ\probat{\indexedshortcatvariables}=1\big)   \]
+		\[ \forall_{\shortatomindicesin} \big(\basemeasureat{\indexedshortcatvariables}=1\big) \rightarrow \big(\nonzerofunction\circ\probat{\indexedshortcatvariables}=1\big)   \]
 	and thus $\basemeasure\models\nonzerofunction\circ\probtensor$.
 \end{proof}
 
 
+\sect{Constraint Satisfaction Problems}
+
+Let us now explore a more general class of logical inference problems and discuss probabilistic entailment within that class.
+We then provide further examples based on categorical constraints.
+
+\begin{definition}
+	Let there be a hypergraph $\graph=(\nodes,\edges)$ and $\extnet$ be a tensor network of boolean constraint tensors $\hypercoreofat{\edge}{\catvariableof{\edge}}$ to each $\edgein$, that is
+	\begin{align*}
+		\extnet = \{ \hypercoreofat{\edge}{\catvariableof{\edge}} \, : \, \edge\in\edges \} \, .
+	\end{align*}
+	The Constraint Satisfaction Problem CSP to $\extnet$ is the decision whether there is a state $\catindexof{\nodes}$ such that
+	\begin{align*}
+		\contractionof{\extnet}{\indexedcatvariableof{\nodes}} = 1 \, .
+	\end{align*}
+	We say the CSP is satisfiable, when there is such a state, and unsatisfiable if not.
+\end{definition}
 
 \subsect{Deciding entailment on Markov Networks}
 
-
+Deciding entailment on Markov Networks is a general class of contraint satisfaction problems.
+Here, any factor tensor in the Markov Networks produces a constraint tensor in the respective CSP.
 
 \begin{theorem}\label{the:factorReduction}
-	Let $\extnet=\extnetasset$ be a non-negative Tensor Network on a hypergraph $\graph=(\nodes,\edges)$, $\secnodes\subset\nodes$ be a subset and
-		\[ \probtensor[\catvariableof{\secnodes}] = \normationof{\{\hypercoreat{\edge} \, : \, \edge\in\edges \}}{\catvariableof{\secnodes}} \]
-	and
-		\[ \tilde{\probtensor}[\catvariableof{\secnodes}] = \normationof{\{\nonzerofunction \circ \hypercoreat{\edge} \, : \, \edge\in\edges \}}{\catvariableof{\secnodes}} \]
-	Then we have for any $\exformula$ that $\probtensor\models\exformula$ if and only if $\tilde{\probtensor}\models\exformula$.
+	Let $\probof{\graph}$ be a Markov Network to the Tensor Network $\extnet=\extnetasset$ on a hypergraph $\graph=(\nodes,\edges)$. % $\secnodes\subset\nodes$ be a subset and
+%	\begin{align*}
+%		\probat{\catvariableof{\secnodes}} = \normationof{\{\hypercoreat{\edge} \, : \, \edge\in\edges \}}{\catvariableof{\secnodes}}
+%	\end{align*}
+	For each $\edge\in\edges$ we build the factor constraint cores
+	\begin{align*}
+		\sechypercoreofat{\edge}{\catvariableof{\edge}} = \nonzerofunction\circ\hypercoreofat{\edge}{\catvariableof{\edge}} \, .
+	\end{align*}
+	Let further $\exformulaat{\catvariableof{\secnodes}}$ be a formula depending on the variables $\secnodes$, and build $\secgraph=(\nodes,\edges\cup\{\secnodes\})$.
+	Then we have that $\probof{\graph}\models\exformula$ if and only if the constraint satisfaction problem of $\secgraph$ to the constraint tensors
+	\begin{align*}
+		\{\sechypercoreof{\edge} \, : \, \edge\in\edges \} \cup \{\lnot\exformula \}
+	\end{align*}
+	is unsatisfiable.
+	%and
+	%	\[ \tilde{\probtensor}[\catvariableof{\secnodes}] = \normationof{\{\nonzerofunction \circ \hypercoreat{\edge} \, : \, \edge\in\edges \}}{\catvariableof{\secnodes}} \]
+	%Then we have for any $\exformula$ that $\probtensor\models\exformula$ if and only if $\tilde{\probtensor}\models\exformula$.
 \end{theorem}
 \begin{proof}
-	We first show
-	\begin{align}\label{eq:proofFacReduction}
-		 \nonzerofunction\circ\probtensor = \nonzerofunction\circ\tilde{\probtensor} \, . 
-	\end{align}
-	The claim follows then from \theref{the:entailmentProbToLogical}.
-	To show \eqref{eq:proofFacReduction} let there be $\indexedcatvariableof{\secnodes}$ such that $\probtensor[\indexedcatvariableof{\secnodes}]=0$.
-	Then for any $\indexedcatvariableof{\nodes}$ extending  $\indexedcatvariableof{\secnodes}$ we have $\contractionof{\{\hypercoreat{\edge} \, : \, \edge\in\edges \}}{\indexedcatvariableof{\nodes}} = 0$ and thus also $\contractionof{\{\nonzerofunction\circ\hypercoreat{\edge} \, : \, \edge\in\edges \}}{\indexedcatvariableof{\nodes}} = 0$ and $\tilde{\probtensor}[\indexedcatvariableof{\secnodes}]=0$.
-	One can similarly show, that when $\tilde{\probtensor}[\indexedcatvariableof{\secnodes}]=0$ then also ${\probtensor}[\indexedcatvariableof{\secnodes}]=0$. 
-	The support of the distributions $\probtensor$ and $\tilde{\probtensor}$ is thus identical and \eqref{eq:proofFacReduction} holds.
+	We first show, that
+	\begin{align*}
+		\nonzerofunction\circ\probofat{\graph}{\nodevariables} =
+		\contractionof{\{\sechypercoreof{\edge} \, : \, \edge\in\edges \}}{\nodevariables} \, . %\nonzerofunction\circ\tilde{\probtensor} \, .
+	\end{align*}
+	To this end, let $\catindexof{\nodes}\in\nodestatesof{\nodes}$ be arbitrary.
+	We have $\probofat{\graph}{\indexednodevariables}=0$ if and only if at there is an edge $\edge\in\edges$ with $\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}$.
+	But this is equivalent to
+	\begin{align*}
+		\contractionof{\{\sechypercoreof{\edge} \, : \, \edge\in\edges \}}{\nodevariables} \, .
+	\end{align*}
+	We thus have for any $\catindexof{\nodes}\in\nodestatesof{\nodes}$
+	\begin{align*}
+		\nonzerofunction\circ\probofat{\graph}{\indexednodevariables} =
+		\contractionof{\{\sechypercoreof{\edge} \, : \, \edge\in\edges \}}{\indexednodevariables} \, . %\nonzerofunction\circ\tilde{\probtensor} \, .
+	\end{align*}
+
+	To continue, we have $\probof{\graph}\models\exformula$ if and only if
+	\begin{align*}
+		\contraction{\extnetat{\shortcatvariables},\lnot\exformulaat{\shortcatvariables}} = 0
+	\end{align*}
+	which is equal to
+	\begin{align*}
+		\contraction{\nonzerofunction\circ\extnetat{\shortcatvariables},\lnot\exformulaat{\shortcatvariables}} = 0 \, .
+	\end{align*}
+	We notice, that this is the unsatisfiability of the claimed Constraint Satisfaction Problem.
+
+%	We first show
+%	\begin{align}\label{eq:proofFacReduction}
+%		 \nonzerofunction\circ\probtensor = \nonzerofunction\circ\tilde{\probtensor} \, .
+%	\end{align}
+%	The claim follows then from \theref{the:entailmentProbToLogical}.
+%	To show \eqref{eq:proofFacReduction} let there be $\indexedcatvariableof{\secnodes}$ such that $\probtensor[\indexedcatvariableof{\secnodes}]=0$.
+%	Then for any $\indexedcatvariableof{\nodes}$ extending  $\indexedcatvariableof{\secnodes}$ we have $\contractionof{\{\hypercoreat{\edge} \, : \, \edge\in\edges \}}{\indexedcatvariableof{\nodes}} = 0$ and thus also $\contractionof{\{\nonzerofunction\circ\hypercoreat{\edge} \, : \, \edge\in\edges \}}{\indexedcatvariableof{\nodes}} = 0$ and $\tilde{\probtensor}[\indexedcatvariableof{\secnodes}]=0$.
+%	One can similarly show, that when $\tilde{\probtensor}[\indexedcatvariableof{\secnodes}]=0$ then also ${\probtensor}[\indexedcatvariableof{\secnodes}]=0$.
+%	The support of the distributions $\probtensor$ and $\tilde{\probtensor}$ is thus identical and \eqref{eq:proofFacReduction} holds.
 \end{proof}
 
 % Consequence: Reduction of probabilitic entailment to logical entailment.
@@ -419,203 +550,206 @@ For any positive tensor $\hypercore$ we have
 	\[ \nonzerofunction\circ\hypercoreat{\catvariableof{\edge}} = \onesat{\catvariableof{\edge}} \, , \]
 which does not influence the distribution and can be omitted from the Markov Network.
 By \theref{the:factorReduction}, when deciding eintailment, we can reduce all tensors of a Markov Network to their support and omit those with full support.
-Since the support indicating tensors $\nonzerofunction\circ\hypercoreat{\catvariableof{\edge}}$ are Boolean, each is a propositional formula and the Markov Network is turned into a Knowledge Base of their conjunctions.
-Deciding probabilstic entailment is thus traced back to logical entailment.
-
-%\subsect{Queries by Formulas}
-%We have investigated a specific type of query for the definition of entailment.
-%More generally, the semantic of logics thus offer a method to state generic queries on arbitrary probability distributions in an interpretable way.
-
-%%  TO DO: Give examples, e.g. correlations by formulas
-%
-%% Probabilistic Queries
-%Deciding entailment is a specific form of a query:
-%\begin{itemize}
-%	\item Query function is a formula, the one-hot encoding the formula tensor
-%	\item Expectations, which are the output of the query, are interpreted whether they are parallel to $\fbasis$ (contradiction), $\tbasis$ (entailment), both (inconsistent KB) or neither (contingent)
-%\end{itemize}
-%
-%
-%%We now apply the developed formalism of formula tensors to design a knowledge base.
-%Deciding entailment can be done by efficient tensor network contractions of the knowledge base sentences and the query formula in tensor network representation.
+Since the support indicating tensors $\nonzerofunction\circ\hypercoreat{\catvariableof{\edge}}$ are boolean, each is a propositional formula and the Markov Network is turned into a Knowledge Base of their conjunctions.
+Deciding probabilitic entailment is thus traced back to logical entailment.
+\red{For exponential families, the corresponding constraint tensor network is thus reduced to the base measure.}
 
 
+\subsect{Categorical Constraints}\label{sec:categoricalTN}
+
+%% Categorical variables with more possibilities
+We so far in this chapter made the assumption that all categorical variables in factored systems to be represented by propositional logics take binary values (i.e. $\catdim=2$).
+In cases where a categorical variable $\catvariable$ takes multiple values we define for each $\catindex$ an atomic formula $\catvariableof{\catindex}$ representing whether $\catvariable$ is assigned by $\catindex$ in a specific state.
+	%\[ \catvariableof{\catindex} =  (\catvariable = \catindex \, . \] Confusing notation
+Following this construction we have the constraint that exactly one of the atoms $\catvariableof{\catindex}$ is $1$ at each state.
+
+%% Capture constraint
+%To capture the constraints resulting from this construction we introduce auxiliary parts. % of Bayesian Propositional Networks.
+%Such constraints can also be expressed by a formula but would result in an unnecessary large tensor network.
 
 
-
-
-
-
-%\sect{Deciding Entailment by Contractions}
-%
-%In the next Theorem we show how the normations required in the computation of $\condprobof{\exformula}{\kb=1}$ can be avoided when deciding entailment.
-%
-
-%\begin{proof}
-%	The claim holds in case of unsatisfiable $\kb$, since any $\exformula$ is entailed and $\sbcontractionof{\kb,\rencodingof{\exformula}}{\formulavar}$ is parallel to both $\tbasis$ and $\fbasis$.
-%	Let us thus assume, that $\kb$ is satisfiable, in which case we have
-%	\begin{align*}
-%		 \sbcontractionof{\kb,\rencodingof{\exformula}}{\formulavar}  
-%		 & = \onehotmapof{0} \otimes \sbcontractionof{\kb,{\lnot\exformula}}{\formulavar} 
-%		 + \onehotmapof{1} \otimes \sbcontractionof{\kb,{\exformula}}{\formulavar} \\
-%		 & = \contractionof{\{\kb\}}{\varnothing} \cdot \left(  
-%		 \onehotmapof{0} \otimes \frac{\sbcontractionof{\kb,{\lnot\exformula}}{\formulavar}}{\contractionof{\{\kb\}}{\varnothing}}
-%		 + \onehotmapof{1} \otimes \frac{
-%		 \sbcontractionof{\kb,{\exformula}}{\formulavar}
-%		 }{\contractionof{\{\kb\}}{\varnothing}}
-%		 \right) \\
-%		 & = \contractionof{\{\kb\}}{\varnothing} \cdot \left(  
-%		 	\onehotmapof{0} \otimes \condprobof{\exformula=0}{\kb=1}
-%		 	+ \onehotmapof{1} \otimes \condprobof{\exformula=1}{\kb=1}
-%		 \right) \\
-%	\end{align*}
-%	Now, if and only if $\kb\models\exformula$ we have $\condprobof{\exformula=1}{\kb=1}=1$ and
-%		\[ \condprobof{\exformula=0}{\kb=1} = 1 - \condprobof{\exformula=1}{\kb=1}=0\]
-%	and the term $\onehotmapof{0} \otimes \condprobof{\exformula=0}{\kb=1}$.
-%	Exactly in this case, we then have $ \sbcontractionof{\kb,\rencodingof{\exformula}}{\formulavar}  \parallel \tbasis$.
-%	By the same argument concerning the term $\onehotmapof{1} \otimes \condprobof{\exformula=1}{\kb=1}$, we get  $\sbcontractionof{\kb,\rencodingof{\exformula}}{\formulavar}\parallel\fbasis$ if and only if $\kb\models\lnot\exformula$.
-%\end{proof}
-
-
-
-
-
-
-
-
-
-
-
-%\sect{Deciding Entailment by Contractions}
-%
-%\begin{theorem}
-%	Given a Knowledge Base $\kb$ and a formula $\exformula$, we have $\kb\models\exformula$ if and only if
-%		\[ \contractionof{\{\kb,\rencodingof{\exformula}\}}{\randomxof{\exformula}}  \parallel \tbasis \, . \]
-%\end{theorem}
-%\begin{proof}
-%	We note that  $\contractionof{\{\kb,\rencodingof{\exformula}\}}{\randomxof{\exformula}}  \parallel \tbasis $ is equal to
-%		\[ \contractionof{\{\kb,{\lnot\exformula}\}}{\varnothing}  = 0  \, . \]
-%	This is equal to $\kb\land\not\exformula$ being inconsistent and therefore equal to $\kb\models\exformula$.
-%\end{proof}
-
-
-
-
-
-
-
-
-
-
-
-
-\sect{Deciding Entailment by partial ordering}
-
-% Classical definition of entailment
-Classically entailment in propositional logics is defined by a model-theoretic approach.
-According to that approach, the entailment statement $\kb\models\exformula$ holds, whenever any model of $\kb$ is also a model of $\exformula$.
-We will in the following show, that this is equal to our definition based on probabilistic queries.
-
-
-% Here for general tensors, not just propositional formulas!
-\begin{definition}[Partial ordering of tensors]\label{def:partialFTOrder}
-	We say that two tensors $\exformula$ and $\secexformula$ in a tensor space $\facspace$ are partially ordered, denoted by
-		\[ {\exformula}\prec{\secexformula} \, , \]
-	if for all $\catindices\in\facstates$
-		\[ {\exformula}(\catindices) \leq {\secexformula}(\catindices) \, .\]
+%% Categorical selection map
+\begin{definition}[Categorical Constraint and Atomization Variables]
+	Given a list $\catvariableof{0},\ldots,\catvariableof{\catdim-1}$ of boolean variables and a categorical variable $\catvariable$ with dimension $\catdim$ a categorical constraint is a tensor $\categoricalmap[\catvariable,\catvariableof{[\catdim]}]$ defined as
+	\begin{align*}
+		 \categoricalmap(\catindex,\catindexof{\variableset})
+		 = \begin{cases}
+		 	1 & \text{if} \quad \catindexof{[\catdim]} = \onehotmapof{\catindex} \\
+			0 & \text{else} \, .
+		 \end{cases}
+	\end{align*}
+	We then call the variables  $\catvariableof{0},\ldots,\catvariableof{\catdim-1}$ the atomization variables to the categorical variable $\catvariable$.
 \end{definition}
 
-We notice, that whenever ${\exformula} \prec{\secexformula}$ holds, for any model $\atomindices$ of $\exformula$ we have
+%% Decomposition
+With Theorem~\ref{the:functionDecompositionBasisCP} the tensor representation of $\categoricalcore$ decomposes in a basis CP format (see Figure~\ref{fig:CategoricalDecomposition}b) of if its coordinate maps $\categoricalmap_{\catindex}$, where $\catindex\in[\catdim]$.
+For the cores
+\begin{align}
+	\categoricalcoreof{\catindex} = \onehotmapofat{\catindex}{\catvariable} \otimes \onehotmapofat{1}{\catvariableof{\catindex}} + (\onesat{\catvariable}- \onehotmapofat{\catindex}{\catvariable} ) \otimes \onehotmapofat{0}{\catvariableof{\catindex}}
+\end{align}
+we have by Theorem~\ref{the:functionDecompositionBasisCP}
 \begin{align*}
-	1 = \exformula(\atomindices) \leq \secexformula(\atomindices)
+	\rencodingofat{\categoricalmap}{\catvariable, \catvariableof{0}, \ldots, \catvariableof{\catdim-1}}
+	= \contractionof{\{\rencodingof{\categoricalmap(\catindex)} \, : \, \catindex\in[\catdim]\}}{\catvariable, \catvariableof{0}, \ldots, \catvariableof{\catdim-1}} \, .
 \end{align*}
-and thus $\secexformula(\atomindices)=1$.
-Therefore any model of $\exformula$ is also a model of $\secexformula$.
-We show in the next theorem, that this is equivalent to the entailment statement $\exformula\models\secexformula$.
 
-\begin{theorem}[Partial Ordering Criterion] \label{the:orderingEntailmentCriterion}
-	We have $\kb\models\exformula$ if and only if $\kb\prec\exformula$.
+
+In the next theorem we show how a categorical constraint can be enforced in a tensor network by adding the tensor $\categoricalmap$ to a contraction.
+
+\begin{theorem}
+	For any tensor $\hypercoreat{\shortcatvariables}$ and a categorical constraint defined by an ordered subset $\catvariableof{\variableset}\subset\shortcatvariables$, a variable $\catvariable\in\shortcatvariables$ we have
+	\begin{align*}
+	 	\contractionof{\{\hypercoreat{\shortcatvariables}, \categoricalmap\}}{\indexedcatvariables}
+		= \begin{cases}
+			\hypercoreat{\indexedcatvariables} & \text{if} \quad \catindexof{\variableset} = \onehotmapof{\catindex} \\
+			0 & \text{else} \, .
+		\end{cases}
+	\end{align*}
 \end{theorem}
 \begin{proof}
-	Directly by definition, since both $\kb$ and $\exformula$ are Boolean and therefore for any $\shortcatindices\in\atomstates$ we have that
-		\[ \kbat{\indexedcatvariableof{[\catorder]}} \leq \formulaat{\indexedcatvariableof{[\catorder]}} \]
-	is equivalent to 
-		\[ \big(\kbat{\indexedcatvariableof{[\catorder]}}=1\big) \rightarrow \big(\formulaat{\indexedcatvariableof{[\catorder]}}=1\big) \, .  \]
-	Therefore, $\kb\prec\exformula$ is equivalent to
-		\[ \forall_{\shortcatindices\in\atomstates} \big(\kbat{\indexedcatvariableof{[\catorder]}}=1\big) \rightarrow \big(\formulaat{\indexedcatvariableof{[\catorder]}}=1\big) \, , \]
-	which is equal to $\kb\models\exformula$.
-%\red{Relate to other Theorem!}
-%	By \theref{cor:parallelCriterion} suffices to show that $\contractionof{\{\kb,\rencodingof{\exformula}\}}{\formulavar}  \parallel \tbasis$ is equivalent to $\kb\prec\exformula$.
-%	To show this equivalence we observe
-%		\[ \sbcontractionof{\kb,\rencodingof{\exformula}}{\formulavar}(0) = 
-%		\contractionof{\{\kb,{\lnot\exformula}\}}{\varnothing} =
-%		\# \left\{ i \in\facstates : \kb(i)= 1 \land \exformula(i) = 0 \right\} \, . \]
-%	If and only if $\contractionof{\{\kb,\rencodingof{\exformula}\}}{\formulavar}  \parallel \tbasis$ we have $\sbcontraction{\kb,\exformula}=0$, which is equivalent to 
-%		\[ \forall i \in\facstates : \lnot\kb(i)= 1 \land \exformula(i) = 0)  \, . \]
-%	This is further equivalent to 
-%		\[ \forall i \in\facstates : \kb(i) = 1 \rightarrow \exformula(i) = 1)  \]
-%	and 
-%		\[ \kb \prec \exformula \, . \]
+	For any $\catindexof{[\atomorder]}$ we have
+		\[ \contractionof{\{\hypercoreat{\shortcatvariables}, \categoricalmap\}}{\indexedcatvariables}  =
+			\hypercoreat{\shortcatindices} \cdot \categoricalmap[\indexedcatvariableof{},\indexedcatvariableof{\variableset}] \, .
+		\]
+	If $\catindexof{\variableset} = \onehotmapof{\catindex}$ we have $\categoricalmap[\indexedcatvariableof{},\indexedcatvariableof{\variableset}] = 1$ and thus
+		\[ \contractionof{\hypercoreat{\shortcatvariables},\categoricalmap}{\indexedcatvariables}  =  \hypercoreat{\shortcatindices}  \, . \]
+	If $\catindexof{\variableset} \neq \onehotmapof{\catindex}$ then $\categoricalmap[\indexedcatvariableof{},\indexedcatvariableof{\variableset}] = 0$ and
+		\[ \contractionof{\hypercoreat{\shortcatvariables},\categoricalmap}{\indexedcatvariables}  = 0 \, . \]
 \end{proof}
 
-% Semantic Interpretation
-%The partial ordering criterion offers a model-theoretic proof of entailment, since partial ordering is defined through comparison of all models:
-%We have
-%	\[ \exformula \prec \secexformula \]
-%if and only if 
-%	\[ \forall i\in \facstates : \exformula_i=1 \rightarrow \secexformula_i = 1 \, , \]
-%that is any model of $\exformula$ is also a model of $\secexformula$.
+\begin{figure}[h]
+\begin{center}
+	\input{PartII/tikz_pics/network_representation/categorical_decomposition.tex}
+\end{center}
+\caption{Representation of a categorical constraint in a $\cpformat$ Format tensor network.
+	a) Representation of the dependency of the graphical model.
+	b) Tensor Representation with further network decomposition.
+	We average by contraction with the dashed tensor $\ones$, if we do not specify the active atom.
+	}
+\label{fig:CategoricalDecomposition}
+\end{figure}
 
-
-
-% Partial Ordering
-%We can therefore understand partial ordering as a generalization of entailment?
-
-
-
-
-
-\subsect{Monotonicity of Entailment}
-
-
-%\red{When defining entailment based on Markov Networks, would have clearer statement!}
-Vanishing local contractions provide sufficient but not necessary criterion to decide entailment, as we show in the next theorem.
-
-\begin{theorem}[Monotonicity of Entailment]\label{the:monotonEntailment}
-	For any Markov Network on the decorated hypergraph $\graph$ and any subgraph $\secgraph$, we have for any formula that $\probtensor^{\graph}\models\exformula$ if $\probtensor^{\secgraph}\models\exformula$.
-\end{theorem}	
-\begin{proof}
-	Based on the reduction to Knowledge Bases by \theref{the:entailmentProbToLogical} and the monotonocity of binary contractions as shown in \theref{the:monotonicityBinaryContractions}.
-\end{proof}
-
-
-
-\begin{remark}
-	To make use of \theref{the:monotonEntailment} we can exploit any entailment criterion.
-	However, there is no claim about entailment being false, when the entailment 
-	\theref{the:monotonEntailment} therefore just provides a sufficient but not necessary criterion of entailment with respect to $\probtensor^{\graph}$.
+\begin{remark}[Combination of Constraints]
+	We can combine constraint cores by Hadamard products in the dual tensor network representation, as long as they can be satisfied together.
+	An example, where this is not the case, are the categorical constraints to the three sets
+		\[ \{\randomxof{0},\randomxof{1},\randomxof{2},\randomxof{3}\} \, , \, \{\randomxof{0},\randomxof{1}\}\, ,\,\{\randomxof{2},\randomxof{3}\} \, . \]
+	Besides the categorical cores also the datacores have a similar bayesian network affecting the atoms by another hidden variable.
+	Combining both is welldefined, only when all datapoints satisfy the categorical constraints (that is only one of the atoms in each constraint is active).
 \end{remark}
+
+
+\begin{example}[Sudoku]\label{exa:sudoku}
+	An interesting example, where categorical constraints are combined is Sudoku, the game of assigning numbers to a grid (see for example Section~5.2.6 in \cite{russell_artificial_2021}).
+	The basic variables therein are $\catvariableof{i,j}$, with $\catdimof{i,j}=n^2$ and $i,j\in[n^2]$.
+	By understanding $i$ as a line index and $j$ as a column index, they are ordered in a grid as sketched in Figure~\ref{fig:sudokuGrid} in the case $n=3$.
+
+	For a $n\in\nn$ we further define the atomization variables $\catvariableof{i,j,k}$ where $i,j,k\in[n^2]$ and $\catdimof{i,j,k}=2$.
+	These $n^6$ variables are the booleans indicating whether a specific position has a specific number assigned.
+	The consistency of the atomization variables to the basic variables is then for each $i,j\in[n^2]$ ensured by the constraints
+		\[ \{\catvariableof{i,j,k} \, : \, k \in [n^2] \} \, . \]
+
+	We further have $3\cdot n^2$ constraints by the
+	\begin{itemize}
+		\item Row constraints: Each number $k$ appears exactly once in each row $i\in[n^2]$, captured by the constraints
+			\[ \{\catvariableof{i,j,k}  \, : \, j \in [n^2] \} \, . \]
+		\item Column constraints: Each number $k$ appears exactly once in each column $j\in[n^2]$, captured by the constraints
+			\[ \{\catvariableof{i,j,k}  \, : \, i \in [n^2] \} \, . \]
+		\item Square constraints: Each number appears exactly once in each square $s,r\in[n]$, captured by the constraints
+			\[ \{\catvariableof{i+n\cdot s,j+n\cdot r,k}  \, : \, i,j \in [n] \} \, . \]
+	\end{itemize}
+
+	In total we have $3\cdot n^2 + n^4$ constraints for $n^6$ variables.
+
+	Deciding whether a Sudoku has a solution is a Constraint Satisfaction Problem.
+	Let us notice, that due to this large number of variables and constraints, direct solution of the problem by a global contraction is not feasible.
+	For efficient algorithmic solutions, we instead refer to \secref{subsec:LocalEntailment}.
+
+	\begin{figure}\label{fig:sudokuGrid}
+	\begin{center}
+		\input{PartII/tikz_pics/network_representation/sudoku_grid.tex}
+	\end{center}
+	\caption{
+	Sudoku grid of basic categorical variables $\catvariableof{i,j}$, here drawn in the standard case of $n=3$, each with dimension $\catdim=n^2=9$.
+	Each basic categorical variables has $n^2$ corresponding atomization variables, which are further atomization variables to the row, column and squares constraints.
+	Instead of depicting those constraints by hyperedges in a variable dependency graph, we here just indicate their existence through row, column and squares blocks.
+	}
+	\end{figure}
+\end{example}
+
 
 
 
 \sect{Deciding Entailment by local contractions}\label{subsec:LocalEntailment}
 
-
-Global entailment can become inefficient, when
-\begin{itemize}
-	\item we are interested in batches of entailment checks. Here we can make use of dynamic programming (store partial contraction results in the Knowledge Cores).
-	\item the network is large. Although efficient tensor network contraction often work, they might get infeasible when the tensor network has a large connectivity.
-\end{itemize}
+When having a Constraint Satisfaction Problem on a large number of variables, which are densely connected by constraint tensors, direct exploitation of the global entailment criterion in \theref{the:contCriterionLogEntailment} will be infeasible.
 An alternative to deciding entailment by global operations is the use of local operations.
 Here we interpret a part of the network (for example a single core) as an own knowledge base (with atomic formulas being the roots of the directed subgraph, that is potentially differing with the atoms in the global perspective) and perform entailment with respect to that.
 
-\begin{remark}{Tradeoff between generality and efficiency}
-	While generic entailment decision algorithms (those by the full network) can decide any entailment, local algorithms as presented here can only perform some, but therefore more effectively as operating batchwise (dynamically deciding entailment for many leg variables).
-	This is a typical phenomenon in logical reasoning and related to decidability.
+\subsect{Monotonicity of entailment}
+
+%\red{When defining entailment based on Markov Networks, would have clearer statement!}
+Vanishing local contractions provide sufficient but not necessary criterion to decide entailment, as we show in the next theorem.
+
+\begin{theorem}[Monotonicity of Entailment]\label{}
+	For any Markov Network on the decorated hypergraph $\graph$ and any subgraph $\secgraph$, we have for any formula that $\probtensor^{\graph}\models\exformula$ if $\probtensor^{\secgraph}\models\exformula$.
+\end{theorem}
+
+%To show this theorem, we show the following lemma, that whether a contraction of non-negative tensors vanishes, a vanishing contraction of a subset of these tensors is a sufficient criterion.
+To prove the theorem, we first establish the following lemma that states if a contraction of non-negative tensors vanishes, the vanishing of a contraction over a subset of these tensors is a sufficient criterion.
+
+\begin{lemma}\label{lem:monotocityOfVanishingContractions}
+	For any non-negative tensor network $\extnet$ on $\graph$ and $\secedges\subset\edges$ we have the following.
+	For $\secgraph=(\secnodes,\secedges)$ with $\secnodes=\cup_{\edge\in\secedges}\edge$ and the tensor network $\tnetof{\secgraph}$ with tensors coinciding on $\secedges$ with those in $\extnet$ we have
+	\begin{align*}
+		\contraction{\extnet} = 0
+	\end{align*}
+	if $\contraction{\tnetof{\secgraph}}=0$.
+\end{lemma}
+\begin{proof}
+	Since the tensor network $\tnetof{\secgraph}$ is non-negative, we have whenever $\contraction{\tnetof{\secgraph}}=0$ that
+	\begin{align*}
+		\contractionof{\tnetof{\secgraph}}{\catvariableof{\secnodes}} = \zerosat{\catvariableof{\secnodes}} \, .
+	\end{align*}
+	It follows with the commutation of contractions (see \theref{the:splittingContractions} in \charef{cha:messagePassing}), that
+	\begin{align*}
+		\contractionof{\extnet}{\catvariableof{\nodes}}
+		&= \contractionof{
+			\{\hypercoreof{\edge} \, : \, \edge\in\edges/\secedges\}
+			\cup \{\contractionof{\tnetof{\secgraph}}{\catvariableof{\secnodes}}\}
+		}{\catvariableof{\nodes}} \\
+		&= 	\contractionof{
+			\{\hypercoreof{\edge} \, : \, \edge\in\edges/\secedges\}
+			\cup \{\zerosat{\catvariableof{\secnodes}}\}
+		}{\catvariableof{\nodes}} \\
+		&= 0
+	\end{align*}
+	Thus, also the contraction of $\extnet$ vanishes in this case.
+\end{proof}
+
+\begin{proof}[Proof of \theref{the:monotonEntailment}]
+	We use \lemref{lem:monotocityOfVanishingContractions} on the subset $\tnetof{\secgraph}$ of the cores $\extnet$ to the Markov Network $\probof{\graph}$, which itself defines the Markov Network $\probof{\secgraph}$.
+	Whenever $\probof{\secgraph}\models\exformula$ for a formula $\exformula$, then we have by \theref{the:contCriterionLogEntailment}
+	\begin{align*}
+		\contractionof{\tnetof{\secgraph} \cup\{\lnot\exformula\}} = 0 \, .
+	\end{align*}
+	It follows with \lemref{lem:monotocityOfVanishingContractions} that also
+	\begin{align*}
+		\contractionof{\tnetof{\graph} \cup\{\lnot\exformula\}} = 0 \, .
+	\end{align*}
+	and therefore $\probof{\graph}\models\exformula$.
+\end{proof}
+
+
+\begin{remark}
+	To make use of \theref{the:monotonEntailment} we can exploit any entailment criterion.
+	However, there is no general statement about entailment possible, when the local entailment does not hold.
+	\theref{the:monotonEntailment} therefore just provides a sufficient but not necessary criterion of entailment with respect to $\probtensor^{\graph}$.
 \end{remark}
 
 
 \subsect{Knowledge Propagation}
+
+\red{We now provide a solution algorithm for constraint satisfaction problems by propagating local contractions.}
 
 Let us now draw on these insights and store partial entailment results in Knowledge Cores, which is a use of the dynamic programming paradigm.
 We then iterate over local entailment checks, where we recursively add further entailment checks to be redone due to additional knowledge.
@@ -623,107 +757,205 @@ We then call the local checks until convergence Entailment Propagation, since di
 We describe local Knowledge Propagation in a generic way in Algorithm~\ref{alg:KP}.
 
 \begin{algorithm}[hbt!]
-\caption{Knowledge Propagation (KP)}\label{alg:KP}
+\caption{Knowledge Propagation (KP)}\label{alg:knowledgePropagation}
 \begin{algorithmic}
-\State Tensor Network $\extnet$, $\kcoreof{\edge}=\onesat{\catvariableof{\edge}}$
+\State Boolean Tensor Network $\extnet$ on $\graph=(\nodes,\edges)$, graph $\secgraph=(\nodes,\secedges)$ with knowledge cores $\kcoreof{\edge}=\onesat{\catvariableof{\edge}}$
 \While{Stopping Criterion is not met}
-	\State Choose $\edge$, subset $M$ of $\extnet$ and of $\{\kcoreof{\edge} : \edge\in\edges \}$ containing $\kcoreof{\edge}$
-	\State Update 
-		\[ \kcoreof{\edge} \leftarrow \nonzerofunction\circ\contractionof{M}{\catvariableof{\edge}} \]
+	\State Choose $\secedge\in\secedges$ and subsets $\arbsetof{\edges}$ of $\edges$ and $\arbsetof{\secedges}$ of $\edges$  %$%of $\{\kcoreof{\edge} : \edge\in\secdges \}$ containing $\kcoreof{\edge}$
+	\State Update
+	\begin{align*}
+		\kcoreof{\secedge} \algdefsymbol\nonzerofunction\circ\contractionof{
+			\{\hypercoreof{\edge} \, : \, \edge\in\arbsetof{\edges}\} \cup \{\kcoreof{\edge} \, : \, \edge\in\arbsetof{\secedges}\cup\{\secedge\}\}
+		}{\catvariableof{\edge}}
+	\end{align*}
 \EndWhile
 \end{algorithmic}
 \end{algorithm}
 
 % Interpretation
-Each chosen subset $M$ is understood as a local knowledge base, which is then applied for local entailment.
+Each chosen subset $\arbsetof{\edges}$ is understood as a local knowledge base, which is then applied for local entailment.
+The knowledge cores are understood as messages, which propagate information from different regions of a tensor network (see \charef{cha:messagePassing}).
 
-%
-%The Knowledge Cores 
 
 %Implementation
-There are different ways of implementing Algorithm~\ref{alg:KP}, by choosing an order of local knowledge bases $M$ and a stopping criterion.
+There are different ways of implementing \algoref{alg:knowledgePropagation}, by choosing an order of local knowledge bases $\arbsetof{\edge}$ and a stopping criterion.
 
-\begin{theorem}
-	In Entailment Propagation Algorithm~\ref{alg:KP}, $\kcoreof{\edge}$ is monotonically decreasing with respect to the partial ordering and greater than $\tilde{\kcoreof{\edge}}$ defined as
-			\[ \tilde{\kcoreof{\edge}} = \nonzeroof{\contractionof{\extnet}{\edge}} \, . \]
+%The central property used in knowledge propagation is that any subcontraction can be added to the constraint network without changing it.
+%
+%\begin{theorem}\label{the:booleanContractionInvariance}
+%	Given a boolean tensor network $\extnet$ on $\graph$ and $\secedges\subset\edges$.
+%	For $\secgraph=(\secnodes,\secedges)$ with $\nodes=\cup_{\edge\in\secedges}\edge$ and the tensor network $\tnetof{\secgraph}$ with boolean tensors coinciding on $\secedges$ with those in $\extnet$ we have
+%	\begin{align*}
+%		\contractionof{\extnet}{\catvariableof{\nodes}} =
+%		\contractionof{\extnet\cup\{\nonzerofunction\circ\contractionof{\tnetof{\secgraph}}{\thirdnodes}\}}{\catvariableof{\nodes}} \, ,
+%	\end{align*}
+%	where $\thirdnodes\subset\nodes$ is arbitrary.
+%\end{theorem}
+%\begin{proof}
+%	We will proof this statement later in \charef{cha:messagePassing}, see \theref{the:invarianceAddingSubcontractions}.
+%\end{proof}
+
+
+\begin{theorem}\label{the:soundnessKnowledgePropagation}
+	At any state of the Knowledge Propagation \algoref{alg:knowledgePropagation}, we have
+	\begin{align*}
+		\contractionof{\extnet}{\nodevariables}
+		= \contractionof{\extnet \cup \{\kcoreof{\edge} \, : \, \edge\in\secedges\}}{\nodevariables} \, .
+	\end{align*}
+	Each core $\kcoreof{\secedge}$ is monotonically decreasing with respect to the partial ordering and lower bounded by
+	\begin{align*}
+		\nonzeroof{\contractionof{\extnet}{\catvariableof{\secedge}}} \prec \kcoreofat{\secedge}{\catvariableof{\secedge}} \, .
+	\end{align*}
 \end{theorem}
 \begin{proof}
-	We deduce the theorem from generic properties of the support of contractions, see \secref{sec:supportContractionEquations}.
-	Monotonic decreasing follows from montonocity of tensor contractions, see \theref{the:monotonicityBinaryContractions}.
-	By \theref{the:invarianceAddingSubcontractions} we have during any state of the algorithm
-		\[ \nonzerofunction\circ\contractionof{\extnet}{\catvariableof{\nodes}}  =  
-		\nonzerofunction\circ\contractionof{\extnet\cup\{\kcoreof{\edge} : \edge\in\edges\}}{\catvariableof{\nodes}}  \, . 
-		\]
-	If follows that
-		\[ \tilde{\kcoreof{\edge}} =  \nonzerofunction\circ\contractionof{\extnet\cup\{\kcoreof{\edge} : \edge\in\edges\}}{\catvariableof{\edge}} \]
-	and by \theref{the:monotonicityBinaryContractions}
-		\[  \tilde{\kcoreof{\edge}}  \prec \kcoreof{\edge} \, . \]
+	We show the first claim by induction over the update steps in \algoref{alg:knowledgePropagation}.
+	At the start, where $\kcoreofat{\edge}{\edgevariables} = \onesat{\edgevariables}$, we trivially have
+	\begin{align*}
+		\contractionof{\extnet \cup \{\kcoreofat{\edge}{\edgevariables} \, : \, \edge\in\secedges\}}{\nodevariables}
+		= \contractionof{\extnet \cup \{\onesat{\edgevariables} \, : \, \edge\in\secedges\}}{\nodevariables}
+		= \contractionof{\extnet}{\nodevariables} \, .
+	\end{align*}
+	Let us now assume, that for a state of cores $\{\{\kcoreof{\edge} \, : \, \edge\in\secedges\}\}$ the first claim holds and let $\arbsetof{\edges}\subset\edges$ and $\arbsetof{\secedges}\subset\edges$ be chosen for the update of $\kcoreof{\secedge}$.
+	By the invariance under adding the support of subcontractions, which we will proof in more detail as \theref{the:monotonicityBinaryContractions} in \charef{cha:messagePassing}, we have for the update
+	\begin{align*}
+		\tilde{\kcore}^{\secedge}[\catvariableof{\secedge}]
+		= \nonzerofunction\circ\contractionof{
+			\{\hypercoreof{\edge} \, : \, \edge\in\arbsetof{\edges}\} \cup \{\kcoreof{\edge} \, : \, \edge\in\arbsetof{\secedges}\cup\{\secedge\}\}
+		}{\catvariableof{\secedge}}
+	\end{align*}
+	that
+	\begin{align*}
+		\contractionof{\extnet \cup \{\kcoreofat{\edge}{\edgevariables} \, : \, \edge\in\secedges\}}{\nodevariables}
+		= \contractionof{\extnet \cup \{\kcoreofat{\edge}{\edgevariables} \, : \, \edge\in\secedges\} \cup \{\tilde{\kcore}^{\secedge}[\catvariableof{\secedge}]\}
+		}{\nodevariables}  \, .
+	\end{align*}
+	Thus, the first claim holds also after the update of the core to $\secedge$.
+
+	We further have for any update of $\kcoreof{\secedge}$ by $\tilde{\kcore}^{\secedge}$ with the monotonocity of boolean contraction (see \theref{the:monotonicityBinaryContractions}) that
+	\begin{align*}
+		\tilde{\kcore}^{\secedge}[\catvariableof{\secedge}]
+		= \nonzerofunction\circ\contractionof{
+			\{\hypercoreof{\edge} \, : \, \edge\in\arbsetof{\edges}\} \cup \{\kcoreof{\edge} \, : \, \edge\in\arbsetof{\secedges}\cup\{\secedge\}\}
+		}{\catvariableof{\secedge}}
+		\prec \kcoreofat{\secedge}{\catvariableof{\secedge}} \, .
+	\end{align*}
+	Thus, each Knowledge Core is monotoneously decreasing at each update, with respect to the partial tensor ordering.
+
+	From the first claim we further have for any $\secedge\in\secedges$
+	\begin{align*}
+		\contractionof{\{\kcoreofat{\secedge}{\catvariableof{\secedge}}\}\cup\extnet \cup \left\{\kcoreof{\edge} \, : \, \edge\in\secedges/\{\secedge\}\right\}}{\catvariableof{\secedge}}
+		= \contractionof{\extnet}{\catvariableof{\secedge}}
+	\end{align*}
+	And thus in combination with the monotonocity of boolean contraction (see \theref{the:monotonicityBinaryContractions}) that
+	\begin{align*}
+		\nonzeroof{\contractionof{\extnet}{\catvariableof{\secedge}}} \prec \kcoreofat{\secedge}{\catvariableof{\secedge}}  \, .
+	\end{align*}
+%	We deduce the theorem from generic properties of the support of contractions, see \secref{sec:supportContractionEquations}.
+%	Monotonic decreasing follows from montonocity of boolean tensor contractions, see \theref{the:monotonicityBinaryContractions}.
+%	By \theref{the:invarianceAddingSubcontractions} we have during any state of the algorithm
+%		\[ \nonzerofunction\circ\contractionof{\extnet}{\catvariableof{\nodes}}  =
+%		\nonzerofunction\circ\contractionof{\extnet\cup\{\kcoreof{\edge} : \edge\in\edges\}}{\catvariableof{\nodes}}  \, .
+%		\]
+%	If follows that
+%		\[ \nonzeroof{\contractionof{\extnet}{\edgevariables}} =  \nonzerofunction\circ\contractionof{\extnet\cup\{\kcoreof{\edge} : \edge\in\edges\}}{\catvariableof{\edge}} \]
+%	and by \theref{the:monotonicityBinaryContractions}
+%		\[  \tilde{\kcoreof{\edge}}  \prec \kcoreof{\edge} \, . \]
 \end{proof}
 
+We can exploit the Knowledge Propagation \algoref{alg:knowledgePropagation} for the solution of Constraint Satisfaction Problems, by taking $\extnet$ as the tensor network of constraint tensors.
+Whenever a knowledge core vanishes, we can conclude that the Constraint Satisfaction Problems is not satisfiable, as we show next.
 
 \begin{corollary}
+	Let us for a Constraint Satisfaction Problem encoded by $\extnet$ run Knowledge Propagation \algoref{alg:knowledgePropagation}.
+	Whenever for any $\secedge\in\edges$ we have $\kcoreofat{\secedge}{\catvariableof{\secedge}}=\zerosat{\catvariableof{\secedge}}$, then the Constraint Satisfaction Problem is not satisfiable.
+\end{corollary}
+\begin{proof}
+	Whenever $\kcoreofat{\secedge}{\catvariableof{\secedge}}=\zerosat{\catvariableof{\secedge}}$, then we have by \theref{the:soundnessKnowledgePropagation}
+	\begin{align*}
+		\nonzeroof{\contractionof{\extnet}{\catvariableof{\secedge}}} \prec \zerosat{\catvariableof{\secedge}}
+	\end{align*}
+	and therefore
+	\begin{align*}
+		\contraction{\extnet} = 0 \, .
+	\end{align*}
+\end{proof}
+
+% Combination with backtracking search
+When the Knowledge Propagation \algoref{alg:knowledgePropagation} converges in a given implementation and no knowledge core vanishes, we can however not conclude that the Constraint Satisfaction Problem is not satisfiable.
+However, for any index tuple $\catindexof{\nodes}$ to be a solution of the CSP to $\extnet$, we have the necessary condition
+\begin{align*}
+	\uniquantwrtof{\secedge\in\secedges}{\kcoreofat{\edge}{\catvariableof{\secedge}=\restrictionofto{\catindexof{\nodes}}{\secedges}}=1} \, ,
+\end{align*}
+where by $\restrictionofto{\catindexof{\nodes}}{\secedges}$ we denote the restriction of the index tuple $\catindexof{\nodes}$ to the variables included in $\secedges$.
+One can use this insight as a starting point for backtracking search, where the assignments to variables $\catvariableof{\secnodes}$ are iteratively guessed, based on the restriction that each constraint is locally satisfialbe, i.e. .
+\begin{align*}
+	\uniquantwrtof{\secedge\in\secedges}{
+		\contraction{\kcoreofat{\edge}{
+			\catvariableof{\secedge\cap\secnodes}=\restrictionofto{\catindexof{\nodes}}{\secedge\cap\secnodes}
+			,\catvariableof{\secedge/\secnodes}}} \neq 0
+	} \, .
+\end{align*}
+One can understand the guess of an assignment $\catindexof{\node}$ to a variable $\catvariableof{\node}$, as it is done during backtracking search, as an inclusion of a constraint
+\begin{align*}
+	\kcoreofat{\{\node\}}{\catvariableof{\node}}
+	= \onehotmapofat{\catindexof{\node}}{\catvariableof{\node}} \, .
+\end{align*}
+Therefore, Knowledge Propagation \algoref{alg:knowledgePropagation} can be integrated with backtracking search, with iterations between propagations of knowledge and guessing of additional variables.
+%The knowledge cores $\kcoreof{\edge}$ are subset encoding of possible local choices, according to which variables can be assigned.
+
+
+
+\subsect{Applications}
+
+Let us examplify the usage of Knowledge Propagation on Constraint Satisfaction Problems posed by entailment queries on Markov Networks.
+
+\begin{corollary}\label{cor:knowledgePropagationMarkovNetworks}
+	Let \algoref{alg:knowledgePropagation} be run on the cores $\tnetof{\graph}\cup\{\rencodingof{\exformula}\}$ with an arbitrary design of $\secedges$.
 	Whenever for a formula $\formulaat{\catvariableof{\secnodes}}$ and a $\kcoreof{\edge}$ we have
 		\[ \contractionof{\kcoreof{\edge},\rencodingof{\exformula}}{\exformulavar=0} =0  \]
 	then the Markov Network $\extnet$ probabilistically entails $\exformula$.
+	If on the contrary
+		\[ \contractionof{\kcoreof{\edge},\rencodingof{\exformula}}{\exformulavar=1} =0  \]
+	then the Markov Network $\extnet$ probabilistically entails $\lnot\exformula$, that is probabilistically contradicts $\exformula$.
 \end{corollary}
+\begin{proof}
+	This follows from \theref{the:soundnessKnowledgePropagation} ensuring the soundness of Knowledge Propagation and the sufficiency of local entailment.
+\end{proof}
 
+\begin{example}[Batch decision of entailment]
+	Let $\formulaset$ be a set of formulas and $\probofat{\graph}{\shortcatvariables}$ a Markov Network, for which it shall be decided, which formulas in $\formulaset$ are entailed, contradicted or contingent.
+	We can in addition to the cores of the Markov Network create the cores $\{\rencodingofat{\exformula}{\formulavar,\shortcatvariables} \, : \, \exformula\in\formulaset\}$ and prepare the knowledge cores
+	\begin{align*}
+		\kcoreofat{\{\formula\}}{\formulavar} \, .
+	\end{align*}
+	To decide entailment batchwise, Knowledge Propagation \algoref{alg:knowledgePropagation} can be run.
+	Whenever during the algorithm we have that for a $\formula$, then \corref{cor:knowledgePropagationMarkovNetworks} implies that if
+	\begin{align*}
+		\kcoreofat{\{\formula\}}{\formulavar} =
+		\begin{cases}
+			\tbasisat{\formulavar} & \text{then, the formula is entailed by }\probof{\graph} \, . \\
+			\fbasisat{\formulavar} & \text{then, the formula is contradicted by }\probof{\graph} \, .\\
+			\onesat{\formulavar} & \text{then no conclusion can be drawn.}
+	\end{cases}
+	\end{align*}
+	Note, that $\kcoreofat{\{\formula\}}{\formulavar} = \zerosat{\formulavar}$ can not happen, since this would mean that $\nonzeroof{\probof{\graph}}$ is inconsistent.
+	Thus, at any stage of \algoref{alg:knowledgePropagation}, one of the three holds.
 
-%% Interpretation for leg dimension two
-Another way to use Algorithm~\ref{alg:KP} to decide entailement of formulas $\exformula$ is adding each $\rencodingof{\exformula}$ to $\extnet$ and defining Knowledge Cores $\kcoreof{\exformula}[\exformulavar]$.
-Since then the Knowledge Core has only two dimensions, there are only four possible cores with the interpretation
-\begin{itemize}
-	\item $\tbasis$: the formula is known to be true
-	\item $\fbasis$: the formula is known to be false
-	\item $\ones$: the formula is not known
-	\item $0$: the knowledge base is inconsistent
-\end{itemize}
+	We notice, that a careful design of \algoref{alg:knowledgePropagation} can increase the efficiency of the batchwise entailment.
+	For example, when for two formulas $\exformula,\secexformula\in\formulaset$ we have $\exformula\models\secexformula$, then when $\kcoreofat{\{\exformula\}}{\exformulavar} = \tbasisat{\formulavar}$ we have
+	\begin{align*}
+		\tbasisat{\secexformulavar} = \contractionof{\rencodingof{\exformula},\rencodingof{\secexformula},\kcoreofat{\{\exformula\}}{\exformulavar}}{\secexformula} \, ,
+	\end{align*}
+	that is entailment of $\secexformula$ can be concluded without the contraction of $\probof{\graph}$, using a single update.
 
+	% Inference rules such as modus ponens can be mimicked.
+\end{example}
 
-%% OLD Criteria 
+\sect{Discussion}
 
-%\sect{Deciding entailment by Global Operations}
-%
-%\begin{corollary}\label{cor:SatisfiabilityCheck}
-%	A Knowledge Base $\kb$ is satisfiable, if and only if
-%		\[ \contractionof{\rencodingof{\kb}\cup\tbasis^{\kb}}{[]} \geq 0 \, .\]
-%	Here $\tbasis^{\kb}$ denotes the tensor with values $\tbasis$ and leg variable $\kb$.
-%\end{corollary}
-%\begin{proof}
-%	It would not be satisfiable if and only if $\formulaset\models\nothing$ and $\rencodingof{\nothing}=0$.
-%\end{proof}
-%
-%More precisely, $\contractionof{\rencodingof{\kb}}{[]} $ is the count of models.
-%
-%
-%%% Satisfaction Check
-%
-%\begin{theorem}\label{the:EntailmentCheck}
-%	We have $\kb\models\exformula$ if and only if
-%		\[ \contractionof{\rencodingof{\kb}\cup\tbasis^{\kb} \cup \rencodingof{\exformula} \cup \fbasis^{\exformula}}{[]} = 0 \, .\]
-%\end{theorem}
-%\begin{proof}
-%	It is known that $\kb\models\exformula$ if and only if $\kb\cup\{\lnot\exformula\}$ unsatisfiable (proof by contradiction).
-%	Using Corollary \ref{cor:SatisfiabilityCheck} we have $\kb\cup\{\lnot\exformula\}$ unsatisfiable if and only if
-%		\[  \contractionof{\rencodingof{\kb\cup\{\lnot\exformula\}}\cup\tbasis^{\kb\cup\{\lnot\exformula\}}}{[]} = 0 \, .\]
-%	The claim thus follows from noticing 
-%		\[ \contractionof{\rencodingof{\kb\cup\{\lnot\exformula\}}\cup\tbasis^{\kb\cup\{\lnot\exformula\}}}{[]}  =
-%		\contractionof{\rencodingof{\kb}\cup\tbasis^{\kb} \cup \rencodingof{\exformula} \cup \fbasis^{\exformula}}{[]} \, .
-%		\]
-%\end{proof}
+\begin{remark}{Tradeoff between generality and efficiency}
+	While generic entailment decision algorithms (those by the full network) can decide any entailment, local algorithms as presented here can only perform some, but therefore more effectively as operating batchwise (dynamically deciding entailment for many leg variables).
+	This is a typical phenomenon in logical reasoning and related to decidability.
+\end{remark}
 
-
-%% Contraction based criterion % But obvious from Monotonocity!! % Best when having a Markov Network definition of entailment.
-%\begin{theorem}[Local Contraction Criterion]\label{the:localEntailmentCriterion}
-%	For any subset $\seckb$ of the binary tensor cores of $\kb$, we have $\kb\models\exformula$ (respectively $\kb\models\lnot\exformula$), if the contraction of $\seckb$ with leaving $\atomlegindexof{\exformula}$ open is parallel to $\fbasis$ (respectively parallel to $\fbasis)$, denoted by 
-%		\[ \contractionof{\rencodingof{\seckb}}{[\atomlegindexof{\exformula}]}  \parallel \tbasis \quad \text{( respectively }\contractionof{\rencodingof{\seckb}}{[\atomlegindexof{\exformula}]}  \parallel \fbasis \text{)} \, . \]
-%%	 whenever the contraction of the subset with leaving $\atomlegindexof{\exformula}$ open is parallel to $\fbasis$ (respectively parallel to $\fbasis)$, then $\kb\models\exformula$ (respectively $\kb\models\lnot\exformula)$.
-%\end{theorem}
-%\begin{proof}
-%	From the monotonicity of binary tensor contractions with respect to the partial ordering it follows with \theref{the:monotonicityBinaryContractions} that
-%		\[ \rencodingof{\kb} \prec \rencodingof{\seckb} \, . \]
-%	By \theref{the:orderingEntailmentCriterion} we further have $\kb\models\seckb$.
-%	Theorem~\ref{cor:parallelCriterion} now implies, that $\seckb\models\exformula$ (respectively $\seckb\models\lnot\exformula$), when the in the claim assumed contraction criterion is satisfied.
-%	By monotonicity of entailment we in that case further have $\kb\models\exformula$ (respectively $\seckb\models\lnot\exformula$).
-%%	For any knowledge base $\seckb$ such that $\kb\models\seckb$ (seen as sublist of its formulas represented by knowledge cores).
-%%	Follows from the monotonicity of propositional logic: When entailment by subset, then also entailment by the full, but not the other way around.
-%\end{proof}
+Local contraction approaches in inference, especially when orchestrated by a Knowledge Propagation algorithm, mimik inference rules in syntax-based prove approaches.

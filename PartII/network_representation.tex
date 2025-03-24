@@ -649,7 +649,7 @@ We apply \lemref{lem:clauseTermBasisPlus} to show the following sparsity bound o
 \end{theorem}
 \begin{proof}
 	Let $\exformula$ have a CNF with clauses indexed by $l\in[n]$ and each clause represented by subsets $\nodes_0^l, \nodes_1^l$, that is
-		\[ \exformula = \bigwedge_{l \in [n]}  \clauseof{\nodes_0^l}{\nodes_1^l} \, . \]
+		\[ \exformula = \bigwedge_{l \in [n]}  \clauseof{\nodes_0^l}{\nodes_1^l} \, . \]
 	We now use the rank bound of Theorem~\ref{the:CPrankContractionBound} and \lemref{lem:clauseTermBasisPlus} to get
 	\begin{align*}
 		\slicesparsityof{\exformula} \leq \prod_{l \in [n]}  \slicesparsityof{\clauseof{\nodes_0^l}{\nodes_1^l}} \leq 2^n \, . 
@@ -662,126 +662,6 @@ We apply \lemref{lem:clauseTermBasisPlus} to show the following sparsity bound o
 \end{proof}
 
 
-\subsect{Categorical Constraints}\label{sec:categoricalTN}
-
-%% Categorical variables with more possibilities
-We made the assumption that all categorical variables in factored systems to be represented by propositional logics take binary values (i.e. $\catdim=2$).
-In cases where a categorical variable $\catvariable$ takes multiple values we define for each $\catindex$ an atomic formula $\catvariableof{\catindex}$ representing whether $\catvariable$ is assigned by $\catindex$ in a specific state.
-	%\[ \catvariableof{\catindex} =  (\catvariable = \catindex \, . \] Confusing notation
-Following this construction we have the constraint that exactly one of the atoms $\catvariableof{\catindex}$ is $1$ at each state.
-
-%% Capture constraint
-To capture the constraints resulting from this construction we introduce auxiliary parts. % of Bayesian Propositional Networks.
-Such constraints can also be expressed by a formula but would result in an unnecessary large tensor network.
-
-
-%% Categorical selection map
-\begin{definition}[Categorical Constraint and Atomization Variables]
-	Given a list $\catvariableof{0},\ldots,\catvariableof{\catdim-1}$ of boolean variables and a categorical variable $\catvariable$ with dimension $\catdim$ a categorical constraint is a tensor $\categoricalmap[\catvariable,\catvariableof{[\catdim]}]$ defined as
-	\begin{align*}
-		 \categoricalmap(\catindex,\catindexof{\variableset}) 
-		 = \begin{cases} 
-		 	1 & \text{if} \quad \catindexof{[\catdim]} = \onehotmapof{\catindex} \\
-			0 & \text{else} \, . 
-		 \end{cases}
-	\end{align*}
-	We then call the variables  $\catvariableof{0},\ldots,\catvariableof{\catdim-1}$ the atomization variables to the categorical variable $\catvariable$.
-\end{definition}
-
-%% Decomposition
-With Theorem~\ref{the:functionDecompositionBasisCP} the tensor representation of $\categoricalcore$ decomposes in a basis CP format (see Figure~\ref{fig:CategoricalDecomposition}b) of if its coordinate maps $\categoricalmap_{\catindex}$, where $\catindex\in[\catdim]$.
-For the cores
-\begin{align}
-	\categoricalcoreof{\catindex} = \onehotmapofat{\catindex}{\catvariable} \otimes \onehotmapofat{1}{\catvariableof{\catindex}} + (\onesat{\catvariable}- \onehotmapofat{\catindex}{\catvariable} ) \otimes \onehotmapofat{0}{\catvariableof{\catindex}} 
-\end{align}	
-we have by Theorem~\ref{the:functionDecompositionBasisCP}
-\begin{align*}
-	\rencodingofat{\categoricalmap}{\catvariable, \catvariableof{0}, \ldots, \catvariableof{\catdim-1}} 
-	= \contractionof{\{\rencodingof{\categoricalmap(\catindex)} \, : \, \catindex\in[\catdim]\}}{\catvariable, \catvariableof{0}, \ldots, \catvariableof{\catdim-1}} \, . 
-\end{align*}
-
-
-In the next theorem we show how a categorical constraint can be enforced in a tensor network by adding the tensor $\categoricalmap$ to a contraction.
-
-\begin{theorem}
-	For any tensor $\hypercoreat{\shortcatvariables}$ and a categorical constraint defined by an ordered subset $\catvariableof{\variableset}\subset\shortcatvariables$, a variable $\catvariable\in\shortcatvariables$ we have
-	\begin{align*}
-	 	\contractionof{\{\hypercoreat{\shortcatvariables}, \categoricalmap\}}{\indexedcatvariables} 
-		= \begin{cases}
-			\hypercoreat{\indexedcatvariables} & \text{if} \quad \catindexof{\variableset} = \onehotmapof{\catindex} \\
-			0 & \text{else} \, . 
-		\end{cases}
-	\end{align*}
-\end{theorem}
-\begin{proof}
-	For any $\catindexof{[\atomorder]}$ we have
-		\[ \contractionof{\{\hypercoreat{\shortcatvariables}, \categoricalmap\}}{\indexedcatvariables}  = 
-			\hypercoreat{\shortcatindices} \cdot \categoricalmap[\indexedcatvariableof{},\indexedcatvariableof{\variableset}] \, . 
-		\]
-	If $\catindexof{\variableset} = \onehotmapof{\catindex}$ we have $\categoricalmap[\indexedcatvariableof{},\indexedcatvariableof{\variableset}] = 1$ and thus
-		\[ \contractionof{\hypercoreat{\shortcatvariables},\categoricalmap}{\indexedcatvariables}  =  \hypercoreat{\shortcatindices}  \, . \]
-	If $\catindexof{\variableset} \neq \onehotmapof{\catindex}$ then $\categoricalmap[\indexedcatvariableof{},\indexedcatvariableof{\variableset}] = 0$ and  
-		\[ \contractionof{\hypercoreat{\shortcatvariables},\categoricalmap}{\indexedcatvariables}  = 0 \, . \]
-\end{proof}
-
-\begin{figure}[h]
-\begin{center}
-	\input{PartII/tikz_pics/network_representation/categorical_decomposition.tex}
-\end{center}
-\caption{Representation of a categorical constraint in a $\cpformat$ Format tensor network.
-	a) Representation of the dependency of the graphical model.
-	b) Tensor Representation with further network decomposition.
-	We average by contraction with the dashed tensor $\ones$, if we do not specify the active atom.
-	}
-\label{fig:CategoricalDecomposition}
-\end{figure}
-
-\begin{remark}[Combination of Constraints]
-	We can combine constraint cores by Hadamard products in the dual tensor network representation, as long as they can be satisfied together.
-	An example, where this is not the case, are the categorical constraints to the three sets
-		\[ \{\randomxof{0},\randomxof{1},\randomxof{2},\randomxof{3}\} \, , \, \{\randomxof{0},\randomxof{1}\}\, ,\,\{\randomxof{2},\randomxof{3}\} \, . \] 
-	Besides the categorical cores also the datacores have a similar bayesian network affecting the atoms by another hidden variable.
-	Combining both is welldefined, only when all datapoints satisfy the categorical constraints (that is only one of the atoms in each constraint is active).
-\end{remark}
-
-
-\begin{example}[Sudoku]\label{exa:sudoku}
-	An interesting example, where categorical constraints are combined is Sudoku, the game of assigning numbers to a grid (see for example Section~5.2.6 in \cite{russell_artificial_2021}).
-	The basic variables therein are $\catvariableof{i,j}$, with $\catdimof{i,j}=n^2$ and $i,j\in[n^2]$.
-	By understanding $i$ as a line index and $j$ as a column index, they are ordered in a grid as sketched in Figure~\ref{fig:sudokuGrid} in the case $n=3$.
-		
-	For a $n\in\nn$ we further define the atomization variables $\catvariableof{i,j,k}$ where $i,j,k\in[n^2]$ and $\catdimof{i,j,k}=2$.
-	These $n^6$ variables are the booleans indicating whether a specific position has a specific number assigned.
-	The consistency of the atomization variables to the basic variables is then for each $i,j\in[n^2]$ ensured by the constraints
-		\[ \{\catvariableof{i,j,k} \, : \, k \in [n^2] \} \, . \]
-	
-	We further have $3\cdot n^2$ constraints by the
-	\begin{itemize}
-		\item Row constraints: Each number $k$ appears exactly once in each row $i\in[n^2]$, captured by the constraints
-			\[ \{\catvariableof{i,j,k}  \, : \, j \in [n^2] \} \, . \]
-		\item Column constraints: Each number $k$ appears exactly once in each column $j\in[n^2]$, captured by the constraints
-			\[ \{\catvariableof{i,j,k}  \, : \, i \in [n^2] \} \, . \]
-		\item Square constraints: Each number appears exactly once in each square $s,r\in[n]$, captured by the constraints
-			\[ \{\catvariableof{i+n\cdot s,j+n\cdot r,k}  \, : \, i,j \in [n] \} \, . \]
-	\end{itemize}
-	
-	In total we have $3\cdot n^2 + n^4$ constraints for $n^6$ variables.
-
-	\begin{figure}\label{fig:sudokuGrid} 
-	\begin{center}
-		\input{PartII/tikz_pics/network_representation/sudoku_grid.tex}
-	\end{center}
-	\caption{
-	Sudoku grid of basic categorical variables $\catvariableof{i,j}$, here drawn in the standard case of $n=3$, each with dimension $\catdim=n^2=9$.
-	Each basic categorical variables has $n^2$ corresponding atomization variables, which are further atomization variables to the row, column and squares constraints.
-	Instead of depicting those constraints by hyperedges in a variable dependency graph, we here just indicate their existence through row, column and squares blocks.
-	}
-	\end{figure}
-
-	\red{Reasoning by Entailment propagation! 
-	Also, probabilistic choices possible when exact (!) contraction at a position not a basis vector, then can choose one possibility.}
-
-\end{example}
 
 
 
@@ -938,7 +818,7 @@ However, notice that if $\hardformulaset/\{\exformula\}\models\lnot\exformula$, 
 %If the conjunction of $\hardformulaset/\{\exformula\}$ entails $\exformula$, we can erase $\exformula$ from $\hardformulaset$ without changing the contraction, therefore without changing the base measure of the Hybrid Logic Network.
 
 % Utility in Contraction KB implementation
-These results are especially interesting for the efficient implementation of Algorithm~\ref{alg:TensorKB}, which has been introduced in \charef{cha:logicalReasoning}.
+These results are especially interesting for the efficient implementation of \algoref{alg:contractionKB}, which has been introduced in \charef{cha:logicalReasoning}.
 By Theorem~\ref{the:hlnEntailmentReduction} only the hard logic parts of a Hybrid Logic Network are required in the ASK operation.
 %Theorem~\ref{the:hlnRepRedundancy} for the TELL operation, but already discussed in more generality
 

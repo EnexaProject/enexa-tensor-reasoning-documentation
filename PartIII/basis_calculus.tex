@@ -20,7 +20,7 @@ For a schematic depiction of this see \figref{fig:dbTensorSketch}.
 
 
 
-\sect{Encoding of Subsets and Relations}
+\sect{Encoding of Subsets}
 
 Based on the concept of one-hot encodings of states we in this chapter develop the construction of encodings to sets, relations and functions.
 We start with the definition of subset encodings, which represent set memberships in their boolean coordinates.
@@ -46,6 +46,52 @@ In a one-hot basis decomposition we have
 	\onehotmapofat{\arbsubset}{\indvariable}
 	\coloneqq \sum_{\indindex\in[\cardof{\arbset}]\,:\,\indexinterpretationat{\indindex}\in\arbsubset}\onehotmapofat{\indindex}{\indvariable} \, .
 \end{align*}
+
+
+The inclusion of subsets is represented by the partial ordering of tensors.
+Let us first define this property for arbitrary tensors.
+
+% Here for general tensors, not just propositional formulas!
+\begin{definition}[Partial ordering of tensors]\label{def:partialOrder}
+	We say that two tensors $\exformulaat{\shortcatvariables}$ and $\secexformulaat{\shortcatvariables}$ attached with the same variables are partially ordered, denoted by
+	\begin{align*}
+		{\exformula}\prec{\secexformula} \, ,
+	\end{align*}
+	if for all $\shortcatindices\in\facstates$
+	\begin{align*}
+		 \exformulaat{\indexedshortcatvariables} \leq \secexformulaat{\shortcatindices}  \, .
+	\end{align*}
+\end{definition}
+
+For boolean tensors, the partially ordering is equal to a subset relation of the coordinates with value $1$, as we show next.
+
+\begin{theorem}\label{the:subsetRelationSubsetEncoding}
+	Let $\arbset$ be an arbitrary set enumerated by the variable $\indvariable$ and index interpretation function $\indexinterpretation$.
+	For two subsets $\arbsetof{0},\arbsetof{1}$ of $\arbset$ we have
+	\begin{align*}
+		\arbsetof{0} \subset \arbsetof{1}
+	\end{align*}
+	if and only if
+	\begin{align*}
+		\onehotmapofat{\arbsetof{0}}{\indvariable} \prec \onehotmapofat{\arbsetof{1}}{\indvariable} \, .
+	\end{align*}
+\end{theorem}
+\begin{proof}
+	We have $\arbsetof{0} \subset \arbsetof{1}$ if and only if
+	\begin{align*}
+		\forall{\indindex\in[\cardof{\arbset}]} \big(\indexinterpretationat{\indindex}\in\arbsetof{0}\big) \Rightarrow \big(\indexinterpretationat{\indindex}\in\arbsetof{1}\big) \, ,
+	\end{align*}
+	which is equal to
+	\begin{align*}
+		\forall{\indindex\in[\cardof{\arbset}]} \big(\onehotmapofat{\arbsetof{0}}{\indexedindvariable}=1\big) \Rightarrow \big(\onehotmapofat{\arbsetof{0}}{\indexedindvariable}=1\big)  \, .
+	\end{align*}
+	Since subset encodings are boolean tensors, this is equivalent to
+	\begin{align*}
+		\onehotmapofat{\arbsetof{0}}{\indvariable} \prec \onehotmapofat{\arbsetof{1}}{\indvariable} \, .
+	\end{align*}
+\end{proof}
+
+\subsect{Binary Relations}
 
 % Explanation
 %Encoding of subsets as vectors: Each coordinate associated with a possible element, $\{0,1\}$ encoding whether in subset.
