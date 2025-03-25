@@ -484,13 +484,14 @@ Let us use this to connect the entailment formalism with the representability (s
 
 Let us now explore a more general class of logical inference problems and discuss probabilistic entailment within that class.
 We then provide further examples based on categorical constraints.
+Following Chapter~5 in \cite{russell_artificial_2021}, we now define Constraint Satisfaction Problems.
 
 \begin{definition}
 	Let there be a hypergraph $\graph=(\nodes,\edges)$ and $\extnet$ be a tensor network of boolean constraint tensors $\hypercoreofat{\edge}{\catvariableof{\edge}}$ to each $\edgein$, that is
 	\begin{align*}
 		\extnet = \{ \hypercoreofat{\edge}{\catvariableof{\edge}} \, : \, \edge\in\edges \} \, .
 	\end{align*}
-	The Constraint Satisfaction Problem CSP to $\extnet$ is the decision whether there is a state $\catindexof{\nodes}$ such that
+	The Constraint Satisfaction Problem (CSP) to $\extnet$ is the decision whether there is a state $\catindexof{\nodes}$ such that
 	\begin{align*}
 		\contractionof{\extnet}{\indexedcatvariableof{\nodes}} = 1 \, .
 	\end{align*}
@@ -564,10 +565,14 @@ Here, any factor tensor in the Markov Networks produces a constraint tensor in t
 For any positive tensor $\hypercore$ we have
 	\[ \nonzerofunction\circ\hypercoreat{\catvariableof{\edge}} = \onesat{\catvariableof{\edge}} \, , \]
 which does not influence the distribution and can be omitted from the Markov Network.
-By \theref{the:factorReduction}, when deciding eintailment, we can reduce all tensors of a Markov Network to their support and omit those with full support.
+By \theref{the:factorReduction}, when deciding entailment, we can reduce all tensors of a Markov Network to their support and omit those with full support.
 Since the support indicating tensors $\nonzerofunction\circ\hypercoreat{\catvariableof{\edge}}$ are boolean, each is a propositional formula and the Markov Network is turned into a Knowledge Base of their conjunctions.
 Deciding probabilitic entailment is thus traced back to logical entailment.
-\red{For exponential families, the corresponding constraint tensor network is thus reduced to the base measure.}
+
+%Exponential families
+Exponential families have a tensor network representation by a Markov Network (see \theref{def:expFamilyTensorRep}).
+However, all factors corresponding with a coordinate of the statistic $\sstat$ have a trivial support, and therefore do not influence the support of the distribution.
+The only tensors with non-trivial support are those to the boolean base measure $\basemeasure$.
 
 
 \subsect{Categorical Constraints}\label{sec:categoricalTN}
@@ -587,9 +592,10 @@ Following this construction we have the constraint that exactly one of the atoms
 \begin{definition}[Categorical Constraint and Atomization Variables]
 	Given a list $\catvariableof{0},\ldots,\catvariableof{\catdim-1}$ of boolean variables and a categorical variable $\catvariable$ with dimension $\catdim$ a categorical constraint is a tensor $\categoricalmap[\catvariable,\catvariableof{[\catdim]}]$ defined as
 	\begin{align*}
-		 \categoricalmap(\catindex,\catindexof{\variableset})
+		\categoricalmapat{\indexedcatvariableof{[\catdim]},\indexedcatvariable}
+%		 \categoricalmap(\catindex,\catindexof{\variableset})
 		 = \begin{cases}
-		 	1 & \text{if} \quad \catindexof{[\catdim]} = \onehotmapof{\catindex} \\
+		 	1 & \text{if} \quad \catindexof{[\catdim]} = \onehotmapof{\catindex} \quad \Big(\text{i.e. }\forall \catenumerator\in[\catdim] \big(\catindex=\catenumerator\big) \Leftrightarrow \big(\catindexof{\catenumerator}=1\big) \Big)\\
 			0 & \text{else} \, .
 		 \end{cases}
 	\end{align*}
@@ -597,15 +603,24 @@ Following this construction we have the constraint that exactly one of the atoms
 \end{definition}
 
 %% Decomposition
-With Theorem~\ref{the:functionDecompositionBasisCP} the tensor representation of $\categoricalcore$ decomposes in a basis CP format (see Figure~\ref{fig:CategoricalDecomposition}b) of if its coordinate maps $\categoricalmap_{\catindex}$, where $\catindex\in[\catdim]$.
-For the cores
-\begin{align}
-	\categoricalcoreof{\catindex} = \onehotmapofat{\catindex}{\catvariable} \otimes \onehotmapofat{1}{\catvariableof{\catindex}} + (\onesat{\catvariable}- \onehotmapofat{\catindex}{\catvariable} ) \otimes \onehotmapofat{0}{\catvariableof{\catindex}}
-\end{align}
-we have by Theorem~\ref{the:functionDecompositionBasisCP}
+With \theref{the:functionDecompositionBasisCP} the relational encoding $\categoricalcore$ decomposes in a basis $\cpformat$ format (see \figref{fig:CategoricalDecomposition}b) of if its coordinate maps $\categoricalmapof{\catenumerator}$, where $\catenumerator\in[\catdim]$, defined as
 \begin{align*}
-	\rencodingofat{\categoricalmap}{\catvariable, \catvariableof{0}, \ldots, \catvariableof{\catdim-1}}
-	= \contractionof{\{\rencodingof{\categoricalmap(\catindex)} \, : \, \catindex\in[\catdim]\}}{\catvariable, \catvariableof{0}, \ldots, \catvariableof{\catdim-1}} \, .
+	\categoricalmapofat{\catenumerator}{\indexedcatvariableof{\catenumerator},\indexedcatvariable}
+	= \begin{cases}
+		  1 & \text{if} \quad \catindex=\catenumerator \\
+		  0 & \text{else} \, .
+	\end{cases}
+\end{align*}
+Their relational encoding are decomposed as
+\begin{align}
+	\categoricalcoreofat{\catenumerator}{\catvariableof{\catenumerator},\catvariable}
+	= \onehotmapofat{1}{\catvariableof{\catenumerator}} \otimes \onehotmapofat{\catenumerator}{\catvariable}
+	+ \onehotmapofat{0}{\catvariableof{\catenumerator}} \otimes \big(\onesat{\catvariable}- \onehotmapofat{\catenumerator}{\catvariable}\big) \, .
+\end{align}
+We further have by \theref{the:functionDecompositionBasisCP}
+\begin{align*}
+	\rencodingofat{\categoricalmap}{\catvariableof{[\catdim]},\catvariable}
+	= \contractionof{\{\categoricalcoreofat{\catenumerator}{\catvariableof{\catenumerator},\catvariable} \, : \, \catindex\in[\catdim]\}}{\catvariable, \catvariableof{0}, \ldots, \catvariableof{\catdim-1}} \, .
 \end{align*}
 
 
@@ -614,21 +629,22 @@ In the next theorem we show how a categorical constraint can be enforced in a te
 \begin{theorem}
 	For any tensor $\hypercoreat{\shortcatvariables}$ and a categorical constraint defined by an ordered subset $\catvariableof{\variableset}\subset\shortcatvariables$, a variable $\catvariable\in\shortcatvariables$ we have
 	\begin{align*}
-	 	\contractionof{\{\hypercoreat{\shortcatvariables}, \categoricalmap\}}{\indexedcatvariables}
+	 	\contractionof{\hypercoreat{\shortcatvariables},\categoricalmapat{\catvariableof{\variableset},\catvariable}}{\indexedcatvariables}
 		= \begin{cases}
 			\hypercoreat{\indexedcatvariables} & \text{if} \quad \catindexof{\variableset} = \onehotmapof{\catindex} \\
 			0 & \text{else} \, .
 		\end{cases}
 	\end{align*}
+	Here by $\catindexof{\variableset}$ we denote the restriction of $\shortcatindices$ on the set $\variableset$.
 \end{theorem}
 \begin{proof}
 	For any $\catindexof{[\atomorder]}$ we have
 		\[ \contractionof{\{\hypercoreat{\shortcatvariables}, \categoricalmap\}}{\indexedcatvariables}  =
-			\hypercoreat{\shortcatindices} \cdot \categoricalmap[\indexedcatvariableof{},\indexedcatvariableof{\variableset}] \, .
+			\hypercoreat{\shortcatindices} \cdot \categoricalmap[\indexedcatvariableof{\variableset},\indexedcatvariable] \, .
 		\]
-	If $\catindexof{\variableset} = \onehotmapof{\catindex}$ we have $\categoricalmap[\indexedcatvariableof{},\indexedcatvariableof{\variableset}] = 1$ and thus
+	If $\catindexof{\variableset} = \onehotmapof{\catindex}$ we have $\categoricalmap[\indexedcatvariableof{\variableset},\indexedcatvariable] = 1$ and thus
 		\[ \contractionof{\hypercoreat{\shortcatvariables},\categoricalmap}{\indexedcatvariables}  =  \hypercoreat{\shortcatindices}  \, . \]
-	If $\catindexof{\variableset} \neq \onehotmapof{\catindex}$ then $\categoricalmap[\indexedcatvariableof{},\indexedcatvariableof{\variableset}] = 0$ and
+	If $\catindexof{\variableset} \neq \onehotmapof{\catindex}$ then $\categoricalmap[\indexedcatvariableof{\variableset},\indexedcatvariable] = 0$ and
 		\[ \contractionof{\hypercoreat{\shortcatvariables},\categoricalmap}{\indexedcatvariables}  = 0 \, . \]
 \end{proof}
 
@@ -639,29 +655,29 @@ In the next theorem we show how a categorical constraint can be enforced in a te
 \caption{Representation of a categorical constraint in a $\cpformat$ Format tensor network.
 	a) Representation of the dependency of the graphical model.
 	b) Tensor Representation with further network decomposition.
-	We average by contraction with the dashed tensor $\ones$, if we do not specify the active atom.
 	}
 \label{fig:CategoricalDecomposition}
 \end{figure}
 
-\begin{remark}[Combination of Constraints]
-	We can combine constraint cores by Hadamard products in the dual tensor network representation, as long as they can be satisfied together.
-	An example, where this is not the case, are the categorical constraints to the three sets
+% Drop?
+\begin{remark}[Constraint Satisfaction Problems of Categorical Constraints]
+	We can define CSPs by collection of categorical constraints.
+	An example, where the corresponding Constraint Satisfaction Problem is unsatisfiable are the categorical constraints to the three sets
 		\[ \{\randomxof{0},\randomxof{1},\randomxof{2},\randomxof{3}\} \, , \, \{\randomxof{0},\randomxof{1}\}\, ,\,\{\randomxof{2},\randomxof{3}\} \, . \]
-	Besides the categorical cores also the datacores have a similar bayesian network affecting the atoms by another hidden variable.
-	Combining both is welldefined, only when all datapoints satisfy the categorical constraints (that is only one of the atoms in each constraint is active).
+%	Besides the categorical cores also the datacores have a similar bayesian network affecting the atoms by another hidden variable.
+%	Combining both is welldefined, only when all datapoints satisfy the categorical constraints (that is only one of the atoms in each constraint is active).
 \end{remark}
 
 
 \begin{example}[Sudoku]\label{exa:sudoku}
 	An interesting example, where categorical constraints are combined is Sudoku, the game of assigning numbers to a grid (see for example Section~5.2.6 in \cite{russell_artificial_2021}).
 	The basic variables therein are $\catvariableof{i,j}$, with $\catdimof{i,j}=n^2$ and $i,j\in[n^2]$.
-	By understanding $i$ as a line index and $j$ as a column index, they are ordered in a grid as sketched in Figure~\ref{fig:sudokuGrid} in the case $n=3$.
+	By understanding $i$ as a line index and $j$ as a column index, they are ordered in a grid as sketched in \figref{fig:sudokuGrid} in the case $n=3$.
 
 	For a $n\in\nn$ we further define the atomization variables $\catvariableof{i,j,k}$ where $i,j,k\in[n^2]$ and $\catdimof{i,j,k}=2$.
 	These $n^6$ variables are the booleans indicating whether a specific position has a specific number assigned.
 	The consistency of the atomization variables to the basic variables is then for each $i,j\in[n^2]$ ensured by the constraints
-		\[ \{\catvariableof{i,j,k} \, : \, k \in [n^2] \} \, . \]
+		\[ \{\catvariableof{i,j,k} \, : \, k\in [n^2] \} \, . \]
 
 	We further have $3\cdot n^2$ constraints by the
 	\begin{itemize}
@@ -679,7 +695,7 @@ In the next theorem we show how a categorical constraint can be enforced in a te
 	Let us notice, that due to this large number of variables and constraints, direct solution of the problem by a global contraction is not feasible.
 	For efficient algorithmic solutions, we instead refer to \secref{subsec:LocalEntailment}.
 
-	\begin{figure}\label{fig:sudokuGrid}
+	\begin{figure}
 	\begin{center}
 		\input{PartII/tikz_pics/network_representation/sudoku_grid.tex}
 	\end{center}
@@ -687,7 +703,7 @@ In the next theorem we show how a categorical constraint can be enforced in a te
 	Sudoku grid of basic categorical variables $\catvariableof{i,j}$, here drawn in the standard case of $n=3$, each with dimension $\catdim=n^2=9$.
 	Each basic categorical variables has $n^2$ corresponding atomization variables, which are further atomization variables to the row, column and squares constraints.
 	Instead of depicting those constraints by hyperedges in a variable dependency graph, we here just indicate their existence through row, column and squares blocks.
-	}
+	}\label{fig:sudokuGrid}
 	\end{figure}
 \end{example}
 
