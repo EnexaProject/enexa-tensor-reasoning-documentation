@@ -5,8 +5,8 @@ These message passing schemes provide tradeoffs between efficiency increases and
 
 We use the $\cpformat$ decompositions to investigate the asymptotic behavior of the message passing algorithms.
 
-\red{The application of message passing schemata can be justified based on commutation and monotonous properties of large contractions.
-We first show these properties and then provide message passing schemata.
+\red{The application of message passing schemata to calculate contractions are motivated by commutations of contractions.
+We first show this property and then provide message passing schemata.
 }
 
 \sect{Commutation of Contractions}
@@ -64,97 +64,9 @@ We show in the next theorem, that a contractions can be performed by contracting
 \end{proof}
 
 
-
-
-
-
-
-\sect{Support of Contractions}\label{sec:supportContractionEquations}
-
-
-To state the next theorem we use the nonzero function $\nonzerofunction: \rr \rightarrow [2]$ by $\nonzeroof{x}=1$ if $x\neq0$ and $\nonzeroof{x}=0$ else.
-Applied coordinatewise on tensors it marks the nonzero coordinates by $1$.
-
-We show that adding boolean tensor cores to an contraction orders the results by the partial ordering introduced in \defref{def:partialOrder}.
-
-\begin{theorem}[Monotonicity of Tensor Contractions]\label{the:monotonicityBinaryContractions}
-	Let $\extnet, \secextnet$ be tensor network of non-negative tensors and $\catvariableof{\secnodes}$ an arbitrary set of random variables. %, and $\tilde{\theta}$ another binary tensor.
-	Then we have
-	\begin{align*}
-		\nonzeroof{\contractionof{\extnet\cup\secextnet}{\catvariableof{\secnodes}}} \prec
-		\nonzeroof{\contractionof{\extnet}{\catvariableof{\secnodes}}} \, .
-	\end{align*}
-\end{theorem}
-\begin{proof}
-	It suffices to show that for any $\catindexof{\secnodes}$ with
-		\[ \nonzeroof{\contractionof{\extnet\cup\secextnet}{\indexedcatvariableof{\secnodes}}}=1 \]
-	we also have
-		\[ \nonzeroof{\contractionof{\extnet}{\indexedcatvariableof{\secnodes}}}=1 \, . \]
-	For any $\catindexof{\secnodes}$ satisfying the first equation we find an extension $\catindexof{\nodes}$ to all variables of the tensor networks such that
-		\[ \contractionof{\extnet\cup\secextnet}{\indexedcatvariableof{\nodes}} > 0 \]
-	and it follows that
-		\[ \contractionof{\extnet}{\indexedcatvariableof{\nodes}} > 0 \quad\text{and}\quad  \contractionof{\secextnet}{\indexedcatvariableof{\nodes}} > 0  \, . \]
-	But this already implies, that
-		\[ \nonzeroof{\contractionof{\extnet}{\indexedcatvariableof{\secnodes}}}=1 \, . \]
-\end{proof}
-
-%We now show \theref{the:booleanContractionInvariance} of \charef{cha:logicalReasoning}.
-Let us now state an equivalence of the contraction, when we add the result of the same contraction.
-This property was used in the proof of \theref{the:soundnessKnowledgePropagation}.
-
-\begin{theorem}[Invariance under adding subcontractions]\label{the:invarianceAddingSubcontractions}
-	Let $\extnet$ be a tensor network of non-negative tensors with variables $\catvariableof{\nodes}$ and let $\secextnet$ be a subset.
-	Then we have for any subset $\catvariableof{\secnodes}$ of $\catvariableof{\nodes}$
-		\[ \contractionof{\extnet \cup\{
-			\nonzeroof{
-			\contractionof{\secextnet}{\catvariableof{\secnodes}}
-			}
-		\}}{\catvariableof{\nodes}}
-		= \contractionof{\extnet}{\catvariableof{\nodes}}
-		\, . \]
-\end{theorem}
-\begin{proof}
-	For any $\catindexof{\nodes}$ with
-		\[ \contractionof{\extnet}{\indexedcatvariableof{\nodes}} = 0 \]
-	we also have
-		\[ \contractionof{\extnet \cup\{
-			\nonzeroof{
-			\contractionof{\secextnet}{\catvariableof{\secnodes}}
-			}
-		\}}{\indexedcatvariableof{\nodes}} = 0 \, . \]
-	For any $\catindexof{\nodes}$ with
-		\[ \contractionof{\extnet}{\indexedcatvariableof{\nodes}} \neq 0 \]
-	we have for the reduction $\catindexof{\secnodes}$ of the index $\catindexof{\nodes}$ that
-		\[  \contractionof{\secextnet}{\indexedcatvariableof{\secnodes}} \neq 0 \]
-	and thus
-	\begin{align*}
-		\contractionof{\extnet \cup\{
-			\nonzeroof{
-			\contractionof{\secextnet}{\catvariableof{\secnodes}}
-			}
-		\}}{\indexedcatvariableof{\nodes}}
-		= \contractionof{\extnet}{\indexedcatvariableof{\nodes}} \cdot \nonzeroof{
-			\contractionof{\secextnet}{\catvariableof{\secnodes}}
-			}[\indexedcatvariableof{\secnodes}]
-		= \contractionof{\extnet}{\indexedcatvariableof{\nodes}} \, .
-	\end{align*}
-%	When the subcore transformed by $\nonzeroof{\cdot}$ contains a zero slice, then this
-%	 zero slice is also appearing in the rest contraction.
-%	Multiplying a zero slice with zero does not affect the contraction, neither does multiplication with one on any slice.
-\end{proof}
-
-
-\begin{remark}
-	Similar statements hold, when dropping the non-negativity assumption on the, but demanding that all variables are left open.
-\end{remark}
-
-
-
-% Application
-This properties can be applied as a sparsification of tensors before the execution of a contraction.
-The Knowledge Propagation \algoref{alg:knowledgePropagation} produces in the knowledge cores conditions on non-vanishing coordinates.
-Thus, the knowledge cores can be locally contracted with the tensors, as a sparsification before performing a global contraction.
-
+% Message interpretation
+We can interpret the inner contraction $\contractionof{\tnetof{\graph_2}}{\catvariableof{\nodestwo\cap(\nodesone\cup\secnodes)}}$ as a message, sent from $\graph_2$ to $\graph_1$.
+Based on this intuition, we will define message passing schemes in the next section.
 
 
 \sect{Exact Contractions}
@@ -403,7 +315,96 @@ Naive execution of $\contractionof{\tnetof{\graph}}{\secnodes}$: $\prod_{\node\i
 When splitting contractions into local subcontractions, the product can be turned into sums with tremendous decrease in complexity.
 
 
-\sect{Basis Calculus as message passing scheme}
+
+
+
+\sect{Boolean Message Passing}\label{sec:supportContractionEquations}
+
+Instead of the exact calculation of a contraction, let us now investigate schemes to sparsify the tensors before a contraction.
+To this end, we first show underlying properties of contractions enabling these schemes.
+
+
+\subsect{Monotonocity of tensor contraction}
+
+To state the next theorem we use the nonzero function $\nonzerofunction: \rr \rightarrow [2]$ by $\nonzeroof{x}=1$ if $x\neq0$ and $\nonzeroof{x}=0$ else.
+Applied coordinatewise on tensors it marks the nonzero coordinates by $1$.
+
+We show that adding boolean tensor cores to an contraction orders the results by the partial ordering introduced in \defref{def:partialOrder}.
+
+\begin{theorem}[Monotonicity of Tensor Contractions]\label{the:monotonicityBinaryContractions}
+	Let $\extnet, \secextnet$ be tensor network of non-negative tensors and $\catvariableof{\secnodes}$ an arbitrary set of random variables. %, and $\tilde{\theta}$ another binary tensor.
+	Then we have
+	\begin{align*}
+		\nonzeroof{\contractionof{\extnet\cup\secextnet}{\catvariableof{\secnodes}}} \prec
+		\nonzeroof{\contractionof{\extnet}{\catvariableof{\secnodes}}} \, .
+	\end{align*}
+\end{theorem}
+\begin{proof}
+	It suffices to show that for any $\catindexof{\secnodes}$ with
+		\[ \nonzeroof{\contractionof{\extnet\cup\secextnet}{\indexedcatvariableof{\secnodes}}}=1 \]
+	we also have
+		\[ \nonzeroof{\contractionof{\extnet}{\indexedcatvariableof{\secnodes}}}=1 \, . \]
+	For any $\catindexof{\secnodes}$ satisfying the first equation we find an extension $\catindexof{\nodes}$ to all variables of the tensor networks such that
+		\[ \contractionof{\extnet\cup\secextnet}{\indexedcatvariableof{\nodes}} > 0 \]
+	and it follows that
+		\[ \contractionof{\extnet}{\indexedcatvariableof{\nodes}} > 0 \quad\text{and}\quad  \contractionof{\secextnet}{\indexedcatvariableof{\nodes}} > 0  \, . \]
+	But this already implies, that
+		\[ \nonzeroof{\contractionof{\extnet}{\indexedcatvariableof{\secnodes}}}=1 \, . \]
+\end{proof}
+
+\subsect{Invariance of adding subcontractions}
+
+%We now show \theref{the:booleanContractionInvariance} of \charef{cha:logicalReasoning}.
+Let us now state an equivalence of the contraction, when we add the result of the same contraction.
+This property was used in the proof of \theref{the:soundnessKnowledgePropagation}.
+
+\begin{theorem}[Invariance under adding subcontractions]\label{the:invarianceAddingSubcontractions}
+	Let $\extnet$ be a tensor network of non-negative tensors with variables $\catvariableof{\nodes}$ and let $\secextnet$ be a subset.
+	Then we have for any subset $\catvariableof{\secnodes}$ of $\catvariableof{\nodes}$
+		\[ \contractionof{\extnet \cup\{
+			\nonzeroof{
+			\contractionof{\secextnet}{\catvariableof{\secnodes}}
+			}
+		\}}{\catvariableof{\nodes}}
+		= \contractionof{\extnet}{\catvariableof{\nodes}}
+		\, . \]
+\end{theorem}
+\begin{proof}
+	For any $\catindexof{\nodes}$ with
+		\[ \contractionof{\extnet}{\indexedcatvariableof{\nodes}} = 0 \]
+	we also have
+		\[ \contractionof{\extnet \cup\{
+			\nonzeroof{
+			\contractionof{\secextnet}{\catvariableof{\secnodes}}
+			}
+		\}}{\indexedcatvariableof{\nodes}} = 0 \, . \]
+	For any $\catindexof{\nodes}$ with
+		\[ \contractionof{\extnet}{\indexedcatvariableof{\nodes}} \neq 0 \]
+	we have for the reduction $\catindexof{\secnodes}$ of the index $\catindexof{\nodes}$ that
+		\[  \contractionof{\secextnet}{\indexedcatvariableof{\secnodes}} \neq 0 \]
+	and thus
+	\begin{align*}
+		\contractionof{\extnet \cup\{
+			\nonzeroof{
+			\contractionof{\secextnet}{\catvariableof{\secnodes}}
+			}
+		\}}{\indexedcatvariableof{\nodes}}
+		= \contractionof{\extnet}{\indexedcatvariableof{\nodes}} \cdot \nonzeroof{
+			\contractionof{\secextnet}{\catvariableof{\secnodes}}
+			}[\indexedcatvariableof{\secnodes}]
+		= \contractionof{\extnet}{\indexedcatvariableof{\nodes}} \, .
+	\end{align*}
+%	When the subcore transformed by $\nonzeroof{\cdot}$ contains a zero slice, then this
+%	 zero slice is also appearing in the rest contraction.
+%	Multiplying a zero slice with zero does not affect the contraction, neither does multiplication with one on any slice.
+\end{proof}
+
+
+\begin{remark}
+	Similar statements hold, when dropping the non-negativity assumption on the, but demanding that all variables are left open.
+\end{remark}
+
+\subsect{Basis Calculus as message passing scheme}
 
 Message Passing of directed and boolean message by relational encoding of functions can be interpreted as function evaluation.
 Each subfunction evaluation is passed in its one-hot encoding.
@@ -425,13 +426,28 @@ We do not need acyclicity of the underlying undirected graph.
 %Applying this insight iteratively on composed functions we show the following theorem.
 
 \begin{remark}[Basis Calculus as Message Passing]
-	Given a tensor network of directed and binary tensor cores $\hypercoreof{\edge}$, each representing a function $\exfunction^{\edge}$.
-	When there are not directed cycles, we define the compositions of $\exfunction^{\edge}$ to be the function $\exfunction$ from the nodes $\nodesone$ not appearing as incoming nodes to the nodes $\nodestwo$ not appearing as outgoing nodes in an edge.
+	Given a tensor network of directed and binary tensor cores, each representing a function $\exfunctionof{\edge}$ depending on variables $\incomingnodes$.
+	When there are not directed cycles, we define the compositions of $\exfunctionof{\edge}$ to be the function $\exfunction$ from the nodes $\nodesone$ not appearing as incoming nodes to the nodes $\nodestwo$ not appearing as outgoing nodes in an edge.
 	Choosing arbitrary $\catindexof{\node}\in[\catdimof{\node}]$ for $\node\in\nodesone$ we have
 	\begin{align*}
-		\contractionof{\{\hypercoreof{\edge} \, : \edge\in\edges\}}{\nodestwo} = \onehotmapof{\exfunction(\catindexof{\node} \, : \, \node\in\nodesone)}\, .
+		\contractionof{\{\rencodingofat{\exfunctionof{\edge}}{\catvariableof{\outgoingnodes},\catvariableof{\incomingnodes}} \, : \edge=(\outgoingnodes,\incomingnodes)\in\edges\}}{\nodestwo}
+	= \onehotmapof{\exfunction(\catindexof{\node} \, : \, \node\in\nodesone)}\, .
 	\end{align*}
 \end{remark}
+
+
+
+\subsect{Application}
+
+% Application
+This properties can be applied as a sparsification of tensors before the execution of a contraction.
+The Knowledge Propagation \algoref{alg:knowledgePropagation} produces in the knowledge cores conditions on non-vanishing coordinates.
+Thus, the knowledge cores can be locally contracted with the tensors, as a sparsification before performing a global contraction.
+
+
+
+
+
 
 \sect{Discussion}
 

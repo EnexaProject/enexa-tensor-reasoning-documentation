@@ -67,84 +67,150 @@
     \date{\today}
 
 
-We show, how Constraint Satisfaction Problems can be formalized by boolean tensor networks in the \tnreason notation, and how their solution can be approached by tree search, possible in combination with monte carlo approaches. 
-
-\section{Formalization}
-
-\begin{definition}
-	Let there be a hypergraph $\graph=(\nodes,\edges)$ and $\extnet$ be a tensor network of boolean constraint tensors $ \hypercoreofat{\edge}{\catvariableof{\edge}}$ to each $\edgein$, that is 
-	\[ \extnet = \{ \hypercoreofat{\edge}{\catvariableof{\edge}} \, : \, \edge\in\edges \} \, .\]
-	The Constraint Satisfaction Problem CSP to $\extnet$ is the decision whether there is a state $\catindexof{\nodes}$ such that
-	\[ \contractionof{\extnet}{\indexedcatvariableof{\nodes}} = 1 \, . \]
-	We say the CSP is satisfiable, when there is such a state, and unsatisfiable if not.
-\end{definition}
+    We show, how Constraint Satisfaction Problems can be formalized by boolean tensor networks in the \tnreason notation, and how their solution can be approached by tree search, possible in combination with monte carlo approaches.
 
 
-\section{Solution}
+    \section{Formalization}
 
-\subsection{Global contraction}
-
-The most obvious solution is to contract the tensor network and decide the CSP based on 
-\[ \contraction{\extnet} > 0 \, . \]
-This can be demanding, when having a large and densely connected tensor network.
-
-\subsection{Message passing}
-
-Local contractions instead of global provide a tradeoff between generality and efficiency.
-Their results can be passed to further contractions by message passing.
-Whenever a local contraction vanishes, the CSP is unsatisfiable.
-However, the converse is not true: In general, we cannot conclude that the CSP is satisfiable, when a message-passing scheme does converge without vanishing.
-
-\subsection{Guessing}
-
-To decide a CSP it is enough to construct a state $\catindexof{\nodes}$ which satisfies all constraint tensors.
-One procedure is to consecutively guess the state of some variables $\node\in\nodes$ and check, whether the guess can satisfy the constraint tensor.
-
-\subsection{Orchestration in a Backtracking Search Tree}
-
-We build a search tree for a constructive solution of the CSP, where each node represents a guess of a variables state.
-After a guess, a message passing scheme of varying complexity  is performed to calculate the imediate consequences of the guess.
-Then an intelligent agent decides whether to
-\begin{itemize}
-	\item stop the message passing scheme
-	\item increase the complexity of the scheme by extending the set of communicated variables, or the size of the contraction
-	\item continue with a further guess of another variable
-	\item undo the previous guess (e.g. necessary when reached a vanishing message indicating inconsistency)
-\end{itemize}
+    \begin{definition}
+        Let there be a hypergraph $\graph=(\nodes,\edges)$ and $\extnet$ be a tensor network of boolean constraint tensors $ \hypercoreofat{\edge}{\catvariableof{\edge}}$ to each $\edgein$, that is
+        \[ \extnet = \{ \hypercoreofat{\edge}{\catvariableof{\edge}} \, : \, \edge\in\edges \} \, .\]
+        The Constraint Satisfaction Problem CSP to $\extnet$ is the decision whether there is a state $\catindexof{\nodes}$ such that
+        \[ \contractionof{\extnet}{\indexedcatvariableof{\nodes}} = 1 \, . \]
+        We say the CSP is satisfiable, when there is such a state, and unsatisfiable if not.
+    \end{definition}
 
 
-\section{Examples}
+    \section{Solution}
 
-\subsection{Temporal Clue Game}
+    \subsection{Global contraction}
 
-\begin{itemize}
-	\item Nodes $\nodes$: To each characteristic of a murder (who, when, where, how etc) there is a categorical variable $\catvariableof{\node}$ with finite possibilities
-	\item Edges $\edges$: To each clue and accusation, there is a constraint tensor storing the possible states consistent with the clue
-\end{itemize}
+    The most obvious solution is to contract the tensor network and decide the CSP based on
+    \[ \contraction{\extnet} > 0 \, . \]
+    This can be demanding, when having a large and densely connected tensor network.
 
-\subsection{Graph Coloring}
+    \subsection{Message passing}
 
-Given a graph $\graph=(\nodes,\edges)$ we design
-\begin{itemize}
-	\item a variable to each nodes $\node\in\nodes$ carrying the color
-	\item a constraint to each edge $\edge\in\edges$ by differing colors, i.e. $\hypercoreofat{(\node_1,\node_2)}{\catvariableof{\node_1},\catvariableof{\node_2}} = \onesofat{\catindexof{\node_1}\neq\catindexof{\node_2}}{\catvariableof{\node_1},\catvariableof{\node_2}} $
-\end{itemize}
+    Local contractions instead of global provide a tradeoff between generality and efficiency.
+    Their results can be passed to further contractions by message passing.
+    Whenever a local contraction vanishes, the CSP is unsatisfiable.
+    However, the converse is not true: In general, we cannot conclude that the CSP is satisfiable, when a message-passing scheme does converge without vanishing.
 
-\subsection{Knowledge Base Satisfiability}
+    \subsection{Guessing}
 
-As described in the main report.
+    To decide a CSP it is enough to construct a state $\catindexof{\nodes}$ which satisfies all constraint tensors.
+    One procedure is to consecutively guess the state of some variables $\node\in\nodes$ and check, whether the guess can satisfy the constraint tensor.
 
-\subsection{Sudoku}
+    \subsection{Orchestration in a Backtracking Search Tree}
 
-As described in the main report.
+    We build a search tree for a constructive solution of the CSP, where each node represents a guess of a variables state.
+    After a guess, a message passing scheme of varying complexity is performed to calculate the imediate consequences of the guess.
+    Then an intelligent agent decides whether to
+    \begin{itemize}
+        \item stop the message passing scheme
+        \item increase the complexity of the scheme by extending the set of communicated variables, or the size of the contraction
+        \item continue with a further guess of another variable
+        \item undo the previous guess (e.g. necessary when reached a vanishing message indicating inconsistency)
+    \end{itemize}
 
 
+    \section{Examples}
+
+    \subsection{Temporal Clue Game}
+
+    \begin{itemize}
+        \item Nodes $\nodes$: To each characteristic of a murder (who, when, where, how etc) there is a categorical variable $\catvariableof{\node}$ with finite possibilities
+        \item Edges $\edges$: To each clue and accusation, there is a constraint tensor storing the possible states consistent with the clue
+    \end{itemize}
+
+    \subsection{Graph Coloring}
+
+    Given a graph $\graph=(\nodes,\edges)$ we design
+    \begin{itemize}
+        \item a variable to each nodes $\node\in\nodes$ carrying the color
+        \item a constraint to each edge $\edge\in\edges$ by differing colors, i.e. $\hypercoreofat{(\node_1,\node_2)}{\catvariableof{\node_1},\catvariableof{\node_2}} = \onesofat{\catindexof{\node_1}\neq\catindexof{\node_2}}{\catvariableof{\node_1},\catvariableof{\node_2}} $
+    \end{itemize}
+
+    \subsection{Knowledge Base Satisfiability}
+
+    As described in the main report.
+
+    \subsection{Sudoku}
+
+    As described in the main report.
 
 
+    \section{Toy Example}
+
+    As a toy example, let there be a knowledge base of atoms $A1$ and $A2$ representing two accounts to be used in an accounting proposal, and $E$ represents incoming invoices.
+    The constraints are that exactly one of $A1$ or $A2$ is booked, that is $X_{A1}\oplus X_{A2}$.
 
 
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[scale=0.35, thick]
 
+            \node[anchor=center] (text) at (-2,0) {\small $a)$};
 
+            \draw (-1,-5) rectangle (1, -7);
+            \node[anchor=center] (text) at (0,-6) {\small $K^{A1}$};
 
+            \draw[] (0,-3)--(0,-5)  node[midway,left] {\tiny $X_{A1}$};
+            \draw[]  (3,-3) to[bend left = -20] (4.5,-5);
+            \draw (-1,-1) rectangle (4, -3);
+            \node[anchor=center] (text) at (1.5,-2) {\small ${A1} \oplus {A2}$};
+
+            \draw (5,-1) rectangle (10, -3);
+            \node[anchor=center] (text) at (7.5,-2) {\small $E \Rightarrow A2$};
+            \draw (6,-3) to[bend left = 20] (4.5,-5);
+            \draw[] (4.5,-5)--(4.5,-7) node[midway,right] {\tiny $X_{A2}$};
+            \draw (3.5,-9) rectangle (5.5, -7);
+            \node[anchor=center] (text) at (4.5,-8) {\small $K^{A2}$};
+
+            \draw[] (9,-3)--(9,-5) node[midway,right] {\tiny $X_E$};
+
+            \draw (8,-5) rectangle (10, -7);
+            \node[anchor=center] (text) at (9,-6) {\small $K^{E}$};
+
+            \draw[fill] (4.5,-5) circle (0.15cm);
+
+            \begin{scope}
+                [shift={(25,0)}]
+
+                \node[anchor=center] (text) at (-6,0) {\small $b)$};
+
+                \node[draw, circle] (A) at (0,0) {};
+                \node[draw, circle] (B) at (-3,-3) {};
+                \node[draw, circle] (C) at (-3,-6) {};
+                \node[draw, circle] (D) at (-3,-9) {};
+
+                \node[draw, circle] (B1) at (3,-3) {};
+                \node[draw, circle] (C1) at (0,-6) {};
+                \node[draw, circle] (C2) at (6,-6) {};
+
+                \node[draw, circle] (D1) at (0,-9) {};
+                \node[draw, circle] (D2) at (6,-9) {};
+
+                % Edges
+                \draw (A) -- (B) node [midway, left] {\tiny $K^{E}=e_1$};
+                \draw (A) -- (B1) node [midway, right] {\tiny $K^{E}=e_0$};
+                \draw (B) -- (C) node [midway, left] {\tiny $K^{A2}=e_1$};
+                \draw (C) -- (D) node [midway, left] {\tiny $K^{A1}=e_1$};
+
+                \draw (B1) -- (C1) node [midway, left] {\tiny $K^{A2}=e_1$};
+                \draw (B1) -- (C2) node [midway, right] {\tiny $K^{A2}=e_0$};
+
+                \draw (C1) -- (D1) node [midway, right] {\tiny $K^{A1}=e_0$};
+                \draw (C2) -- (D2) node [midway, right] {\tiny $K^{A1}=e_1$};
+
+            \end{scope}
+
+        \end{tikzpicture}
+        \caption{a) Tensor Network Representation of a toy CSP, in which two formulas ${A1} \oplus {A2}$ and $E\Rightarrow {A2}$ have to be satisfied.
+        The Knowledge Cores $K$ contain the possible choices after a constraint propagation and are taken from $e_0,e_1,\underline{1},\underline{0}$.
+        b) The corresponding search tree, where the assignments to variables are guessed in the order $E,{A2},{A1}$.
+        At each parent with a single child, the other choice has been ruled out by constraint propagation.
+        In our toy example with minimally connected constraints, single-core constraint propagation ensures that the guessed reasoning path remains consistent.}
+    \end{figure}
 
 \end{document}
