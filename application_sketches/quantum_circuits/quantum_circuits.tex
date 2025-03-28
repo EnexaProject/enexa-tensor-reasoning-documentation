@@ -1,0 +1,151 @@
+\documentclass[aps,onecolumn,nofootinbib,pra]{article}
+
+\usepackage{../../article_compilation/spec_files/arxiv}
+\usepackage{amsmath,amsfonts,amssymb,amsthm,bbm,graphicx,enumerate,times}
+\usepackage{mathtools}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{hyperref}
+\hypersetup{
+    breaklinks,
+    colorlinks,
+    linkcolor=gray,
+    citecolor=gray,
+    urlcolor=gray,
+    pdftitle={The Tensor Network Approach to Efficient and Explainable AI},
+    pdfauthor={Alex Goessmann}
+}
+
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{comment}
+\usepackage{csquotes}
+
+\usepackage{braket}
+
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{etoolbox}
+\usepackage{braket}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{bbm}
+\usepackage{bm}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{lipsum}
+
+\newtheorem{remark}{Remark}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+
+\input{../../macros/organization_macros.tex}
+\input{../../macros/general_macros.tex}
+\input{../../macros/tc_macros.tex}
+\input{../../macros/tikz_macros.tex}
+
+\pretolerance=500
+\tolerance=100
+\emergencystretch=10pt
+
+% Bibliography
+\DeclareUnicodeCharacter{FB01}{fi}
+\usepackage[round]{natbib}
+\usepackage{wasysym}
+
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+\begin{document}
+    \title{Quantum Circuits as Contraction providers for \tnreason}
+
+    \maketitle
+    \date{\today}
+
+    By its central axioms, quantum mechanics of multiple qubits is formulated by tensors capturing states and discrete time evolutions.
+    Quantum circuits are contractions of multiple tensors and therefore tensor networks, and measurement probabilities are given by contractions.
+    Here we investigate how we can exploit these as contraction provider for \tnreason.
+
+    \section{Comparing tensor networks and quantum circuits}
+
+    First of all, we need to extend to complex tensors, which are maps
+    \begin{align*}
+        \hypercore : \atomstates \rightarrow \mathbb{C} \,
+    \end{align*}
+    with image in $\mathbb{C}$ instead of $\mathbb{R}$ as in the report.
+
+    A coarse comparison of the nomenclature used for quantum circuits and tensor networks:
+
+    \begin{center}
+    \begin{tabular}{l|l}
+        \textbf{Quantum Circuit} & \textbf{Tensor Network}\\
+        \hline
+        Qubit & Boolean Variable \\
+        Quantum Gate & Unitary Tensor \\
+        Quantum Circuit & Tensor Network on a graph
+    \end{tabular}
+    \end{center}
+
+    Some contraints appear for a tensor network to be a quantum circuit
+    \begin{itemize}
+        \item \textbf{Unitarity of each gate:} That is the variables of each tensor are bipartite into sets $\variablesetof{\insymbol}$ and $\variablesetof{\outsymbol}$ of same cardinality and the basis encoding with respect to this bipartition, that is
+            \begin{align*}
+                T_{\insymbol \rightarrow \outsymbol}[\catvariableof{\insymbol},\catvariableof{\outsymbol}] : \bigotimes_{\atomenumerator\in\variablesetof{\insymbol}} \mathbb{C}^2 \rightarrow \bigotimes_{\atomenumerator\in\variablesetof{\outsymbol}} \mathbb{C}^2  \, ,
+            \end{align*}
+            is a unitary map, that is
+            \begin{align*}
+                 \left(T_{\insymbol \rightarrow \outsymbol}\right)^H \circ \left(T_{\insymbol \rightarrow \outsymbol}\right)
+                 = \contractionof{
+                     T_{\insymbol \rightarrow \outsymbol}[\catvariableof{\insymbol},\seccatvariable],
+                     \overline{T}_{\insymbol \rightarrow \outsymbol}[\seccatvariable,\catvariableof{\outsymbol}]
+                 }{\catvariableof{\outsymbol},\catvariableof{\insymbol}}
+                 = \identityat{\catvariableof{\outsymbol},\catvariableof{\insymbol}}.
+            \end{align*}
+        \item \textbf{Acylicity:} Incoming and outgoing variables of each tensor core provide a direction of each edge tensor. With respect to this directionality the graph underlying the tensor network has to be acyclic.
+        \item \textbf{Incoming-Outgoing structure:} Variable appear at most once as incoming and at most once as outgoing variables.
+            Those appearing either as incoming or as outgoing are the input and the output variables of the whole circuit.
+    \end{itemize}
+
+    The unitary tensors can be aligned layerwise, if and only if the last two assumption hold, i.e. the directed graph is acylic and each variable appears at most once as an incoming and at most once as an outgoing variable.
+
+
+    \section{POVM measurements as contractions}
+
+    The main difficulty of using quantum circuits as contraction providers is that we can only extract information through measurments.
+    Therefore measurement is the only way to execute contractions of the circuit, which come with restrictions when interested in contraction with open variables.
+
+    The most general measurement formalism is through a POVM, a set $\{E_\seccatindex \, : \, \seccatindex\in[r]\}$ of positive operators with % Nielsen book notation
+    \begin{align*}
+        \sum_{\seccatindex\in[r]} E_\seccatindex = I
+    \end{align*}
+
+    Measuring a pure state $\ket{\psi}$ We then get outcome $m$ with probability
+    \begin{align*}
+        \braket{\psi|E_\seccatindex|\psi}
+    \end{align*}
+
+    We define a measurement variable $\headvariable$ taking indices $\seccatindex\in[r]$ and a measurement tensor
+    \begin{align*}
+        E[\headvariable,\catvariableof{\insymbol},\catvariableof{\outsymbol}]
+    \end{align*}
+    with slices
+    \begin{align*}
+        E[\headvariable=\seccatindex,\catvariableof{\insymbol},\catvariableof{\outsymbol}] = E_\seccatindex \, .
+    \end{align*}
+
+    Repeating the measurement asymptotically on a state $\ket{\psi}$ prepared by a quantum circuit $\tnetof{\graph}$ acting on the trivial start state $\ones$, we denote the measurement outcome by $\seccatindex^\datindex$.
+    In the limit $\datanum\rightarrow\infty$ we get almost surely
+%    we thus get the contraction
+    \begin{align*}
+        \frac{1}{\datanum} \sum_{\datindexin} \onehotmapofat{\seccatindex^\datindex}{\headvariable} \rightarrow
+        \contractionof{\tnetof{\graph}[\catvariableof{\insymbol}],E[\headvariable,\catvariableof{\insymbol},\catvariableof{\outsymbol}],\tnetof{\secgraph}[\catvariableof{\outsymbol}]}{\headvariable} \, .
+    \end{align*}
+
+
+\end{document}
