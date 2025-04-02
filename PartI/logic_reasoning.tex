@@ -734,7 +734,7 @@ Here we interpret a part of the network (for example a single core) as an own kn
 Vanishing local contractions provide sufficient but not necessary criterion to decide entailment, as we show in the next theorem.
 
 \begin{theorem}[Monotonicity of Entailment]
-    \label{}
+    \label{the:monotonEntailment}
     For any Markov Network on the decorated hypergraph $\graph$ and any subgraph $\secgraph$, we have for any formula that $\probtensor^{\graph}\models\exformula$ if $\probtensor^{\secgraph}\models\exformula$.
 \end{theorem}
 
@@ -790,6 +790,28 @@ To prove the theorem, we first establish the following lemma that states if a co
     However, there is no general statement about entailment possible, when the local entailment does not hold.
     \theref{the:monotonEntailment} therefore just provides a sufficient but not necessary criterion of entailment with respect to $\probtensor^{\graph}$.
 \end{remark}
+
+\subsect{Knowledge Cores}
+
+To store preliminary conclusions, we define auxiliary knowledge cores storing constraints on variables $\edge\subset\nodes$.
+They are understood as logical formulas to the atomization variables $\left(\catvariableof{\edge}=\catindexof{\edge}\right)$ of the respective formulas
+\begin{align*}
+    \kcoreofat{\edge}{\catvariableof{\edge}}
+    = \bigvee_{\catindexof{\edge} \, : \, \kcoreofat{\edge}{\indexedcatvariableof{\edge}}} \bigwedge_{\node\in\edge} \left(\catvariableof{\edge}=\catindexof{\edge}\right) \, .
+\end{align*}
+
+\begin{definition}
+    Let $\extnet$ be a constraint satisfaction problem. % and $$ be a knowledge core. % \left(\catvariableof{\edge}=\catindexof{\edge}\right)
+    We say that a knowledge core $\kcoreofat{\edge}{\catvariableof{\edge}}$ is sound for $\extnet$, if
+    \begin{align*}
+        \nonzerocirc\contractionof{\extnet}{\catvariableof{\edge}}  \prec \kcoreofat{\edge}{\catvariableof{\edge}}
+    \end{align*}
+    and complete for $\extnet$ if in addition
+    \begin{align*}
+        \nonzerocirc\contractionof{\extnet}{\catvariableof{\edge}}=\kcoreofat{\edge}{\catvariableof{\edge}} \, .
+    \end{align*}
+\end{definition}
+
 
 
 \subsect{Knowledge Propagation}
@@ -900,15 +922,15 @@ The AC-3 algorithm (see \cite{mackworth_consistency_1977}) is a specific instanc
 
 \begin{theorem}
     \label{the:soundnessKnowledgePropagation}
-    At any state of the Knowledge Propagation \algoref{alg:knowledgePropagation}, we have
-    \begin{align*}
-        \contractionof{\extnet}{\nodevariables}
-        = \contractionof{\extnet \cup \{\kcoreof{\edge} \, : \, \edge\in\domainedges\}}{\nodevariables} \, .
-    \end{align*}
-    Each core $\kcoreof{\secedge}$ is monotonically decreasing with respect to the partial ordering and lower bounded by
-    \begin{align*}
-        \nonzerocirc\contractionof{\extnet}{\catvariableof{\secedge}} \prec \kcoreofat{\secedge}{\catvariableof{\secedge}} \, .
-    \end{align*}
+    At any state of the Knowledge Propagation \algoref{alg:knowledgePropagation}, we have that each knowledge core $\kcoreof{\secedge}$ is sound for $\extnet$.
+    %\begin{align*}
+    %    \contractionof{\extnet}{\nodevariables}
+    %    = \contractionof{\extnet \cup \{\kcoreof{\edge} \, : \, \edge\in\domainedges\}}{\nodevariables} \, .
+    %\end{align*}
+    After each update in \algoref{alg:knowledgePropagation}, $\kcoreof{\secedge}$ is further monotonically decreasing with respect to the partial ordering.
+    %\begin{align*}
+    %    \nonzerocirc\contractionof{\extnet}{\catvariableof{\secedge}} \prec \kcoreofat{\secedge}{\catvariableof{\secedge}} \, .
+    %\end{align*}
 \end{theorem}
 \begin{proof}
     We show the first claim by induction over the update steps in \algoref{alg:knowledgePropagation}.
@@ -979,10 +1001,11 @@ We can further characterize the knowledge cores at termination.
     \end{align*}
 \end{definition}
 
-
+This property is similar to the completeness of a knowledge core, when interpreting the other knowledge cores and the constraints $\{\hypercoreof{\edge} \, : \, \edge\in\secedges\}$ as posing a Constraint Satisfaction Problem.
 
 \begin{theorem}
     Knowledge Propagation \algoref{alg:knowledgePropagation} always terminates.
+%    At termination, each knowledge core $\kcoreof{}$
     At termination we further for each $\secedges\in\arbset$ and $\edge\in\domainedges$ with $\edge\cap\bigcup_{\edge\in\secedges}\edge\neq\varnothing$, that the knowledge cores $\{\kcoreof{\edge} \, : \, \edge\in\domainedges, \, \edge\cap\bigcup_{\edge\in\secedges}\edge\neq\varnothing\}$ are consistent with $\{\hypercoreof{\edge} \, : \, \edge\in\secedges\}$.
 \end{theorem}
 \begin{proof}
@@ -1002,7 +1025,10 @@ We can further characterize the knowledge cores at termination.
 %    since otherwise the queue $\graphqueue$ would at least contain $\secedges$ and the while loop would not terminate.
 \end{proof}
 
-
+%A direct consequence of this theorem is that when running Knowledge Propagation with all edges, then
+%\begin{corollary}
+%    When we choose $\arbset=\{\edges\}$ for an CSP $\extnet$, then the knowledge cores returned by \algoref{alg:knowledgePropagation} are complete.
+%\end{corollary}
 
 
 We can exploit the Knowledge Propagation \algoref{alg:knowledgePropagation} for the solution of Constraint Satisfaction Problems, by taking $\extnet$ as the tensor network of constraint tensors.
@@ -1111,6 +1137,11 @@ that is the inference rule can be performed in when $\formulaset$ are in $\arbse
         = \contractionof{(\exformula\Rightarrow\secexformula)[\exformulavar,\secexformulavar],\kcoreofat{\{\exformula\}}{\exformulavar}}{\secexformulavar} \, ,
     \end{align*}
     that is entailment of $\secexformula$ can be concluded using a single update.
+
+    When we have a Knowledge Base of horn clauses, we run Knowledge Propagation with each horn clause being a constraint core and a knowledge core for any variable.
+    \algoref{alg:knowledgePropagation} therefore resembles the forward chaining algorithm of propositional logics (see Figure~7.15 in \cite{russell_artificial_2021}).
+    It is known, that forward chaining is complete for Horn Logic.
+    Thus, the knowledge cores returned in that case by \algoref{alg:knowledgePropagation} are complete for the Knowledge Base as a CSP.
 \end{example}
 
 
