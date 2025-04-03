@@ -366,9 +366,9 @@ The difference between both sides is called the Kullback Leibler Divergence and 
 We are now ready to provide an entropic interpretation of the loss introduced in \defref{def:loss}.
 
 \begin{theorem}\label{the:lossCentropy}
-	Given a data selecting map $\datamap$ and a distribution $\probtensor$ we have
+	Given a data selecting map $\datamap$and a distribution $\probtensor$ we have
 	\begin{align}
-		\lossof{\probtensor} =  \centropyof{\empdistribution}{\probtensor} \, . % \sbcontraction{\empdistribution,\lnof{\probtensor}} \, . 
+		\lossof{\probtensor} =  \centropyof{\empdistribution}{\probtensor} \, . % \sbcontraction{\empdistribution,\lnof{\probtensor}}\, .
 	\end{align}
 \end{theorem}
 \begin{proof}
@@ -377,7 +377,7 @@ We are now ready to provide an entropic interpretation of the loss introduced in
 		\lossof{\probtensor} 
 		& = \frac{1}{\datanum} \lnof{\probat{\data}}
 		= \frac{1}{\datanum} \sum_{\datain} \lnof{\probat{\shortcatvariables =\datamap(\datindex)}}
-		= \frac{1}{\datanum} \sum_{\datain} \contraction{\{\lnof{\probtensor},\onehotmapof{\datamap(\datindex)}\}} \\ 
+		= \frac{1}{\datanum} \sum_{\datain} \contraction{\{\lnof{\probtensor},\onehotmapof{\datamap(\datindex)}\}} \\
 		& = \sbcontraction{\empdistribution,\lnof{\probtensor}} \, .
 	\end{align*}
 	Comparing with the negative log likelihood we notice that that loss coincides with the cross-entropy between the empirical distribution $\empdistribution$ and $\probtensor$, i.e.
@@ -531,7 +531,7 @@ We investigate this situation further and provide here a construction scheme to 
 	Then there is a $\canparamat{\selvariable}$ with 
 		\[ \meanparamat{\selvariable} \in \argmax_{\meanparam\in\genmeanset} \contraction{\canparamat{\selvariable},\meanparamat{\selvariable}} \,  \]
 	and all distributions with mean parameter $\meanparamat{\selvariable}$ are representable with respect to the base measure
-		\[ \secbasemeasureat{\shortcatvariables} = \contractionof{\basemeasure, \indicatorofat{\arbset}{\shortcatvariables}}{\shortcatvariables} \, , \]
+		\[\secbasemeasureat{\shortcatvariables} = \contractionof{\basemeasure, \indicatorofat{\arbset}{\shortcatvariables}}{\shortcatvariables} \, , \]
 	where the indicator is on the set
 		\[ \arbset = \argmax_{\shortcatindices} \contraction{\canparam,\sstat(\shortcatindices)}  \, . \]
 \end{theorem}
@@ -620,10 +620,10 @@ We now utilize these findings and provide in \algoref{alg:baseMeasureRefinement}
 
 
 % Define sets of realizable distributions
-\begin{theorem}
+\begin{theorem}%\label{the:maxGraphExpressivity}
 	For the maximal graph $\maxgraph=([\seldim],\{[\seldim]\})$, which has a single hyperedge containing all head variables we have
 	\begin{align*}
-		\genmeanset = \left\{ \contractionof{\probat{\shortcatvariables},\sencodingofat{\sstat}{\shortcatvariables,\selvariable}}{\shortcatvariables} \, , \, \probtensor \in \realizabledistsof{\sstat,\maxgraph} \right\}
+		\genmeanset = \left\{ \contractionof{\probat{\shortcatvariables},\sencodingofat{\sstat}{\shortcatvariables,\selvariable}}{\shortcatvariables} \, , \, \probtensor \in\realizabledistsof{\sstat,\maxgraph} \right\}
 	\end{align*}
 \end{theorem}
 \begin{proof}
@@ -670,7 +670,7 @@ is taken at an extreme point in $\genmeanset$ (since linear objective over close
 	= 
 	\argmax_{\meanparam\in\genmeanset}  \sbcontraction{\meanparam,\canparam} + \frac{1}{\invtemp} \cdot \sentropyof{\meanrepprob} 	
 \end{align*}
-thus the entropy term is neglectible for large $\invtemp$.
+thus the entropy term is neglectable for large $\invtemp$.
 A more precise argument is using a limit of the maxima and can be found in Theorem~8.1 in \cite{wainwright_graphical_2008}
 
 
@@ -705,7 +705,7 @@ The naive mean field is the approximation by distributions of independent random
 	\end{align*}
 	is solved at 
 		\[ \legcoreofat{\catenumerator}{\catvariableof{\catenumerator}} 
-			= \normationof{ \expof{ \contractionof{ \{\energytensor[\shortcatvariables] \} \cup
+			= \normationof{ \expof{ \contractionof{ \{\energytensor[\shortcatvariables] \}\cup
 				\{\legcoreofat{\seccatenumerator}{\catvariableof{\seccatenumerator}} \, : \, \seccatenumerator\neq\catenumerator\} }{\shortcatvariables} }
 			}{\catvariableof{\catenumerator}} \, . \]
 \end{theorem}
@@ -734,7 +734,7 @@ The naive mean field is the approximation by distributions of independent random
 	\end{align*}
 	Together with the condition $\sbcontractionof{\legcoreof{\catenumerator}}=1$ this is satisfied at
 		\[ \legcoreofat{\catenumerator}{\catvariableof{\catenumerator}} 
-			= \normationof{ \expof{ \contractionof{ \{\energytensor\} \cup
+			= \normationof{ \expof{ \contractionof{ \{\energytensor\}\cup
 				\{\legcoreof{\seccatenumerator} \, : \, \seccatenumerator\neq\catenumerator\} }{\catvariableof{\catenumerator}} }
 			}{\catvariableof{\catenumerator}} \, . \]
 \end{proof}
@@ -755,7 +755,7 @@ Algorithm~\ref{alg:NMF} is the alternation of legwise updates until a stopping c
 	\For{$\catenumeratorin$}
 		\State 
 			\[ \legcoreofat{\catenumerator}{\catvariableof{\catenumerator}} 
-			\algdefsymbol \normationof{ \expof{ \contractionof{ \{\energytensor[\shortcatvariables] \} \cup
+			\algdefsymbol \normationof{ \expof{ \contractionof{ \{\energytensor[\shortcatvariables] \}\cup
 				\{\legcoreofat{\seccatenumerator}{\catvariableof{\seccatenumerator}} \, : \, \seccatenumerator\neq\catenumerator\} }{\catvariableof{\catenumerator}} }
 			}{\catvariableof{\catenumerator}} \]
 \EndFor
