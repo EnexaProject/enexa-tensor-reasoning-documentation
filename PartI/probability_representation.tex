@@ -292,12 +292,12 @@ Following the insight of the Bayes \theref{the:bayes}, probability distributions
     For any probability distribution $\probwith$ we have
     \begin{align*}
         \probat{\shortcatvariables}
-        = \contractionof{
-            \left\{\condprobof{\catvariableof{\catenumerator}}{\catvariableof{0},\ldots,\catvariableof{\catenumerator-1}}\,:\,\catenumeratorin\right\}
+        = \contractionof{\{\margprobat{\catvariableof{0}}\} \cup
+        \left\{\condprobof{\catvariableof{\catenumerator}}{\catvariableof{0},\ldots,\catvariableof{\catenumerator-1}}\,:\,\catenumeratorin, \, \catenumerator\geq 1\right\}
         }{\shortcatvariables} \, ,
     \end{align*}
     provided that all conditional probability distributions exist.
-    where for $\catenumerator=0$ we denote by $ \condprobof{\catvariableof{0}}{\catvariableof{0},\ldots,\catvariableof{-1}}$ the marginal distribution $\probat{\catvariableof{0}}$.
+%    where for $\catenumerator=0$ we denote by $ \condprobof{\catvariableof{0}}{\catvariableof{0},\ldots,\catvariableof{-1}}$ the marginal distribution $\probat{\catvariableof{0}}$.
 \end{theorem}
 \begin{proof}
     The claim can be derived by an iterative application of the Bayes \theref{the:bayes} theorem.
@@ -305,12 +305,12 @@ Following the insight of the Bayes \theref{the:bayes}, probability distributions
     The claim here then follows from \theref{the:genericChainRule} using $\nodes=[\catorder]$ and $\hypercoreat{\nodevariables}=\probwith$, since
     \begin{align*}
         \probwith
-        &= \contractionof{
-            \{\normationofwrt{\probwith}{\catvariableof{\catenumerator}}{\catvariableof{0},\ldots,\catvariableof{\catenumerator-1}}  \, : \catenumeratorin \}
+        &= \contractionof{\{\margprobat{\catvariableof{0}}\} \cup
+        \{\normationofwrt{\probwith}{\catvariableof{\catenumerator}}{\catvariableof{0},\ldots,\catvariableof{\catenumerator-1}}  \, : \catenumeratorin, \, \catenumerator\geq 1\}
         }{\shortcatvariables} \\
-        & = \contractionof{
-            \left\{\condprobof{\catvariableof{\catenumerator}}{\catvariableof{0},\ldots,\catvariableof{\catenumerator-1}}\,:\,\catenumeratorin\right\}
-        }{\shortcatvariables} \, .
+        &  = \contractionof{\{\margprobat{\catvariableof{0}}\} \cup
+        \left\{\condprobof{\catvariableof{\catenumerator}}{\catvariableof{0},\ldots,\catvariableof{\catenumerator-1}}\,:\,\catenumeratorin, \, \catenumerator\geq 1\right\}
+        }{\shortcatvariables} \, ,
     \end{align*}
 \end{proof}
 
@@ -337,7 +337,7 @@ We state next an equivalent independence criterion based on a contraction equati
 %Let us state the most direct equivalent in the next theorem and derive further criteria as corrolaries.
 %We give a criterion on independence based on a contraction equation of the probability distribution in the next theorem.
 
-\begin{theorem}
+\begin{theorem}[Independence Criterion as a Contraction Equation]
     \label{the:independenceProductCriterion}
     The variable $\exrandom$ is independent from $\secexrandom$ with respect to a probability distribution $\probat{\exrandom,\secexrandom}$, if and only if
     \begin{align*}
@@ -391,187 +391,223 @@ As a result, the degrees of freedom scaling exponential in the number of distrib
 Independence is, as we observed, a strong assumption, which is often too restrictive.
 It is furthermore an undesired property, when in a supervised learning scenario a target variable has to be predicted based on known feature variables.
 Conditional independence instead is a less demanding assumption, which still implies efficient tensor network decompositions schemes.
-We introduce conditional independendence as independence of variables with respect to conditional distributions.
+We introduce conditional independence as independence of variables with respect to conditional distributions.
 
 \begin{definition}[Conditional Independence]
     \label{def:condIndependence}
-    Given a joint distribution of variables $\exrandom$, $\secexrandom$ and $\thirdexrandom$, we say $\exrandom$ is independent from $\secexrandom$ conditioned on $\thirdexrandom$ if for any states $\exrandindin,\secexrandindin$ and $\thirdexrandindin$
+    Given a joint distribution of variables $\exrandom$, $\secexrandom$ and $\thirdexrandom$, such that $\margprobat{\thirdexrandom}$ is positive.
+    We say that $\exrandom$ is independent of $\secexrandom$ conditioned on $\thirdexrandom$ if for any states $\exrandindin,\secexrandindin$ and $\thirdexrandindin$
     \begin{align*}
         \condprobof{\indexedexrandom,\indexedsecexrandom}{\indexedthirdexrandom}
         = \condprobof{\indexedexrandom}{\indexedthirdexrandom}
-        \cdot \condprobof{\indexedsecexrandom}{\indexedthirdexrandom}   \, ,
+        \cdot \condprobof{\indexedsecexrandom}{\indexedthirdexrandom}   \, .
     \end{align*}
-    that is when $\exrandom$ is independent of $\secexrandom$ with respect to any slice $\condprobof{\exrandom,\secexrandom}{\thirdexrandom=\thirdexrandind}$ of the conditional distribution $\condprobof{\exrandom,\secexrandom}{\thirdexrandom}$.
 \end{definition}
 
-%%%%%
-% END OF WEDNESDAY 2.4.
-
-Conditional independence is a relation between conditional probabilities and is therefore equivalent to a normation equation stated next.
+Conditional independence stated in \defref{def:condIndependence} has a close connection with independence stated in \defref{def:independence}.
+To be more precise, $\exrandom$ is independent of $\secexrandom$ conditioned on $\thirdexrandom$, if and only if $\exrandom$ is independent of $\secexrandom$ with respect to any slice $\condprobof{\exrandom,\secexrandom}{\thirdexrandom=\thirdexrandind}$ of the conditional distribution $\condprobof{\exrandom,\secexrandom}{\thirdexrandom}$.
+Analogously to \theref{the:independenceProductCriterion} for independence, we further find a decomposition criterion for conditional independence.
+Since conditional independence can be regarded as a property of conditional probabilities, this decomposition criterion also involves conditional probabilities.
 
 \begin{theorem}[Conditional Independence as a Contraction Equation]
     \label{the:condIndependenceProductCriterion}
-    Given a distribution $\probtensor$ of variables $\exrandom$, $\secexrandom$ and $\thirdexrandom$, the variable $\exrandom$ is independent from $\secexrandom$ if and only if the contraction equation
+    Given a distribution $\probtensor$ of variables $\exrandom$, $\secexrandom$ and $\thirdexrandom$, the variable $\exrandom$ is independent of $\secexrandom$ conditioned on $\thirdexrandom$, if and only if the equation
     \begin{align*}
         \condprobof{\exrandom,\secexrandom}{\thirdexrandom}
-        = \sbcontractionof{
-            \condprobof{\exrandom}{\thirdexrandom} ,\condprobof{\secexrandom}{\thirdexrandom}
+        = \contractionof{
+            \condprobof{\exrandom}{\thirdexrandom},\condprobof{\secexrandom}{\thirdexrandom}
         }{\exrandom,\secexrandom,\thirdexrandom}
     \end{align*}
     holds.
 \end{theorem}
 \begin{proof}
-    Directly by \theref{the:conditionalContraction} used on the conditional probabilities in \defref{def:condIndependence}.
-\end{proof}
-
-We can exploit conditional independence to find tensor network decompositions of probability tensors, as we show in the next theorem.
-
-\begin{corollary}
-    \label{cor:secCriterionCondIndepencence}
-    If and only if $\exrandom$ is independent from $\secexrandom$ conditioned on $\thirdexrandom$ the probability distribution $\probtensor$ satisfies
-    \[ \probat{\exrandom, \secexrandom, \thirdexrandom}
-    = \contractionof{
-        \{ \condprobof{\exrandom}{\thirdexrandom}, \condprobof{\secexrandom}{\thirdexrandom}, \margprobat{\thirdexrandom} \}
-    }{
-        \exrandom, \secexrandom, \thirdexrandom
-    } \, .
-    \]
-\end{corollary}
-\begin{proof}
-    Follows from \theref{the:condIndependenceProductCriterion} and \theref{the:bayes}.
-%	We start with the chain rule decomposition of \theref{the:chainRule} and have
-%		\[ \probat{\exrandom,\secexrandom,\thirdexrandom} = \probat{\thirdexrandom}  \cdot \condprobof{\exrandom,\secexrandom}{\thirdexrandom} \]
-%	Since $\exrandom$ is independent from $\secexrandom$ conditioned on $\thirdexrandom$ we have
-%		\[ \condprobof{\exrandom,\secexrandom}{\thirdexrandom}  = \condprobof{\exrandom}{\thirdexrandom}  \cdot \condprobof{\secexrandom}{\thirdexrandom}  \, . \]
-%	Converse direction similar.
-\end{proof}
-
-
-\begin{corollary}
-    \label{cor:conditionDropping}
-    Whenever $\exrandom$ is independent of $\secexrandom$ given $\thirdexrandom$, we have
+    With the same argumentation as in the proof of \theref{the:independenceProductCriterion}, we notice that the contraction equation holds, if and only if for any $\exrandindin$, $\secexrandindin$ and $\thirdexrandindin$
     \begin{align*}
-        \condprobof{\exrandom}{\secexrandom,\thirdexrandom} = \condprobof{\exrandom}{\thirdexrandom} \, .
+        \condprobof{\indexedexrandom,\indexedsecexrandom}{\indexedthirdexrandom}
+        = \condprobof{\indexedexrandom}{\indexedthirdexrandom} \cdot \condprobof{\indexedsecexrandom}{\indexedthirdexrandom} \, .
     \end{align*}
-\end{corollary}
+    This is equivalent to conditional independence by \defref{def:condIndependence}.
+\end{proof}
 
-
-\begin{figure}[h]
+We can further exploit conditional independence to find tensor network decompositions of probabilities, as we show as the next corollary.
+\begin{figure}[hbt!]
     \begin{center}
         \input{PartI/tikz_pics/probability_representation/cond_independence_decomposition.tex}
     \end{center}
-    \caption{Diagrammatic visualization of the contraction equation in Corollary~\ref{cor:secCriterionCondIndepencence}. Conditional independence of $\exrandom$ and $\secexrandom$ given $\thirdexrandom$ holds if the contraction on the right ride is equal to the probability tensor on the left side.}
+    \caption{Diagrammatic visualization of the contraction equation in \corref{cor:secCriterionCondIndepencence}.
+    Conditional independence of $\exrandom$ and $\secexrandom$ given $\thirdexrandom$ holds if the contraction on the right ride is equal to the probability tensor on the left side.}
+    \label{fig:condIndependenceDecomposition}
 \end{figure}
 
 
-% More of an example?
-\begin{theorem}[Markov Chain]
-    \label{the:MarkovChain}
-    Let there be a set of variables $\catvariableof{\tenumerator}$ where $\tenumeratorin$.
-    When $\catvariableof{\tenumerator}$ is independent of $\catvariableof{0:{\tenumerator-2}}$ conditioned on $\catvariableof{\tenumerator-1}$ (the Markov Property), then
+\begin{corollary}
+    \label{cor:secCriterionCondIndepencence}
+    %Let $\probat{\exrandom,\secexrandom,\thirdexrandom}$ be a distribution, such that
+    If and only if $\exrandom$ is independent of $\secexrandom$ conditioned on $\thirdexrandom$ the probability distribution $\probtensor$ satisfies (see \figref{fig:condIndependenceDecomposition})
     \begin{align*}
-        \probtensor = \contractionof{\{ \condprobof{\catvariableof{\tenumerator}}{\catvariableof{\tenumerator-1}}\, : \, \tenumeratorin \}}{
-            \catvariableof{0},\ldots,\catvariableof{\tdim-1}
-        }
+        \probat{\exrandom,\secexrandom,\thirdexrandom}
+        = \contractionof{\condprobof{\exrandom}{\thirdexrandom},\condprobof{\secexrandom}{\thirdexrandom},\margprobat{\thirdexrandom}}{\exrandom,\secexrandom,\thirdexrandom} \, .
     \end{align*}
-%		\[ \probat{\catvariableof{0},\ldots,\catvariableof{\tdim-1}} = %\probat{\catvariableof{1}} 
-%		\prod_{\tenumeratorin} \condprobof{\catvariableof{\tenumerator}}{\catvariableof{\tenumerator-1}} \, . \] 
-    We depict this decomposition in Figure~\ref{fig:MC}.
-\end{theorem}
+\end{corollary}
 \begin{proof}
-    By the chain rule (\theref{the:chainRule}) we have
+    With the Bayes \theref{the:bayes} it holds that
     \begin{align*}
-        \probat{\catvariableof{0},\ldots,\catvariableof{\tdim-1}}
-        = \contractionof{
-            \{ \condprobof{\catvariableof{\tenumerator}}{\catvariableof{0:\tenumerator}} : \tenumeratorin \}
-        }{\catvariableof{[\tdim]}}
-        %= \contractionof{\{\probat{\catvariableof{0}} \prod_{\tenumeratorin, \tenumerator>1} \condprobof{\catvariableof{\tenumerator}}{\catvariableof{0:\tenumerator}}\}{\catvariableof{[\tdim]}} \, .
+        \probat{\exrandom,\secexrandom,\thirdexrandom}
+        = \contractionof{\condprobof{\exrandom,\secexrandom}{\thirdexrandom},\margprobat{\thirdexrandom}}{\exrandom,\secexrandom,\thirdexrandom} \, .
     \end{align*}
-    Using the conditional independence of $\catvariableof{\tenumerator}$ and $\catvariableof{0:{\tenumerator-2}}$ conditioned on $\catvariableof{\tenumerator-1}$ we further have by Corollary~\ref{cor:conditionDropping}
-    \[ \condprobof{\catvariableof{\tenumerator}}{\indexedcatvariableof{0:\tenumerator}}  = \condprobof{\catvariableof{\tenumerator}}{\indexedcatvariableof{\tenumerator-1}} \, .  \]
-    Composing both equalities shows the claim.
+    Decomposing the first tensor in the contraction, \theref{the:condIndependenceProductCriterion} implies, that $\exrandom$ is independent of $\secexrandom$ conditioned on $\thirdexrandom$, if and only if
+    \begin{align*}
+        \probat{\exrandom,\secexrandom,\thirdexrandom}
+        = \contractionof{\condprobof{\exrandom}{\thirdexrandom},\condprobof{\secexrandom}{\thirdexrandom},\margprobat{\thirdexrandom}}{\exrandom,\secexrandom,\thirdexrandom} \, .
+    \end{align*}
 \end{proof}
 
-Here we denoted by $\catvariableof{0:\tenumerator}$ the tuple $\catvariableof{0},...,\catvariableof{\tenumerator}$.
 
-\begin{remark}
-    Let us notice that the dimensionality dropped drastically through applying the independence assumption.
-    The tensor space in the naive representation of any probability distribution has
-    \[ \prod_{\tenumeratorin} \catdimof{\tenumerator}\]
-    coordinates, while the Markov Chain is represented by
-    \[ \sum_{\tenumeratorin}  \catdimof{\tenumerator}\cdot \catdimof{\tenumerator-1} \, . \]
-    Replacing exponential scaling with the number of variables to linear scaling is the advantage of tensor network decompositions.
-\end{remark}
+Let us now recall our motivation of the study of conditional independence, namely to find sparsifications of conditional probabilities as those appearing in chain decompositions \theref{the:chainRule}.
+As we state as the next theorem, such sparsifications follow from conditional independence.
+%Conditional independence can be exploited in the sparsification of conditional probabilities.
 
+\begin{theorem}
+    \label{the:conditionDropping}
+    Whenever $\exrandom$ is independent of $\secexrandom$ given $\thirdexrandom$, we have for any $\secexrandindin$
+    \begin{align*}
+        \condprobof{\exrandom}{\indexedsecexrandom,\thirdexrandom}
+        = \condprobof{\exrandom}{\thirdexrandom} \, .
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    By the Bayes \theref{the:bayes} we have for any indices to the variables
+    \begin{align*}
+        \condprobof{\indexedexrandom}{\indexedsecexrandom,\indexedthirdexrandom}
+        = \frac{\condprobof{\indexedexrandom,\indexedsecexrandom}{\indexedthirdexrandom}}{
+            \contraction{\condprobof{\exrandom,\indexedsecexrandom}{\indexedthirdexrandom}}
+        }
+    \end{align*}
+    If $\exrandom$ is independent of $\secexrandom$ given $\thirdexrandom$ it follows that
+    \begin{align*}
+        \condprobof{\indexedexrandom}{\indexedsecexrandom,\indexedthirdexrandom}
+        & = \frac{\condprobof{\indexedexrandom}{\indexedthirdexrandom} \cdot \condprobof{\indexedsecexrandom}{\indexedthirdexrandom}}{
+            \contraction{\condprobof{\exrandom,\indexedsecexrandom}{\indexedthirdexrandom}}
+        } \\
+        & = \condprobof{\indexedexrandom}{\indexedthirdexrandom} \, .
+    \end{align*}
+\end{proof}
+
+Following our motivation of sparse decompositions, we now combine this result with the generic chain rule, to show Markov Chain decompositions.
 \begin{figure}[h]
     \begin{center}
         \input{PartI/tikz_pics/probability_representation/markov_chain.tex}
     \end{center}
-    \caption{Depiction of a Markov Chain.
-    a) Dependency Graph (of the corresponding chain Graphical Model).
-    b) Dual Tensor Network representing the conditional probability factors.}
+    \caption{Depiction of a Markov Chain Decomposition by a
+    a) hypergraph with the nodes $\nodes=[\catorder]$ and edges $\edges=\big\{\{0\}\cup\{\{\catenumerator,\catenumerator+1\} \, : \, \catenumeratorin, \, \catenumerator>1\} \big\}$ and
+    b) a decorating Tensor Network representing the sparsified conditional probabilities.}
     \label{fig:MC}
 \end{figure}
 
+% More of an example?
+\begin{theorem}[Markov Chain]
+    \label{the:MarkovChain}
+    Let there be a set of variables $\catvariableof{\catenumerator}$ where $\catenumeratorin$, and let us denote for $\catenumeratorin$ by $\catvariableof{[\catenumerator]}$ the collection of variables $\catvariableof{0},\ldots,\catvariableof{\catenumerator-1}$.
+    Let us assume, that for any $\catenumeratorin$ with $\catenumerator\geq2$ the variable $\catvariableof{\catenumerator}$ is independent of $\catvariableof{[\catenumerator-1]}$ conditioned on $\catvariableof{\catenumerator-1}$, then
+    \begin{align*}
+        \probwith
+        = \contractionof{\{\margprobat{\catvariableof{0}}\} \cup \{\condprobof{\catvariableof{\catenumerator}}{\catvariableof{\catenumerator-1}}\,:\,\catenumeratorin, \, \catenumerator\geq1\}}{\shortcatvariables}
+    \end{align*}
+%    Here we denote by $\condprobof{\catvariableof{0}}{\catvariableof{-1}}$ the marginal distribution of $\margprobat{\catvariableof{0}}$.
+    We depict this decomposition in \figref{fig:MC}.
+\end{theorem}
+\begin{proof}
+    By the chain rule shown in \theref{the:chainRule} we have
+    \begin{align*}
+        \probwith
+        = \contractionof{
+            \{ \condprobof{\catvariableof{\catenumerator}}{\catvariableof{[\catenumerator]}} \,:\, \catenumeratorin \}
+        }{\shortcatvariables}
+    \end{align*}
+    Using that $\catvariableof{\catenumerator}$ is conditional independent of $\catvariableof{[\catenumerator-1]}$ conditioned on $\catvariableof{\catenumerator-1}$ we further have by \theref{the:conditionDropping}
+    \begin{align*}
+        \condprobof{\catvariableof{\catenumerator}}{\catvariableof{[\catenumerator]}}
+        = \condprobof{\catvariableof{\catenumerator}}{\catvariableof{\catenumerator-1}} \otimes \onesat{\catvariableof{[\catenumerator-1]}} \, .
+    \end{align*}
+    Composing both equalities and omitting the trivial tensors shows the claim.
+\end{proof}
 
+% Markov Property
+The assumption of $\catvariableof{\catenumerator}$ being independent of $\catvariableof{[\catenumerator-1]}$ conditioned on $\catvariableof{\catenumerator-1}$ is called the Markov property and the corresponding collection of random variables is called a Markov Chain.
+\theref{the:MarkovChain} states an efficient decomposition of the probability distribution into a concatenated product of matrices representing conditional probability distributions.
+Marginal distributions of Markov Chains can therefore consecutively be computed by matrix-vector products, that is for $\catenumeratorin$ with $\catenumerator\geq1$
+\begin{align*}
+    \margprobat{\catvariableof{\catenumerator}}
+    = \contractionof{\condprobat{\catvariableof{\catenumerator}}{\catvariableof{\catenumerator-1}},\margprobat{\catvariableof{\catenumerator-1}}}{\catvariableof{\catenumerator}} \, .
+\end{align*}
+The conditional probability matrices are therefore called stochastic transition matrices.
 
+We notice, that the decomposition scheme of \theref{the:MarkovChain} hints at an efficient representation of $\probwith$ based on transition matrices.
+While $\probwith$ is a tensor in a space of dimension
+\begin{align*}
+    \prod_{\catenumeratorin} \catdimof{\catenumerator} \, ,
+\end{align*}
+the sum of the dimension of the transition matrices is
+\begin{align*}
+    \catdimof{0} + \sum_{\catenumeratorin,\, \catenumerator\geq 1} \catdimof{\catenumerator}\cdot \catdimof{\catenumerator-1} \, .
+\end{align*}
+We therefore observe a linear increase of the storage demand of the transition matrices in the order $\catorder$, whereas a naive storage of $\probwith$ by its coordinates would have an exponentially demand.
+
+% Generalizing Markov Chain
+The Markov Chain serves as a toy example drawing on a restrictive chain arrangement of conditional independencies.
+In the following section, we will investigate decomposition schemes, which relax this assumption and draw on more general collections of conditional independencies.
+The computation of marginal distribution by consecutive transition matrix multiplications will then be replaced by more general tensor network contractions.
 
 
 \sect{Graphical Models}
 
-
-
-We have already depicted conditional dependency assumptions made for Markov Chains in Figure~\ref{fig:MC} and discussed the implied decomposition of the dual tensor networks.
-Graphical models provide a more general framework for conditional dependency assumptions and provide a generic approach to exploit independences in finding tensor network decompositions of $\probtensor$.
-
-
-%Graphical Models are typically depicted by nodes to each variable and edges.
+%We have already depicted conditional dependency assumptions made for Markov Chains in \figref{fig:MC} and discussed the implied decomposition of the dual tensor networks.
+Graphical models provide a more generic framework to relate conditional dependency assumptions on a distribution with tensor network decompositions.
 Following the tensor network formalism we in this section introduce graphical models based on hypergraphs.
-Whether the hypergraph is directed or not distinguished between Bayesian Networks and Markov Networks.
-
-
-%\begin{remark}[Further nomenclature]
-%	The factors of the graphical models are tensors (since multivariate functions of discrete variables).
-%	The edges are associated to each axis of the tensor and carry the variables.
-%	Since each edge variable can appear in multiple factors, the Tensor Network is defined on a Hypergraph, where edges are interpreted as Hadamard contractions.
-%\end{remark}
-
-
+First, we study Markov Networks in most generality and then connect with conditional probabilities in the discussion of Bayesian Networks.
 
 \subsect{Markov Networks}
 
-While typically Markov Networks are defined on graphs, we define them here on hypergraphs to establish a direct connection to tensor networks defined on the same hypergraph.
-Along that line, Markov Networks are tensor networks with non-negative tensors (see \defref{def:tensorNetwork}), which are interpreted as probability distributions after normation.
+We now define Markov Networks based on hypergraphs, to establish a direct connection with tensor network decorating the hypergraph.
+In a more canonical way, Markov Networks are instead defined by graphs, where instead of the edges the cliques are decorated by factor tensors (see for example \cite{koller_probabilistic_2009}).
+%While canonically Markov Networks are defined on graphs, we here define them based on hypergraphs to establish a direct connection to tensor networks defined on the same hypergraph.
+%Along that line, Markov Networks are tensor networks with non-negative tensors (see \defref{def:tensorNetwork}), which are interpreted as probability distributions after normation.
 
 \begin{definition}[Markov Network]
     \label{def:markovNetwork}
-    Let $\tnetof{\graph}$ be a tensor network of non-negative tensors on a hypergraph $\graph$.
-    Then the Markov Network to $\tnetof{\graph}$ is the probability distribution of $\catvariableof{\node}$ defined by the tensor
-    \[ \probofat{\graph}{\nodevariables} = \frac{
-        \contractionof{\{\hypercoreof{\edge} : \edge \in \edges\}}{\nodevariables}
-    }{
-        \contraction{\{\hypercoreof{\edge} : \edge \in \edges\}}
-    } = \normationof{\tnetof{\graph}}{\nodevariables} \, . \]
+    Let $\tnetof{\graph}$ be a tensor network of non-negative tensors decorating a hypergraph $\graph$.
+    Then the Markov Network $\probof{\graph}$ to $\tnetof{\graph}$ is the probability distribution of $\catvariableof{\node}$ defined by the tensor
+    \begin{align*}
+        \probofat{\graph}{\nodevariables} = \frac{
+            \contractionof{\{\hypercoreof{\edge} : \edge \in \edges\}}{\nodevariables}
+        }{
+            \contraction{\{\hypercoreof{\edge} : \edge \in \edges\}}
+        } = \normationof{\tnetof{\graph}}{\nodevariables} \, .
+    \end{align*}
     We call the denominator
-    \[\partitionfunctionof{\tnetof{\graph}} = \contraction{\{\hypercoreof{\edge} : \edge \in \edges\}} \]
-    the partition function of the Markov Network.
+    \begin{align*}
+        \partitionfunctionof{\tnetof{\graph}} = \contraction{\{\hypercoreof{\edge} : \edge \in \edges\}}
+    \end{align*}
+    the partition function of the tensor network $\tnetof{\graph}$.
 \end{definition}
 
 % Marginalization and Conditioning
-Often, we are only interested in the distribution of a subset of variables, which are called the observable variables, and call the other variables hidden variables.
-The marginalization of a Markov Network to $\tnetof{\graph}$ on the variables $\catvariableof{\secnodes}$ is
-\[
+%Often, we are only interested in the distribution of a subset of variables, which are called the observable variables, and call the other variables hidden variables.
+The marginalization of a Markov Network to $\tnetof{\graph}$ on subsets of variables $\catvariableof{\secnodes}$ is
+\begin{align*}
     \probofat{\graph}{\catvariableof{\secnodes}}
     = \normationof{\tnetof{\graph}}{\catvariableof{\secnodes}} \, .
-\]
+\end{align*}
 This can be derived from \theref{the:splittingContractions}, which established an equivalence of contractions with sequences of consecutive contractions.
 
-
 Further, the distribution of $\catvariableof{\secnodes}$ conditioned on $\catvariableof{\thirdnodes}$, where $\secnodes,\thirdnodes$ are disjoint subsets of $\nodes$, is
-\[
-    \probtensor^{\graph}\left[ \catvariableof{\secnodes} | \catvariableof{\thirdnodes}\right]
+\begin{align*}
+    \probtensor^{\graph}\left[\catvariableof{\secnodes}|\catvariableof{\thirdnodes}\right]
     = \normationofwrt{\tnetof{\graph}}{\catvariableof{\secnodes}}{\catvariableof{\thirdnodes}} \, .
-\]
+\end{align*}
+
+While we have directly defined Markov Networks as decomposed probability distributions, we now want to derive assumptions on a distribution assuring that such decompositions exist.
+As we will see, the sets of conditional independencies encoded by a hypergraph are captured by its seperation properties, as we define next.
 
 \begin{definition}[Separation of Hypergraph]
     A path in a hypergraph is a sequence of nodes $\node_{\atomenumerator}$ for $\atomenumeratorin$, such that for any $\atomenumerator\in[\atomorder-1]$ we find a hyperedge $\edge\in\edges$ such that $(\node_{\atomenumerator}, \node_{\atomenumerator+1})\subset \edge$.
@@ -580,7 +616,7 @@ Further, the distribution of $\catvariableof{\secnodes}$ conditioned on $\catvar
 \end{definition}
 
 To characterize Markov Networks in terms of conditional independencies we need to further define the property of clique-capturing.
-This property of clique-capturing established a correspondence of hyperedges with maximal cliques in an alternative graph-based definition of Markov Networks \cite{koller_probabilistic_2009}.
+This property of clique-capturing established a correspondence of hyperedges with maximal cliques in the more canonical graph-based definition of Markov Networks \cite{koller_probabilistic_2009}.
 
 \begin{definition}[Clique-Capturing Hypergraph]
     \label{def:ccHypergraph}
@@ -595,7 +631,7 @@ Let us now show a characterization of Markov Networks in terms of conditional in
     Given a clique-capturing hypergraph $\graph$, the set of positive Markov Networks on the hypergraph coincides with the set of positive probability distributions, such that each for each disjoint subsets of variables $\nodesa$, $\nodesb$, $\nodesc$ we have $\catvariableof{\nodesa}$ is independent of $\catvariableof{\nodesb}$ conditioned on $\catvariableof{\nodesc}$, when $\nodesc$ separates $\nodesa$ and $\nodesb$ in the hypergraph. % called d-separation
 \end{theorem}
 \begin{proof}
-    %=>
+    \proofrightsymbol:
     %Given any Markov Network, contracting with $\onehotmapof{\atomlegindexof{\nodesc}}$ turns all hyperedges contained in $\nodesc$ to scalar factors (copying possible).
     Let there be a hypergraph $\graph$, a Markov Network $\extnet$ on $\graph$ and nodes $\nodesa,\nodesb,\nodesc \subset \nodes$, such that $\nodesc$ separates $\nodesa$ from $\nodesb$.
     Let us denote by $\nodes_0$ the nodes with paths to $\nodesa$, which do not contain a node in $\nodesc$, and by $\nodes_1$ the nodes with paths to $\nodesb$, which do not contain a node in $\nodesc$.
@@ -605,13 +641,13 @@ Let us now show a characterization of Markov Networks in terms of conditional in
     \begin{align*}
         \normationofwrt{\extnetasset}{\catvariableof{\nodesa},\catvariableof{\nodesb}}{\indexedcatvariableof{\nodesc}}
         = & \normationof{\extnetasset\cup\{\onehotmapof{\catindexof{\nodesc}}\}}{\catvariableof{\nodesa},\catvariableof{\nodesb}} \\
-        = &  \normationof{\{\hypercoreof{\edge}\, : \, \edge\in\edges_0\}\cup\{\onehotmapof{\catindexof{\nodesc}}\}}{\catvariableof{\nodesa}}
-        \otimes \normationof{\{\hypercoreof{\edge}\, : \, \edge\in\edges_1\}\cup\{\onehotmapof{\catindexof{\nodesc}}\}}{\catvariableof{\nodesb}} \, .
+        = &  \normationof{\{\hypercoreof{\edge}\, : \, \edge\in\edges_0\}\cup\{\onehotmapof{\catindexof{\nodesc}}\}}{\catvariableof{\nodesa}} \\
+        & \quad \otimes \normationof{\{\hypercoreof{\edge}\, : \, \edge\in\edges_1\}\cup\{\onehotmapof{\catindexof{\nodesc}}\}}{\catvariableof{\nodesb}} \, .
     \end{align*}
     By \theref{the:condIndependenceProductCriterion}, it now follows that $\catvariableof{\nodesa}$ is independent of $\catvariableof{\nodesb}$ conditioned on $\catvariableof{\nodesc}$.
-    %<= HARDER! Hammersley Clifford needed
-    The converse direction, i.e. that positive distributions respecting the conditional indpendence assumptions are representable as Markov Networks, is known as the Hammersley Clifford Theorem,
-    which we will proof later in \secref{sec:proofHCTheorem}.
+
+    \proofleftsymbol:
+    The converse direction, i.e. that positive distributions respecting the conditional indpendence assumptions are representable as Markov Networks, is known as the Hammersley Clifford Theorem (see \cite{clifford_markov_1971}), which we will proof later in \secref{sec:proofHCTheorem} of \charef{cha:coordinateCalculus}.
     %for which proof we refer to Theorem~4.8 in KOLLER.
 \end{proof}
 
@@ -673,7 +709,7 @@ This allows us to verify with \theref{the:conditionalContractionPreservation} th
     \begin{center}
         \input{PartI/tikz_pics/probability_representation/bayesian_factor.tex}
     \end{center}
-    \caption{Example of a Factor of a Bayesian Network to the node $\catvariableof{\node}$ with parents $\catvariableof{0},\ldots,\catvariableof{\catorder-1}$, as subgraph $a)$ and dual tensor core $b)$.}
+    \caption{Example of a Factor of a Bayesian Network to the node $\catvariableof{\node}$ with parents $\catvariableof{0},\ldots,\catvariableof{\catorder-1}$, as an directed edge a) which is decorated by a directed tensor b).}
     \label{fig:BayesianFactor}
 \end{figure}
 
@@ -701,7 +737,7 @@ Conditioned Bayesian Network do not have a simple Bayesian Network representatio
     \end{align*}
     Since $\prec$ is a topological ordering we have
     \[ \parentsof{\node} \subset \{\secnode : \secnode \prec \node\} \]
-    We apply the assumed conditional independence with Corollary~\ref{cor:conditionDropping} and get
+    We apply the assumed conditional independence with \theref{the:conditionDropping} and get
     \begin{align*}
         \probat{\nodevariables} =
         \contractionof{
@@ -820,41 +856,66 @@ As a consequence, tasks such as the determination of the partition functions or 
 %Bayesian Networks conditioned on evidence are no longer Bayesian Networks on the same graph, but Markov Networks on a hypergraph enriched by the evidence conditioned about.
 
 
-\subsect{Example: Hidden Markov Models}
+\subsect{Hidden Markov Models}
 
-We here extend the example of Markov Chains from Theorem \ref{the:MarkovChain} to a limited observation of the variables by observations.
-Let there be the variables $\catvariableof{\tenumerator}$ (states) and $\randomeof{\tenumerator}$ (observations) with a discrete and finite time $\tenumeratorin$.
-
-The conditional assumptions are
+Hidden Markov Models are examples of Bayesian Networks, constructed as follows.
+Let us recall Markov Chains as investigated in \theref{the:MarkovChain} and extend them by observation variables $\randomeof{\catenumerator}$ for $\catenumeratorin$, representing limited observations of the state variables $\catvariableof{\catenumerator}$.
+%Let there be the variables $\catvariableof{\catenumerator}$ (states) and $\randomeof{\catenumerator}$ (observations) with a discrete and finite time $\catenumeratorin$.
+To be more precise, we assume the following conditional independencies:
 \begin{itemize}
-    \item $\catvariableof{\tenumerator+1}$ is independent of $\catvariableof{0:\tenumerator-1}$ and $\randomeof{0:\tenumerator}$ conditioned on $\catvariableof{\tenumerator}$
-    \item $\randomeof{\tenumerator}$ is independent of all other variables conditioned on $\catvariableof{\tenumerator}$
+    \item As for Markov Chains, we assume that for $\catenumeratorin$ with $\catenumerator\geq1$ the variable $\catvariableof{\catenumerator}$ is independent of $\catvariableof{[\catenumerator-1}$ and $\randomeof{[\catenumerator-1]}$ conditioned on $\catvariableof{\catenumerator-1}$
+    \item In addition, for we assume that for $\catenumeratorin$ the observation variable $\randomeof{\catenumerator}$ is independent of $\catvariableof{[\catenumerator}$ and $\randomeof{[\catenumerator]}$ conditioned on $\catvariableof{\catenumerator}$
 \end{itemize}
-
-Then the probability tensor has the decomposition
-\begin{align}
-    \probat{\catvariableof{0:\tdim},\randomeof{0:\tdim}}
-    & = \prod_{\tenumeratorin}
-    \left( \condprobof{\catvariableof{\tenumerator}}{\catvariableof{0:\tenumerator-1},\randomeof{0:\tenumerator-1}} \cdot \condprobof{\randomeof{\tenumerator}}{\catvariableof{0:\tenumerator},\randomeof{0:\tenumerator-1}} \right) \\
-    & = \probat{\catvariableof{0}} \cdot \condprobof{\randomeof{0}}{\catvariableof{0}} \cdot \prod_{\tenumeratorin, \tenumerator>0}
-    \left( \condprobof{\catvariableof{\tenumerator}}{\catvariableof{\tenumerator-1}} \cdot \condprobof{\randomeof{\tenumerator}}{\catvariableof{\tenumerator}} \right)
-\end{align}
-Here we used the Chain Rule decomposition of Theorem~\ref{the:chainRule} in the first equation and the conditional independence assumptions in the second.
-
-We notice, that this is a Bayesian Netowork on a directed acyclic hypergraph $\graph$ consistent in nodes to each state and each observation and directed hyperedges
+From this conditional independence assumption, we apply the Chain Rule \theref{the:chainRule} given the order of variables
+\begin{align*}
+    \catvariableof{0},\randomeof{0},\catvariableof{1},\randomeof{1},\ldots,\catvariableof{\catorder-1},\randomeof{\catorder-1}
+\end{align*}
+and get
+\begin{align*}
+    \probat{\catvariableof{[\catorder]},\randomeof{[\catorder]}}
+    & = \breakablecontractionof{
+        \{\margprobat{\catvariableof{0}},\condprobat{\randomeof{0}}{\catvariableof{0}}\} \\
+        & \quad\quad  \cup \{\condprobat{\catvariableof{\catenumerator}}{\catvariableof{[\catenumerator]},\randomeof{[\catorder]}} \,:\, \catenumeratorin\} \\
+        & \quad\quad \cup \{\condprobat{\randomeof{\catenumerator}}{\catvariableof{[\catenumerator+1]},\randomeof{[\catorder]}} \,:\, \catenumeratorin\}
+    }{
+        \catvariableof{[\catorder]},\randomeof{[\catorder]}
+    } \, .
+\end{align*}
+We now apply the conditional independence assumptions to sparsify the appearing conditional distributions by application of \theref{the:conditionDropping}.
+This results in the decomposition (see \figref{fig:HMM}b)
+\begin{align*}
+    \probat{\catvariableof{[\catorder]},\randomeof{[\catorder]}}
+    & = \breakablecontractionof{
+        \{\margprobat{\catvariableof{0}},\condprobat{\randomeof{0}}{\catvariableof{0}}\} \\
+        & \quad\quad  \cup \{\condprobat{\catvariableof{\catenumerator}}{\catvariableof{\catenumerator-1}} \,:\, \catenumeratorin\} \\
+        & \quad\quad \cup \{\condprobat{\randomeof{\catenumerator}}{\catvariableof{\catenumerator}} \,:\, \catenumeratorin\}
+    }{
+        \catvariableof{[\catorder]},\randomeof{[\catorder]}
+    } \, .
+\end{align*}
+In addition to the stochastic transition matrices $\condprobat{\catvariableof{\catenumerator}}{\catvariableof{\catenumerator-1}}$ appearing in Markov Chains, we further have stochastic observation matrices $\condprobat{\randomeof{\catenumerator}}{\catvariableof{\catenumerator}}$ for $\catenumeratorin$.
+Their contraction with marginal distribution of the respective state varibles delivers the marginal distribution of the observation matrix by
+\begin{align*}
+    \margprobat{\randomeof{\catenumerator}}
+    = \contractionof{\condprobat{\randomeof{\catenumerator}}{\catvariableof{\catenumerator}},\margprobat{\catvariableof{\catenumerator}}}{\randomeof{\catenumerator}}
+\end{align*}
+We notice, that this is a Bayesian Network on a directed acyclic hypergraph $\graph$ (see \figref{fig:HMM}a) consistent in nodes $\{\catvariableof{[\catorder]}\}\cup\{\randomeof{[\catorder]}\}$ to each state and observation variables, and the directed hyperedges by
+%and directed hyperedges
 \begin{itemize}
-    \item $(\{\catvariableof{\tenumerator}\}, \{\catvariableof{\tenumerator+1}\})$ for $\tenumerator\in[\tdim-1]$
-    \item $(\{\catvariableof{\tenumerator}\}, \{\randomeof{\tenumerator}\})$ for $\tenumeratorin$
+    \item $(\varnothing,\{\catvariableof{0}\})$, decorated by the intial marginal distribution of $\catvariableof{0}$
+    \item $(\{\catvariableof{\catenumerator-1}\}, \{\catvariableof{\catenumerator}\})$ for $\catenumerator\in[\catorder]$ with $\catenumerator\geq1$, decorated by stochastic transition matrices
+    \item $(\{\catvariableof{\catenumerator}\}, \{\randomeof{\catenumerator}\})$ for $\catenumeratorin$, decorated stochastic observation matrices
 \end{itemize}
+While we have derived this directed graph structure directly based on the chain rule decomposition with sparsified conditional distributions, it also follows from the more generic hypergraph characterization of Bayesian Networks through separability by \theref{the:condIndBN}.
 
-
-\begin{figure}[h]
+\begin{figure}[t!]
     \begin{center}
         \input{PartI/tikz_pics/probability_representation/hidden_markov_model.tex}
     \end{center}
-    \caption{Depiction of a Hidden Markov Model.
-    a) Dependency Graph (of the corresponding chain Graphical Model).
-    b) Dual Tensor Network representing the conditional probability factors.}
+    \caption{Decomposition of a probability distribution in the Hidden Markov Model, consistent of state variables $\catvariableof{\catenumerator}$ and observation variables $\randomeof{\catenumerator}$.
+    Given the models conditional independence assumptions, the distribution is a Bayesian Network on the directed hypergraph a).
+    The hypergraph is decorated by the network of conditional probability tensors b), which are interpreted as stochastic transition matrices $\condprobat{\catvariableof{\catenumerator}}{\catvariableof{\catenumerator-1}}$ and stochastic observation matrices $\condprobat{\randomeof{\catenumerator}}{\catvariableof{\catenumerator}}$.
+    }
     \label{fig:HMM}
 \end{figure}
 
