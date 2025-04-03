@@ -74,6 +74,7 @@ To avoid this ambiguity, we introduce the notation of representability with resp
 \begin{definition}
     \label{def:representationBaseMeasure}
     We say that a probability distribution $\probtensor$ is representable with respect to a boolean base measure $\basemeasure$, if for all $\shortcatindices$ with $\basemeasureat{\indexedshortcatvariables}=0$ we have $\probat{\indexedshortcatvariables}=0$.
+    We denote the set of by $\basemeasure$ representable distributions by $\bmrealprobof{\basemeasure}$.
 \end{definition}
 
 When a probability distribution $\probtensor$ is representable with respect to a boolean base measure $\basemeasure$, we have the invariance
@@ -81,9 +82,16 @@ When a probability distribution $\probtensor$ is representable with respect to a
     \probwith=\contractionof{\probwith,\basemeasurewith}{\shortcatvariables}
 \end{align*}
 and can therefore safely ignore the base measures.
+This enables the characterization of by $\basemeasure$ representable distributions by
+\begin{align*}
+    \bmrealprobof{\basemeasure}
+    = \left\{ \probat{\shortcatvariables} \, : \, \uniquantwrtof{\shortcatindicesin}{\probat{\indexedshortcatvariables}\geq0}, \, \contractionof{\probwith,\basemeasurewith}{\shortcatvariables}
+    = \probwith \right\} \, .
+\end{align*}
 
 Starting with \charef{cha:logicalRepresentation} we will further investigate boolean tensors and relate them with propositional formulas.
 In \charef{cha:logicalReasoning} we will connect the representation and positivity with respect to boolean base measures with the formalism of entailment.
+The notation $\bmrealprobof{\basemeasure}$ of by $\basemeasure$ representable distributions will later in \charef{cha:networkRepresentation} relate to minterm exponential families introduced therein.
 
 % Positive distribution
 We now investigate, which base measures $\basemeasure$ can be chosen for a probability distribution $\probtensor$, such that $\probtensor$ is representable by $\basemeasure$.
@@ -946,7 +954,7 @@ Exponential families consist the most generic distributions investigated in this
     \end{align*}
     with $\contraction{\basemeasure}\neq0$, the set $\expfamily=\{\expdist \, : \, \canparamwithin\}$ of probability distributions
     \begin{align*}
-        \expdistat{\shortcatvariables} = \normationof{\expof{\sbcontractionof{\sencsstatat{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables},\basemeasurewith}}{\shortcatvariables}
+        \expdistat{\shortcatvariables} = \normationof{\expof{\sbcontractionof{\sencsstatat{\shortcatvariables,\selvariable},\canparamwith}{\shortcatvariables},\basemeasurewith}}{\shortcatvariables}
     \end{align*}
     is called the exponential family to $\sstat$.
     We further define for each member with parameters $\canparam$ the associated energy tensor
@@ -969,7 +977,7 @@ defined for $\shortcatindices\in\facstates$ and $\selindexin$ as
 The selection encoding represent the weighted sum of the statistic coordinates by the canonical parameter vector $\canparamwith$ as a contraction
 \begin{align*}
     \sum_{\selindexin}\canparamat{\indexedselvariable}\cdot \sstatcoordinateofat{\selindex}{\shortcatvariables}
-    = \sbcontractionof{\sencsstatat{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables} \, .
+    = \sbcontractionof{\sencsstatat{\shortcatvariables,\selvariable},\canparamwith}{\shortcatvariables} \, .
 \end{align*}
 For more details on this representation scheme, we refer to \theref{the:linCompSelEncoding} in \charef{cha:coordinateCalculus}.
 Up to normation, we sketch the probability distribution of any member by the tensor network diagram
@@ -1126,11 +1134,13 @@ A straightforward generalization of probability distributions representable by e
 % Define sets of realizable distributions
 \begin{definition}
     \label{def:realizableStatDistributions}
-    Given a statistic $\sstat : \facstates \rightarrow \rr^{\seldim}$, and a hypergraph $\graph=([\seldim],\edges)$ with nodes associated to the coordinates of the statistic, we define the set of realizable distributions by
+    Given a statistic $\sstat : \facstates \rightarrow \rr^{\seldim}$, and a hypergraph $\graph=([\seldim],\edges)$ with nodes associated to the coordinates of the statistic, we define the by $\sstat$ and $\graph$ computable family of distributions by
     \begin{align*}
         \realizabledistsof{\sstat,\graph}
-        = \left\{ \normationof{\{\rencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}\} \cup \{\hypercoreofat{\edge}{\sstatcatof{\edge}}\}}{\shortcatvariables}  \, : \,\hypercoreofat{\edge}{\sstatcatof{\edge}}\in\bigotimes_{\selindex\in\edge}\rr^{\headdimof{\selindex}} \right\} \, .
+        = \left\{ \normationof{\{\rencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}\} \cup \{\hypercoreofat{\edge}{\sstatcatof{\edge}}\}}{\shortcatvariables}  \, : \,\hypercoreofat{\edge}{\sstatcatof{\edge}}\in\bigotimes_{\selindex\in\edge}\rr^{\headdimof{\selindex}}, \, \zerosat{\sstatcatof{\edge}}\prec\hypercoreofat{\edge}{\sstatcatof{\edge}} \right\} \, .
     \end{align*}
+    Note that we restrict to non-negative activation cores by demanding $\zerosat{\sstatcatof{\edge}}\prec\hypercoreofat{\edge}{\sstatcatof{\edge}}$, a notation which will be introduced in more detail in \charef{cha:logicalReasoning} as partial order of tensors.
+    We refer to any member $\probat{\shortcatvariables}\in\realizabledistsof{\sstat,\graph}$ as a by $\sstat$ and $\graph$ computable distribution.
 \end{definition}
 
 For unary activation cores, that is for the elementary graph $\elgraph$, any member of $\realizabledistsof{\sstat,\elgraph}$ has up to a normation factor a tensor network decomposition by the diagram
@@ -1147,7 +1157,7 @@ Comparing this representation scheme with \theref{def:expFamilyTensorRep}, we co
     \end{align*}
 \end{corollary}
 
-For elements of the exponential family with general boolean basemeasure we have with the activation cores constructed in \theref{def:expFamilyTensorRep}
+For elements of the exponential family with general boolean base measure we have with the activation cores constructed in \theref{def:expFamilyTensorRep}
 \begin{center}
     \input{PartI/tikz_pics/probability_representation/expdist_unary_realizable.tex}
 \end{center}
@@ -1210,24 +1220,34 @@ Mean parameters are an alternative way to represent members of exponential famil
     \label{def:meanForwardBackward}
     Let there be an exponential family defined by a statistic $\sstat$ and a boolean base measure.
     We call the tensor
-    \[ \meanparam = \sbcontractionof{\probtensor,\sencsstat}{\selvariable} \]
-    the mean parameter tensor to a distribution $\probtensor$ of an exponential family.
+    \begin{align*}
+        \meanparamwith = \sbcontractionof{\probat{\shortcatvariables},\sencsstatat{\shortcatvariables,\selvariable}}{\selvariable}
+    \end{align*}
+    the mean parameter tensor to a distribution $\probat{\shortcatvariables}$.
     The set
-    \[ \genmeanset = \left\{\contractionof{\probtensor,\sencsstat,\basemeasure}{\selvariable} \, : \, 0\prec\probtensor , \, \contractionof{\probtensor,\basemeasure}{\shortcatvariables}
-    = \basemeasurewith \right\} \, , \]
-    where $\probtensorset$ denotes the set of all probability distributions,
+    \begin{align*}
+        \genmeanset = \left\{\contractionof{\probtensor,\sencsstat,\basemeasure}{\selvariable} \, : \,
+        0\prec\probtensor , \, \contractionof{\probwith,\basemeasurewith}{\shortcatvariables}
+        = \probwith \right\} \, ,
+    \end{align*}
     is called the convex polytope of realizable mean parameters.
+    Here we denote by $\bmrealprobof{\basemeasure}$ the set of all probability distributions representable with respect to $\basemeasure$ (see \defref{def:representationBaseMeasure}).
     The map
-    \[ \forwardmap :  \simpleparspace\rightarrow\simpleparspace\]
-    with $\forwardmapof{\canparam} = \sbcontractionof{\expdist,\sencsstat}{\selvariable}$ is called the forward map of the exponential family and any map
-    \[ \backwardmap : \imageof{\forwardmap} \rightarrow \simpleparspace\]
-    with $\expdistof{(\sstat,\backwardmapof{\forwardmapof{\canparam}},\basemeasure)} = \expdist$ for any $\canparamwithin$ a backward map.
+    \begin{align*}
+        \forwardmap :  \simpleparspace\rightarrow\simpleparspace
+    \end{align*}
+    with $\forwardmapof{\canparam} = \sbcontractionof{\expdist,\sencsstat}{\selvariable}$ is called the forward map of the exponential family and inverse, that is a map
+    \begin{align*}
+        \backwardmap : \imageof{\forwardmap} \rightarrow \simpleparspace
+    \end{align*}
+    with $\expdistof{(\sstat,\backwardmapof{\forwardmapof{\canparam}},\basemeasure)} = \expdist$ for any $\canparamwithin$, a backward map of the exponential family.
 \end{definition}
 
 
 % Convex Hull Characterization Polytope
 While introduced here as a property of a distribution, the mean parameters will be central to the discussion of probabilistic inference in \charef{cha:probReasoning}.
-We now provide a simple characterization of the sets of mean parameters based on slices of the selection encoding of the statistic.
+We now turn our interest towards the characterization of the polytope of realizable mean parameters.
+First of all, we provide a simple characterization of the sets of mean parameters as the convex hull of the slices to the selection encoding of the statistic.
 
 \begin{theorem}
     \label{the:meanPolytopeConvHull}
@@ -1238,12 +1258,25 @@ We now provide a simple characterization of the sets of mean parameters based on
     \end{align*}
 \end{theorem}
 \begin{proof}
-    This follows from the fact, that the set of probability distributions is the convex hull of the one-hot encodings and the convex hull of mean parameters is a linear transform of that set.
+    First we realize that the characterization of by $\basemeasure$ representable distributions is a standard simplex extended by trivial coordinates, that is
+    \begin{align*}
+        \bmrealprobof{\basemeasure}
+        = \convhullof{\onehotmapofat{\shortcatindices}{\shortcatvariables} \, : \, \basemeasureat{\indexedshortcatvariables}=1 } \, .
+    \end{align*}
+    This follows from the fact, that the support of any by $\basemeasure$ representable distribution is contained in the support of $\basemeasure$.
+    Further, each representable distribution is contained in the convex hull of the one-hot encoded support elements, since any distribution is normed.
+
+    The polytope of mean parameters is a linear transform of the elements in $\bmrealprobof{\basemeasure}$, since the contraction with $\sencsstat$ is linear.
+    It follows that
+    \begin{align*}
+        \genmeanset
+        &= \convhullof{\contractionof{\sencsstatat{\shortcatvariables,\selvariable},\onehotmapofat{\shortcatindices}{\selvariable}} \, : \, \basemeasureat{\indexedshortcatvariables}=1 } \\
+        &= \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \basemeasureat{\indexedshortcatvariables}=1} \, .
+    \end{align*}
 \end{proof}
 
-
 % Halfspace Representation
-The convex polytope $\genmeanset$ can further be characterized as an intersection of half-spaces, as we state next.
+Any convex polytope $\genmeanset$ can further be characterized as an intersection of half-spaces, as we state next.
 
 \begin{theorem}
     \label{the:meanPolytopeHalfspaces}
@@ -1254,7 +1287,7 @@ The convex polytope $\genmeanset$ can further be characterized as an intersectio
     where $a_i[\selvariable]$ a vector and $b_i\in\rr$ for all $i\in[n]$ such that
     \begin{align*}
         \genmeanset
-        = \left\{\meanparamat{\selvariable} \, : \, \forall_{i\in[n]} \, \contraction{\meanparamat{\selvariable},\normalvecofat{i}{\selvariable}}\leq\normalboundof{i} \right\} \, .
+        = \left\{\meanparamwith \, : \, \forall_{i\in[n]} \, \contraction{\meanparamwith,\normalvecofat{i}{\selvariable}}\leq\normalboundof{i} \right\} \, .
     \end{align*}
 \end{theorem}
 \begin{proof}
@@ -1262,42 +1295,67 @@ The convex polytope $\genmeanset$ can further be characterized as an intersectio
 \end{proof}
 
 The determination of the half-space parametrizing $\halfspaceparams$ is, however, in general difficult and the main reason for the intractability of probabilistic inference (see e.g. \cite{wainwright_graphical_2008}).
+Let us now continue with the investigation of the faces of the mean parameter polytope, which we define following Def.~2.1 in \cite{ziegler_lectures_2013}.
 
 \begin{definition}
     \label{def:meanPolytopeFaces}
     Given a mean parameter polytope $\genmeanset$ in the half space representation of Theorem~\ref{the:meanPolytopeHalfspaces}, and any subset $\mathcal{I}\subset[n]$ we say that the set
     \begin{align*}
-        \genfacesetof{\facecondset} = \left\{\meanparamat{\selvariable}\in\genmeanset \, : \, \forall_{i\in\mathcal{I}} \, \contraction{\meanparamat{\selvariable},\normalvecofat{i}{\selvariable}}\leq\normalboundof{i} \right\}
+        \genfacesetof{\facecondset} = \left\{\meanparamwith\in\genmeanset \, : \, \forall_{i\in\mathcal{I}} \, \contraction{\meanparamwith,\normalvecofat{i}{\selvariable}}=\normalboundof{i} \right\}
     \end{align*}
     is the face to the constraints $\mathcal{I}$.
 \end{definition}
 
+While all inequalities in a half-space representation are satisfied for any element of the polytope, we define faces by the additional sharp satisfaction of a subset of the half-space inequalities.
 
 \begin{theorem}
     \label{the:faceNormal}
-    For any non-empty face $\genfacesetof{\facecondset}$ to a subset $\mathcal{I}\subset[n]$ there is a vector $\canparamat{\selvariable}$, which we call a normal of the face, such that
-    \[ \genfacesetof{\facecondset} = \argmax_{\meanparam\in\genmeanset} \contraction{\canparamat{\selvariable},\meanparamat{\selvariable}}  \, . \]
+    For any non-empty face $\genfacesetof{\facecondset}$ to a subset $\mathcal{I}\subset[n]$ there is a vector $\canparamwith$, which we call a normal of the face, such that
+    \[ \genfacesetof{\facecondset} = \argmax_{\meanparam\in\genmeanset} \contraction{\canparamwith,\meanparamwith}  \, . \]
     For any collection of positive $\lambda_i$, where $i\in\facecondset$, the vector
-    \[ \canparamat{\selvariable} = \sum_{i\in\facecondset} \lambda_i\cdot\normalvecofat{i}{\selvariable}\]
+    \[ \canparamwith = \sum_{i\in\facecondset} \lambda_i\cdot\normalvecofat{i}{\selvariable}\]
     is a normal for $\genfacesetof{\facecondset}$.
     %% UNCLEAR if this is true-> Are all possible normals in the span )
-%	If $\canparamat{\selvariable}$ is a normal to a face, then for any positive scalars $\lambda[\selvariable]$ also the vector
-%		\[ \seccanparam\left[\selvariable\right] = \contractionof{\canparamat{\selvariable},\labmda[\selvariable]}{\selvariable} \]
+%	If $\canparamwith$ is a normal to a face, then for any positive scalars $\lambda[\selvariable]$ also the vector
+%		\[ \seccanparam\left[\selvariable\right] = \contractionof{\canparamwith,\labmda[\selvariable]}{\selvariable} \]
 %	is a normal to the same face.
 \end{theorem}
 \begin{proof}
     The first claim follows trivially from the second.
     To show the second claim, let there be for $i\in\facecondset$ arbitrary positive scalars $\lambda_i$.
-    We use that the face is non-empty, and thus there is a $\meanparamat{\selvariable}$ with
-    \[ \contraction{\meanparamat{\selvariable},\normalvecofat{i}{\selvariable}}=\normalboundof{i} \]
+    We use that the face is non-empty, and thus there is a $\meanparamwith$ with
+    \[ \contraction{\meanparamwith,\normalvecofat{i}{\selvariable}}=\normalboundof{i} \]
     for all $i\in\facecondset$.
     Since for any $\meanparam\in\genmeanset$
-    \[ \contraction{\meanparamat{\selvariable},\normalvecofat{i}{\selvariable}}\leq \normalboundof{i} \]
+    \[ \contraction{\meanparamwith,\normalvecofat{i}{\selvariable}}\leq \normalboundof{i} \]
     it follows that
-    \[ \max_{\meanparam\in\genmeanset} \contraction{\canparamat{\selvariable},\meanparamat{\selvariable}}
+    \[ \max_{\meanparam\in\genmeanset} \contraction{\canparamwith,\meanparamwith}
     = \sum_{i\in\facecondset} \lambda_i \cdot \normalboundof{i} \, \, . \]
-    The maximum is attained at a $\meanparamat{\selvariable}$, if and only if the equations $\contraction{\meanparamat{\selvariable},\normalvecofat{i}{\selvariable}}=\normalboundof{i}$ are satisfied for $i\in\facecondset$.
-    This is equalt to $\meanparam\in\genfacesetof{\facecondset}$.
+    The maximum is attained at a $\meanparamwith$, if and only if the equations $\contraction{\meanparamwith,\normalvecofat{i}{\selvariable}}=\normalboundof{i}$ are satisfied for $i\in\facecondset$.
+    This is equal to $\meanparam\in\genfacesetof{\facecondset}$.
+\end{proof}
+
+As we show next, also a converse statement holds, namely that for any vector $\canparamwith$ we find a face $\genfacesetof{\facecondset}$, such that the $\canparamwith$ is a face normal to that face.
+
+\begin{theorem}
+    For any $\canparamwith$ we find a subset $\mathcal{I}\subset[n]$, such that
+    \begin{align*}
+        \argmax_{\meanparam\in\genmeanset} \contraction{\canparamwith,\meanparamwith}
+        = \genfacesetof{\facecondset} \, .
+    \end{align*}
+\end{theorem}
+\begin{proof} % Not a smooth proof, improve!
+    We first notice, that
+    \begin{align*}
+        \argmax_{\meanparam\in\genmeanset} \contraction{\canparamwith,\meanparamwith}
+        = \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\argmax_{\shortcatindicesin} \contraction{\canparamwith,\sstatat{\shortcatindices}}} \, .
+    \end{align*}
+    Further, since the contraction with $\canparamwith$ is linear, the set $\argmax_{\meanparam\in\genmeanset} \contraction{\canparamwith,\meanparamwith}$ is contained in the boundary of the polytope $\genmeanset$.
+    We can conlcude, that the set is a face, that is we find a subset $\mathcal{I}\subset[n]$ with
+    \begin{align*}
+        \genfacesetof{\facecondset}
+        = \argmax_{\meanparam\in\genmeanset} \contraction{\canparamwith,\meanparamwith} \, .
+    \end{align*}
 \end{proof}
 
 % Notation
@@ -1306,68 +1364,141 @@ In a slide abuse of notation, we denote in this case $\genfacesetof{\canparam} =
 
 
 
-\subsect{Examples}
 
-% Minterm Exponential Family
-\begin{example}[The minterm exponential family]
-    \label{exa:mintermExpFamily}
-    When taking as sufficient statistic the identity $\identityat{\shortcatvariables,\selvariableof{[\catorder]}}$, we can represent any positive distribution $\probtensor$ as a member of the exponential family, namely when choosing the canonical parameter
-    \[ \canparam = \lnof{\probtensor} \, . \]
-    The associated mean parameter is then, after relabeling the variables $\shortcatvariables$ by $\selvariableof{[\catorder]}$,
-    \[ \meanparam = \probtensor \,  \]
-    and $\meansetof{\identity,\ones}$ coincides with the set of probability tensors.
-    For reasons to be explained in the \charef{cha:logicalRepresentation} we refer to this family as the minterm exponential family.
-\end{example}
 
+\subsect{Markov Networks as Exponential Families}
 
 % Markov Networks
-Given a hypergraph with fixed node decoration, the different decorations of the hyperedges by tensors can be represented by an exponential family, as we show next.
+As we have claimed before, exponential families can be regarded as a generalization of graphical models.
+We here show this claim by a construction of exponential families representing Markov Networks on constant hypergraphs.
+%Since Markov Networks have been shown to also contain Bayesian Networks
+%Given a hypergraph with fixed node decoration, the different decorations of the hyperedges by tensors can be represented by an exponential family, as we show next.
 
-\begin{theorem}[Exponential Representation of Markov Networks]
-    For any hypergraph $\graph=(\nodes,\edges)$ we define a sufficient statistics
-    \[ \sstat = \bigtimes_{\edge\in\edges}  \sstatcoordinateof{\edge} \]
+\begin{theorem}[Exponential Representation of Markov Networks]\label{the:markovNetworkExponentialFamilies}
+    Let there be a hypergraph $\graph=(\nodes,\edges)$ with a coloring of the nodes by dimensions $\catdimof{\node}$, we define a sufficient statistics
+    \begin{align*}
+        \sstatof{\graph} \, : \bigtimes_{\node\in\nodes} [\catdimof{\node}] \rightarrow \bigtimes_{\edge\in\edges}\left(\bigtimes_{\node\in\edge}[\catdimof{\node}]\right)
+    \end{align*}
+    by a cartesian product $\sstatof{\graph} = \bigtimes_{\edge\in\edges} \sstatcoordinateof{\edge}$ of statistics
+    \begin{align*}
+        \sstatcoordinateof{\edge} : \bigtimes_{\node\in\nodes} [\catdimof{\node}] \rightarrow \bigtimes_{\node\in\edge} [\catdimof{\node}]
+    \end{align*}
+    defined by the restriction of indices to the respective edge, that is for $\catindexof{\nodes}\in\nodestatesof{\nodes}$
+    \begin{align*}
+        \sstatcoordinateof{\edge}(\catindexof{\nodes}) = \catindexof{\edge} \, .
+    \end{align*}
+    Given any Markov Network with positive tensors $\{\hypercoreof{\edge} \, : \, \edge\in\edges\}$ decorating the hyperedges of $\graph$ we define
+    \begin{align*}
+         \canparamat{\selvariable} = \bigtimes_{\edge\in\edges} \canparamofat{\edge}{\catvariableof{\edge}}
+    \end{align*}
     where
-    \[ \sstatcoordinateof{\edge}(\catindexof{\nodes}) = \catindexof{\edge} \, . \]
-    Given any Markov Network $\{\hypercoreof{\edge} \, : \, \edge\in\edges\}$ on $\graph$ with positive tensors $\hypercoreof{\edge}$ we define
-    \[ \canparam = \bigtimes_{\edge\in\edges} \canparamof{\edge} \]
-    where
-    \[ \canparamof{\edge} =  \lnof{\hypercoreof{\edge}} \]
-    and $\ln$ acts coordinatewise.
-    Then, the Markov Network is in the member of the exponential family with trivial base measure, sufficient statistic $\sstat$ and parameters $\canparam$.
+    \begin{align*}
+        \canparamofat{\edge}{\catvariableof{\edge}} =  \lnof{\hypercoreofat{\edge}{\catvariableof{\edge}}}
+    \end{align*}
+    and $\selvariable$ enumerates a concatenation of the states of $\catvariableof{\edge}$.
+    Then, the Markov Network is in the member of the exponential family with trivial base measure, sufficient statistic $\sstatof{\graph}$ and parameters $\canparam$.
 \end{theorem}
 \begin{proof}
     We have for any $\catindexof{\nodes}$
+    \begin{align*}
+        \prod_{\edge\in\edges} \hypercoreofat{\edge}{\indexedcatvariableof{\edge}} \\
+        &= \expof{\sum_{\edge\in\edges} \lnof{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}}} \\
+        &= \expof{\sum_{\edge\in\edges} \canparamofat{\edge}{\indexedcatvariableof{\edge}}} \\
+        &= \expof{\sum_{\edge\in\edges} \contraction{\canparamofat{\edge}{\catvariableof{\edge}},\sstatcoordinateof{\edge}(\catindexof{\nodes})}}  \, .
+    \end{align*}
+    By contraction, we further have
+    \begin{align*}
+        \contractionof{\sstatat{\nodevariables,\selvariable},\canparamwith}{\nodevariables}
+        = \sum_{\edge\in\edges} \contractionof{\sstatcoordinateofat{\edge}{\nodevariables,\catvariableof{\edge}},\canparamofat{\edge}{\catvariableof{\edge}}}{\nodevariables}
+    \end{align*}
+    we thus get with the above
     \begin{align}
-        \prod_{\edge\in\edges} \hypercoreofat{\edge}{\indexedcatvariableof{\edge}}
-        = \expof{\sum_{\edge\in\edges} \canparamofat{\edge}{\indexedcatvariableof{\edge}}}
-        = \expof{\sum_{\edge\in\edges} \sbcontraction{\canparamofat{\edge}{\catvariableof{\edge}},\sstatcoordinateof{\edge}(\catindexof{\nodes})}}  \, .
+        \contractionof{\{\hypercoreof{\edge}: \edge\in\edges\}}{\nodevariables}
+        = \expof{\contractionof{\sstatat{\nodevariables,\selvariable},\canparamwith}{\nodevariables}} \, .
     \end{align}
-    Using that
-    \[ \contractionof{\sstat,\canparam}{\nodevariables} = \sum_{\edge\in\edges} \contractionof{\sstatcoordinateof{\edge},\canparamof{\edge}}{\nodevariables} \]
-    we get
+    This implies, that the contraction of the tensors in the Markov Network coincides with the exponential of the energy tensor of the constructed member of the exponential family.
+    It follows for the normalization, that
     \begin{align}
-        \contractionof{\{\hypercoreof{\edge}: \edge\in\edges\}}{\nodevariables} = \expof{\contractionof{\canparam,\sstat}{\nodevariables}} \, .
+        \normationof{\{\hypercoreof{\edge}: \edge\in\edges\}}{\nodevariables}
+        = \normationof{\expof{\contractionof{\canparam,\sstat}{\nodevariables}}}{\nodevariables} \, .
     \end{align}
-    This implies
-    \begin{align}
-        \normationof{\{\hypercoreof{\edge}: \edge\in\edges\}}{\nodevariables} = \normationof{\expof{\contractionof{\canparam,\sstat}{\nodevariables}}}{\nodevariables} \, .
-    \end{align}
+    We thus conclude, that the Markov Network coincides with the constructed member of the exponential family.
 \end{proof}
 
-
 % Mean parameters
-The mean parameter of the Markov Network exponential family is the cartesian product of the marginals $\meanparamofat{\edge}{\catvariableof{\edge}}$ are often refered to as beliefs in the literature \cite{pearl_probabilistic_1988}.
-\red{They are outer bounded by local consistency polytope, which leads to the motivation of message passing algorithms called belief propgations, see for a derivation \cite{wainwright_graphical_2008}.}
+The mean parameter of the Markov Network exponential family is the cartesian product of the marginals $\meanparamofat{\edge}{\catvariableof{\edge}}$.
+They are often refered to as beliefs in the literature, as introduced by \cite{pearl_probabilistic_1988}.
+For Markov Networks on tree hypergraphs, and their embedding into junction tree formats, the corresponding mean parameter polytope can be characterized by local consistency constraints.
+More precisely, it can be shown, that for the statistic constructed in \theref{the:markovNetworkExponentialFamilies}, in case of tree hypergraphs, the
+\begin{align*}
+    \meansetof{\sstatof{\graph}}
+    = \Big\{ \meanparamwith=\big(\meanparamofat{\edge}{\catvariableof{\edge}}\big)_{\edge\in\edges} \, : \,
+    & \uniquantwrtof{\edge,\secedge\in\edges}{
+        \contractionof{\meanparamofat{\edge}{\catvariableof{\edge}}}{\catvariableof{\edge\cap\secedge}} = \contractionof{\meanparamofat{\edge}{\catvariableof{\edge}}}{\catvariableof{\edge\cap\secedge}}}, \\
+    & \uniquantwrtof{\edge}{\zerosat{\catvariableof{\edge}} \prec \meanparamofat{\edge}{\catvariableof{\edge}} \land \contraction{\meanparamofat{\edge}{\catvariableof{\edge}}}=1} \Big\} \, .
+\end{align*}
+That is, the polytope of realizable mean parameters consists of those non-negative and normed beliefs, which are coinciding on the contraction of shared variables.
+Capturing these constraints by Lagrange parameters and performing optimization of certain objectives then results in message-passing schemes, as we will discuss in \charef{cha:messagePassing}.
+If the hypergraph is not minimally connected, this constructed polytope is only an outer bound of the true mean parameter polytope, but still serves as a motivation of loopy belief propagation schemes (see Chapter~4 in \cite{wainwright_graphical_2008}).
+
+% (see e.g. see for a derivation \cite{wainwright_graphical_2008}).
+
+
+
+\subsect{Representation of generic distributions}\label{sec:mintermExpFamily}
+
+%\red{They are outer bounded by local consistency polytope, which leads to the motivation of message passing algorithms called belief propgations, see for a derivation \cite{wainwright_graphical_2008}.}
+% Minterm Exponential Family
+%\begin{example}[The minterm exponential family]
+
+The formalism of exponential families can capture any probability distribution, when applying statistic functions of large expressivity.
+Taking for the statistic the identity function $\identityat{\shortcatvariables,\selvariableof{[\catorder]}}$ defined as
+\begin{align*}
+    \identityat{\indexedshortcatvariables,\indexedselvariableof{[\catorder]}}
+    = \begin{cases}
+          1 & \text{if} \quad \shortcatindices = \selindexof{[\catorder]} \\
+          0 & \text{else}
+     \end{cases} \, ,
+\end{align*}
+we can represent any positive probability distribution $\probwith$ as a member of the exponential family $\expfamilyof{\identity,\ones}$.
+To see this, it is enough to choose
+\begin{align*}
+    \canparamat{\selvariableof{[\catorder]}} = \contractionof{\lnof{\probat{\shortcatvariables}},\identityat{\indexedshortcatvariables,\indexedselvariableof{[\catorder]}}}{\selvariableof{[\catorder]}} \, ,
+\end{align*}
+where the contraction with $\identity$ copies the variables $\shortcatvariables$ to $\selvariableof{[\catorder]}$.
+The energy tensor of this member of $\expfamilyof{\identity,\ones}$ is then
+\begin{align*}
+   \contractionof{\canparamat{\selvariableof{[\catorder]}},\identityat{\indexedshortcatvariables,\indexedselvariableof{[\catorder]}}}{\shortcatvariables}
+    = \lnof{\probat{\shortcatvariables}}
+\end{align*}
+and thus
+\begin{align*}
+    \expdistofat{\identity,\canparam,\ones}{\shortcatvariables} = \normationof{\expof{\lnof{\probat{\shortcatvariables}}}}{\shortcatvariables} = \probat{\shortcatvariables} \, .
+\end{align*}
+We further note, that the mean parameter of this constructed element of $\expfamilyof{\identity,\ones}$ is
+\begin{align*}
+    \meanparamat{\selvariableof{[\catorder]}}
+    = \contractionof{\expdistofat{\identity,\canparam,\ones}{\shortcatvariables},\identityat{\indexedshortcatvariables,\indexedselvariableof{[\catorder]}}}{\selvariableof{[\catorder]}}
+    = \contractionof{\probwith,\identityat{\indexedshortcatvariables,\indexedselvariableof{[\catorder]}}}{\selvariableof{[\catorder]}} \, ,
+\end{align*}
+and thus coincides with the distribution itself, after a relabelling of the distributed variables.
+Let us notice, that this family also correspond with the Markov Network on the maximal hypergraph $\maxgraph=(\nodes,\{\nodes\})$.
+We will further revisit this family in \charef{cha:networkRepresentation}, where we will refer to it by the minterm family in order to connect with terminology developed for logical reasoning in \charef{cha:logicalReasoning}.
 
 \sect{Empirical Distributions}\label{sec:empDistribution}
 
-Let us now apply the formalism of probability distributions in tensor network representations to encode data.
+To prepare for reasoning on data in the next section, we now derive tensor network representation for empirical distributions, which are defined based on observed states $\dataset$ of a factored system.
+
 \begin{definition}
     \label{def:dataMap}
     Given a dataset $\dataset$ of samples of the factored system we define the sample selector map
-    \[ \datamap : [\datanum] \rightarrow \facstates \]
+    \begin{align*}
+        \datamap : [\datanum] \rightarrow \facstates
+    \end{align*}
     elementwise by
-    \[ \datamapat{\datindex} = (\catindicesof{\datindex}) \, . \]
+    \begin{align*}
+         \datamapat{\datindex} = (\catindicesof{\datindex}) \, .
+    \end{align*}
 %% Empirical Distribution
     The empirical distribution to the sample selector map $\datamap$ is the probability distribution
     \begin{align*}
@@ -1379,24 +1510,25 @@ Let us now apply the formalism of probability distributions in tensor network re
 \end{definition}
 
 % Sample Selector map (former data tensor)
-The relational encoding of the sample selector map is
+The relational encoding of the sample selector map has a decomposition by
 \begin{align*}
     \datacoreat{\shortcatvariables,\datvariable}
     = \sum_{\datindexin} \onehotmapofat{\catindicesof{\datindex}}{\shortcatvariables} \otimes \onehotmapofat{\datindex}{\datvariable} \, .
 \end{align*}
 % Interpretation of the empirical distribution
-Each coordinate $\shortcatindices$ of the empirical distribution can be calculated by
+Each coordinate $\shortcatindices$ of the empirical distribution can thus be calculated by
 \begin{align*}
     \empdistributionat{\indexedshortcatvariables}
     & = \frac{1}{\sbcontraction{\datacore}} \left( \sum_{\datindexin} \onehotmapofat{\catindicesof{\datindex}}{\indexedshortcatvariables}  \right) \\
-    &= \frac{\cardof{\datindexin \, : \, (\catindicesof{\datindex}) = (\catindices)}}{\cardof{\datindexin}}
+    &= \frac{\cardof{\datindexin \, : \, (\catindicesof{\datindex}) = (\catindices)}}{\cardof{\datindexin}} \, .
 \end{align*}
-and is thus interpreted as the frequency of the corresponding world in the data.
+We can therefore interpret each coordinate of the empirical distribution as the relative frequency of the corresponding state in the observed data.
+%and is thus interpreted as the frequency of the corresponding world in the data.
 
 %% Basic CP Decomposition 
 The relational encoding of the sample selector map is a sum of one-hot encodings of the data indices and the corresponding sample states.
-Such sums of basis tensors will be further investigated in \secref{sec:basisCP} as basis CP decompositions.
-We now exploit this structure to find efficient tensor network decompositions (see Figure~\ref{fig:DataDecomposition}) based on matrices encoding its variables.
+Such sums of basis tensors will be further investigated in \secref{sec:basisCP} as basis $\cpformat$ decompositions.
+We now exploit this structure to find efficient tensor network decompositions (see \figref{fig:DataDecomposition}) based on matrices encoding its variables.
 
 
 \begin{figure}[t!]
@@ -1404,7 +1536,7 @@ We now exploit this structure to find efficient tensor network decompositions (s
         \input{PartI/tikz_pics/probability_representation/data_decomposition.tex}
     \end{center}
     \caption{
-        Representation of a dataset $\dataset$.
+        Decomposition of the relational encoding of a sample selector map to a dataset $\dataset$.
         a) Interpretation as a sample selection variable $\datvariable$ selecting states for the variables $\shortcatvariables$ according to the enumerated dataset.
         b) Corresponding decomposition of the relational encoding $\datacore$ into a tensor network in the basis $\cpformat$ Format (see \secref{sec:basisCP}), where $\hypercoreof{\edgeof{\atomenumerator}}=\datacoreof{\atomenumerator}$.
 %Without the contraction with the dashed $\frac{1}{\datanum}\onesat{\datvariable}$ core, the datacore encodes the distribution conditioned on a datapoint.
@@ -1416,9 +1548,13 @@ We now exploit this structure to find efficient tensor network decompositions (s
 \begin{theorem}
     \label{the:empCPRep}
     Given a data map $\datamap: [\datanum] \rightarrow \facstates$ we define for $\catenumeratorin$ its coordinate maps
-    \[ \datamap_{\catenumerator} : [\datanum] \rightarrow [\catdimof{\catenumerator}] \]
+    \begin{align*}
+        \datamap_{\catenumerator} : [\datanum] \rightarrow [\catdimof{\catenumerator}]
+    \end{align*}
     by
-    \[  \datamap_{\catenumerator}(\datindex) = \catindexof{\catenumerator}^\datindex \, .  \]
+    \begin{align*}
+        \datamap_{\catenumerator}(\datindex) = \catindexof{\catenumerator}^\datindex \, .
+    \end{align*}
     We then have
     \begin{align*}
         \rencodingofat{\datamap}{\shortcatvariables,\datvariable}
@@ -1432,7 +1568,7 @@ We now exploit this structure to find efficient tensor network decompositions (s
         = \sbcontractionof{\datacoreat{\shortcatvariables,\datvariable}, \frac{1}{\datanum}\onesat{\datvariable}}{\shortcatvariables}
         = \sbcontractionof{\datacoreofat{0}{\catvariableof{0},\datvariable},\ldots,\datacoreofat{\catorder-1}{\catvariableof{\catorder-1},\datvariable},\frac{1}{\datanum}\onesat{\datvariable}}{\shortcatvariables} \, .
     \end{align*}
-    In a contraction diagram this reads
+    In a contraction diagram this decomposition is represented as
     \begin{center}
         \input{PartI/tikz_pics/probability_representation/empirical_distribution.tex}
     \end{center}
@@ -1461,7 +1597,7 @@ However, creating the core $\frac{1}{\datanum}\onesat{\datvariable}$ provides us
 We can understand $\frac{1}{\datanum}\onesat{\datvariable}$ as the uniform probability distribution over the samples, which is by the map $\datamap$ forwarded to a distribution over $\facstates$.
 The one-hot encoding of each sample is itself a probability distribution, which is understood as conditioned on the respective state of the sample selection variable $\datvariable$.
 The conditional distribution $\datacore$ therefore forwards the uniform distribution of the samples to a distribution of the variables $\shortcatvariables$.
-In the perspective of a Bayesian Network (see Figure~\ref{fig:DataDecomposition}, the variable $\datvariable$ served as single parent for each categorical variable $\catvariableof{\catenumerator}$.
+In the perspective of a Bayesian Network (see Figure~\ref{fig:DataDecomposition}), the variable $\datvariable$ serves as single parent for each categorical variable $\catvariableof{\catenumerator}$.
 
 
 %%% Inductive vs Deductive perspective
@@ -1475,17 +1611,33 @@ In the perspective of a Bayesian Network (see Figure~\ref{fig:DataDecomposition}
 
 \sect{Discussion and Outlook}
 
-\begin{remark}[Alternative definitions of graphical models]
-    In the literature, tensor networks are often called dual to the hypergraphs defining graphical models (see e.g. \cite{robeva_duality_2019}).
-    The duality becomes clear, when one interpretes the tensors as cores and their common variables as edges.
-    We in this work avoid this ambiguity by directly defining tensor networks as decoration of hyperedges by tensors.
+% Hypergraphs
+This chapter has established a foundational treatment of probability distributions by tensors, and motivated tensor network decompositions along classical approaches towards graphical models.
+To show this correspondence, we defined both tensor networks and graphical models based on the same hypergraph.
+This then enabled us to define Markov Networks simply as the normations of tensor networks with non-negative coordinates.
+In the literature, tensor networks are, however, often treated as being dual to the graphs defining graphical models (see e.g. \cite{robeva_duality_2019}).
+The duality becomes clear, when one interpretes the tensors as nodes and their common variables as edges, as might be natural given the applied notation of wiring diagrams to represent tensor networks.
+We in this work avoid the discussion of this ambiguity, and treat tensors as decorations of hyperedges.
 
-    Often, the tensors decorating hyperedges are called factors and their logarithm features \cite{koller_probabilistic_2009}.
+% Alternative names
+In the literature, the tensors decorating hyperedges are often refered to as "factors" and their coordinatewise logarithm as "features" \cite{koller_probabilistic_2009}.
+With the scope of this work, we avoided such further terminology.
 
-    Further, we directly use hypergraphs instead of the more canonical association of factors with cliques of a graph.
-    This avoids the discussion of non-maximal cliques as decorated with trivial tensors.
-    Such hypergraphs follow the same line of though compared with factor graphs, which are bipartite graphs with nodes either corresponding with single variables or with a collection of them affected by a factor.
-\end{remark}
+Further, graphical models follow a tradition of definition on graphs, instead of hypergraphs.
+Tensors, or "factors", are then assigned to maximal cliques.
+We observed that the notion of maximality is an important assumption, for example in the proof of the Hammersley-Clifford theorem, and therefore introduced the property of clique capturing hypergraphs (see \defref{def:ccHypergraph}) to connect with this graph-based formalism.
+
+% Arbitrary measureable spaces
+While we here restricted our discussion to finite state spaces to each variable, probability distributions can in general be defined for arbitrary measureable spaces.
+Joint distributions of these more generic variables still have a tensor structure.
+The discussion of them, however, needs to be more careful, since integrals might diverge and tensors therefore not be normable.
+By restriction in this work to finite state spaces of factored systems, we where able to exclude such situations.
+
+%\begin{remark}[Alternative definitions of graphical models]
+%    Further, we directly use hypergraphs instead of the more canonical association of factors with cliques of a graph.
+%    This avoids the discussion of non-maximal cliques as decorated with trivial tensors.
+%    Such hypergraphs follow the same line of though compared with factor graphs, which are bipartite graphs with nodes either corresponding with single variables or with a collection of them affected by a factor.
+%\end{remark}
 
 
 
