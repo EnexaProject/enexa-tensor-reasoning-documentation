@@ -1,17 +1,5 @@
 \chapter{\chatextprobReasoning}\label{cha:probReasoning}
 
-%We have investigated means to store the knowledge about a system and now turn to the retrieval of information, a process called inference.
-%
-%%
-%Contraction of the relational encoding of a function with a Markov Network gives the statistics over the values of the functions.
-%When contracting the function directly, we get the expectation.
-%
-%% Message passing
-%%Another approximation comes from an approximation of the contractions itself.
-%One can increase the efficiency of inference algorithms by using approximative contractions.
-%Here, message passing schemes can be applied as to be introduced in \charef{cha:messagePassing}.
-
-
 After having investigated sparse decomposition schemes of probability distributions into tensor networks, we now exploit these schemes to derive efficient reasoning schemes. % Start of Focus Reasoning here
 We first introduce by queries a generic scheme to retrieve information by contractions, and introduce the method of maximum likelihood estimation related to entropy optimization.
 Then we focus on inference tasks in exponential families, which have been introduced as a generalization of graphical models in the previous chapter.
@@ -19,16 +7,8 @@ Then we focus on inference tasks in exponential families, which have been introd
 
 \sect{Queries}
 
-The efficient retrieval of information stored in tensors has to exploit the available decomposition schemes.
-To avoid the instantiation of the orginal tensor based on its decomposition, we directly define deductive reasoning schemes by contractions, which can be executed using the available decomposition.
-
-
-%% Motivation of queries: Avoid distribution instantiation
-%In the previous chapter, we have derived efficient representation schemes of probability distributions based on tensor network decompositions.
-%We have argued that one should avoid naive instantiation of these distributions based on storage of each coordinates.
-%In the task of reasoning, we want to retrieve information encoded in the probability distribution.
-%To derive an efficient approach one therefore needs to avoid instantiating the distribution in a coordinatewise manner in an intermediate step.
-%We thus formalize a basic reasoning scheme by contractions of the decomposed distributions with query tensors.
+The efficient retrieval of information stored in probability distributions has to exploit the available decomposition schemes.
+To avoid the instantiation of a distribution based on its decomposition, we directly define deductive reasoning schemes by contractions, which can be executed using the available decomposition.
 
 \subsect{Querying by functions}
 
@@ -51,8 +31,6 @@ More details on this scheme are provided in \charef{cha:basisCalculus}, see \def
     \begin{align*}
         \expectationof{\exfunction} = \sbcontraction{\exfunctionat{\shortcatvariables},\probwith} \, .
     \end{align*}
-    % Used in connection to mean parameters
-    % Used for sampling
     Given another query statistic $\secexfunction: \facstates \rightarrow \arbsetof{\secexfunction}$, which image is enumerated by a variable $\headvariableof{\secexfunction}$, the conditional query of the probability distribution $\probat{\shortcatvariables}$ by the statistic $\exfunction$ conditioned on $\secexfunction$ is the matrix $\condprobof{\headvariableof{\exfunction}}{\headvariableof{\secexfunction}}\in\rr^{\cardof{\imageof{\exfunction}}}\otimes \rr^{\cardof{\imageof{\secexfunction}}}$ defined as the normation
     \begin{align*}
         \condprobof{\headvariableof{\exfunction}}{\headvariableof{\secexfunction}}
@@ -66,8 +44,8 @@ More details on this scheme are provided in \charef{cha:basisCalculus}, see \def
 
 We notice, that marginal and conditional queries generalize the schemes of marginalization and conditioning on the distributed variables.
 As such, marginal distributions are marginal queries with respect to a identity query statistic acting on the respective variables.
-Conditional distributions can be similarly retrieved by two identity statistics.
-The framework of \defref{def:queries} can be beyond that used for customized queries.
+Conditional distributions can be similarly retrieved by two identity statistics, representing the incoming and outgoing variables.
+%The query framework of \defref{def:queries} can be used beyond marginal and conditional quereis for the customized information retrieval.
 
 %% Relation of queries and expectation queries
 Expectation queries return the expectation of a real-valued feature $\exfunction : \facstates\rightarrow\rr$.
@@ -75,9 +53,9 @@ When understanding $\exfunction$ as a random variable given the probability meas
 Expectation queries are further contractions of marginal queries with the identity function restricted on the image of $\exfunction$, since
 \begin{align*}
     \expectationof{\exfunction}
-    = \sbcontraction{\probat{\headvariableof{\exfunction}},\idrestrictedto{\imageof{\exfunction}}{\headvariableof{\exfunction}} } \, .
+    = \contraction{\probat{\headvariableof{\exfunction}},\idrestrictedto{\imageof{\exfunction}}{\headvariableof{\exfunction}} } \, .
 \end{align*}
-This will be shown in more detail in \charef{cha:basisCalculus} in \corref{cor:rhoToNormal}.
+This contraction equations follows from the more general \corref{cor:rhoToNormal}, which will be shown in \charef{cha:basisCalculus}.
 
 %% Conditional Probabilities and conditional queries
 %Conditional probabilities are queries, where the tensors $\exfunction$ and $\secexfunction$ are identity mappings in the respective variable state spaces.
@@ -94,42 +72,45 @@ This will be shown in more detail in \charef{cha:basisCalculus} in \corref{cor:r
 %	& =  \sbcontraction{ \probat{\exfunction} ,\onehotmapof{z}} \, .
 %\end{align*}
 
-\subsect{MAP Queries}
+\subsect{Mode Queries}
 
-
-
-Find the maximal variable of a tensor is a problem, which can be approached by sampling methods as we discuss here.
+A different kind of queries are mode queries, which we formalize by the searches of the indices to maximal coordinates in a tensor.
 
 \begin{definition}
-    Given a tensor $\hypercore$ the MAP query is the problem
+    Given a tensor $\hypercorewith$ the mode query is the problem
     \begin{align}
-        \argmax_{\catindices} \hypercoreat{\indexedcatvariables} \, .
+        \argmax_{\shortcatindices} \hypercoreat{\indexedshortcatvariables} \, .
     \end{align}
 \end{definition}
 
-%Often, the generation of a full (conditioned) probability tensor can be infeasible, if too many variables are queries.
-%Having a tensor network decomposition of the probability tensor avoids this generation.
+%MAP relation - Needed?
+%Mode queries are often called MAP queries.
+%The name MAP is an abbreviation of maximum a-posteriori, since it searches for the most probable state in probability distributions.
+%The term a-posteriori originates from a focus on conditional probabilities, which slices with respect to incoming variables represent the a-posteriori distribution given evidence on the incoming variables.
+%We will in this work use this term for generic maximum coordinate searches.
 
-% One hot perspective
-By coordinate calculus, we notice that
-\begin{align}
-    \hypercoreat{\indexedcatvariables}
-    \sbcontraction{\hypercore, \onehotmapof{\catindices}} \, .
-\end{align}
-Given the image $\Gamma^{\elformat}$ of one-hot encodings, the MAP query problem is equivalent to
-\begin{align}
-    \max_{\catindices} \hypercoreat{\indexedcatvariables}
-    = \max_{\theta\in\Gamma^{\elformat}} \sbcontraction{\hypercore, \theta} \, .
-\end{align}
-We can thus understand MAP queries as a Tensor Network approximation problem, where the approximating tensor are the one-hot encodings of states.
+% Convex optimization
+We can pose mode queries as convex optimization problems.
+To this end we recall, that the set of all probability distributions is a convex hull of the one-hot encoded states, that is
+\begin{align*}
+    \bmrealprobof{\ones}
+    = \convhullof{\onehotmapofat{\shortcatindices}{\shortcatvariables} \, : \, \shortcatindicesin} \, .
+\end{align*}
+With this we have
+\begin{align*}
+    \max_{\shortcatindices} \hypercoreat{\indexedshortcatvariables}
+    &= \max_{\shortcatindices} \contraction{\hypercoreat{\shortcatvariables},\onehotmapofat{\shortcatindices}{\shortcatvariables}} \\
+    &= \max_{\meanparamat{\shortcatvariables}\in\bmrealprobof{\ones}} \contraction{\hypercoreat{\shortcatvariables},\meanparamat{\shortcatvariables}} \, .
+\end{align*}
+We note that the maximation over $\bmrealprobof{\ones}$ is a convex optimization problem and the maxima are taken at
+\begin{align*}
+    \argmax_{\meanparamat{\shortcatvariables}\in\bmrealprobof{\ones}} \contraction{\hypercoreat{\shortcatvariables},\meanparamat{\shortcatvariables}}
+    = \convhullof{\onehotmapofat{\shortcatindices}{\shortcatvariables} \, : \, \shortcatindices\in\argmax_{\shortcatindices} \hypercoreat{\indexedshortcatvariables}} \, .
+\end{align*}
+We will further apply this generic trick to approach mode queries when studying inference problems for exponential families in the following sections.
 
-\begin{remark}[MAP queries on energy and probability tensors]
-% Usage on energies and probabilities
-    Since the dential function is monotonic, MAP queries on the energy tensor of an exponential family with uniform base measure are equivalent to MAP queries of their energies.
-\end{remark}
 
-
-\subsect{Answering queries by energy contractions}
+\subsect{Energy representations}
 
 For exponential families (see \secref{sec:exponentialFamilies}) we have observed, that often energy tensors have feasible tensor network representations, whereas the corresponding probability distributions can get infeasible.
 We therefore investigate here schemes to answer queries based on the energy tensor instead of the distribution.
@@ -169,52 +150,51 @@ We therefore investigate here schemes to answer queries based on the energy tens
     \end{align*}
 \end{proof}
 
-
-%Thus, it suffices to build the selection encoding of the statistics, and we can avoid the usage of the relational encoding.
-
-% 
+% Situation of marginalized variables
 Importantly, \theref{the:energyContractionQueries} does not generalize to situations, where $\nodesa\cup\nodesb\neq[\catorder]$, since summation over the indices of the variables $[\catorder]/\nodesa\cup\nodesb$ and contraction do not commute.
 In this more generic situation, we would need to sum over exponentiated coordinates, that is
-\[ \condprobof{\catvariableof{\nodesa}}{\indexedcatvariableof{\nodesb}}
-= \normationof{
-    \sum_{\catindexofin{[\catorder]/\nodesa\cup\nodesb}}
-    \expof{\energytensorat{\catvariableof{\nodesa},\indexedcatvariableof{\nodesb},\indexedcatvariableof{[\catorder]/\nodesa\cup\nodesb}}}
-}{\catvariableof{\nodesa}} \, .\]
-%\red{In that case, each summed index produces a factor.}
-
-%
-%\begin{lemma}  %\red{TRUE?}
-%	For any probability distribution $\probtensor$ with $\probtensor= \normationof{\expof{\energytensorat{\shortcatvariables}}}{\shortcatvariables}$, disjoint subsets $\nodesa,\nodesb \subset [\catorder]$ and any $\catindexof{\nodesb}$ we have
-%		\[ \condprobof{\catvariableof{\nodesa}}{\indexedcatvariableof{\nodesb}}
-%			=
-%			\normationof{
-%			 \sum_{\catindexofin{[\catorder]/\nodesa\cup\nodesb}}
-%				 \expof{\energytensorat{\catvariableof{\nodesa},\indexedcatvariableof{\nodesb},\indexedcatvariableof{[\catorder]/\nodesa\cup\nodesb}}}
-%		}{\catvariableof{\nodesa}} \, .\]
-%\end{lemma}
-%\begin{proof}
-%	By splitting the contraction into terms to $\nodesa\cup\nodesb$. % and using \theref{the:energyContractionQueries}.
-%\end{proof}
+\begin{align*}
+    \condprobof{\catvariableof{\nodesa}}{\indexedcatvariableof{\nodesb}}
+    = \normationof{
+        \sum_{\catindexofin{[\catorder]/\nodesa\cup\nodesb}}
+        \expof{\energytensorat{\catvariableof{\nodesa},\indexedcatvariableof{\nodesb},\indexedcatvariableof{[\catorder]/\nodesa\cup\nodesb}}}
+    }{\catvariableof{\nodesa}} \, .
+\end{align*}
 
 
+% Mode queries
+Mode queries on probability distributions in an energy representation can always be reduces to mode queries on the energy tensor.
+This is due to the monotonicity of the exponential function, which implies
+\begin{align*}
+    \argmax_{\shortcatindicesin} \probat{\indexedshortcatvariables}
+    &=\argmax_{\shortcatindicesin} \normationof{\expof{\energytensorat{\shortcatvariables}}}{\indexedshortcatvariables} \\
+    &=\argmax_{\shortcatindicesin} \expof{\energytensorat{\indexedshortcatvariables}} \\
+    &=\argmax_{\shortcatindicesin} \energytensorat{\indexedshortcatvariables} \, .
+\end{align*}
+Since we are only interested in identifying the index of the maximum coordinate, and not its value, we have further dropped the normalization term by partition functions.
+When one instead need to get the value of the maximal, the partition function cannot be ignored.
 
+\sect{Sampling}
 
-\sect{Sampling based on queries}
-
-
-Let us here investigate how to draw samples from distributions $\probtensor$, based on queries on $\probtensor$.
-%Need to generate the full conditional probability distribution by contraction and then sample from it.
-
-Naive methods, such as drawing a random number in $[0,1]$, adding iteratively the coordinates and stopping when the sum exceeds the random variables are infeasible because of the number of coordinates.
+Let us here investigate how to draw samples from a prbability distribution, based on queries on it.
+Naive methods, such as drawing a random number in $[0,1]$, adding iteratively the coordinates and stopping when the sum exceeds the random variables, are infeasible when having large tensor orders causing exponential increases of the coordinate number.
 We recall, that the number of coordinates of $\probwith$ is $\prod_{\catenumeratorin}\catdimof{\catenumerator}$, which increases exponentially in the number $\catorder$ of the variables.
-
 Efficient methods instead have to exploit tensor network decompositions of the decompositions.
-
-One can instead exploit a representation of $\probtensor$ by a Markov network or the energy term in an exponential family for efficient algorithms and sample from local proxy distributions resulting from contractions and interpreted as marginal and conditional probabilities.
 
 \subsect{Exact Methods}
 
-Forward Sampling (see Algorithm~\ref{alg:ForwardSampling}) uses a chain decomposition (see \theref{the:chainRule}) of a probability distribution to iteratively sample the variables.
+The first insight to derive efficient sampling algorithms is to sample a single variable in each step.
+Forward sampling (see \algoref{alg:ForwardSampling}) exploits to this end the generic chain decomposition (see \theref{the:chainRule}) of a probability distribution, namely
+\begin{align*}
+    \probwith = \contractionof{\{\margprobat{\catvariableof{0}}\} \cup
+    \left\{\condprobof{\catvariableof{\catenumerator}}{\catvariableof{0},\ldots,\catvariableof{\catenumerator-1}}\,:\,\catenumeratorin, \, \catenumerator\geq 1\right\}
+    }{\shortcatvariables} \, ,
+\end{align*}
+It then samples iteratively a state $\catindexof{\catenumerator}$ for the variable $\catvariableof{\catenumerator}$ conditioned on the previously sampled states, that is from the conditonal distribution
+\begin{align*}
+    \condprobof{\catvariableof{\catenumerator}}{\indexedcatvariableof{[\catenumerator]}} \, .
+\end{align*}
+The generic chain decomposition thereby ensures that probability of getting a state $\shortcatindices$ by this procedure coincides with $\probat{\indexedshortcatvariables}$.
 
 \begin{algorithm}[hbt!]
     \caption{Forward Sampling}\label{alg:ForwardSampling}
@@ -228,15 +208,17 @@ Forward Sampling (see Algorithm~\ref{alg:ForwardSampling}) uses a chain decompos
     \end{algorithmic}
 \end{algorithm}
 
-%
+% Bayesian networks
 Forward Sampling is especially efficient, when sampling from a Bayesian Network respecting the topological order of its nodes.
-The reason for this lies in trivilizations of all conditional distributions, which heads are not included in the evidence of previously sampled variables.
-More technically, we can show that
-\[ \condprobof{\catvariableof{\catenumerator}}{\indexedcatvariableof{\seccatenumerator} \, : \, \seccatenumerator < \catenumerator}
-= \condprobof{\catvariableof{\catenumerator}}{\indexedcatvariableof{\parentsof{\catenumerator}}} \, , \]
-which is only involving a single core of a Bayesian network.
-\red{This can be shown using Corollary~\ref{cor:onesHead} to be derived in \charef{cha:basisCalculus}.}
-
+More technically, when the parents $\parentsof{\catenumerator}$ of a node $\catenumerator$ are contained in the preceding variables $[\catenumerator]$, we apply the conditional independence assumption (more precisely \theref{the:conditionDropping} in combination with \theref{the:condIndBN}) to get
+\begin{align*}
+    \condprobof{\catvariableof{\catenumerator}}{\indexedcatvariableof{[\catenumerator]}}
+    = \condprobof{\catvariableof{\catenumerator}}{\indexedcatvariableof{\parentsof{\catenumerator}}} \, .
+\end{align*}
+Since this conditional probability coincides with a local tensor in the Bayesian Network, we can avoid to contract the network for preparing the conditional distribution.
+Different to more general Markov Networks, forward sampling from Bayesian Network can therefore be done efficiently by reduction to conditional queries answerable using local tensors.
+We note that it is important to sample in the topological order induced by the underlying directed hypergraph, since the computation of generic conditional distributions is also for Bayesian Networks $\mathsf{NP}$-hard (see Chapter~13 in \cite{koller_probabilistic_2009}).
+Sampling along the topological variable order requires only tractable to answer conditional queries on the Bayesian Network.
 
 %% Comment on rejection Sampling 
 %When sampling from conditional probability distributions, one can sample from the conditioned distribution instead.
@@ -244,17 +226,13 @@ which is only involving a single core of a Bayesian network.
 %One ways around is rejection sampling, where one samples from the unconditioned distribution and rejects samples not satisfying the event conditioned on.
 %When the event conditioned on is of small probability, methods like rejection sampling will come with large runtimes.
 
-\subsect{Approximate Methods}
+\subsect{Gibbs Sampling}
 
-% Problem of many variables
-When there are many variables to be sample, the computation of the conditional probability to all variables can be infeasible.
-One way to overcome this is Gibbs Sampling: Iteratively resemble single variables given the rest as evidence.
-
-%\subsect{Gibbs Sampling}
-
-% Still old: Sample from Marginal
-Sample each variable independent from the marginal distribution.
-Then, alternate through the variables and sample each variable from the conditional distribution taking the others as evidence.
+While we have seen that forward sampling can be performed efficiently on Bayesian Networks, Gibbs sampling can be also performed efficiently for Markov Networks.
+Gibbs sampling \algoref{alg:Gibbs} overcomes the intractability problems of sampling steps during forward sampling at the expense of repetitions of the sampling step.
+%The tractability of each sampling step is traded off against the number of repetitions to produce a sample.
+When performing finite repetitions, Gibbs sampling in general samples from an approximate distribution to the one desired.
+It can be shown, that these approximate distribution tend to one desired in the asymptotic limit of infinite repetitions of the sampling step (see Chapter~12 in \cite{koller_probabilistic_2009}).
 
 \begin{algorithm}[hbt!]
     \caption{Gibbs Sampling}\label{alg:Gibbs}
@@ -273,179 +251,246 @@ Then, alternate through the variables and sample each variable from the conditio
     \end{algorithmic}
 \end{algorithm}
 
+% Efficiency on Markov Networks
+The central problem of forward sampling on Markov Networks has been the need for global contractions to answer the required conditional queries, which originates from large numbers of variables to be marginalized out.
+When avoiding the marginalization of variables, and conditioning on them instead, global contractions can be avoided.
+To be more precise, for any tensor network $\extnet$ on $\graph=([\catorder],\edges)$ and any $\catenumeratorin$ we have
+\begin{align*}
+    \contractionof{\extnet}{\catvariableof{\catenumerator},\catvariableof{[\catorder]/\{\catenumerator\}}}
+    = \contractionof{\{\hypercoreat{\edge}{\catvariableof{\catenumerator},\indexedcatvariableof{\edge/\{\catenumerator\}}} \, : \, \edge\in\edges, \, \catenumerator\in\edge\}}{\catvariableof{\catenumerator}}
+    \cdot \prod_{\edge\in\edges, \, \catenumerator\notin\edge} \hypercoreat{\edge}{\indexedcatvariableof{\edge}} \, .
+\end{align*}
+As a consequence, we get for the Markov Network $\probtensor=\probof{\graph}$ to $\extnet$, that
+\begin{align*}
+    \condprobof{\catvariableof{\catenumerator}}{\indexedcatvariableof{[\catorder]/\{\catenumerator\}}}
+    &= \normationof{\extnet}{\catvariableof{\catenumerator},\catvariableof{[\catorder]/\{\catenumerator\}}} \\
+    &= \normationof{\{\hypercoreat{\edge}{\catvariableof{\catenumerator},\indexedcatvariableof{\edge/\{\catenumerator\}}} \, : \, \edge\in\edges, \, \catenumerator\in\edge\}}{\catvariableof{\catenumerator}} \, .
+\end{align*}
+The conditional queries on a Markov Network asked in Gibbs Sampling can therefore be answered by contractions only of those tensors containing the variable $\catvariableof{\catenumerator}$.
+To find further locally answerable conditional queries, we need to condition only on the neighbored variables, refered to as Markov blanket, such that the other variables are conditionally independent.
+This follows from the characterization of the conditional independences eminent in Markov Networks, which has been shown in \theref{the:condIndMN}, and can be used to design further tractable sampling schemes for Markov Networks.
 
 % Energy
-
-Gibbs can be implemented based on the energy tensor $\energytensor$ of the probability tensor, as follows form the \theref{the:energyContractionQueries}.
-\red{This is in contrast with forward sampling, where we need to marginalize out variables, which can not be done without performing the exponential coordinate transform first.
-The reason for this is that summations and exponentiations do not commute.
-%sum over many coordinates of the exponentiated energy tensor, which amounts to the representation of the probability distribution as a tensor network using relational encodings.
-}
-
+We can further answer these conditional queries efficiently, when we perform Gibbs sampling on a probability distribution in an energy representation, that is $\probwith=\normationof{\expof{\energytensorat{\shortcatvariables}}}{\shortcatvariables}$.
+Using \theref{the:energyContractionQueries}, we have
+\begin{align*}
+    \condprobof{\catvariableof{\catenumerator}}{\indexedcatvariableof{[\catorder]/\{\catenumerator\}}}
+    = \normationof{\expof{\energytensorat{\catvariableof{\catenumerator},\indexedcatvariableof{[\catorder]/\{\catenumerator\}}}}
+    }{\catvariableof{\nodesa}}
+\end{align*}
+We note, that the main property of the conditional query exploited here, is that all variables but the one sampled appear as a condition and none is marginalized out.
+In the scheme of forward sampling, where most of the variables are marginalized out in many queries, we cannot apply this trick and would have to perform sums over exponentiated coordinates to the variables marginalized out.
 
 
 \subsect{Simulated Annealing}
 
-\red{MAP queries are approximated by sampling from annealed distributions: Use $\hypercore$ as the energy tensor, e.g. as parameter tensor to the naive exponential family.}
+Simulated annealing is an adapted sampling scheme that targets mode queries rather than generating representative samples from a distribution.
+It employs an annealing process that gradually transforms the probability distribution by increasingly favoring high-likelihood configurations, thereby improving the chances of sampling a solution to a mode query.
+To be more precise, let there be a distribution in energy representation, that is $\probwith=\normationof{\expof{\energytensorat{\shortcatvariables}}}{\shortcatvariables}$.
+Whe introduce a parameter $\invtemp\in\rr$, which we understand as the inverse temperature, and anneal the distribution through scaling its energy by this parameter.
+%\begin{align*}
+%    \energytensorofat{\invtemp}{\shortcatvariables} = \invtemp \cdot \energytensorat{\shortcatvariables} \, .
+%\end{align*}
+In the limit of $\invtemp\rightarrow\infty$, for each state $\shortcatindicesin$ the annealed distribution behaves as
+\begin{align*}
+    \normationof{\expof{\invtemp\cdot\energytensorofat{\shortcatvariables}}}{\indexedshortcatvariables} \rightarrow
+    \normationof{\ones_{\argmax_{\shortcatindicesin}\energytensorat{\indexedshortcatvariables}}}{\indexedshortcatvariables} \, .
+\end{align*}
+In this limit, the annealed distribution tends to the uniform distribution of the maximal coordinates, that is the uniform distribution of the set
+\begin{align*}
+    \argmax_{\shortcatindicesin}\energytensorat{\indexedshortcatvariables} = \argmax_{\shortcatindicesin}\probat{\indexedshortcatvariables} \, .
+\end{align*}
 
-%\begin{remark}\label{rem:simulatedAnnealing}
-% Simulated annealing
-\red{Here by the naive exponential family!}
-Simulated annealing manipulates the probability used to sample $\catindexof{\catenumerator}$ in terms of an inverse temperature parameter $\invtemp$, by
-\[ \probtensor \rightarrow \frac{\expof{\invtemp\cdot\lnof{\probtensor}}}{\contraction{\expof{\invtemp\cdot\lnof{\probtensor}}} } \, . \]
-When the temperature is larger than $1$, the probability of states with low probability increases while the probability of states with large probability decreases and for low temperatures the opposite.
-Simulated annealing, that is the decrease of the temperature to $0$ during Gibbs sampling biases the algorithm towards states with large probability.
-%	Tuning this parameter can improve the convergence of Gibbs Sampling.
-
-% On exponential families
-For any exponential family the transformation
-\[ \energytensor \rightarrow \invtemp \cdot \energytensor  \]
-can be performed by rescaling the canonical parameters as
-\[ \canparam \rightarrow \invtemp \cdot \canparam \, . \]
-%\end{remark}
-
-
-
-
-
+To integrate annealing into Gibbs sampling, one chooses a parameter $\invtemp$ for each repetition of a sampling step and sample from the conditioned annealed distribution $\normationof{\expof{\invtemp\cdot\energytensorat{\shortcatvariables}}}{\shortcatvariables}$.
+Through increasing $\invtemp$ during the algorithm, the samples are drawn towards states with larger coordinates in $\probat{\shortcatvariables}$.
+However, when $\invtemp$ is large, the sampling procedure can get stuck in local maxima, whereas small $\invtemp$ are in favor of overcoming such.
+The inverse temperature is thus understood as a tradeoff parameter between the exploration of new regions of the state space and increasing the coordinate of the sample by local coordinate optimization.
+It is therefore typically chosen low in the beginning of the sampling algorithm and then sequentially increased to find maximal coordinates.
+Due to this typical increasement of the inverse temperature strategy, the algorithm is refered to as simulated annealing.
 
 
 \sect{Maximum Likelihood Estimation} % Stuff from Parameter Estimation - Problem that Part I is called inference?
 
-Let us now turn to inductive reasoning tasks, where a probabilistic model is trained on given data.
+So far we have been concerned with deductive reasoning task, that is retrieve information from a given distribution or drawing a sample.
+We now turn to inductive reasoning tasks, where a probability distribution is estimated given data.
+To present the generic framework of maximum likehihood estimation in the tensor network contraction formalism, we introduce the likelihood loss exploiting the structure of empirical distribution, and then provide interpretations in terms of entropies.
 
-\subsect{Likelihood and Loss}
+\subsect{Likelihood Loss}
 
-Given a datapoint $\datamapat{\datindex}$ consisting of the images of the data selecting map $\datamap$ (see \defref{def:dataMap}), the likelihood given a Markov Logic Network is denoted as
-\[ \probat{\shortcatvariables = \datamapat{\datindex}} \, . \]
-
-% Independent assumption
-When all $\datamapat{\datindex}$ are drawn independently from $\probat{\shortcatvariablelist}$, we can factorize into
-\[ \probat{\data}  = \prod_{\datindexin} \probat{\shortcatvariables=\datamapat{\datindex}} \, . \]
+Following the notation in \secref{sec:empDistribution}, datasets $\dataset$ are collections of observed samples
+\begin{align*}
+    \datamapat{\datindex} = (\catindicesof{\datindex}) \in \facstates
+\end{align*}
+of a factored system.
+The likelihood of a probability distribution $\probwith$ to produce an observed sample is then
+\begin{align*}
+    \probat{\shortcatvariables = \datamapat{\datindex}} \, .
+\end{align*}
+We further introduce the likelihood of $\probwith$
+\begin{align*}
+    \probat{\dataset} := \prod_{\datindexin} \probat{\shortcatvariables = \datamapat{\datindex}} \, .
+\end{align*}
+The likelihood draws on the assumption, that each datapoint in the dataset has been drawn independently from the same distribution.
+When this distribution is $\probwith$, then the probability of generating the dataset $\dataset$ by this scheme coincides with the likelihood.
+In inductive reasoning, the true distribution $\probwith$ is unknown and needs to be approximatively estimated based on data and a learning hypothesis.
+We will therefore compute and compare the likelihood of distributions, which in general not coincide with the distribution generating the data.
+It is thus important to not understand the likelihood as a probability, which is only true for the generating distribution, as pointed out in Chapter~2 in \cite{mackay_information_2003}.
 
 % Logarithm
-It is convenient to apply a logarithm on the objective, which does not influence the optimum when optimizing this quantity.
-This is especially useful, when investigating the convergence of the objective for $\datanum\rightarrow\infty$ (see \charef{cha:concentration}).
+Let us now transform the likelihood to find an representation involving the empirical distribution (see \defref{def:dataMap}), for which efficient tensor network decompositions have been derived in \theref{the:empCPRep}.
+Applying a scaled logarithm we get
+\begin{align*}
+    \frac{1}{\datanum} \cdot \lnof{\probat{\dataset}}
+    &= \frac{1}{\datanum} \cdot \lnof{\prod_{\datindexin} \probat{\shortcatvariables = \datamapat{\datindex}}} \\
+    &= \dataaverage \lnof{\probat{\shortcatvariables = \datamapat{\datindex}}} \\
+    &= \contractionof{\lnof{\probwith},\empdistributionwith} \, .
+\end{align*}
+Let us notice, that this transform of the likelihood is monotoneous and therefore does not influence the position of the maximum, when optimizing the likelihood.
+Motivated by this property, we use the transformed form to define the loss-likelihood loss and maximum likelihood estimation.
+%This is especially useful, when investigating the convergence of the objective for $\datanum\rightarrow\infty$ (see \charef{cha:concentration}).
 
 \begin{definition}
     \label{def:loss}
-    We define the loss of a distribution $\probtensor$ as
-    \begin{align*}%\label{eq:defLikelihoodLossPL}
+    The log-likelihood loss of a distribution $\probtensor$ given a dataset $\dataset$ is the functional
+    \begin{align*}
         \lossof{\probtensor}
-        = \frac{1}{\datanum} \lnof{\probat{\data}}
+        = -\contractionof{\lnof{\probwith},\empdistributionwith} \, .
     \end{align*}
+    Having a hypothesis $\Gamma\subset\bmrealprobof{\ones}$, that is a set of probability distributions, the maximum likelihood estimation is the problem
+    \begin{align}
+        \tag{$\probtagtypeinst{\loss}{\Gamma,\empdistribution}$}\label{prob:parameterMaxLikelihood}
+        \argmin_{\probtensor\in\Gamma} \lossof{\probtensor} \, .
+    \end{align}
 \end{definition}
-
-We now state the Maximum Likelihood Problem in the form
-\begin{align}
-    \tag{$\probtagtypeinst{\loss}{\Gamma,\empdistribution}$}\label{prob:parameterMaxLikelihood}
-    \argmin_{\probtensor\in\Gamma} \lossof{\probtensor} \, . % Naive Exponential Family perspective!
-\end{align}
-
 
 
 \subsect{Entropic Interpretation}
 
-
+The Shannon entropy, which has been introduced in the seminal paper \cite{shannon_mathematical_1948}, is a foundational concept in various research fields beyond statistical learning, such as information theory or statistical physics.
+While a detailed discussion is out of the scope of this work, we here only provide computation schemes of the entropy based on contractions of distributions.
 
 \begin{definition}[Shannon entropy]
-    The information content or the Shannon entropy of a distribution is defined as
-    \[ \sentropyof{\probtensor}
-    := \expectationofwrt{-\lnof{\probat{\shortcatvariables}}}{\shortcatvariables\sim\probtensor}
-    = \sbcontraction{\probtensor,-\lnof{\probtensor}} \, . \]
-    %	= - \sum_{\shortcatindices} \probat{\indexedshortcatvariables} \cdot \lnof{\probat{\indexedshortcatvariables}} \, . \]
-    We depict this in a tensor network diagram with an ellipsis denoting a coordinatewise transform (see \charef{cha:coordinateCalculus}) with a natural logarithm $\ln$ as:
+    The Shannon entropy of a distribution $\probwith$ is the quantity
+    \begin{align*}
+        \sentropyof{\probtensor}
+        =  \sum_{\shortcatindicesin} \probat{\indexedshortcatvariables} \cdot \left(-\lnof{\probat{\indexedshortcatvariables}}\right)
+        = \sbcontraction{\probtensor,-\lnof{\probtensor}} \, .
+    \end{align*}
+    We represent the Shannon entropy by the tensor network diagram
     \begin{center}
         \input{PartI/tikz_pics/probability_reasoning/shannon_entropy.tex}
     \end{center}
+    where we denote a coordinatewise transform by the logarithm as an ellipsis (see \secref{sec:coordinatewiseTransforms}).
 \end{definition}
 
-\begin{definition}[Cross entropy]
+We here make the convention $\lnof{0}=-\infty$ and $0\cdot\lnof{0} = 0$, to have the Shannon entropy well-defined for distributions with non-trivial support.
+
+Among the distributions in the same tensor space, the uniform distribution maximizes the Shannon entropy
+\begin{align*}
+    \sentropyof{\normationof{\ones}{\shortcatvariables}} = \sum_{\catenumeratorin}\lnof{\catdimof{\catenumerator}}
+\end{align*}
+and the one-hot encodings to states $\shortcatindicesin$ minimize the Shannon entropy
+\begin{align*}
+    \sentropyof{\onehotmapofat{\shortcatindices}{\shortcatvariables}} = 0 \, .
+\end{align*}
+%We understand the samples of the uniform concentration as having the maximal information con
+
+The Shannon entropy measures the information content of a distribution and is therefore a central tool for regularization in statistical learning (see for an introduction Chapter~2 in \cite{mackay_information_2003}).
+We therefore exploit this information content as a regularizer to identify a distribution among those coinciding in the answer to a collection of expectation queries.
+To be more precise, let there be for $\selindexin$ query tensors $\exfunction^{\selindex}$ (see \defref{def:queries}) and $\empdistribution$ an empirical distribution.
+The problem of maximal entropy with respect to coinciding expectation queries with $\empdistribution$ is then posed as
+\begin{align*}
+    \argmax_{\probtensor\in\bmrealprobof{\ones}} \sentropyof{\probtensor} \quad \text{subject to} \quad \uniquantwrtof{\selindexin}{\contraction{\probtensor,\exfunction^{\selindex}} = \contraction{\empdistribution,\exfunction^{\selindex}}}
+\end{align*}
+where $\bmrealprobof{\ones}$ is the set of probability distributions given a factored system.
+We study instances of this maximal entropy problem later in \secref{sec:maxEntDuality}, where we show that its solution is a member of the exponential family, which statistic is build by the query tensors.
+We will further provide connections between the problems of maximal entropy and maximum likelihood estimation.
+
+While the Shannon entropy is a property of a single distribution, the cross-entropy is a straight forward generalization towards pairs of distributions.
+We first introduce this quantity and then interpret the log-likelihood loss based on the cross-entropy.
+
+\begin{definition}[Cross entropy and Kullback Leibler divergence]
     \label{def:crossEntropy}
-    The cross entropy between two distributions is defined as
-    \[ \centropyof{\probtensor}{\secprobtensor}
-    :=  \expectationofwrt{-\lnof{\secprobtensor[\shortcatvariables]}}{\shortcatvariables\sim\probtensor}
-    = \sbcontraction{\probtensor,-\lnof{\secprobtensor}} \, . \]
-    %- \sum_{\catindices}  \probat{\indexedcatvariables} \cdot \lnof{\secprobtensor[\indexedshortcatvariables]}  \, . \]
-    We depict this in a tensor network diagram with an ellipsis denoting a coordinatewise transform (here the $\ln$) as :
+    The cross-entropy between two distributions $\probwith$ and $\secprobat{\shortcatvariables}$ defined with respect to the same factored system is the quantity
+    \begin{align*}
+        \centropyof{\probtensor}{\secprobtensor}
+        = \sum_{\catindices}  \probat{\indexedcatvariables} \cdot \left(-\lnof{\secprobtensor[\indexedshortcatvariables]}\right)
+        = \sbcontraction{\probtensor,-\lnof{\secprobtensor}} \, .
+    \end{align*}
+    The cross-entropy is captured by the tensor network diagram
     \begin{center}
         \input{PartI/tikz_pics/probability_reasoning/cross_entropy.tex}
     \end{center}
+    The Kullback-Leiber divergence between $\probwith$ and $\secprobat{\shortcatvariables}$ is the quantity
+    \begin{align*}
+        \kldivof{\probtensor}{\secprobtensor} = \centropyof{\probtensor}{\secprobtensor} - \sentropyof{\probtensor}  \, .
+    \end{align*}
 \end{definition}
 
 %% Vanishing coordinates case
-We here use $\lnof{0}=-\infty$ and $0\cdot \lnof{0} = 0$.
-Then we have $\centropyof{\probtensor}{\secprobtensor} = \infty$ if and only if there is a $\shortcatindices$ such that $\probat{\indexedshortcatvariables}>0$ and $\secprobtensor[\indexedshortcatvariables]=0$.
-
+Let us notice, that we have $\centropyof{\probtensor}{\secprobtensor} = \infty$ if and only if there is a state $\shortcatindicesin$ such that $\probat{\indexedshortcatvariables}>0$ and $\secprobtensor[\indexedshortcatvariables]=0$.
 
 % KL Divergence
-The Gibbs inequality states that
-\[ \centropyof{\probtensor}{\secprobtensor} \geq \sentropyof{\probtensor} \, . \]
-The difference between both sides is called the Kullback Leibler Divergence and a useful metric in reasoning, since it vanishes for $\probtensor=\secprobtensor$.
-
-\begin{definition}[Kullback Leibler Divergence]
-    \label{def:KLDivergence}
-    The KL divergence between two distributions is defined as
-    \[ \kldivof{\probtensor}{\secprobtensor} = \centropyof{\probtensor}{\secprobtensor} - \sentropyof{\probtensor}  \, . \]
-\end{definition}
-
-We are now ready to provide an entropic interpretation of the loss introduced in \defref{def:loss}.
-
-\begin{theorem}
-    \label{the:lossCentropy}
-    Given a data selecting map $\datamap$and a distribution $\probtensor$ we have
-    \begin{align}
-        \lossof{\probtensor} =  \centropyof{\empdistribution}{\probtensor} \, . % \sbcontraction{\empdistribution,\lnof{\probtensor}}\, .
-    \end{align}
-\end{theorem}
-\begin{proof}
-    We have
-    \begin{align*}
-        \lossof{\probtensor}
-        & = \frac{1}{\datanum} \lnof{\probat{\data}}
-        = \frac{1}{\datanum} \sum_{\datain} \lnof{\probat{\shortcatvariables =\datamap(\datindex)}}
-        = \frac{1}{\datanum} \sum_{\datain} \contraction{\{\lnof{\probtensor},\onehotmapof{\datamap(\datindex)}\}} \\
-        & = \sbcontraction{\empdistribution,\lnof{\probtensor}} \, .
-    \end{align*}
-    Comparing with the negative log likelihood we notice that that loss coincides with the cross-entropy between the empirical distribution $\empdistribution$ and $\probtensor$, i.e.
-    \[ \lossof{\probtensor} = \centropyof{\empdistribution}{\probtensor} \, . \]
-\end{proof}
-
-
-% Interpretation of MLE as Cross-Entropy Minimization
-
-We can therefore rewrite Problem~\ref{prob:parameterMaxLikelihood} as minimization of cross-entropies and of Kullback Leibler divergences as
+The Gibbs inequality (for a proof see for example Chapter~2 in \cite{cover_elements_2006}) states that for any distributions $\probwith$ and $\secprobat{\shortcatvariables}$ we have
 \begin{align*}
-    \argmin_{\probtensor\in\Gamma} \lossof{\probtensor}
-    = \argmin_{\probtensor\in\Gamma} \centropyof{\empdistribution}{\probtensor}
-    = \argmin_{\probtensor\in\Gamma} \kldivof{\empdistribution}{\probtensor} \, .
+    \centropyof{\probtensor}{\secprobtensor} \geq \sentropyof{\probtensor} \, ,
 \end{align*}
+where equality holds if any only if $\probtensor=\secprobtensor$
+This ensures, that the Kullback-Leiber Divergence between any distributions is positive vanishes only if both distributions coincide.
 
+%The difference between both sides is called the Kullback-Leibler Divergence and a useful distance measure between distributions, since it is positive and vanishes for $\probtensor=\secprobtensor$.
+%Let us note, that any cross-entropy minimization problem attains its optim
 
-% M-Projection -> A projection since P^2 = P, i.e. P applied on the image is id
-Most general, the Maximum Likelihood Problem is the M-Projection of a distribution $\gendistribution$ onto a set $\Gamma$ of probability tensors is
-\begin{align}
-    \tag{$\mathrm{P}_{\Gamma, \gendistribution}$}\label{prob:mProjection}
-    \argmax_{\probtensor\in\Gamma} \centropyof{\gendistribution}{\probtensor}
-\end{align}
-where the Maximum Likelihood Estimation is the special case $\gendistribution=\empdistribution$.
+%\begin{definition}[Kullback Leibler Divergence]
+%    \label{def:KLDivergence}
+%    The KL divergence between two distributions is defined as
+%    \[ \kldivof{\probtensor}{\secprobtensor} = \centropyof{\probtensor}{\secprobtensor} - \sentropyof{\probtensor}  \, . \]
+%\end{definition}
 
+We in the next lemma provide an entropic interpretation of maximum likehlihood estimation as defined in \defref{def:loss}.
+%Comparing with the cross-entropy we find that
+%\begin{align*}
+%    \lossof{\probtensor} = \centropyof{\empdistribution}{\probtensor} \, .
+%\end{align*}
+
+\begin{lemma}
+    \label{lem:centropyMLE}
+    The maximum likelihood estimation \probref{prob:parameterMaxLikelihood} is equivalent to the minimization of cross-entropy and Kullback-Leibler divergence, that is
+    \begin{align*}
+        \argmin_{\probtensor\in\Gamma} \lossof{\probtensor}
+        = \argmin_{\probtensor\in\Gamma} \centropyof{\empdistribution}{\probtensor}
+          = \argmin_{\probtensor\in\Gamma} \kldivof{\empdistribution}{\probtensor} \, .
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    Comparing the log-likelihood loss in \defref{def:loss} with the cross-entropy in \defref{def:crossEntropy}, we get
+    \begin{align*}
+        \lossof{\probtensor} = \centropyof{\empdistribution}{\probtensor} \,
+    \end{align*}
+    which established the equivalence of maximum likelihood estimation and cross-entropy minimization.
+    Futher, since
+    \begin{align*}
+        \kldivof{\empdistribution}{\probtensor} = \centropyof{\empdistribution}{\probtensor} - \sentropyof{\empdistribution}
+    \end{align*}
+    and $\sentropyof{\empdistribution}$ is a constant offset in the objective, maximum likelihood estimation is equivalent to the minimization of the Kullback-Leibler divergence.
+\end{proof}
 
 \begin{example}[Cross entropy with respect to exponential families]
     \label{exa:cEntropyExp}
-    If $\secprobtensor$ from an exponential family with boolean base measure, have with the representation from \lemref{lem:energyCumulantRepresentation}
+    If $\secprobtensor$ is a member of an exponential family, we have %with the representation from \lemref{lem:energyCumulantRepresentation}
     \begin{align*}
         \centropyof{\probtensor}{\expdist}
         = \sbcontraction{\probtensor,\lnof{\expdist}}
-        = \sbcontraction{\probtensor,\sencsstat} - \cumfunctionof{\canparam} + \sbcontraction{\probtensor,\lnof{\basemeasure}} \, .
+        = \sbcontraction{\probtensor,\sencsstat,\canparam} - \cumfunctionof{\canparam} + \contraction{\probtensor,\lnof{\basemeasure}} \, .
     \end{align*}
-    For the trivial base measure we can further exploit the existence of the energy tensor and have the representation
-    \[ \centropyof{\probtensor}{\expdist} = \sbcontraction{\probtensor,(\expenergy-\cumfunctionof{\canparam}\cdot \ones)}
-    =   \sbcontraction{\probtensor,\expenergy} -\cumfunctionof{\canparam} \, .   \]
+    The last term vanishes, given the convention $0\cdot\lnof{0}=0$, if and only if for any $\shortcatindices$ with $\basemeasureat{\indexedshortcatvariables}=0$ we have $\probat{\indexedshortcatvariables}=0$, and is infinite instead.
+    Therefore, the cross entropy between a distribution and a member of an exponential family is finite, if and only if the distribution is representable with respect to the base measure $\basemeasure$ (see \defref{def:representationBaseMeasure}).
+    If $\probtensor$ is representable with respect to $\basemeasure$, we can abbreviate the cross-entropy to
+    \begin{align*}
+        \centropyof{\probtensor}{\expdist}
+        = \contraction{\probtensor,\expenergy} -\cumfunctionof{\canparam} \, .
+    \end{align*}
 \end{example}
-
-
-
 
 \sect{Forward Mapping in Exponential Families}
 
@@ -455,7 +500,7 @@ where the Maximum Likelihood Estimation is the special case $\gendistribution=\e
 
 
 %% Mean parameters are expectation queries
-Mean parameter coordinates are expectation queries to $\sstatcoordinateof{\selindex}$, by
+The mean parameter coordinates are expectation queries to $\sstatcoordinateof{\selindex}$, by
 \[ \meanparamat{\indexedselvariable} = \expectationof{\sstatcoordinateof{\selindex}} \, . \]
 
 %% Forward mappings are contractions, variational formulation as an alternative to avoid inefficiencies
@@ -973,6 +1018,15 @@ The mean field method corresponds with minimization of the KL Divergence to the 
 
 \sect{Backward Mapping in Exponential Families}
 
+\red{%Introduce M-projections here:
+Lemma~\ref{lem:centropyMLE} further implies, that the Maximum Likelihood Problem is the M-Projection (see Chapter~8 in \cite{koller_probabilistic_2009}) of a distribution $\gendistribution$ onto a set $\Gamma$ of probability tensors is}
+\begin{align}
+    \tag{$\mathrm{P}_{\Gamma, \gendistribution}$}\label{prob:mProjection}
+    \argmax_{\probtensor\in\Gamma} \centropyof{\gendistribution}{\probtensor}
+\end{align}
+where the Maximum Likelihood Estimation is the special case $\gendistribution=\empdistribution$.
+
+
 %% FROM NETWORK LEARNING
 The parameters optimizing the likelihood, will be shown to coincide with the backward mapping evaluated on the expectation of the sufficient statistics (see \theref{the:parEstToBackwardMap}).
 This is in most generality true for the parameters of the M-projection of any distribution onto the exponential family.
@@ -1055,7 +1109,7 @@ The loss is the cross entropy between a distribution with $\meanparam$ and the d
     This shows, that the backward map coincides with the M-projection onto $\Gamma=\expfamily$.
 
     Further, if $\meanparam=\datamean$ for a data map $\datamap$, we have that the corresponding empirical distribution $\empdistribution$ satisfies $\sbcontractionof{\sencsstat,\empdistribution}{\selvariable}=\meanparamat{\selvariable}$.
-    The backward map of $\meanparam$ is therefore the M-projection of $\empdistribution$, which is with \theref{the:lossCentropy} the maximum likelihood estimator.
+    The backward map of $\meanparam$ is therefore the M-projection of $\empdistribution$, which is with \lemref{lem:centropyMLE} the maximum likelihood estimator.
 \end{proof}
 
 
@@ -1212,11 +1266,9 @@ This highlights the fact, that the maximum entropy distribution does not vanish 
 \subsect{Alternating Algorithms to Approximate the Backward Map}\label{sec:alternatingBackwardMap}
 
 
-\red{While the forward map always has a representation in closed form by contraction of the probability tensor, the backward map in general fails to have a closed form representation.
-Computation of the Backward map can instead be performed by alternating algorithms, as we show here.} % Are these fixpoint iterations?
-
-
-Alternate through the coordinates of the statistics and adjust $\canparamat{\indexedselvariable}$ to a minimum of the likelihood, i.e. where for any $\selindexin$
+While the forward map always has a representation in closed form by contraction of the probability tensor, the backward map in general fails to have a closed form representation.
+Computation of the Backward map can instead be performed by alternating algorithms, as we show here. % Are these fixpoint iterations?
+We alternate through the coordinates of the statistics and adjust $\canparamat{\indexedselvariable}$ to a minimum of the likelihood, i.e. where for any $\selindexin$
 \begin{align*}
     0 = \frac{\partial}{\partial \canparamat{\indexedselvariable}} \lossof{\expdist} \, .
 \end{align*}
