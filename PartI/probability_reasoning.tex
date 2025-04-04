@@ -326,14 +326,14 @@ The likelihood of a probability distribution $\probwith$ to produce an observed 
 \begin{align*}
     \probat{\shortcatvariables = \datamapat{\datindex}} \, .
 \end{align*}
-We further introduce the likelihood of $\probwith$
+We further introduce the likelihood of $\probwith$ with respect to a dataset as
 \begin{align*}
     \probat{\dataset} := \prod_{\datindexin} \probat{\shortcatvariables = \datamapat{\datindex}} \, .
 \end{align*}
 The likelihood draws on the assumption, that each datapoint in the dataset has been drawn independently from the same distribution.
-When this distribution is $\probwith$, then the probability of generating the dataset $\dataset$ by this scheme coincides with the likelihood.
+When this generating distribution coincides with $\probwith$, then the probability of generating a dataset by this scheme is the likelihood.
 In inductive reasoning, the true distribution $\probwith$ is unknown and needs to be approximatively estimated based on data and a learning hypothesis.
-We will therefore compute and compare the likelihood of distributions, which in general not coincide with the distribution generating the data.
+We will therefore compute and compare the likelihood of distributions, which in general do not coincide with the distribution generating the data.
 It is thus important to not understand the likelihood as a probability, which is only true for the generating distribution, as pointed out in Chapter~2 in \cite{mackay_information_2003}.
 
 % Logarithm
@@ -492,68 +492,112 @@ We in the next lemma provide an entropic interpretation of maximum likehlihood e
     \end{align*}
 \end{example}
 
-\sect{Forward Mapping in Exponential Families}
 
-
-%\red{Integrate: 
-%Selection encodings suffice for variational methods, relational encodings of statistics are required for markov network instantiations of exponential families.}
+\sect{Polytope of mean parameters}
 
 
 %% Mean parameters are expectation queries
-The mean parameter coordinates are expectation queries to $\sstatcoordinateof{\selindex}$, by
-\[ \meanparamat{\indexedselvariable} = \expectationof{\sstatcoordinateof{\selindex}} \, . \]
+To prepare for the discussion of forward and backward inference in exponential families, we in this section investigate the polytope of mean parameters.
+Given a pair of a statistic $\sstat:\facstates\rightarrow\simpleparspace$ and a boolean base measure $\basemeasurewith$, the polytope of mean parameters is the set (see \defref{def:meanForwardBackward})
+\begin{align*}
+	\genmeanset
+	= \convhullof{\contractionof{\sencsstatwith,\probwith} \, : \, \probwith\in\bmrealprobof{\basemeasure}} \, ,
+\end{align*}
+where by $\bmrealprobof{\basemeasure}$ we note the set of by $\basemeasure$ representable distributions (see \defref{{def:representationBaseMeasure}}).
+We in this section, we will further characterize the polytope of realizable mean parameters.
 
-%% Forward mappings are contractions, variational formulation as an alternative to avoid inefficiencies
-Forward mappings have a closed form representation by
-\[ \forwardmapof{\canparam}
-= \sbcontractionof{\sencodingof{\sstat},\normationof{\basemeasure,\expof{\contraction{\sencodingof{\sstat},\canparam}}}{\shortcatvariables}}{\selvariable} \, . \]
-% Infeasibility and turn to variational alternatives with selection encodings.
-This contraction can, however, be infeasible, since it requires the instantiation of the probability tensor, which can be done by basis encodings of the statistic.
-We in this section provide alternative characterization of the forward map and approximations of it, which can be computed based on the selection encoding instead.
-Following \cite{wainwright_graphical_2008}, we can characterize the forward mapping to exponential families as a variational problem and provide an alternative characterization to this contraction.
+% Expectation queries
+The mean parameters are computated as collections of expectation queries to $\sstatcoordinateof{\selindex}$, which are answered against distributions in $\bmrealprobof{\basemeasure}$.
+For any $\selindexin$ we have for the mean parameter $\meanparamwith$ reproduced by a distribution $\probwith$
+\begin{align*}
+    \meanparamat{\indexedselvariable}
+    = \expectationof{\sstatcoordinateof{\selindex}}
+    = \contraction{\sencsstatat{\shortcatvariables,\indexedselvariable},\probwith} \, .
+\end{align*}
 
 
+\subsect{Representation by convex hulls}
 
-\subsect{Variational Formulation}
-
-Besides the direct computation of the mean parameter tensor we can give a variational characterization of the forward mapping.
-This is especially useful, when the contraction is intractable, for example because the tensor $\expdist$ is infeasible to create.
+First of all, we provide a simple characterization of the sets of mean parameters as the convex hull of the slices to the selection encoding of the statistic.
+Such sets are refered to as $\mathcal{V}$-polytopes \cite{ziegler_lectures_2013}.
 
 \begin{theorem}
-    We have
+    \label{the:meanPolytopeConvHull}
+    For any statistic $\sstat$ the polytope of mean parameters is the convex hull of the slices of $\sencsstat$ with fixed indices to $\shortcatvariables$, that is
     \begin{align*}
-        \forwardmapof{\canparam}
-        = \argmax_{\meanparam\in\genmeanset}  \sbcontraction{\meanparam,\canparam} + \sentropyof{\meanrepprob}
+        \genmeanset
+        = \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\facstates, \, \basemeasureat{\indexedshortcatvariables}=1} \, .
     \end{align*}
-    where by $\meanrepprob$ we denote a probability distribution with respect to a base measure $\basemeasure$, which reproduces the mean parameter $\meanparam$.
 \end{theorem}
 \begin{proof}
-    Theorem~3.4 in \cite{wainwright_graphical_2008}.
+    First we realize that the characterization of by $\basemeasure$ representable distributions is a standard simplex extended by trivial coordinates, that is
+    \begin{align*}
+        \bmrealprobof{\basemeasure}
+        = \convhullof{\onehotmapofat{\shortcatindices}{\shortcatvariables} \, : \, \basemeasureat{\indexedshortcatvariables}=1 } \, .
+    \end{align*}
+    This follows from the fact, that the support of any by $\basemeasure$ representable distribution is contained in the support of $\basemeasure$.
+    Further, each representable distribution is contained in the convex hull of the one-hot encoded support elements, since any distribution is normed.
+
+    The polytope of mean parameters is a linear transform of the elements in $\bmrealprobof{\basemeasure}$, since the contraction with $\sencsstat$ is linear.
+    It follows that
+    \begin{align*}
+        \genmeanset
+        &= \convhullof{\contractionof{\sencsstatat{\shortcatvariables,\selvariable},\onehotmapofat{\shortcatindices}{\selvariable}} \, : \, \basemeasureat{\indexedshortcatvariables}=1 } \\
+        &= \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \basemeasureat{\indexedshortcatvariables}=1} \, .
+    \end{align*}
 \end{proof}
 
-Let us now characterize the image of the forward map, which turns out to be the interior of the mean polytope, if the statistic is minimal (see \defref{def:minimalStatistics}).
+
+\subsect{Representation as intersecting half-spaces}
+
+For any vector $\normalvec[\selvariable]\in\rr^{\seldim}$ and a scalar $\normalbound\in\rr$, we call the set
+\begin{align*}
+    \left\{\meanparamwith \, : \, \contraction{\meanparamwith,\normalvec[\selvariable]} \leq \normalbound \right\} \subset \rr^{\seldim}
+\end{align*}
+a half-space of $\rr^\seldim$.
+Bounded intersections of finitely many half-spaces are called $\mathcal{H}$-polytopes \cite{ziegler_lectures_2013}.
+
+% Halfspace Representation
+We state next, that the polytope $\genmeanset$ of mean parameters is a $\mathcal{H}$-polytopes.
+
 
 \begin{theorem}
-    \label{the:meanPolytopeInterior}
-    For any statistics $\sstat$, which is minimal with respect to a base measure $\basemeasure$, the image $\imageof{\forwardmap}$ of the forward map is the interior of the convex polytope $\genmeanset$.
+    \label{the:meanPolytopeHalfspaces}
+    The set $\genmeanset$ is for any statistic $\sstat$ and base measure $\basemeasure$ a $\mathcal{H}$-polytope, that is there exists a finite collection
+    \begin{align*}
+        \halfspaceparams
+    \end{align*}
+    where $a_i[\selvariable]$ a vector and $b_i\in\rr$ for all $i\in[n]$ such that
+    \begin{align*}
+        \genmeanset
+        = \left\{\meanparamwith \, : \, \forall_{i\in[n]} \, \contraction{\meanparamwith,\normalvecofat{i}{\selvariable}}\leq\normalboundof{i} \right\} \, .
+    \end{align*}
 \end{theorem}
 \begin{proof}
-    Theorem 3.3 in \cite{wainwright_graphical_2008}.
+    By \theref{the:meanPolytopeConvHull}, the set $\genmeanset$ is the convex hull of a finite set of vectors and is therefore a $\mathcal{V}$-polytope.
+    We therefore apply the main theorem for polytopes \cite{motzkin_beitrage_1936}, which states the equivalence of $\mathcal{V}$-polytopes and $\mathcal{H}$-polytope, for which a proof can be found as Theorem~1.1 in \cite{ziegler_lectures_2013}.
+    Therefore, $\genmeanset$ is also a $\mathcal{H}$-polytope and has is thus the intersection of finitely many half-spaces.
 \end{proof}
 
-For the practicle usage of this theorem, we need a characterization of the interior of $\genmeanset$.
+The determination of the half-space parametrizing $\halfspaceparams$ is, however, in general difficult and the main reason for the intractability of probabilistic inference (see e.g. \cite{wainwright_graphical_2008}).
+
+
+\subsect{Characterization of the interior}
+
+%For the practicle usage of this theorem, we need a characterization of the interior of $\genmeanset$.
 
 \begin{theorem}
     \label{the:meanPolytopeInteriorCharacterization}
-    For any minimal statistics $\sstat$ and boolean base measure $\basemeasure$ we have for some $\meanparamat{\selvariable}$ that $\meanparamat{\selvariable}\in\genmeanset$ if and only if there is a positive distribution with respect to $\basemeasure$ such that
-    \[ \meanparamat{\selvariable} = \sbcontractionof{\probtensor,\sencsstat}{\selvariable} \, . \]
-%	If $\meanparamat{\selvariable}$ is in an minimal exponential family with boolean base measure $\basemeasure$, then it is in the interior of $\genmeanset$ if and only if it is representable by a positive distribution with respect to $\basemeasure$.
+    For any minimal statistics $\sstat$ and boolean base measure $\basemeasure$ we have for some $\meanparamwith$ that $\meanparamwith\in\genmeanset$ if and only if there is a positive distribution with respect to $\basemeasure$ such that
+    \[ \meanparamwith = \sbcontractionof{\probtensor,\sencsstat}{\selvariable} \, . \]
+%	If $\meanparamwith$ is in an minimal exponential family with boolean base measure $\basemeasure$, then it is in the interior of $\genmeanset$ if and only if it is representable by a positive distribution with respect to $\basemeasure$.
 \end{theorem}
 \begin{proof}
     \proofrightsymbol:
     By \theref{the:meanPolytopeInterior} we find a canonical parameter $\canparamat{\selvariable}$ such that
     \begin{align*}
-        \meanparamat{\selvariable} = \sbcontractionof{\expdistat{\shortcatvariables},\sencsstatwith}{\selvariable} \, .
+        \meanparamwith 
+        = \sbcontractionof{\expdistat{\shortcatvariables},\sencsstatwith}{\selvariable} \, .
     \end{align*}
     We notice, that $\expdist$ is positive with respect to $\basemeasure$, as is any member of an exponential family with base measure $\basemeasure$.
 
@@ -561,10 +605,10 @@ For the practicle usage of this theorem, we need a characterization of the inter
     Since by assumption the statistics is minimal, the convex set $\genmeanset$ is full dimensional (see e.g. Appendix B in \cite{wainwright_graphical_2008}).
     We thus use a well-known property for full-dimensional convex sets (see \cite{rockafellar_convex_1997,hiriart-urruty_convex_1993}), that $\meanparam\in\interiorof{\genmeanset}$ if for any non-vanishing vector $\vectorat{\selvariable}$ there is a  % citations from Wainwright - Appendix B
     there is a $\tilde{\meanparam}[\selvariable]$ with
-    \[ \contraction{\vectorat{\selvariable},\meanparamat{\selvariable}} <  \contraction{\vectorat{\selvariable},\tilde{\meanparam}[\selvariable]} \, . \]
+    \[ \contraction{\vectorat{\selvariable},\meanparamwith} <  \contraction{\vectorat{\selvariable},\tilde{\meanparam}[\selvariable]} \, . \]
     It thus suffices to show for an arbitrary non-vanishing vector $\vectorat{\selvariable}$ the existence of a distribution $\tilde{\probtensor}$, such that
     \begin{align*}
-        \contraction{\vectorat{\selvariable},\meanparamat{\selvariable}} < \contraction{\vectorat{\selvariable},\sencsstatwith,\secprobat{\shortcatvariables}} \, .
+        \contraction{\vectorat{\selvariable},\meanparamwith} < \contraction{\vectorat{\selvariable},\sencsstatwith,\secprobat{\shortcatvariables}} \, .
     \end{align*}
     We define for $\epsilon\in\rr$
     \begin{align*}
@@ -590,38 +634,153 @@ For the practicle usage of this theorem, we need a characterization of the inter
     \end{align*}
     Thus, there is a $\epsilon>0$ with
     \begin{align*}
-        \contraction{\vectorat{\selvariable},\meanparamat{\selvariable}} < \contraction{\vectorat{\selvariable},\sencsstatwith,\probofat{\epsilon}{\shortcatvariables}} \, .
+        \contraction{\vectorat{\selvariable},\meanparamwith} < \contraction{\vectorat{\selvariable},\sencsstatwith,\probofat{\epsilon}{\shortcatvariables}} \, .
     \end{align*}
 
 \end{proof}
 
 
-\subsect{Boundary of convex polytopes}
+\subsect{Characterization of the boundary by faces}
 
-For mean parameters $\meanparamat{\selvariable}$ outside the interior of $\genmeanset$ we know by \theref{the:meanPolytopeInteriorCharacterization}, that any distribution with mean parameter $\meanparamat{\selvariable}$ is not positive with respect to $\basemeasure$ and is therefore not in the exponential family.
+Let us now continue with the investigation of the faces of the mean parameter polytope, which we define analogously to Def.~2.1 in \cite{ziegler_lectures_2013}.
+
+\begin{definition}
+    \label{def:meanPolytopeFaces}
+    Given a mean parameter polytope $\genmeanset$ in the half space representation of \theref{the:meanPolytopeHalfspaces}, and any subset $\mathcal{I}\subset[n]$ we say that the set
+    \begin{align*}
+        \genfacesetof{\facecondset}
+        = \left\{\meanparamwith\in\genmeanset \, : \, \forall_{i\in\mathcal{I}} \, \contraction{\meanparamwith,\normalvecofat{i}{\selvariable}}=\normalboundof{i} \right\}
+    \end{align*}
+    is the face to the constraints $\mathcal{I}$.
+\end{definition}
+
+While all inequalities in a half-space representation are satisfied for any element of the polytope, we define faces by the additional sharp satisfaction of a subset of the half-space inequalities.
+
+We notice, that the faces build the boundary of $\genmeanset$.
+This can be easily verified, since for any vector $\meanparamwith\in\genmeanset$, for which no halfspace inequalities hold sharply, also a neighborhood satisfies the halfspace inequalities.
+If any halfspace inequality holds sharply, in the other case, the vector is a member of the corresponding face.
+
+% Trivial face containing the whole polytope in case of non-minimal statistics
+If $\sstat$ is not minimal with respect to $\basemeasure$, we find a non-vanishing vector $\vectorat{\selvariable}$ and a scalar $\lambda\in\rr$ such that
+\begin{align*}
+    \contractionof{\sencsstatat{\shortcatvariables,\selvariable},\vectorat{\selvariable},\basemeasurewith}{\shortcatvariables} = \lambda\cdot\basemeasurewith \, .
+\end{align*}
+This implies, that any probability distribution $\probwith$ representable with $\basemeasure$ satisfies
+\begin{align*}
+    \contraction{\probwith,\sencsstatat{\shortcatvariables,\selvariable},\vectorat{\selvariable},\basemeasurewith} = \lambda\cdot \contraction{\probwith,\basemeasurewith} = \lambda \, .
+\end{align*}
+Any $\meanparamwith\in\genmeanset$ then satisfies
+\begin{align*}
+    \contraction{\meanparamwith,\vectorat{\selvariable}} = \lambda \, .
+\end{align*}
+Thus, the polytope $\genmeanset$ is contained in an affine linear subspace and has vanishing interior.
+We can further understand this equation as two half-space inequalities
+\begin{align*}
+    \contraction{\meanparamwith,\vectorat{\selvariable}} \leq \lambda \quad \text{and} \quad \contraction{\meanparamwith,\vectorat{\selvariable}} \geq \lambda \, ,
+\end{align*}
+which can be integrated into any half-space representation.
+We conclude, that in the case of non-minimal statistics, the whole polytope $\genmeanset$ is a face itself, since it satisfies these half-space inequalities sharply.
+
+Let us now investigate, that subsets of $\genmeanset$ are the solutions of linear optimization problems constrained on $\genmeanset$.
+Since such solution sets are intersections of the boundary of $\genmeanset$ with half-spaces, they are faces.
+In the next theorem we show, how linear optimization problems are constructed to match a given face.
+
+%which is build by faces, we
+%Let us now connect faces with the solutions of maximization problems.
+
+\begin{theorem}
+    \label{the:faceNormal}
+    For any non-empty face $\genfacesetof{\facecondset}$ to a subset $\mathcal{I}\subset[n]$ there is a vector $\canparamwith$, which we call a normal of the face, such that
+    \begin{align*}
+        \genfacesetof{\facecondset} = \cangenmeansetargmax  \, .
+    \end{align*}
+    For any collection of positive $\lambda_i$, where $i\in\facecondset$, the vector
+    \begin{align*}
+        \canparamwith = \sum_{i\in\facecondset} \lambda_i\cdot\normalvecofat{i}{\selvariable}
+    \end{align*}
+    is a normal for $\genfacesetof{\facecondset}$.
+    %% UNCLEAR if this is true-> Are all possible normals in the span
+%	If $\canparamwith$ is a normal to a face, then for any positive scalars $\lambda[\selvariable]$ also the vector
+%		\[ \seccanparam\left[\selvariable\right] = \contractionof{\canparamwith,\labmda[\selvariable]}{\selvariable} \]
+%	is a normal to the same face.
+\end{theorem}
+\begin{proof}
+    The first claim follows trivially from the second.
+    To show the second claim, let there be for $i\in\facecondset$ arbitrary positive scalars $\lambda_i$.
+    Since the face is non-empty, there is a $\meanparamwith$ with
+    \begin{align*}
+         \contraction{\meanparamwith,\normalvecofat{i}{\selvariable}}=\normalboundof{i}
+    \end{align*}
+    for all $i\in\facecondset$.
+    Since any $\meanparam\in\genmeanset$ obey
+    \begin{align*}
+        \contraction{\meanparamwith,\normalvecofat{i}{\selvariable}}\leq \normalboundof{i}
+    \end{align*}
+    it follows that
+    \begin{align*}
+        \max_{\meanparam\in\genmeanset} \contraction{\canparamwith,\meanparamwith}
+        = \sum_{i\in\facecondset} \lambda_i \cdot \normalboundof{i} \, .
+    \end{align*}
+    The maximum is attained at a $\meanparamwith$, if and only if the equations $\contraction{\meanparamwith,\normalvecofat{i}{\selvariable}}=\normalboundof{i}$ are satisfied for $i\in\facecondset$.
+    This is equal to $\meanparamwith\in\genfacesetof{\facecondset}$.
+\end{proof}
+
+As we show next, also a converse statement holds, namely that for any vector $\canparamwith$ we find a face $\genfacesetof{\facecondset}$, such that the $\canparamwith$ is a face normal to that face.
+
+\begin{theorem}
+    For any $\canparamwith$ we find a subset $\mathcal{I}\subset[n]$, such that
+    \begin{align*}
+       \cangenmeansetargmax = \genfacesetof{\facecondset} \, .
+    \end{align*}
+\end{theorem}
+\begin{proof} % Not a smooth proof, improve!
+    We first notice, that
+    \begin{align*}
+        \cangenmeansetargmax
+        = \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\argmax_{\shortcatindicesin} \contraction{\canparamwith,\sstatat{\shortcatindices}}} \, .
+    \end{align*}
+    Further, since the contraction with $\canparamwith$ is linear, the set $\cangenmeansetargmax$ is contained in the boundary of the polytope $\genmeanset$.
+    We can conlcude, that the set is a face, that is we find a subset $\mathcal{I}\subset[n]$ with
+    \begin{align*}
+        \genfacesetof{\facecondset} = \cangenmeansetargmax \, .
+    \end{align*}
+\end{proof}
+
+% Notation
+In a slide abuse of notation, we denote in this case $\genfacesetof{\canparam} = \genfacesetof{\facecondset}$.
+
+
+\subsect{Base measure refinement}
+
+For mean parameters $\meanparamwith$ outside the interior of $\genmeanset$ we know by \theref{the:meanPolytopeInteriorCharacterization}, that any distribution with mean parameter $\meanparamwith$ is not positive with respect to $\basemeasure$ and is therefore not in the exponential family.
 We investigate this situation further and provide here a construction scheme to adapt the base measure such that there are exponential families containing these boundary distributions.
 
 \begin{theorem}
     \label{the:faceToArgmax}
-    Let there be a minimal $\sstat$ with respect to the base measure $\basemeasure$ and $\meanparamat{\selvariable}\notin\interiorof{\genmeanset}$.
-    Then there is a $\canparamat{\selvariable}$ with
-    \[ \meanparamat{\selvariable} \in \argmax_{\meanparam\in\genmeanset} \contraction{\canparamat{\selvariable},\meanparamat{\selvariable}} \,  \]
-    and all distributions with mean parameter $\meanparamat{\selvariable}$ are representable with respect to the base measure
-    \[\secbasemeasureat{\shortcatvariables} = \contractionof{\basemeasure, \indicatorofat{\arbset}{\shortcatvariables}}{\shortcatvariables} \, , \]
+    Let there be a statistic $\sstat$, which is minimal with respect to a base measure $\basemeasure$, and $\meanparamwith\notin\interiorof{\genmeanset}$.
+    Then there is a vector $\canparamwithin$ with
+    \begin{align*}
+        \meanparamwith\in\cangenmeansetargmax
+    \end{align*}
+    and all distributions reproducing the mean parameter $\meanparamwith$ are representable with respect to the base measure
+    \begin{align*}
+        \secbasemeasureat{\shortcatvariables} = \contractionof{\basemeasure, \indicatorofat{\arbset}{\shortcatvariables}}{\shortcatvariables} \, ,
+    \end{align*}
     where the indicator is on the set
-    \[ \arbset = \argmax_{\shortcatindices} \contraction{\canparam,\sstat(\shortcatindices)}  \, . \]
+    \begin{align*}
+        \arbset = \cansstatcatindicesargmax  \, .
+    \end{align*}
 \end{theorem}
 \begin{proof}
     When $\meanparam\notin\interiorof{\genmeanset}$ we find a face such that $\meanparam\in\genfacesetof{\facecondset}$.
     The existence of $\canparamat{\selvariable}$ follows from \theref{the:faceNormal}, in which also a construction procedure is provided given a half-space representation (see \theref{the:meanPolytopeHalfspaces}).
-
     Now, we have
     \begin{align*}
-        \meanparamat{\selvariable} \in \argmax_{\meanparam\in\genmeanset} \contraction{\canparamat{\selvariable},\meanparamat{\selvariable}}
+        \meanparamwith \in \cangenmeansetargmax
     \end{align*}
     and thus
     \begin{align*}
-        \meanparamat{\selvariable} \in \convhullof{ \sencsstat{\indexedshortcatvariables,\selvariable} \, : \,
+        \meanparamwith \in \convhullof{ \sencsstat{\indexedshortcatvariables,\selvariable} \, : \,
         \shortcatindices \in \argmax_{\shortcatindices \, : \, \basemeasureat{\indexedshortcatvariables}=1} \contraction{\canparamat{\selvariable},\sencsstat{\indexedshortcatvariables,\selvariable}} }
     \end{align*}
     Thus, any distribution reproducing meanparam is a convex combination of the one-hot encodings of the states in $\argmax_{\shortcatindices} \contraction{\canparamat{\selvariable},\sencsstat{\indexedshortcatvariables,\selvariable}}$, and therefore representable with respect to the base measure $\secbasemeasure$.
@@ -632,16 +791,19 @@ Each face of $\genmeanset$ thus defines a refinement of a base measure, which is
 \begin{definition}
     \label{def:faceBaseMeasure}
     The base measure to the face of $\meanset$ with normal $\canparam$ is
-    \[ \basemeasureof{\sstat,\canparam} = \indicatorofat{\argmax_{\shortcatindices} \contraction{\canparam,\sstat(\shortcatindices)}}{\shortcatvariables} \, . \]
+    \begin{align*}
+        \basemeasureofat{\sstat,\canparam}{\shortcatvariables}
+        = \indicatorofat{\cansstatcatindicesargmax}{\shortcatvariables} \, .
+    \end{align*}
 \end{definition}
 
-\theref{the:faceToArgmax} therefore states, that when a mean parameter is on a face of $\genmeanset$, then each distribution reproducing the mean parameter has a representation with respect to the refined base measure
+\theref{the:faceToArgmax} implies that any mean parameter on a face of $\genmeanset$ can be reproduced with a distribution representable with respect to the refined base measure
 \begin{align*}
     \secbasemeasureat{\shortcatvariables} = \contractionof{\basemeasure,\basemeasureof{\sstat,\canparam}}{\shortcatvariables} \, .
 \end{align*}
 
 % Base Measure Refinement algorithm
-We now utilize these findings and provide in \algoref{alg:baseMeasureRefinement} a procedure to refine the base measure until the reduced mean parameter is in the open set of a reduced mean parameter polytope.
+We now utilize these findings and provide by \algoref{alg:baseMeasureRefinement} a procedure to refine the base measure until the reduced mean parameter is in the interior of a reduced mean parameter polytope.
 
 \begin{algorithm}[h!]
     \caption{Base Measure Refinement}\label{alg:baseMeasureRefinement}
@@ -701,7 +863,7 @@ We now utilize these findings and provide in \algoref{alg:baseMeasureRefinement}
 \begin{theorem}%\label{the:maxGraphExpressivity}
     For the maximal graph $\maxgraph=([\seldim],\{[\seldim]\})$, which has a single hyperedge containing all head variables we have
     \begin{align*}
-        \genmeanset = \left\{ \contractionof{\probat{\shortcatvariables},\sencodingofat{\sstat}{\shortcatvariables,\selvariable}}{\shortcatvariables} \, , \, \probtensor \in\realizabledistsof{\sstat,\maxgraph} \right\}
+        \genmeanset = \left\{ \contractionof{\probat{\shortcatvariables},\sencodingofat{\sstat}{\shortcatvariables,\selvariable}}{\shortcatvariables} \, , \, \probtensor \in\realizabledistsof{\sstat,\maxgraph} \right\} \, .
     \end{align*}
 \end{theorem}
 \begin{proof}
@@ -731,6 +893,64 @@ We now utilize these findings and provide in \algoref{alg:baseMeasureRefinement}
     Now, any member $\expdistof{\secbasemeasure,\canparam,\secsstat}\in\expfamilyof{\secsstat,\secbasemeasure}$ can be represented by a member of  $\realizabledistsof{\sstat,\maxgraph}$, by contracting these base measure representing cores with the activation cores $\bigotimes_{\selindexin}\sstatacwith$.
 \end{proof}
 
+
+
+
+
+
+
+
+
+\sect{Forward Mapping in Exponential Families}
+
+
+%\red{Integrate: 
+%Selection encodings suffice for variational methods, relational encodings of statistics are required for markov network instantiations of exponential families.}
+
+%% Forward mappings are contractions, variational formulation as an alternative to avoid inefficiencies
+Forward mappings are expectation queries of the coordinates $\sstatcoordinateof{\selindex}$ asked against members of the exponential family itself, which are represented by canonical parameters $\canparamwithin$.
+Each expectation query thereby computes a coordinate of the corresponding mean parameter.
+For any $\canparamwith$ we have a closed form representation of this expectation query by
+\[ \forwardmapof{\canparam}
+= \sbcontractionof{\sencodingof{\sstat},\normationof{\basemeasure,\expof{\contraction{\sencodingof{\sstat},\canparam}}}{\shortcatvariables}}{\selvariable} \, . \]
+% Infeasibility and turn to variational alternatives with selection encodings.
+This contraction can, however, be infeasible, since it requires the instantiation of the probability tensor, which can be done by basis encodings of the statistic.
+We in this section provide alternative characterization of the forward map and approximations of it, which can be computed based on the selection encoding instead.
+Following \cite{wainwright_graphical_2008}, we can characterize the forward mapping to exponential families as a variational problem and provide an alternative characterization to this contraction.
+
+
+
+\subsect{Variational Formulation}
+
+Besides the direct computation of the mean parameter tensor we can give a variational characterization of the forward mapping.
+This is especially useful, when the contraction is intractable, for example because the tensor $\expdist$ is infeasible to create.
+
+\begin{theorem}
+    We have
+    \begin{align*}
+        \forwardmapof{\canparam}
+        = \genmeansetargmax  \sbcontraction{\meanparam,\canparam} + \sentropyof{\meanrepprob}
+    \end{align*}
+    where by $\meanrepprob$ we denote a probability distribution with respect to a base measure $\basemeasure$, which reproduces the mean parameter $\meanparam$.
+\end{theorem}
+\begin{proof}
+    For a proof see Theorem~3.4 in \cite{wainwright_graphical_2008}.
+\end{proof}
+
+%Let us now characterize the image of the forward map, which turns out to be the interior of the mean polytope, if the statistic is minimal (see \defref{def:minimalStatistics}).
+\red{We already know by \theref{the:meanPolytopeInteriorCharacterization}, that distribution representable by $\basemeasure$ reproduce the mean parameters in the interior of $\genmeanset$.
+We now state that the elements of the corresponding exponential family $\expfamily$, which are by construction representable by $\basemeasure$, are expressive enough to reproduce the whole interior of $\genmeanset$.}
+
+\begin{theorem}
+    \label{the:meanPolytopeInterior}
+    For any statistics $\sstat$ the image $\imageof{\forwardmap}$ of the forward map is the interior of the convex polytope $\genmeanset$.
+    If the statistic $\sstat$ is in addition minimal with respect to $\basemeasure$ (see \defref{def:minimalStatistics}), the forward map is a bijection between $\rr^{\seldim}$ as the set of canonical mean parameters and $\genmeanset$.
+\end{theorem}
+\begin{proof}
+    For a proof see Theorem~3.3 in \cite{wainwright_graphical_2008}.
+\end{proof}
+
+
 \subsect{Mode Search by annealing}
 
 %% ANNEALING
@@ -740,19 +960,16 @@ $\meanparam$ to a delta distribution (or in the convex hull of multiple maxima) 
 % Annealing effect on the optimization problem
 This is because
 \begin{align*}
-    \argmax_{\meanparam\in\genmeanset}  \sbcontraction{\meanparam,\canparam}
+    \genmeansetargmax  \sbcontraction{\meanparam,\canparam}
 \end{align*}
 is taken at an extreme point in $\genmeanset$ (since linear objective over closed convex set), which is a delta distribution of a set and
 \begin{align*}
-    \argmax_{\meanparam\in\genmeanset}  \sbcontraction{\meanparam,\invtemp\cdot\canparam}+ \sentropyof{\meanrepprob}
+    \genmeansetargmax  \sbcontraction{\meanparam,\invtemp\cdot\canparam}+ \sentropyof{\meanrepprob}
     =
-    \argmax_{\meanparam\in\genmeanset}  \sbcontraction{\meanparam,\canparam} + \frac{1}{\invtemp} \cdot \sentropyof{\meanrepprob}
+    \genmeansetargmax  \sbcontraction{\meanparam,\canparam} + \frac{1}{\invtemp} \cdot \sentropyof{\meanrepprob}
 \end{align*}
 thus the entropy term is neglectable for large $\invtemp$.
 A more precise argument is using a limit of the maxima and can be found in Theorem~8.1 in \cite{wainwright_graphical_2008}
-
-
-
 
 
 \subsect{Mean Field Method}
@@ -1070,11 +1287,11 @@ The backward mapping to $\datameanat{\selvariable} = \sbcontractionof{\empdistri
     and thus
     \begin{align*}
         \difwrt{\canparamat{\selvariable}} \left( \sbcontraction{\meanparam,\canparam} - \cumfunctionof{\canparam}  \right)
-        = \meanparamat{\selvariable} -  \forwardmapof{\canparam}[\selvariable] \, .
+        = \meanparamwith -  \forwardmapof{\canparam}[\selvariable] \, .
     \end{align*}
 
     The first order condition is therefore
-    \[ \meanparamat{\selvariable} =  \forwardmapof{\canparam}[\selvariable] \]
+    \[ \meanparamwith =  \forwardmapof{\canparam}[\selvariable] \]
     and any $\canparam$ satisfies this condition exactly when $\canparam=\backwardmapof{\meanparam}$ for a backward map.
 \end{proof}
 
@@ -1108,7 +1325,7 @@ The loss is the cross entropy between a distribution with $\meanparam$ and the d
     \end{align*}
     This shows, that the backward map coincides with the M-projection onto $\Gamma=\expfamily$.
 
-    Further, if $\meanparam=\datamean$ for a data map $\datamap$, we have that the corresponding empirical distribution $\empdistribution$ satisfies $\sbcontractionof{\sencsstat,\empdistribution}{\selvariable}=\meanparamat{\selvariable}$.
+    Further, if $\meanparam=\datamean$ for a data map $\datamap$, we have that the corresponding empirical distribution $\empdistribution$ satisfies $\sbcontractionof{\sencsstat,\empdistribution}{\selvariable}=\meanparamwith$.
     The backward map of $\meanparam$ is therefore the M-projection of $\empdistribution$, which is with \lemref{lem:centropyMLE} the maximum likelihood estimator.
 \end{proof}
 

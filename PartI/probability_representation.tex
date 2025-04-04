@@ -1030,8 +1030,10 @@ A further useful criterion is that of minimality of an exponential family, as we
 
 \begin{definition}[Minimal]
     \label{def:minimalStatistics}
-    We say that a statistic $\sstat$ is minimal with respect to a boolean base measure $\basemeasure$, if there is no pair of a nonvanishing vector $\vectorat{\selvariable}$ and a scalar $\lambda\in\rr$ with
-    \[ \contractionof{\sencsstatat{\shortcatvariables,\selvariable},\vectorat{\selvariable},\basemeasurewith}{\shortcatvariables} = \lambda\cdot\basemeasurewith \, . \]
+    We say that a statistic $\sstat$ is minimal with respect to a boolean base measure $\basemeasure$, if there is no pair of a non-vanishing vector $\vectorat{\selvariable}$ and a scalar $\lambda\in\rr$ with
+    \begin{align*}
+        \contractionof{\sencsstatat{\shortcatvariables,\selvariable},\vectorat{\selvariable},\basemeasurewith}{\shortcatvariables} = \lambda\cdot\basemeasurewith \, .
+    \end{align*}
 \end{definition}
 
 % Making a statistic minimal
@@ -1230,7 +1232,7 @@ Mean parameters are an alternative way to represent members of exponential famil
         0\prec\probtensor , \, \contractionof{\probwith,\basemeasurewith}{\shortcatvariables}
         = \probwith \right\} \, ,
     \end{align*}
-    is called the convex polytope of realizable mean parameters.
+    is called the polytope of realizable mean parameters.
     Here we denote by $\bmrealprobof{\basemeasure}$ the set of all probability distributions representable with respect to $\basemeasure$ (see \defref{def:representationBaseMeasure}).
     The map
     \begin{align*}
@@ -1243,128 +1245,8 @@ Mean parameters are an alternative way to represent members of exponential famil
     with $\expdistof{(\sstat,\backwardmapof{\forwardmapof{\canparam}},\basemeasure)} = \expdist$ for any $\canparamwithin$, a backward map of the exponential family.
 \end{definition}
 
-
 % Convex Hull Characterization Polytope
 While introduced here as a property of a distribution, the mean parameters will be central to the discussion of probabilistic inference in \charef{cha:probReasoning}.
-We now turn our interest towards the characterization of the polytope of realizable mean parameters.
-First of all, we provide a simple characterization of the sets of mean parameters as the convex hull of the slices to the selection encoding of the statistic.
-
-\begin{theorem}
-    \label{the:meanPolytopeConvHull}
-    For any statistic $\sstat$ the polytope of mean parameters is the convex hull of the slices of $\sencsstat$ with fixed indices to $\shortcatvariables$, that is
-    \begin{align*}
-        \genmeanset
-        = \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\facstates, \, \basemeasureat{\indexedshortcatvariables}=1} \, .
-    \end{align*}
-\end{theorem}
-\begin{proof}
-    First we realize that the characterization of by $\basemeasure$ representable distributions is a standard simplex extended by trivial coordinates, that is
-    \begin{align*}
-        \bmrealprobof{\basemeasure}
-        = \convhullof{\onehotmapofat{\shortcatindices}{\shortcatvariables} \, : \, \basemeasureat{\indexedshortcatvariables}=1 } \, .
-    \end{align*}
-    This follows from the fact, that the support of any by $\basemeasure$ representable distribution is contained in the support of $\basemeasure$.
-    Further, each representable distribution is contained in the convex hull of the one-hot encoded support elements, since any distribution is normed.
-
-    The polytope of mean parameters is a linear transform of the elements in $\bmrealprobof{\basemeasure}$, since the contraction with $\sencsstat$ is linear.
-    It follows that
-    \begin{align*}
-        \genmeanset
-        &= \convhullof{\contractionof{\sencsstatat{\shortcatvariables,\selvariable},\onehotmapofat{\shortcatindices}{\selvariable}} \, : \, \basemeasureat{\indexedshortcatvariables}=1 } \\
-        &= \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \basemeasureat{\indexedshortcatvariables}=1} \, .
-    \end{align*}
-\end{proof}
-
-% Halfspace Representation
-Any convex polytope $\genmeanset$ can further be characterized as an intersection of half-spaces, as we state next.
-
-\begin{theorem}
-    \label{the:meanPolytopeHalfspaces}
-    For any statistic $\sstat$ and base measure $\basemeasure$ there exists a finite collection
-    \begin{align*}
-        \halfspaceparams
-    \end{align*}
-    where $a_i[\selvariable]$ a vector and $b_i\in\rr$ for all $i\in[n]$ such that
-    \begin{align*}
-        \genmeanset
-        = \left\{\meanparamwith \, : \, \forall_{i\in[n]} \, \contraction{\meanparamwith,\normalvecofat{i}{\selvariable}}\leq\normalboundof{i} \right\} \, .
-    \end{align*}
-\end{theorem}
-\begin{proof}
-    This is a standard result of polyhedral combinatorics, see for a constructive proof \cite{ziegler_lectures_2013}.
-\end{proof}
-
-The determination of the half-space parametrizing $\halfspaceparams$ is, however, in general difficult and the main reason for the intractability of probabilistic inference (see e.g. \cite{wainwright_graphical_2008}).
-Let us now continue with the investigation of the faces of the mean parameter polytope, which we define following Def.~2.1 in \cite{ziegler_lectures_2013}.
-
-\begin{definition}
-    \label{def:meanPolytopeFaces}
-    Given a mean parameter polytope $\genmeanset$ in the half space representation of Theorem~\ref{the:meanPolytopeHalfspaces}, and any subset $\mathcal{I}\subset[n]$ we say that the set
-    \begin{align*}
-        \genfacesetof{\facecondset} = \left\{\meanparamwith\in\genmeanset \, : \, \forall_{i\in\mathcal{I}} \, \contraction{\meanparamwith,\normalvecofat{i}{\selvariable}}=\normalboundof{i} \right\}
-    \end{align*}
-    is the face to the constraints $\mathcal{I}$.
-\end{definition}
-
-While all inequalities in a half-space representation are satisfied for any element of the polytope, we define faces by the additional sharp satisfaction of a subset of the half-space inequalities.
-
-\begin{theorem}
-    \label{the:faceNormal}
-    For any non-empty face $\genfacesetof{\facecondset}$ to a subset $\mathcal{I}\subset[n]$ there is a vector $\canparamwith$, which we call a normal of the face, such that
-    \[ \genfacesetof{\facecondset} = \argmax_{\meanparam\in\genmeanset} \contraction{\canparamwith,\meanparamwith}  \, . \]
-    For any collection of positive $\lambda_i$, where $i\in\facecondset$, the vector
-    \[ \canparamwith = \sum_{i\in\facecondset} \lambda_i\cdot\normalvecofat{i}{\selvariable}\]
-    is a normal for $\genfacesetof{\facecondset}$.
-    %% UNCLEAR if this is true-> Are all possible normals in the span )
-%	If $\canparamwith$ is a normal to a face, then for any positive scalars $\lambda[\selvariable]$ also the vector
-%		\[ \seccanparam\left[\selvariable\right] = \contractionof{\canparamwith,\labmda[\selvariable]}{\selvariable} \]
-%	is a normal to the same face.
-\end{theorem}
-\begin{proof}
-    The first claim follows trivially from the second.
-    To show the second claim, let there be for $i\in\facecondset$ arbitrary positive scalars $\lambda_i$.
-    We use that the face is non-empty, and thus there is a $\meanparamwith$ with
-    \[ \contraction{\meanparamwith,\normalvecofat{i}{\selvariable}}=\normalboundof{i} \]
-    for all $i\in\facecondset$.
-    Since for any $\meanparam\in\genmeanset$
-    \[ \contraction{\meanparamwith,\normalvecofat{i}{\selvariable}}\leq \normalboundof{i} \]
-    it follows that
-    \[ \max_{\meanparam\in\genmeanset} \contraction{\canparamwith,\meanparamwith}
-    = \sum_{i\in\facecondset} \lambda_i \cdot \normalboundof{i} \, \, . \]
-    The maximum is attained at a $\meanparamwith$, if and only if the equations $\contraction{\meanparamwith,\normalvecofat{i}{\selvariable}}=\normalboundof{i}$ are satisfied for $i\in\facecondset$.
-    This is equal to $\meanparam\in\genfacesetof{\facecondset}$.
-\end{proof}
-
-As we show next, also a converse statement holds, namely that for any vector $\canparamwith$ we find a face $\genfacesetof{\facecondset}$, such that the $\canparamwith$ is a face normal to that face.
-
-\begin{theorem}
-    For any $\canparamwith$ we find a subset $\mathcal{I}\subset[n]$, such that
-    \begin{align*}
-        \argmax_{\meanparam\in\genmeanset} \contraction{\canparamwith,\meanparamwith}
-        = \genfacesetof{\facecondset} \, .
-    \end{align*}
-\end{theorem}
-\begin{proof} % Not a smooth proof, improve!
-    We first notice, that
-    \begin{align*}
-        \argmax_{\meanparam\in\genmeanset} \contraction{\canparamwith,\meanparamwith}
-        = \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\argmax_{\shortcatindicesin} \contraction{\canparamwith,\sstatat{\shortcatindices}}} \, .
-    \end{align*}
-    Further, since the contraction with $\canparamwith$ is linear, the set $\argmax_{\meanparam\in\genmeanset} \contraction{\canparamwith,\meanparamwith}$ is contained in the boundary of the polytope $\genmeanset$.
-    We can conlcude, that the set is a face, that is we find a subset $\mathcal{I}\subset[n]$ with
-    \begin{align*}
-        \genfacesetof{\facecondset}
-        = \argmax_{\meanparam\in\genmeanset} \contraction{\canparamwith,\meanparamwith} \, .
-    \end{align*}
-\end{proof}
-
-% Notation
-In a slide abuse of notation, we denote in this case $\genfacesetof{\canparam} = \genfacesetof{\facecondset}$.
-
-
-
-
-
 
 \subsect{Markov Networks as Exponential Families}
 
