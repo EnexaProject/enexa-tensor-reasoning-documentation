@@ -72,14 +72,14 @@ This contraction equations follows from the more general \corref{cor:rhoToNormal
 %	& =  \sbcontraction{ \probat{\exfunction} ,\onehotmapof{z}} \, .
 %\end{align*}
 
-\subsect{Mode Queries}
+\subsect{Mode Queries}\label{sec:modeQueries}
 
 A different kind of queries are mode queries, which we formalize by the searches of the indices to maximal coordinates in a tensor.
 
 \begin{definition}
     Given a tensor $\hypercorewith$ the mode query is the problem
     \begin{align}
-        \argmax_{\shortcatindices} \hypercoreat{\indexedshortcatvariables} \, .
+        \argmax_{\shortcatindicesin} \hypercoreat{\indexedshortcatvariables} \, .
     \end{align}
 \end{definition}
 
@@ -108,6 +108,22 @@ We note that the maximation over $\bmrealprobof{\ones}$ is a convex optimization
     = \convhullof{\onehotmapofat{\shortcatindices}{\shortcatvariables} \, : \, \shortcatindices\in\argmax_{\shortcatindices} \hypercoreat{\indexedshortcatvariables}} \, .
 \end{align*}
 We will further apply this generic trick to approach mode queries when studying inference problems for exponential families in the following sections.
+
+% Restriction to subsets
+Let us note, that we can also approach modified mode queries, where we restrict to $\arbset\subset\facstates$, namely
+\begin{align*}
+     \argmax_{\shortcatindices\in\arbset} \hypercoreat{\indexedshortcatvariables} \, .
+\end{align*}
+We can choose the base measure by the subset encoding (see \charef{cha:basisCalculus}) of $\arbset$, namely
+\begin{align*}
+    \basemeasurewith = \sum_{\shortcatindices\in\arbset} \onehotmapofat{\shortcatindices}{\shortcatvariables} \, ,
+\end{align*}
+and conclude that
+\begin{align*}
+    \argmax_{\meanparamat{\shortcatvariables}\in\bmrealprobof{\basemeasure}} \contraction{\hypercoreat{\shortcatvariables},\meanparamat{\shortcatvariables}}
+    = \convhullof{\onehotmapofat{\shortcatindices}{\shortcatvariables} \, : \, \shortcatindices\in\argmax_{\shortcatindices\in\arbset} \hypercoreat{\indexedshortcatvariables}} \, .
+\end{align*}
+
 
 
 \subsect{Energy representations}
@@ -282,7 +298,7 @@ We note, that the main property of the conditional query exploited here, is that
 In the scheme of forward sampling, where most of the variables are marginalized out in many queries, we cannot apply this trick and would have to perform sums over exponentiated coordinates to the variables marginalized out.
 
 
-\subsect{Simulated Annealing}
+\subsect{Simulated Annealing}\label{sec:simulatedAnnealing}
 
 Simulated annealing is an adapted sampling scheme that targets mode queries rather than generating representative samples from a distribution.
 It employs an annealing process that gradually transforms the probability distribution by increasingly favoring high-likelihood configurations, thereby improving the chances of sampling a solution to a mode query.
@@ -728,6 +744,7 @@ In the next theorem we show, how linear optimization problems are constructed to
 As we show next, also a converse statement holds, namely that for any vector $\canparamwith$ we find a face $\genfacesetof{\facecondset}$, such that the $\canparamwith$ is a face normal to that face.
 
 \begin{theorem}
+    \label{the:modeQueryFaceBM}
     For any $\canparamwith$ we find a subset $\mathcal{I}\subset[n]$, such that
     \begin{align*}
        \cangenmeansetargmax = \genfacesetof{\facecondset} \, .
@@ -747,7 +764,58 @@ As we show next, also a converse statement holds, namely that for any vector $\c
 \end{proof}
 
 % Notation
-In a slide abuse of notation, we denote in this case $\genfacesetof{\canparam} = \genfacesetof{\facecondset}$.
+%In a slide abuse of notation, we denote in this case $\genfacesetof{\canparam} = \genfacesetof{\facecondset}$.
+
+\subsect{Face characterization by mode queries}
+
+% Mode queries
+\theref{the:modeQueryFaceBM} provides a geometric perspective for mode queries.
+An arbitrary tensor $\hypercorewith$ can be understood to be a canonical parameter of the exponential family with statistic $\naivestat$, and base measure $\onesat{\shortcatvariables}$.
+For this exponential family, $\bmrealprobof{\ones}$ coincides with the polytope of mean parameters, and is a standard simplex.
+Continuing our discussion in \secref{sec:modeQueries}, we have for any $\arbset\subset\facstates$ and $\basemeasure$ being the subset encoding of $\arbset$ that
+\begin{align*}
+    \max_{\shortcatindices\in\arbset} \hypercoreat{\indexedshortcatvariables} =
+    \max_{\meanparamat{\shortcatvariables}\in\bmrealprobof{\basemeasure}} \contraction{\hypercoreat{\shortcatvariables},\meanparamat{\shortcatvariables}} \, .
+\end{align*}
+The maximum is attained exactly for the mean parameters
+\begin{align*}
+    \meanparamat{\shortcatvariables}\in
+    \convhullof{\onehotmapofat{\shortcatindices}{\shortcatvariables} \, : \, \shortcatindices\in\argmax_{\shortcatindices\in\arbset} \hypercoreat{\indexedshortcatvariables}} \, .
+\end{align*}
+Answering the mode query is thus the characterization of the face of the standard simplex with face normal $\hypercorewith$.
+
+% Decompositions of \hypercore
+Let us now consider cases where the queried tensor $\hypercore$ has a tensor network decomposition.
+This is the case for energy tensors to members of exponential families, for which we have a decomposition into selection encodings $\sencsstatwith$ and canonical parameters $\canparamwith$.
+In most generality we assume a decomposition of $\hypercore$ by a tensor network on a hypergraph $\graph=(\nodes,\edges)$, where $[\catorder]\subset\nodes$ as
+\begin{align*}
+    \hypercorewith = \contractionof{\extnetasset}{\shortcatvariables} \, .
+\end{align*}
+Let us choose a subset $\secedges\subset\edges$ and
+\begin{align*}
+    \max_{\shortcatindices\in\arbset} \hypercoreat{\indexedshortcatvariables}
+    = \max_{\shortcatindices\in\arbset} \contraction{\{\onehotmapofat{\shortcatindices}{\shortcatvariables}\} \cup \extnetasset}
+%        = \max_{\shortcatindices\in\arbset} \contraction{\onehotmapofat{\shortcatindices}{\shortcatvariables},\hypercoreat{\indexedshortcatvariables}}
+\end{align*}
+We now split the contractions (see \theref{the:splittingContractions}) to contract the cores $\edges/\secedges$ with the one-hot encoding first and keeping $\secnodes=\bigcup_{\edge\in\secedges}\edge$ open.
+With this we get
+\begin{align*}
+   & \max_{\shortcatindices\in\arbset} \hypercoreat{\indexedshortcatvariables} \\
+   & = \max_{\shortcatindices\in\arbset}
+    \contraction{
+    \contractionof{\{\onehotmapofat{\shortcatindices}{\shortcatvariables}\} \cup \left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\, : \, \edge\in\edges/\secedges\right\}}{\catvariableof{\secnodes}},
+        \contractionof{\left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\, : \, \edge\in\secedges\right\}}{\catvariableof{\secnodes}}
+    } \, .
+\end{align*}
+This optimization problem is the characterization of vectors, which convex hull is the face in the polytope
+\begin{align*}
+    \meanset = \left\{\{\contractionof{\onehotmapofat{\shortcatindices}{\shortcatvariables}\} \cup \left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\, : \, \edge\in\edges/\secedges\right\}}{\catvariableof{\secnodes}} \, : \, \shortcatindices\in\arbset \right\}
+\end{align*}
+with the face normal
+\begin{align*}
+    \canparamat{\catvariableof{\secnodes}} =
+    \contractionof{\left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\, : \, \edge\in\secedges\right\}}{\catvariableof{\secnodes}} \, .
+\end{align*}
 
 
 \subsect{Base measure refinement}
@@ -951,46 +1019,56 @@ We now state that the elements of the corresponding exponential family $\expfami
 \end{proof}
 
 
-\subsect{Mode Search by annealing}
+\subsect{Mode queries by annealing}
 
 %% ANNEALING
-Finding the mode of a distribution is related to the forward mapping of $\invtemp\cdot\canparam$:
-$\meanparam$ to a delta distribution (or in the convex hull of multiple maxima) in the limit.
-
+The mode of a distribution is related to the forward mapping of $\invtemp\cdot\canparam$ in the limit $\invtemp\rightarrow\infty$ of low temperatures.
+%$\meanparam$ to a delta distribution (or in the convex hull of multiple maxima) in the limit.
 % Annealing effect on the optimization problem
-This is because
+To sketch this relation in more detail, we recall the variational formulation of mode queries by
 \begin{align*}
-    \genmeansetargmax  \sbcontraction{\meanparam,\canparam}
+    \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\cansstatcatindicesargmax}
+    = \genmeansetargmax \sbcontraction{\meanparam,\canparam}  \, .
 \end{align*}
-is taken at an extreme point in $\genmeanset$ (since linear objective over closed convex set), which is a delta distribution of a set and
+Further, for any by the inverse temperature $\invtemp\neq0$ annealed canonical parameter $\canparamwith$ (see \secref{sec:simulatedAnnealing}) we have
 \begin{align*}
     \genmeansetargmax  \sbcontraction{\meanparam,\invtemp\cdot\canparam}+ \sentropyof{\meanrepprob}
-    =
-    \genmeansetargmax  \sbcontraction{\meanparam,\canparam} + \frac{1}{\invtemp} \cdot \sentropyof{\meanrepprob}
+    = \genmeansetargmax  \sbcontraction{\meanparam,\canparam} + \frac{1}{\invtemp} \cdot \sentropyof{\meanrepprob} \, .
 \end{align*}
-thus the entropy term is neglectable for large $\invtemp$.
-A more precise argument is using a limit of the maxima and can be found in Theorem~8.1 in \cite{wainwright_graphical_2008}
+In the annealing limit, that is for large $\invtemp$, the entropy term becomes neglectable and the forward mapping tends to the convex hull
+\begin{align*}
+    \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\cansstatcatindicesargmax}
+    = \genmeansetargmax \sbcontraction{\meanparam,\canparam}  \, .
+\end{align*}
+For a more detailed proof of this relation, see Theorem~8.1 in \cite{wainwright_graphical_2008}.
+
+%and the entropy term is neglectable for large $\invtemp$.
+%A more precise argument is using a limit of the maxima and can be found in Theorem~8.1 in \cite{wainwright_graphical_2008}.
 
 
-\subsect{Mean Field Method}
+\subsect{Mean Field Methods}
 
-We rewrite
+Mean field methods are approximation schemes for forward mappings, designed for efficient inference.
+To introduce them we turn the maximation over the mean parameter polytope in the the variational principle of forwards mappings into a maximation over the reproducing distributions, that is
 \begin{align*}
     \max_{\meanparam\in\genmeanset}  \sbcontraction{\meanparam,\canparam} + \sentropyof{\meanrepprob}
     =
-    \max_{\probtensor} \sbcontraction{\energytensor,\probtensor} + \sentropyof{\probtensor}
+    \max_{\probtensor\in\bmrealprobof{\basemeasure}} \sbcontraction{\energytensor,\probtensor} + \sentropyof{\probtensor}
 \end{align*}
 where
-\[ \energytensor = \sbcontractionof{\sencsstat,\canparam}{\shortcatvariables} \, . \]
+\begin{align*}
+    \energytensor = \sbcontractionof{\sencsstat,\canparam}{\shortcatvariables} \, .
+\end{align*}
+Mean field methods now provide lower bounds on this maximization by restricting the distribution optimized over to a tractable subset of $\genmeanset$.
 
-We now restrict the distributions in the maximum.
+\subsubsect{Naive Mean Field Method}
+
 Typically we use the family of independent distributions, also called naive mean field method.
 The naive mean field is the approximation by distributions of independent random variables $\legcoreof{\catenumerator}$, that is
 \begin{align*}
     \argmax_{\legcoreof{\catenumerator} \, : \, \catenumeratorin} \contraction{\{\energytensor\} \cup \{\legcoreof{\catenumerator} \, : \, \catenumeratorin\}}
     + \sum_{\catenumeratorin} \sentropyof{\legcoreof{\catenumerator}} \, .
 \end{align*}
-
 
 \begin{theorem}[Update equations for the mean field approximation]
     Keeping all legs but one constant, the problem
@@ -1034,8 +1112,6 @@ The naive mean field is the approximation by distributions of independent random
     }{\catvariableof{\catenumerator}} \, . \]
 \end{proof}
 
-
-
 Algorithm~\ref{alg:NMF} is the alternation of legwise updates until a stopping criterion is met.
 
 \begin{algorithm}[h!]
@@ -1059,7 +1135,7 @@ Algorithm~\ref{alg:NMF} is the alternation of legwise updates until a stopping c
 \end{algorithm}
 
 
-\subsect{Structured Variational Approximation}
+\subsubsect{Structured Variational Approximation}
 
 %% Structured Variational approximation
 More generically, we restrict the maximum over the mean parameters of efficiently contractable distributions and get a lower bound.
@@ -1225,9 +1301,6 @@ The mean field method corresponds with minimization of the KL Divergence to the 
 %	This follows from the fact, that the objective is the cross-entropy and the position of the maximum is invariant under substracting $\sentropyof{\probtensor}$.
     By rearranging the objective to the KL divergence.
 \end{proof}
-
-
-
 
 
 
