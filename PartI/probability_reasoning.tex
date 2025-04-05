@@ -316,7 +316,7 @@ In this limit, the annealed distribution tends to the uniform distribution of th
 \begin{align*}
     \argmax_{\shortcatindicesin}\energytensorat{\indexedshortcatvariables} = \argmax_{\shortcatindicesin}\probat{\indexedshortcatvariables} \, .
 \end{align*}
-
+i
 To integrate annealing into Gibbs sampling, one chooses a parameter $\invtemp$ for each repetition of a sampling step and sample from the conditioned annealed distribution $\normationof{\expof{\invtemp\cdot\energytensorat{\shortcatvariables}}}{\shortcatvariables}$.
 Through increasing $\invtemp$ during the algorithm, the samples are drawn towards states with larger coordinates in $\probat{\shortcatvariables}$.
 However, when $\invtemp$ is large, the sampling procedure can get stuck in local maxima, whereas small $\invtemp$ are in favor of overcoming such.
@@ -374,8 +374,8 @@ Motivated by this property, we use the transformed form to define the loss-likel
     \end{align*}
     Having a hypothesis $\Gamma\subset\bmrealprobof{\ones}$, that is a set of probability distributions, the maximum likelihood estimation is the problem
     \begin{align}
-        \tag{$\probtagtypeinst{\loss}{\Gamma,\empdistribution}$}\label{prob:parameterMaxLikelihood}
-        \argmin_{\probtensor\in\Gamma} \lossof{\probtensor} \, .
+        \tag{$\probtagtypeinst{M}{\Gamma,\empdistribution}$}\label{prob:parameterMaxLikelihood}
+        \argmin_{\probtensorin} \lossof{\probtensor} \, .
     \end{align}
 \end{definition}
 
@@ -452,30 +452,17 @@ The Gibbs inequality (for a proof see for example Chapter~2 in \cite{cover_eleme
     \centropyof{\probtensor}{\secprobtensor} \geq \sentropyof{\probtensor} \, ,
 \end{align*}
 where equality holds if any only if $\probtensor=\secprobtensor$
-This ensures, that the Kullback-Leiber Divergence between any distributions is positive vanishes only if both distributions coincide.
-
-%The difference between both sides is called the Kullback-Leibler Divergence and a useful distance measure between distributions, since it is positive and vanishes for $\probtensor=\secprobtensor$.
-%Let us note, that any cross-entropy minimization problem attains its optim
-
-%\begin{definition}[Kullback Leibler Divergence]
-%    \label{def:KLDivergence}
-%    The KL divergence between two distributions is defined as
-%    \[ \kldivof{\probtensor}{\secprobtensor} = \centropyof{\probtensor}{\secprobtensor} - \sentropyof{\probtensor}  \, . \]
-%\end{definition}
+This ensures, that the Kullback-Leiber Divergence between any distributions is positive and vanishes if and only if both distributions coincide.
 
 We in the next lemma provide an entropic interpretation of maximum likehlihood estimation as defined in \defref{def:loss}.
-%Comparing with the cross-entropy we find that
-%\begin{align*}
-%    \lossof{\probtensor} = \centropyof{\empdistribution}{\probtensor} \, .
-%\end{align*}
 
 \begin{lemma}
     \label{lem:centropyMLE}
     The maximum likelihood estimation \probref{prob:parameterMaxLikelihood} is equivalent to the minimization of cross-entropy and Kullback-Leibler divergence, that is
     \begin{align*}
-        \argmin_{\probtensor\in\Gamma} \lossof{\probtensor}
-        = \argmin_{\probtensor\in\Gamma} \centropyof{\empdistribution}{\probtensor}
-          = \argmin_{\probtensor\in\Gamma} \kldivof{\empdistribution}{\probtensor} \, .
+        \argmin_{\probtensorin} \lossof{\probtensor}
+        = \argmin_{\probtensorin} \centropyof{\empdistribution}{\probtensor}
+          = \argmin_{\probtensorin} \kldivof{\empdistribution}{\probtensor} \, .
     \end{align*}
 \end{lemma}
 \begin{proof}
@@ -490,6 +477,23 @@ We in the next lemma provide an entropic interpretation of maximum likehlihood e
     \end{align*}
     and $\sentropyof{\empdistribution}$ is a constant offset in the objective, maximum likelihood estimation is equivalent to the minimization of the Kullback-Leibler divergence.
 \end{proof}
+
+% M-projection
+More general than Maximum Likelihood Estimation, we define the moment projection of an arbitrary distribution $\gendistribution$ onto a set $\Gamma$ of probability distributions as the problem
+\begin{align}
+    \tag{$\probtagtypeinst{\mathrm{M}}{\Gamma,\gendistribution}$}\label{prob:mProjection}
+    \argmax_{\probtensorin} \centropyof{\gendistribution}{\probtensor} \, .
+\end{align}
+With \lemref{lem:centropyMLE} we have established, that maximum likelihood estimation is the M-projection of the empirical distribution onto a set $\Gamma$.
+
+% I-projection
+We further define the information projection an arbitrary distribution $\gendistribution$ onto a set $\Gamma$ of probability distributions as the problem
+\begin{align}
+    \tag{$\probtagtypeinst{\mathrm{I}}{\Gamma,\gendistribution}$}\label{prob:iProjection}
+    \argmax_{\probtensorin} \centropyof{\probtensor}{\gendistribution} \, .
+\end{align}
+The cross-entropy is not symmetric, thus the information and the moment projections do not coincide in general.
+The differences of both are discussed in Chapter~8 in \cite{koller_probabilistic_2009}.
 
 \begin{example}[Cross entropy with respect to exponential families]
     \label{exa:cEntropyExp}
@@ -604,7 +608,7 @@ The determination of the half-space parametrizing $\halfspaceparams$ is, however
 
 \begin{theorem}
     \label{the:meanPolytopeInteriorCharacterization}
-    For any minimal statistics $\sstat$ and boolean base measure $\basemeasure$ we have for some $\meanparamwith$ that $\meanparamwith\in\genmeanset$ if and only if there is a positive distribution with respect to $\basemeasure$ such that
+    For any minimal statistics $\sstat$ and boolean base measure $\basemeasure$ we have for some $\meanparamwith$ that $\meanparamwith\in\sbinteriorof{\genmeanset}$ if and only if there is a positive distribution with respect to $\basemeasure$ such that
     \[ \meanparamwith = \sbcontractionof{\probtensor,\sencsstat}{\selvariable} \, . \]
 %	If $\meanparamwith$ is in an minimal exponential family with boolean base measure $\basemeasure$, then it is in the interior of $\genmeanset$ if and only if it is representable by a positive distribution with respect to $\basemeasure$.
 \end{theorem}
@@ -898,7 +902,8 @@ We now utilize these findings and provide by \algoref{alg:baseMeasureRefinement}
 \begin{theorem}
     \label{the:baseMeasureRefinement}
     For arbitrary inputs $\basemeasure,\sstat$ and $\meanparam\in\genmeanset$, \algoref{alg:baseMeasureRefinement} terminates in finite time and outputs a triple of base measure $\secbasemeasure$, statistic $\secsstat$ and mean parameter $\secmeanparam$ such that the following holds.
-    Any probability tensor $\probtensor$ reproducing $\meanparam$ is representable with respect to $\secbasemeasure$ and $\secmeanparam\in\sbinteriorof{\meansetof{\secsstat,\secbasemeasure}}$.
+    Any probability distribution $\probtensor$ reproduces $\meanparam$, if and only if it reproduces $\secmeanparam$.
+    Further, any probability distribution reproducing $\meanparam$ is representable with respect to $\secbasemeasure$ and $\secmeanparam\in\sbinteriorof{\meansetof{\secsstat,\secbasemeasure}}$.
 %	Thus, there is a member of the exponential family $\expfamilyof{\secsstat,\secbasemeasure}$ reproducing $\meanparam$.
 \end{theorem}
 \begin{proof}
@@ -909,7 +914,7 @@ We now utilize these findings and provide by \algoref{alg:baseMeasureRefinement}
     \[ \basemeasureat{\shortcatvariables} = \contractionof{\basemeasure,\basemeasureof{\sstat,\canparam}}{\shortcatvariables} \]
     and thus $\genfacesetof{\canparam}=\genmeanset$, which is a contradiction with the assumption of a non-trivial face.
 
-    The second claim follows from an iterative application of \theref{the:faceToArgmax} and the fact, that a probability distribution reproduces $\meanparam$ in a non-minimal representation, if and only if it reproduces the corresponding reduced $\meanparam$ with respect to the reduced statistics.
+    The second and third claim follow from an iterative application of \theref{the:faceToArgmax} and the fact, that a probability distribution reproduces $\meanparam$ in a non-minimal representation, if and only if it reproduces the corresponding reduced $\secmeanparam$ with respect to the reduced statistics.
 \end{proof}
 
 
@@ -1011,8 +1016,8 @@ We now state that the elements of the corresponding exponential family $\expfami
 
 \begin{theorem}
     \label{the:meanPolytopeInterior}
-    For any statistics $\sstat$ the image $\imageof{\forwardmap}$ of the forward map is the interior of the convex polytope $\genmeanset$.
-    If the statistic $\sstat$ is in addition minimal with respect to $\basemeasure$ (see \defref{def:minimalStatistics}), the forward map is a bijection between $\rr^{\seldim}$ as the set of canonical mean parameters and $\genmeanset$.
+    For any statistics $\sstat$, which is minimal with respect to a base measure $\basemeasure$ (see \defref{def:minimalStatistics}), the the forward map is a bijection between $\rr^{\seldim}$ and the interior $\sbinteriorof{\genmeanset}$ of the mean parameter polytope.
+   % If the statistic $\sstat$ is in addition minimal with respect to $\basemeasure$  the forward map is a bijection between $\rr^{\seldim}$ as the set of canonical mean parameters and $\genmeanset$.
 \end{theorem}
 \begin{proof}
     For a proof see Theorem~3.3 in \cite{wainwright_graphical_2008}.
@@ -1035,12 +1040,12 @@ Further, for any by the inverse temperature $\invtemp\neq0$ annealed canonical p
     \genmeansetargmax  \sbcontraction{\meanparam,\invtemp\cdot\canparam}+ \sentropyof{\meanrepprob}
     = \genmeansetargmax  \sbcontraction{\meanparam,\canparam} + \frac{1}{\invtemp} \cdot \sentropyof{\meanrepprob} \, .
 \end{align*}
-In the annealing limit, that is for large $\invtemp$, the entropy term becomes neglectable and the forward mapping tends to the convex hull
+In the annealing limit, that is for large $\invtemp$, the entropy term becomes negligible and the forward mapping tends to the convex hull
 \begin{align*}
     \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\cansstatcatindicesargmax}
     = \genmeansetargmax \sbcontraction{\meanparam,\canparam}  \, .
 \end{align*}
-For a more detailed proof of this relation, see Theorem~8.1 in \cite{wainwright_graphical_2008}.
+For a more detailed discussion of this relation, see the proof of Theorem~8.1 in \cite{wainwright_graphical_2008}.
 
 %and the entropy term is neglectable for large $\invtemp$.
 %A more precise argument is using a limit of the maxima and can be found in Theorem~8.1 in \cite{wainwright_graphical_2008}.
@@ -1059,7 +1064,49 @@ where
 \begin{align*}
     \energytensor = \sbcontractionof{\sencsstat,\canparam}{\shortcatvariables} \, .
 \end{align*}
-Mean field methods now provide lower bounds on this maximization by restricting the distribution optimized over to a tractable subset of $\genmeanset$.
+Mean field methods now provide lower bounds on this maximization by restricting the distribution optimized over to a tractable subset of distributions.
+
+Let $\Gamma$ be a subset of $\bmrealprobof{\ones}$, we state the mean field problem as
+%Let $\graph$ be any hypergraph, we define the problem
+\begin{align}
+    \tag{$\probtagtypeinst{I}{\Gamma,\probof{\energytensor}}$}\label{prob:meanField}
+    \argmax_{\probtensor\in \mnexpfamily} \sbcontraction{\energytensor,\probtensor} + \sentropyof{\probtensor}
+\end{align}
+%% KL Divergence
+We show next, that the mean field problem is an instance of an information projection, as indicated by the notation.
+
+\begin{theorem}\label{the:meanFieldIProjection}
+    For any hypergraph $\graph$ and energy tensor $\energytensor$ we have for $\probofat{\energytensor}{\shortcatvariables}=\normationof{\energytensor}{\shortcatvariables}$
+    \begin{align*}
+        \argmax_{\probtensorin} \sbcontraction{\energytensor,\probtensor} + \sentropyof{\probtensor}
+        = \argmin_{\probtensorin} \kldivof{\probtensor}{\probof{\energytensor}}
+    \end{align*}
+    Problem~\ref{prob:meanField} is thus the information projection of a distribution $\probofat{\energytensor}{\shortcatvariables}=\normationof{\energytensor}{\shortcatvariables}$ onto the exponential family $\mnexpfamily$.
+\end{theorem}
+\begin{proof}
+%	This follows from the fact, that the objective is the cross-entropy and the position of the maximum is invariant under substracting $\sentropyof{\probtensor}$.
+    The cross entropy between a $\probtensorin$ and $\probof{\energytensor}$ is
+    \begin{align*}
+        \centropyof{\probtensor}{\probof{\energytensor}}
+        &= \contraction{\probat{\shortcatvariables},-\lnof{\probofat{\energytensor}{\shortcatvariables}}} \\
+        &= \contraction{\probat{\shortcatvariables},-\energytensorat{\shortcatvariables}}
+        + \contraction{\probat{\shortcatvariables}} \cdot \lnof{\contraction{\expof{\energytensorat{\shortcatvariables}}}}
+    \end{align*}
+
+    Together we have, that
+    \begin{align*}
+         \kldivof{\probtensor}{\probof{\energytensor}} 
+         = \centropyof{\probtensor}{\probof{\energytensor}} - \sentropyof{\probtensor}
+        = - \contraction{\probat{\shortcatvariables},\energytensorat{\shortcatvariables}} - \sentropyof{\probtensor} + \lnof{\contraction{\expof{\energytensorat{\shortcatvariables}}}}
+    \end{align*}
+    Since the last term is constant among $\probtensorin$, we have
+    \begin{align*}
+        \argmax_{\probtensorin} \sbcontraction{\energytensor,\probtensor}+ \sentropyof{\probtensor}
+        = \argmax_{\probtensorin} -\kldivof{\probtensor}{\probof{\energytensor}}
+        = \argmax_{\probtensorin} \kldivof{\probtensor}{\probof{\energytensor}} \, .
+    \end{align*}
+\end{proof}
+
 
 \subsubsect{Naive Mean Field Method}
 
@@ -1070,10 +1117,10 @@ The naive mean field is the approximation by distributions of independent random
     + \sum_{\catenumeratorin} \sentropyof{\legcoreof{\catenumerator}} \, .
 \end{align*}
 
-\begin{theorem}[Update equations for the mean field approximation]
+\begin{theorem}[Update equations for the naive mean field approximation]
     Keeping all legs but one constant, the problem
     \begin{align*}
-        \argmax_{\legcoreof{\catenumerator}} \contraction{\{\energytensor\} \cup \{\legcoreof{\catenumerator} \, : \, \catenumeratorin\}}
+        \argmax_{\legcoreof{\catenumerator}} \contraction{\{\energytensor\} \cup \{\legcoreofat{\seccatenumerator}{\catvariableof{\seccatenumerator}} \, : \, \seccatenumeratorin\}}
         + \sum_{\catenumeratorin} \sentropyof{\legcoreof{\catenumerator}}
     \end{align*}
     is solved at
@@ -1141,11 +1188,13 @@ Algorithm~\ref{alg:NMF} is the alternation of legwise updates until a stopping c
 More generically, we restrict the maximum over the mean parameters of efficiently contractable distributions and get a lower bound.
 In this section we use any Markov Network as the approximating family.
 
-Let $\graph$ be any hypergraph, we define the problem
+Let $\graph$ be any hypergraph, we take $\Gamma$ in \probref{prob:meanField} as the exponential family $\mnexpfamily$ of Markov Networks on a hypergraph $\graph$ and define the structured variational approach as
 \begin{align}
     \tag{$\mathrm{P}_{\mnexpfamily, \probtensor}$}\label{prob:structuredApproximation}
     \argmax_{\probtensor\in \mnexpfamily} \sbcontraction{\energytensor,\probtensor} + \sentropyof{\probtensor}
 \end{align}
+By \theref{the:meanFieldIProjection} the structured approximation coincides with the information projection \probref{iProjection} onto the exponential family of Markov Networks given a hypergraph $\graph$.
+
 
 We approximate the solution of this problem again by an alternating algorithm, which iteratively updates the cores of the approximating Markov Network.
 
@@ -1286,61 +1335,34 @@ We approximate the solution of this problem again by an alternating algorithm, w
     \[ \lambda = \expof{\lambda_1} \, . \]
 \end{proof}
 
-%% KL Divergence
-The mean field method corresponds with minimization of the KL Divergence to the efficiently contractable family, i.e. the I-projection onto the family.
-
-\begin{theorem}
-    For any hypergraph $\graph$ and energy tensor $\energytensor$ we have
-    \begin{align*}
-        \argmax_{\probtensor\in \mnexpfamily} \sbcontraction{\energytensor, \probtensor}+ \sentropyof{\probtensor}
-        = \argmax_{\probtensor\in \mnexpfamily} \kldivof{\expdistof{(\graph,\canparam)}}{\normationof{\expof{\energytensor}}{\shortcatvariables}}
-    \end{align*}
-    Problem~\ref{prob:structuredApproximation} is thus the I-projection onto the exponential family $\mnexpfamily$.
-\end{theorem}
-\begin{proof}
-%	This follows from the fact, that the objective is the cross-entropy and the position of the maximum is invariant under substracting $\sentropyof{\probtensor}$.
-    By rearranging the objective to the KL divergence.
-\end{proof}
 
 
 
 
 
-\sect{Backward Mapping in Exponential Families}
 
-\red{%Introduce M-projections here:
-Lemma~\ref{lem:centropyMLE} further implies, that the Maximum Likelihood Problem is the M-Projection (see Chapter~8 in \cite{koller_probabilistic_2009}) of a distribution $\gendistribution$ onto a set $\Gamma$ of probability tensors is}
-\begin{align}
-    \tag{$\mathrm{P}_{\Gamma, \gendistribution}$}\label{prob:mProjection}
-    \argmax_{\probtensor\in\Gamma} \centropyof{\gendistribution}{\probtensor}
-\end{align}
-where the Maximum Likelihood Estimation is the special case $\gendistribution=\empdistribution$.
+\sect{Backward Map in Exponential Families}
 
+Let us now continue with the discussion of the backward map, which calculates to a maen parameter $\meanparamwith$ a canonical parameter $\canparamwith$, such that the corresponding member of the exponential family reproduced $\meanparamwith$.
 
 %% FROM NETWORK LEARNING
-The parameters optimizing the likelihood, will be shown to coincide with the backward mapping evaluated on the expectation of the sufficient statistics (see \theref{the:parEstToBackwardMap}).
-This is in most generality true for the parameters of the M-projection of any distribution onto the exponential family.
-We therefore investigate methods to compute the backward mapping, in most generality by alternating algorithms and in the special case of Markov Logic Networks by closed form representations.
-
+%The parameters optimizing the likelihood will be shown to coincide with the backward mapping evaluated on the expectation of the sufficient statistics (see \theref{the:parEstToBackwardMap}).
+%This is in most generality true for the parameters of the M-projection of any distribution onto the exponential family.
+%We therefore investigate methods to compute the backward mapping, in most generality by alternating algorithms and in the special case of Markov Logic Networks by closed form representations.
 
 %\begin{theorem}[Moment Matching Criteria]\label{the:MM}
-We have that $\canparam$ is a solution of the backward problem at $\genmean$, if and only if
-\[ \sbcontractionof{\expdist,\sencsstat}{\selvariable} = \genmeanat{\selvariable} \, . \]
 %\end{theorem}
-
-This contraction equation is called moment matching, since the moment of the empirical distribution is matched by the moment of the fitting distribution.
-
-We find one backward mapping as the dual problem to the forward mapping.
+%We find one backward mapping as the dual problem to the forward mapping.
 
 
 \subsect{Variational Formulation}
 
-The backward mapping to $\datameanat{\selvariable} = \sbcontractionof{\empdistribution,\sencsstat}{\selvariable}$ is Maximum Likelihood estimation and the solution of the maximum entropy problem.
+we now provide a variational characterization of
 
 \begin{theorem}
     \label{the:varBackward}
-    Let there be a sufficient statistic $\sstat$.
-    The map $\backwardmap: \rr^{\seldim}\rightarrow \rr^{\seldim}$ defined as
+    Let there be a statistic $\sstat$, which is minimal with respect to a boolean base measure $\basemeasure$.
+    The map $\backwardmap: \sbinteriorof{\genmeanset}\rightarrow\rr^{\seldim}$ defined as
     \begin{align*}
         \backwardmapof{\meanparam}
         = \argmax_{\canparam\in\rr^{\seldim}}  \sbcontraction{\meanparam,\canparam} - \cumfunctionof{\canparam} \, .
@@ -1366,23 +1388,32 @@ The backward mapping to $\datameanat{\selvariable} = \sbcontractionof{\empdistri
     The first order condition is therefore
     \[ \meanparamwith =  \forwardmapof{\canparam}[\selvariable] \]
     and any $\canparam$ satisfies this condition exactly when $\canparam=\backwardmapof{\meanparam}$ for a backward map.
+    We conclude the proof by noticing, that since $\meanparamwith$ is in the interior $\sbinteriorof{\genmeanset}$ we find by \theref{the:meanPolytopeInterior} a $\canparam$ such that the first order condition is met.
 \end{proof}
 
+%We have that $\canparam$ is a solution of the backward problem at $\genmean$, if and only if
+%\[ \sbcontractionof{\expdist,\sencsstat}{\selvariable} = \genmeanat{\selvariable} \, . \]
+%This contraction equation is called moment matching, since the moment of the empirical distribution is matched by the moment of the fitting distribution.
 
 \subsect{Interpretation by Maximum Likelihood Estimation}
 
 % Backward mapping
-Backward mapping coincides with the Maximum Likelihood Estimation Problem \eqref{prob:parameterMaxLikelihood}, when we take $\Gamma$ to the distributions in an exponential family $\expfamily$ for a sufficient statistic $\sstat$.
-
+Backward mapping coincides with the Maximum Likelihood Estimation Problem \eqref{prob:parameterMaxLikelihood}, when we take the hypothesis to be exponential family $\expfamily$. % for a sufficient statistic $\sstat$.
+We show this as a more general statement for M-projections onto exponential families.
+%We recall, that the Maximum likelihood estimation is the M-projection of the empirical distribution onto the exponential family.
 % Cross entropy
-The loss is the cross entropy between a distribution with $\meanparam$ and the distribution $\expdistof{(\sstat,\canparam,\basemeasure)}$.
+%The loss is the cross entropy between a distribution with $\meanparam$ and the distribution $\expdistof{(\sstat,\canparam,\basemeasure)}$.
 
 
 \begin{theorem}
     Let there be any exponential family, a mean parameter vector $\genmean\in\imageof{\forwardmap}$ and a backward map $\backwardmap$.
-    Then $\estcanparam=\backwardmapof{\genmean}$ is the parameter of the M-projection (Problem~\ref{prob:mProjection}) of any $\gendistribution$ with $\sbcontractionof{\sencsstat,\gendistribution}{\selvariable}=\genmeanat{\selvariable}$ on to $\expfamily$, that is
+    Then $\estcanparam=\backwardmapof{\genmean}$ is the canonical parameter to the solution of the M-projection (Problem~\ref{prob:mProjection}) of any $\gendistribution$ with
+    \begin{align*}
+        \sbcontractionof{\sencsstat,\gendistribution}{\selvariable}=\genmeanat{\selvariable}
+    \end{align*}
+    onto the exponential family, if
     \[ \expdistof{(\sstat,\estcanparam,\basemeasure)} \in \argmax_{\probtensor\in\expfamily} \centropyof{\gendistribution}{\probtensor}  \, . \]
-    In particular, if $\meanparam=\datamean$ for a data map $\datamap$, the backward map is a maximum likelihood estimator.
+    In particular, if we choose $\meanparamwith=\contractionof{\sencsstatwith,\empdistribution}{\selvariable}$ for an empirical distribution $\empdistribution$, the backward map is a maximum likelihood estimator.
 \end{theorem}
 \begin{proof}
     We exploit the variational characterization of the backward map by \theref{the:varBackward}, and first show that the objective coincides with the cross entropy between the distribution $\gendistribution$ and the respective member of the exponential family.
@@ -1398,9 +1429,22 @@ The loss is the cross entropy between a distribution with $\meanparam$ and the d
     \end{align*}
     This shows, that the backward map coincides with the M-projection onto $\Gamma=\expfamily$.
 
-    Further, if $\meanparam=\datamean$ for a data map $\datamap$, we have that the corresponding empirical distribution $\empdistribution$ satisfies $\sbcontractionof{\sencsstat,\empdistribution}{\selvariable}=\meanparamwith$.
-    The backward map of $\meanparam$ is therefore the M-projection of $\empdistribution$, which is with \lemref{lem:centropyMLE} the maximum likelihood estimator.
+    The second claim holds, since maximum likelihood estimation is a special instance of M-projection, when projecting $\empdistribution$.
+    In that case, we choose $\meanparamwith=\contractionof{\sencsstatwith,\empdistribution}{\selvariable}$.
+%    Further, if $\meanparam=\datamean$ for a data map $\datamap$, we have that the corresponding empirical distribution $\empdistribution$ satisfies $\sbcontractionof{\sencsstat,\empdistribution}{\selvariable}=\meanparamwith$.
+%    The backward map of $\meanparam$ is therefore the M-projection of $\empdistribution$, which is with \lemref{lem:centropyMLE} the maximum likelihood estimator.
 \end{proof}
+
+
+The backward mapping to $\datameanat{\selvariable} = \sbcontractionof{\empdistribution,\sencsstat}{\selvariable}$ is Maximum Likelihood estimation and the solution of the maximum entropy problem.
+
+
+%The Maximum Likelihood Problem with hypothesis by an emponential family is also called the M-Projection (see Chapter~8 in \cite{koller_probabilistic_2009}) of a distribution $\empdistribution$ onto a set $\expfamily$ of probability tensors.
+%\begin{align}
+%    \tag{$\mathrm{P}_{\Gamma, \gendistribution}$}\label{prob:mProjection}
+%    \argmax_{\probtensorin} \centropyof{\gendistribution}{\probtensor}
+%\end{align}
+%where the Maximum Likelihood Estimation is the special case $\gendistribution=\empdistribution$.
 
 
 %\begin{lemma}
@@ -1435,36 +1479,17 @@ The loss is the cross entropy between a distribution with $\meanparam$ and the d
 %\end{proof}
 
 
-%%\sect{Maximum Likelihood and Maximum Entropy for Exponential Families}
-%
-%Parameter Estimation is the M-Projection of a distribution onto the exponential family.
-%
-
-%% DONE BEFORE!
-%\begin{theorem}[\cite{wainwright_graphical_2008}]\label{the:parEstToBackwardMap}
-%	Given any probability distribution $\probat{\shortcatvariables}$ and a exponential family defined by the sufficient statistic $\sstat$, the M-Projection onto the family is the distribution $\probtensorof{(\sstat,\estcanparam,\basemeasure)}$ where
-%	\begin{align*}
-%		\estcanparam = \backwardmapof{\contractionof{\probtensor,\sencsstat}{\selvariable}} \, .
-%	\end{align*}
-%\end{theorem}
-%\begin{proof}
-%	$\contractionof{\probtensor,\sencsstat}{\selvariable}$ is in $\imageof{\forwardmap}$ and MLE has a variational characterization with maximum at the dual $\estcanparam$, see \cite{wainwright_graphical_2008}.
-%\end{proof}
-
-
-
-
 
 \subsect{Connection with Maximum Entropy}\label{sec:maxEntDuality}
 
 
-The Maximum entropy problem with respect to matching expected statistics $\genmean\in\genmeanset$
+The maximum entropy problem with respect to matching expected statistics $\genmean\in\genmeanset$ is the optimization problem
 \begin{align}
-    \tag{$\probtagtypeinst{\entropysymbol}{\sstat,\basemeasure,\genmean}$}\label{prob:maxEntropy}
-    \argmax_{\probtensor\in\Gamma^{\basemeasure}} \sentropyof{\probtensor} \quad \text{subject to} \quad
+    \tag{$\probtagtypeinst{\entropysymbol}{\sstat,\basemeasure,\genmean}$}\label{prob:maxEntropy} % Notation clash with cross-entropy!
+    \argmax_{\probtensor\in\bmrealprobof{\basemeasure}} \sentropyof{\probtensor} \quad \text{subject to} \quad
     \sbcontractionof{\probtensor,\sencsstat}{\selvariable} =  \genmeanat{\selvariable}
 \end{align}
-where the optimization is over all the distributions $\Gamma^{\basemeasure}$, which are representable with respect to the base measure $\basemeasure$.
+where by $\bmrealprobof{\basemeasure}$ we denote all distributions, which are representable with respect to a base measure $\basemeasure$.
 
 \begin{theorem}
     \label{the:maxEntInterior}
@@ -1510,7 +1535,13 @@ Instead, in combination with the base measure refinement \algoref{alg:baseMeasur
     Then, the distribution $\expdistof{(\secsstat,\estcanparam,\secbasemeasure)}$, where $\estcanparam=\backwardmapwrtof{\secsstat,\secbasemeasure}{\secmeanparam}$, solves \probref{prob:maxEntropy}.
 \end{theorem}
 \begin{proof}
-    \theref{the:baseMeasureRefinement} and the above Lemma.
+    By \theref{the:baseMeasureRefinement}, a distribution $\probtensor$ is feasible for the problem \probref{prob:maxEntropy} if and only if
+    \begin{align*}
+        \contractionof{\probwith,\sencodingofat{\secsstat}{\shortcatvariables,\secselvariable}} = \secmeanparam[\secselvariable] \, .
+    \end{align*}
+    Therefore, a distribution solves the maximum entropy problem for $\sstat$ and $\meanparam$, if and only if it solves the maximum entropy problem for $\secsstat$ and $\secmeanparam$.
+    Since \theref{the:baseMeasureRefinement} further ensures, that $\secmeanparam\in\sbinteriorof{\meansetof{\secsstat,\secbasemeasure}}$, the claim follows from \theref{the:maxEntInterior}.
+%    \theref{the:baseMeasureRefinement} and the above Lemma.
 \end{proof}
 
 % Minimality of the refined base measure
@@ -1553,7 +1584,7 @@ This highlights the fact, that the maximum entropy distribution does not vanish 
 
 
 
-\subsect{Alternating Algorithms to Approximate the Backward Map}\label{sec:alternatingBackwardMap}
+\subsect{Approximation by alternating algorithms}\label{sec:alternatingBackwardMap}
 
 
 While the forward map always has a representation in closed form by contraction of the probability tensor, the backward map in general fails to have a closed form representation.
@@ -1572,7 +1603,7 @@ This condition is equal to the collection of moment matching equations % (see \t
 
 \begin{lemma}
     \label{lem:mmContractionEquation}
-    For any sufficient statistic $\sstat$ a parameter vector $\canparam$ and a $\selindexin$ we define
+    For any sufficient statistic $\sstat$ a parameter vector $\canparam$ and an index $\selindexin$ we define
     \begin{align*}
         \hypercoreat{\catvariableof{\sstatcoordinateof{\selindex}}}
         = \contractionof{\{\sstatcc\}\cup\{\headcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}}{\catvariableof{\sstatcoordinateof{\selindex}}} \, .
