@@ -495,7 +495,7 @@ and
 
 
 \begin{theorem}
-	Let $\formulaset$ be a formulaset and $\canparam$ a positive parameter vector.
+	Let $\formulaset$ be a formula set and $\canparam$ a positive parameter vector.
 	If the formula
 		\[ \kb = \bigwedge_{\exformulain} \exformula \]
 	is satisfiable we have in the limit $\invtemp\rightarrow\infty$ the coordinatewise convergence
@@ -526,42 +526,22 @@ and
 		\[ \normationof{\kb}{\shortcatvariables} \, . \]
 \end{proof}
 
+% Generalization to face base measures
+We here assumed, that the conjunction $\kb$ of the formulas in $\formulaset$ is satisfiable, and showed, that the markov logic network converges in the limit of large weights to the uniform distribution of the models of $\kb$.
+In \charef{cha:networkReasoning} we will drop this assumption and show that the limit is the face base measure associated with the corresponding face of the mean parameter polytope.
+The face base measure coincides thereby with $\kb$, if $\kb$ is satisfiable.
 
-\begin{remark}[More generic situation of simulated annealing]
-	The process of taking $\invtemp\rightarrow\infty$ is known as simulated annealing, see \charef{cha:probReasoning}.
-	From the discussion there we have the more general statement, that the limiting distribution is the uniform distribution among the maxima of $\expdistofat{(\formulaset,\canparam)}{\shortcatvariables}$.
-	If the formula $\kb$ is not satisfiable the normation $\normationofwrt{\kb}{\shortcatvariables}{\varnothing}$ does not exist and the limit distribution has another syntactical representation, to be gained e.g. by minterm or maxterm representation (see Theorem~\ref{the:tensorToMaxMinTerms}).
-\end{remark}
-
-
-
-
-
-%To make this convergence precise, we define the uniform distribution 
-%\begin{align}
-%	\expdistofat{\kb}{\datapoint}
-%	= \begin{cases} 
-%	\frac{1}{\braket{\rencodingof{\kb},\ones}} & \text{if } \braket{\rencodingof{\kb},\datapoint} = 1 \\
-%	0 &  \text{if } \braket{\rencodingof{\kb},\datapoint} = 0
-%	\end{cases}
-%\end{align}
-
-%\begin{theorem}
-%	Given a MLN parameterized by $\mlnparameters$, we have for $\lambda\rightarrow\infty$
-%		\[ \kldivof{\expdistofat{(\formulaset,\lambda\cdot\weight)}{\datapoint}}{\expdistofat{\kb}{\datapoint}} \rightarrow 0 \, .\]
-%\end{theorem}
-%\begin{proof}
-%	Follows directly from the convergence at each core.
-%\end{proof}
-
-
-
+%\begin{remark}[More generic situation of simulated annealing]
+%	The process of taking $\invtemp\rightarrow\infty$ is known as simulated annealing, see \charef{cha:probReasoning}.
+%	From the discussion there we have the more general statement, that the limiting distribution is the uniform distribution among the maxima of $\expdistofat{(\formulaset,\canparam)}{\shortcatvariables}$.
+%	If the formula $\kb$ is not satisfiable the normation $\normationofwrt{\kb}{\shortcatvariables}{\varnothing}$ does not exist and the limit distribution has another syntactical representation, to be gained e.g. by minterm or maxterm representation (see Theorem~\ref{the:tensorToMaxMinTerms}).
+%\end{remark}
 
 
 \subsect{Tensor Network Representation}
 
 Hard Logic Network coincide with Knowledge Bases and are thus representable by contractions of formulas (which can be interpreted as an effective calculus scheme, see \secref{sec:effectiveCalculus}).
-We use $\land$ symmetry to represent them as a contraction of the formulas building the Knowledge Base as conjunction.
+
 
 \begin{theorem}[Conjunction Decomposition of Knowledge Bases]\label{the:conDecKB}
 	For a Knowledge Base
@@ -572,23 +552,24 @@ We use $\land$ symmetry to represent them as a contraction of the formulas build
 		\[ \kbat{\shortcatvariables} = \contractionof{\{\formulaccwith \, : \, \formula\in\formulaset\} \cup \{\tbasisat{\formulavar} \, : \, \formula\in\formulaset\} }{\shortcatvariables} \, .  \]
 \end{theorem}
 \begin{proof}
-	By the $\land$-symmetry, see effective calculus and 
-		\[ \formulaat{\shortcatvariables} =  \contractionof{\{\formulaccwith,\tbasisat{\formulavar}\}}{\shortcatvariables} \]
+	This follows from the representation of conjunctions by contraction (see \secref{sec:effectiveCalculus}) and
+%	By the $\land$-symmetry, see effective calculus and
+		\[ \formulaat{\shortcatvariables} =  \contractionof{\formulaccwith,\tbasisat{\formulavar}}{\shortcatvariables} \, .\]
 \end{proof}
 
-\begin{remark}{$\land$ symmetry does not generalize to Markov Logic Networks}
+We call this representation scheme the $\land$-symmetry, since we can either represent $\kb$ by instantiation of $\rencodingof{\kb}$, which involves a relational encoding of the conjunction $\land$, or by instantiations of a collection of $\rencodingof{\formula}$.
+We use the $\land$ symmetry to represent them as a contraction of the formulas building the Knowledge Base as conjunction.
+
+\begin{remark}{$\land$ symmetry does not generalize to Markov Logic Networks} % Strange -> Drop?
 	% Comparison to Markov Logic
-	In Markov Logic, similar decompositions are not possible.
+	In Markov Logic Networks, similar decompositions are not possible.
 	For example, consider a MLN with a single formula $\atomicformulaof{0}\land\atomicformulaof{1}$ and nonvanishing weight $\canparam$.
 	This does not coincide with the distribution of a MLN of two formulas $\atomicformulaof{0}$ and $\atomicformulaof{1}$.
 	To see this, we notice that with respect to the distribution of the first MLN, both variables are not independent, while for any MLN constructed by the two atomic formulas they are.
+	% Can also be understood based on non-elementary contraction of $\land$ !
 \end{remark}
 
 
-%It is known, that there are symmetries in the syntactical represention of Knowledge Bases.
-%
-%There is a lot of redundancy in the activation of Knowledge Cores describing exactly the same models.
-%
 %\begin{theorem}[$\land$-symmetry]\label{the:landSymmetry}
 %	We observe that the contraction of an $\land$ core with $\tbasis$  is equivalent with $\tbasis$ cores on all the connected subformulas.
 %\end{theorem}
@@ -609,13 +590,6 @@ We use $\land$ symmetry to represent them as a contraction of the formulas build
 %One tensor representation of a Knowledge Base is the association of the Knowledge Core $\tbasis$ at the formula being the Knowledge Base itself.
 %We can use the $\land$ symmetry (Theorem~\ref{the:landSymmetry}) to propagate $\tbasis$ to all clause cores and get an alternative representation.
 %Those are especially interesting when using Modus Ponens/Resolution as local sub-KB reasoners (see \secref{subsec:LocalEntailment}).
-
-
-%\subsect{Polynomial Representation}
-
-
-
-
 
 \sect{Hybrid Logic Network}
 
@@ -944,7 +918,3 @@ A more general class of problems, which have natural representations by Hard Log
 Solving such problems is then equivalent to sampling from the worlds in a logical interpretation, and can be approached by the methods of \charef{cha:logicalReasoning}.
 Among these classed, we have only discussed the Sudoku game in Example~\ref{exa:sudoku}.
 Extensions by Hybrid Logic Networks can be interpreted as implementations of preferences among possible solutions by probabilities.
-
-
-
-

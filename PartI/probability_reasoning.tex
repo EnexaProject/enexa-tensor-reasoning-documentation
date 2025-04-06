@@ -516,8 +516,21 @@ The differences of both are discussed in Chapter~8 in \cite{koller_probabilistic
 \sect{Polytope of mean parameters}
 
 
+\begin{figure}[t!]
+    \begin{center}
+        \input{PartI/tikz_pics/probability_reasoning/meanset_sketch_generic.tex}
+    \end{center}
+    \caption{Sketch of the mean polytope ${\hlnmeanset}$ to a statistic $\sstat$, which is minimal with respect to $\basemeasure$.
+    The mean polytope is a bounded subset of $\rr^\seldim$ (here sketched as a 2-dimensional projection), where each mean parameter in in one of the three cases $\meanparamof{1},\meanparamof{2}$ or $\meanparamof{3}$.
+    For any extreme point $\meanparamof{1}$ we find $\shortcatindices$ such that $\meanparamofat{1}{\selvariable}=\sencsstatat{\indexedshortcatvariables,\selvariable}$.
+    Non-extreme points $\meanparamof{2}$ outside the interior are not reproduced by a member of the exponential family $\expfamily$, but by a member of the family $\expfamilyof{\sstat,\secbasemeasure}$ where $\secbasemeasure$ is a refined base measure deterimined by \algoref{alg:baseMeasureRefinement}.
+%are reproducable by Hybrid Logic Networks with statistic $\mlnstat$ and refined base measure $\secbasemeasure$.
+    Interior points $\meanparamof{3}\in\interiorof{\hlnmeanset}$ are reproducable by a member of $\expfamily$, which canonical parameter is found by the backward map.
+    }\label{fig:meansetSketchGeneric}
+\end{figure}
+
 %% Mean parameters are expectation queries
-To prepare for the discussion of forward and backward inference in exponential families, we in this section investigate the polytope of mean parameters.
+To prepare for the discussion of forward and backward inference in exponential families, we in this section investigate the polytope of mean parameters, sketched in \figref{fig:meansetSketchGeneric}.
 Given a pair of a statistic $\sstat:\facstates\rightarrow\simpleparspace$ and a boolean base measure $\basemeasurewith$, the polytope of mean parameters is the set (see \defref{def:meanForwardBackward})
 \begin{align*}
     \genmeanset
@@ -662,6 +675,17 @@ The determination of the half-space parametrizing $\halfspaceparams$ is, however
 
 \subsect{Characterization of the boundary by faces}
 
+\begin{figure}[t!]
+    \begin{center}
+        \input{PartI/tikz_pics/probability_reasoning/meanset_sketch_face.tex}
+    \end{center}
+    \caption{Sketch of a face $\genfacesetof{\canparam}$ to the normal $\canparamwith$.
+    The face is characterized by those mean parameters in $\genmeanset$, which maximize the contraction with $\canparamwith$.
+    The sketched distance of the origin $\zerosat{\canparam}$ of $\rr^{\seldim}$ to the affine hull of the face is further related to the maximal contraction.
+    }\label{fig:meansetSketchFace}
+\end{figure}
+
+
 Let us now continue with the investigation of the faces of the mean parameter polytope, which we define analogously to Def.~2.1 in \cite{ziegler_lectures_2013}.
 
 \begin{definition}
@@ -701,7 +725,7 @@ We can further understand this equation as two half-space inequalities
 which can be integrated into any half-space representation.
 We conclude, that in the case of non-minimal statistics, the whole polytope $\genmeanset$ is a face itself, since it satisfies these half-space inequalities sharply.
 
-Let us now investigate, that subsets of $\genmeanset$ are the solutions of linear optimization problems constrained on $\genmeanset$.
+Let us now investigate, that faces of $\genmeanset$ are the solutions of linear optimization problems constrained on $\genmeanset$ (see \figref{fig:meansetSketchFace}).
 Since such solution sets are intersections of the boundary of $\genmeanset$ with half-spaces, they are faces.
 In the next theorem we show, how linear optimization problems are constructed to match a given face.
 
@@ -768,7 +792,7 @@ As we show next, also a converse statement holds, namely that for any vector $\c
 \end{proof}
 
 % Notation
-%In a slide abuse of notation, we denote in this case $\genfacesetof{\canparam} = \genfacesetof{\facecondset}$.
+In a slide abuse of notation, we denote in this case $\genfacesetof{\canparam} = \genfacesetof{\facecondset}$.
 
 \subsect{Face characterization by mode queries}
 
@@ -868,6 +892,13 @@ Each face of $\genmeanset$ thus defines a refinement of a base measure, which is
         = \indicatorofat{\cansstatcatindicesargmax}{\shortcatvariables} \, .
     \end{align*}
 \end{definition}
+
+% Also interesting: The mean parameter of face base measures, giving a weighted center of the face, which is the limit of the mean parameter to the annealed canonical parameter.
+The mean parameter to the normalized face base measure is
+\begin{align*}
+    \meanparam(\genfacesetof{\canparam}) = \contractionof{\sencsstatwith,\normationof{\basemeasureof{\sstat,\canparam}}{\shortcatvariables}}{\selvariable} \, .
+\end{align*}
+This quantity will be interesting as the limit of annealing (see \charef{cha:probReasoning}).
 
 \theref{the:faceToArgmax} implies that any mean parameter on a face of $\genmeanset$ can be reproduced with a distribution representable with respect to the refined base measure
 \begin{align*}
