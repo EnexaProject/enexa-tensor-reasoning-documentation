@@ -611,55 +611,7 @@ We use $\land$ symmetry to represent them as a contraction of the formulas build
 %Those are especially interesting when using Modus Ponens/Resolution as local sub-KB reasoners (see \secref{subsec:LocalEntailment}).
 
 
-\subsect{Polynomial Representation}
-
-We now apply the representation symmetries to represent a propositional Knowledge Base in conjunctive normal form.
-A Knowledge Base in Conjunctive Normal Form is a conjunction of clauses, where clauses are disjunctions of literals being atoms (positive literals) or negated atoms (negative literals).
-
-Formulas can be represented as sparse polynomials, which will be discussed in more detail in \charef{cha:sparseCalculus} (see \defref{def:polynomialSparsity}).
-
-\begin{lemma}\label{lem:clauseTermBasisPlus}
-	Any term is representable by a single monomial and any clause is representable by at most two monomials. %, any term of basis+ with rank 1. %Use also \baspluscprankof{}
-\end{lemma}
-\begin{proof}
-	Let $\nodes_0$ and $\nodes_1$ be disjoint subsets of $\nodes$, then we have
-	\begin{align*}
-		\termof{\nodes_0}{\nodes_1} = \onehotmapofat{
-			\{\catindexof{\atomenumerator} = 0 : \atomenumerator\in\nodes_0\} \cup \{\catindexof{\atomenumerator} = 1 : \atomenumerator\in\nodes_1\}
-		}{\catvariableof{\nodes_0\cup\nodes_1}} \otimes \onesat{\catvariableof{\nodes/(\nodes_0\cup\nodes_1)}}
-	\end{align*}
-	and
-	\begin{align*}
-		\clauseof{\nodes_0}{\nodes_1} = \onesat{\catvariableof{\nodes}} - \onehotmapofat{
-			\{\catindexof{\atomenumerator} = 0 : \atomenumerator\in\nodes_0\} \cup \{\catindexof{\atomenumerator} = 1 : \atomenumerator\in\nodes_1\}
-		}{\catvariableof{\nodes_0\cup\nodes_1}}
-		\otimes \onesat{\catvariableof{\nodes/(\nodes_0\cup\nodes_1)}} \, . 
-	\end{align*}
-	We notice, that any tensors $\ones$ and $\onehotmapof{\catindex}\otimes \ones$ habe basis+-rank of $1$ and therefore $\termof{\nodes_0}{\nodes_1}$ of $1$ and $\clauseof{\nodes_0}{\nodes_1}$ of at most $2$.
-\end{proof}
-
-
-We apply \lemref{lem:clauseTermBasisPlus} to show the following sparsity bound on the energy tensor of Markov Logic Networks.
-
-\begin{theorem}
-	Any formula $\exformula$ with a conjunctive normal form of $n$ clauses satisfies
-		\[ \slicesparsityof{\exformula} \leq 2^{n} \, . \]
-	For any set $\formulaset$ of formulas each with a conjunctive normal form of $n_{\exformula}$ clauses satisfies for any $\weight$
-		\[ \slicesparsityof{\sum_{\exformulain}\weightof{\exformula}\cdot\exformula} \leq \sum_{\exformulain}2^{n_{\exformula}} \, . \]
-\end{theorem}
-\begin{proof}
-	Let $\exformula$ have a CNF with clauses indexed by $l\in[n]$ and each clause represented by subsets $\nodes_0^l, \nodes_1^l$, that is
-		\[ \exformula = \bigwedge_{l \in [n]}  \clauseof{\nodes_0^l}{\nodes_1^l} \, . \]
-	We now use the rank bound of Theorem~\ref{the:CPrankContractionBound} and \lemref{lem:clauseTermBasisPlus} to get
-	\begin{align*}
-		\slicesparsityof{\exformula} \leq \prod_{l \in [n]}  \slicesparsityof{\clauseof{\nodes_0^l}{\nodes_1^l}} \leq 2^n \, . 
-	\end{align*}
-	
-	Given a collection of formulas $\formulaset$, each with a CNF of $n_{\exformula}$ clauses we apply Theorem~\ref{the:CPrankSumBound} and get
-	\begin{align*}
-		\slicesparsityof{\sum_{\exformulain}\weightof{\exformula}\cdot\exformula} \leq \sum_{\exformulain}\slicesparsityof{\exformula} \leq \sum_{\exformulain}2^{n_{\exformula}} \, . 
-	\end{align*}
-\end{proof}
+%\subsect{Polynomial Representation}
 
 
 
@@ -863,6 +815,93 @@ Hybrid Logic Networks extend the expressivity result of Theorem~\ref{the:minterm
 		&= \prod_{\selindexof{[\catorder]}} \expof{\canparamat{\selvariableof{[\catorder]}=\selindexof{[\catorder]}} \cdot \mintermofat{\selindexof{[\catorder]}}{\indexedshortcatvariables}} \\
 		&=  \expof{\canparamat{\selvariableof{[\catorder]}=\shortcatindices}} \\
 		&=  \probat{\indexedshortcatvariables} \, .
+	\end{align*}
+\end{proof}
+
+
+
+\sect{Polynomial Representation}
+
+%We now apply the representation symmetries to represent a propositional Knowledge Base in conjunctive normal form.
+We now sparse representation formats for the introduced logic networks, namely the basis+ $\cpformat$ format introduced in \charef{cha:sparseCalculus} which are understood as polynomial decompositions.
+First of all, we establish a sparsity result for terms and clauses (see \defref{def:clauses}).
+
+\begin{lemma}\label{lem:clauseTermBasisPlus}
+	Any term is representable by a single monomial and any clause is representable by a sum of at most two monomials. %, any term of basis+ with rank 1. %Use also \baspluscprankof{}
+\end{lemma}
+\begin{proof}
+	Let $\nodes_0$ and $\nodes_1$ be disjoint subsets of $\nodes$, then we have
+	\begin{align*}
+		\termof{\nodes_0}{\nodes_1} = \onehotmapofat{
+			\{\catindexof{\atomenumerator} = 0 : \atomenumerator\in\nodes_0\} \cup \{\catindexof{\atomenumerator} = 1 : \atomenumerator\in\nodes_1\}
+		}{\catvariableof{\nodes_0\cup\nodes_1}} \otimes \onesat{\catvariableof{\nodes/(\nodes_0\cup\nodes_1)}}
+	\end{align*}
+	and
+	\begin{align*}
+		\clauseof{\nodes_0}{\nodes_1} = \onesat{\catvariableof{\nodes}} - \onehotmapofat{
+			\{\catindexof{\atomenumerator} = 0 : \atomenumerator\in\nodes_0\} \cup \{\catindexof{\atomenumerator} = 1 : \atomenumerator\in\nodes_1\}
+		}{\catvariableof{\nodes_0\cup\nodes_1}}
+		\otimes \onesat{\catvariableof{\nodes/(\nodes_0\cup\nodes_1)}} \, .
+	\end{align*}
+	We notice, that any tensors $\ones$ and $\onehotmapof{\catindex}\otimes \ones$ habe basis+-rank of $1$ and therefore $\termof{\nodes_0}{\nodes_1}$ of $1$ and $\clauseof{\nodes_0}{\nodes_1}$ of at most $2$.
+\end{proof}
+
+A formula in conjunctive normal form is a conjunction of clauses, where clauses are disjunctions of literals being atoms (positive literals) or negated atoms (negative literals).
+Based on these normal forms, we show representations of formulas as sparse polynomials. %, which will be discussed in more detail in \charef{cha:sparseCalculus} (see \defref{def:polynomialSparsity}).
+We apply \lemref{lem:clauseTermBasisPlus} to show the following sparsity bound. % on the energy tensor of Markov Logic Networks.
+
+\begin{theorem}\label{the:formulaSlicePolynomialDecomposition}
+	Any formula $\exformula$ with a conjunctive normal form of $\clausedim$ clauses satisfies
+		\[ \slicesparsityof{\exformula} \leq 2^{\clausedim} \, . \]
+\end{theorem}
+\begin{proof}
+	Let $\exformula$ have a conjunctive normal form with clauses indexed by $\clauseenumeratorin$ and each clause represented by subsets $\nodes_0^\clauseenumerator, \nodes_1^\clauseenumerator$, that is
+		\[ \exformula = \bigwedge_{\clauseenumeratorin} \clauseof{\nodes_0^\clauseenumerator}{\nodes_1^\clauseenumerator} \, . \]
+	We now use the rank bound of \theref{the:CPrankContractionBound} and \lemref{lem:clauseTermBasisPlus} to get
+	\begin{align*}
+		\slicesparsityof{\exformula} \leq \prod_{\clauseenumeratorin} \slicesparsityof{\clauseof{\nodes_0^\clauseenumerator}{\nodes_1^\clauseenumerator}} \leq 2^{\clausedim} \, .
+	\end{align*}
+\end{proof}
+
+We apply this result on the sparse representation of a single formula to derive sparse representations for Hard Logic Networks and the energy tensor of Hybrid Logic Networks.
+Both results use in addition to \theref{the:formulaSlicePolynomialDecomposition} sparsity bounds, which are shown by explicit representation construction in \charef{cha:sparseCalculus}.
+
+\begin{corollary}
+	Any Hard Logic Network $\hardformulaset$ obeys
+	\begin{align*}
+		\slicesparsityof{\hardformulaset} \leq \prod_{\exformula\in\hardformulaset} 2^{\clausedimof{\exformula}}
+\end{align*}
+\end{corollary}
+\begin{proof}
+	We apply the contraction bound \theref{the:CPrankContractionBound} for the decomposition
+	\begin{align*}
+		\kbat{\shortcatvariables} = \contractionof{\{\formulaat{\shortcatvariables} \, : \, \formula\in\hardformulaset\}}{\shortcatvariables}
+	\end{align*}
+	and get
+	\begin{align*}
+		\slicesparsityof{\kb} \leq \prod_{\formula\in\hardformulaset} \slicesparsityof{\formula} \, .
+	\end{align*}
+	The claimed bound follows with \theref{the:formulaSlicePolynomialDecomposition}.
+\end{proof}
+
+\begin{corollary}
+	The energy tensor of a Hybrid Logic Network with statistic $\mlnstat$
+	\begin{align*}
+		\slicesparsityof{\contractionof{\sencmlnstatwith,\canparamwith}{\shortcatvariables}} \leq \sum_{\selindexin\,:\,\canparamat{\indexedselvariable}\neq0} 2^{\clausedimof{\enumformula}} \, .
+	\end{align*}
+	where $\clausedimof{\enumformula}$ denotes the number of clauses in a conjunctive normal form of $\enumformula$.
+\end{corollary}
+\begin{proof}
+	We decompse the energy into the sum
+	\begin{align*}
+		\contractionof{\sencmlnstatwith,\canparamwith}{\shortcatvariables}
+		= \sum_{\selindexin\,:\,\canparamat{\indexedselvariable}\neq0} \canparamat{\indexedselvariable} \cdot \enumformulawith
+	\end{align*}
+	and apply \theref{the:CPrankSumBound} to get
+	\begin{align*}
+		\slicesparsityof{\contractionof{\sencmlnstatwith,\canparamwith}{\shortcatvariables}}
+		\leq \sum_{\selindexin\,:\,\canparamat{\indexedselvariable}\neq0} \slicesparsityof{\enumformulawith}
+		\leq \sum_{\selindexin\,:\,\canparamat{\indexedselvariable}\neq0}2^{\clausedimof{\enumformula}} \, .
 	\end{align*}
 \end{proof}
 
