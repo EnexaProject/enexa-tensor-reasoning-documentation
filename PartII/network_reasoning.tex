@@ -1,14 +1,19 @@
 \chapter{\chatextnetworkReasoning}\label{cha:networkReasoning}
 
 In this chapter we investigate the inference properties of Hybrid Logic Networks starting with characterizations of its mean parameter polytopes.
-We first investigate unconstrained parameter estimated for Markov Logic Networks and Hybrid Logic Networks, which are special cases of the backward maps introduced in \charef{cha:probRepresentation}.
-We then motivate structure learning based on sparsity constraints on the parameters on the minterm family and present heuristic strategies leading to efficient structure learning algorithms.
+We investigate unconstrained parameter estimated for Markov Logic Networks and Hybrid Logic Networks, which are special cases of the backward maps introduced in \charef{cha:probRepresentation}.
+We then motivate structure learning based on sparsity constraints on the parameters on the minterm exponential family and present heuristic strategies leading to efficient structure learning algorithms.
 
 \sect{Mean parameters of Hybrid Logic Networks}
 
-The convex polytope of realizable mean parameters (see \defref{def:meanForwardBackward}) is for a statistic $\formulaset$ of propositional formulas and a base measure $\basemeasure$
-	\[ \hlnmeanset = \left\{ \sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable} \, : \, \probtensor\in\bmrealprobof{\basemeasure} \right\} \, ,\]
-where by $\probtensorset$ we denote the set of all probability distributions.
+% Polytope
+While mean parameter polytopes $\genmeanset$ to generic exponential families have been subject to \charef{cha:probReasoning}, we in this section restrict to the mean polytopes of hybrid logic networks, which we characterize using propositional logics.
+Hybrid Logic Networks are exponential families, which statistic $\sstat$ consists of coordinates with $\imageof{\sstatcoordinateof{\selindex}}\subset\ozset$ and are therefore propositional formulas.
+The convex polytope of mean parameters (see \defref{def:meanForwardBackward}) is for a statistic $\mlnstat$ of propositional formulas and a base measure $\basemeasure$
+\begin{align*}
+	\hlnmeanset = \left\{ \sbcontractionof{\probtensor,\sencmlnstat}{\selvariable} \, : \, \probtensor\in\bmrealprobof{\basemeasure} \right\} \, ,
+\end{align*}
+where by $\bmrealprobof{\basemeasure}$ we denote the set of all by $\basemeasure$ representable probability distributions.
 By \theref{the:meanPolytopeConvHull} the convex polytope has a characterization as a convex hull
 \begin{align}\label{eq:hlnMeansetConvCharacterization}
 	\hlnmeanset
@@ -16,56 +21,54 @@ By \theref{the:meanPolytopeConvHull} the convex polytope has a characterization 
 \end{align}
 
 % 0/1 Polytopes
-The mean parameter polytopes are examples of $0/1$-polytopes \cite{ziegler_lectures_2000,gillmann_01-polytopes_2007}, from which a few obvious properties follow.
+We notice, that all $\sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable}$ are boolean vectors in $\rr^{\seldim}$.
+The mean parameter polytopes are thus of $0/1$-polytopes \cite{ziegler_lectures_2000,gillmann_01-polytopes_2007}, from which a few obvious properties follow.
 Since those are convex subsets of the cube $[0,1]^p$, which extreme points are all binary vectors, also each $\sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable}$ (with $\basemeasureat{\indexedshortcatvariables}=1$) is an extreme point.
-Further, if for any $\selindexin$ we have $\meanparamat{\indexedselvariable}\in\{0,1\}$, then $\meanparamat{\selvariable}$ is in the boundary of the cube and thus also of $\hlnmeanset$
+Further, if for any $\selindexin$ we have $\meanparamat{\indexedselvariable}\in\{0,1\}$, then $\meanparamwith$ is in the boundary of the cube and thus also of $\hlnmeanset$
 
-To summarize some insights:
-\begin{itemize}
-	\item If all mean parameters in $\{0,1\}$ then an extreme points, exactly those are hard logic networks
-	\item If some mean params in $\{0,1\}$, then not in the interior. 
-		Back direction not correct: There are interior points where no coordinate in $\{0,1\}$.
-	\item If in the interior after dropping the hard coordinates: Then a hybrid logic network
-\end{itemize}
 
 \subsect{Extreme points by hard logic networks}
 
-We exploit this characterization to show, that the extreme points of $\hlnmeanset$ are exactly those realizable by Hard Logic Networks.
+We exploit this characterization to show, that the extreme points of $\hlnmeanset$ are exactly those reproducable by Hard Logic Networks.
 
 \begin{theorem}\label{the:extremeCharacterizationHLN}
-	Any parameter $\meanparamat{\selvariable}\in\hlnmeanset$ is an extreme point of $\hlnmeanset$, if and only $\meanparamat{\selvariable}$ is boolean and the formula
-			\[ \basemeasureofat{\formulaset,\meanparam}{\shortcatvariables} 
-			\coloneqq \bigwedge_{\selindexin} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables} \]
+	Any parameter $\meanparamwith\in\hlnmeanset$ is an extreme point of $\hlnmeanset$, if and only if $\meanparamwith$ is boolean and the formula
+	\begin{align*}
+		 \basemeasureofat{\formulaset,\meanparam}{\shortcatvariables} 
+			\coloneqq \bigwedge_{\selindexin} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables}
+	\end{align*}
 	is satisfiable.
 	In that case, $\meanparam$ is the mean parameter of the Hard Logic Network with formulas
-		\[ \kb=\{\lnot^{(1-\meanparamat{\indexedselvariable})} \enumformula \, : \, \selindexin \} \, , \]
+	\begin{align*}
+		\kb=\{\lnot^{(1-\meanparamat{\indexedselvariable})} \enumformula \, : \, \selindexin \} \, , 
+	\end{align*}
 	where we denote by $\lnot^0$ the identity connective and by $\lnot^1=\lnot$ the logical negation.
 \end{theorem}
 \begin{proof}
 	\proofrightsymbol: Let $\meanparam$ be an extreme point of $\hlnmeanset$. 
 		Since by \eqref{eq:hlnMeansetConvCharacterization} $\hlnmeanset$ is a convex hull of vectors, there exists a $\shortcatindices\in\atomstates$ such that
-			\[ \meanparamat{\selvariable} = \sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable}  \, . \]
-		By definition of $\sencodingof{\formulaset}$, $\meanparamat{\selvariable}$ is a boolean vector and for any $\selindexin$ we have
+			\[ \meanparamwith = \sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable}  \, . \]
+		By definition of $\sencmlnstat$, $\meanparamwith$ is a boolean vector and for any $\selindexin$ we have
 			\[ \enumformulaat{\indexedshortcatvariables} = \meanparamat{\indexedselvariable} \]
 		and thus
-			\[ \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\indexedshortcatvariables} = 1 \, .  \]
+			\[ \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\indexedshortcatvariables} = 1\, .  \]
 		It follows that $\shortcatindices$ is also a model of $\basemeasureof{\formulaset,\meanparam}$ and $\basemeasureof{\formulaset,\meanparam}$ is satisfiable.
 			
-	\proofleftsymbol: To show the converse direction, let $\meanparamat{\selvariable}$ be a boolean vector such that $\basemeasureof{\formulaset,\meanparam}$ is satisfiable.
+	\proofleftsymbol: To show the converse direction, let $\meanparamwith$ be a boolean vector such that $\basemeasureof{\formulaset,\meanparam}$ is satisfiable.
 		Then there exists a model $\shortcatindices$ of $\basemeasureof{\formulaset,\meanparam}$.
 		We have for any $\selindexin$ 
 			\[ \sencodingofat{\formulaset}{\indexedshortcatvariables,\indexedselvariable} =  \enumformulaat{\indexedshortcatvariables} = \meanparamat{\indexedselvariable} \]
-		and thus $\meanparamat{\selvariable}=\sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable}$.
-		With the characterization \eqref{eq:hlnMeansetConvCharacterization} this establishes in particular $\meanparamat{\selvariable}\in\hlnmeanset$.		
-		Since $\meanparamat{\selvariable}$ is boolean and therefore an extreme point of the cube $\cubeof{\seldim}$, it is also an extreme point of the subset $\hlnmeanset\subset\cubeof{\seldim}$.
+		and thus $\meanparamwith=\sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable}$.
+		With the characterization \eqref{eq:hlnMeansetConvCharacterization} this establishes in particular $\meanparamwith\in\hlnmeanset$.		
+		Since $\meanparamwith$ is boolean and therefore an extreme point of the cube $\cubeof{\seldim}$, it is also an extreme point of the subset $\hlnmeanset\subset\cubeof{\seldim}$.
 \end{proof}
 
 \subsect{Mean parameters in the interior}
 
 By \theref{the:meanPolytopeInterior} the interior points are those realizable by a Hybrid Logic Network with statistics $\mlnstat$ and base measure $\basemeasure$, as we state in the following Corollary.
 
-\begin{corollary}
-	If $\meanparamat{\selvariable}\in\interiorof{\hlnmeanset}$, or equivalently the statistic is minimal and $\meanparamat{\selvariable}$ is reproduceable by a distribution positive with respect to $\basemeasure$, then there is $\canparamat{\selvariable}$ such that $\expdistof{\formulaset,\canparam,\basemeasure}$ reproduces $\meanparamat{\selvariable}$.
+\begin{corollary}\label{cor:interiorCharacterizationHLN}
+	If $\meanparamwith\in\interiorof{\hlnmeanset}$, or equivalently the statistic is minimal and $\meanparamwith$ is reproduceable by a distribution positive with respect to $\basemeasure$, then there is $\canparamat{\selvariable}$ such that $\expdistof{\formulaset,\canparam,\basemeasure}$ reproduces $\meanparamwith$.
 \end{corollary}
 
 \subsect{Mean parameters outside the interior}
@@ -75,19 +78,19 @@ Instead, we in this section construct refined base measures $\secbasemeasure$ (r
 
 
 % Sufficient criterion for boundary: 0/1 coordinates
-First of all, we can use the criterion of mean parameter coordinates in $\{0,1\}$ as a sufficient condition for $\meanparamat{\selvariable}\notin\interiorof{\hlnmeanset}$.
+First of all, we can use the criterion of mean parameter coordinates in $\{0,1\}$ as a sufficient condition for $\meanparamwith\notin\interiorof{\hlnmeanset}$.
 In this case, the next theorem provides us with a procedure to refine the base measure in these cases.
 
 \begin{theorem}[Base measure refinement for mean coordinates in $\{0,1\}$]\label{the:hlnMeanPolytopeReduction}
-	To any $\meanparamat{\selvariable}\in\hlnmeanset$ we build the base measure 
+	To any $\meanparamwith\in\hlnmeanset$ we build the base measure 
 			\[ \basemeasureofat{\formulaset,\meanparam}{\shortcatvariables} \coloneqq \bigwedge_{\selindexin \, : \, \meanparamat{\indexedselvariable}\in\{0,1\}}
 		\lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables} \, . \]
-	Then any probability distribution reproducing $\meanparamat{\selvariable}$ has a representation with respect to the base measure
+	Then any probability distribution reproducing $\meanparamwith$ has a representation with respect to the base measure
 		\[ \secbasemeasureat{\shortcatvariables} =  \contractionof{\basemeasure,\basemeasureof{\formulaset,\meanparam}}{\shortcatvariables} \, . \]
 \end{theorem}
 \begin{proof}
 	Let $\probtensor$ be a distribution representable with respect to $\basemeasure$ and reproducing $\meanparam$, that is 
-		\[ \contractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable} = \meanparamat{\selvariable} \, . \]
+		\[ \contractionof{\probtensor,\sencmlnstat}{\selvariable} = \meanparamwith \, . \]
 	For any $\selindexin$, if $\meanparamat{\indexedselvariable}=1$ we have 
 		\[  \contraction{\probat{\shortcatvariables},\enumformulaat{\shortcatvariables}} =1 \]
 	and with \theref{the:probEntailment} probabilistic entailment $\probtensor\models\enumformula$ (see \defref{def:probEntailment}).
@@ -102,7 +105,7 @@ In this case, the next theorem provides us with a procedure to refine the base m
 
 % Reduction to non 0/1 coordinates, but still no guarantee to be in the interior
 By \theref{the:hlnMeanPolytopeReduction} we can reduce the statistics to the set $\formulaset^{\meanparam}=\{\enumformula\in\formulaset : \meanparamat{\indexedselvariable}\notin\{0,1\}\}$ and continue searching for a reproducing distribution, now for the reduced mean parameter with coordinates not in $\{0,1\}$.
-The criterion of mean parameter coordinates in $\{0,1\}$ is, however, not a necessary condition for $\meanparamat{\selvariable}\notin\interiorof{\hlnmeanset}$, see \exaref{exa:insufficentHLNsetExpressivity} for minimal representations where mean parameters outside the interior exist with coordinates not in $\{0,1\}$.
+The criterion of mean parameter coordinates in $\{0,1\}$ is, however, not a necessary condition for $\meanparamwith\notin\interiorof{\hlnmeanset}$, see \exaref{exa:insufficentHLNsetExpressivity} for minimal representations where mean parameters outside the interior exist with coordinates not in $\{0,1\}$.
 
 % Face base measure refinement as a generic approach
 Following a different approach, any mean parameter outside the interior of the mean parameter polytope is on a face of the polytope.
@@ -147,11 +150,46 @@ For hybrid logic network we characterize the face base measures in the next theo
 
 \subsect{Expressivity of Hybrid Logic Networks}
 
+% Summarize
+To summarize the above, we have characterized all the mean parameter vectors in $\hlnmeanset$ by their reproducing distributions, as sketched in \figref{fig:meansetSketch}.
+Extreme points in $\hlnmeanset$ are boolean mean parameter vectors and by \theref{the:extremeCharacterizationHLN} exactly those reproduced by hard logic networks.
+Points, which are neither extreme nor in the interior of $\hlnmeanset$, are reproduced by hybrid logic networks with a refined base measure $\secbasemeasure$. % Need to connect with base measure refinement algo?
+If the statistic $\mlnstat$ is minimal with respect to $\basemeasure$, then $\secbasemeasure$ does not coincide with $\basemeasure$.
+Finally, interior points are by \corref{cor:interiorCharacterizationHLN} those reproduced by a hybrid logic network with base measure $\basemeasure$.
+
+%% Mean parameter characterization
+%To summarize, for any $\meanparam\in\hlnmeanset$ we have one of the following (see \figref{fig:meansetSketch}):
+%\begin{itemize}
+%	\item $\meanparamat{\indexedselvariable}\in\interiorof{\hlnmeanset}$: Then reproducible by a Hybrid Logic Network with base measure $\basemeasure$ .
+%%		This follows from the classical result of Theorem~3.3 in \cite{wainwright_graphical_2008}.
+%	\item  $\meanparamat{\indexedselvariable}\notin\interiorof{\hlnmeanset}$:
+%		Then on a facet and reproducible by a Hybrid Logic Network with refined base measure $\secbasemeasure$.
+%		Whether the base measure can be realized by the computation network of $\fselectionmap$ depends on the satisfiability of the face formula.
+%\end{itemize}
+
+\begin{figure}[t!]
+\begin{center}
+	\input{PartII/tikz_pics/network_reasoning/meanset_sketch.tex}
+\end{center}
+\caption{Sketch of the mean polytope ${\hlnmeanset}$ to a statistic $\mlnstat$ which is minimal with respect to $\basemeasure$.
+	The mean polytope is a subset of the $\seldim$-dimensional cube $[0,1]^\seldim$ (here sketched as a 2-dimensional projection), where each mean parameter in in one of the three cases $\meanparam_1,\meanparam_2$ or $\meanparam_3$.
+	Extreme points $\meanparam_1\in\hlnmeanset\cap\{0,1\}^{\seldim}$ are those reproduceable by a Hard Logic Network given $\mlnstat$.
+	Non-extreme points outside the interior $\meanparam_2\in\hlnmeanset/(\interiorof{\hlnmeanset}\cup\{0,1\}^{\seldim})$ are reproducable by Hybrid Logic Networks with statistic $\mlnstat$ and refined base measure $\secbasemeasure$.
+	Interior points $\meanparam_3\in\interiorof{\hlnmeanset}$ are reproducable by a Hybrid Logic Network with statistic $\mlnstat$ and refined base measure $\secbasemeasure$.
+%	Any extreme point $\meanparam_1\in\hlnmeanset\cap\{0,1\}^{\seldim}$ is reproducable by a Hard Logic Network,
+%	while a non-extreme boundary point $\meanparam_2\in\hlnmeanset/\{0,1\}^{\seldim}$ is realizable by a Hybrid Logic Network.
+%	The boundary points $\meanparam_1,\meanparam_2\in\hlnmeanset/\sbinteriorof{\hlnmeanset}$ are examples of mean parameters, which can be reproduced by a Hard Logic Networks (respectively Hybrid Logic Network).
+}\label{fig:meansetSketch}
+\end{figure}
+
+
+
+
 % Reduction to Hybrid Logic Networks, question of sufficient expressivity
 Let us recall, that the set $\hlnsetof{\formulaset}$ contains all Hybrid Logic Networks, which can be realized as tensor networks with the same structure of computation and activation cores.
 We now investigate, whether we can reduce the set of probability distributions in the definition of the convex polytope of mean parameters to the set $\hlnsetof{\formulaset}$ (see \defref{def:hln}), that is
 \begin{align*}
-	\hlnmeanset|_{\hlnsetof{\formulaset}} = \left\{ \sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable} \, : \, \probtensor\in\hlnsetof{\formulaset} \right\} \, .
+	\hlnmeanset|_{\hlnsetof{\formulaset}} = \left\{ \sbcontractionof{\probtensor,\sencmlnstat}{\selvariable} \, : \, \probtensor\in\hlnsetof{\formulaset} \right\} \, .
 \end{align*}
 While $\hlnmeanset|_{\hlnsetof{\formulaset}}\subset\hlnmeanset$ is obvious, we pose the question, for which $\formulaset$ there is an equivalence.
 We will refer to the equality of both sets as sufficient expressivity of $\hlnsetof{\formulaset}$.
@@ -193,28 +231,6 @@ In that case, we can flexibilize the distribution, to also represent the base me
 This can be done by adding activation cores with multiple variables, or further computation cores calculating the disjunctions of formulas.
 
 
-% Mean parameter characterization
-To summarize, for any $\meanparam\in\hlnmeanset$ we have one of the following (see Figure~\ref{fig:meansetSketch}):
-\begin{itemize}
-	\item $\meanparamat{\indexedselvariable}\in\interiorof{\hlnmeanset}$: Then reproducible by a Hybrid Logic Network with base measure $\basemeasure$ .
-%		This follows from the classical result of Theorem~3.3 in \cite{wainwright_graphical_2008}.
-	\item  $\meanparamat{\indexedselvariable}\notin\interiorof{\hlnmeanset}$:
-		Then on a facet and reproducible by a Hybrid Logic Network with refined base measure $\secbasemeasure$.
-		Whether the base measure can be realized by the computation network of $\fselectionmap$ depends on the satisfiability of the face formula.
-\end{itemize}
-
-
-
-\begin{figure}[h]\label{fig:meansetSketch}
-\begin{center}
-	\input{PartII/tikz_pics/network_reasoning/meanset_sketch.tex}
-\end{center}
-\caption{Sketch of the convex polytope ${\hlnmeanset}$ as a subset of the $\seldim$-dimensional cube $[0,1]^\seldim$ (here as a 2-dimensional projection) with example mean 	parameters $\meanparam_1,\meanparam_2,\meanparam_3$.
-	The boundary points $\meanparam_1,\meanparam_2\in\closureof{\meanset}_{\formulaset}/\interiorof{\meanset}_{\formulaset}$ are examples of mean parameters, which can be realized by a Hard Logic Networks (respectively Hybrid Logic Network). 
-	Any extreme point $\meanparam_1\in\hlnmeanset\cup\{0,1\}^{\seldim}$ is realizable by a Hard Logic Network, while a non-extreme boundary point $\meanparam_2\in\hlnmeanset/\{0,1\}^{\seldim}$ is realizable by a Hybrid Logic Network.
-	Any interior point $\meanparam_3\in\interiorof{\hlnmeanset}$ is realizable by a Markov Logic Network.
-} 
-\end{figure}
 
 
 \subsect{Case of tree computation networks}
@@ -234,9 +250,8 @@ We can relate our two standard examples of the atomic and the minterm formula se
 \end{example}
 
 \begin{example}[Minterm formulas]
-	The mean polytope is in this case the $2^\catorder-1$-dimensional standard simplex.
+	The mean polytope is in the case of the minterm exponential family is the $2^\catorder-1$-dimensional standard simplex.
 	In this case, $\hlnsetof{\mintermformulaset}$ contains any distribution and therefore trivially realizes any mean parameter in $\meansetof{\mintermformulaset,\ones}$.
-	\red{Set relation to the HLN Expressivity theorem!}
 \end{example}
 
 
@@ -251,23 +266,23 @@ Based on this, we apply the theory of probabilistic inference, developed in \cha
 \subsect{Maximum Likelihood in Hybrid Logic Networks}
 
 % Special example: MLE
-The Maximum Likelihood Problem on Markov Logic Networks is the M-projection
+The Maximum Likelihood Problem on a hybrid logic network family is the moment projection
 \begin{align*}
 	\argmax_{\canparamat{\selvariable}\in\rr^{\seldim}} \quad 
 	\centropyof{\probtensor}{\expdistof{(\sstat,\canparam,\basemeasure)}}	
 \end{align*}
-in the case $\probtensor=\empdistribution$ for a data map $\datamap$.
+in the case $\probtensor=\empdistribution$ for a sample selector map $\datamap$.
 
 % Backward map
-The M-projection coincides, after dropping constant terms in case of non-trivial base measure, with the backward map
+The moment projection coincides, after dropping constant terms in case of non-trivial base measure, with the backward map
 \begin{align*}
 	\argmax_{\canparamat{\selvariable}\in\rr^{\seldim}} \quad 
-	\sbcontraction{\canparamat{\selvariable},\meanparamat{\selvariable}} - \cumfunctionof{\canparamat{\selvariable}} 
+	\sbcontraction{\canparamat{\selvariable},\meanparamwith} - \cumfunctionof{\canparamat{\selvariable}} 
 \end{align*}
 where
 \begin{align*}
-	\meanparamat{\selvariable} 
-	= \sbcontractionof{\sencodingof{\formulaset},\probtensor}{\selvariable} 
+	\meanparamwith 
+	= \sbcontractionof{\sencmlnstat,\probtensor}{\selvariable}
 	\quad \text{and} \quad
 	\cumfunctionof{\canparamat{\selvariable}} 
 	= \sbcontraction{\expof{ \sbcontractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables} }, \basemeasure} \, . 
@@ -283,12 +298,12 @@ We now extend to Hybrid Logic Networks
 
 
 \begin{corollary}
-	Let $\meanparamat{\selvariable} = \contractionof{\probtensor,\sencfset}{\selvariable}$ and
+	Let $\meanparamwith = \contractionof{\probtensor,\sencfset}{\selvariable}$ and
 		\[ \secformulaset = \{\enumformula \, : \, \meanparamat{\indexedselvariable} \in \{0,1\}\} \quad , \quad 
 		\basemeasureofat{\secformulaset,\meanparam}{\shortcatvariables} 
 		= \bigwedge_{\enumformula\in\secformulaset} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables}
 		\, . \]
-	If $\meanparamat{\selvariable}$ is reproduceable by a positive distribution with respect to $\basemeasureofat{\secformulaset,\meanparam}{\shortcatvariables} $, then the solution of the M-projection of $\probtensor$ onto the set of hybrid logic networks is representable by $\formulaset$ then coincides with the projection of $\probtensor$ onto $\expfamilyof{\formulaset/\secformulaset,\basemeasureof{\secformulaset,\meanparam}}$.
+	If $\meanparamwith$ is reproduceable by a positive distribution with respect to $\basemeasureofat{\secformulaset,\meanparam}{\shortcatvariables} $, then the solution of the M-projection of $\probtensor$ onto the set of hybrid logic networks is representable by $\formulaset$ then coincides with the projection of $\probtensor$ onto $\expfamilyof{\formulaset/\secformulaset,\basemeasureof{\secformulaset,\meanparam}}$.
 \end{corollary}
 %\begin{proof}
 %	Work by weight cutoff, in the limit of hard logics?
@@ -298,19 +313,19 @@ We now extend to Hybrid Logic Networks
 
 
 % Special example: MaxEnt
-The Maximum Entropy Problem for Markov Logic Networks is
+The Maximum Entropy Problem for a statistic $\mlnstat$ is %Markov Logic Networks is
 \begin{align}
 	\argmax_{\probtensor} \quad \sentropyof{\probtensor} 
 	\quad \text{subject to} \quad  
-	\sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable}
-	 =  \meanparamat{\selvariable} 
+	\sbcontractionof{\probtensor,\sencmlnstat}{\selvariable}
+	 =  \meanparamwith 
 \end{align}
 
 
 
 \begin{corollary}[of \theref{the:maxEntMaxLikeDuality}]
 	%\red{Works only for $\meanparamat{\indexedselvariable}\in\interiorof{\hlnmeanset}$}
-	Let $\empdistribution$ be a distribution such that there is a positive distribution $\probtensor$ with $\sbcontractionof{\probtensor,\sencodingof{\formulaset}}{\selvariable} = \sbcontractionof{\empdistribution,\sencodingof{\formulaset}}{\selvariable}$.
+	Let $\empdistribution$ be a distribution such that there is a positive distribution $\probtensor$ with $\sbcontractionof{\probtensor,\sencmlnstat}{\selvariable} = \sbcontractionof{\empdistribution,\sencmlnstat}{\selvariable}$.
 	Among all positive distributions $\probtensor$ of $\atomstates$ satisfying this moment matching condition, the Markov Logic Network with formulas $\formulaset$ and weights $\canparam$ being the solution of the maximum likelihood problem has minimal entropy.
 \end{corollary}
 
@@ -329,7 +344,7 @@ The max entropy - max likelihood duality still holds for hybrid logic networks a
 	Given a set of formulas $\tilde{\formulaset}$ and $\tilde{\meanparam}$, with coordinates $\tilde{\meanparam}_\selindex\in[0,1]$ in the closed interval $[0,1]$.
 	If the corresponding maximum entropy problem is feasible, its solution is a hybrid logic network with 
 	\begin{itemize}
-		\item $\hardformulaset= \{\enumformula : \selindexin, \meanparamat{\indexedselvariable} = 1\} \cup  \{\lnot\enumformula : \selindexin, \meanparamat{\indexedselvariable} = 0\} $
+		\item $\hardformulaset= \{\enumformula : \selindexin, \meanparamat{\indexedselvariable} = 1\} \cup \{\lnot\enumformula : \selindexin, \meanparamat{\indexedselvariable} = 0\} $
 		\item $\softformulaset = \{\enumformula : \selindexin, \meanparamat{\indexedselvariable} \in (0,1)\}$
 		\item $\canparam$ being the backward map evaluated at the vector $\meanparam$ consisting of the coordinates of $\tilde{\meanparam}$ not in $\{0,1\}$
 	\end{itemize}
@@ -612,11 +627,11 @@ The mean parameters coincide with the queries on the atomic formulas, that is th
 	where the quotient is performed coordinatewise.
 
 	A backward mapping is the coordinatewise logit, that is
-		\[ \backwardmapwrt{\mlnatomsymbol}(\meanparamat{\selvariable}) 
+		\[ \backwardmapwrt{\mlnatomsymbol}(\meanparamwith) 
 		= \lnof{\frac{
-			\meanparamat{\selvariable}
+			\meanparamwith
 			}{
-			\onesat{\selvariable}-\meanparamat{\selvariable}
+			\onesat{\selvariable}-\meanparamwith
 			}}  \, . \]
 \end{theorem}
 \begin{proof}
@@ -635,7 +650,7 @@ The mean parameters coincide with the queries on the atomic formulas, that is th
 
 	Since the coordinatewise logit is the inverse function of the coordinatewise sigmoid the map
 	\begin{align*}
-		\backwardmapwrtof{\mlnatomsymbol}{\meanparamat{\selvariable}}[\selvariable=\atomenumerator] 
+		\backwardmapwrtof{\mlnatomsymbol}{\meanparamwith}[\selvariable=\atomenumerator] 
 		& = \lnof{\frac{\meanparamat{\selvariable=\atomenumerator}}{1- \meanparamat{\selvariable=\atomenumerator}}}
 	\end{align*}
 	satisfies for any $\meanparam$ in the image of the forward map
@@ -1024,7 +1039,7 @@ The result is Algorithm~\ref{alg:greedyStructureLearning}, which is a greedy alg
 		\[ \currentdistribution \algdefsymbol \frac{1}{\prod_{\catenumeratorin}\catdimof{\atomenumerator}} \cdot \onesat{\shortcatvariables} \quad, \quad \formulaset = \varnothing \]
 	\While{Stopping criterion is not met}
 		\State Structure Learning: Compute a (approximative) solution $\hat{\formula}$ to Problem~\ref{prob:restrictedNaiveMLE} and add the formula to $\formulaset$, i.e.
-				\[ \formulaset \algdefsymbol \formulaset \cup \{\hat{\formula}\} \]
+				\[ \formulaset \algdefsymbol \formulaset \cup\{\hat{\formula}\} \]
 			Extend dimension of $\selvariable$ by one, by $\formulaof{\seldim}=\hat{\formula}$ and $\canparamat{\seldim}=0$
 		\State Weight Estimation: Estimate the best weights for the added formula and recalibrate the weights of the previous formulas, by calling Algorithm~\ref{alg:AWO}.
 				\[ \currentdistribution \algdefsymbol \expdistof{\formulaset, \canparam} \]
@@ -1110,6 +1125,14 @@ The extreme points are the formulas selectable by the formula selecting map $\fs
 	\end{align}
 \end{remark}
 
+To summarize some insights on the mean polytopes $\hlnmeanset$:
+\begin{itemize}
+	\item If and only íf all coordinates are in $\{0,1\}$ then an extreme points, then $\meanparam$ is reproduced by a hard logic network.
+	\item If some mean params in $\{0,1\}$, then not in the interior, and not reproduced by a markov logic network.
+		Back direction not correct: There are interior points where no coordinate in $\{0,1\}$.
+	\item If not in the interior, we can identify with base measure refinement a base measure, such that reproducable by a distribution representable by the base measure.
+\end{itemize}
+
 
 % Polytopes - MLN 
 The polytopes of mean parameters to hybrid logic networks and proposal distributions are an interesting connection between the fields of combinatorical optimization and the study of expressivity of tensor networks.
@@ -1117,7 +1140,6 @@ The polytopes of mean parameters to hybrid logic networks and proposal distribut
 This is of special interest, when the computation cores of a hybrid logic network are minimally connected, the mean parameters are captured by local consistencies.
 Similar investigations have been made in the field of tensor networks, where minimal connected tensor networks are refered to by Hierarchical Tucker formats (HT).
 Minimal connection is exploited in the tensor network community to show numerical properties of the format, such as closedness and existence of best approximators.
-
 
 
 
