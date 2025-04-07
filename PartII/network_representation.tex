@@ -28,15 +28,12 @@ We introduce Markov Logic Networks in the formalism of exponential families (see
 \end{definition}
 
 % Binary Statistics as propositional formula
-Since the image of each feature is contained in $[2]$, they are propositional formulas (see Def.~\ref{def:formulas}).
+
 
 % Characterization of MLNs among exponential families: When choosing binary features
-Conversely, any binary feature $\sstatcoordinateof{\selindex}$ of an exponential family defines a propositional formula (see \defref{def:formulas}).
+Since the image of each coordinate $\sstatcoordinateof{\selindex}$ is contained in $\ozset$, each is a propositional formulas (see \defref{def:formulas}).
+%Conversely, any boolean feature $\sstatcoordinateof{\selindex}$ of an exponential family defines a propositional formula (see \defref{def:formulas}).
 Thus, any exponential family of distributions of $\atomstates$, such that $\imageof{\sstatcoordinateof{\selindex}}\subset\ozset$ for all $\selindexin$ is a set of Markov Logic Networks with fixed formulas.
-
-% Formula Selecting Networks
-%We will further study the sparse representation of formula sets in \charef{cha:formulaSelection}.
-
 
 The sufficient statistics consistent in a map $\formulaset$ of formulas brings the following advantages:
 \begin{itemize}
@@ -45,7 +42,6 @@ The sufficient statistics consistent in a map $\formulaset$ of formulas brings t
 	\item Statistical Advantage: Since each formula is Boolean valued, the coordinates of the sufficient statistic are Bernoulli variables. 
 	Due to their boundedness, they and their averages (by Hoeffdings inequality) are sub-Gaussian variables with favorable concentration properties (absence of heavy tails).
 \end{itemize}
-
 
 \begin{remark}[Alternative Definitions]
 	We here defined MLNs on propositional logic, while originally they are defined in FOL.
@@ -58,6 +54,8 @@ The sufficient statistics consistent in a map $\formulaset$ of formulas brings t
 
 Based on the previous discussion on the representation of exponential families by tensor networks in \secref{sec:exponentialFamilies} we now derive a representation for Markov Logic Networks.
 
+\subsubsect{Relational encodings for distributions}
+
 \begin{theorem}[Relational Encodings for Markov Logic Networks]\label{the:mlnTensorRep}
 	A Markov Logic Network to a set of formulas $\formulaset = \{\enumformula \, : \, \selindexin\}$ is represented as
 	\begin{align*}
@@ -67,31 +65,43 @@ Based on the previous discussion on the representation of exponential families b
 	\end{align*}
 	where we denote for each $\selindexin$ an activation core
 	\begin{align*}
-		\enumformulaacwith
-		= \begin{bmatrix} 1 \\
-		 \expof{\canparamat{\indexedselvariable}} 
-		 \end{bmatrix}[\enumformulavar] \, .
+		\enumformulaac\left[\indexedheadvariableof{\selindex}\right]
+		= \begin{cases}
+			1 & \text{for} \quad \headindexof{\selindex} = 0 \\
+			\expof{\canparamat{\indexedselvariable}} & \text{for} \quad \headindexof{\selindex}  = 1
+		\end{cases}  \, .
 	\end{align*}
+%	\begin{align*}
+%		\enumformulaacwith
+%		= \begin{bmatrix} 1 \\
+%		 \expof{\canparamat{\indexedselvariable}}
+%		 \end{bmatrix}[\enumformulavar] \, .
+%	\end{align*}
 \end{theorem}
 \begin{proof}
-	The claim follows from Theorem~\ref{def:expFamilyTensorRep} and the following contraction equations.
-	We have with the grouped variable $\headvariableof{\formulaset} = \{\enumformulavar\, : \, \selindexin\}$
+	Markov Logic Networks are exponential families, which base measure is trivial and which statistic consist of boolean features.
+	We apply the tensor network decomposition of more generic exponential families \theref{the:expFamilyTensorRep} to this case and get
 	\begin{align*}
-		\rencodingofat{\formulaset}{\headvariableof{\formulaset},\shortcatvariables}
-		= \contractionof{\{\enumformulaccwith : \selindexin \}}{\headvariableof{\formulaset},\shortcatvariables} \, .
-	\end{align*}
-	Since we have a Markov Logic Network we have $\imageof{\enumformula}\subset [2]$ and thus
+        \mlnprobat{\shortcatvariables} =
+        \normationof{\{\onesat{\shortcatvariables}\}
+		\cup \{\rencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables} \, : \, \selindexin\}
+		\cup\{\enumformulaacwith\, : \, \selindexin\}}{\shortcatvariables} \, .
+    \end{align*}
+	While the base measure tensor is trivial, it can be ignored in the contraction.
+	Since the image of each feature $\enumformula$ is in $[2]$, we choose the index interpretation function by the identity $\indexinterpretation : [2] \rightarrow \ozset$ and get
+%	We further choose the standard index interpretation for booleans (see \secref{sec:booleanEncoding}) and get
 	\begin{align*}
-		\enumformulaac\left[\headvariableof{\selindex}=\headindex_{\selindex}\right]
-		= \begin{cases}
-			1 & \text{for} \quad \headindex_{\selindex} = 0 \\
-			\expof{\canparamat{\indexedselvariable}} & \text{for} \quad \headindex_{\selindex}  = 1
-		\end{cases}  
+		\enumformulaac\left[\indexedheadvariableof{\selindex}\right]
+		&= \expof{\canparamat{\indexedselvariable} \cdot \indexinterpretationofat{\selindex}{\headindexof{\selindex}} }
+		= \expof{\canparamat{\indexedselvariable} \cdot \headindexof{\selindex}} \\
+		&= \begin{cases}
+			1 & \text{for} \quad \headindexof{\selindex} = 0 \\
+			\expof{\canparamat{\indexedselvariable}} & \text{for} \quad \headindexof{\selindex}  = 1
+		\end{cases}
 	\end{align*}
-	Using these equations, the claim follows from Theorem~\ref{def:expFamilyTensorRep}.
 \end{proof}
 
-\begin{figure}[h]
+\begin{figure}[t!]
 \begin{center}
 	\input{PartII/tikz_pics/network_representation/factor.tex}
 \end{center}
@@ -101,41 +111,44 @@ Based on the previous discussion on the representation of exponential families b
 \label{fig:mlnFactor}
 \end{figure}
 
-% 
-Since any member of an exponential family is a Markov Network with tensors to each coordinate of the statistic, also Markov Logic Networks are Markov Networks.
+% Graphical model representation
+\theref{the:mlnTensorRep} provides a decomposition of markov logic networks by a tensor network of computation cores $\rencodingof{\enumformula}$ and accompanying activation cores $\enumformulaac$.
+Since the head variable $\headvariableof{\selindex}$ appears exclusively in these pairs, we can contract each computation core with the corresponding activation core to get a factor, see \figref{fig:mlnFactor}.
+With this we get the decomposition
+\begin{align*}
+	\mlnprobat{\shortcatvariables}
+	= \normationof{\{\expof{\canparamat{\indexedselvariable}\cdot\enumformulaat{\shortcatvariables}} \, : \, \selindexin\}}{\shortcatvariables} \, .
+\end{align*}
+More precisely, this transformation of the decomposition holds by \theref{the:splittingContractions} to be shown in \charef{cha:messagePassing}, stating that the contraction of computation and activation cores can be performed before the global contraction of the result. 
 
-\begin{corollary}\label{cor:MLNasMN}
-	Given a set $\formulaset$ of formulas on atomic variables $\catvariableof{\nodes}$, we construct a $\graph=(\nodes,\edges)$, where $\nodes$ are decorated by the atoms and
-		\[ \edges = \{ \nodesof{\formula}: \formula\in\formulaset \} \, , \]
-	where by $\nodesof{\formula}$ we denote the minimal set such that there exists a tensor $\hypercoreat{\catvariableof{\nodesof{\formula}}}$ with
-		\[ \formulaat{\catvariableof{\nodes}} = \hypercoreat{\catvariableof{\nodesof{\formula}}} \otimes \onesat{\catvariableof{\nodes/\nodesof{\formula}}} \, . \]		
-	Any Markov Logic Network $\mlnparameters$ is then a Markov Network given the graph $\graphof{\formulaset}$
-	$\{\expof{\canparamat{\indexedselvariable}\cdot\enumformula}
-\, :\,\selindexin\}$.
-\end{corollary}
+% Sparsification by trivial variables
+While in the decomposition of \theref{the:mlnTensorRep} the relational encodings of the features carry all distributed variables $\shortcatvariables$, we now seek towards sparser decompositions.
+To each $\selindexin$ we denote by $\nodesof{\selindex}$ the maximal subset of $[\catorder]$ such that there is a reduced function
+$\tilde{\formula}_{\selindex} : \bigtimes_{} \rightarrow [2]$
+with
+\begin{align*}
+	\enumformulaat{\shortcatvariables}
+	= \contractionof{\tilde{\formula}_{\selindex}[\catvariableof{\nodesof{\selindex}}]}{\shortcatvariables} \, .
+\end{align*}
+We often account for such situations of sparse formulas, when $\enumformula$ has a syntactical decomposition involving only the atomic variables $\nodesof{\selindex}$.
+As a consequence we have
+\begin{align*}
+	\rencodingofat{\enumformula}{\shortcatvariables}
+	= \rencodingofat{\tilde{\formula}_{\selindex}}{\catvariableof{\nodesof{\selindex}}}
+\end{align*}
+and
+\begin{align*}
+	\mlnprobat{\shortcatvariables}
+	= \normationof{\{\expof{\canparamat{\indexedselvariable}\cdot\tilde{\formula}_{\selindex}[\catvariableof{\nodesof{\selindex}}]} \, : \, \selindexin\}}{\shortcatvariables} \, .
+\end{align*}
+Thus, any markov logic network has a sparse representation by a markov network on the graph
+\begin{align*}
+	\graphof{\formulaset} = ([\catorder],\{\nodesof{\selindex} \, : \, \selindexin\}) \, .
+\end{align*}
+This sparsity inducing mechanism is analogous to the decomposition of probability distributions based on conditional independence assumptions, when understanding each formula in the markov logic network as an introduced dependency among the affected variables $\nodesof{\selindex}$.
 
 
-% MLN as graphical models
-Markov Logic Networks are Markov Networks with the factors given in a restricted form from the weighted truth of a formula.
-Each formula is seen as a factor of the graphical model.
-
-There are two sparsity mechanisms drastically reducing the number of parameters (and loosing generality):
-\begin{itemize}
-	\item Factors/Formulas contain only subsets of atoms (already in Corollary~\ref{cor:MLNasMN} exploited):
-		The underlying assumptions of conditional independence loss generality.
-	\item Structure in the factors: In MLN each factor corresponds with a formula evaluated on possible worlds.
-		Again, any possible factor can be represented by a formula, but we concentrate on small formulas (see Theorem \ref{the:FormulaToTensor}).
-\end{itemize}
-
-
-% 
-\red{We can extend the set of variables, by including the hidden formulas, and get a Markov Network of the relational encodings of connectives and headcores.
-Here hidden variables are additional variables facilitating the decomposition, but not appearing in open variables of contractions when doing reasoning.
-One can then exploit redundancies and make sure that every subresult is computed just once, by dropping relational encodings with identical head functions.
-}
-
-
-\begin{figure}[h]
+\begin{figure}[t]
 \begin{center}
 	\input{PartII/tikz_pics/network_representation/decomposed_representation.tex}
 \end{center}
@@ -146,6 +159,59 @@ One can then exploit redundancies and make sure that every subresult is computed
 \end{figure}
 
 
+% Sparsity by decomposition
+A further sparsity introducing mechanism is through exploiting redundancy in the computation of $\enumformula$, when a decomposition of the feature is known.
+For the propositional formulas $\enumformula$ this amounts to a syntactic representation of the formula as a composition of logical connectives is available (see \figref{fig:mlnDecRep}). % Make a precise definition in logicRepresentation and link it!
+In this case, we exploit the representation by tensor networks of the relational encodings (shown as \theref{the:compositionByContraction} in \charef{cha:basisCalculus})
+Note, that this decomposition scheme introduces further auxiliary variables $\headvariable$ with deterministic dependence on the distributed variables $\shortcatvariables$.
+Such variables are often refered to as hidden.
+
+% Shared formulas
+We can further exploit common syntactical structure in the formulas $\enumformula\in\formulaset$ to reduce the number of relational encodings of connectives.
+This is the case, when the syntax graph of two or more formulas share a subgraph.
+In that case, the respective syntax graph needs to be represented only once an can be incorporated into the decomposition of all formulas, which share this subgraph.
+For an example see \figref{fig:mlnDecRep}, where the syntactical representation of the formula $\formulaof{0}$ is a subgraph of the syntactical representation of $\formulaof{1}$.
+
+
+%Since any member of an exponential family is a Markov Network with tensors to each coordinate of the statistic, also Markov Logic Networks are Markov Networks.
+
+%\begin{corollary}\label{cor:MLNasMN}
+%	Given a set $\formulaset$ of formulas on atomic variables $\catvariableof{\nodes}$, we construct a $\graph=(\nodes,\edges)$, where $\nodes$ are decorated by the atoms and
+%		\[ \edges = \{ \nodesof{\formula}: \formula\in\formulaset \} \, , \]
+%	where by $\nodesof{\formula}$ we denote the minimal set such that there exists a tensor $\hypercoreat{\catvariableof{\nodesof{\formula}}}$ with
+%		\[ \formulaat{\catvariableof{\nodes}} = \hypercoreat{\catvariableof{\nodesof{\formula}}} \otimes \onesat{\catvariableof{\nodes/\nodesof{\formula}}} \, . \]
+%	Any Markov Logic Network $\mlnprobat{\shortcatvariables}$ is then a Markov Network given the graph $\graphof{\formulaset}$
+%	$\{\expof{\canparamat{\indexedselvariable}\cdot\enumformula}
+%\, :\,\selindexin\}$.
+%\end{corollary}
+
+
+% MLN as graphical models
+%Markov Logic Networks are Markov Networks with the factors given in a restricted form from the weighted truth of a formula.
+%Each formula is seen as a factor of the graphical model.
+
+To summarize, there are two sparsity mechanisms, originating from graphical models and propositional syntax, providing sparse representations of markov logic network:
+\begin{itemize}
+	\item \textbf{Dependence Sparsity:} Formulas depend only on subsets of atoms.
+		This exploits the main sparsity mechanism in graphical models, where factors in sparse representations depend only on a subset of variables.
+%		The underlying assumptions of conditional independence loss generality.
+	\item \textbf{Computation Sparsity:}
+		When the features of an exponential family are compositions of smaller formulas, the computation core is decomposed into a tensor network of their relational encodings.
+		This can be regarded as the main sparsity mechanism of propositional logics, where syntactical decompositions of formulas are exploited.
+		Further, when the structure of the smaller formulas is shared among different features, the respective relational encodings need to be instantiated only once.
+\end{itemize}
+
+
+%%
+%\red{
+%	We can extend the set of variables, by including the hidden formulas, and get a Markov Network of the relational encodings of connectives and headcores.
+%Here hidden variables are additional variables facilitating the decomposition, but not appearing in open variables of contractions when doing reasoning.
+%One can then exploit redundancies and make sure that every subresult is computed just once, by dropping relational encodings with identical head functions.
+%}
+
+
+
+
 %\begin{theorem}[Selection encodings for Energy representation]
 %	\red{More the definition of exponential families.}
 %	The energy of Markov Logic Networks is the contraction
@@ -153,25 +219,26 @@ One can then exploit redundancies and make sure that every subresult is computed
 %\end{theorem}
 
 
-\subsect{Energy tensors}
+\subsubsect{Selection encodings for energy tensors}
 
 %% Tensor Representation of MLN
-With the energy tensor
+
+As for generic exponential families, we can represent markov logic networks in terms of their energy tensors
+%The energy tensor of an markov logic network is the contraction
 \begin{align}
 	\mlnenergy\left[\shortcatvariables\right]
 	= \sum_{\selindexin} \canparamat{\indexedselvariable} \cdot \enumformulaat{\shortcatvariables} 
-	= \sbcontractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables} 
+	= \sbcontractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables} \, .
 \end{align}
-the MLN is the distribution
+The energy tensor provides an exponential representation of the distribution by
 \begin{align}
 	\mlnprobat{\shortcatvariables} = \normationof{\expof{\mlnenergy}}{\shortcatvariables} \, . 
 \end{align}
 
-In case of a common structure of the formulas in a Markov Logic Network, Formula selecting networks can be applied to represent their energies.
-
+In case of a common structure of the formulas in a Markov Logic Network, formula selecting networks (see \charef{cha:formulaSelection}) can be applied to represent their energies.
 % Energy representation
 %The weighted sum of formulas is then the energy of the Markov Logic Network.
-We represent the superposition of formulas as a contraction with s parameter tensor.
+We represent the superposition of formulas as a contraction with a parameter tensor.
 Given a factored parametrization of formulas $\exformula_{\selindices}$ with indices $\selindexof{\selenumerator}$ we have the superposition by the network representation:
 \begin{center}
 	\input{PartII/tikz_pics/network_representation/energy_contraction.tex}
@@ -193,8 +260,7 @@ For such tasks, contractions of formula selecting networks are not sufficient an
 
 \subsect{Expressivity}\label{sec:MLNMaxMintermRep}
 
-Based on Markov Logic Networks containing only maxterms and minterms (see \defref{def:clauses}), we here provide an expressivity study.
-There are $2^{\atomorder}$ maxterms and $2^{\atomorder}$ minterms which are enough to represent any probability distribution as we show next.
+Based on Markov Logic Networks containing only maxterms and minterms (see \defref{def:clauses}), we now show that any positive probability distribution has a representation by a markov logic network.
 
 \begin{theorem}\label{the:maximalClausesRepresentation}\label{the:mintermExpressivityMLN}
 	Let there be a positive probability distribution
@@ -251,32 +317,40 @@ There are $2^{\atomorder}$ maxterms and $2^{\atomorder}$ minterms which are enou
 	where $\lambda$ is a constant.
 \end{proof}
 
+We note, that there are $2^{\atomorder}$ maxterms and $2^{\atomorder}$ minterms, which would have to be instantiated by relational encodings to get a tensor network decomposition.
+This large number of features originates from the generality of the representation scheme.
+As a fundamental tradeoff, efficient representations come at the expense of a smaller expressivity of the representation scheme.
+
+
 % Redundant parametrization
-In general, this representation is redundant, since any offset of the weight by $\lambda\cdot\ones$ results in the same distribution.
-However, the only $\bar{\canparam}$ are multiples of $\onesat{\shortcatvariables}$.
+%In general, this representation is redundant, since any offset of the weight by $\lambda\cdot\ones$ results in the same distribution.
+%However, the only $\bar{\canparam}$ are multiples of $\onesat{\shortcatvariables}$.
 
 % Comparison with previous schemes
 Theorem~\ref{the:maximalClausesRepresentation} is the analogue in Markov Logic to Theorem~\ref{the:tensorToMaxMinTerms}, which shows that any binary tensor has a representation by a logical formula, to probability tensors.
 Here we require positive distributions for well-defined energy tensors.
 
+% Markov Networks
+Sparser representation formats based on the same principle as used in \theref{the:maximalClausesRepresentation} can be constructed to represent markov networks by markov logic networks.
+Here, we can separately instantiate the factors by combinations of terms and clauses only involving the variables containted in the factor.
 
-\begin{remark}[Representation of Markov Networks]
+%\begin{remark}[Representation of Markov Networks]
 % Composition of Markov Networks
-	If a probability distribution is representable as a Markov Network, we only need to activate clauses and terms, which variables are contained in factors.
-	\red{Make a theorem out of that?}
-\end{remark}
-
-
-
+%	If a probability distribution is representable as a Markov Network, we only need to activate clauses and terms, which variables are contained in factors.%
+%	\red{Make a theorem out of that?}
+%\end{remark}
 %\subsect{Examples}
 
+\subsect{Examples}
 
-\subsect{Distribution of independent variables}
+Let us now provide examples of markov logic networks.
+
+\subsubsect{Distribution of independent variables}
 
 We show next, the independent positive distributions are representable by tuning the $\atomorder$ weights of the atomic formulas and keeping all other weights zero.
 
 \begin{theorem}\label{the:independentAtomicMLN}
-	Let $\probat{\shortcatvariables}$ be a positive probability distribution, such that disjoint subsets of atoms are independent from each other.
+	Let $\probat{\shortcatvariables}$ be a positive probability distribution, such that atomic formulas are independent from each other.
 	Then $\probat{\shortcatvariables}$ is the Markov Logic Network of atomic formulas
 		\[ \atomformulaset = \{\atomicformulaof{\catenumerator} \, : \, \catenumeratorin \} \]
 	and parameters
@@ -339,44 +413,42 @@ The probability distribution is left invariant, when also replacing $\canparamat
 
 
 
-\subsect{Boltzmann machines}
+\subsubsect{Boltzmann machines}
 
-%\red{Add sufficient statistics?}
-
-A Boltzmann machine is a member of an exponential family with the energy tensor (see e.g. Chapter 43 in \cite{mackay_information_2003})
-	\[ \energytensorofat{W,b}{\indexedcatvariables} = 
+A Boltzmann machine is a distribution of boolean variables $\shortcatvariables$ depending on weight tensors %(see e.g. Chapter 43 in \cite{mackay_information_2003})
+\begin{align*}
+	W[\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}] \in\rr^{\catorder}\otimes\rr^{\catorder} \quad \text{and} \quad b[\selvariableof{\vselectionsymbol,0}] \in\rr^{\catorder} \, .
+\end{align*}
+Its distribution is
+\begin{align*}
+	\probofat{W,b}{\shortcatvariables} = \normationof{\expof{\energytensorofat{W,b}{\shortcatvariables}}}{\shortcatvariables}
+\end{align*}
+where its energy tensor is
+	\[ \energytensorofat{W,b}{\indexedshortcatvariables} =
 	\sum_{\atomenumerator,\secatomenumerator \in [\atomorder]} 
 		W[\selvariableof{\vselectionsymbol,0}=\atomenumerator, \selvariableof{\vselectionsymbol,1}=\secatomenumerator] \cdot \catindexof{\atomenumerator} \cdot \catindexof{\secatomenumerator} 
 	+ \sum_{\atomenumerator\in[\atomorder]} b[\selvariableof{\vselectionsymbol,0}=\atomenumerator] \cdot \catindexof{\atomenumerator}\, . \]
-
-
-%sufficient statistic 
-%	\[ \sstat : \atomstates \rightarrow (\rr^{\catorder}\otimes \rr^{\catorder}) \times \rr^{\catorder} \]
-%by interaction term
-%	\[ \sstat(\shortcatindices) = (\catindexof{\atomenumerator} \Leftrightarrow \catindexof{\secatomenumerator})_{\atomenumerator,\secatomenumerator \in[\atomorder]} \]
-%and by potential term
-%	\[ \sstat(\shortcatindices) =  (\catvariableof{\atomenumerator})_{\atomenumeratorin} \, . \]
-
-We notice, that this coincides with the energy tensor of a Markov Logic Network with formula set 
+We notice, that this tensor coincides with the energy tensor of a markov logic network with formula set
 	\[ \formulaset = \{ \catvariableof{\atomenumerator} \Leftrightarrow \catvariableof{\secatomenumerator} \, : \, \atomenumerator,\secatomenumerator \in[\atomorder] \} 
 	\cup \{ \catvariableof{\atomenumerator}\, : \, \atomenumeratorin \} \, \]
 with cardinality $\atomorder^2+\atomorder$.
-
 Each formula is in the expressivity of an architecture consisting of a single binary logical neuron selecting any variable of $\shortcatvariables$ in each argument and selecting connectives $\{\eqbincon,\lpasbincon\}$, where by $\lpasbincon$ we refer to a connective passing the first argument, defined for $\catindexofin{0}, \catindexofin{1}$ as 
-	\[ \lpasbincon[\indexedcatvariableof{0},\indexedcatvariableof{1}] = \vselectionmapat{\indexedcatvariableof{0},\catvariableof{1},\selvariableof{\vselectionsymbol}=0} \, . \]
-
-The weight is
-	\[ \canparam 
-	= \onehotmapofat{0}{\selvariableof{\cselectionsymbol}} \otimes W 
-	+ \onehotmapofat{1}{\selvariableof{\cselectionsymbol}} \otimes b[\selvariableof{\vselectionsymbol,0}] \otimes  \onehotmapofat{0}{\selvariableof{\vselectionsymbol,0}} 
+	\[ \lpasbincon[\indexedcatvariableof{0},\indexedcatvariableof{1}] = \vselectionmapat{\indexedcatvariableof{0},\indexedcatvariableof{1},\selvariableof{\vselectionsymbol}=0} \, . \]
+When we choose the canonical parameter as
+	\[ \canparamat{\selvariableof{\cselectionsymbol},\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}}
+	= \onehotmapofat{0}{\selvariableof{\cselectionsymbol}} \otimes W[\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}]
+	+ \onehotmapofat{1}{\selvariableof{\cselectionsymbol}} \otimes b[\selvariableof{\vselectionsymbol,0}] \otimes  \onehotmapofat{0}{\selvariableof{\vselectionsymbol,1}} \, .
 	\]
-	
-And we have
+we have (see \figref{fig:boltzmannEnergy})
 	\[ \energytensorofat{W,b}{\shortcatvariables} = 
-	\sbcontractionof{\fsnnat{\shortcatvariables,\selvariableof{\cselectionsymbol},\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}}, \canparamat{\selvariableof{\cselectionsymbol},\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}}}{\shortcatvariables} \, . \]
+	\sbcontractionof{\fsnnat{\shortcatvariables,\selvariableof{\cselectionsymbol},\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}},
+		\canparamat{\selvariableof{\cselectionsymbol},\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}}}{\shortcatvariables} \, . \]
 
+Therefore, Boltzmann machines are specific markov logic networks with the statistic being biimplications between atoms and atoms itself.
+Generic markov logic networks are more expressive than Boltzmann machines, by the flexibility to create further features by propositional formulas.
+%We can use any binary logical connective and have an associated formula where we can put a weight on.
 
-\begin{figure}[h]
+\begin{figure}[t]
 \begin{center}
 	\input{PartII/tikz_pics/network_representation/boltzmann_energy.tex}
 \end{center}
@@ -399,14 +471,10 @@ And we have
 %		\[ \weightof{ \exformula_{\atomenumerator,\secatomenumerator} } = U_{\atomenumerator, \secatomenumerator} \quad , \quad \atomenumerator,\secatomenumerator \in [\atomorder]\] 
 %\end{theorem}
 
-\red{
-Often Boltzmann machines are formulated with hidden variables.
-To average those out, one needs to instantiate the probability distribution instead of the energy tensor and leave only visible variables open in a contraction.
-}
 
 
-Markov Logic Networks go beyond the Boltzmann machines already for binary formulas, by the flexibility to capture further dependencies beyond the correlation.
-We can use any binary logical connective and have an associated formula where we can put a weight on.
+
+
 
 
 

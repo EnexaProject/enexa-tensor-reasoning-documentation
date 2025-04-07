@@ -23,12 +23,12 @@ Booleans are variables valued by $\truthset$ and consist a basic data structure.
 
 To represent Booleans by categorical variables $\catvariable$ with two states we use the index interpretation function
 \begin{align*}
-	\indexinterpretation:\truthset\rightarrow\ozset
+	\indexinterpretation:[2]\rightarrow\truthset%\rightarrow\ozset
 \end{align*}
 defined as
 \begin{align*}
-	\indexinterpretationat{\truesymbol} = 1
-	\quad \text{and} \quad \indexinterpretationat{\falsesymbol} = 0 \, .
+	\indexinterpretationat{1} = \truesymbol%} = 1
+	\quad \text{and} \quad \indexinterpretationat{0} = \falsesymbol \, .
 \end{align*}
 
 % Outlook: General interpretation maps
@@ -40,14 +40,14 @@ One motivation for this particular choice of the interpretation function $\index
 \begin{lemma}
 	$\indexinterpretation$ is a homomorphism between the groups
 	\begin{align*}
-		\big(\truthset,\land\big) \quad \text{and} \quad \big(\ozset,\cdot\big) \, .
+		\big(\ozset,\cdot\big)  \quad \text{and} \quad \big(\truthset,\land\big) \, .
 	\end{align*}
 \end{lemma}
 \begin{proof}
-	It suffices to notice, that for arbitrary $\truthstateof{0},\truthstateof{1}\in\truthset$ we have
+	It suffices to notice, that for arbitrary $\truthstateof{0},\truthstateof{1}\in\ozset$ we have
 	\begin{align*}
-		\indexinterpretationat{\truthstateof{0} \land \truthstateof{1}}
-		= \indexinterpretationat{\truthstateof{0}} \cdot \indexinterpretationat{\truthstateof{1}}  \, .
+		\indexinterpretationat{\truthstateof{0} \cdot \truthstateof{1}}
+		= \indexinterpretationat{\truthstateof{0}} \land \indexinterpretationat{\truthstateof{1}}  \, .
 	\end{align*}
 \end{proof}
 	
@@ -58,7 +58,7 @@ This homomorphism is further applied in type conversion in dynamically-typed lan
 % Nonlinearity issues
 Operations like the negation fail to be linear and are only affine linear, since for $\truthstate\in\truthset$ we have
 \begin{align}\label{eq:affineLinearNegation}
- 	\indexinterpretationat{\lnot\truthstate} = 1 - \indexinterpretationat{\truthstate}  \, . 
+ 	\invindexinterpretationat{\lnot\truthstate} = 1 - \invindexinterpretationat{\truthstate}  \, .
 \end{align}
 Since any logical connective can be represented as a composition of conjunctions and negations, any logical connective corresponds with an affine linear function on the interpreted truth values.
 Direct applications of this insight to execute logical calculus will be discussed later in \secref{sec:effectiveCalculus}.
@@ -68,14 +68,14 @@ This is why we call the negation representation as in \eqref{eq:affineLinearNega
 % Disjunction central interpretation
 While in this work, we will always encode boolean states by $\indexinterpretation$, other index interpretation functions could be chosen.
 For example, the interpretation
-	\[ \indexinterpretationof{\lor}:\truthset\rightarrow\ozset \]
+	\[ \indexinterpretationof{\lor}:\ozset\rightarrow\truthset \]
 defined as
-    	\[ \indexinterpretationofat{\lor}{\truesymbol} = 0 \quad \text{and} \quad \indexinterpretationofat{\lor}{\falsesymbol} = 1 \, , \]
+    	\[ \indexinterpretationofat{\lor}{0} = \truesymbol \quad \text{and} \quad \indexinterpretationofat{\lor}{1} = \falsesymbol \, , \]
 results is a homomorphism between the groups	
-	\[ \big(\truthset,\lor\big) \quad \text{and} \quad \big(\ozset,\cdot\big) \, . \]
+	\[ \big(\ozset,\cdot\big) \quad \text{and} \quad \big(\truthset,\lor\big)  \, . \]
 While placing the disjunction $\lor$ as the logical connective effectively executed by contractions, the negation will for arbitrary interpretations mapping onto $\ozset$ remain the function %\eqref{eq:affineLinearNegation}
 \begin{align*}
- 	\indexinterpretationofat{\lor}{\lnot\truthstate} = 1 - \indexinterpretationofat{\lor}{\truthstate}  \, . 
+ 	\invindexinterpretationofat{\lor}{\lnot\truthstate} = 1 - \invindexinterpretationofat{\lor}{\truthstate}  \, .
 \end{align*}
 Thus, the problem of affine linear operations cannot be resolved by a clever choice of an interpretation function with image in $\ozset$. 
 
@@ -85,15 +85,15 @@ Thus, the problem of affine linear operations cannot be resolved by a clever cho
 While contractions can just perform conjunctions, we need a representation trick to extend the contraction expressivity to arbitrary connectives and resolve the affine representation problem.
 To this end we now compose $\indexinterpretation$ with the one-hot encoding $\onehotmap$ and get an encoding
 \begin{align*}
-	\onehotmap\circ\indexinterpretation : \truthset \rightarrow \ozbasisset \, ,
+	\onehotmap\circ\invindexinterpretation : \truthset \rightarrow \ozbasisset \, ,
 \end{align*}
 where $\catvariable$ is a categorical variable with $\catdim=2$.
 For any $\truthstate\in\truthset$ we have
 \begin{align*}
-	\onehotmap\circ\indexinterpretationat{\truthstate} = 
+	\onehotmap\circ\invindexinterpretationat{\truthstate} =
 	\begin{bmatrix}
-		\indexinterpretationat{\lnot\truthstate} \\
-		\indexinterpretationat{\truthstate}
+		\invindexinterpretationat{\lnot\truthstate} \\
+		\invindexinterpretationat{\truthstate}
 	\end{bmatrix}  \, .
 \end{align*}
 
@@ -110,8 +110,8 @@ Performing the negation now amounts to switching the coordinates of the encoded 
 where in this notation we always understand the first variable $\catvariable$ as the row index selector and the second variable $\headvariableof{\notucon}$ as the column index selector.
 We then have
 \begin{align*}
-	\onehotmap\circ\indexinterpretationat{\lnot\truthstate}[\headvariableof{\lnot}] 
-	= \contractionof{\rencodingofat{\notucon}{\headvariableof{\notucon},\catvariable},\onehotmap\circ\indexinterpretationat{\truthstate}[\catvariable]}{\headvariableof{\notucon}} \, .  
+	\onehotmap\circ\invindexinterpretationat{\lnot\truthstate}[\headvariableof{\lnot}]
+	= \contractionof{\rencodingofat{\notucon}{\headvariableof{\notucon},\catvariable},\onehotmap\circ\invindexinterpretationat{\truthstate}[\catvariable]}{\headvariableof{\notucon}} \, .
 \end{align*}
 We therefore arrived at our aim to resolve the affine representation problem and have found a procedure to represent logical negations by a contraction, which is a linear operation.
 Besides negations, we will show in this chapter, that arbitrary logical formulas can be represented by contractions.

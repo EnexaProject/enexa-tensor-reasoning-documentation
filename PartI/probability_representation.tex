@@ -1048,7 +1048,7 @@ We now overcome this problem with usage of the relational encoding formalism to 
 %The central insight here is a relational encoding of the statistic , which enables representation by tensor network decomposition, when the sufficient statistic is decomposable.
 
 \begin{theorem}[Generic Representation of Exponential Families]
-    \label{def:expFamilyTensorRep}
+    \label{the:expFamilyTensorRep}
     Given any base measure $\basemeasure$ and a sufficient statistic $\sstat$ we enumerate for each coordinate $\selindexin$ the image $\imageof{\sstatcoordinateof{\selindex}}$ by a variable $\sstatcatof{\selindex}$ taking values in $[\cardof{\imageof{\sstatcoordinateof{\selindex}}}]$ (see for more details on this scheme \charef{cha:basisCalculus}), given an interpretation map
     \begin{align*}
         \indexinterpretationof{\selindex} :
@@ -1056,13 +1056,13 @@ We now overcome this problem with usage of the relational encoding formalism to 
     \end{align*}
     For any canonical parameter vector $\canparamwithin$ we build the activation cores
     \begin{align*}
-        \actcoreofat{\selindex}{\sstatcatof{\selindex}=\sstatindof{\selindex}}
-        = \expof{\canparamat{\indexedselvariable} \cdot \indexinterpretationofat{\selindex}{\sstatcatof{\selindex}} } \,
+        \actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\indexedheadvariableof{\selindex}}
+        = \expof{\canparamat{\indexedselvariable} \cdot \indexinterpretationofat{\selindex}{\headindex{\selindex}} } \,
     \end{align*}
     and have
     \begin{align*}
         \expdistwith =
-        \normationof{\{\basemeasurewith\} \cup \{\rencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables} \, : \, \selindexin\}\cup\{\actcoreof{\selindex} \, : \, \selindexin\}}{\shortcatvariables} \, .
+        \normationof{\{\basemeasurewith\} \cup \{\rencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables} \, : \, \selindexin\}\cup\{\sstatac \, : \, \selindexin\}}{\shortcatvariables} \, .
     \end{align*}
 \end{theorem}
 \begin{proof}
@@ -1083,7 +1083,7 @@ We now overcome this problem with usage of the relational encoding formalism to 
     \begin{align*}
         \restrictionoftoat{\expof{\braket{\cdot,\canparam}}}{\imageof{\sstat}}{\sstatcatof{[\seldim]}}
         = \bigotimes_{\selindexin} \restrictionoftoat{\expof{\cdot \canparamat{\indexedselvariable}}}{\imageof{\sstatcoordinateof{\selindex}}}{\sstatcatof{\selindex}}
-        = \bigotimes_{\selindexin} \actcoreofat{\selindex}{\sstatcatof{\selindex}} \, .
+        = \bigotimes_{\selindexin} \actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\sstatcatof{\selindex}} \, .
     \end{align*}
     We further have (see \theref{the:functionImageDecompositionContraction} in \charef{cha:basisCalculus})
     \begin{align*}
@@ -1094,7 +1094,7 @@ We now overcome this problem with usage of the relational encoding formalism to 
 \end{proof}
 
 
-In the proof of \theref{def:expFamilyTensorRep} we have observed, that the relational encoding $\rencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}$ of the statistics decomposed into a tensor network of relational encodings $\rencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables}$ to the coordinate of the statistic.
+In the proof of \theref{the:expFamilyTensorRep} we have observed, that the relational encoding $\rencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}$ of the statistics decomposed into a tensor network of relational encodings $\rencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables}$ to the coordinate of the statistic.
 We can exploit further decomposition mechanisms, which will be discussed in full detail in \charef{cha:basisCalculus}, to find even sparser decompositions.
 This is for example the case, when the coordinates of the statistic are compositions of functions depending on small numbers of variables.
 When the coorindates of the statistic furthermore share similar parts in their compositions, these parts can be shared in the decomposition.
@@ -1109,25 +1109,25 @@ We will investigate such sparsification mechanisms in more detail in \charef{cha
 
 
 % Core types
-The tensor network representation of an exponential family by \theref{def:expFamilyTensorRep} is a Markov Network consistent of two types of cores.
+The tensor network representation of an exponential family by \theref{the:expFamilyTensorRep} is a Markov Network consistent of two types of cores.
 First, we refer to the relational encodings $\rencodingof{\sstatcoordinateof{\selindex}}$ of the coordinates of a statistic as computation cores.
 Our intuition is that they compute the hidden variable $\sstatcatof{\selindex}$, based on Basis Calculus (see \charef{cha:basisCalculus}), which encode the value of the coordinate with respect to the image interpretation map $\indexinterpretationof{\selindex}$.
 We notice, that since they are directed with $\sstatcatof{\selindex}$ being the only outgoing variable, they do not influence any contraction with open variables $\shortcatvariables$, unless further tensors sharing the variable $\sstatcatof{\selindex}$ are present in the contraction.
-The influence of the contraction is performed by the activation cores $\actcoreofat{\selindex}{\sstatcatof{\selindex}}$, which exploit the computed statistic variable and provide in combination with the relational encoding a factor
+The influence of the contraction is performed by the activation cores $\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\sstatcatof{\selindex}}$, which exploit the computed statistic variable and provide in combination with the relational encoding a factor
 \begin{align*}
-    \contractionof{\rencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables},\actcoreofat{\selindex}{\sstatcatof{\selindex}}}{\shortcatvariables}
+    \contractionof{\rencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables},\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\sstatcatof{\selindex}}}{\shortcatvariables}
 \end{align*}
 to the Markov Network reduced to the observed variables $\shortcatvariables$.
-When the canonical parameter is vanishing at a coordinate, that is $\canparamat{\indexedselvariable}=0$, then this factor is trivial, since $\actcoreofat{\selindex}{\sstatcatof{\selindex}}=\onesat{\sstatcatof{\selindex}}$ and as a consequence of the directionality of relational encodings we have
+When the canonical parameter is vanishing at a coordinate, that is $\canparamat{\indexedselvariable}=0$, then this factor is trivial, since $\actcoreofat{\selindex,0}{\sstatcatof{\selindex}}=\onesat{\sstatcatof{\selindex}}$ and as a consequence of the directionality of relational encodings we have
 \begin{align*}
-    \contractionof{\rencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables},\actcoreofat{\selindex}{\sstatcatof{\selindex}}}{\shortcatvariables}
+    \contractionof{\rencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables},\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\sstatcatof{\selindex}}}{\shortcatvariables}
     = \contractionof{\rencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables},\onesat{\sstatcatof{\selindex}}}{\shortcatvariables}
     = \onesat{\shortcatvariables} \, .
 \end{align*}
 In that case both the activation core and the corresponding computation core can be dropped from the network without changing its distribution.
 
 % Interpretation as elementary 
-By \theref{def:expFamilyTensorRep} any member of an exponential family is represented by the normed contraction of a collection of unary activation cores contracted with the computation network $\rencodingofat{\sstat}{\headvariableof{[\seldim]},\shortcatvariables}$.
+By \theref{the:expFamilyTensorRep} any member of an exponential family is represented by the normed contraction of a collection of unary activation cores contracted with the computation network $\rencodingofat{\sstat}{\headvariableof{[\seldim]},\shortcatvariables}$.
 We understand these activation cores as a member of a simple Markov Network distributing the head variables $\headvariableof{[\seldim]}$.
 This Markov Network has a graph, where the edges contain single variables, that is $\elgraph=([\seldim],\{\{\selindex\} \, : \, \selindexin\})$.
 We call this graph the elementary graph, since it also corresponds with elementary tensor network formats consistent of tensor products of vectors.
@@ -1149,9 +1149,9 @@ For unary activation cores, that is for the elementary graph $\elgraph$, any mem
 \begin{center}
     \input{PartI/tikz_pics/probability_representation/unary_realizable.tex}
 \end{center}
-Comparing this representation scheme with \theref{def:expFamilyTensorRep}, we conclude as the next corollary, that any member of an exponential family with trivial base measure can be represented by an elementary activation tensors.
+Comparing this representation scheme with \theref{the:expFamilyTensorRep}, we conclude as the next corollary, that any member of an exponential family with trivial base measure can be represented by an elementary activation tensors.
 
-\begin{corollary}[Corollary of \theref{def:expFamilyTensorRep}]
+\begin{corollary}[Corollary of \theref{the:expFamilyTensorRep}]
     \label{cor:unaryActivationExpdistRealization}
     For any statistic $\sstat:\facstates\rightarrow[\seldim]$ and trivial base measure $\basemeasurewith=\onesat{\shortcatvariables}$ we have
     \begin{align*}
@@ -1159,7 +1159,7 @@ Comparing this representation scheme with \theref{def:expFamilyTensorRep}, we co
     \end{align*}
 \end{corollary}
 
-For elements of the exponential family with general boolean base measure we have with the activation cores constructed in \theref{def:expFamilyTensorRep}
+For elements of the exponential family with general boolean base measure we have with the activation cores constructed in \theref{the:expFamilyTensorRep}
 \begin{center}
     \input{PartI/tikz_pics/probability_representation/expdist_unary_realizable.tex}
 \end{center}
@@ -1191,18 +1191,18 @@ In general, the expressivity increases monotonously with the introduction of add
 %We can sum multiples of the trivial tensor on the head cores without changing the distribution as we show next.
 %
 %\begin{theorem}
-%	For any $\selindexin$, the distribution is invariant under replacing $\actcoreofat{\selindex}{\selvariableof{\selindex}}$ by $\actcoreofat{\selindex}{\catvariableof{\selindex}}+\lambda\cdot \onesat{\catvariableof{\selindex}}$ where $\lambda\in\rr$
+%	For any $\selindexin$, the distribution is invariant under replacing $\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\selvariableof{\selindex}}$ by $\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\catvariableof{\selindex}}+\lambda\cdot \onesat{\catvariableof{\selindex}}$ where $\lambda\in\rr$
 %\end{theorem}
 %\begin{proof}
 %	Follows from linearity in each head core, trivialization by trivial heads and normation.
 %	
 %	By linearity we have
 %	\begin{align*}
-%		\sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, (\actcoreofat{\selindex}{\catvariableof{\selindex}}+\lambda\cdot \onesat{\catvariableof{\selindex}})}{\shortcatvariables}
+%		\sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, (\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\catvariableof{\selindex}}+\lambda\cdot \onesat{\catvariableof{\selindex}})}{\shortcatvariables}
 %		= 
-%		\sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \actcoreofat{\selindex}{\catvariableof{\selindex}}}{\shortcatvariables}
+%		\sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\catvariableof{\selindex}}}{\shortcatvariables}
 %		+\lambda\cdot  \sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \onesat{\catvariableof{\selindex}}}{\shortcatvariables}
-%		=  \sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \actcoreofat{\selindex}{\catvariableof{\selindex}}}{\shortcatvariables}
+%		=  \sbcontractionof{\rencodingof{\sstatcoordinateof{\selindex}}, \actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\catvariableof{\selindex}}}{\shortcatvariables}
 %		+ \lambda \cdot \onesat{\shortcatvariables} \, .
 %	\end{align*}
 %\end{proof}
