@@ -215,6 +215,9 @@ The generic chain decomposition thereby ensures that probability of getting a st
 \begin{algorithm}[hbt!]
     \caption{Forward Sampling}\label{alg:ForwardSampling}
     \begin{algorithmic}
+        \Require Probability distribution $\probtensor$
+        \Ensure Exact sample $\catindices$ of $\probtensor$
+        \hrule
         \For{$\catenumeratorin$}
             \State Draw $\catindexof{\catenumerator}\in[\catdimof{\catenumerator}]$ from the conditional distribution
             \begin{align*}
@@ -253,6 +256,9 @@ It can be shown, that these approximate distribution tend to one desired in the 
 \begin{algorithm}[hbt!]
     \caption{Gibbs Sampling}\label{alg:Gibbs}
     \begin{algorithmic}
+        \Require Probability distribution $\probtensor$
+        \Ensure Approximative sample $\catindices$ of $\probtensor$
+        \hrule
         \For{$\catenumeratorin$}
             \State Draw $\catindexof{\catenumerator}$ from an initialization distribution. % In implementation: Initialize with ones and draw -> Avoids zero probability state
         \EndFor
@@ -264,6 +270,7 @@ It can be shown, that these approximate distribution tend to one desired in the 
                 \end{align*}
             \EndFor
         \EndWhile
+        \Return $\catindices$
     \end{algorithmic}
 \end{algorithm}
 
@@ -911,10 +918,9 @@ We now utilize these findings and provide by \algoref{alg:baseMeasureRefinement}
 \begin{algorithm}[h!]
     \caption{Base Measure Refinement}\label{alg:baseMeasureRefinement}
     \begin{algorithmic}
-        \State \textbf{Input}: Base measure $\basemeasure$, statistic $\sstat$ and mean parameter $\meanparam\in\genmeanset$
-        \State \textbf{Output}: Refined base measure $\secbasemeasure$, remaining statistic $\secsstat$ and remaining mean parameter $\secmeanparam$
+        \Require $\basemeasure$, statistic $\sstat$ and mean parameter $\meanparam\in\genmeanset$
+        \Ensure Refined base measure $\secbasemeasure$, reduced statistic $\secsstat$ and reduced mean parameter $\secmeanparam$ with properties described in \theref{the:baseMeasureRefinement}
         \hrule
-%\State \noindent\rule{\linewidth}{0.4pt}
         \While{$\meanparam\notin\sbinteriorof{\genmeanset}$}
             \While{$\sstat$ not minimal with respect to $\basemeasure$ (see \defref{def:minimalStatistics})}
                 \State Find non-vanishing vector $\vectorat{\selvariable}$ and scalar $\lambda\in\rr$ such that
@@ -1206,6 +1212,9 @@ The optimal update equations are derived as the next theorem.
 \begin{algorithm}[h!]
     \caption{Naive Mean Field Approximation}\label{alg:NMF}
     \begin{algorithmic}
+        \Require Energy tensor $\energytensorat{\energytensor}$
+        \Ensure Tensor Network $\{\legcoreofat{\catenumerator} \, : \, \catenumeratorin\}$ approximating $\normationof{\energytensorat{\shortcatvariables}}{\shortcatvariables}$
+        \hrule
         \For{$\catenumeratorin$}
             \State
             \begin{align*}
@@ -1222,6 +1231,7 @@ The optimal update equations are derived as the next theorem.
                 }{\catvariableof{\catenumerator}} \]
             \EndFor
         \EndWhile
+        \Return $\{\legcoreofat{\catenumerator} \, : \, \catenumeratorin\}$
     \end{algorithmic}
 \end{algorithm}
 
@@ -1698,6 +1708,9 @@ Since the log likelihood is concave, the algorithm converges to a global minimum
 \begin{algorithm}[h!]
     \caption{Alternating Moment Matching}\label{alg:AMM}
     \begin{algorithmic}
+        \Require Empirical distribution $\empdistribution$, statistic $\sstat$ and base measure $\basemeasure$
+        \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\expfamily$
+        \hrule
         \State Set $\canparamat{\selvariable}=\zerosat{\selvariable}$
         \State Compute $\datameanat{\selvariable}= \sbcontractionof{\empdistribution,\sencsstat}{\selvariable}$
         \While{Stopping criterion is not met}
@@ -1714,6 +1727,7 @@ Since the log likelihood is concave, the algorithm converges to a global minimum
                 \end{align*}
             \EndFor
         \EndWhile
+        \Return $\canparamat{\selvariable}$
     \end{algorithmic}
 \end{algorithm}
 

@@ -173,38 +173,52 @@ The function $\mathrm{TELL}(\exformula)$ incorporates an additional formula $\ex
 Here we exploit \theref{the:ReduncancyOfEntailed} and do not add a formula, which is entailed in order to maintain a sparse representation. %(in which case it returns Incons).
 The function further refuses to add a formula, which would make the Knowledge Base inconsistent (returns Refused) and only changes the Knowledge Base in case of a contingent formula (returns Added).
 
+
+\begin{figure}
+    \begin{center}
+        \input{./PartI/tikz_pics/logic_reasoning/ask_decision_table.tex}
+    \end{center}
+    \caption{Table of possible logical relations between a knowledge base $\kb$ and $\formula$, based on whether the knowledge base entails the formula ($\kb\models\lnot\formula$) and its negation ($\kb\models\lnot\lnot\formula$).}\label{fig:askDecisionTable}
+\end{figure}
+
+
 % Works also for Markov Networks!
 \begin{algorithm}[hbt!]
-    \caption{Contraction Knowledge Base}\label{alg:contractionKB}
-    ASK($\kb$, $\exformula$)
+    \caption{Contraction Knowledge Base with operations ASK and TELL}\label{alg:contractionKB}
+    \vspace{0.3cm} \textbf{ASK}($\kb$, $\exformula$)
     \begin{algorithmic}
+    \hrule
+    \Require Knowledge base $\kb$, query formula $\exformula$
+    \Ensure Decision which relation between $\kb$ and $\exformula$ holds (see \figref{fig:askDecisionTable})
+    \hrule
         \State{$\hypercoreat{\formulavar} \algdefsymbol \contractionof{\{\secexformulaat{\shortcatvariables} \, : \, \secexformula\in\kb\},\rencodingofat{\exformula}{\formulavar,\shortcatvariables}}{\formulavar}$}
         \If{$\hypercoreat{\formulavar=0}=0$ and $\hypercoreat{\formulavar=1}=0$ }
-            \State{return Inconsistent}
+            \State \Return Inconsistent
+        \ElsIf{$\hypercoreat{\formulavar=0}=0$}
+            \State \Return Entailed
+        \ElsIf{$\hypercoreat{\formulavar=1}=0$}
+            \State \Return Contradicted
+        \Else
+            \State \Return Contingent
         \EndIf
-        \If{$\hypercoreat{\formulavar=0}=0$}
-            \State{return Entailed}
-        \EndIf
-        \If{$\hypercoreat{\formulavar=1}=0$}
-            \State{return Contradicted}
-        \EndIf
-        \State{return Contingent}
+    \hrule
     \end{algorithmic}
-    TELL($\kb$, $\exformula$)
+    \vspace{0.3cm} \textbf{TELL}($\kb$, $\exformula$)
     \begin{algorithmic}
+        \hrule
+    \Require Knowledge base $\kb$, query formula $\exformula$
+    \Ensure Decision whether a formula is added to the knowledge base (\stringof{Added}), or an exception in (\stringof{Inconsistent}, \stringof{Redundant} or \stringof{Refused}) is raised.
+    \hrule
         \State{answer $\algdefsymbol$ ASK($\exformula$)}
-        \If{answer is Inconsistent:}
-            \State{return Inconsistent}
-        \EndIf
-        \If{answer is Entailed:}
-            \State{return Redundant}
-        \EndIf
-        \If{answer is Inconsistent or Contradicted:}
-            \State{return Refused}
-        \EndIf
-        \If{answer is Inconsistent or Contradicted:}
+        \If{answer is \stringof{Inconsistent}:}
+            \State \Return \stringof{Inconsistent}
+        \ElsIf{answer is \stringof{Entailed}:}
+            \State \Return \stringof{Redundant}
+        \ElsIf{answer is \stringof{Contradicted}:}
+            \State \Return \stringof{Refused}
+        \ElsIf{answer is \stringof{Contingent}:}
             \State $\kb \algdefsymbol \kb\cup\{\exformula\}$
-            \State{return Added}
+            \State \Return \stringof{Added}
         \EndIf
     \end{algorithmic}
 
@@ -818,25 +832,20 @@ They are understood as logical formulas to the atomization variables $\left(\cat
 \end{definition}
 
 
-
 \subsect{Knowledge Propagation}
 
-\red{We now provide a solution algorithm for constraint satisfaction problems by propagating local contractions.}
-
-Let us now draw on these insights and store partial entailment results in Knowledge Cores, which is a use of the dynamic programming paradigm.
+We now provide a solution algorithm for constraint satisfaction problems by propagating local contractions.
+The dynamic programming paradigm is implemented by the storage of partial entailment results in Knowledge Cores.
 We then iterate over local entailment checks, where we recursively add further entailment checks to be redone due to additional knowledge.
-We then call the local checks until convergence Entailment Propagation, since different stadia of knowledge are propagated through the network.
-We describe local Knowledge Propagation in a generic way in \algoref{alg:KnowledgePropagation}.
-
+This local entailment scheme is called Knowledge Propagation and described in a generic way in \algoref{alg:KnowledgePropagation}.
 
 \begin{algorithm}[hbt!]
-    \caption{Knowledge Propagation (KP)}\label{alg:knowledgePropagation}
+    \caption{Knowledge Propagation}\label{alg:knowledgePropagation}
     \begin{algorithmic}
-        \State Boolean Tensor Network $\extnet$ on $\graph=(\nodes,\edges)$,
-        a set of domain edges $\domainedges$
-        and a set $\arbset$ of subsets of $\edges$
-%	graph $\secgraph=(\nodes,\secedges)$
-
+        \Require Boolean Tensor Network $\extnet$ on $\graph=(\nodes,\edges)$, domain edges $\domainedges$ and a set $\arbset$ of subsets of $\edges$ for local propagation
+        \Ensure Knowledge cores $\kcoreofat{\edge}{\catvariableof{\edge}}$ for $\edge\in\domainedges$ with $\contractionof{\extnet}{\catvariableof{\edge}}\prec\kcoreofat{\edge}{\catvariableof{\edge}}$
+        \hrule
+        \State
         \State Initialize for all $\edge\in\domainedges$:
         \begin{align*}
             \kcoreofat{\edge}{\catvariableof{\edge}}=\onesat{\catvariableof{\edge}}
@@ -855,8 +864,8 @@ We describe local Knowledge Propagation in a generic way in \algoref{alg:Knowled
                 \begin{align*}
                     \hypercoreat{\catvariableof{\edge}}
                     = \nonzerocirc\contractionof{
-                        \{\hypercoreofat{\secedge}{\catvariableof{\secedge}} \, : \, \secedge\in\secedges\}
-                        \cup \{\kcoreofat{\edge}{\catvariableof{\edge}} \, : \, \edge \in \domainedges , \, \edge\cap\bigcup_{\secedge\in\secedges}\secedge\neq\varnothing \}
+                        \{\hypercoreofat{\secedge}{\catvariableof{\secedge}}\wcols\secedge\in\secedges\}
+                        \cup \{\kcoreofat{\edge}{\catvariableof{\edge}}\wcols\edge \in \domainedges , \, \edge\cap\bigcup_{\secedge\in\secedges}\secedge\neq\varnothing \}
                     }{\catvariableof{\edge}}
                 \end{align*}
                 \If{$\hypercoreat{\catvariableof{\edge}}\neq\kcoreofat{\edge}{\catvariableof{\edge}}$}
@@ -870,46 +879,20 @@ We describe local Knowledge Propagation in a generic way in \algoref{alg:Knowled
                     \EndFor
                 \EndIf
             \EndFor
-%	\State Choose $\secedge\in\secedges$ and subsets $\arbsetof{\edges}$ of $\edges$ and $\arbsetof{\secedges}$ of $\edges$  %$%of $\{\kcoreof{\edge} : \edge\in\secdges \}$ containing $\kcoreof{\edge}$
-%	\State Update
-%	\begin{align*}
-%		\kcoreof{\secedge} \algdefsymbol\nonzerocirc\contractionof{
-%			\{\hypercoreof{\edge} \, : \, \edge\in\arbsetof{\edges}\} \cup \{\kcoreof{\edge} \, : \, \edge\in\arbsetof{\secedges}\cup\{\secedge\}\}
-%		}{\catvariableof{\edge}}
-%	\end{align*}
         \EndWhile
+        \State \Return $\{\kcoreofat{\edge}{\catvariableof{\edge}}\,:\,\edge\in\domainedges\}$
     \end{algorithmic}
 \end{algorithm}
-
-
-%\begin{algorithm}[hbt!]
-%\caption{Knowledge Propagation (KP)}\label{alg:knowledgePropagation}
-%\begin{algorithmic}
-%\State Boolean Tensor Network $\extnet$ on $\graph=(\nodes,\edges)$,graph $\secgraph=(\nodes,\secedges)$ with knowledge cores $\kcoreof{\edge}=\onesat{\catvariableof{\edge}}$
-%\While{Stopping Criterion is not met}
-%	\State Choose $\secedge\in\secedges$ and subsets $\arbsetof{\edges}$ of $\edges$ and $\arbsetof{\secedges}$ of $\edges$  %$%of $\{\kcoreof{\edge} : \edge\in\secdges \}$ containing $\kcoreof{\edge}$
-%	\State Update
-%	\begin{align*}
-%		\kcoreof{\secedge} \algdefsymbol\nonzerocirc\contractionof{
-%			\{\hypercoreof{\edge} \, : \, \edge\in\arbsetof{\edges}\} \cup \{\kcoreof{\edge} \, : \, \edge\in\arbsetof{\secedges}\cup\{\secedge\}\}
-%		}{\catvariableof{\edge}}
-%	\end{align*}
-%\EndWhile
-%\end{algorithmic}
-%\end{algorithm}
 
 % Interpretation
 Each chosen subset $\secedges\in\arbset$ is understood as a local knowledge base, which is then applied for local entailment.
 The knowledge cores are understood as messages, which propagate information from different regions of a tensor network (see \charef{cha:messagePassing}).
 
-
 %Implementation
 There are different ways of implementing \algoref{alg:knowledgePropagation}, by choosing the set $\arbset$ of constraint sets $\secedges$ and domain $\domainedges$. % and a stopping criterion.
 The AC-3 algorithm (see \cite{mackworth_consistency_1977}) is a specific instance, where knowledge cores are assigned to single variables and propagation is performed on single constraint cores.
 
-
 %The central property used in knowledge propagation is that any subcontraction can be added to the constraint network without changing it.
-%
 %\begin{theorem}\label{the:booleanContractionInvariance}
 %	Given a boolean tensor network $\extnet$ on $\graph$ and $\secedges\subset\edges$.
 %	For $\secgraph=(\secnodes,\secedges)$ with $\nodes=\cup_{\edge\in\secedges}\edge$ and the tensor network $\tnetof{\secgraph}$ with boolean tensors coinciding on $\secedges$ with those in $\extnet$ we have
@@ -922,8 +905,6 @@ The AC-3 algorithm (see \cite{mackworth_consistency_1977}) is a specific instanc
 %\begin{proof}
 %	We will proof this statement later in \charef{cha:messagePassing}, see \theref{the:invarianceAddingSubcontractions}.
 %\end{proof}
-
-
 
 \begin{theorem}
     \label{the:soundnessKnowledgePropagation}
@@ -993,7 +974,6 @@ The AC-3 algorithm (see \cite{mackworth_consistency_1977}) is a specific instanc
 %	and by \theref{the:monotonicityBinaryContractions}
 %		\[  \tilde{\kcoreof{\edge}}  \prec \kcoreof{\edge} \, . \]
 \end{proof}
-
 
 Let us now show that Knowledge Propagation always terminates.
 We can further characterize the knowledge cores at termination.
