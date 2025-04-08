@@ -191,12 +191,9 @@ We define their semantic first, and then relate their syntactical decomposition 
     \end{align*}
     Each coordinate represents thereby the boolean, whether the substitution of the variables in the formula is satisfied given a world $\dataworld$, that is
     \begin{align*}
-        \groundingofat{\folexformula}{\indexedindvariableof{\folexformula}} =
-        \begin{cases}
-            1 & \quad \text{if the substitution of $\folexformula$ with the variables $\indvariableof{\folexformula}$ replaced by the objects $\indexinterpretationat{\indindexof{\indenumerator}}$ is satisfied on the world $\dataworld$.} \\
-            0 &  \text{else}
-        \end{cases} \, .
+        \groundingofat{\folexformula}{\indexedindvariableof{\folexformula}} = 1
     \end{align*}
+    if and only if the substitution of $\folexformula$ with the variables $\indvariableof{\folexformula}$ replaced by the objects $\indexinterpretationat{\indindexof{\indenumerator}}$ is satisfied on the world $\dataworld$.
 \end{definition}
 
 % Comment: Formulas as maps to
@@ -278,7 +275,7 @@ While the atomic formulas where delta tensors copying states, they are more invo
 \begin{theorem}
     For any connective $\exconnective$ and formulas $\folexformula_1$ and $\folexformula_2$ we have
     \begin{align}
-        &\groundingofat{(\folexformula_1\exconnective\folexformula_2)}{\indvariableof{\folexformula_1}\cup\indvariableof{\folexformula_2}}
+        &\groundingofat{(\folexformula_1\exconnective\folexformula_2)}{\indvariableof{\folexformula_1}\cup\indvariableof{\folexformula_2}} \\
         &\quad=
         \contractionof{
             \rencodingofat{\groundingof{\folexformula_1}}{\headvariableof{\folexformula_1},\indvariableof{\folexformula_1}},
@@ -286,7 +283,7 @@ While the atomic formulas where delta tensors copying states, they are more invo
             \rencodingofat{\exconnective}{\headvariableof{\folexformula_1\exconnective\folexformula_2}, \headvariableof{\folexformula_1}, \headvariableof{\folexformula_2}},
             \tbasisat{\headvariableof{\folexformula_1\exconnective\folexformula_2}}
         }
-        {\shortindvariablelist} \, . \\
+        {\shortindvariablelist} \, .
     \end{align}
 \end{theorem}
 \begin{proof}
@@ -544,7 +541,8 @@ We then construct a grounding tensor $\kggroundingof{\rdf}$ out of the world $\k
 \end{align*}
 where
 \begin{align*}
-    \kggroundingofat{\rdf}{\indexedindvariableof{s}, \indexedindvariableof{p}, \indexedindvariableof{o}} =
+    &\kggroundingofat{\rdf}{\indexedindvariableof{s}, \indexedindvariableof{p}, \indexedindvariableof{o}} \\
+    &\quad =
     \begin{cases}
         \kgat{\selvariable=\indindexof{s},\indvariableof{0}=\indindexof{o},\indvariableof{1}=0}
         & \text{if} \quad \indindexof{p} = \invindexinterpretationat{\mathrdftype} \\
@@ -933,8 +931,8 @@ Using these insights we decompose a normalized log likelihood as
     \label{eq:dataworldLogProb}
     \frac{1}{\datanum} \lnof{\probofat{\folmlnparameters}{\indexedrandworld}}
     = & \frac{1}{\datanum} \sum_{\datindexin} \sum_{\selindexin} \canparamat{\indexedselvariable}
-    \groundingofat{\headfolexformula}{\shortindindices = \indindexof{[\indorder]}^{\datindex}}
-    - \frac{1}{\datanum} \lnof{
+    \groundingofat{\headfolexformula}{\shortindindices = \indindexof{[\indorder]}^{\datindex}} \\
+    & - \frac{1}{\datanum} \lnof{
         \frac{\partitionfunctionof{\folmlnparameters}}{
             \expof{\contraction{\weight} \cdot \contraction{\groundingof{\lnot\impformula}}}
         }
@@ -1066,7 +1064,7 @@ With this lemma, we are now show \theref{the:FOLworldToPLdataset}.
         \sum_{\selindexin} \canparamat{\indexedselvariable} \contraction{\groundingof{\enumfolformula}}
         &=  \contraction{\canparam} \cdot \contraction{\groundingof{\lnot\impformula}}
         + \sum_{\selindexin}\sum_{\datindexin} \canparamat{\indexedselvariable} \cdot \headfolformulaofat{\selindex}{\datshortindvariables} \\
-        &= \contraction{\canparam} \cdot \contraction{\groundingof{\lnot\impformula}} 
+        &= \contraction{\canparam} \cdot \contraction{\groundingof{\lnot\impformula}}
         + \sum_{\selindexin}\sum_{\datindexin} \canparamat{\indexedselvariable} \cdot \enumformulaat{\datshortcatvariables} \, .
     \end{align*}
     With \lemref{lem:FOLpartitionfunctionfactorization} we have under the given assumptions for the second term
@@ -1254,7 +1252,10 @@ Based on these construction, we now provide a tensor network decomposition of th
     \begin{align*}
         \contraction{\{\rencodingofat{\secdatamap_{\indenumerator}}{\indexedindvariableof{\indenumerator},\datvariable} \, : \, \indenumeratorin\}}  = 1 \, .
     \end{align*}
-    The first condition is equal to $\catindexof{\atomenumerator} = \extformulaofat{\atomenumerator}{\indexedshortindvariables}$ for all $\catenumeratorin$ and the second to $\groundingofat{\impformula}{\indexedshortindvariables} = 1$.
+    The first condition is equal to $\catindexof{\atomenumerator} = \extformulaofat{\atomenumerator}{\indexedshortindvariables}$ for all $\catenumeratorin$ and the second to
+    \begin{align*}
+        \groundingofat{\impformula}{\indexedshortindvariables} = 1 \, .
+    \end{align*}
     Comparing with the definition of the extraction relation (see \defref{def:extractionRelation}), we notice that these conditions are equal to $(\shortindindices,\shortcatindices)\in\extractionrelation$ and therefore to
     \begin{align*}
         \rencodingofat{\extractionrelation}{\indexedshortindvariables,\indexedshortcatvariables} \, .
@@ -1448,15 +1449,15 @@ In the first reproduction scheme we construct datapoints by dedicated objects, w
     For arbitrary $\atomenumeratorin$ and $\datindexin$ we now have
     \begin{align*}
         \datacoreofat{\atomenumerator}{\catvariableof{\catenumerator},\indexeddatvariable}
-        = \contractionof{
+        &= \contractionof{
             \rencodingofat{\groundingof{\extformulaof{\atomenumerator}}}{\catvariableof{\catenumerator},\indvariable},
             \legcoreofat{0}{\indvariable,\indexeddatvariable}
-        }{\catvariableof{\atomenumerator},\datvariable}
-        = \contractionof{
+        }{\catvariableof{\atomenumerator},\datvariable} \\
+        &= \contractionof{
             \rencodingofat{\groundingof{\extformulaof{\atomenumerator}}}{\catvariableof{\catenumerator},\indvariable},
             \onehotmapofat{\secdatamap(\datindex)}{\indvariable}
-        }{\catvariableof{\atomenumerator},\indexeddatvariable}
-        = \onehotmapofat{\datamap_\atomenumerator(\datindex)}{\catvariableof{\catenumerator}} \, .
+        }{\catvariableof{\atomenumerator},\indexeddatvariable} \\
+        &= \onehotmapofat{\datamap_\atomenumerator(\datindex)}{\catvariableof{\catenumerator}} \, .
     \end{align*}
     This coincides with the slice of the data core of the CP representation of empirical distributions used in \theref{the:empCPRep}.
     Since the slice and the core was arbitrary, the tensor network representations in \theref{the:empCPRep} and \theref{the:extractionDataCores} are equal and thus the triple $(\dataworld,\impformula,\shortextformulas)$ reproduces $\empdistribution$.
