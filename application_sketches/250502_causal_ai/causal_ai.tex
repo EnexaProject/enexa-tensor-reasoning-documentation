@@ -1,0 +1,114 @@
+\documentclass[aps,onecolumn,nofootinbib,pra]{article}
+
+\usepackage{../../article_compilation/spec_files/arxiv}
+\usepackage{amsmath,amsfonts,amssymb,amsthm,bbm,graphicx,enumerate,times}
+\usepackage{mathtools}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{hyperref}
+\hypersetup{
+    breaklinks,
+    colorlinks,
+    linkcolor=gray,
+    citecolor=gray,
+    urlcolor=gray,
+    pdftitle={The Tensor Network Approach to Efficient and Explainable AI},
+    pdfauthor={Alex Goessmann}
+}
+
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{comment}
+\usepackage{csquotes}
+
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{etoolbox}
+\usepackage{braket}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{bbm}
+\usepackage{bm}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{lipsum}
+
+\newtheorem{remark}{Remark}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+
+\input{../../macros/organization_macros.tex}
+\input{../../macros/general_macros.tex}
+\input{../../macros/tc_macros.tex}
+\input{../../macros/tikz_macros.tex}
+
+\pretolerance=500
+\tolerance=100
+\emergencystretch=10pt
+
+% Bibliography
+\DeclareUnicodeCharacter{FB01}{fi}
+\usepackage[round]{natbib}
+\usepackage{wasysym}
+
+\newcommand{\doof}[1]{\mathrm{do}\left(#1\right)}
+\newcommand{\dovariable}{D}
+\newcommand{\dovariableof}[1]{\dovariable_{#1}}
+
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+\begin{document}
+    \title{Causal AI in \tnreason}
+
+    \maketitle
+    \date{\today}
+
+%    Following the formalism of Chapter~21 in [Koller]
+
+    \section{Intervention Queries}
+
+    In a Bayesian Network, when intervening on a variable $\catvariableof{\node}$, the corresponding conditional probability gets trivialized.
+    The probability tensor is then captured by
+    \begin{align*}
+        \condprobat{\catvariableof{\secnodes}}{\doof{\indexedcatvariableof{\thirdnodes}}}
+      %  \condprobat{\catvariableof{\secnodes}}{\doof{X}}
+        = \contractionof{
+            \{\condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \,:\, \node\notin\thirdnodes \}
+            \cup \{\frac{1}{\catdimof{\node}} \onesat{\catvariableof{\node},\catvariableof{\parentsof{\node}}} \,:\, \node\in\thirdnodes\}
+            \cup \{\onehotmapofat{\catindexof{\node}}{\catvariableof{\node}} \,:\, \node\in\thirdnodes\}
+        }{\catvariableof{\secnodes}} \, .
+    \end{align*}
+
+    Since $\frac{1}{\catdimof{\node}} \onesat{\catvariableof{\node},\catvariableof{\parentsof{\node}}}$ is directed with $\catvariableof{\parentsof{\node}}$ incoming and $\catvariableof{\node}$ outgoing, the partition function of the network stays $1$ and the normation is captured by the contraction.
+
+    \subsection{Intervention Variables}
+
+    We modify conditional probability cores in Bayesian Networks to capture interventions, by introducing intervention variable
+
+    \begin{align*}
+        \hypercoreat{\catvariableof{\node},\catvariableof{\parentsof{\node}},\dovariableof{\node}}
+        = \condprobat{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \otimes \onehotmapofat{0}{\dovariableof{\node}}
+        + \onesat{\catvariableof{\node},\catvariableof{\parentsof{\node}}} \otimes \onehotmapofat{1}{\dovariableof{\node}}
+    \end{align*}
+
+    \subsection{Simplifications}
+
+    The back-door and front-door criterion provide conditions for intervention queries being equal to conditional queries.
+    We can proof them in the tensor network formalism based on network separations, which contribution to contractions are scalar multiplications, which therefore are dropped in normations.
+
+
+    \section{Learning}
+
+    Given a parametrization of hypothesis distribution by the states of selection variables, we can include the intervention variables.
+    The cores to be trivialized by intervention can depend on the state of the selection variables.
+    For example, a selection variable might select whether the cores direction is from $\catvariableof{0}$ to $\catvariableof{1}$ or in the other direction.
+    In both cases only one of the to intervention variables $\dovariableof{0}$ and $\dovariableof{1}$ influences the core.
+
+\end{document}
