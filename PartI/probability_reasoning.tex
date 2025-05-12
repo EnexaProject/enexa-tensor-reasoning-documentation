@@ -520,6 +520,112 @@ The differences of both are discussed in Chapter~8 in \cite{koller_probabilistic
 \end{example}
 
 
+\sect{Variational Inference in Exponential Families}
+
+We now formulate the forward and backward inference problems in exponential families as convex optimization problems.
+
+The conjugate dual of the cumulative function is
+\begin{align*}
+    \dualcumfunction(\meanparam) = \max_{\canparam\in\simpleparspace} \contraction{\meanparam,\canparam} - \cumfunctionof{\canparam} \, .
+\end{align*}
+
+\begin{lemma}\label{lem:gradientCumfunction}
+    Let $\canparam\in\simpleparspace$ and $\meanparamwith$ the corresponding mean parameter.
+    For the gradient of $\cumfunction$ evaluated at $\canparam$ we have
+    \begin{align*}
+        \gradwrtat{\seccanparamat{\selvariable}}{\canparam} \cumfunctionof{\seccanparam} = \meanparamat{\selvariable}
+    \end{align*}
+    If the statistic $\sstat$ is minimal with respect to $\basemeasure$, then also
+    \begin{align*}
+        \gradwrtat{\secmeanparamat{\selvariable}}{\meanparam} \dualcumfunctionof{\secmeanparam}
+        = \canparamat{\selvariable} \, .
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    We have
+    \begin{align*}
+        \gradwrtat{\canparam}{\seccanparam} \cumfunctionof{\seccanparam} \\
+        & = \gradwrtat{\canparam}{\seccanparam} \lnof{\contraction{\expof{\contractionof{\sencsstatwith,\canparamwith}{\shortcatvariables}},\basemeasure}} \\
+        & = \frac{1}{\contraction{\expof{\contractionof{\sencsstatwith,\canparamwith}{\shortcatvariables}}}}  \cdot \contractionof{\sencsstatwith,\expof{\contractionof{\sencsstatwith,\canparamwith}{\shortcatvariables}},\basemeasure}{\selvariable}\\
+        & = \contractionof{\expdistwith,\sencsstatwith}{\selvariable} \, .
+    \end{align*}
+    For the proof of the second claim we refer to Appendix B.2 in \cite{wainwright_graphical_2008}.
+\end{proof}
+
+\begin{theorem}[Variational backward map]
+    For any $\meanparam\in\interiorof{\meanset}$ choose
+    \begin{align*}
+        \canparamat{\selvariable} \in \argmax_{\canparam} \contraction{\meanparam,\canparam} - \cumfunctionof{\canparam} \, .
+    \end{align*}
+    Then $\meanparam$ is the mean parameter to $\expdist$.
+\end{theorem}
+\begin{proof}
+    The maximization over $\canparam$ is an unconstrained concave maximization problem and the optimum is characterized by
+    \begin{align*}
+        0 = \gradwrtat{\canparam}{\seccanparam}\left(\contraction{\meanparam,\canparam} - \cumfunctionof{\canparam}\right)
+    \end{align*}
+    which reads
+    \begin{align*}
+        \meanparamat{\selvariable} = \gradwrtat{\canparam}{\seccanparam[\selvariable]} \cumfunctionof{\canparam} \, .
+    \end{align*}
+    With \lemref{lem:gradientCumfunction}, the gradient vanishes if and only if $\meanparam$ is the mean parameter to $\expdist$.
+\end{proof}
+
+
+
+\begin{theorem}
+    For any $\canparam$ with mean parameter $\meanparam$ we have
+    \begin{align*}
+        \dualcumfunction(\meanparam) = - \sentropyof{\expdist} \, .
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    We have
+    \begin{align*}
+        \canparam \in \argmax_{\canparam} \contraction{\meanparam,\canparam} - \cumfunctionof{\canparam}
+    \end{align*}
+    if and only if
+    \begin{align*}
+        \meanparamwith = \contractionof{\expdistwith,\sencsstatwith}{\selvariable} \, .
+    \end{align*}
+    Therefore
+    \begin{align*}
+        \dualcumfunction(\meanparam) = \contraction{\expdistwith,\sencsstatwith,\canparam} - \cumfunctionof{\canparam}
+        = \contraction{\expdistwith, \lnof{\expdistwith}}
+        = - \sentropyof{\expdist} \, .
+    \end{align*}
+\end{proof}
+
+\begin{theorem}[Variational forward map]
+    Let $\sstat$ be a minimal statistic with respect to $\basemeasure$.
+    Given $\canparam$, there is a unique $\meanparam$ with
+    \begin{align*}
+         \meanparam \in \argmax_{\meanparam\in\meanset} \contraction{\meanparam,\canparam} -  \dualcumfunction(\meanparam)
+    \end{align*}
+    and $\meanparam$ is the mean parameter to $\expdistwith$.
+\end{theorem}
+\begin{proof}
+    By strong duality, we have $\left(\cumfunction\right)^{**}=\cumfunction$ and
+    \begin{align*}
+        \cumfunction(\canparam) = \max_{\meanparam\in\meanset} \contraction{\meanparam,\canparam} -  \dualcumfunction(\meanparam) \, .
+    \end{align*}
+    The statement then follows from the first order condition, where we use the gradient \lemref{lem:gradientCumfunction}. % Do we need to assume minimal statistics?
+\end{proof}
+
+
+
+
+
+%We have at any $\canparam\in\simpleparspace$
+%\begin{align*}
+%    \gradwrtat{\canparam}{\seccanparam} \cumfunctionof{\seccanparam} = \meanparamat{\selvariable}
+%\end{align*}
+%and thus
+%\begin{align*}
+%    \meanparamat{\selvariable} = \argmax_{\meanparam\in\meanset}
+%\end{align*}
+
+
 \sect{Polytope of mean parameters}
 
 
@@ -537,13 +643,13 @@ The differences of both are discussed in Chapter~8 in \cite{koller_probabilistic
 \end{figure}
 
 %% Mean parameters are expectation queries
-To prepare for the discussion of forward and backward inference in exponential families, we in this section investigate the polytope of mean parameters, sketched in \figref{fig:meansetSketchGeneric}.
+To prepare for the more detailled discussion of forward and backward inference in exponential families, we in this section investigate the polytope of mean parameters, sketched in \figref{fig:meansetSketchGeneric}.
 Given a pair of a statistic $\sstat:\facstates\rightarrow\simpleparspace$ and a boolean base measure $\basemeasurewith$, the polytope of mean parameters is the set (see \defref{def:meanForwardBackward})
 \begin{align*}
     \genmeanset
-    = \convhullof{\contractionof{\sencsstatwith,\probwith} \, : \, \probwith\in\bmrealprobof{\basemeasure}} \, ,
+    = \convhullof{\contractionof{\sencsstatwith,\probwith}{\selvariable} \, : \, \probwith\in\bmrealprobof{\basemeasure}} \, ,
 \end{align*}
-where by $\bmrealprobof{\basemeasure}$ we note the set of by $\basemeasure$ representable distributions (see \defref{{def:representationBaseMeasure}}).
+where by $\bmrealprobof{\basemeasure}$ we note the set of by $\basemeasure$ representable distributions (see \defref{def:representationBaseMeasure}).
 We in this section, we will further characterize the polytope of realizable mean parameters.
 
 % Expectation queries
@@ -582,7 +688,7 @@ Such sets are refered to as $\mathcal{V}$-polytopes \cite{ziegler_lectures_2013}
     It follows that
     \begin{align*}
         \genmeanset
-        &= \convhullof{\contractionof{\sencsstatat{\shortcatvariables,\selvariable},\onehotmapofat{\shortcatindices}{\selvariable}} \, : \, \basemeasureat{\indexedshortcatvariables}=1 } \\
+        &= \convhullof{\contractionof{\sencsstatat{\shortcatvariables,\selvariable},\onehotmapofat{\shortcatindices}{\shortcatvariables}}{\selvariable} \, : \, \basemeasureat{\indexedshortcatvariables}=1 } \\
         &= \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \basemeasureat{\indexedshortcatvariables}=1} \, .
     \end{align*}
 \end{proof}
@@ -620,6 +726,58 @@ We state next, that the polytope $\genmeanset$ of mean parameters is a $\mathcal
 \end{proof}
 
 The determination of the half-space parametrizing $\halfspaceparams$ is, however, in general difficult and the main reason for the intractability of probabilistic inference (see e.g. \cite{wainwright_graphical_2008}).
+
+
+\subsect{Mean parameters by soft and hard constraints}
+
+We provide further intuition o n the position of the mean parameter, when interpreting $\basemeasure$ and $\sstat$ as soft and hard constraint meachanisms on a distribution.
+To this end, let $\stateset$ be an arbitrary finite state set, where we so far had the set $\facstates$ for factored representations.
+
+% Statistics encoding
+We define the statistics encoding of states as a map
+\begin{align*}
+    \sstatencoding : \stateset \rightarrow \simpleparspace \quad, \quad
+    \sstatencodingat{\catindex} = \sencsstatat{\indexedshortcatvariables,\selvariable} \, .
+\end{align*}
+This encoding generalizes the one-hot encoding, which corresponds with the special case $\sstat=\naivestat$.
+
+%
+The mean polytope is then the subset of the polytope $\meansetof{\sstat,\trivbm}$,
+\begin{align*}
+    \meansetof{\sstat,\basemeasure}
+    = \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable}\wcols\basemeasureat{\indexedshortcatvariables}=1}
+\end{align*}
+
+% Mean parameter of base measure
+The mean parameter of a base measure $\basemeasure$, which normalization is understood as a distribution is then
+\begin{align*}
+    \meanparamat{\sstat,\zeros,\basemeasure}
+    &= \frac{1}{\contraction{\basemeasure}} \sum_{\shortcatindices\wcols\basemeasureat{\indexedshortcatvariables}=1}  \sencsstatat{\indexedshortcatvariables,\selvariable} \\
+    &= \contractionof{\normationof{\basemeasure}{\shortcatvariables},\sencsstatat{\shortcatvariables,\selvariable}}{\selvariable} \, .
+\end{align*}
+We understand $\meanparamat{\sstat,\zeros,\basemeasure}$ as the weighted center of $\meansetof{\sstat,\basemeasure}$, where weights are allocated on the image of the statistics encoding by the cardinality of their pre-images.
+These concepts are sketched in \figref{fig:hs_mean_sketch} in blue.
+
+The choice of a base measure $\basemeasure$ can be regarded as hard structure of a distribution.
+Given $\basemeasure$, let us now implement soft structure in form of distributions in exponential families $\expfamily$.
+While the normalized base measure $\basemeasure$ reproduces only the weighted center of $\meansetof{\sstat,\basemeasure}$, canonical parameters can be chosen to alter to any interior point in $\meansetof{\sstat,\basemeasure}$. % ! Here the effective interior, when not minimal !
+This alternations are sketched in \figref{fig:hs_mean_sketch} in red.
+
+\begin{figure}
+    \begin{center}
+        \input{PartI/tikz_pics/probability_reasoning/hs_meanset_sketch}
+    \end{center}
+    \caption{
+        Sketch of hard constraints (blue) and soft constraints (red) determing the position of the mean parameter in $\meanparamof{\sstat,\trivbm}$.
+        In the set of states $\stateset$, the support of a base measure $\basemeasure$ is marked blue, and the base measure is the corresponding subset encoding.
+        The normalized $\basemeasure$ has the mean parameter $\meanparamof{\sstat,\zeros,\basemeasure}$, and the mean polytope $\meansetof{\sstat,\basemeasure}$ is the convex hull of the image to the statistics encoding $\sstatencoding$ restricted on the support set of $\basemeasure$.
+        Given a base measure $\basemeasure$, the corresponding forward and backward maps implement soft contraints depedning on canonical parameters $\canparam$.
+        The forward mapping maps the zero canonical parameter to $\meanparamof{\sstat,\zeros,\basemeasure}$, correspond with the normalized base measure.
+        Generic parameters $\canparam$ (red) are mapped onto the interior $\interiorof{\meansetof{\sstat,\basemeasure}}$.
+    }\label{fig:hs_mean_sketch}
+\end{figure}
+
+
 
 
 \subsect{Characterization of the interior}
@@ -1648,7 +1806,7 @@ We alternate through the coordinates of the statistics and adjust $\canparamat{\
 % Moment matching
 This condition is equal to the collection of moment matching equations % (see \theref{the:mm})
 \begin{align*}
-    \sbcontractionof{\expdist,\sencsstat}{\indexedselvariable} = \sbcontraction{\empdistribution,\sencsstat}{\indexedselvariable} \, .
+    \sbcontractionof{\expdist,\sencsstat}{\indexedselvariable} = \sbcontractionof{\empdistribution,\sencsstat}{\indexedselvariable} \, .
 \end{align*}
 
 
@@ -1705,7 +1863,7 @@ An alternating optimization is the coordinate descent of the negative likelihood
 Since the log likelihood is concave, the algorithm converges to a global minimum.
 
 \begin{algorithm}[h!]
-    \caption{Alternating Moment Matching}\label{alg:AMM}
+    \caption{Alternating Moment Matching for the Backward Map}\label{alg:AMM}
     \begin{algorithmic}
         \Require Empirical distribution $\empdistribution$, statistic $\sstat$ and base measure $\basemeasure$
         \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\expfamily$
@@ -1722,7 +1880,7 @@ Since the log likelihood is concave, the algorithm converges to a global minimum
                 \State Set $\canparamat{\indexedselvariable}$ to a solution of
                 \begin{align*}
                     \sbcontraction{\headcoreof{\selindex},\idrestrictedto{\imageof{\sstatcoordinateof{\selindex}}},\hypercoreof{\selindex}}
-                    \algdefsymbol \sbcontraction{\headcoreof{\selindex},\hypercoreof{\selindex}} \cdot \datameanat{\indexedselvariable} \, .
+                    = \sbcontraction{\headcoreof{\selindex},\hypercoreof{\selindex}} \cdot \datameanat{\indexedselvariable} \, .
                 \end{align*}
             \EndFor
         \EndWhile
@@ -1737,6 +1895,59 @@ We will investigate the case of binary images, where there are closed form expre
 
 %
 The computation of $\hypercoreof{\selindex}$ in Algorithm~\ref{alg:AMM} can be intractable and be replaced by an approximative procedure based on message passing schemes.
+
+\subsect{Second order Methods}
+
+The Hesse matrix of $\cumfunction$ at $\canparam$ is the covariance of the features with respect to $\expdist$, as we show next.
+
+\begin{lemma}\label{lem:hesseCumfunction}
+    At any $\canparam\in\simpleparspace$ we have
+    \begin{align*}
+       \gradwrt{\seccanparamat{\secselvariable}}\gradwrtat{\seccanparamat{\selvariable}}{\canparam} \cumfunctionof{\seccanparam}
+       =& \contractionof{\expdistwith,\sencsstatat{\shortcatvariables,\selvariable},\sencsstatat{\shortcatvariables,\secselvariable}}{\secselvariable,\selvariable} \\
+        &-  \contractionof{\expdistwith,\sencsstatat{\shortcatvariables,\secselvariable}}{\secselvariable} \otimes \contractionof{\expdistwith,\sencsstatat{\shortcatvariables,\selvariable}}{\selvariable} \, .
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    By \lemref{lem:gradientCumfunction} we have
+    \begin{align*}
+        \gradwrtat{\seccanparamat{\selvariable}}{\canparam} \cumfunctionof{\seccanparam}
+        = \contractionof{\expdistwith,\sencsstatwith}{\selvariable} \, .
+    \end{align*}
+    It further holds
+    \begin{align*}
+        \gradwrtat{\seccanparamat{\secselvariable}}{\canparam} \expdistwith
+        = \contractionof{\expdistwith,\sencsstatat{\shortcatvariables,\secselvariable}}{\shortcatvariables,\secselvariable}
+        - \contractionof{\expdistwith,\sencsstatat{\shortcatvariables,\secselvariable}}{\secselvariable} \otimes \expdistwith \, .
+    \end{align*}
+    Combining both equations, we get the claim.
+\end{proof}
+
+With this characterization, we can perform second order optimization algorithms such as the Newton Method, see \algoref{alg:newtonBackward} to solve the backward map.
+
+\begin{algorithm}
+    \caption{Newton Method for the Backward Map}\label{alg:newtonBackward}
+    \begin{algorithmic}
+        \Require Empirical distribution $\empdistribution$, statistic $\sstat$ and base measure $\basemeasure$
+        \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\expfamily$
+        \hrule
+        \State Set $\canparamat{\selvariable}=\zerosat{\selvariable}$
+        \State Compute $\datameanat{\selvariable}= \sbcontractionof{\empdistribution,\sencsstat}{\selvariable}$
+        \While{Convergence criterion not met}
+            \State Calulate $\gradwrt{\seccanparamat{\secselvariable}}\gradwrtat{\seccanparamat{\selvariable}}{\canparam} \cumfunctionof{\seccanparam}$ and  $\gradwrtat{\seccanparamat{\selvariable}}{\canparam} \cumfunctionof{\seccanparam}$ as in \lemref{lem:hesseCumfunction} and \lemref{lem:cumulativeGradient}.
+            \State Solve the linear equation
+                \begin{align*}
+                   \left(\gradwrt{\seccanparamat{\secselvariable}}\gradwrtat{\seccanparamat{\selvariable}}{\canparam} \cumfunctionof{\seccanparam}\right)  \Delta\left[\selvariable\right]
+                    = \meanparamwith - \gradwrtat{\seccanparamat{\selvariable}}{\canparam} \cumfunctionof{\seccanparam}
+                \end{align*}
+            \State Update the canonical parameter
+                \begin{align*}
+                    \canparamwith \algdefsymbol \canparamwith - \Delta\left[\selvariable\right]
+                \end{align*}
+        \EndWhile
+    \end{algorithmic}
+\end{algorithm}
+
 
 \sect{Discussion}
 
