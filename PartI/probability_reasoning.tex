@@ -1010,6 +1010,129 @@ with the face normal
     \contractionof{\left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\, : \, \edge\in\secedges\right\}}{\catvariableof{\secnodes}} \, .
 \end{align*}
 
+We define for each face the cone
+\begin{align*}
+    \maxcone = \{\canparam\wcols\canparam\in\simpleparspace\ncond\argmax_{\meanparam\in\genmeanset}\contraction{\canparam,\meanparam}=\genfaceset\}
+\end{align*}
+
+% Maybe earlier to avoid minimal statistics discussion
+\begin{definition}
+    We say, that a set $\arbset\subset\simpleparspace$ is effectively open, if $\arbset$ is contained in an affine subspace and open in that affine subspace.
+\end{definition}
+
+\begin{lemma}
+    For each face $\facecondset$, $\maxcone$ is a convex cone. % Missing: effectively open
+\end{lemma}
+\begin{proof}
+    $\maxcone$ is a cone, since for any $\canparam\in\maxcone$ and $\lambda>0$ we have
+    \begin{align*}
+        \genfaceset = \argmax_{\meanparam\in\genmeanset} \contraction{\canparam,\meanparam} = \argmax_{\meanparam\in\genmeanset} \contraction{\lambda\cdot\canparam,\meanparam} \, .
+    \end{align*}
+
+    % Convex
+    $\maxcone$ is convex, since for $\canparam,\seccanparam\in\maxcone$ and $\lambda\in(0,1)$ we have
+    \begin{align*}
+        \genfaceset = \argmax_{\meanparam\in\genmeanset} \contraction{\canparam,\meanparam} = \argmax_{\meanparam\in\genmeanset} \contraction{\seccanparam,\meanparam} \, .
+    \end{align*}
+    It follows
+    \begin{align*}
+        \genfaceset = \argmax_{\meanparam\in\genmeanset} \contraction{\lambda\cdot\canparam+(1-\lambda)\cdot\seccanparam,\meanparam}
+    \end{align*}
+    and $\lambda\cdot\canparam+(1-\lambda)\cdot\seccanparam \in\maxcone$.
+
+    % Show that Effectively open - Missing!
+\end{proof}
+
+
+
+\begin{lemma}\label{lem:faceSetsToMaxCones}
+    For two non-empty faces $\facecondsetof{0}$ and $\facecondsetof{1}$ we have % Non-empty needed? Can deal with face 1 empty, but with face 0 empty?
+    \begin{align*}
+        \genfacesetof{\facecondsetof{0}} \subset \genfacesetof{\facecondsetof{1}}
+    \end{align*}
+    if and only if
+    \begin{align*}
+        \genmaxconeof{\facecondsetof{1}} \subset \closureof{\genmaxconeof{\facecondsetof{0}}} \, .
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    \proofrightsymbol Let us assume $\genfacesetof{\facecondsetof{0}} \subset \genfacesetof{\facecondsetof{1}}$ and let us choose arbitrary $\canparamof{0}\in\genmaxconeof{\facecondsetof{0}},\,\canparamof{1}\in\genmaxconeof{\facecondsetof{1}}$.
+        It suffices to show, that for all $\lambda\in(0,1)$ we have $\lambda\cdot\canparamof{0}+(1-\lambda)\cdot\canparamof{1}\in\genmaxconeof{\facecondsetof{0}}$, since this implies $\canparamof{1}\in\closureof{\genmaxconeof{\facecondsetof{0}}}$.
+        By assumption we have
+        \begin{align*}
+            \argmax_{\meanparam\in\genmeanset} \contraction{\canparamof{0},\meanparam} \subset  \argmax_{\meanparam\in\genmeanset} \contraction{\canparamof{1},\meanparam}
+        \end{align*}
+        and thus
+        \begin{align*}
+            \argmax_{\meanparam\in\genmeanset} \contraction{\lambda\cdot\canparamof{0}+(1-\lambda)\cdot\canparamof{1},\meanparam} = \argmax_{\meanparam\in\genmeanset} \contraction{\canparamof{0},\meanparam}
+        \end{align*}
+        which implies $\lambda\cdot\canparamof{0}+(1-\lambda)\cdot\canparamof{1}\in\genmaxconeof{\facecondsetof{0}}$.
+    \proofleftsymbol Conversely, let us assume $\genmaxconeof{\facecondsetof{1}} \subset \closureof{\genmaxconeof{\facecondsetof{0}}}$.
+        We then find a sequence $\left(\canparamof{n}\right)_{n\in\nn}$ with $\canparamof{n}\in\genmaxconeof{\facecondsetof{0}}$ for $n\in\nn$ and which limit $\canparam$ exists in $\genmaxconeof{\facecondsetof{1}}$.
+        For an arbitrary $\catindex\in\stateset$ with $\sstatencodingat{\catindex}\in\genfacesetof{\facecondsetof{0}}$ we have
+        \begin{align*}
+            \contraction{\canparam,\sstatencodingat{\catindex}}
+            &= \lim_{n\rightarrow\infty} \contraction{\canparamof{n},\sstatencodingat{\catindex}} \\
+            &= \lim_{n\rightarrow\infty} \max_{\seccatindex\in\stateset} \contraction{\canparamof{n},\sstatencodingat{\seccatindex}} \\
+            &= \max_{\seccatindex\in\stateset} \contraction{\canparam,\sstatencodingat{\seccatindex}}
+        \end{align*}
+        and therefore $\sstatencodingat{\catindex}\in\genfacesetof{\facecondsetof{1}}$.
+        Note, that we used in the third equation, that $\stateset$ is finite.% and thus avoided to justify these equations based on convexity. -> More precise statement needed !
+        We use this property for all elements of the preimage of $\facecondsetof{0}$ and get
+        \begin{align*}
+            \genfacesetof{\facecondsetof{0}}
+            &= \convhullof{\sstatencodingat{\catindex}\wcols\catindex\in\argmax_{\seccatindex\in\stateset}\contraction{\canparamof{1},\sstatencodingat{\seccatindex}}} \\
+            &\subset \convhullof{\sstatencodingat{\catindex}\wcols\catindex\in\argmax_{\seccatindex\in\stateset}\contraction{\canparam,\sstatencodingat{\seccatindex}}} \\
+            &= \genfacesetof{\facecondsetof{1}} \, .
+        \end{align*}
+\end{proof}
+
+We consider the cone lattice
+
+\begin{theorem}\label{the:faceSetsToMaxCones}
+    The max cone lattice of $\genmeanset$, partially order by the
+    \begin{align*}
+        \genmaxconeof{\facecondsetof{0}} \prec \genmaxconeof{\facecondsetof{1}} \quad \text{if and only if} \quad
+        \genmaxconeof{\facecondsetof{1}} \subset \closureof{\genmaxconeof{\facecondsetof{0}}}
+    \end{align*}
+    is homomorphic to the face lattice of $\genmeanset$ with the homomorphism
+%    The homomorphism is given by
+    \begin{align*}
+        \psi(\genfaceset) = \genmaxcone \, .
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    % Special case of empty faces
+    We have to show that for all pairs of faces $\genfacesetof{\facecondsetof{0}},\genfacesetof{\facecondsetof{1}}$
+    \begin{align*}
+        \psi(\genfacesetof{\facecondsetof{0}}) \prec \psi(\genfacesetof{\facecondsetof{1}}) \quad \Leftrightarrow \quad \genfacesetof{\facecondsetof{0}} \prec \genfacesetof{\facecondsetof{1}} \, .
+    \end{align*}
+    We show this first for the case, that $\genfacesetof{\facecondsetof{0}}=\varnothing$ or $\genfacesetof{\facecondsetof{1}}=\varnothing$.
+    Note, that the empty face is contained in any other face, but contains no non-empty face.
+    Conversely, the trivial max cone $\genmaxconeof{\facecondsetof{\varnothing}}$ is for minimal statistics $\{\zerosat{\selvariable}\}$ and contained in the boundary of any other non-empty cone.
+    If the statistic is not minimal, the inclusion holds for the equivalence class of canonical parameters.
+    Further, since the max cones are a disjoint partition of $\simpleparspace$, $\zerosat{\selvariable}$ is not in any other max cone and thus $\genmaxconeof{\facecondset} \prec \genmaxconeof{\facecondsetof{\varnothing}}$ does not hold for any non-empty $\facecondset$.
+
+    % Non-empty faces
+    For all pairs of non-empty faces $\genfacesetof{\facecondsetof{0}},\genfacesetof{\facecondsetof{1}}$, \lemref{lem:faceSetsToMaxCones} ensures that
+    \begin{align*}
+        \psi(\genfacesetof{\facecondsetof{0}}) \prec \psi(\genfacesetof{\facecondsetof{1}}) \quad \Leftrightarrow \quad \genfacesetof{\facecondsetof{0}} \prec \genfacesetof{\facecondsetof{1}} \, .
+    \end{align*}
+\end{proof}
+
+As a consequence of \theref{the:faceSetsToMaxCones}, the max cone lattice inherits all properties of the face lattice, for example those shown in Theorem~2.6 in \cite{ziegler_lectures_2013}.
+
+\begin{figure}
+    \begin{center}
+        \input{PartI/tikz_pics/probability_reasoning/max_cone_sketch}
+    \end{center}
+    \caption{
+        Partition of the canonical parameters in $\simpleparspace$ into convex and effectively open maximum cones $\maxcone$ to faces $\facecondset$ (left).
+        The forward mapping maps the maximum cones into the mean parameter polytope (right).
+    }\label{fig:max_cone_sketch}
+\end{figure}
+
+
 
 \subsect{Base measure refinement}
 
@@ -1193,6 +1316,8 @@ Following \cite{wainwright_graphical_2008}, we can characterize the forward mapp
 Besides the direct computation of the mean parameter we can give a variational characterization of the forward mapping.
 %This is especially useful, when the contraction is intractable, for example because the tensor $\expdist$ is infeasible to create.
 
+
+%% REMOVE!
 \begin{theorem}
     We have
     \begin{align*}
@@ -1570,6 +1695,7 @@ Let us now continue with the discussion of the backward map, which calculates to
 
 We now provide a variational characterization of the backward map.
 
+%% Remove here, moved to variational inference section
 \begin{theorem}
     \label{the:varBackward}
     Let there be a statistic $\sstat$, which is minimal with respect to a boolean base measure $\basemeasure$.
