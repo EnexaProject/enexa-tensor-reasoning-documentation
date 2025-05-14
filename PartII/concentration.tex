@@ -324,6 +324,73 @@ When comparing the gap with the noise width, we get the following guarantee.
     Thus, any mode of the empirical mean parameter is also a model of the expected mean parameter.
 \end{proof}
 
+
+\subsect{Mode recovery}
+
+Let us now consider a more general problem than in the section above, namely the estimation of the modes of a distribution.
+Let $\estcanparam$ be the estimator of the canonical parameter $\gencanparam$, then the mode set of both coincide, if and only if they are elements in the same max cone, i.e.
+\begin{align*}
+    \genmaxconeof{\estcanparam} = \genmaxconeof{\gencanparam} \, .
+\end{align*}
+
+To ensure, that this is the case, we generalize the gap at $\gencanparam$ as the minimal distance to other cones and bound uniform concentration events implying that the distance between $\estcanparam$ and $\gencanparam$ is smaller than the gap.
+
+\begin{definition}
+    Let $\canmetricof{\cdot}{\cdot}$ be a metric on $\simpleparspace$, then the generalized gap of $\canparam\in\simpleparspace$ is defined as
+    \begin{align*}
+        \maxgapofat{\canmetric}{\canparam} = \inf_{\seccanparam\notin\genmaxconeof{\canparam}} \canmetricof{\seccanparam}{\canparam} \, .
+    \end{align*}
+\end{definition}
+
+Atomic norms induce metrics, which are widths (see Chapter~5 in \cite{goesmann_uniform_2021}).
+
+\begin{definition}
+    Given a set $\Gamma\subset\simpleparspace$ such that an open neighborhood of the origin is contained in $\convhullof{\Gamma}$.
+    Then
+    \begin{align*}
+        \|\canparam\|_{\Gamma} = \widthwrtof{\Gamma}{\canparam}
+    \end{align*}
+    is the atomic norm and
+    \begin{align*}
+        \canmetricwrtof{\Gamma}{\canparam}{\seccanparam} = \widthwrtof{\Gamma}{\canparam-\seccanparam}
+    \end{align*}
+    is the atomic distance to $\Gamma$.
+\end{definition}
+
+Examples of atomic norms are:
+\begin{itemize}
+    \item Euclidean distance $\ell_2$, when $\Gamma=\subsphere$
+    \item Supremum distance $\ell_{\infty}$, when $\Gamma=\{\lambda\cdot \onehotmapofat{\selindex}{\selvariable} \wcols \lambda\in\{-1,+1\}\ncond \selindexin\}$
+\end{itemize}
+
+
+\begin{theorem}
+    Let $\Gamma\subset\simpleparspace$ induce an atomic norm.
+    If
+    \begin{align*}
+        \widthwrtof{\Gamma}{\estcanparam-\gencanparam} < \maxgapofat{\canmetricwrt{\Gamma}}{\gencanparam}
+    \end{align*}
+    then the modes of $\stanexpdistof{\estcanparam}$ and $\stanexpdistof{\gencanparam}$ coincide.
+\end{theorem}
+\begin{proof}
+    If $\estcanparam\notin\genmaxconeof{\gencanparam}$, then
+    \begin{align*}
+        \maxgapofat{\canmetricwrt{\Gamma}}{\gencanparam} \geq \canmetricwrtof{\Gamma}{\estcanparam}{\gencanparam} = \widthwrtof{\Gamma}{\estcanparam-\gencanparam} \, ,
+    \end{align*}
+    which contradicts the assumption.
+    Therefore if the assumption holds, then $\estcanparam\in\genmaxconeof{\gencanparam}$ and the modes of $\stanexpdistof{\estcanparam}$ and $\stanexpdistof{\gencanparam}$ coincide.
+\end{proof}
+
+The guarantee on structure learning is the special case, where $\Gamma=\{\lambda\cdot \onehotmapofat{\selindex}{\selvariable} \wcols \lambda\in\{-1,+1\}\ncond \selindexin\}$ and
+\begin{align*}
+     \maxgapofat{\canmetricwrt{\Gamma}}{\canparam}
+     = \frac{1}{2} \max_{\selindex\notin\argmax_{\selindex}\canparamat{\indexedselvariable}} \left| \canparamat{\indexedselvariable} - \max_{\selindex}\canparamat{\indexedselvariable} \right| \, .
+\end{align*}
+
+%This is a slight abuse of the special gap definition above.
+
+
+
 \sect{Fluctuations in Logic Networks}
 
 \red{In case of logical formulas being statistics, the coordiantes of the mean parameter are satisfaction rates to the formulas.}
