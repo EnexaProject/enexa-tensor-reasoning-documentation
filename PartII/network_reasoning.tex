@@ -21,18 +21,22 @@ By \theref{the:meanPolytopeConvHull} the convex polytope has a characterization 
 \end{align}
 
 % 0/1 Polytopes
-We notice, that all $\sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable}$ are boolean vectors in $\rr^{\seldim}$.
+We notice, that all $\sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable}$ are boolean vectors in $\simpleparspace$.
 The mean parameter polytopes are thus of $0/1$-polytopes \cite{ziegler_lectures_2000,gillmann_01-polytopes_2007}, from which a few obvious properties follow.
-Since those are convex subsets of the cube $[0,1]^p$, which extreme points are all binary vectors, also each $\sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable}$ (with $\basemeasureat{\indexedshortcatvariables}=1$) is an extreme point.
+Since those are convex subsets of the cube $[0,1]^\seldim$, which vertices are all binary vectors, also each $\sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable}$ (with $\basemeasureat{\indexedshortcatvariables}=1$) is an extreme point.
 Further, if for any $\selindexin$ we have $\meanparamat{\indexedselvariable}\in\{0,1\}$, then $\meanparamwith$ is in the boundary of the cube and thus also of $\hlnmeanset$
 
+\red{In the following, we characterize the faces of the mean parameter }
 
-\subsect{Extreme points by hard logic networks}
 
-We exploit this characterization to show, that the extreme points of $\hlnmeanset$ are exactly those reproducable by Hard Logic Networks.
+\subsect{Vertices by hard logic networks}
+
+\red{$\basemeasureofat{\formulaset,\meanparam}{\shortcatvariables}$ are the subset encodings of preimages of the statistics encoding.}
+
+We exploit this characterization to show, that the vertices of $\hlnmeanset$ are exactly those reproducable by Hard Logic Networks.
 
 \begin{theorem}\label{the:extremeCharacterizationHLN}
-	Any parameter $\meanparamwith\in\hlnmeanset$ is an extreme point of $\hlnmeanset$, if and only if $\meanparamwith$ is boolean and the formula
+	Any set $\{\meanparamwith\}\subset\hlnmeanset$ of cardinality $1$ is a vertex of $\hlnmeanset$, if and only if its unique element $\meanparamwith$ is boolean and the formula
 	\begin{align*}
 		 \basemeasureofat{\formulaset,\meanparam}{\shortcatvariables}
 			\coloneqq \bigwedge_{\selindexin} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables}
@@ -40,7 +44,7 @@ We exploit this characterization to show, that the extreme points of $\hlnmeanse
 	is satisfiable.
 	In that case, $\meanparam$ is the mean parameter of the Hard Logic Network with formulas
 	\begin{align*}
-		\kb=\{\lnot^{(1-\meanparamat{\indexedselvariable})} \enumformula \, : \, \selindexin \} \, ,
+		\kb=\{\lnot^{(1-\meanparamat{\indexedselvariable})} \enumformula \, : \, \selindexin \} \, , % call this \formula^{\meanparam}
 	\end{align*}
 	where we denote by $\lnot^0$ the identity connective and by $\lnot^1=\lnot$ the logical negation.
 \end{theorem}
@@ -62,6 +66,19 @@ We exploit this characterization to show, that the extreme points of $\hlnmeanse
 		With the characterization \eqref{eq:hlnMeansetConvCharacterization} this establishes in particular $\meanparamwith\in\hlnmeanset$.
 		Since $\meanparamwith$ is boolean and therefore an extreme point of the cube $\cubeof{\seldim}$, it is also an extreme point of the subset $\hlnmeanset\subset\cubeof{\seldim}$.
 \end{proof}
+
+\subsect{Faces of larger rank}
+
+% True?
+Since the by inclusion partially ordered set of faces is a graded lattice (see Theorem~2.7 in \cite{ziegler_lectures_2013}), the faces are ranked by dimension of th% the number of included vertices.
+
+The face base measure is thus
+\begin{align*}
+	\basemeasureof{\facecondset}
+	= \bigcup_{\meanparam\in\genfaceset\cup\{0,1\}^{\seldim}} \formula^{\meanparam}
+	= \bigcup_{\meanparam\in\genfaceset\cup\{0,1\}^{\seldim}} \bigwedge_{\selindexin} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformula \, .
+\end{align*}
+
 
 \subsect{Mean parameters in the interior}
 
@@ -211,6 +228,7 @@ In the next example we provide a class of formulas, for which $\hlnsetof{\formul
 % Sufficient Expressivity
 Before presenting the example class of atomic formulas as a case, where $\hlnsetof{\formulaset}$ has sufficient expressivity, let us first proof a generic criterion.
 
+% Drop!
 \begin{theorem}\label{the:sufficientHLNExpressivity}
 	The set of mean parameters realizable by $\hlnsetof{\formulaset}$ coincides with the set of mean parameters realizable by any distribution, if for any boolean vector $\canparamat{\selvariable}$ the formula $\formulaof{\formulaset,\canparam}$ is satisfiable.
 \end{theorem}
@@ -233,16 +251,52 @@ This can be done by adding activation cores with multiple variables, or further 
 
 
 % New 15.5.25: Full characterization of representable pre-images
-Let us now characterize all the pre-images of faces, which are in $\hlnsetof{\formulaset}$.
-\begin{theorem}
+To characterize all the pre-images of faces, which are in $\hlnsetof{\formulaset}$, we exploit the faces of the $\seldim$-dimensional cube.
+The cube $[0,1]^{\seldim}$ is a polytope in $\rr^{\seldim}$, namely the convex hull of all boolean vectors
+\begin{align*}
+	[0,1]^{\seldim} = \convhullof{\meanparamat{\selvariable}\wcols\uniquantwrtof{\selindexin}{\meanparamat{\indexedselvariable}\in\{0,1\}}} \, .
+\end{align*}
+We have for the statistic of atoms $\atomstat$, that $\meansetof{\atomstat,\ones}=[0,1]^{\seldim}$.
+Its faces are enumerated by tuples $(\variableset,\catindexof{\variableset})$, where $\variableset\subset[\seldim]$ and $\catindexof{\variableset}\in\{0,1\}^{\cardof{\variableset}}$.
+\begin{align*}
+	\genfacesetof{(\variableset,\catindexof{\variableset})}
+	= \left\{\meanparamat{\selvariable}\wcols \meanparam\in[0,1]^{\seldim}\ncond\uniquantwrtof{\selindex\in\variableset}{\meanparamat{\indexedselvariable}=\catindexof{\selindex}}\right\} \, .
+\end{align*}
+
+
+\begin{theorem}\label{the:HLNExpressivity}
 	The pre-image of faces of $\hlnmeanset$, which subset encodings are in $\hlnsetof{\formulaset}$, are those faces, which are intersections of $\hlnmeanset$ with faces of the cube $[0,1]^\seldim$.
 \end{theorem}
 \begin{proof}
-	Any subset encoding is a boolean tensor and any boolean tensor in $\hlnsetof{\formulaset}$ has a representation with boolean activation core.
+	Any subset encoding is a boolean tensor and any boolean tensor in $\hlnsetof{\formulaset}$ has a representation with boolean activation core. % $\actcore\in\bigotimes$
 	If the activation core is elementary, it has a basis+ decomposition with rank 1, since we have leg dimensions of 2 for boolean statistics.
-	Contractions with the computation network are effectively constraining only a subset of statistic coordinates (use the ones-trivial-property of relational encodings).
-	Any $\meanparam$ being the statistic encoding of a coordinate in the support of this contraction thus satisfies contraints $\meanparamat{\indexedselvariable}=0$ respectively $\meanparamat{\indexedselvariable}=1$, which are known to define faces of the cube.
+	Let $\variableset\subset[\seldim]$ be the legs, which vector is a basis vector, and let $\catindexof{\variableset}\in\{0,1\}^{\cardof{\variableset}}$ be the tuple storing to $\selindex\in\variableset$ the number of the basis vector by $\catindexof{\selindex}$.
+	Therefore, we have a parametrization of the boolean tensors in $\hlnsetof{\formulaset}$ by
+	\begin{align*}
+		\hlnsetof{\formulaset} \cup \bigotimes_{\catenumeratorin}\{0,1\}^{2}
+		= \bigcup_{\variableset\subset[\seldim]} \bigcup_{\catindexof{\variableset}\in\{0,1\}^{\cardof{\variableset}}}
+		\contractionof{\rencodingofat{\formulaset}{\headvariableof{[\seldim]},\shortcatvariables},\onehotmapofat{\catindexof{\variableset}}{\headvariableof{\variableset}}}{\shortcatvariables}
+	\end{align*}
+
+	For any tuple $(\variableset,\catindexof{\variableset})$ and any $\shortcatindices$ we then have
+	\begin{align*}
+		\contractionof{\rencodingofat{\formulaset}{\headvariableof{[\seldim]},\shortcatvariables},\onehotmapofat{\catindexof{\variableset}}{\headvariableof{\variableset}}}{\indexedshortcatvariables}=1
+		\quad \Leftrightarrow \quad
+		\uniquantwrtof{\selindex\in\variableset}{\sencsstatat{\indexedshortcatvariables,\indexedselvariable}=\catindexof{\selindex}}
+	\end{align*}
+	And thus
+	\begin{align*}
+		\left\{\shortcatindices\wcols\contractionof{\rencodingofat{\formulaset}{\headvariableof{[\seldim]},\shortcatvariables},\onehotmapofat{\catindexof{\variableset}}{\headvariableof{\variableset}}}{\indexedshortcatvariables}=1\right\}
+		= \hlnmeanset \cup \genfacesetof{(\variableset,\catindexof{\variableset})} \, .
+	\end{align*}
+	Since to each boolean tensors in $\hlnsetof{\formulaset}$ and to each face in
+	Note, that there might be multiple pairs $(\variableset,\catindexof{\variableset})$ to a boolean tensor in $\hlnsetof{\formulaset}$, corresponding to situations where multiple faces of the cube have identical intersections with $\hlnmeanset$.
+%	Contractions with the computation network are effectively constraining only a subset of statistic coordinates (use the ones-trivial-property of relational encodings).
+%	Any $\meanparam$ being the statistic encoding of a coordinate in the support of this contraction thus satisfies contraint $\meanparamat{\indexedselvariable}=0$ respectively $\meanparamat{\indexedselvariable}=1$, which are known to define faces of the cube.
 \end{proof}
+
+The vertices of $\hlnmeanset$ consist of $\{\meanparam\}$ where $\meanparamat{\selvariable}=\sencsstatat{\indexedshortcatvariables,\selvariable}$ for an $\shortcatindices$.
+As a corollary of \theref{the:HLNExpressivity}, their pre-image is always in $\hlnsetof{\formulaset}$.
 
 \begin{corollary}
 	All encoded pre-images of vertices are in $\hlnsetof{\formulaset}$.
@@ -269,6 +323,17 @@ Any face, which is the intersection with faces of the distorted cube
 \end{align*}
 has a representation of its encoded pre-image with an activation tensor of basis+ rank 1.
 Since for leg dimensions larger than 2 the boolean tensors with elementary decomposition contain more tensors than the basis+ tensors of rank 1, we can represent further faces.
+
+
+
+%
+\begin{theorem}
+	The encoded pre-image of any face of rank $r$ is represented by a activation core of basis $\cpformat$ rank $r$.
+\end{theorem}
+\begin{proof}
+	We build for each vertex $\{\meanparam\}$ a basis vector $\bigotimes_{\selindex\in\seldim}\onehotmapofat{\meanparamat{\indexedselvariable}}{\headvariableof{\selindex}}$, which contraction with $\rencodingof{\formulaset}$.
+	Note, that the vertex base measures have disjoint support and their disjunction is thus a summation.
+\end{proof}
 
 
 \subsect{Case of tree computation networks}
