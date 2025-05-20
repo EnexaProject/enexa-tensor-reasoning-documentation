@@ -339,9 +339,7 @@ So far we have been concerned with deductive reasoning task, that is retrieve in
 We now turn to inductive reasoning tasks, where a probability distribution is estimated given data.
 To present the generic framework of maximum likehihood estimation in the tensor network contraction formalism, we introduce the likelihood loss exploiting the structure of empirical distribution, and then provide interpretations in terms of entropies.
 
-
-
-\sect{Empirical Distributions}\label{sec:empDistribution}
+\subsect{Empirical Distributions}\label{sec:empDistribution}
 
 To prepare for reasoning on data, we now derive tensor network representation for empirical distributions, which are defined based on observed states $\dataset$ of a factored system.
 
@@ -647,38 +645,99 @@ The differences of both are discussed in Chapter~8 in \cite{koller_probabilistic
 \end{example}
 
 
+
 \sect{Variational Inference in Exponential Families}
+
+
 
 \subsect{Forward and Backward Mappings}
 
-We recall the mean parameters of a statistics $\sstat$ from \defref{def:meanPolytope} and investigate the relation between the canonical parameter $\canparam$ of a member of an exponential family and the corresponding mean parameter $\meanparam$.
+While defined for arbitrary distributions (see \defref{def:meanPolytope}), we now consider mean parameters to members of exponential families.
+First of all, they provide an alternative parameterization to the canonical parameter $\canparam$.
+The computation of the mean parameter to a given canonical parameter and vice versa are the central inference problems in exponential families.
+We first formalize these inference problems by the forward and backward mapping and then provide in this section further insights into these mappings.
 
 \begin{definition}
     \label{def:meanForwardBackward}
-%    Let there be a statistic $\sencsstatwith$ and a boolean base measure $\basemeasurewith$.
-%    We call the tensor
-%    \begin{align*}
-%        \meanparamwith = \sbcontractionof{\probat{\shortcatvariables},\sencsstatat{\shortcatvariables,\selvariable}}{\selvariable}
-%    \end{align*}
-%    the mean parameter tensor to a distribution $\probat{\shortcatvariables}$.
-%    The set
-%    \begin{align*}
-%        \genmeanset = \left\{\contractionof{\probtensor,\sencsstat,\basemeasure}{\selvariable} \, : \,
-%        0\prec\probtensor , \, \contractionof{\probwith,\basemeasurewith}{\shortcatvariables}
-%        = \probwith \right\} \, ,
-%    \end{align*}
-%    is called the polytope of realizable mean parameters.
     Let $\sstat$ be a statistic and $\basemeasure$ a base measure and consider the exponential family $\genexpfamily$
     The map
     \begin{align*}
-        \forwardmap :  \parspace\rightarrow\parspace
+        \forwardmap : \parspace\rightarrow\genmeanset\subset\parspace
+        \defspace \forwardmapof{\canparam} = \contractionof{\expdistwith,\sencsstatwith}{\selvariable}
     \end{align*}
-    with $\forwardmapof{\canparam} = \sbcontractionof{\expdist,\sencsstat}{\selvariable}$ is called the forward map of the exponential family and inverse, that is a map
+    is called the forward map of the exponential family and inverse, that is a map
     \begin{align*}
-        \backwardmap : \imageof{\forwardmap} \rightarrow \parspace
+        \backwardmap : \imageof{\forwardmap} \subset\parspace\rightarrow \parspace
     \end{align*}
     with $\expdistof{(\sstat,\backwardmapof{\forwardmapof{\canparam}},\basemeasure)} = \expdist$ for any $\canparamwithin$, a backward map of the exponential family.
 \end{definition}
+
+% Domain of \forwardmap
+We notice, that the domain of $\forwardmap$ is always $\parspace$, since the coordinates of $\forwardmapof{\canparam}$ are for any $\canparam\in\parspace$ summations over finitely many products.
+
+%
+We already know by \theref{the:meanPolytopeInteriorCharacterization}, that distributions representable by $\basemeasure$ have mean parameters in the interior of $\genmeanset$.
+We now state that the elements of the corresponding exponential family $\expfamily$, which are by construction representable by $\basemeasure$, are expressive enough to reproduce the whole interior of $\genmeanset$.
+
+\begin{theorem}
+    \label{the:meanPolytopeInterior}
+    For any exponential family $\genexpfamily$ the image of the forward mapping is the mean polytope except its proper faces, that is
+    \begin{align*}
+        \imageof{\forwardmap} = \genmeanset / \bigcup_{\genfaceset\neq\genmeanset} \genfaceset \, .
+    \end{align*}
+    If $\sstat$ is minimal with respect to $\basemeasure$, then $\imageof{\forwardmap}=\sbinteriorof{\genmeanset}$, the forward mapping is a bijection and the unique backward mapping its inverse.
+\end{theorem}
+\begin{proof}
+    In case of minimal statistics, we refer for the proof of this statement to Theorem~3.3 in \cite{wainwright_graphical_2008}.
+    If $\sstat$ is not minimal, we find a subset $\secsstat$ of its features such that $\secsstat$ is minimal with respect to $\basemeasure$ and there is a matrix $\matrixat{\selvariable,\secselvariable}$ such that for any distribution
+    \begin{align*}
+        \contractionof{\probat{\shortcatvariables},\sencodingofat{\secsstat}{\shortcatvariables,\secselvariable},\matrixat{\selvariable,\secselvariable}}{\selvariable}
+        = \contractionof{\probat{\shortcatvariables},\sencodingofat{\sstat}{\shortcatvariables,\selvariable}}{\selvariable} \, .
+    \end{align*}
+    This subset $\secsstat$ can be found by iteratively identifying $\vectorat{\selvariable}$ and $\lambda$ such that the condition in \defref{def:minimalStatistics} is violated, and dropping a feature $\sstatcoordinateof{\selindex}$ with $\vectorat{\indexedselvariable}\neq0$.
+    At each manipulation step the expressivity of the exponential family stays constant and thus $\expfamilyof{\secsstat,\basemeasure}=\expfamilyof{\sstat,\basemeasure}$.
+    The matrix $\matrixat{\selvariable,\secselvariable}$ can be constructed based on the linear dependencies of the dropped features on the remaining.
+    The procedure terminates, when there is no pair $\vectorat{\selvariable},\lambda$, which is equal to $\secsstat$ being minimal with respect to $\basemeasure$.
+%    \begin{align*}
+%        \sencodingofat{\sstat}{\shortcatvariables,\selvariable}
+%        = \contractionof{\sencodingofat{\secsstat}{\shortcatvariables,\secselvariable},\matrixat{\selvariable,\secselvariable}}{\shortcatvariables,\selvariable} \, .
+%    \end{align*}
+    We then have %$\expfamilyof{\secsstat,\basemeasure}=\expfamilyof{\sstat,\basemeasure}$ and
+    \begin{align*}
+        \meansetof{\sstat,\basemeasure} / \bigcup_{\genfaceset\neq\genmeanset} \genfaceset
+        = \{\contractionof{\meanparamat{\secselvariable},\matrixat{\selvariable,\secselvariable}}{\selvariable}\wcols\meanparamat{\secselvariable}\in\sbinteriorof{\meansetof{\secsstat,\basemeasure}}\} \, .
+    \end{align*}
+    and using that $\secsstat$ is minimal we get
+    \begin{align*}
+        \imageof{\forwardmap} = \genmeanset / \bigcup_{\genfaceset\neq\genmeanset} \genfaceset \, .
+    \end{align*}
+%    For any $\canparam$
+\end{proof}
+
+%\begin{theorem}
+%    \label{the:meanPolytopeInterior}
+%    For any exponential family $\genexpfamily$, where $\sstat$ is minimal with respect to $\basemeasure$, the forward mapping is a bijection of $\parspace$ and $\sbinteriorof{\genmeanset}$.
+%    There is thus a unique backward mapping by the inverse of the forward mapping.
+%\end{theorem}
+
+
+Forward and backward maps in an exponential family $\expfamily$ are the central classes of inference, which transform the description of a member by a canonical parameter into mean parameters and vise versa.
+Forward maps calculate to a canonical parameter $\canparamwith$ the corresponding mean parameter $\meanparamwith$.
+For any $\canparamwith$ we have a closed form representation of this expectation query by the moment matching condition
+\begin{align*}
+    \meanparamwith = \contractionof{\sencsstatwith,\expdistwith}{\selvariable} \, .
+\end{align*}
+The forward map is thus a collection of expectation queries (see \defref{def:queries}) to compute the coordinates of the mean parameter.
+The query $\sstatcoordinateof{\selindex}$ asked against $\expdistwith$ computes the coordinate $\meanparamat{\indexedselvariable}$.
+%\begin{align*}
+%    \forwardmapof{\canparam}
+%    = \contractionof{\sencodingof{\sstat},\normationof{\basemeasure,\expof{\contraction{\sencodingof{\sstat},\canparam}}}{\shortcatvariables}}{\selvariable} \, .
+%\end{align*}
+% Infeasibility and turn to variational alternatives with selection encodings.
+The contraction by the moment matching condition can, however, be infeasible, since it requires the instantiation of the probability distribution, which can be done by relational encodings of the statistic.
+We in this section provide alternative characterization of the forward map and approximations of it, which can be computed based on the selection encoding instead.
+Following \cite{wainwright_graphical_2008}, we can characterize the forward mapping to exponential families as a variational problem and provide an alternative characterization to this contraction.
+
 
 \subsect{Variational Formulation}
 
@@ -731,12 +790,19 @@ The conjugate dual of the cumulative function is
     With \lemref{lem:gradientCumfunction}, the gradient vanishes if and only if $\meanparam$ is the mean parameter to $\expdist$.
 \end{proof}
 
-\begin{theorem}
+The backward map is closely connected with the conjugate dual of $\cumfunction$.
+In particular, while the conjugate dual is defined by the maximization problem
+\begin{align*}
+    \dualcumfunctionof{\meanparam} = \max_{\canparam\in\parspace} \contraction{\meanparam,\canparam} - \cumfunctionof{\canparam}
+\end{align*}
+the backward map returns the position of the maximum in $\parspace$.
+
+\begin{lemma}\label{lem:dualCumEntropy}
     For any $\canparam$ with mean parameter $\meanparam$ we have
     \begin{align*}
         \dualcumfunction(\meanparam) = - \sentropyof{\expdist} \, .
     \end{align*}
-\end{theorem}
+\end{lemma}
 \begin{proof}
     We have
     \begin{align*}
@@ -754,20 +820,23 @@ The conjugate dual of the cumulative function is
     \end{align*}
 \end{proof}
 
-\begin{theorem}[Variational forward map]
+We can use this insight to provide a variational characterization of the forward mapping.
+
+\begin{theorem}[Variational forward mapping]
     Let $\sstat$ be a minimal statistic with respect to $\basemeasure$.
     Given $\canparam$, there is a unique $\meanparam$ with
     \begin{align*}
-         \meanparam \in \argmax_{\meanparam\in\meanset} \contraction{\meanparam,\canparam} -  \dualcumfunction(\meanparam)
+         \meanparam \in \argmax_{\meanparam\in\meanset} \contraction{\meanparam,\canparam} + \sentropyof{\expdistof{\sstat,\meanparam,\basemeasure}} %-  \dualcumfunction(\meanparam)
     \end{align*}
     and $\meanparam$ is the mean parameter to $\expdistwith$.
+    Here, we denote by $\expdistof{\sstat,\meanparam,\basemeasure}$ the member of the exponential family with the mean parameter $\meanparam$.
 \end{theorem}
 \begin{proof}
     By strong duality, we have $\left(\cumfunction\right)^{**}=\cumfunction$ and
     \begin{align*}
         \cumfunction(\canparam) = \max_{\meanparam\in\meanset} \contraction{\meanparam,\canparam} -  \dualcumfunction(\meanparam) \, .
     \end{align*}
-    The statement then follows from the first order condition, where we use the gradient \lemref{lem:gradientCumfunction}. % Do we need to assume minimal statistics?
+    The statement then follows from the first order condition, where we use the gradient \lemref{lem:gradientCumfunction}, and the characterization of $\dualcumfunction$ by \lemref{lem:dualCumEntropy}. % Do we need to assume minimal statistics?
 \end{proof}
 
 %We have at any $\canparam\in\parspace$
@@ -780,10 +849,14 @@ The conjugate dual of the cumulative function is
 %\end{align*}
 
 
-\sect{Reasoning on mean parameter polytopes}
+\sect{Maximum entropy distributions}
+
+\red{We characterize in this section to any mean parameter the reproducing distribution with maximum entropy, and investigate their modes and tensor network representation.
+As we will show, the distributions with maximal entropy are in exponential families with base measure determined by the smallest face, which contains the mean parameter.
+}
 
 % To expectation queries, as an example!
-The mean parameters are computated as collections of expectation queries to $\sstatcoordinateof{\selindex}$, which are answered against distributions in $\bmrealprobof{\basemeasure}$.
+The mean parameters are computed as collections of expectation queries to $\sstatcoordinateof{\selindex}$, which are answered against distributions in $\bmrealprobof{\basemeasure}$.
 For any $\selindexin$ we have for the mean parameter $\meanparamwith$ reproduced by a distribution $\probwith$
 \begin{align*}
     \meanparamat{\indexedselvariable}
@@ -791,7 +864,176 @@ For any $\selindexin$ we have for the mean parameter $\meanparamwith$ reproduced
     = \contraction{\sencsstatat{\shortcatvariables,\indexedselvariable},\probwith} \, .
 \end{align*}
 
-\subsect{Face characterization by mode queries}
+
+\subsect{Entropy maximization problem}\label{sec:maxEntDuality}
+
+
+The entropy maximization problem with respect to matching expected statistics $\genmean\in\genmeanset$ is the optimization problem
+\begin{align}
+    \tag{$\probtagtypeinst{\entropysymbol}{\sstat,\basemeasure,\genmean}$}\label{prob:maxEntropy} % Notation clash with cross-entropy!
+    \argmax_{\probtensor\in\bmrealprobof{\basemeasure}} \sentropyof{\probtensor} \quad \text{subject to} \quad
+    \sbcontractionof{\probtensor,\sencsstat}{\selvariable} = \genmeanat{\selvariable}
+\end{align}
+where by $\bmrealprobof{\basemeasure}$ we denote all distributions, which are representable with respect to a base measure $\basemeasure$.
+
+% Feasibility
+By definition of the mean polytope, \probref{prob:maxEntropy} has a feasible distribution if and only if $\genmeanat{\selvariable}\in\genmeanset$.
+If this condition holds, we now characterize the solution of \probref{prob:maxEntropy}.
+First of all, we show that the maximum entropy distribution is in the exponential family $\genexpfamily$, when $\meanparam$ does not lie on a proper face of $\genmeanset$.
+We then drop this assumption and generalize the statement to exponential families with refined base measures.
+
+\begin{theorem}\label{the:maxEntropyInterior}
+    If the only face $\genfacesetof{\facecondset}$ of $\genmeanset$ with $\meanparam\in\genfacesetof{\facecondset}$ is $\genmeanset$ itself, then the solution of the maximum entropy distribution is the unique distribution
+    \begin{align*}
+        \expdistofat{\sstat,\meanparam,\basemeasure}{\shortcatvariables}\in\expfamilyof{\sstat,\basemeasure}
+    \end{align*}
+    with $\contractionof{\expdistofat{\sstat,\meanparam,\basemeasure}{\shortcatvariables},\sencsstatwith}{\selvariable}=\meanparamat{\selvariable}$.
+\end{theorem}
+\begin{proof}
+    By \theref{the:meanPolytopeInterior}, since by assumption
+    \begin{align*}
+        \meanparamwith \in \genmeanset / \bigcup_{\genfaceset\neq\genmeanset} \genfaceset \, ,
+    \end{align*}
+    there is a canonical parameter $\canparam$ with
+    \begin{align*}
+        \contractionof{\expdistofat{\sstat,\canparam,\basemeasure}{\shortcatvariables},\sencsstatwith}{\selvariable}=\meanparamat{\selvariable}
+    \end{align*}
+
+    For any other feasible distribution $\secprobat{\shortcatvariables}$ we also have $\contractionof{\secprobat{\shortcatvariables},\sencsstatwith}{\selvariable}=\meanparamat{\selvariable}$ and thus
+    \begin{align*}
+        \centropyof{\secprobtensor}{\expdistof{(\sstat,\canparam,\basemeasure)}}
+        &= -\contraction{\secprobtensor,\lnof{\expdistofat{(\sstat,\canparam,\basemeasure)}{\shortcatvariables}}} \\
+        &= -\contraction{\secprobtensor,\contractionof{\sencsstatwith,\canparamwith}{\shortcatvariables}} + \cumfunctionof{\canparam} \\
+        &= - \contraction{\canparam,\meanparam} + \cumfunctionof{\canparam} \\
+        &= \sentropyof{\expdistof{(\sstat,\canparam,\basemeasure)}} \, .
+    \end{align*}
+
+    With the Gibbs inequality we have if $\secprobtensor\neq\expdistof{(\sstat,\canparam,\basemeasure)}$
+    \begin{align*}
+        \sentropyof{\expdistof{(\sstat,\estcanparam,\basemeasure)}} - \sentropyof{\secprobtensor}
+        = \centropyof{\secprobtensor}{\expdistof{(\sstat,\estcanparam,\basemeasure)}} - \sentropyof{\secprobtensor} > 0 \, .
+    \end{align*}
+
+    Therefore, if $\secprobtensor$ does not coincide with$\expdistof{(\sstat,\estcanparam,\basemeasure)}$, it is not a solution of \probref{prob:maxEntropy}.
+\end{proof}
+
+
+%\begin{theorem}
+%    \label{the:maxEntInterior}
+%    Let $\sstat$ be a minimal statistic with respect to a base measure $\basemeasure$.
+%    For any $\genmean\in\sbinteriorof{\genmeanset}$ the solution of \probref{prob:maxEntropy} is the distribution $\expdistof{(\secsstat,\estcanparam,\secbasemeasure)}$, where $\estcanparam=\backwardmapwrtof{\secsstat,\secbasemeasure}{\secmeanparam}$.
+%\end{theorem}
+%\begin{proof}
+%    Since $\genmean\in\sbinteriorof{\genmeanset}$, \theref{the:meanPolytopeInteriorCharacterization} implies the existence of $\estcanparam$ such that
+%    \[ \genmeanat{\selvariable} = \sbcontractionof{\expdistof{(\sstat,\estcanparam,\basemeasure)},\sencsstat}{\selvariable}   \, . \]
+%    We now follow the argumentation of the proof of Theorem~20.2 in \cite{koller_probabilistic_2009}.
+%    Let $\secprobtensor$ further be an arbitrary distribution, possibly different from $\expdistof{(\sstat,\estcanparam,\basemeasure)}$, such that
+%    \[ \genmeanat{\selvariable} = \sbcontractionof{\secprobtensor,\sencsstat}{\selvariable}  \, . \]
+%    We then have
+%    \begin{align*}
+%        \sentropyof{\expdistof{(\sstat,\estcanparam,\basemeasure)}}
+%        = \centropyof{\secprobtensor}{\expdistof{(\sstat,\estcanparam,\basemeasure)}}
+%    \end{align*}
+%
+%    With the Gibbs inequality we have if $\secprobtensor\neq\expdistof{(\sstat,\estcanparam,\basemeasure)}$
+%    \begin{align*}
+%        \sentropyof{\expdistof{(\sstat,\estcanparam,\basemeasure)}} - \sentropyof{\secprobtensor}
+%        = \centropyof{\secprobtensor}{\expdistof{(\sstat,\estcanparam,\basemeasure)}} - \sentropyof{\secprobtensor} > 0 \, .
+%    \end{align*}
+%
+%    Therefore, if $\secprobtensor$ does not coincide with$\expdistof{(\sstat,\estcanparam,\basemeasure)}$, it is not a solution of Problem~\ref{prob:maxEntropy}.
+%    %Classical result based on duality of maximum entropy and maximum likelihood, shown e.g. in Koller Book.
+%\end{proof}
+
+% Interpretation
+Let us highlight the fact, that in \probref{prob:maxEntropy} we did not restrict to distributions in an exponential family and only demanded representability with respect to the base measure.
+When choosing the trivial base measure, this does not pose a restriction on the distributions.
+\theref{the:maxEntInterior} states, that when the maximum entropy problem has a solution (i.e. $\genmean\in\genmeanset$), then the solution is in the exponential family to the statistic $\sstat$.
+
+% Generalization
+When $\genmean\notin\sbinteriorof{\genmeanset}$, the mean paramater is by \theref{the:meanPolytopeInteriorCharacterization} not reproducable by a member of the exponential family $\expfamilyof{\sstat,\basemeasure}$.
+Instead, in combination with the base measure refinement \algoref{alg:baseMeasureRefinement}, we show that the solution is in a refined exponential family.
+% dropping the assumption that the mean parameters are in the interior of the mean parameter polytope.
+
+\begin{theorem}\label{the:maxEntropyFace}
+    Let $\genfacesetof{\facecondset}$ be the minimal face of $\genmeanset$ such that $\meanparamat{\selvariable}\in\genfacesetof{\facecondset}$.
+    Then, the solution of the maximum entropy problem is the distribution
+    \begin{align*}
+        \expdistof{\sstat,\meanparam,\secbasemeasure}
+    \end{align*}
+    where the base measure $\secbasemeasure$ is the refinement of $\basemeasure$ by the face measure $\genfacemeasure$, that is
+    \begin{align*}
+        \secbasemeasureat{\shortcatvariables} = \contractionof{\basemeasureat{\shortcatvariables},\genfacemeasureat{\shortcatvariables}}{\shortcatvariables} \, .
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    By \theref{the:facePolytopeCharacterization} all feasible distributions for the maximum entropy problem have to be representable by the face measure $\genfacemeasure$.
+    Since the feasible distributions are further restricted to those representable by $\basemeasure$, they are also representable by the refined base measure $\secbasemeasure$.
+    Now, by \theref{the:faceAsRefinedPolytope} the face itself is a polytope $\meansetof{\sstat,\secbasemeasure}$ and the smallest face containing $\meanparam$ is the polytope itself.
+    We thus arrive at the claim by applying \theref{the:maxEntropyInterior} on the polytope $\meansetof{\sstat,\secbasemeasure}$.
+\end{proof}
+
+
+%\begin{theorem}
+%    \label{the:maxEntMaxLikeDuality}
+%    Let $\sstat$ be a statistic and $\basemeasure$ a base measure.
+%    For any $\genmean\in\genmeanset$, let $\secsstat,\secbasemeasure$ and $\secmeanparam$ be the outputs of \algoref{alg:baseMeasureRefinement} when passing $\sstat,\basemeasure$ and $\genmean$ as input.
+%    Then, the distribution $\expdistof{(\secsstat,\estcanparam,\secbasemeasure)}$, where $\estcanparam=\backwardmapwrtof{\secsstat,\secbasemeasure}{\secmeanparam}$, solves \probref{prob:maxEntropy}.
+%\end{theorem}
+%\begin{proof}
+%    By \theref{the:baseMeasureRefinement}, a distribution $\probtensor$ is feasible for the problem \probref{prob:maxEntropy} if and only if
+%    \begin{align*}
+%        \contractionof{\probwith,\sencodingofat{\secsstat}{\shortcatvariables,\secselvariable}} = \secmeanparam[\secselvariable] \, .
+%    \end{align*}
+%    Therefore, a distribution solves the maximum entropy problem for $\sstat$ and $\meanparam$, if and only if it solves the maximum entropy problem for $\secsstat$ and $\secmeanparam$.
+%    Since \theref{the:baseMeasureRefinement} further ensures, that $\secmeanparam\in\sbinteriorof{\meansetof{\secsstat,\secbasemeasure}}$, the claim follows from \theref{the:maxEntInterior}.
+%%    \theref{the:baseMeasureRefinement} and the above Lemma.
+%\end{proof}
+
+% Minimality of the refined base measure
+\theref{the:maxEntropy} implies, that the by the face measure refined base measure $\secbasemeasure$ is minimal for the maximum entropy problem, in the sense that the solving distribution is positive with respect to it and all feasible distributions have to be representable by it.
+This highlights the fact, that the maximum entropy distribution does not vanish beyond those states, which are necessary to vanish to lie on the respective face. %by \theref{the:baseMeasureRefinement}.
+
+
+\subsect{Tensor Network Representation}
+
+% Representation
+Maximum entropy distributions with respect to constraints $\meanparamat{\selvariable}=\contractionof{\probtensor,\sencsstat}{\selvariable}$ always have the sufficient statistic $\sstat$.
+They are represented in $\hlnsetof{\sstat}$, if and only if the face measure of any face $\facecondset$ such that
+\begin{align*}
+    \meanparamat{\selvariable} \in \genfaceset{\facecondset}
+\end{align*}
+is in $\hlnsetof{\sstat}$.
+This is for example the case when $\meanparamat{\selvariable}\in\sbinteriorof{\genmeanset}$.
+In general, we find a $\cpformat$ decomposition as sketched in \figref{fig:maxEntropyActcore}.
+
+\begin{figure}
+    \begin{center}
+        \input{PartI/tikz_pics/probability_reasoning/max_entropy_actcore}
+    \end{center}
+    \caption{
+        Tensor network decomposition of maximum entropy distributions to the constraint $\meanparamat{\selvariable}=\contractionof{\probtensor,\sencsstat}{\selvariable}$.
+        Blue: Constraint activation cores $\conactcoreof{\selindex}$ in an $\cpformat$ decomposition, representing the face measure to the minimal face, such that $\meanparam\in\genfacesetof{\facecondset}$.
+        Red: Probabilistic activation cores $\actcoreof{\selindex}$ in an elementary decomposition, where each leg core is a scaled exponentials evaluated on the enumerated image $\imageof{\sstatcoordinateof{\selindex}}$.
+    }\label{fig:maxEntropyActcore}
+\end{figure}
+
+
+
+\subsect{Modes of maximum entropy distributions}
+
+\begin{figure}[t!]
+    \begin{center}
+        \input{PartI/tikz_pics/probability_reasoning/meanset_sketch_face.tex}
+    \end{center}
+    \caption{Sketch of a face $\genfacesetof{\canparam}$ to the normal $\canparamwith$.
+    The face is characterized by those mean parameters in $\genmeanset$, which maximize the contraction with $\canparamwith$.
+    The sketched distance of the origin $\zerosat{\canparam}$ of $\rr^{\seldim}$ to the affine hull of the face is further related to the maximal contraction.
+    }\label{fig:meansetSketchFace}
+\end{figure}
+
+\red{We now show, that the face base measures coincide with the solutions of mode queries.
+Motivated by this fact, we define max cones of canonical parameters, which parametrized distributions coincide in their modes.}
 
 %% To Reasoning: Characterization of faces by maxima
 Let us now investigate, that faces of $\genmeanset$ are the solutions of linear optimization problems constrained by $\genmeanset$ (see \figref{fig:meansetSketchFace}).
@@ -912,9 +1154,9 @@ with the face normal
     \contractionof{\left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\, : \, \edge\in\secedges\right\}}{\catvariableof{\secnodes}} \, .
 \end{align*}
 
-We define for each face the cone
+We define for each face the normal cone
 \begin{align*}
-    \maxcone = \{\canparam\wcols\canparam\in\parspace\ncond\argmax_{\meanparam\in\genmeanset}\contraction{\canparam,\meanparam}=\genfaceset\}
+    \maxcone = \{\canparam\wcols\canparam\in\parspace\ncond\argmax_{\meanparam\in\genmeanset}\contraction{\canparam,\meanparam}=\genfaceset\} \, .
 \end{align*}
 
 % Maybe earlier to avoid minimal statistics discussion
@@ -1070,18 +1312,19 @@ We investigate this situation further and provide here a construction scheme to 
         \meanparamwith \in \convhullof{ \sencsstat{\indexedshortcatvariables,\selvariable} \, : \,
         \shortcatindices \in \argmax_{\shortcatindices \, : \, \basemeasureat{\indexedshortcatvariables}=1} \contraction{\canparamat{\selvariable},\sencsstat{\indexedshortcatvariables,\selvariable}} }
     \end{align*}
-    Thus, any distribution reproducing meanparam is a convex combination of the one-hot encodings of the states in $\argmax_{\shortcatindices} \contraction{\canparamat{\selvariable},\sencsstat{\indexedshortcatvariables,\selvariable}}$, and therefore representable with respect to the base measure $\secbasemeasure$.
+    Thus, any distribution reproducing the mean parameter is a convex combination of the one-hot encodings of the states in $\argmax_{\shortcatindices} \contraction{\canparamat{\selvariable},\sencsstat{\indexedshortcatvariables,\selvariable}}$, and therefore representable with respect to the base measure $\secbasemeasure$.
 \end{proof}
 
 Each face of $\genmeanset$ thus defines a refinement of a base measure, which is sufficient to reproduce the mean parameters on that face.
 
 % Face base measures defined before!
 \begin{definition}
-    \label{def:faceBaseMeasure}
+    %\label{def:faceBaseMeasure}
     The base measure to the face of $\meanset$ with normal $\canparam$ is
     \begin{align*}
-        \basemeasureofat{\sstat,\canparam}{\shortcatvariables}
-        = \indicatorofat{\cansstatcatindicesargmax}{\shortcatvariables} \, .
+        \basemeasureofat{\sstat,\facecondset}{\shortcatvariables}
+        =\basemeasureofat{\sstat,\canparam}{\shortcatvariables}
+        %= \indicatorofat{\cansstatcatindicesargmax}{\shortcatvariables} \, .
     \end{align*}
 \end{definition}
 
@@ -1164,7 +1407,7 @@ We now utilize these findings and provide by \algoref{alg:baseMeasureRefinement}
 \begin{proof}
     It is enough show, that for any output tuples $\secbasemeasure$, $\secsstat$ of the Base Measure Refinement \algoref{alg:baseMeasureRefinement} we have
     \[ \expfamilyof{\secbasemeasure,\secsstat} \subset  \realizabledistsof{\sstat,\maxgraph} \, . \]
-    We notice, that the normation of any face base measure is realizable by $\realizabledistsof{\sstat,\maxgraph}$, since the objective in the maximation problem in \defref{def:faceBaseMeasure} depends only on $\sstat$.
+    We notice, that the normation of any face base measure is realizable by $\realizabledistsof{\sstat,\maxgraph}$. %since the objective in the maximation problem in \defref{def:faceBaseMeasure} depends only on $\sstat$. ?
     Providing a more technical argument, we have
     \begin{align*}
         \indicatorofat{\argmax_{\shortcatindices} \contraction{\canparam,\sstat(\shortcatindices)}}{\shortcatvariables}
@@ -1195,12 +1438,12 @@ We provide further intuition on the position of the mean parameter, when interpr
 To this end, let $\stateset$ be an arbitrary finite state set, where we so far had the set $\facstates$ for factored representations.
 
 % Statistics encoding
-We define the statistics encoding of states as a map
+We recall the statistics encoding of states as a map
 \begin{align*}
     \sstatencoding : \stateset \rightarrow \parspace \quad, \quad
     \sstatencodingat{\catindex} = \sencsstatat{\indexedshortcatvariables,\selvariable} \, .
 \end{align*}
-This encoding generalizes the one-hot encoding, which corresponds with the special case $\sstat=\naivestat$.
+%This encoding generalizes the one-hot encoding, which corresponds with the special case $\sstat=\naivestat$.
 
 %
 The mean polytope is then the subset of the polytope $\meansetof{\sstat,\trivbm}$,
@@ -1219,7 +1462,7 @@ The mean parameter of a base measure $\basemeasure$, which normalization is unde
 We understand $\meanparamat{\sstat,\zeros,\basemeasure}$ as the weighted center of $\meansetof{\sstat,\basemeasure}$, where weights are allocated on the image of the statistics encoding by the cardinality of their pre-images.
 These concepts are sketched in \figref{fig:hs_mean_sketch} in blue.
 
-The choice of a base measure $\basemeasure$ can be regarded as hard structure of a distribution.
+The choice of a base measure $\basemeasure$ can be regarded as the hard structure of a distribution.
 Given $\basemeasure$, let us now implement soft structure in form of distributions in exponential families $\expfamily$.
 While the normalized base measure $\basemeasure$ reproduces only the weighted center of $\meansetof{\sstat,\basemeasure}$, canonical parameters can be chosen to alter to any interior point in $\meansetof{\sstat,\basemeasure}$. % ! Here the effective interior, when not minimal !
 This alternations are sketched in \figref{fig:hs_mean_sketch} in red.
@@ -1246,54 +1489,36 @@ This alternations are sketched in \figref{fig:hs_mean_sketch} in red.
 
 \sect{Forward Mapping in Exponential Families}
 
-Forward and backward maps in an exponential family $\expfamily$ are the central classes of inference, which transform the description of a member by a canonical parameter into mean parameters and vise versa.
-Forward maps calculate to a canonical parameter $\canparamwith$ the corresponding mean parameter $\meanparamwith$.
-For any $\canparamwith$ we have a closed form representation of this expectation query by the moment matching condition
-\begin{align*}
-    \meanparamwith = \contractionof{\sencsstatwith,\expdistwith}{\selvariable} \, .
-\end{align*}
-The foward map is thus a collection of expectation queries (see \defref{def:queries}) to compute the coordinates of the mean parameter.
-The query $\sstatcoordinateof{\selindex}$ asked against $\expdistwith$ computes the coordinate $\meanparamat{\indexedselvariable}$.
-%\begin{align*}
-%    \forwardmapof{\canparam}
-%    = \contractionof{\sencodingof{\sstat},\normationof{\basemeasure,\expof{\contraction{\sencodingof{\sstat},\canparam}}}{\shortcatvariables}}{\selvariable} \, .
-%\end{align*}
-% Infeasibility and turn to variational alternatives with selection encodings.
-The contraction by the moment matching condition can, however, be infeasible, since it requires the instantiation of the probability distribution, which can be done by relational encodings of the statistic.
-We in this section provide alternative characterization of the forward map and approximations of it, which can be computed based on the selection encoding instead.
-Following \cite{wainwright_graphical_2008}, we can characterize the forward mapping to exponential families as a variational problem and provide an alternative characterization to this contraction.
-
-\subsect{Variational Formulation}
-
-Besides the direct computation of the mean parameter we can give a variational characterization of the forward mapping.
-%This is especially useful, when the contraction is intractable, for example because the tensor $\expdist$ is infeasible to create.
-
-
-%% REMOVE!
-\begin{theorem}
-    We have
-    \begin{align*}
-        \forwardmapof{\canparam}
-        = \genmeansetargmax  \sbcontraction{\meanparam,\canparam} + \sentropyof{\meanrepprob}
-    \end{align*}
-    where by $\meanrepprob$ we denote a probability distribution with respect to a base measure $\basemeasure$, which reproduces the mean parameter $\meanparam$.
-\end{theorem}
-\begin{proof}
-    For a proof see Theorem~3.4 in \cite{wainwright_graphical_2008}.
-\end{proof}
-
-%Let us now characterize the image of the forward map, which turns out to be the interior of the mean polytope, if the statistic is minimal (see \defref{def:minimalStatistics}).
-We already know by \theref{the:meanPolytopeInteriorCharacterization}, that distributions representable by $\basemeasure$ reproduce the mean parameters in the interior of $\genmeanset$.
-We now state that the elements of the corresponding exponential family $\expfamily$, which are by construction representable by $\basemeasure$, are expressive enough to reproduce the whole interior of $\genmeanset$.
-
-\begin{theorem}
-    \label{the:meanPolytopeInterior}
-    For any statistics $\sstat$, which is minimal with respect to a base measure $\basemeasure$ (see \defref{def:minimalStatistics}), the the forward map is a bijection between $\rr^{\seldim}$ and the interior $\sbinteriorof{\genmeanset}$ of the mean parameter polytope.
-    % If the statistic $\sstat$ is in addition minimal with respect to $\basemeasure$  the forward map is a bijection between $\rr^{\seldim}$ as the set of canonical mean parameters and $\genmeanset$.
-\end{theorem}
-\begin{proof}
-    For a proof see Theorem~3.3 in \cite{wainwright_graphical_2008}.
-\end{proof}
+%\subsect{Variational Formulation}
+%Besides the direct computation of the mean parameter we can give a variational characterization of the forward mapping.
+%%This is especially useful, when the contraction is intractable, for example because the tensor $\expdist$ is infeasible to create.
+%
+%
+%%% REMOVE!
+%\begin{theorem}
+%    We have
+%    \begin{align*}
+%        \forwardmapof{\canparam}
+%        = \genmeansetargmax  \sbcontraction{\meanparam,\canparam} + \sentropyof{\meanrepprob}
+%    \end{align*}
+%    where by $\meanrepprob$ we denote a probability distribution with respect to a base measure $\basemeasure$, which reproduces the mean parameter $\meanparam$.
+%\end{theorem}
+%\begin{proof}
+%    For a proof see Theorem~3.4 in \cite{wainwright_graphical_2008}.
+%\end{proof}
+%
+%%Let us now characterize the image of the forward map, which turns out to be the interior of the mean polytope, if the statistic is minimal (see \defref{def:minimalStatistics}).
+%We already know by \theref{the:meanPolytopeInteriorCharacterization}, that distributions representable by $\basemeasure$ reproduce the mean parameters in the interior of $\genmeanset$.
+%We now state that the elements of the corresponding exponential family $\expfamily$, which are by construction representable by $\basemeasure$, are expressive enough to reproduce the whole interior of $\genmeanset$.
+%
+%\begin{theorem}
+%    \label{the:meanPolytopeInterior}
+%    For any statistics $\sstat$, which is minimal with respect to a base measure $\basemeasure$ (see \defref{def:minimalStatistics}), the the forward map is a bijection between $\rr^{\seldim}$ and the interior $\sbinteriorof{\genmeanset}$ of the mean parameter polytope.
+%    % If the statistic $\sstat$ is in addition minimal with respect to $\basemeasure$  the forward map is a bijection between $\rr^{\seldim}$ as the set of canonical mean parameters and $\genmeanset$.
+%\end{theorem}
+%\begin{proof}
+%    For a proof see Theorem~3.3 in \cite{wainwright_graphical_2008}.
+%\end{proof}
 
 
 \subsect{Mode queries by annealing}
@@ -1317,7 +1542,9 @@ In the annealing limit, that is for large $\invtemp$, the entropy term becomes n
 \end{align*}
 For a more detailed discussion of this relation, see Theorem~8.1 in \cite{wainwright_graphical_2008}.
 
-\subsect{Mean Field Methods}
+
+
+\sect{Mean Field Methods}
 
 Mean field methods are approximation schemes for forward mappings, designed for efficient inference.
 To introduce them we turn the maximization over the mean parameter polytope in the the variational principle of forwards mappings into a maximization over the reproducing distributions, that is
@@ -1374,7 +1601,7 @@ We show next, that the mean field problem is an instance of an information proje
 \end{proof}
 
 
-\subsubsect{Naive Mean Field Method}
+\subsect{Naive Mean Field Method}
 
 %Typically we use the family of independent distributions, also called naive mean field method.
 In the naive mean field method, we choose the approximating set $\probtensorset$ by the exponential family of Markov Networks $\mnexpfamilyof{\elgraph}$ on the elementary graph % confusing to do here exponential families: Cannot deal with non-trivial core support!
@@ -1470,7 +1697,7 @@ The optimal update equations are derived as the next theorem.
 \end{algorithm}
 
 
-\subsubsect{Structured Variational Approximation}
+\subsect{Structured Variational Approximation}
 
 %% Structured Variational approximation
 %More generically, we restrict the maximum over the mean parameters of efficiently contractable distributions and get a lower bound.
@@ -1768,95 +1995,6 @@ In that case, we choose $\meanparamwith=\contractionof{\sencsstatwith,\empdistri
 
 
 
-\subsect{Connection with Maximum Entropy}\label{sec:maxEntDuality}
-
-
-The maximum entropy problem with respect to matching expected statistics $\genmean\in\genmeanset$ is the optimization problem
-\begin{align}
-    \tag{$\probtagtypeinst{\entropysymbol}{\sstat,\basemeasure,\genmean}$}\label{prob:maxEntropy} % Notation clash with cross-entropy!
-    \argmax_{\probtensor\in\bmrealprobof{\basemeasure}} \sentropyof{\probtensor} \quad \text{subject to} \quad
-    \sbcontractionof{\probtensor,\sencsstat}{\selvariable} =  \genmeanat{\selvariable}
-\end{align}
-where by $\bmrealprobof{\basemeasure}$ we denote all distributions, which are representable with respect to a base measure $\basemeasure$.
-
-\begin{theorem}
-    \label{the:maxEntInterior}
-    Let $\sstat$ be a statistic and $\basemeasure$ a base measure.
-    For any $\genmean\in\sbinteriorof{\genmeanset}$ the solution of \probref{prob:maxEntropy} is the distribution $\expdistof{(\secsstat,\estcanparam,\secbasemeasure)}$, where $\estcanparam=\backwardmapwrtof{\secsstat,\secbasemeasure}{\secmeanparam}$.
-\end{theorem}
-\begin{proof}
-    Since $\genmean\in\sbinteriorof{\genmeanset}$, \theref{the:meanPolytopeInteriorCharacterization} implies the existence of $\estcanparam$ such that
-    \[ \genmeanat{\selvariable} = \sbcontractionof{\expdistof{(\sstat,\estcanparam,\basemeasure)},\sencsstat}{\selvariable}   \, . \]
-    We now follow the argumentation of the proof of Theorem~20.2 in \cite{koller_probabilistic_2009}.
-    Let $\secprobtensor$ further be an arbitrary distribution, possibly different from $\expdistof{(\sstat,\estcanparam,\basemeasure)}$, such that
-    \[ \genmeanat{\selvariable} = \sbcontractionof{\secprobtensor,\sencsstat}{\selvariable}  \, . \]
-    We then have
-    \begin{align*}
-        \sentropyof{\expdistof{(\sstat,\estcanparam,\basemeasure)}}
-        = \centropyof{\secprobtensor}{\expdistof{(\sstat,\estcanparam,\basemeasure)}}
-    \end{align*}
-
-    With the Gibbs inequality we have if $\secprobtensor\neq\expdistof{(\sstat,\estcanparam,\basemeasure)}$
-    \begin{align*}
-        \sentropyof{\expdistof{(\sstat,\estcanparam,\basemeasure)}} - \sentropyof{\secprobtensor}
-        = \centropyof{\secprobtensor}{\expdistof{(\sstat,\estcanparam,\basemeasure)}} - \sentropyof{\secprobtensor} > 0 \, .
-    \end{align*}
-
-    Therefore, if $\secprobtensor$ does not coincide with$\expdistof{(\sstat,\estcanparam,\basemeasure)}$, it is not a solution of Problem~\ref{prob:maxEntropy}.
-    %Classical result based on duality of maximum entropy and maximum likelihood, shown e.g. in Koller Book.
-\end{proof}
-
-% Interpretation
-Let us highlight the fact, that in \probref{prob:maxEntropy} we did not restrict to distributions in an exponential family and only demanded representability with respect to the base measure.
-When choosing the trivial base measure, this does not pose a restriction on the distributions.
-\theref{the:maxEntInterior} states, that when the maximum entropy problem has a solution (i.e. $\genmean\in\genmeanset$), then the solution is in the exponential family to the statistic $\sstat$.
-
-% Generalization
-When $\genmean\notin\sbinteriorof{\genmeanset}$, the mean paramater is by \theref{the:meanPolytopeInteriorCharacterization} not reproducable by a member of the exponential family $\expfamilyof{\sstat,\basemeasure}$.
-Instead, in combination with the base measure refinement \algoref{alg:baseMeasureRefinement}, we show that the solution is in a refined exponential family.
-% dropping the assumption that the mean parameters are in the interior of the mean parameter polytope.
-
-\begin{theorem}
-    \label{the:maxEntMaxLikeDuality}
-    Let $\sstat$ be a statistic and $\basemeasure$ a base measure.
-    For any $\genmean\in\genmeanset$, let $\secsstat,\secbasemeasure$ and $\secmeanparam$ be the outputs of \algoref{alg:baseMeasureRefinement} when passing $\sstat,\basemeasure$ and $\genmean$ as input.
-    Then, the distribution $\expdistof{(\secsstat,\estcanparam,\secbasemeasure)}$, where $\estcanparam=\backwardmapwrtof{\secsstat,\secbasemeasure}{\secmeanparam}$, solves \probref{prob:maxEntropy}.
-\end{theorem}
-\begin{proof}
-    By \theref{the:baseMeasureRefinement}, a distribution $\probtensor$ is feasible for the problem \probref{prob:maxEntropy} if and only if
-    \begin{align*}
-        \contractionof{\probwith,\sencodingofat{\secsstat}{\shortcatvariables,\secselvariable}} = \secmeanparam[\secselvariable] \, .
-    \end{align*}
-    Therefore, a distribution solves the maximum entropy problem for $\sstat$ and $\meanparam$, if and only if it solves the maximum entropy problem for $\secsstat$ and $\secmeanparam$.
-    Since \theref{the:baseMeasureRefinement} further ensures, that $\secmeanparam\in\sbinteriorof{\meansetof{\secsstat,\secbasemeasure}}$, the claim follows from \theref{the:maxEntInterior}.
-%    \theref{the:baseMeasureRefinement} and the above Lemma.
-\end{proof}
-
-% Minimality of the refined base measure
-\theref{the:maxEntMaxLikeDuality} further implies, that the base measure $\secbasemeasure$ identified by \algoref{alg:baseMeasureRefinement} is minimal for the maximum entropy problem, in the sense that the solving distribution is positive with respect to it and all feasible distributions have to be representable by it.
-This highlights the fact, that the maximum entropy distribution does not vanish beyond those states, which are necessary by \theref{the:baseMeasureRefinement}.
-
-
-% Representation
-Maximum entropy distributions with respect to constraints $\meanparamat{\selvariable}=\contractionof{\probtensor,\sencsstat}{\selvariable}$ always have the sufficient statistic $\sstat$.
-They are represented in $\hlnsetof{\sstat}$, if and only if the face measure of any face $\facecondset$ such that
-\begin{align*}
-    \meanparamat{\selvariable} \in \genfaceset{\facecondset}
-\end{align*}
-is in $\hlnsetof{\sstat}$.
-This is for example the case when $\meanparamat{\selvariable}\in\sbinteriorof{\genmeanset}$.
-In general, we find a $\cpformat$ decomposition as sketched in \figref{fig:maxEntropyActcore}.
-
-\begin{figure}
-    \begin{center}
-        \input{PartI/tikz_pics/probability_reasoning/max_entropy_actcore}
-    \end{center}
-    \caption{
-        Tensor network decomposition of maximum entropy distributions to the constraint $\meanparamat{\selvariable}=\contractionof{\probtensor,\sencsstat}{\selvariable}$.
-        Blue: Constraint activation cores $\conactcoreof{\selindex}$ in an $\cpformat$ decomposition, representing the face measure to the minimal face, such that $\meanparam\in\genfacesetof{\facecondset}$.
-        Red: Probabilistic activation cores $\actcoreof{\selindex}$ in an elementary decomposition, where each leg core is a scaled exponentials evaluated on the enumerated image $\imageof{\sstatcoordinateof{\selindex}}$.
-    }\label{fig:maxEntropyActcore}
-\end{figure}
 
 
 
