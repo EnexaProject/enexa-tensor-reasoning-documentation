@@ -424,23 +424,44 @@ In order to represent neuro-symbolic architectures, the grammar of $\synencoding
 In encoding.suffixes we defined suffixes for the names of cores and colors, which highlight their origin and purpose.
 
 % See in encoding subpackage
-Cores are named with suffixes based on their funcitonality
+Cores are named with suffixes based on their functionality
 \begin{itemize}
-	\item \stringof{\_conCore}: logical connectives (relational encoding of the connective map)
-	\item \stringof{\_headCore}: two-dimensional vectors representing of the activation core to a formula 
-	\item \stringof{\_dataCore}: Representing (relational encoding of the data map)
-	\item \stringof{\_catCore}: Categorical constraint cores 
-	\item \red{Add: Formula selecting cores}
+	\item \comCoreSuf: Computation core: logical connectives (relational encoding of the connective map)
+	\item \actCoreSuf: Activation core: two-dimensional vectors representing of the activation core to a formula
+\end{itemize}
+
+Exploiting efficient representation tricks we further have:
+\begin{itemize}
+	\item \atoCoreSuf: Atomization core, for sparse representation of categorical constraints
+	\item \vselCoreSuf: Variable selection core: For sparse representation of variable selectors
 \end{itemize}
 
 \subsect{Color Nomenclature}
 
-Represent the three appearing types of variables:
+Suffixes in color string denote the type of the variable:
 \begin{itemize}
-	\item Categorical variables $\catvariableof{\cdot}$: cVar / aVar
-	\item Selection variables $\selvariableof{\cdot}$: sVar % differing suffixes actVar, selVar! -> unify them
-	\item Term variables $\indvariableof{\cdot}$: tVar % so far without suffix, just atom names, toDo: tVar
+	\item \disVarSuf: Distributed variables $\catvariableof{\cdot}$
+	\item \comVarSuf: Computed variables $\headvariableof{\cdot}$
+	\item \selVarSuf: Selection variables $\selvariableof{\cdot}$
+	\item \terVarSuf: Term variables $\indvariableof{\cdot}$
+%	\item %\item Selection variables $\selvariableof{\cdot}$: \stringof{\_sVar} % differing suffixes actVar, selVar! -> unify them
+%	\item Term variables $\indvariableof{\cdot}$: tVar % so far without suffix, just atom names, toDo: tVar
 \end{itemize}
+
+\subsect{Refinement by infixes}
+
+Both the cores and the colors are further refined by infixes before the suffices to denote specific instantiations.
+
+\begin{itemize}
+	\item \selCoreIn: Involving a selection variable
+	\item \eviCoreIn: Storing evidence about a variable
+	\item \heaIn: Head of a function, typically the variable computed at a activation selector
+	\item \funIn: Function selection variables
+	\item \posIn+\stringof{i}: Variable selection for argument at position $i$
+	\item \datIn: Involving data (data cores and colors)
+\end{itemize}
+
+Further infixes are strings denoting atom names and neuron neames.
 
 
 \subsect{Relational encoding of formulas}
@@ -475,7 +496,7 @@ When encoding formulas with hard interpretation, we furthermore add a head core 
 
 \subsect{Representation of MLNs}
 
-\textbf{Structure Cores} are binary cores relating the variables in a predefined way, which is not changing during reasoning.
+\textbf{Computation Cores} are binary cores relating the variables in a predefined way, which is not changing during reasoning.
 \begin{itemize}
 	\item Logical interpretation: Cores $\rencodingof{\exconnective}$ \red{Structure Cores are those of the Bayesian Propositional Network}
 	\item Categorical constraints: Cores $\categoricalcore$
@@ -483,8 +504,8 @@ When encoding formulas with hard interpretation, we furthermore add a head core 
 \end{itemize}
 
 \textbf{Activation Cores} encode the weights of the formulas in a Markov Logic Network.
-For proper MLN only have unary cores, which we call headCores.
-Head cores with suffix "headCore" in name.
+%For proper MLN only have unary cores, which we call headCores.
+%Head cores with suffix "headCore" in name.
 
 They are modified during reasoning: Selection of activation cores in structure learning, assigning a weight in parameter estimation.
 
@@ -565,7 +586,6 @@ With the \spknowledge subpackage we provide an interface for reasoning workload.
 It builds a third layer, since it used \spencoding to represent knowledge by tensor networks and \spalgorithms in the execution of reasoning tasks.
 
 \subsect{Distributions}
-
 
 We encode Markov Networks by specifying a set of tensor cores.
 Each distribution needs to have a routine
