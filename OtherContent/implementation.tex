@@ -16,8 +16,8 @@ The package can be installed either by cloning \href{https://github.com/EnexaPro
 \tnreason is structured in four subpackages and three layers
 \begin{itemize}
 	\item Layer 1: Storage and numerical manipulations, by subpackage \spengine, "Tensor Networks" -> building "tn" of \tnreason
-	\item Layer 2: Specification of workload, subpackage \spencoding specific for storage, subpackage \spalgorithms specific for manipulations
-	\item Layer 3: Applications in reasoning, by subpackage \spknowledge, "Reasoning" -> building "reason" of \tnreason
+	\item Layer 2: Specification of workload, subpackage \sprepresentation specific for storage, subpackage \spreasoning specific for manipulations
+	\item Layer 3: Applications in reasoning, by subpackage \spapplication, "Reasoning" -> building "reason" of \tnreason
 \end{itemize}
 
 We sketch this structure by
@@ -131,7 +131,7 @@ The supported contraction methods are
   	\hline
 	\stringof{PgmpyVariableEliminator} 	&  $\mathrm{pgmpy}$  & Variable Elimination of DiscreteFactors in $\mathrm{pgmpy}$\\
   	\hline
-	\stringof{PolynomialContractor} 	&  $\mathrm{numpy}$  & Contraction of CP Decompositions stored in $\mathrm{numpy}$ arrays\\
+	\stringof{CorewiseContractor} 	&  $\mathrm{numpy}$  & Contraction of CP Decompositions stored in $\mathrm{numpy}$ arrays\\
   	\hline	
 \end{tabular}
 \end{center}
@@ -174,15 +174,16 @@ basis calculus then based on contractions
 
 
 
-\sect{Subpackage \spencoding}
+\sect{Subpackage \sprepresentation}
 
-In the \spencoding subpackage we encode maps 
+The \sprepresentation subpackage consists in a collection of core creation methods.
+
 Here the relational encodings $\rencodingof{\exfunction}$ of various maps $\exfunction$ are created.
 %
 The maps are either specified by the script language (logical formulas or neuro-symbolic architectures), categorical constraints or data.
 Given a specification of a formula $\exformula$ in script language $\synencodingof{\cdot}$, the task amounts to building a semantic representation based on the syntactic specification.
 
-We arrange the \spencoding subpackage into the second layer of the \tnreason architecture, since it specifies tensor cores which formats are specified in \spengine.
+We arrange the \sprepresentation subpackage into the second layer of the \tnreason architecture, since it specifies tensor cores which formats are specified in \spengine.
 
 
 \subsect{Script Language}\label{subsec:scriptLanguage} % To encoding?
@@ -527,10 +528,10 @@ Skeleton expression (\defref{def:skeleton}) are stored with placeholderkeys and 
 
 
 
-\sect{Subpackage \spalgorithms}
+\sect{Subpackage \spreasoning}
 
-The \spalgorithms subpackage implements basic tensor network algorithms with calls of specific execution in \spengine.
-As the \spencoding subpackage it is arranged in the second layer of the \tnreason architecture, since it specifies the manipulation of tensor networks in the \spengine subpackage.
+The \spreasoning subpackage implements basic tensor network algorithms with calls of specific execution in \spengine.
+As the \sprepresentation subpackage it is arranged in the second layer of the \tnreason architecture, since it specifies the manipulation of tensor networks in the \spengine subpackage.
 
 
 \subsect{Alternating Least Squares}
@@ -580,10 +581,10 @@ As the \spencoding subpackage it is arranged in the second layer of the \tnreaso
 \end{centeredcode}
 
 
-\sect{Subpackage \spknowledge}
+\sect{Subpackage \spapplication}
 
-With the \spknowledge subpackage we provide an interface for reasoning workload.
-It builds a third layer, since it used \spencoding to represent knowledge by tensor networks and \spalgorithms in the execution of reasoning tasks.
+With the \spapplication subpackage we provide an interface for reasoning workload.
+It builds a third layer, since it used \sprepresentation to represent knowledge by tensor networks and \spreasoning in the execution of reasoning tasks.
 
 \subsect{Distributions}
 
