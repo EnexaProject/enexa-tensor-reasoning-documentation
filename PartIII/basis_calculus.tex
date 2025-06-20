@@ -1188,19 +1188,20 @@ Now, given a partition statistic $\secformulaset$ we can instantiate the to $\se
 \end{align*}
 
 
-\sect{Effective Coordinate Calculus}\label{sec:effectiveCalculus}
+\sect{Hybrid Basis and Coordinate Calculus}\label{sec:hybridCalculus}
 
 % Motivation: Effective Coordinate Calculus
 In some situations, we can perform basis calculus more effectively by avoiding image enumeration variables, and instead apply coordinatewise transforms on tensors (see \defref{def:coordinatewiseTransform}).
-As we show here, these include conjunctions, which correspond with coordinatewise multiplication, and negation, which correspond with coordinatewise substraction from 1.
+As we show here, these include conjunctions, which correspond with coordinatewise multiplication, and negation, which correspond with coordinatewise substraction from the trivial tensor.
 Such schemes are applied for example in \cite{tsilionis_tensor-based_2024} in batchwise logical inference.
 
 \begin{figure}
     \begin{center}
         \input{./PartIII/tikz_pics/basis_calculus/skeleton_elements.tex}
     \end{center}
-    \caption{Decomposition schemes by effective calculus, using coordinatewise transforms of tensors (see \defref{def:coordinatewiseTransform}).
-    a) Conjunction performed by coordinatewise multiplications, b) Negations performed by coordinatewise substraction from one.}\label{fig:ConNegDecomposition}
+    \caption{Decomposition schemes by hybrid calculus, using coordinatewise transforms of tensors (see \defref{def:coordinatewiseTransform}).
+    a) Conjunction performed by coordinatewise multiplications.
+    b) Negations performed by coordinatewise substraction from one.}\label{fig:ConNegDecomposition}
 \end{figure}
 
 \begin{theorem}
@@ -1208,9 +1209,9 @@ Such schemes are applied for example in \cite{tsilionis_tensor-based_2024} in ba
     For any formulas $\exformula,\secexformula$ we have
     \begin{align*}
         \sbcontractionof{
-            \rencodingofat{\land}{\headvariableof{\exformula\land\secexformula},\catvariableof{\exformula},\catvariableof{\secexformula}},\tbasisat{\headvariableof{\exformula\land\secexformula}}
-        }{\catvariableof{\exformula},\catvariableof{\secexformula}}
-        = \tbasisat{\catvariableof{\exformula}} \otimes \tbasisat{\catvariableof{\secexformula}} \, .
+            \rencodingofat{\land}{\headvariableof{\exformula\land\secexformula},\formulavar,\secexformulavar},\tbasisat{\headvariableof{\exformula\land\secexformula}}
+        }{\formulavar,\secexformulavar}
+        = \tbasisat{\formulavar} \otimes \tbasisat{\secexformulavar} \, .
     \end{align*}
     In particular, it holds that (see Figure~\ref{fig:ConNegDecomposition}a)
     \begin{align*}
@@ -1221,34 +1222,34 @@ Such schemes are applied for example in \cite{tsilionis_tensor-based_2024} in ba
 \begin{proof}
     We decompose
     \begin{align*}
-        \rencodingofat{\land}{\headvariableof{\exformula\land\secexformula},\catvariableof{\exformula},\catvariableof{\secexformula}}
-        = \tbasisat{\headvariableof{\exformula\land\secexformula}} \otimes \tbasisat{\catvariableof{\exformula}} \otimes \tbasisat{\catvariableof{\secexformula}}
-        + \fbasisat{\headvariableof{\exformula\land\secexformula}} \left( \onesat{\catvariableof{\exformula},\catvariableof{\secexformula}} -  \tbasisat{\catvariableof{\exformula}} \otimes \tbasisat{\catvariableof{\secexformula}} \right)
+        \rencodingofat{\land}{\headvariableof{\exformula\land\secexformula},\formulavar,\secexformulavar}
+        = \tbasisat{\headvariableof{\exformula\land\secexformula}} \otimes \tbasisat{\formulavar} \otimes \tbasisat{\secexformulavar}
+        + \fbasisat{\headvariableof{\exformula\land\secexformula}} \left( \onesat{\formulavar,\secexformulavar} -  \tbasisat{\formulavar} \otimes \tbasisat{\secexformulavar} \right)
     \end{align*}
     and get the first claim as
     \begin{align*}
         \sbcontractionof{
-            \rencodingofat{\land}{\headvariableof{\exformula\land\secexformula},\catvariableof{\exformula},\catvariableof{\secexformula}},\tbasisat{\headvariableof{\exformula\land\secexformula}}
-        }{\catvariableof{\exformula},\catvariableof{\secexformula}}
+            \rencodingofat{\land}{\headvariableof{\exformula\land\secexformula},\formulavar,\secexformulavar},\tbasisat{\headvariableof{\exformula\land\secexformula}}
+        }{\formulavar,\secexformulavar}
         & = \sbcontractionof{
-            \tbasisat{\headvariableof{\exformula\land\secexformula}} \otimes \tbasisat{\catvariableof{\exformula}} \otimes \tbasisat{\catvariableof{\secexformula}},\tbasisat{\headvariableof{\exformula\land\secexformula}}
-        }{\catvariableof{\exformula},\catvariableof{\secexformula}} \\
-        & = \tbasisat{\catvariableof{\exformula}} \otimes \tbasisat{\catvariableof{\secexformula}} \, .
+            \tbasisat{\headvariableof{\exformula\land\secexformula}} \otimes \tbasisat{\formulavar} \otimes \tbasisat{\secexformulavar},\tbasisat{\headvariableof{\exformula\land\secexformula}}
+        }{\formulavar,\secexformulavar} \\
+        & = \tbasisat{\formulavar} \otimes \tbasisat{\secexformulavar} \, .
     \end{align*}
     To show the second claim we use
     \begin{align*}
     (\exformula\land\secexformula)[\shortcatvariables]
         &= \sbcontractionof{
-            \rencodingofat{\exformula}{\catvariableof{\exformula},\shortcatvariables},
-            \rencodingofat{\secexformula}{\catvariableof{\secexformula},\shortcatvariables},
-            \rencodingofat{\land}{\headvariableof{\exformula\land\secexformula},\catvariableof{\exformula},\catvariableof{\secexformula}},
+            \rencodingofat{\exformula}{\formulavar,\shortcatvariables},
+            \rencodingofat{\secexformula}{\secexformulavar,\shortcatvariables},
+            \rencodingofat{\land}{\headvariableof{\exformula\land\secexformula},\formulavar,\secexformulavar},
             \tbasisat{\headvariableof{\exformula\land\secexformula}}
         }{\shortcatvariables} \\
         &  = \sbcontractionof{
-            \rencodingofat{\exformula}{\catvariableof{\exformula},\shortcatvariables},
-            \rencodingofat{\secexformula}{\catvariableof{\secexformula},\shortcatvariables},
-            (\tbasisat{\catvariableof{\exformula}}\otimes \tbasisat{\catvariableof{\secexformula}})
-        %\rencodingofat{\land}{\catvariableof{\exformula},\catvariableof{\secexformula},\headvariableof{\exformula\land\secexformula}}
+            \rencodingofat{\exformula}{\formulavar,\shortcatvariables},
+            \rencodingofat{\secexformula}{\secexformulavar,\shortcatvariables},
+            (\tbasisat{\formulavar}\otimes \tbasisat{\secexformulavar})
+        %\rencodingofat{\land}{\formulavar,\secexformulavar,\headvariableof{\exformula\land\secexformula}}
         }{\shortcatvariables} \\
         &= \sbcontractionof{\exformula,\secexformula}{\shortcatvariables} \, .
     \end{align*}
@@ -1260,16 +1261,16 @@ A similar decomposition holds for negations, as we show next.
     For any formula $\exformula$ we have
     \begin{align*}
         \sbcontractionof{
-            \rencodingofat{\lnot}{\headvariableof{\lnot\exformula},\catvariableof{\exformula}},\tbasisat{\headvariableof{\lnot\exformula}}
-        }{\catvariableof{\exformula}}
-        = \fbasisat{\catvariableof{\exformula}} =  \onesat{\catvariableof{\exformula}} - \tbasisat{\catvariableof{\exformula}} \, .
+            \rencodingofat{\lnot}{\headvariableof{\lnot\exformula},\formulavar},\tbasisat{\headvariableof{\lnot\exformula}}
+        }{\formulavar}
+        = \fbasisat{\formulavar} =  \onesat{\formulavar} - \tbasisat{\formulavar} \, .
     \end{align*}
     and
     \begin{align*}
         \sbcontractionof{
-            \rencodingofat{\lnot}{\catvariableof{\exformula},\headvariableof{\lnot\exformula}},\fbasisat{\headvariableof{\lnot\exformula}}
-        }{\catvariableof{\exformula}}
-        = \tbasisat{\catvariableof{\exformula}} \, .
+            \rencodingofat{\lnot}{\formulavar,\headvariableof{\lnot\exformula}},\fbasisat{\headvariableof{\lnot\exformula}}
+        }{\formulavar}
+        = \tbasisat{\formulavar} \, .
     \end{align*}
     In particular, it holds that (see Figure~\ref{fig:ConNegDecomposition}b)
     \begin{align*}
@@ -1278,14 +1279,64 @@ A similar decomposition holds for negations, as we show next.
     \end{align*}
 \end{theorem}
 \begin{proof}
-    Using that for two dimensional variables we have $\onesat{\catvariable}=\fbasisat{\catvariable}+\tbasisat{\catvariable}\, .$
+    We have
+    \begin{align*}
+        \rencodingofat{\lnot}{\headvariableof{\lnot\exformula},\formulavar}
+        = \tbasisat{\headvariableof{\lnot\exformula}} \otimes \fbasisat{\formulavar}
+        +\fbasisat{\headvariableof{\lnot\exformula}} \otimes \tbasisat{\formulavar}
+    \end{align*}
+    and therefore get the second claim by contraction with $\fbasisat{\headvariableof{\lnot\exformula}}$
+    \begin{align*}
+        \sbcontractionof{
+            \rencodingofat{\lnot}{\formulavar,\headvariableof{\lnot\exformula}},\fbasisat{\headvariableof{\lnot\exformula}}
+        }{\formulavar}
+        &=  \sbcontractionof{
+            \tbasisat{\headvariableof{\lnot\exformula}} \otimes \fbasisat{\formulavar},\fbasisat{\headvariableof{\lnot\exformula}}
+        }{\formulavar}
+        +  \sbcontractionof{
+            \fbasisat{\headvariableof{\lnot\exformula}} \otimes \tbasisat{\formulavar},\fbasisat{\headvariableof{\lnot\exformula}}
+        }{\formulavar}
+        \\
+        &= \tbasisat{\formulavar} \, .
+    \end{align*}
+    The first equation of the first claim follows similarly by contraction with $\tbasisat{\headvariableof{\lnot\exformula}}$ as
+    \begin{align*}
+        \sbcontractionof{
+            \rencodingofat{\lnot}{\headvariableof{\lnot\exformula},\formulavar},\tbasisat{\headvariableof{\lnot\exformula}}
+        }{\formulavar}
+        = \fbasisat{\formulavar}
+    \end{align*}
+    and the second equation using that $\onesat{\catvariable}=\fbasisat{\catvariable}+\tbasisat{\catvariable}$ and hence
+    \begin{align*}
+        \fbasisat{\formulavar} =  \onesat{\formulavar} - \tbasisat{\formulavar} \, .
+    \end{align*}
+    To show the third claim, we contract the computation tensor $\rencodingofat{\exformula}{\formulavar,\shortcatvariables}$ to the formula $\exformula$ on both sides of the first claim and get
+    \begin{align*}
+        \sbcontractionof{
+            \rencodingofat{\exformula}{\formulavar,\shortcatvariables},\rencodingofat{\lnot}{\headvariableof{\lnot\exformula},\formulavar},\tbasisat{\headvariableof{\lnot\exformula}}
+        }{\formulavar}
+        \contractionof{\rencodingofat{\exformula}{\formulavar,\shortcatvariables},\onesat{\formulavar}}{\formulavar}
+        - \contractionof{\rencodingofat{\exformula}{\formulavar,\shortcatvariables},\tbasisat{\formulavar}}{\formulavar} \, .
+    \end{align*}
+    We simplify this equation using the trivial head contraction identity of directed tensors of \corref{cor:onesHead} and \lemref{lem:formulaEncodingDecomposition} stating that
+%    For any formula $\formulaat{\shortcatvariables}$ we further have by \lemref{lem:formulaEncodingDecomposition}
+    \begin{align*}
+        \formulaat{\shortcatvariables} = \contractionof{\rencodingofat{\exformula}{\formulavar,\shortcatvariables},\tbasisat{\formulavar}}{\shortcatvariables}
+        \quad \text{and} \quad
+        \lnot\formulaat{\shortcatvariables} = \contractionof{\rencodingofat{\exformula}{\formulavar,\shortcatvariables},\fbasisat{\formulavar}}{\shortcatvariables}
+    \end{align*}
+    and arrive at the third claim
+        \begin{align*}
+    (\lnot\exformula)[\shortcatvariables]
+        = \onesat{\shortcatvariables} - \formulaat{\shortcatvariables}  \, .
+    \end{align*}
 \end{proof}
 
 % Usage
 These theorems provide a mean to represent logical formulas by sums of one-hot encodings.
 Since any propositional formula can be represented by compositions of negations and conjunctions, they are universal.
 We further notice, that the resulting decomposition is a basis+ CP format, as further discussed in \charef{cha:sparseCalculus}.
-In Figure~\ref{fig:DecompositionExample} we provide an example of this decomposition.
+In \figref{fig:DecompositionExample} we provide an example of this decomposition.
 
 
 \begin{figure}
@@ -1293,30 +1344,44 @@ In Figure~\ref{fig:DecompositionExample} we provide an example of this decomposi
         \input{./PartIII/tikz_pics/basis_calculus/skeleton_example.tex}
     \end{center}
     \caption{
-        Example of a decomposition by effective calculus of a formula $\exformula(\catvariableof{1},\catvariableof{2}) = \textcolor{blue}{\lnot} \secexformula^{(1)}(\catvariableof{1},\catvariableof{2}) \textcolor{red}{\land}  \secexformula^{(2)}(\catvariableof{1},\catvariableof{2})$ into a sum of contractions.}
-    \label{fig:DecompositionExample}
+        Example of a decomposition by hybrid calculus of a formula
+        $\formulaat{\catvariableof{1},\catvariableof{2}} = \textcolor{blue}{\lnot} \secexformula^{(1)}[\catvariableof{1},\catvariableof{2}] \textcolor{red}{\land}  \secexformula^{(2)}[\catvariableof{1},\catvariableof{2}]$ into a sum of contractions.
+    }\label{fig:DecompositionExample}
 \end{figure}
 
 
 % Calculus against the direction
-\red{In an alternative perspective, effective calculus amounts to an contraction against the directionality of the relational encodings.}
-For specific functions, slices of the relational encodings with respect to head variables are basis vectors.
-In that case, we can perform basis calculus in the inverse direction than suggested by the directions of the tensors.
-We examplify this situation in the following theorem for relational encodings of logical conjunctions and negations.
+%\red{In an alternative perspective, effective calculus amounts to an contraction against the directionality of the relational encodings.}
+%For specific functions, slices of the relational encodings with respect to head variables are basis vectors.
+%In that case, we can perform basis calculus in the inverse direction than suggested by the directions of the tensors.
+%We examplify this situation in the following theorem for relational encodings of logical conjunctions and negations.
 
 
 
 
 \sect{Applications in Machine Learning}
 
-The neural paradigm of Machine Learning describes the relevance of sparse function to be effective models in the sense of learning and approximation.
-
-% Neural Paradigm by Tensor Network Decompositions
+% Neural paradigm
+Basis calculus provides a tool suited to represent decompositions of function by efficient tensor networks.
+The decomposition of function into smaller components, called neurons, is often refered to as the neural paradigm of machine learning.
 Our model of the neural paradigm are tensor network decompositions, seen as decomposition of functions into smaller functions, which take each other as input.
 Summations along input axis are avoided, when having directed and boolean tensor networks with basis calculus interpretation.
+Inference is then performed by contractions with basis tensors representing the input, as shown in \theref{the:basisCalculus}.
+These contractions can further be executed neuron-wise.
 
+% + Symbolic -> Neuro-symbolic
+What is more, basis calculus provides an efficient scheme to represent symbols such as logical connectives by their relational encodings.
+Basis calculus is therefore a tool for neuro-symbolic AI \cite{garcez_neural-symbolic_2019, sarker_neuro-symbolic_2022, marra_statistical_2024}.
+
+% ADD?
+% \secref{sec:hybridCalculus} -> Connection to conjunction-based knownledge bases
+% \secref{sec:indicatorFeatures} -> Connection with factor-wise graphical model contractions
+
+
+%The neural paradigm of Machine Learning describes the relevance of sparse function to be effective models in the sense of learning and approximation.
+% Neural Paradigm by Tensor Network Decompositions
 % Basis Calculus
-We have already observed in Theorem~\ref{the:basisCalculus}, that the value of discrete maps can be calculated by contractions of the directed boolean relation encodings.
-This has been framed as Basis Calculus.
-What is more, tensor network decompositions into directed boolean tensors correspond with representation of functions as compositions of smaller functions.
-We can understand each composition as marking a neuron in an architecture and thus have established a neural perspective on boolean directed tensor networks.
+%We have already observed in Theorem~\ref{the:basisCalculus}, that the value of discrete maps can be calculated by contractions of the directed boolean relation encodings.
+%This has been framed as Basis Calculus.
+%What is more, tensor network decompositions into directed boolean tensors correspond with representation of functions as compositions of smaller functions.
+%We can understand each composition as marking a neuron in an architecture and thus have established a neural perspective on boolean directed tensor networks.
