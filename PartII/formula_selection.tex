@@ -4,10 +4,10 @@ In this chapter we will investigate efficient schemes to represent collections o
 
 % basis encoding of the selection map
 \begin{definition}
-	Given a set of $\seldim$ formulas $\{\formulaof{\selindex} : \selindexin\}$, we define the formula selecting map as
-		\[  \fselectionmapat{\shortcatvariables,\selvariable} : \atomstates \times [\seldim] \rightarrow [2] \]
-	defined for $\selindexin$ by
-		\[ \fselectionmapat{\shortcatvariables=\atomindices,\selvariable=\selindex} =  \formulaofat{\selindex}{\shortcatvariables=\atomindices} \, . \]
+	Given a set of $\seldim$ formulas $\{\formulaof{\selindex} : \selindexin\}$, we define the formula selecting map as the map
+		\[  \fselectionmap : \atomstates \rightarrow \bigtimes_{\selindex\in\seldim} [2] \]
+	with the selection encoding having coordinates to $\shortcatindices\in\atomstates$ and $\selindexin$ by
+		\[ \sencfselectionmapat{\shortcatvariables=\atomindices,\selvariable=\selindex} =  \formulaofat{\selindex}{\shortcatvariables=\atomindices} \, . \]
 \end{definition}
 
 % Selection Variables
@@ -18,8 +18,8 @@ We introduce a selection variable $\selvariable$ and depict the formula selectio
 \begin{center}
 	\input{PartII/tikz_pics/formula_selection/formula_selecting_map.tex}
 \end{center}
-\caption{Representation of the Formula Selecting map as a 
-a) Graphical Model with a selection variable $\fselectionmap$.
+\caption{Representation of the basis encoding to a formula selecting map as an
+a) Factor of a Graphical Model with a selection variable $\selvariable$ and a computed variable $\headvariableof{\fselectionmap}$.
 b) Decorating Tensor Core with selection variable corresponding with an additional axis.}
 \label{fig:formulaSelectionMap}
 \end{figure}
@@ -27,7 +27,10 @@ b) Decorating Tensor Core with selection variable corresponding with an addition
 
 % Decomposition
 A naive representation of the formula selecting map is as a sum
-	\[ \fselectionmap = \sum_{\selindexin} \formulaofat{\selindex}{\shortcatvariables}  \otimes \onehotmapofat{\selindex}{\selvariable} \, . \]
+\begin{align*}
+	 \sencfselectionmapat{\shortcatvariables,\selvariable}
+	 = \sum_{\selindexin} \formulaofat{\selindex}{\shortcatvariables}  \otimes \onehotmapofat{\selindex}{\selvariable} \, .
+\end{align*}
 Such a representation scheme requires linear resources in the number of formulas.
 We will show in the following, that we can exploit common structure in formulas to drastically reduce this resource consumption.
 
