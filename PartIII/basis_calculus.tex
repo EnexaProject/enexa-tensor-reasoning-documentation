@@ -245,7 +245,7 @@ We in this section then show, how contractions of their encodings can be exploit
     \end{align*}
     Given a enumeration of the sets by $\indvariableof{\insymbol}$ and $\indvariableof{\outsymbol}$ we define the basis encoding of $\exfunction$ as the tensor
     \begin{align*}
-        \bencodingofat{\exfunction}{\indvariableof{\insymbol},\indvariableof{\outsymbol}}
+        \bencodingofat{\exfunction}{\indvariableof{\outsymbol},\indvariableof{\insymbol}}
         = \onehotmapofat{\exrelationof{\exfunction}}{\indvariableof{\insymbol},\indvariableof{\outsymbol}}  \, .
     \end{align*}
 \end{definition}
@@ -271,8 +271,8 @@ This is shown in the next theorem, by the claim that any boolean tensor which is
     \proofrightsymbol:
     When $\exfunction$ is a function, we have for any $\indindexofin{\insymbol}$
     \begin{align*}
-        \sum_{\indindexofin{\outsymbol}} \bencodingofat{\exfunction}{\indexedindvariableof{\insymbol},\indexedindvariableof{\outsymbol}}
-        =  \bencodingofat{\exfunction}{\indexedindvariableof{\insymbol},\indvariableof{\outsymbol}=\invindexinterpretationofat{\outsymbol}{\exfunctionat{\indexinterpretationofat{\insymbol}{\indindexof{\insymbol}}}}}
+        \sum_{\indindexofin{\outsymbol}} \bencodingofat{\exfunction}{\indexedindvariableof{\outsymbol},\indexedindvariableof{\insymbol}}
+        =  \bencodingofat{\exfunction}{\indvariableof{\outsymbol}=\invindexinterpretationofat{\outsymbol}{\exfunctionat{\indexinterpretationofat{\insymbol}{\indindexof{\insymbol}}}},\indexedindvariableof{\insymbol}}
         = 1 \, .
     \end{align*}
     Thus, $\bencodingofat{\exfunction}{\indvariableof{\outsymbol},\indvariableof{\insymbol}}$ is a directed tensor with variables $\indvariableof{\insymbol}$ incoming and $\indvariableof{\outsymbol}$ outgoing.
@@ -376,7 +376,7 @@ While this seems to produce unnecessary redundancy in representing a function, w
 \sect{Calculus of basis encodings}
 
 We now show the utility of basis encodings for functions, by developing tensor network representation to composed functions.
-\red{We in this section use the notation of factored system representation, as developed in \parref{par:one} and enumerate states of factored systems by variables $\catvariable$ with states in $[\catdim]$, instead of combinations of variables $\indvariable$ with index interpretation functions $\indexinterpretation$ enumerating arbitrary sets.}
+We in this section use the notation of factored system representation, as developed in \parref{par:one} and enumerate states of factored systems by variables $\catvariable$ with states in $[\catdim]$, instead of combinations of variables $\indvariable$ with index interpretation functions $\indexinterpretation$ enumerating arbitrary sets.
 
 \subsect{Composition of function}
 
@@ -637,13 +637,9 @@ The results are applicable in the exponential family theory, in the tensor repre
 
 % Matrices
 Basis representations are standard linear algebra tools, where matrices are understood as linear maps between vector spaces.
-
 The state sets $\facstates$ can be interpreted as an enumeration of basis elements $\onehotmapof{\catindex}$ of the tensor space $\facspace$.
-
 Along this interpretation, tensors have an interpretation as maps between tensor spaces.
-
-\red{Any tensor and any partition of its variables into two sets can be interpreted as the basis elements of a linear map between the tensor spaces of the respective variables.}
-
+Any tensor and any partition of its variables into two sets can be interpreted as the basis elements of a linear map between the tensor spaces of the respective variables.
 Tensor valued functions on state sets $\facstates$ are an intermediate representation.
 
 \begin{definition}
@@ -667,7 +663,7 @@ Basis representations for compositions of linear functions can be computed via c
     We have
     \begin{align*}
         \brepresentationofat{\linmapof{2}\circ\linmapof{1}}{\individualvariableof{1},\individualvariableof{3}}
-        = \sbcontractionof{
+        = \contractionof{
             \brepresentationofat{\linmapof{2}}{\individualvariableof{2},\individualvariableof{3}}, \brepresentationofat{\linmapof{1}}{\individualvariableof{1},\individualvariableof{2}}
         }{\individualvariableof{1},\individualvariableof{3}}  \, .
     \end{align*}
@@ -676,7 +672,7 @@ Basis representations for compositions of linear functions can be computed via c
     For arbitrary $\indindexofin{1}$ and $\indindexofin{3}$ we have to show that
     \begin{align*}
         \brepresentationofat{\linmapof{2}\circ\linmapof{1}}{\indexedindvariableof{1},\indexedindvariableof{3}}
-        = \sbcontraction{
+        = \contraction{
             \brepresentationofat{\linmapof{2}}{\indvariableof{2},\indexedindvariableof{3}},\brepresentationofat{\linmapof{1}}{\indexedindvariableof{1},\indvariableof{2}}
         } \, .
     \end{align*}
@@ -761,10 +757,6 @@ Selection encodings (see \defref{def:selectionEncoding}) are related to basis re
     For arbitrary $\shortcatindices$ the slices of $\sencodingof{\exfunction}$ and $\brepresentationof{\linmapof{\exfunction}}$ thus coincide, which proofs the equivalence of both tensors.
 \end{proof}
 
-%\red{Selection encodings are interpretations of matrifications.
-%Along that, maps between factored systems are understood as basis decompositions of linear maps between the tensor spaces.}
-
-
 % Comparison with basis encodings - definition
 While basis encoding works for maps from $\facstates$ to arbitrary sets (which are enumerated), selection encodings as introduced in \defref{def:selectionEncoding} require and exploit that their image is embedded in a tensor space.
 
@@ -824,12 +816,12 @@ We use selection encodings to represent weighted sums of functions, based on the
     \[ \left(\sum_{\selindexin}\canparamat{\indexedselvariable} \cdot \sstatcoordinate \right) [\shortcatvariables] : \facstates \rightarrow \rr \]
     is represented as
     \[ \left(\sum_{\selindexin}\canparamat{\indexedselvariable}\cdot \sstatcoordinate \right) [\shortcatvariables]
-    = \sbcontractionof{\sencodingofat{\sstat}{\shortcatvariables,\selvariable} , \canparamat{\selvariable}}{\shortcatvariables} \, . \]
+    = \contractionof{\sencodingofat{\sstat}{\shortcatvariables,\selvariable} , \canparamat{\selvariable}}{\shortcatvariables} \, . \]
 \end{theorem}
 \begin{proof}
     The representation holds, since for any $\shortcatindicesin$ we have
     \begin{align*}
-        \sbcontractionof{\sencodingofat{\sstat}{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\indexedshortcatvariables}
+        \contractionof{\sencodingofat{\sstat}{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\indexedshortcatvariables}
         = \sum_{\selindexin}\exfunctionat{\indexedselvariable}\cdot\sstatcoordinateofat{\selindex}{\indexedshortcatvariables} \, .
     \end{align*}
 \end{proof}
@@ -1042,9 +1034,9 @@ We now relate the by a function $\exfunction$ computable distributions with thos
     \begin{align*}
         \probwith = \contractionof{\bigcup_{\selindexin}\{\bencodingofat{\indicatorof{\exfunction=\indexinterpretationof{\selindex}}}{\headvariableof{\selindex}},\actcoreat{\headvariable=\selindex}\}}{\shortcatvariables}
     \end{align*}
-    If $\actcoreofat{\selindex}{\headvariableof{\selindex}=0}=0$ for an $\selindex$, then we have $\probwith=\normationof{\indicatorofat{\exfunction=\indexinterpretationof{\selindex}}{\shortcatvariables}}{\shortcatvariables}$, which is an element of $\realizabledistsof{\exfunction,\maxgraph}$ since then
+    If $\actcoreofat{\selindex}{\headvariableof{\selindex}=0}=0$ for an $\selindex$, then we have $\probwith=\normalizationof{\indicatorofat{\exfunction=\indexinterpretationof{\selindex}}{\shortcatvariables}}{\shortcatvariables}$, which is an element of $\realizabledistsof{\exfunction,\maxgraph}$ since then
     \begin{align*}
-        \probwith = \normationof{\bencodingof{\exfunction}{\headvariable,\shortcatvariables},\onehotmapofat{\selindex}{\headvariable}}{\shortcatvariables} \, .
+        \probwith = \normalizationof{\bencodingof{\exfunction}{\headvariable,\shortcatvariables},\onehotmapofat{\selindex}{\headvariable}}{\shortcatvariables} \, .
     \end{align*}
     In all other cases we multiply scalars to the leg tensors such that $\actcoreofat{\selindex}{\headvariableof{\selindex}=0}=1$.
     Notice, that the product of all such scalars needs to be $1$ since $\contraction{\probwith}=1$.
@@ -1221,7 +1213,7 @@ Such schemes are applied for example in \cite{tsilionis_tensor-based_2024} in ba
     \label{the:effectiveConjunction}
     For any formulas $\exformula,\secexformula$ we have
     \begin{align*}
-        \sbcontractionof{
+        \contractionof{
             \bencodingofat{\land}{\headvariableof{\exformula\land\secexformula},\formulavar,\secexformulavar},\tbasisat{\headvariableof{\exformula\land\secexformula}}
         }{\formulavar,\secexformulavar}
         = \tbasisat{\formulavar} \otimes \tbasisat{\secexformulavar} \, .
@@ -1229,7 +1221,7 @@ Such schemes are applied for example in \cite{tsilionis_tensor-based_2024} in ba
     In particular, it holds that (see Figure~\ref{fig:ConNegDecomposition}a)
     \begin{align*}
     (\exformula\land\secexformula)[\shortcatvariables]
-        = \sbcontractionof{\exformula,\secexformula}{\shortcatvariables} \, .
+        = \contractionof{\exformula,\secexformula}{\shortcatvariables} \, .
     \end{align*}
 \end{theorem}
 \begin{proof}
@@ -1241,10 +1233,10 @@ Such schemes are applied for example in \cite{tsilionis_tensor-based_2024} in ba
     \end{align*}
     and get the first claim as
     \begin{align*}
-        \sbcontractionof{
+        \contractionof{
             \bencodingofat{\land}{\headvariableof{\exformula\land\secexformula},\formulavar,\secexformulavar},\tbasisat{\headvariableof{\exformula\land\secexformula}}
         }{\formulavar,\secexformulavar}
-        & = \sbcontractionof{
+        & = \contractionof{
             \tbasisat{\headvariableof{\exformula\land\secexformula}} \otimes \tbasisat{\formulavar} \otimes \tbasisat{\secexformulavar},\tbasisat{\headvariableof{\exformula\land\secexformula}}
         }{\formulavar,\secexformulavar} \\
         & = \tbasisat{\formulavar} \otimes \tbasisat{\secexformulavar} \, .
@@ -1252,19 +1244,19 @@ Such schemes are applied for example in \cite{tsilionis_tensor-based_2024} in ba
     To show the second claim we use
     \begin{align*}
     (\exformula\land\secexformula)[\shortcatvariables]
-        &= \sbcontractionof{
+        &= \contractionof{
             \bencodingofat{\exformula}{\formulavar,\shortcatvariables},
             \bencodingofat{\secexformula}{\secexformulavar,\shortcatvariables},
             \bencodingofat{\land}{\headvariableof{\exformula\land\secexformula},\formulavar,\secexformulavar},
             \tbasisat{\headvariableof{\exformula\land\secexformula}}
         }{\shortcatvariables} \\
-        &  = \sbcontractionof{
+        &  = \contractionof{
             \bencodingofat{\exformula}{\formulavar,\shortcatvariables},
             \bencodingofat{\secexformula}{\secexformulavar,\shortcatvariables},
             (\tbasisat{\formulavar}\otimes \tbasisat{\secexformulavar})
         %\bencodingofat{\land}{\formulavar,\secexformulavar,\headvariableof{\exformula\land\secexformula}}
         }{\shortcatvariables} \\
-        &= \sbcontractionof{\exformula,\secexformula}{\shortcatvariables} \, .
+        &= \contractionof{\exformula,\secexformula}{\shortcatvariables} \, .
     \end{align*}
 \end{proof}
 
@@ -1273,14 +1265,14 @@ A similar decomposition holds for negations, as we show next.
 \begin{theorem}
     For any formula $\exformula$ we have
     \begin{align*}
-        \sbcontractionof{
+        \contractionof{
             \bencodingofat{\lnot}{\headvariableof{\lnot\exformula},\formulavar},\tbasisat{\headvariableof{\lnot\exformula}}
         }{\formulavar}
         = \fbasisat{\formulavar} =  \onesat{\formulavar} - \tbasisat{\formulavar} \, .
     \end{align*}
     and
     \begin{align*}
-        \sbcontractionof{
+        \contractionof{
             \bencodingofat{\lnot}{\formulavar,\headvariableof{\lnot\exformula}},\fbasisat{\headvariableof{\lnot\exformula}}
         }{\formulavar}
         = \tbasisat{\formulavar} \, .
@@ -1300,13 +1292,13 @@ A similar decomposition holds for negations, as we show next.
     \end{align*}
     and therefore get the second claim by contraction with $\fbasisat{\headvariableof{\lnot\exformula}}$
     \begin{align*}
-        \sbcontractionof{
+        \contractionof{
             \bencodingofat{\lnot}{\formulavar,\headvariableof{\lnot\exformula}},\fbasisat{\headvariableof{\lnot\exformula}}
         }{\formulavar}
-        &=  \sbcontractionof{
+        &=  \contractionof{
             \tbasisat{\headvariableof{\lnot\exformula}} \otimes \fbasisat{\formulavar},\fbasisat{\headvariableof{\lnot\exformula}}
         }{\formulavar}
-        +  \sbcontractionof{
+        +  \contractionof{
             \fbasisat{\headvariableof{\lnot\exformula}} \otimes \tbasisat{\formulavar},\fbasisat{\headvariableof{\lnot\exformula}}
         }{\formulavar}
         \\
@@ -1314,7 +1306,7 @@ A similar decomposition holds for negations, as we show next.
     \end{align*}
     The first equation of the first claim follows similarly by contraction with $\tbasisat{\headvariableof{\lnot\exformula}}$ as
     \begin{align*}
-        \sbcontractionof{
+        \contractionof{
             \bencodingofat{\lnot}{\headvariableof{\lnot\exformula},\formulavar},\tbasisat{\headvariableof{\lnot\exformula}}
         }{\formulavar}
         = \fbasisat{\formulavar}
@@ -1325,7 +1317,7 @@ A similar decomposition holds for negations, as we show next.
     \end{align*}
     To show the third claim, we contract the computation tensor $\bencodingofat{\exformula}{\formulavar,\shortcatvariables}$ to the formula $\exformula$ on both sides of the first claim and get
     \begin{align*}
-        \sbcontractionof{
+        \contractionof{
             \bencodingofat{\exformula}{\formulavar,\shortcatvariables},\bencodingofat{\lnot}{\headvariableof{\lnot\exformula},\formulavar},\tbasisat{\headvariableof{\lnot\exformula}}
         }{\formulavar}
         \contractionof{\bencodingofat{\exformula}{\formulavar,\shortcatvariables},\onesat{\formulavar}}{\formulavar}
@@ -1361,15 +1353,6 @@ In \figref{fig:DecompositionExample} we provide an example of this decomposition
         $\formulaat{\catvariableof{1},\catvariableof{2}} = \textcolor{blue}{\lnot} \secexformula^{(1)}[\catvariableof{1},\catvariableof{2}] \textcolor{red}{\land}  \secexformula^{(2)}[\catvariableof{1},\catvariableof{2}]$ into a sum of contractions.
     }\label{fig:DecompositionExample}
 \end{figure}
-
-
-% Calculus against the direction
-%\red{In an alternative perspective, effective calculus amounts to an contraction against the directionality of the basis encodings.}
-%For specific functions, slices of the basis encodings with respect to head variables are basis vectors.
-%In that case, we can perform basis calculus in the inverse direction than suggested by the directions of the tensors.
-%We examplify this situation in the following theorem for basis encodings of logical conjunctions and negations.
-
-
 
 
 \sect{Applications in Machine Learning}

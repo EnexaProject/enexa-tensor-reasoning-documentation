@@ -11,7 +11,7 @@ While mean parameter polytopes $\genmeanset$ to generic exponential families hav
 Hybrid Logic Networks are exponential families, which statistic $\sstat$ consists of coordinates with $\imageof{\sstatcoordinateof{\selindex}}\subset\ozset$ and are therefore propositional formulas.
 The convex polytope of mean parameters (see \defref{def:meanPolytope}) is for a statistic $\mlnstat$ of propositional formulas and a base measure $\basemeasure$
 \begin{align*}
-	\hlnmeanset = \left\{ \sbcontractionof{\probtensor,\sencmlnstat}{\selvariable} \, : \, \probtensor\in\bmrealprobof{\basemeasure} \right\} \, ,
+	\hlnmeanset = \left\{ \contractionof{\probtensor,\sencmlnstat}{\selvariable} \, : \, \probtensor\in\bmrealprobof{\basemeasure} \right\} \, ,
 \end{align*}
 where by $\bmrealprobof{\basemeasure}$ we denote the set of all by $\basemeasure$ representable probability distributions.
 By \theref{the:meanPolytopeConvHull} the convex polytope has a characterization as a convex hull
@@ -126,7 +126,7 @@ The criterion of mean parameter coordinates in $\{0,1\}$ is, however, not a nece
 
 % Face base measure refinement as a generic approach
 Following a different approach, any mean parameter outside the interior of the mean parameter polytope is on a face of the polytope.
-We can use this insight, to refine base measures by face base measures (see \defref{def:faceBaseMeasure}), which has been shown in more generality in \theref{the:faceToArgmax}.
+We can use this insight, to refine base measures by face base measures (see \defref{def:faceMeasure}), which has been shown in more generality in \theref{the:faceToArgmax}.
 For hybrid logic network we characterize the face base measures in the next theorem.
 
 %continue with a characterization of the face base measures (see \defref{def:faceBaseMeasure}) in the context of hybrid logic networks, which provides us with further base measure refinements in case of mean parameters outside the interior of the mean parameter polytope.
@@ -206,7 +206,7 @@ Finally, interior points are by \corref{cor:interiorCharacterizationHLN} those r
 Let us recall, that the set $\hlnsetof{\formulaset}$ contains all Hybrid Logic Networks, which can be realized as tensor networks with the same structure of computation and activation cores.
 We now investigate, whether we can reduce the set of probability distributions in the definition of the convex polytope of mean parameters to the set $\hlnsetof{\formulaset}$ (see \defref{def:hln}), that is
 \begin{align*}
-	\hlnmeanset|_{\hlnsetof{\formulaset}} = \left\{ \sbcontractionof{\probtensor,\sencmlnstat}{\selvariable} \, : \, \probtensor\in\hlnsetof{\formulaset} \right\} \, .
+	\hlnmeanset|_{\hlnsetof{\formulaset}} = \left\{ \contractionof{\probtensor,\sencmlnstat}{\selvariable} \, : \, \probtensor\in\hlnsetof{\formulaset} \right\} \, .
 \end{align*}
 While $\hlnmeanset|_{\hlnsetof{\formulaset}}\subset\hlnmeanset$ is obvious, we pose the question, for which $\formulaset$ there is an equivalence.
 We will refer to the equality of both sets as sufficient expressivity of $\hlnsetof{\formulaset}$.
@@ -380,15 +380,15 @@ in the case $\probtensor=\empdistribution$ for a sample selector map $\datamap$.
 The moment projection coincides, after dropping constant terms in case of non-trivial base measure, with the backward map
 \begin{align*}
 	\argmax_{\canparamat{\selvariable}\in\rr^{\seldim}} \quad
-	\sbcontraction{\canparamat{\selvariable},\meanparamwith} - \cumfunctionof{\canparamat{\selvariable}}
+	\contraction{\canparamat{\selvariable},\meanparamwith} - \cumfunctionof{\canparamat{\selvariable}}
 \end{align*}
 where
 \begin{align*}
 	\meanparamwith
-	= \sbcontractionof{\sencmlnstat,\probtensor}{\selvariable}
+	= \contractionof{\sencmlnstat,\probtensor}{\selvariable}
 	\quad \text{and} \quad
 	\cumfunctionof{\canparamat{\selvariable}}
-	= \sbcontraction{\expof{ \sbcontractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables} }, \basemeasure} \, .
+	= \contraction{\expof{ \contractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables} }, \basemeasure} \, .
 \end{align*}
 
 % Extension to HLN
@@ -420,15 +420,15 @@ The Maximum Entropy Problem for a statistic $\mlnstat$ is %Markov Logic Networks
 \begin{align}
 	\argmax_{\probtensor} \quad \sentropyof{\probtensor}
 	\quad \text{subject to} \quad
-	\sbcontractionof{\probtensor,\sencmlnstat}{\selvariable}
+	\contractionof{\probtensor,\sencmlnstat}{\selvariable}
 	 =  \meanparamwith
 \end{align}
 
 
 
-\begin{corollary}[of \theref{the:maxEntMaxLikeDuality}]
+\begin{corollary}% THEOREM DOES NOT EXIST! [of \theref{the:maxEntMaxLikeDuality}]
 	%\red{Works only for $\meanparamat{\indexedselvariable}\in\interiorof{\hlnmeanset}$}
-	Let $\empdistribution$ be a distribution such that there is a positive distribution $\probtensor$ with $\sbcontractionof{\probtensor,\sencmlnstat}{\selvariable} = \sbcontractionof{\empdistribution,\sencmlnstat}{\selvariable}$.
+	Let $\empdistribution$ be a distribution such that there is a positive distribution $\probtensor$ with $\contractionof{\probtensor,\sencmlnstat}{\selvariable} = \contractionof{\empdistribution,\sencmlnstat}{\selvariable}$.
 	Among all positive distributions $\probtensor$ of $\atomstates$ satisfying this moment matching condition, the Markov Logic Network with formulas $\formulaset$ and weights $\canparam$ being the solution of the maximum likelihood problem has minimal entropy.
 \end{corollary}
 
@@ -492,8 +492,8 @@ To solve the moment matching condition at a formula $\enumformula$ we refine \le
 	\end{align*}
 	and the moment matching condition is by \lemref{lem:mmContractionEquation} satisfied if
 	\begin{align*}
-		\sbcontraction{\actcoreof{\selindex}, \onehotmapof{1}, \hypercore}
-			= \sbcontraction{\actcoreof{\selindex},\hypercore} \cdot \datameanat{\indexedselvariable} \, .
+		\contraction{\actcoreof{\selindex}, \onehotmapof{1}, \hypercore}
+			= \contraction{\actcoreof{\selindex},\hypercore} \cdot \datameanat{\indexedselvariable} \, .
 	\end{align*}
 	This is equal to
 	\begin{align*}
@@ -539,7 +539,7 @@ This is an coordinate ascent algorithm, when interpreted the loss $\lossof{\expd
 	\Require Empirical distribution $\empdistribution$, boolean features $\mlnstat$ %and base measure $\basemeasure$
 	\Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\expfamily$
 	\hrule
-    \State Compute $\datameanat{\selvariable}= \sbcontractionof{\empdistribution,\sencsstat}{\selvariable}$
+    \State Compute $\datameanat{\selvariable}= \contractionof{\empdistribution,\sencsstat}{\selvariable}$
 	\State $\kb = \ones$, $\secnodes=\varnothing$
 \For{$\selindexin$}
 	\If{$\meanparamat{\indexedselvariable}=1$}
@@ -553,7 +553,7 @@ This is an coordinate ascent algorithm, when interpreted the loss $\lossof{\expd
 \For{$\selindex\in\secnodes$}
 		\State Compute
 		\[ \hypercoreat{\catvariableof{\enumformula}}
-		\algdefsymbol \sbcontractionof{\bencodingof{\enumformula}}{\catvariableof{\enumformula}} \]
+		\algdefsymbol \contractionof{\bencodingof{\enumformula}}{\catvariableof{\enumformula}} \]
 		\State Set
 		\begin{align*}
 	 		\canparamat{\indexedselvariable}
@@ -563,7 +563,7 @@ This is an coordinate ascent algorithm, when interpreted the loss $\lossof{\expd
 			}
 		\end{align*}
 \EndFor
-\If {$\sbcontraction{\kb}=0$}
+\If {$\contraction{\kb}=0$}
 	 \State \textbf{raise} "Inconsistent Knowledge Base"
 \EndIf
 \While{Convergence criterion is not met}
@@ -657,9 +657,9 @@ We can use these insights to provide a characterization of the forward and backw
 		\maxtermformulaset := \{ \maxtermof{\atomindices} \, : \, \atomindicesin\}  \]
 	of all minterms, respectively of all mapterms, the forward mapping are
 		%\[ \forwardmapwrt{\mintermformulaset}: \bigotimes_{\atomenumeratorin}\rr^{2} \rightarrow \bigotimes_{\atomenumeratorin}\rr^{2} \]
-		\[ \forwardmapwrt{\mlnmintermsymbol}(\canparam) = \normationofwrt{\expof{\canparam}}{\shortcatvariables}{\varnothing}
+		\[ \forwardmapwrt{\mlnmintermsymbol}(\canparam) = \normalizationofwrt{\expof{\canparam}}{\shortcatvariables}{\varnothing}
 		\quad \text{and} \quad
-		 \forwardmapwrt{\mlnmaxtermsymbol}(\canparam) = \normationofwrt{\expof{-\canparam}}{\shortcatvariables}{\varnothing} \, , \]
+		 \forwardmapwrt{\mlnmaxtermsymbol}(\canparam) = \normalizationofwrt{\expof{-\canparam}}{\shortcatvariables}{\varnothing} \, , \]
 	where in a slight abuse of notation we assigned the variables $\shortcatvariables$ to the canonical parameters $\canparam$.
 
 	Possible choices of the backward mappings are
@@ -674,11 +674,11 @@ We can use these insights to provide a characterization of the forward and backw
 		\[ \mintermformulaset[\shortcatvariables,\catvariableof{\mintermformulaset}]  = \identityat{\shortcatvariables,\catvariableof{\maxtermformulaset}}\]
 	and get
 		\[ \forwardmapwrt{\mlnmintermsymbol}(\canparam)
-		= \normationof{
+		= \normalizationof{
 		\expof{\contractionof{\{\mintermformulaset, \canparam\}}{\shortcatvariables}}
 		}{\shortcatvariables}
 		=
-		\normationof{\expof{\canparam}}{\shortcatvariables} \, .
+		\normalizationof{\expof{\canparam}}{\shortcatvariables} \, .
 		\]
 
 	We notice that for any $\meanparam$ in the image of the forward map we have
@@ -690,18 +690,18 @@ We can use these insights to provide a characterization of the forward and backw
 	and get
 	\begin{align*}
 		\forwardmapwrt{\mlnmaxtermsymbol}(\canparam)
-		& = \normationof{
+		& = \normalizationof{
 		\expof{\contractionof{\{\mintermformulaset, \canparam\}}{\shortcatvariables}}
 		}{\shortcatvariables} \\
-		& = \normationof{\{
+		& = \normalizationof{\{
 		\expof{\contractionof{\{\ones, \canparam\}}{\shortcatvariables}},
 		\expof{-\contractionof{\canparam}{\shortcatvariables}} \}
 		}{\shortcatvariables} \\
-		& = \normationof{
+		& = \normalizationof{
 		\expof{-\canparam}
 		}{\shortcatvariables}
 	\end{align*}
-	where we used, that $\expof{\contractionof{\{\ones, \canparam\}}{\shortcatvariables}}$ is a multiple of $\onesat{\shortcatvariables}$ and is thus eliminated in the normation.
+	where we used, that $\expof{\contractionof{\{\ones, \canparam\}}{\shortcatvariables}}$ is a multiple of $\onesat{\shortcatvariables}$ and is thus eliminated in the normalization.
 	For any $\meanparam\in\imageof{\forwardmapwrt{\mlnmaxtermsymbol}}$ we have
 		\[ \forwardmapwrt{\mlnmaxtermsymbol}(\backwardmapwrt{\mlnmaxtermsymbol}(\meanparam) )
 		= \meanparam
@@ -744,14 +744,14 @@ The mean parameters coincide with the queries on the atomic formulas, that is th
 \begin{proof}
 	We have for any $\canparamat{\selvariable}\in\rr^{\atomorder}$
 		\[ \probofat{(\atomformulaset,\canparam)}{\shortcatvariables}
-		= \bigotimes_{\atomenumeratorin} \normationof{\expof{\canparamat{\selvariable=\atomenumerator}\cdot \atomicformulaof{\atomenumerator}}}{\catvariableof{\atomenumerator}}  \, . \]
+		= \bigotimes_{\atomenumeratorin} \normalizationof{\expof{\canparamat{\selvariable=\atomenumerator}\cdot \atomicformulaof{\atomenumerator}}}{\catvariableof{\atomenumerator}}  \, . \]
 
 
 	For any $\atomenumeratorin$ it therefore holds, that
 	\begin{align*}
 		\forwardmapwrtof{\mlnatomsymbol}{\canparamat{\selvariable}}[\selvariable=\atomenumerator]
-		&=\sbcontraction{\atomicformulaof{\atomenumerator},  \probofat{(\atomformulaset,\canparam)}{\shortcatvariables}} \\
-		&=\sbcontraction{\atomicformulaof{\atomenumerator},  \normationof{\expof{\canparamat{\selvariable=\atomenumerator}\cdot \atomicformulaof{\atomenumerator}}}{\catvariableof{\atomenumerator}}} \\
+		&=\contraction{\atomicformulaof{\atomenumerator},  \probofat{(\atomformulaset,\canparam)}{\shortcatvariables}} \\
+		&=\contraction{\atomicformulaof{\atomenumerator},  \normalizationof{\expof{\canparamat{\selvariable=\atomenumerator}\cdot \atomicformulaof{\atomenumerator}}}{\catvariableof{\atomenumerator}}} \\
 		& = \frac{\expof{\canparamat{\selvariable=\atomenumerator}}}{1+\expof{\canparamat{\selvariable=\atomenumerator}}} \, .
 	\end{align*}
 
@@ -781,7 +781,7 @@ The Kullback-Leibler divergence between the distribution and its projection is t
 	The minterms of such MLNs are the literals.
 	By redundancy (literals sum up to $\ones$), it suffices to take only the positive or the negative literal.
 	}
-%	We set the weights of $\weightof{\lnot\atomicformulaof{\atomenumerator}}=0$ (corresponding with a gauge normation of the energy offset symmetry). % Not needed!
+%	We set the weights of $\weightof{\lnot\atomicformulaof{\atomenumerator}}=0$ (corresponding with a gauge normalization of the energy offset symmetry). % Not needed!
 \end{remark}
 
 
@@ -807,7 +807,7 @@ This expressivity result was generalized to arbitrary distributions, when allowi
 Finding the distribution maximizing the likelihood of data would then be the empirical distribution.
 In this case we would have $\datameanat{\selvariableof{[\catorder]}=\shortcatindices} = \empdistributionat{\shortcatvariables=\shortcatindices}$ and the maximum likelihood distribution is found by the problem
 \begin{align*}
-	\argmax_{\canparam\in\facspace}  \sbcontraction{\canparam,\empdistribution} - \cumfunctionof{\canparam} \,
+	\argmax_{\canparam\in\facspace}  \contraction{\canparam,\empdistribution} - \cumfunctionof{\canparam} \,
 \end{align*}
 which is solved at $\canparam=\lnof{\empdistribution}$ with $\probtensorof{(\identity,\lnof{\empdistribution})}= \empdistribution$.
 This follows from $\lossof{\probtensorof{(\identity,\canparam)}}=\kldivof{\empdistribution}{\probtensorof{(\identity,\canparam)}}$, which is by Gibbs inequality minimized at $\probtensorof{(\identity,\canparam)}=\empdistribution$, which is the case for $\canparam = \lnof{\empdistribution}$.
@@ -819,10 +819,10 @@ We here allow for $\lnof{0}=-\infty$, with the convention of $\expof{-\infty}=0$
 % Regularization
 To avoid this overfitting situation, we regularize by restricting the parameter to be a set $\energyhypothesis\subset\facspace$ and state
 \begin{align}\tag{$\mathrm{P}_{\energyhypothesis, \empdistribution}$}\label{prob:restrictedNaiveMLE}
-	\argmax_{\canparam\in\energyhypothesis}  \sbcontraction{\canparam,\empdistribution} - \cumfunctionof{\canparam} \, .
+	\argmax_{\canparam\in\energyhypothesis}  \contraction{\canparam,\empdistribution} - \cumfunctionof{\canparam} \, .
 \end{align}
 
-Problem~\ref{prob:restricedNaiveMLE} has two important types of instantiation, which we discuss in the next sections.
+Problem~\ref{prob:restrictedNaiveMLE} has two important types of instantiation, which we discuss in the next sections.
 
 \subsect{Parameter Estimation}
 
@@ -951,7 +951,7 @@ Let us choose a formula $\formula\in\formulaset$ and consider Problem~\ref{prob:
 This is parameter estimation on the exponential family with the single feature $\formula$ and the base measure $\currentdistribution$.
 Therefore we can apply the theory of \charef{cha:probReasoning} and characterize the solution by the $\weight$ satisfying the moment matching condition
 \begin{align*}
-	\contraction{\currentdistribution, \normationof{\expof{\weight}}{\shortcatvariables} } = \contraction{\empdistribution, \formula} \, .
+	\contraction{\currentdistribution, \normalizationof{\expof{\weight}}{\shortcatvariables} } = \contraction{\empdistribution, \formula} \, .
 \end{align*}
 We state the solution of this condition in the next theorem.
 
@@ -962,7 +962,7 @@ We state the solution of this condition in the next theorem.
 	\end{align*}
 	where the formula $\hat{\formula}$ is in
 	\begin{align*}
-		\hat{\formula} \in \argmax_{\formula\in\formulaset} \kldivof{\sbcontraction{\empdistribution,\formula}}{\sbcontraction{\currentdistribution,\formula}}
+		\hat{\formula} \in \argmax_{\formula\in\formulaset} \kldivof{\contraction{\empdistribution,\formula}}{\contraction{\currentdistribution,\formula}}
 	\end{align*}
 	and $\weightof{\hat{\formula}}$ is the weight of $\hat{\formula}$ in the solution of Problem~\ref{prob:restrictedNaiveMLE} with $\Gamma = \currentdistribution + \mathrm{span}(\exformula)$.
 	Here we denote by $\kldivof{p_1}{p_2}$ the Kullback-Leibler divergence between Bernoulli distributions with parameters $p_1,p_2\in[0,1]$, that is
@@ -973,9 +973,9 @@ We state the solution of this condition in the next theorem.
 	For any formula $\formula$, the inner minimum of Problem~\eqref{prob:greedyGain} is by \lemref{ref:lemMMinMLN} taken at
 		\[ \weightof{\formula} = \lnof{\frac{\datamean}{(1-\datamean)}\cdot \frac{(1-\currentmean)}{\currentmean}}  \]
 	where
-		\[ \currentmean = \sbcontraction{\currentdistribution,\formula} \]
+		\[ \currentmean = \contraction{\currentdistribution,\formula} \]
 	and
-		\[ \datamean = \sbcontraction{\empdistribution,\formula} \, . \]
+		\[ \datamean = \contraction{\empdistribution,\formula} \, . \]
 
 	The difference of the likelihood at the current distribution and the optimum is
 	\begin{align*}
@@ -987,8 +987,8 @@ We state the solution of this condition in the next theorem.
 	% Loss gain at optimum
 	We use the representation scheme of Theorem~\ref{the:hybridNetworkRepresentation} and get
 	\begin{align*}
-		\sbcontraction{\currentdistribution, \expof{\weightof{\formula} \cdot \formula}}
-		& = \sbcontraction{\currentdistribution, \bencodingofat{\formula}{\catvariableof{\formula}}, \actcoreofat{\formula}{\catvariableof{\formula}}} \\
+		\contraction{\currentdistribution, \expof{\weightof{\formula} \cdot \formula}}
+		& = \contraction{\currentdistribution, \bencodingofat{\formula}{\catvariableof{\formula}}, \actcoreofat{\formula}{\catvariableof{\formula}}} \\
 		& = (1-\currentmean) + \currentmean\cdot \expof{\weightof{\formula}} \\
 		& = (1 - \currentmean) + \frac{\datamean \cdot (1-\currentmean)}{(1-\datamean)} \\
 		& = (1-\currentmean) \cdot \frac{1}{(1-\datamean)} \, .
@@ -997,7 +997,7 @@ We state the solution of this condition in the next theorem.
 	It follows, that
 	\begin{align*}
 		\cumfunctionwrtof{\extendedformulaset,\basemeasure}{\extendedcanparam}
-		& = \lnof{\sbcontraction{\currentdistribution, \expof{\weightof{\formula} \cdot \formula}}} \\
+		& = \lnof{\contraction{\currentdistribution, \expof{\weightof{\formula} \cdot \formula}}} \\
 		& = \lnof{1-\currentmean} - \lnof{1-\datamean} \, .
 	\end{align*}
 	% Refining the mean product term
@@ -1017,8 +1017,8 @@ We state the solution of this condition in the next theorem.
 	\end{align*}
 	By definition, this is the Kullback-Leibler divergence between Bernoulli distributions with parameters $\datamean$ and $\currentmean$.
 	%
-	Since the gain in the likelihood loss when restricting to $\energyhypothesis = \spanof{\formula}$ is thus given by $\kldivof{\sbcontraction{\empdistribution,\formula}}{\sbcontraction{\currentdistribution,\formula}}$, we have that Problem~\ref{prob:restrictedNaiveCE}  in the case $\energyhypothesis = \bigcup_{\formula\in\formulaset}\spanof{\formula}$ is solved at $\estcanparam = \weightof{\hat{\formula}}\cdot \hat{\formula}$ where
-		\[ \hat{\formula} = \kldivof{\sbcontraction{\empdistribution,\formula}}{\sbcontraction{\currentdistribution,\formula}} \, . \]
+	Since the gain in the likelihood loss when restricting to $\energyhypothesis = \spanof{\formula}$ is thus given by $\kldivof{\contraction{\empdistribution,\formula}}{\contraction{\currentdistribution,\formula}}$, we have that Problem~\ref{prob:restrictedNaiveCE}  in the case $\energyhypothesis = \bigcup_{\formula\in\formulaset}\spanof{\formula}$ is solved at $\estcanparam = \weightof{\hat{\formula}}\cdot \hat{\formula}$ where
+		\[ \hat{\formula} = \kldivof{\contraction{\empdistribution,\formula}}{\contraction{\currentdistribution,\formula}} \, . \]
 \end{proof}
 
 \red{Thus, we solve the grain heuristic with a coordinatewise transform of the mean parameter tensors to $\empdistribution$ and $\currentdistribution$, using the Bernoulli Kullback-Leibler divergence as transform function.}
@@ -1067,7 +1067,7 @@ as
 %and get a likelihood gradient of
 %\begin{align*}
 %	 \frac{\partial \lossof{\expdistof{(\naivestat(\canparam), \naivecanparam)}}}{\partial\canparam} 
-%	 &= \sbcontraction{
+%	 &= \contraction{
 %	 	\frac{\partial\lossof{\expdistof{(\naivestat, \naivecanparam)}}}{\partial\naivecanparam}|_{\naivecanparam(0)},
 %		\frac{\partial\naivecanparam(\canparam)}{\partial\canparam} 
 %	 }  \\
@@ -1087,25 +1087,25 @@ When nothing has been learned so far, we can take the current model to be the un
 %% Collection of features by selection
 Given a set $\fselectionmap$ of features we vary $\naivecanparam$ by the function
 \begin{align*}
-	 \exfunction(\canparam) = \naivecanparam + \sbcontractionof{\canparam,\sencodingof{\fselectionmap}}{\shortcatvariables} \, .
+	 \exfunction(\canparam) = \naivecanparam + \contractionof{\canparam,\sencodingof{\fselectionmap}}{\shortcatvariables} \, .
 \end{align*}
 At $\canparam=0$ we have the gradient of the loss of the parametrized formula by
 \begin{align*}
 	 \gradwrtat{\canparam}{0}
 	 \lossof{\expdistof{(\naivestat,\exfunction(\canparam),\basemeasure)}}
-	 &= \sbcontraction{
+	 &= \contraction{
 	 	 \gradwrtat{\exfunction(\canparam)}{\naivecanparam}  \lossof{\expdistof{(\naivestat,\exfunction(\canparam),\basemeasure)}},
 		 \gradwrtat{\canparam}{0}  \exfunction(\canparam)
 	 }  \\
-	 &= \sbcontractionof{\empdistribution,\sencodingof{\sstat}}{\selvariable} -   \sbcontractionof{\expdistof{(\naivestat, \naivecanparam, \basemeasure)},\sencodingof{\sstat}}{\selvariable} \, .
+	 &= \contractionof{\empdistribution,\sencodingof{\sstat}}{\selvariable} -   \contractionof{\expdistof{(\naivestat, \naivecanparam, \basemeasure)},\sencodingof{\sstat}}{\selvariable} \, .
 \end{align*}
 
 
 %% Grafting
 We want to choose the formula, which is best aligned with the gradient of the log-likelihood, that is using a formula selecting map $\fselectionmap$
 \begin{align} \label{prob:greedyGrad} \tag{$\mathrm{P}^{\mathrm{grad}}_{\datamap,\formulaset,\fselectionmap}$}
-	\argmax_{\selindex\in[\seldim]} \sbcontractionof{\empdistribution,\fselectionmap}{\indexedselvariable}
-	- \sbcontractionof{\expdistof{(\naivestat, \naivecanparam, \basemeasure)},\fselectionmap}{\indexedselvariable} \, .
+	\argmax_{\selindex\in[\seldim]} \contractionof{\empdistribution,\fselectionmap}{\indexedselvariable}
+	- \contractionof{\expdistof{(\naivestat, \naivecanparam, \basemeasure)},\fselectionmap}{\indexedselvariable} \, .
 \end{align}
 This method is known as the gradient heuristic or grafting.
 % Mean parameter interpretation
@@ -1114,7 +1114,7 @@ The objective of Problem~\eqref{prob:greedyGrad} has another interpretation by t
 %% Formula alignment perspective
 Problem~\eqref{prob:greedyGrad} is further equivalent to the formula alignment
 \begin{align*}
-	\argmax_{\formula\in\fselectionmap} \sbcontraction{\formula,\empdistribution-\currentdistribution} \, .
+	\argmax_{\formula\in\fselectionmap} \contraction{\formula,\empdistribution-\currentdistribution} \, .
 \end{align*}
 The objective can be interpreted as the difference of the satisfaction probability of the formula with respect to the empirical distribution and the current distribution.
 %We can choose selection architectures to efficiently parametrize the formulas in the hypothesis $\fselectionmap$ and rewrite the problem as
@@ -1189,7 +1189,7 @@ Let us now understand the likelihood gradient as the energy tensor of a probabil
 	Let there be a base distribution $\currentdistribution$, a targeted distribution $\empdistribution$ and a formula selecting map $\fselectionmap[\shortcatvariables, \selvariable]$.
 	The proposal distribution at inverse temperature $\invtemp>0$ is the distribution of $\selvariable$ defined by
 	\begin{align*}
-		\normationof{\expof{\sbcontractionof{\invtemp\cdot(\empdistribution-\currentdistribution),\fselectionmap}{\selvariable}} }{\selvariable} \, .
+		\normalizationof{\expof{\contractionof{\invtemp\cdot(\empdistribution-\currentdistribution),\fselectionmap}{\selvariable}} }{\selvariable} \, .
 	\end{align*}
 	The proposal distribution is the member of the exponential family with statistics $\fselectionmap$ and parameter $\invtemp\cdot(\empdistribution-\currentdistribution)$.
 \end{definition}

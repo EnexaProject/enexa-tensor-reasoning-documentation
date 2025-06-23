@@ -58,11 +58,11 @@ First of all, we can decide entailment based on vanishing contractions with the 
 
 
 % Can use basis encoding
-The contraction criterion can be extended to the decision of contradiction as well, since $\kb\models\lnot\exformula$ is equivalent to $\sbcontraction{\kb,\exformula}=0$.
+The contraction criterion can be extended to the decision of contradiction as well, since $\kb\models\lnot\exformula$ is equivalent to $\contraction{\kb,\exformula}=0$.
 Therefore, entailment and contradiction can be decided simultaneously by a single contraction, as we state next.
 %To decide whether a formula is entailed, or its negation is entailed (in which case one says that the formula is contradicted) by a single contraction, one can perform the contraction
 %\begin{align*}
-%	\hypercore = \sbcontractionof{\kbat{\shortcatvariables},\formulaat{\shortcatvariables,\exformulavar}}{\exformulavar}
+%	\hypercore = \contractionof{\kbat{\shortcatvariables},\formulaat{\shortcatvariables,\exformulavar}}{\exformulavar}
 %\end{align*}
 
 \begin{theorem}
@@ -70,18 +70,18 @@ Therefore, entailment and contradiction can be decided simultaneously by a singl
     Given propositional formulas $\kb$ and $\exformula$ we build
     \begin{align*}
         \hypercoreat{\exformulavar}
-        = \sbcontractionof{\kbat{\shortcatvariables},\formulaat{\shortcatvariables,\exformulavar}}{\exformulavar} \, .
+        = \contractionof{\kbat{\shortcatvariables},\formulaat{\shortcatvariables,\exformulavar}}{\exformulavar} \, .
     \end{align*}
     Then $\kb\models\exformula$ is equivalent to $\hypercoreat{\exformulavar=0}=0$, and $\kb\models\lnot\exformula$ is equivalent to $\hypercoreat{\exformulavar=1}=0$ \, .
 \end{theorem}
 \begin{proof}
     This follows from \theref{the:contCriterionLogEntailment} using that
     \begin{align*}
-        \sbcontraction{\kb,\lnot\exformula} = \hypercoreat{\exformulavar=0}
+        \contraction{\kb,\lnot\exformula} = \hypercoreat{\exformulavar=0}
     \end{align*}
     and
     \begin{align*}
-        \sbcontraction{\kb,\exformula} = \hypercoreat{\exformulavar=1} \, .
+        \contraction{\kb,\exformula} = \hypercoreat{\exformulavar=1} \, .
     \end{align*}
 \end{proof}
 
@@ -268,7 +268,7 @@ To be more precise, we have for any $\shortcatindices$
 
 % Interpretation of directionality as
 Since the conditional query $\condprobof{\formulavar}{\shortcatvariables}$ provides an interpretation of $\bencodingof{\exformula}$ as a conditional probability, we interpret $\probat{\exformulavar}$ as a marginal distribution inherited by $\probat{\shortcatvariables}$.
-This is also reflected in the fact that both $\condprobof{\formulavar}{\shortcatvariables}$ and $\bencodingofat{\exformula}{\exformulavar,\shortcatvariables}$ are directed, since the first is a normation by \defref{def:queries} and the second an basis encoding of a formula.
+This is also reflected in the fact that both $\condprobof{\formulavar}{\shortcatvariables}$ and $\bencodingofat{\exformula}{\exformulavar,\shortcatvariables}$ are directed, since the first is a normalization by \defref{def:queries} and the second an basis encoding of a formula.
 Probabilistic queries (see \defref{def:queries}), which functions are propositional formulas are thus answered by the satisfaction rate of a propositional formula given a joint distribution of the corresponding atoms.
 
 
@@ -296,7 +296,7 @@ Probabilistic queries (see \defref{def:queries}), which functions are propositio
 %	\end{center}
 %\end{theorem}
 %\begin{proof}
-%	The distribution $\probtensor$ does not influence the conditional query, since the normation acts on any state.
+%	The distribution $\probtensor$ does not influence the conditional query, since the normalization acts on any state.
 %
 %\end{proof}
 
@@ -310,7 +310,7 @@ To this end, we define by the single tensor core $\{\bencodingofat{\exformula}{\
 By definition we have
 \begin{align*}
     \condprobwrtof{\{\exformula\}\cup[\catorder]}{\shortcatvariables}{\exformulavar}
-    = \sbnormationofwrt{\bencodingof{\exformula}}{\shortcatvariables}{\exformulavar} \, .
+    = \normalizationofwrt{\bencodingof{\exformula}}{\shortcatvariables}{\exformulavar} \, .
 \end{align*}
 We depict this construction by:
 \begin{center}
@@ -322,14 +322,14 @@ Let us further investigate the slices of $\condprobof{\shortcatvariables}{\exfor
 To this end, let us condition on the event of $\exformula=1$, for which we have the distribution
 \begin{align}
     \label{eq:eventFormulaProb}
-    \condprobof{\shortcatvariables}{\formulavar=1} = \frac{1}{\sbcontraction{\exformula}}
+    \condprobof{\shortcatvariables}{\formulavar=1} = \frac{1}{\contraction{\exformula}}
     \sum_{\shortatomindicesin \, : \, \formulaat{\indexedshortcatvariables}=1} \onehotmapofat{\shortcatindices}{\shortcatvariables} \, .
 \end{align}
-With $\sbcontraction{\exformula}$ being the number of models of $\exformula$, this is the uniform distribution among the models of $\exformula$.
+With $\contraction{\exformula}$ being the number of models of $\exformula$, this is the uniform distribution among the models of $\exformula$.
 Conversely, when conditioning on the event $\formulavar=0$ we get a uniform distribution of the models of $\lnot\exformula$.
 
 % 
-The probability distribution in Equation~\eqref{eq:eventFormulaProb} is well defined except for the case that $\sbcontraction{\exformula}=0$.
+The probability distribution in Equation~\eqref{eq:eventFormulaProb} is well defined except for the case that $\contraction{\exformula}=0$.
 In that case we would have $\exformulaat{\shortcatvariables}=\zerosat{\shortcatvariables}$ and call $\exformula$ unsatisfiable, since it has no models.
 
 %% Uniform interpretation -> KB as probability distribution over its models ("global")
@@ -348,10 +348,10 @@ We now combine the ideas of the previous two subsections and define probabilitie
 We have % by \theref{the:conditionByAtoms} % Again, Markov Network with bencoding of \exformula, \kb build the precise \probtensor
 \begin{align*}
     \condprobof{\formulavar}{\kbvar}
-    & = \sbcontractionof{
+    & = \contractionof{
         \condprobof{\formulavar}{\atomicformulas}, \condprobof{\atomicformulas}{\kbvar}
     }{\formulavar,\kbvar} \\
-    & = \sbnormationofwrt{\bencodingof{\exformula},\bencodingof{\kb}}{\formulavar}{\kbvar} \, .
+    & = \normalizationofwrt{\bencodingof{\exformula},\bencodingof{\kb}}{\formulavar}{\kbvar} \, .
 \end{align*}
 We notice, that we have to assume a satisfiable knowledge base $\kb$ for this construction to be well-defined.
 
@@ -359,7 +359,7 @@ We notice, that we have to assume a satisfiable knowledge base $\kb$ for this co
 Of special interest is the conditional probability of $\formulavar$ given that $\kbvar$ is satisfied, that is
 \begin{align*}
     \condprobof{\formulavar}{\kbvar=1}
-    & = \normationof{\{\bencodingof{\exformula} ,\kb\}}{\formulavar}\\
+    & = \normalizationof{\{\bencodingof{\exformula} ,\kb\}}{\formulavar}\\
     & = \frac{\contractionof{\{\bencodingof{\exformula},\kb\}}{\formulavar}}{\contraction{\{\kb\}}} \, .
 \end{align*}
 This conditional probability establishes a connection with the entailment relation of propositional formulas, as we show next.
@@ -373,9 +373,9 @@ This conditional probability establishes a connection with the entailment relati
     \end{align*}
 \end{theorem}
 \begin{proof}
-    Since $\kb$ is satisfiable, we have $\sbcontraction{\kb}>0$ and
-    \[ \condprobof{\formulavar=0}{\kbvar=1} = \frac{\sbcontraction{\lnot\exformula,\kb}}{\sbcontraction{\kb}} \, .  \]
-    This term vanishes if and only if $\sbcontraction{\lnot\exformula,\kb}$ vanish.
+    Since $\kb$ is satisfiable, we have $\contraction{\kb}>0$ and
+    \[ \condprobof{\formulavar=0}{\kbvar=1} = \frac{\contraction{\lnot\exformula,\kb}}{\contraction{\kb}} \, .  \]
+    This term vanishes if and only if $\contraction{\lnot\exformula,\kb}$ vanish.
     Now, by \theref{the:contCriterionLogEntailment} we have $\kb\models\exformula$ if and only if $\contraction{\kb,\lnot\exformula}=0$, which is therefore equal to $\condprobof{\formulavar=0}{\kbvar=1}=0$.
 \end{proof}
 
@@ -394,15 +394,15 @@ We depict the case of entailment $\kb\models\exformula$ by the contraction diagr
     \input{./PartI/tikz_pics/logic_reasoning/entailment_check.tex}
 \end{center}
 
-We can further omit the normation by $\sbcontraction{\kb}$ when deciding entailment, and thus drop the assumption of satisfiability of $\kb$, as we state next.
+We can further omit the normalization by $\contraction{\kb}$ when deciding entailment, and thus drop the assumption of satisfiability of $\kb$, as we state next.
 
 % Not needed?
 \begin{theorem}
     Given a formula $\kb$, we have $\kb\models\exformula$ (respectively $\kb\models\lnot\exformula$), if and only if
     \begin{align*}
-        \sbcontractionof{\kb,\bencodingof{\exformula}}{\formulavar=0} = 0
+        \contractionof{\kb,\bencodingof{\exformula}}{\formulavar=0} = 0
         \quad \text{( respectively }
-        \sbcontractionof{\kb,\bencodingof{\exformula}}{\formulavar=1} = 0 \, .
+        \contractionof{\kb,\bencodingof{\exformula}}{\formulavar=1} = 0 \, .
     \end{align*}
 \end{theorem}
 \begin{proof}
@@ -420,15 +420,15 @@ Relating entailment to probability distributions motivates an extension of the e
     \label{def:probEntailment}
     For any propositional formula $\exformulaat{\shortcatvariables}$ we say that a probability distribution $\probof{\shortcatvariables}$ probabilistically entails $\exformula$, denoted as $\probtensor\models\exformula$, if
     \begin{align*}
-        \sbcontractionof{\probat{\shortcatvariables},\bencodingofat{\exformula}{\exformulavar,\shortcatvariables}}{\exformulavar=0} = 0 .
+        \contractionof{\probat{\shortcatvariables},\bencodingofat{\exformula}{\exformulavar,\shortcatvariables}}{\exformulavar=0} = 0 .
     \end{align*}
-    If $\probtensor\models\lnot\exformula$, that is $\sbcontractionof{\probat{\shortcatvariables},\bencodingofat{\exformula}{\exformulavar,\shortcatvariables}}{\exformulavar=1} = 0$, we say that $\probtensor$ probabilistically contradicts $\exformula$.
+    If $\probtensor\models\lnot\exformula$, that is $\contractionof{\probat{\shortcatvariables},\bencodingofat{\exformula}{\exformulavar,\shortcatvariables}}{\exformulavar=1} = 0$, we say that $\probtensor$ probabilistically contradicts $\exformula$.
 \end{definition}
 
 %
 We note, that when choosing for a formula $\kb$ the uniform distribution
 \begin{align*}
-    \probat{\shortcatvariables}=\sbnormationof{\shortcatvariables}{\kbvar=1}
+    \probat{\shortcatvariables}=\normalizationof{\shortcatvariables}{\kbvar=1}
 \end{align*}
 among its models, then probabilistic entailment $\probtensor\models\exformula$ of a propositional formula $\exformula$ is by \theref{the:probEntailment} equivalent to $\kb\models\exformula$.
 
@@ -536,7 +536,7 @@ Here, any factor tensor in the Markov Networks produces a constraint tensor in t
     \label{the:factorReduction}
     Let $\probof{\graph}$ be a Markov Network to the Tensor Network $\extnet=\extnetasset$ on a hypergraph $\graph=(\nodes,\edges)$. % $\secnodes\subset\nodes$ be a subset and
 %	\begin{align*}
-%		\probat{\catvariableof{\secnodes}} = \normationof{\{\hypercoreat{\edge} \, : \, \edge\in\edges \}}{\catvariableof{\secnodes}}
+%		\probat{\catvariableof{\secnodes}} = \normalizationof{\{\hypercoreat{\edge} \, : \, \edge\in\edges \}}{\catvariableof{\secnodes}}
 %	\end{align*}
     For each $\edge\in\edges$ we build the factor constraint cores
     \begin{align*}
@@ -549,7 +549,7 @@ Here, any factor tensor in the Markov Networks produces a constraint tensor in t
     \end{align*}
     is unsatisfiable.
     %and
-    %	\[ \tilde{\probtensor}[\catvariableof{\secnodes}] = \normationof{\{\nonzerofunction \circ \hypercoreat{\edge} \, : \, \edge\in\edges \}}{\catvariableof{\secnodes}} \]
+    %	\[ \tilde{\probtensor}[\catvariableof{\secnodes}] = \normalizationof{\{\nonzerofunction \circ \hypercoreat{\edge} \, : \, \edge\in\edges \}}{\catvariableof{\secnodes}} \]
     %Then we have for any $\exformula$ that $\probtensor\models\exformula$ if and only if $\tilde{\probtensor}\models\exformula$.
 \end{theorem}
 \begin{proof}

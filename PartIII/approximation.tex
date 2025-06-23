@@ -32,7 +32,7 @@ We first define a basis+ $\cpformat$ selecting tensor and then show its decompos
 
 % Variable and State selectors
 Intuitively, the selection variables $\selvariableof{\selenumerator,1}$ of $\sliceselectionmapof{\catorder,\sliceorder}$ select a variable out of $[\atomorder]$ to be included in $\variableset$ and the selection variables $\selvariableof{\selenumerator,0}$ select a corresponding state to that variable.
-As in \charef{cha:formulaSelectiong} we refer to variables $\selvariableof{\selenumerator,1}$ as variable selectors and $\selvariableof{\selenumerator,0}$ as state selectors.
+As in \charef{cha:formulaSelection} we refer to variables $\selvariableof{\selenumerator,1}$ as variable selectors and $\selvariableof{\selenumerator,0}$ as state selectors.
 When $\selvariableof{\selenumerator,0}=\catdim$, the slice is left trivial, that is the selected variable is effectively not included in $\variableset$.
 This then allows to also represent slices where $\cardof{\variableset}<\sliceorder$.
 We in the following prove this more formally.
@@ -186,7 +186,7 @@ The Hilbert-Schmidt norm of a tensor is the contraction of the coordinatewise tr
 \end{align*}
 
 Approximation involving a selection architecture $\fselectionmap$ is the problem
-	\[ \argmin_{\canparam\in\Gamma^{\graph}} \|\energytensor - \sbcontractionof{\sencodingof{\fselectionmap},\canparam}{\shortcatvariables}\|^2 \, . \]
+	\[ \argmin_{\canparam\in\Gamma^{\graph}} \|\energytensor - \contractionof{\sencodingof{\fselectionmap},\canparam}{\shortcatvariables}\|^2 \, . \]
 
 Direct approximation is then the choice of the minterm statistic
 	\[ \argmin_{\canparam\in\Gamma^{\graph}} \|\energytensorat{\shortcatvariables} - \canparamat{\shortcatvariables}\|^2 \, . \]
@@ -260,7 +260,7 @@ as a weighted squares loss.
 	The Problem~\ref{prob:greedyGrad} of finding the maximal coordinate of the proposal distribution can thus be turned into
 	\begin{align*}
 		&\argmax_{\shortselindices} \contractionof{(\empdistribution-\currentdistribution),\fselectionmap}{\shortselvariables=\shortselindices}  \\
-		&\quad = \argmin_{\shortselindices} \sbcontraction{(\empdistribution-\currentdistribution),
+		&\quad = \argmin_{\shortselindices} \contraction{(\empdistribution-\currentdistribution),
 		\left(\contractionof{\fselectionmap,\onehotmapofat{\shortselindices}{\shortselvariables}}{\shortcatvariables}-\onesat{\shortcatvariables}\right)^2} \, . 
 	\end{align*}
 \end{example}
@@ -280,19 +280,19 @@ As a result, we do not solve the previously posed one-hot encoding problem, when
 	Given a tensor $\hypercore$, we want to find a formula $\exformula\in\formulaset$ such that it approximates $\hypercore$.
 
 	If $\hypercore$ is a binary tensor, we understand it as a formula and want to find an $\exformula$ such that its number of worlds is maximal, that is solve the problem
-		\[ \argmax_{\exformula\in\formulaset}\sbcontraction{\exformula\Leftrightarrow\hypercore}  \, . \]
+		\[ \argmax_{\exformula\in\formulaset}\contraction{\exformula\Leftrightarrow\hypercore}  \, . \]
 
 	We can use the squares risk trick and get an equivalent problem
-		\[ \argmin_{\exformula\in\formulaset} \|\sbcontractionof{\exformula\Leftrightarrow\hypercore}{\shortcatvariables}  - \onesat{\shortcatvariables} \|^2 \, . \]
+		\[ \argmin_{\exformula\in\formulaset} \|\contractionof{\exformula\Leftrightarrow\hypercore}{\shortcatvariables}  - \onesat{\shortcatvariables} \|^2 \, . \]
 
 	We have since $\hypercore$ and $\exformula$ are boolean
 	\begin{align*}
-		\|\sbcontractionof{\exformula\Leftrightarrow\hypercore}{\shortcatvariables}  - \onesat{\shortcatvariables} \|^2
-		= 	\|\sbcontractionof{\exformula}{\shortcatvariables}  - \hypercoreat{\shortcatvariables} \|^2
+		\|\contractionof{\exformula\Leftrightarrow\hypercore}{\shortcatvariables}  - \onesat{\shortcatvariables} \|^2
+		= 	\|\contractionof{\exformula}{\shortcatvariables}  - \hypercoreat{\shortcatvariables} \|^2
 	\end{align*}
 
 	Now, when representing $\formulaset$ in a formula selecting architecture we have
-		\[ \argmin_{\canparam\in\Gamma_1} \|\sbcontractionof{\fselectionmap,\canparam}{\shortcatvariables}  - \hypercoreat{\shortcatvariables}\|^2 \, . \]
+		\[ \argmin_{\canparam\in\Gamma_1} \|\contractionof{\fselectionmap,\canparam}{\shortcatvariables}  - \hypercoreat{\shortcatvariables}\|^2 \, . \]
 	where $\Gamma_1$ is the set of basis tensors.
 
 	When we extend $\Gamma_1$ to a set including the trivial tensor $\onesat{\selvariable}$, when the formulas $\exformula$ are pairwise disjoint and $\hypercorewith=\onesat{\shortcatvariables}$, then the solution would be $\onesat{\selvariable}$.
@@ -408,18 +408,18 @@ Here the sensing matrices are deterministic, since constructed as selection tens
 \begin{example}[Sensing matrix for propositional Formulas]
 	Let there be a set $\formulaset$ of formulas, then we have
 	\begin{align*}
-		\sbcontractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariableof{\insymbol}},\sencodingofat{\formulaset}{\shortcatvariables,\selvariableof{\outsymbol}}}{\indexedselvariableof{\insymbol},\indexedselvariableof{\outsymbol}}
-		= \sbcontraction{\formulaof{\selindexof{\insymbol}}, \formulaof{\selindexof{\outsymbol}}} \, . 
+		\contractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariableof{\insymbol}},\sencodingofat{\formulaset}{\shortcatvariables,\selvariableof{\outsymbol}}}{\indexedselvariableof{\insymbol},\indexedselvariableof{\outsymbol}}
+		= \contraction{\formulaof{\selindexof{\insymbol}}, \formulaof{\selindexof{\outsymbol}}} \, .
 	\end{align*}
 	If the formulas have disjoint model sets then 
 	\begin{align*}
-		\sbcontractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariableof{\insymbol}},\sencodingofat{\formulaset}{\shortcatvariables,\selvariableof{\insymbol}}}{\indexedselvariableof{\insymbol},\indexedselvariableof{\outsymbol}}
+		\contractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariableof{\insymbol}},\sencodingofat{\formulaset}{\shortcatvariables,\selvariableof{\insymbol}}}{\indexedselvariableof{\insymbol},\indexedselvariableof{\outsymbol}}
 		= \begin{cases}
-			\sbcontraction{\formulaof{\insymbol}} & \text{if } \selindexof{\insymbol}=\selindexof{\outsymbol} \\
+			\contraction{\formulaof{\insymbol}} & \text{if } \selindexof{\insymbol}=\selindexof{\outsymbol} \\
 			0 & \text{else} 
 		\end{cases} \, . 
 	\end{align*}
-	In that case, the sensing matrix is a restricted isometry, in the sense that the norm of any mapped vector is its norm mutliplied by a factor between the smallest and the largest $\sbcontraction{\formulaof{\insymbol}}$.
+	In that case, the sensing matrix is a restricted isometry, in the sense that the norm of any mapped vector is its norm mutliplied by a factor between the smallest and the largest $\contraction{\formulaof{\insymbol}}$.
 \end{example}
 
 
@@ -427,7 +427,7 @@ Here the sensing matrices are deterministic, since constructed as selection tens
 
 	For the slice selection network
 	\begin{align*}
-		& \sbcontractionof{\sliceselectionmapat{\shortcatvariables,\selvariableof{\insymbol}},\sliceselectionmapat{\shortcatvariables,\selvariableof{\outsymbol}}}{\indexedselvariableof{\insymbol},\indexedselvariableof{\outsymbol}} \\
+		& \contractionof{\sliceselectionmapat{\shortcatvariables,\selvariableof{\insymbol}},\sliceselectionmapat{\shortcatvariables,\selvariableof{\outsymbol}}}{\indexedselvariableof{\insymbol},\indexedselvariableof{\outsymbol}} \\
 		& \quad = \begin{cases}
 			0 & \text{if for a }\seccatenumerator\in\variablesetof{\selindexof{\insymbol}}\cap\variablesetof{\selindexof{\outsymbol}}\text{ we have }\catindexof{\seccatenumerator}^{\selindexof{\insymbol}}\neq\catindexof{\seccatenumerator}^{\selindexof{\outsymbol}} \\
 			\prod_{\seccatenumerator\notin\variablesetof{\selindexof{\insymbol}}\cup\variablesetof{\selindexof{\outsymbol}}} \catdimof{\seccatenumerator}& \text{else} 
