@@ -460,6 +460,11 @@ The energy-based algorithms execute reasoning tasks solely on energy dictionarie
 
 
 \subsect{Variational Inference}
+An overview over the variational inference methods in presented in \figref{tab:inferenceMethods}.
+
+\paragraph{Forward mappings} are implemented by \inlinecode{reasoning.ForwardContractor} as contraction of all cores, and in \inlinecode{reasoning.ExpectationPropagator} as a message-passing approach.
+
+\paragraph{Backward mappings} (see \secref{sec:backwardMap}) are implemented by \inlinecode{reasoning.BackwardAlternator} as alternating algorithms iteratively updating the canonical parameters to single features (see \algoref{alg:AMM}).
 
 \paragraph{Mean field methods} are approximation methods of energy tensors by tractable exponential families (see \secref{sec:meanField}).
 Given an energy dictionary (e.g. created by \inlinecode{exampleCANetwork.get_energy_dict()}) the naive mean field method is implemented as
@@ -471,6 +476,27 @@ and the more general markov network based mean field method by
     reasoning.GenericMeanField(energyDict, edgeColorDict)
 \end{centeredcode}
 where \inlinecode{edgeColorDict} specifies the graph of the approximating markov network.
+
+
+\begin{figure}
+    \begin{center}
+        \begin{tabular}{|l|p{6cm}|p{6cm}|}
+            \hline
+            \textbf{inferenceMethod} (str)  & \textbf{Applied procedure}              & \textbf{Dependency}                                \\
+            \hline
+            \stringof{ForwardContractor}    & Contraction of all cores keeping the feature colors open  & $--$\\
+            \hline
+            \stringof{BackwardAlternator}   & Iterative local updates to match the mean parameters & Forward inferer to iteratively update the mean parameters \\
+            \hline
+            \stringof{ExpectationPropagator}   & Iterative updates of messages between feature clusters & Forward and backward inferer used for the computation of messages \\
+            \hline
+        \end{tabular}
+    \end{center}
+    \caption{Implemented inference methods in \tnreason.}
+    \label{tab:inferenceMethods}
+\end{figure}
+
+
 
 \subsect{Optimization}
 
@@ -642,7 +668,7 @@ We then store Markov Logic Networks by dictionaries
 To specify neuro-symbolic architectures in terms of formula selecting maps, as has been the subject of \charef{cha:formulaSelection} we further exploit the nested list structure of encoding propositional logics.
 We replace, in each hierarchy of the nested structure each entry by a list of possible choices.
 In this way, we reinterpret the list index as the choice indices $\selindex$ introduced for connective and formula selections (see \defref{def:connectiveSelector} and \ref{def:formulaSelector}).
-More formally, the production rules are formalized in \figref{tab:bnNeurons} by the extension of the Backus-Naur form in \figref{tab:bnFunction}.
+More formally, the production rules are formalized in \figref{tab:bnNeurons} by the extension of the Backus-Naur form in \figref{tab:bnFunctions}.
 
 % Neurons
 \paragraph{Connective selectors} (see \defref{def:connectiveSelector}) are encoded by the list
@@ -681,7 +707,7 @@ When $x$ is not the first element, then each choice is either the encoding $\syn
 where key($\lneuron$) is a string, which can be used in the formula selections of other neurons.
 
 % Important for well-definedness
-It is important that the directed graph of neurons induced by the choice possibilities is acyclic, to ensure well-definedness of the architecture.
+It is important that the directed graph of neurons induced by the choice possibilities is acyclic, to ensure a well-defined architecture.
 
 
 \begin{figure}
@@ -747,10 +773,10 @@ creating the corresponding network.
 %Although the partition function can be calculated by the contraction of all cores, we separate the method since there are situations where a faster calculation can be performed.
 
 \paragraph{Markov Networks} are distributions, which do not have computation cores.
-The factors are
-\begin{lstlisting}
-	application.
-\end{lstlisting}
+The positive coordinates of the factors are represented by \inlinecode{representation.SoftPartitionFactors} and the support of the factors \inlinecode{representation.HardPartitionFactors}.
+%\begin{lstlisting}
+%	application.
+%\end{lstlisting}
 
 \paragraph{Empirical Distributions} are special instances of Markov Networks specifying distributions of sample data.
 We represent the values as a $\cpformat$ Format of data cores as specified in \secref{sec:empDistribution}.
@@ -783,38 +809,38 @@ They are initialized with arguments
 
 \subsect{Inference}
 
-By
+To simplify deductive inference on models a class
 \begin{lstlisting}
 	application.InferenceProvider
 \end{lstlisting}
-taking a distribution from the above as argument.
+taking a \inlinecode{representation.ComputationActivationNetwork} or \inlinecode{application.Distribution} has been implemented.
 
 % Probabilistic Queries
-Probabilistic queries as specified \defref{def:queries})  by
+\paragraph{Probabilistic queries} as specified \defref{def:queries})  by
 \begin{lstlisting}
 	.query(variableList, evidenceDict)
 \end{lstlisting}
 
-MAP queries by
+\paragraph{Mode queries} by
 \begin{lstlisting}
 	.exact_map_query()
 \end{lstlisting}
-or by
-\begin{lstlisting}
-	.annealed_sample()
-\end{lstlisting}
-using Simulated Annealing (see Remark~\ref{rem:simulatedAnnealing}) to find an approximate maximum.
-The second method circumvents the creation of the coordinatewise representation of the distribution and circumvents therefore, at the expense of potentially approximative solutions, a bottleneck in case of many query variables.
+%or by
+%\begin{lstlisting}
+%	.annealed_sample()
+%\end{lstlisting}
+%using Simulated Annealing (see Remark~\ref{rem:simulatedAnnealing}) to find an approximate maximum.
+%The second method circumvents the creation of the coordinatewise representation of the distribution and circumvents therefore, at the expense of potentially approximative solutions, a bottleneck in case of many query variables.
 
 % Entailment Queries
-Entailment from the distribution (\defref{def:entailment}) is be decided by
+\paragraph{Entailment} from the distribution (\defref{def:entailment}) is be decided by
 \begin{lstlisting}
 	.ask(queryFormula, evidenceDict)
 \end{lstlisting}
 where queryFormula is the formula $\exformula$ to be tested for entailment in the representation $\synencodingof{\exformula}$.
 
 % Sampling
-Samples can be drawn by
+\paragraph{Samples} can be drawn by
 \begin{lstlisting}
 	.draw_samples(sampleNum, variableList, annealingPattern)
 \end{lstlisting}
@@ -826,29 +852,29 @@ based on Gibbs sampling, where
 \end{itemize}
 
 
-\subsect{Parameter Estimation}
+%\subsect{Parameter Estimation}
+%
+%\textbf{EntropyMaximizer} implements Algorithm~\ref{alg:AWO}, which is motivated by the maximum entropy principle (see \secref{sec:maxEntDuality}) to optimize Markov Logic Networks.
+%The class
+%\begin{lstlisting}
+%	application.EntropyMaximizer
+%\end{lstlisting}
+%is initialized with the arguments
+%\begin{itemize}
+%    \item expressionsDict: Dictionary of formulas in the format $\synencodingof{\exformula}$
+%    \item satisfactionDict: Dictionary of the satisfaction rates (mean parameters) to be matched by the optimal distribution
+%\end{itemize}
+%The optimization is then performed by
+%\begin{lstlisting}
+%	.alternating_optimization(sweepNum, updateKeys)
+%\end{lstlisting}
+%method, where the iteration in  through the updateKeys is performed sweepNum times.
 
-\textbf{EntropyMaximizer} implements Algorithm~\ref{alg:AWO}, which is motivated by the maximum entropy principle (see \secref{sec:maxEntDuality}) to optimize Markov Logic Networks.
-The class
-\begin{lstlisting}
-	application.EntropyMaximizer
-\end{lstlisting}
-is initialized with the arguments
-\begin{itemize}
-    \item expressionsDict: Dictionary of formulas in the format $\synencodingof{\exformula}$
-    \item satisfactionDict: Dictionary of the satisfaction rates (mean parameters) to be matched by the optimal distribution
-\end{itemize}
-The optimization is then performed by
-\begin{lstlisting}
-	.alternating_optimization(sweepNum, updateKeys)
-\end{lstlisting}
-method, where the iteration in Algorithm~\ref{alg:AWO} through the updateKeys is performed sweepNum times.
+\subsect{Learning}
 
-\subsect{Structure Learning}
-
-\textbf{Formula Booster} chooses a formula given a formula selecting map.
+To learn instances of \inlinecode{application.HybridKnowledegBase} on data the class
 \begin{lstlisting}
-	application.FormulaBooster
+	application.HybridLearner
 \end{lstlisting}
 is initialized with the arguments
 \begin{itemize}
@@ -856,34 +882,25 @@ is initialized with the arguments
     \item specDict: A neuro-symbolic architecture encoded in a dictionary of neurons
 \end{itemize}
 
-
-\subsect{Representation of MLNs}
-
-\textbf{Computation Cores} are binary cores relating the variables in a predefined way, which is not changing during reasoning.
+\paragraph{Formula Selecting Neural Networks} (\defref{def:fsNeuron})
+are specified to define a proposal distribution.
+They are encoded by creating all formula selecting neurons, each involving a
 \begin{itemize}
-    \item Logical interpretation: Cores $\rencodingof{\exconnective}$ \red{Structure Cores are those of the Bayesian Propositional Network}
-    \item Categorical constraints: Cores $\categoricalcore$
-    %\item Data: Cores $\datacore$
+    \item a connective selection map (\defref{def:connectiveSelector})
+    \item variable selection cores (\defref{def:variableSelector}) to each argument using the decomposition of \theref{the:varSelectorDecomposition}.
 \end{itemize}
+Each selection variable of each neuron comes with a control variable with suffix \stringof{\_sV}.
 
-\textbf{Activation Cores} encode the weights of the formulas in a Markov Logic Network.
-%For proper MLN only have unary cores, which we call headCores.
-%Head cores with suffix "headCore" in name.
+\paragraph{Structure Learning}
+is performed by
+\begin{lstlisting}
+	application.HybridLearner.propose_candidate()
+\end{lstlisting}
+where a proposal distribution is instantiated and then sampled given the specified inference method.
 
-They are modified during reasoning: Selection of activation cores in structure learning, assigning a weight in parameter estimation.
-
-
-
-\subsect{Formula Selecting Networks}
-
-Encoding of Neurons according to \defref{def:fsNeuron}:
-\begin{itemize}
-    \item Activation selection core with suffix \stringof{actCore} in name.
-    Selection by variable with suffix \stringof{actVar}
-    \item Selection of neurons as arguments with suffix \stringof{selCore} in name.
-    Each argument of each neuron comes with a control variable with suffix \stringof{selVar}.
-\end{itemize}
-
-Encoding of Formula Selecting Neural Networks (\defref{def:fsNeuron}) by creating all formula selecting neurons.
-
-Skeleton expression (\defref{def:skeleton}) are stored with placeholderkeys and the candidatelists by dictionaries with the placeholderkeys and values being the possible symbols.
+\paragraph{Weight Estimation}
+is performed by
+\begin{lstlisting}
+	application.HybridLearner.infer_weights_on_data(empDistribution)
+\end{lstlisting}
+where \inlinecode{empDistribution} is used to infer the mean parameters to be matched by the canonical parameters of \inlinecode{knowledgeBase.weightedFormulas}.
