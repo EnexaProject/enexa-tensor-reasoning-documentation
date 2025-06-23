@@ -29,21 +29,34 @@ We will first provide a formal definition as real maps from index sets enumerati
 
 \begin{definition}[Tensor]\label{def:tensor}
 	Let there be numbers $\catdimof{\atomenumerator}\in\nn$ for $\atomenumeratorin$ and categorical variables $\catvariableof{\atomenumerator}$ taking their values in $[\catdimof{\atomenumerator}]$.
-	We call maps
+	A Tensors $\hypercoreat{\catvariables}$ of order $\catorder$ and leg dimensions $\catdimof{\atomorder}$ is defined through its coordinates
 	\begin{align*}
-		\hypercoreat{\catvariables} : \bigtimes_{\atomenumeratorin} [\catdimof{\atomenumerator}] \rightarrow \rr
+		\hypercoreat{\indexedcatvariableof{0},\ldots,\indexedcatvariableof{\catorder-1}} \in \rr
 	\end{align*}
-	tensor of order $\atomorder$ and leg dimensions $\catdimof{0},\ldots,\catdimof{\atomorder-1}$.
-	Evaluations of these maps at indices $\catindices$ are denoted by
+	for index tuples
 	\begin{align*}
-		\hypercoreat{\indexedcatvariables} = \hypercoreat{\catvariables}(\catindices)\, .
+		\catindexof{0},\ldots,\catindexof{\catorder-1} \in \facstates \, .
 	\end{align*}
-%	with coordinates denoted by $\hypercore_{\catindices}$ is called a tensor of order $\atomorder$ and legs with the dimensions $\catdimof{0},\ldots,\catdimof{\atomorder-1}$.
-	Tensors $\hypercoreat{\catvariables}$ are elements of the space
+	Tensors $\hypercoreat{\catvariables}$ are elements of the tensor space
 	\begin{align*}
 		\bigotimes_{\atomenumeratorin} \rr^{\catdimof{\atomenumerator}} \,
 	\end{align*}
-	which is, with the operations of coordinatewise summation and scalar multiplication, a linear space called a tensor space.
+	which is a linear space, enriched with the operations of coordinatewise summation and scalar multiplication.
+%	We call maps
+%	\begin{align*}
+%		\hypercoreat{\catvariables} : \bigtimes_{\atomenumeratorin} [\catdimof{\atomenumerator}] \rightarrow \rr
+%	\end{align*}
+%	tensor of order $\atomorder$ and leg dimensions $\catdimof{0},\ldots,\catdimof{\atomorder-1}$.
+%	Evaluations of these maps at indices $\catindices$ are denoted by
+%	\begin{align*}
+%		\hypercoreat{\indexedcatvariables} = \hypercoreat{\catvariables}(\catindices)\, .
+%	\end{align*}
+%%	with coordinates denoted by $\hypercore_{\catindices}$ is called a tensor of order $\atomorder$ and legs with the dimensions $\catdimof{0},\ldots,\catdimof{\atomorder-1}$.
+%	Tensors $\hypercoreat{\catvariables}$ are elements of the space
+%	\begin{align*}
+%		\bigotimes_{\atomenumeratorin} \rr^{\catdimof{\atomenumerator}} \,
+%	\end{align*}
+%	which is, with the operations of coordinatewise summation and scalar multiplication, a linear space called a tensor space.
 \end{definition}
 
 % Non-canonical 
@@ -56,16 +69,20 @@ We abbreviate lists $\catvariables$ of categorical variables by $\shortcatvariab
 Occasionally, when the categorical variables of a tensor are clear from the context, we will omit the notation of the variables. %further abbreviate $\hypercoreat{\catvariables}$ by $\hypercore$.
 
 \begin{example}[Trivial Tensor]\label{exa:trivialTensor}
-	The trivial tensor is defined as the map
-		\[ \onesat{\shortcatvariables} : \facstates \rightarrow \{1\} \subset \rr \]
-	with all coordinates being $1$, that is for all $\catindices\in\facstates$
-		\[ \onesat{\indexedshortcatvariables} = 1 \, . \]
+	The trivial tensor
+	\begin{align*}
+		 \onesat{\shortcatvariables} \in \facspace
+	\end{align*}
+	is defined by all coordinates being $1$, that is for all $\catindices\in\facstates$
+	\begin{align*}
+		\onesat{\indexedshortcatvariables} = 1 \, .
+	\end{align*}
 \end{example}
 
 %\sect{Properties of Tensors}
 
 %% Boolean
-We will often encounter situations, where the coordinates of tensors are in $\{0,1\}=[2]$.
+We will often encounter situations, where the coordinates of tensors are in $\ozset=[2]$.
 
 \begin{definition}\label{def:booleanTensor}
 	We call a tensor $\hypercoreat{\shortcatvariables}$ boolean, when $\imageof{\hypercore}\subset[2]$, i.e. all coordinates are either $0$ or $1$.
@@ -77,7 +94,7 @@ We are now ready to provide the link between tensors and states of systems with 
 To this end, we define the one-hot encoding of a state, which is a bijection between the states and the basis elements of a tensor space.
 
 \begin{definition}[One-hot encodings to Atomic Representations]
-	Given an atomic system described by the categorical variable $\catvariable$, we define for each $\catindex\in[\catdim]$ the basis vector $\onehotmapofat{\catindex}{\catvariable}$ by
+	Given an atomic system described by the categorical variable $\catvariable$, we define for each $\catindex\in[\catdim]$ the basis vector $\onehotmapofat{\catindex}{\catvariable}$ by the coordinates
 	\begin{align}
 		\onehotmapofat{\catindex}{\catvariable=\tilde{\catindex}} = \begin{cases}
 			1 & \text{if} \quad \catindex=\tilde{\catindex} \\
@@ -232,14 +249,16 @@ Such a contraction corresponds with a tensor network of two tensors with disjoin
 \begin{definition}[Tensor Product]\label{def:tensorProduct}
 	Let there be two tensor
 	\begin{align*}
-		\hypercoreofat{\edge_0}{\shortcatvariables} : \facstates \rightarrow \rr \quad \text{and} \quad  \hypercoreofat{\edge_1}{\secshortcatvariables} : \secfacstates \rightarrow \rr \,
+		\hypercoreofat{\edge_0}{\shortcatvariables} \in \facspace  \text{and} \quad  \hypercoreofat{\edge_1}{\secshortcatvariables} \in \secfacspace \,
 	\end{align*}
 	with different categorical variables assigned to its axes.
 	Then there tensor product is the map
 	\begin{align*}
-		\contractionof{\hypercoreofat{\edge_0}{\shortcatvariables},\hypercoreofat{\edge_1}{\secshortcatvariables}}{\shortcatvariables,\secshortcatvariables} :  \left(\facstates\right) \times \left(\secfacstates\right) \rightarrow \rr
+		\contractionof{\hypercoreofat{\edge_0}{\shortcatvariables},\hypercoreofat{\edge_1}{\secshortcatvariables}}{\shortcatvariables,\secshortcatvariables}
+		\in \left(\facspace\right) \otimes \left(\secfacspace \right)
+		%:  \left(\facstates\right) \times \left(\secfacstates\right) \rightarrow \rr
 	\end{align*}
-	defined for $\catindices\in\facstates$ and $\seccatindices\in\secfacstates$ as
+	defined coordinatewise for tuples of $\catindices\in\facstates$ and $\seccatindices\in\secfacstates$ as
 	\begin{align*}
 		& \contractionof{\hypercore,\sechypercore}{\indexedcatvariables,\indexedseccatvariables} \\
 		&\quad\quad :=  \hypercoreofat{\edge_0}{\indexedcatvariables}\cdot \hypercoreofat{\edge_1}{\indexedseccatvariables} \, .
