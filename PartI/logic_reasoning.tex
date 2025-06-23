@@ -191,7 +191,7 @@ The function further refuses to add a formula, which would make the Knowledge Ba
     \Require Knowledge base $\kb$, query formula $\exformula$
     \Ensure Decision which relation between $\kb$ and $\exformula$ holds (see \figref{fig:askDecisionTable})
     \hrule
-        \State{$\hypercoreat{\formulavar} \algdefsymbol \contractionof{\{\secexformulaat{\shortcatvariables} \, : \, \secexformula\in\kb\},\rencodingofat{\exformula}{\formulavar,\shortcatvariables}}{\formulavar}$}
+        \State{$\hypercoreat{\formulavar} \algdefsymbol \contractionof{\{\secexformulaat{\shortcatvariables} \, : \, \secexformula\in\kb\},\bencodingofat{\exformula}{\formulavar,\shortcatvariables}}{\formulavar}$}
         \If{$\hypercoreat{\formulavar=0}=0$ and $\hypercoreat{\formulavar=1}=0$ }
             \State \Return \stringof{Inconsistent}
         \ElsIf{$\hypercoreat{\formulavar=0}=0$}
@@ -229,12 +229,12 @@ The function further refuses to add a formula, which would make the Knowledge Ba
 \sect{Formulas as Random Variables}
 
 %\red{Aim here: Relate with the probabilistic reasoning concepts of marginal and conditional distributions.}
-%\red{Given a probability distribution $\probtensor$ of atoms we add a variable by building the Markov Network of $\probtensor$ and $\rencodingof{\exformula}$ to get a joint distribution of the atoms and a query formula $\exformula$}
+%\red{Given a probability distribution $\probtensor$ of atoms we add a variable by building the Markov Network of $\probtensor$ and $\bencodingof{\exformula}$ to get a joint distribution of the atoms and a query formula $\exformula$}
 
 In order to present logical entailment as extreme cases of more generic probabilistic reasoning, we now provide probabilistic interpretations of propositional formulas.
 % Interpretation of basis encoding as conditional probabilities
 In the next sections, we will investigate two ways of interpreting basis encodings of formulas as conditional probabilities.
-The atom centric one, which understands the atomic legs as conditions and calculates the truth of the formula, leads to a direct interpretation of $\rencodingof{\exformula}$ as a conditional probability distribution.
+The atom centric one, which understands the atomic legs as conditions and calculates the truth of the formula, leads to a direct interpretation of $\bencodingof{\exformula}$ as a conditional probability distribution.
 When instead taking the formula itself centric, we get uniform distributions of its models and the complement, when conditioning on the satisfaction of the formula.
 
 \subsect{Probabilistic queries by formulas}
@@ -244,14 +244,14 @@ Let us then ask a query in the formalism of \defref{def:queries}, where the quer
 The joint distribution can be extended to a variable $\exformulavar$ representing the satisfaction of a formula $\exformula$ given an assignment to the atoms, by adding its basis encoding as
 \begin{align*}
     \probat{\exformulavar,\shortcatvariables}
-    = \contractionof{\rencodingofat{\exformula}{\exformulavar,\shortcatvariables},\probat{\shortcatvariables}}{\shortcatvariables} \, .
+    = \contractionof{\bencodingofat{\exformula}{\exformulavar,\shortcatvariables},\probat{\shortcatvariables}}{\shortcatvariables} \, .
 \end{align*}
-Let us note, that this is a normed probability distribution, since $\contractionof{\rencodingofat{\exformula}{\exformulavar,\shortcatvariables}}{\shortcatvariables}=\onesat{\shortcatvariables}$ and $\probat{\shortcatvariables}$ is normed.
+Let us note, that this is a normed probability distribution, since $\contractionof{\bencodingofat{\exformula}{\exformulavar,\shortcatvariables}}{\shortcatvariables}=\onesat{\shortcatvariables}$ and $\probat{\shortcatvariables}$ is normed.
 
 Conditioning this probability distribution on the atoms, we get
 \begin{align*}
     \condprobof{\formulavar}{\shortcatvariables}
-    = \rencodingofat{\exformula}{\shortcatvariables} \, .
+    = \bencodingofat{\exformula}{\shortcatvariables} \, .
 \end{align*}
 We thus interpret the basis encoding of a formula as a conditional probability of $\exformula$ given the assignments to the atoms $\shortcatvariables$ and depict this by
 \begin{center}
@@ -267,8 +267,8 @@ To be more precise, we have for any $\shortcatindices$
 \end{align*}
 
 % Interpretation of directionality as
-Since the conditional query $\condprobof{\formulavar}{\shortcatvariables}$ provides an interpretation of $\rencodingof{\exformula}$ as a conditional probability, we interpret $\probat{\exformulavar}$ as a marginal distribution inherited by $\probat{\shortcatvariables}$.
-This is also reflected in the fact that both $\condprobof{\formulavar}{\shortcatvariables}$ and $\rencodingofat{\exformula}{\exformulavar,\shortcatvariables}$ are directed, since the first is a normation by \defref{def:queries} and the second an basis encoding of a formula.
+Since the conditional query $\condprobof{\formulavar}{\shortcatvariables}$ provides an interpretation of $\bencodingof{\exformula}$ as a conditional probability, we interpret $\probat{\exformulavar}$ as a marginal distribution inherited by $\probat{\shortcatvariables}$.
+This is also reflected in the fact that both $\condprobof{\formulavar}{\shortcatvariables}$ and $\bencodingofat{\exformula}{\exformulavar,\shortcatvariables}$ are directed, since the first is a normation by \defref{def:queries} and the second an basis encoding of a formula.
 Probabilistic queries (see \defref{def:queries}), which functions are propositional formulas are thus answered by the satisfaction rate of a propositional formula given a joint distribution of the corresponding atoms.
 
 
@@ -284,10 +284,10 @@ Probabilistic queries (see \defref{def:queries}), which functions are propositio
 
 
 %\begin{theorem}\label{the:conditionByAtoms}
-%	Given any distribution $\probat{\shortcatvariables}$ of atomic variables, we extend the joint distribution to a formula variable $\exformulavar$ by contraction with the basis encoding $\rencodingofat{\exformula}{\exformulavar,\shortcatvariables}$.
-%	Then the basis encoding $\rencodingofat{\exformula}{\exformulavar,\shortcatvariables}$ coincides with the conditional probability of that formula conditioned on the atoms, that is
+%	Given any distribution $\probat{\shortcatvariables}$ of atomic variables, we extend the joint distribution to a formula variable $\exformulavar$ by contraction with the basis encoding $\bencodingofat{\exformula}{\exformulavar,\shortcatvariables}$.
+%	Then the basis encoding $\bencodingofat{\exformula}{\exformulavar,\shortcatvariables}$ coincides with the conditional probability of that formula conditioned on the atoms, that is
 %	\begin{align*}
-%		\rencodingofat{\exformula}{\shortcatvariables}
+%		\bencodingofat{\exformula}{\shortcatvariables}
 %		= \condprobof{\formulavar}{\shortcatvariables} \, .
 %	\end{align*}
 %	We depict this by
@@ -305,12 +305,12 @@ Probabilistic queries (see \defref{def:queries}), which functions are propositio
 % Defining probability distribution by formulas
 Let us now converse the order of conditioning from $\condprobof{\exformulavar}{\shortcatvariables}$ to $\condprobof{\shortcatvariables}{\exformulavar}$.
 In this way, we understand a propositional formula as a definition of a joint probability distributions of the atoms, instead of a formulation of a probabilistic query against a joint distribution.
-To this end, we define by the single tensor core $\{\rencodingofat{\exformula}{\exformulavar,\shortcatvariables}\}$ a Markov Network $\probofat{\{\exformula\}\cup[\catorder]}{\exformulavar,\shortcatvariables}$.
-%Given a Markov Network $\probtensor$ with a single core $\rencodingof{\exformula}$ for a propositional formula $\exformula$.
+To this end, we define by the single tensor core $\{\bencodingofat{\exformula}{\exformulavar,\shortcatvariables}\}$ a Markov Network $\probofat{\{\exformula\}\cup[\catorder]}{\exformulavar,\shortcatvariables}$.
+%Given a Markov Network $\probtensor$ with a single core $\bencodingof{\exformula}$ for a propositional formula $\exformula$.
 By definition we have
 \begin{align*}
     \condprobwrtof{\{\exformula\}\cup[\catorder]}{\shortcatvariables}{\exformulavar}
-    = \sbnormationofwrt{\rencodingof{\exformula}}{\shortcatvariables}{\exformulavar} \, .
+    = \sbnormationofwrt{\bencodingof{\exformula}}{\shortcatvariables}{\exformulavar} \, .
 \end{align*}
 We depict this construction by:
 \begin{center}
@@ -345,13 +345,13 @@ While the distributions build a $2^\atomorder-1$-dimensional manifold, the formu
 
 % Both directions for entailment
 We now combine the ideas of the previous two subsections and define probabilities of formulas $\exformula$ given the satisfaction of another formula $\kb$, which we call a knowledge base.
-We have % by \theref{the:conditionByAtoms} % Again, Markov Network with rencoding of \exformula, \kb build the precise \probtensor
+We have % by \theref{the:conditionByAtoms} % Again, Markov Network with bencoding of \exformula, \kb build the precise \probtensor
 \begin{align*}
     \condprobof{\formulavar}{\kbvar}
     & = \sbcontractionof{
         \condprobof{\formulavar}{\atomicformulas}, \condprobof{\atomicformulas}{\kbvar}
     }{\formulavar,\kbvar} \\
-    & = \sbnormationofwrt{\rencodingof{\exformula},\rencodingof{\kb}}{\formulavar}{\kbvar} \, .
+    & = \sbnormationofwrt{\bencodingof{\exformula},\bencodingof{\kb}}{\formulavar}{\kbvar} \, .
 \end{align*}
 We notice, that we have to assume a satisfiable knowledge base $\kb$ for this construction to be well-defined.
 
@@ -359,8 +359,8 @@ We notice, that we have to assume a satisfiable knowledge base $\kb$ for this co
 Of special interest is the conditional probability of $\formulavar$ given that $\kbvar$ is satisfied, that is
 \begin{align*}
     \condprobof{\formulavar}{\kbvar=1}
-    & = \normationof{\{\rencodingof{\exformula} ,\kb\}}{\formulavar}\\
-    & = \frac{\contractionof{\{\rencodingof{\exformula},\kb\}}{\formulavar}}{\contraction{\{\kb\}}} \, .
+    & = \normationof{\{\bencodingof{\exformula} ,\kb\}}{\formulavar}\\
+    & = \frac{\contractionof{\{\bencodingof{\exformula},\kb\}}{\formulavar}}{\contraction{\{\kb\}}} \, .
 \end{align*}
 This conditional probability establishes a connection with the entailment relation of propositional formulas, as we show next.
 
@@ -400,15 +400,15 @@ We can further omit the normation by $\sbcontraction{\kb}$ when deciding entailm
 \begin{theorem}
     Given a formula $\kb$, we have $\kb\models\exformula$ (respectively $\kb\models\lnot\exformula$), if and only if
     \begin{align*}
-        \sbcontractionof{\kb,\rencodingof{\exformula}}{\formulavar=0} = 0
+        \sbcontractionof{\kb,\bencodingof{\exformula}}{\formulavar=0} = 0
         \quad \text{( respectively }
-        \sbcontractionof{\kb,\rencodingof{\exformula}}{\formulavar=1} = 0 \, .
+        \sbcontractionof{\kb,\bencodingof{\exformula}}{\formulavar=1} = 0 \, .
     \end{align*}
 \end{theorem}
 \begin{proof}
     This follows from \theref{the:contCriterionLogEntailment} using that
     \begin{align*}
-        \rencodingofat{\exformula}{\exformulavar=0,\shortcatvariables} = \lnot\exformulaat{\shortcatvariables} \quad \text{and} \quad \rencodingofat{\exformula}{\exformulavar=1,\shortcatvariables} = \exformulaat{\shortcatvariables} \, .
+        \bencodingofat{\exformula}{\exformulavar=0,\shortcatvariables} = \lnot\exformulaat{\shortcatvariables} \quad \text{and} \quad \bencodingofat{\exformula}{\exformulavar=1,\shortcatvariables} = \exformulaat{\shortcatvariables} \, .
     \end{align*}
 \end{proof}
 
@@ -420,9 +420,9 @@ Relating entailment to probability distributions motivates an extension of the e
     \label{def:probEntailment}
     For any propositional formula $\exformulaat{\shortcatvariables}$ we say that a probability distribution $\probof{\shortcatvariables}$ probabilistically entails $\exformula$, denoted as $\probtensor\models\exformula$, if
     \begin{align*}
-        \sbcontractionof{\probat{\shortcatvariables},\rencodingofat{\exformula}{\exformulavar,\shortcatvariables}}{\exformulavar=0} = 0 .
+        \sbcontractionof{\probat{\shortcatvariables},\bencodingofat{\exformula}{\exformulavar,\shortcatvariables}}{\exformulavar=0} = 0 .
     \end{align*}
-    If $\probtensor\models\lnot\exformula$, that is $\sbcontractionof{\probat{\shortcatvariables},\rencodingofat{\exformula}{\exformulavar,\shortcatvariables}}{\exformulavar=1} = 0$, we say that $\probtensor$ probabilistically contradicts $\exformula$.
+    If $\probtensor\models\lnot\exformula$, that is $\sbcontractionof{\probat{\shortcatvariables},\bencodingofat{\exformula}{\exformulavar,\shortcatvariables}}{\exformulavar=1} = 0$, we say that $\probtensor$ probabilistically contradicts $\exformula$.
 \end{definition}
 
 %
@@ -649,7 +649,7 @@ Their basis encoding are decomposed as
 \end{align}
 We further have by \theref{the:functionDecompositionBasisCP}
 \begin{align*}
-    \rencodingofat{\categoricalmap}{\catvariableof{[\catdim]},\catvariable}
+    \bencodingofat{\categoricalmap}{\catvariableof{[\catdim]},\catvariable}
     = \contractionof{\{\categoricalcoreofat{\catenumerator}{\catvariableof{\catenumerator},\catvariable} \, : \, \catindex\in[\catdim]\}}{\catvariable, \catvariableof{0}, \ldots, \catvariableof{\catdim-1}} \, .
 \end{align*}
 
@@ -1065,12 +1065,12 @@ Let us examplify the usage of Knowledge Propagation on Constraint Satisfaction P
 
 \begin{corollary}
     \label{cor:knowledgePropagationMarkovNetworks}
-    Let \algoref{alg:knowledgePropagation} be run on the cores $\tnetof{\graph}\cup\{\rencodingof{\exformula}\}$ with an arbitrary design of $\secedges$.
+    Let \algoref{alg:knowledgePropagation} be run on the cores $\tnetof{\graph}\cup\{\bencodingof{\exformula}\}$ with an arbitrary design of $\secedges$.
     Whenever for a formula $\formulaat{\catvariableof{\secnodes}}$ and a $\kcoreof{\edge}$ we have
-    \[ \contractionof{\kcoreof{\edge},\rencodingof{\exformula}}{\exformulavar=0} =0  \]
+    \[ \contractionof{\kcoreof{\edge},\bencodingof{\exformula}}{\exformulavar=0} =0  \]
     then the Markov Network $\extnet$ probabilistically entails $\exformula$.
     If on the contrary
-    \[ \contractionof{\kcoreof{\edge},\rencodingof{\exformula}}{\exformulavar=1} =0  \]
+    \[ \contractionof{\kcoreof{\edge},\bencodingof{\exformula}}{\exformulavar=1} =0  \]
     then the Markov Network $\extnet$ probabilistically entails $\lnot\exformula$, that is probabilistically contradicts $\exformula$.
 \end{corollary}
 \begin{proof}
@@ -1079,7 +1079,7 @@ Let us examplify the usage of Knowledge Propagation on Constraint Satisfaction P
 
 \begin{example}[Batch decision of entailment]
     Let $\formulaset$ be a set of formulas and $\probofat{\graph}{\shortcatvariables}$ a Markov Network, for which it shall be decided, which formulas in $\formulaset$ are entailed, contradicted or contingent.
-    We can in addition to the cores of the Markov Network create the cores $\{\rencodingofat{\exformula}{\formulavar,\shortcatvariables} \, : \, \exformula\in\formulaset\}$ and prepare the knowledge cores
+    We can in addition to the cores of the Markov Network create the cores $\{\bencodingofat{\exformula}{\formulavar,\shortcatvariables} \, : \, \exformula\in\formulaset\}$ and prepare the knowledge cores
     \begin{align*}
         \kcoreofat{\{\formula\}}{\formulavar} \, .
     \end{align*}
@@ -1111,7 +1111,7 @@ Whenever
 then
 \begin{align*}
     \tbasisat{\secexformulavar} =
-    \contractionof{\{\formulaat{\shortcatvariables} \, : \, \formula\in\formulaset\} \cup \{\rencodingofat{\secexformula}{\secexformulavar,\shortcatvariables}\}}{\secexformulavar} \, ,
+    \contractionof{\{\formulaat{\shortcatvariables} \, : \, \formula\in\formulaset\} \cup \{\bencodingofat{\secexformula}{\secexformulavar,\shortcatvariables}\}}{\secexformulavar} \, ,
 \end{align*}
 that is the inference rule can be performed in when $\formulaset$ are in $\arbset$.
 

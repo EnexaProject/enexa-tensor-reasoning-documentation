@@ -25,7 +25,7 @@ More details on this scheme are provided in \charef{cha:basisCalculus}, see \def
     is the vector $\probat{\headvariableof{\exfunction}}$, where $\headvariableof{\exfunction}$ is an image enumerating variable (see \charef{cha:basisCalculus} for more details), defined as the contraction
     \begin{align*}
         \probat{\headvariableof{\exfunction}}
-        = \contractionof{\probat{\shortcatvariables},\rencodingofat{\exfunction}{\headvariableof{\exfunction},\shortcatvariables}}{\headvariableof{\exfunction}} \, .
+        = \contractionof{\probat{\shortcatvariables},\bencodingofat{\exfunction}{\headvariableof{\exfunction},\shortcatvariables}}{\headvariableof{\exfunction}} \, .
     \end{align*}
     If $\arbsetof{\exfunction}\subset\rr$, and the statistic $\exfunction$ is therefore a tensor, we further define the expectation query of $\probwith$ by $\exfunction$ as
     \begin{align*}
@@ -35,7 +35,7 @@ More details on this scheme are provided in \charef{cha:basisCalculus}, see \def
     \begin{align*}
         \condprobof{\headvariableof{\exfunction}}{\headvariableof{\secexfunction}}
         = \normationofwrt{
-            \probat{\shortcatvariables},\rencodingofat{\exfunction}{\headvariableof{\exfunction},\shortcatvariables},\rencodingofat{\secexfunction}{\headvariableof{\secexfunction},\shortcatvariables}
+            \probat{\shortcatvariables},\bencodingofat{\exfunction}{\headvariableof{\exfunction},\shortcatvariables},\bencodingofat{\secexfunction}{\headvariableof{\secexfunction},\shortcatvariables}
         }{
             \headvariableof{\exfunction}}{\headvariableof{\secexfunction}
         } \, .
@@ -60,16 +60,16 @@ This contraction equations follows from the more general \corref{cor:rhoToNormal
 
 %% Conditional Probabilities and conditional queries
 %Conditional probabilities are queries, where the tensors $\exfunction$ and $\secexfunction$ are identity mappings in the respective variable state spaces.
-%Conversely, we can understand the conditional query $\condprobof{\headvariableof{\exfunction}}{\headvariableof{\secexfunction}}$ as the conditional probability of a query statistic $\exfunction$ conditioned on $\secexfunction$, of the underlying Markov Network with cores $\{\probtensor, \rencodingof{\exfunction}, \rencodingof{\secexfunction} \}$ and variables $\catvariableof{\exfunction},\catvariableof{\secexfunction}$ besides the variables distributed by $\probtensor$.
+%Conversely, we can understand the conditional query $\condprobof{\headvariableof{\exfunction}}{\headvariableof{\secexfunction}}$ as the conditional probability of a query statistic $\exfunction$ conditioned on $\secexfunction$, of the underlying Markov Network with cores $\{\probtensor, \bencodingof{\exfunction}, \bencodingof{\secexfunction} \}$ and variables $\catvariableof{\exfunction},\catvariableof{\secexfunction}$ besides the variables distributed by $\probtensor$.
 
 %%% Expectations as event queries -> Consistency with $\probat{X=i}$?
 %We further denote event queries by
-%	\[  \expectationof{\exfunction=\exfunctionimageelement} = \sbcontraction{\probtensor,\rencodingof{\exfunction},\onehotmapof{\exfunctionimageelement}}\]
+%	\[  \expectationof{\exfunction=\exfunctionimageelement} = \sbcontraction{\probtensor,\bencodingof{\exfunction},\onehotmapof{\exfunctionimageelement}}\]
 %where by $\onehotmapof{z}$ be denote the one hot encoding of the state $z$ with respect to some enumeration.
 %Let us note that they are further contraction of the queries in \defref{def:queries} since by \theref{the:splittingContractions}
 %\begin{align*}
 %	 \expectationof{\exfunction=z}
-%	& =  \sbcontraction{ \sbcontractionof{\probtensor,\rencodingof{\exfunction}}{\catvariableof{\exfunction}} ,\onehotmapof{z}}\\
+%	& =  \sbcontraction{ \sbcontractionof{\probtensor,\bencodingof{\exfunction}}{\catvariableof{\exfunction}} ,\onehotmapof{z}}\\
 %	& =  \sbcontraction{ \probat{\exfunction} ,\onehotmapof{z}} \, .
 %\end{align*}
 
@@ -357,7 +357,7 @@ To prepare for reasoning on data, we now derive tensor network representation fo
     The empirical distribution to the sample selector map $\datamap$ is the probability distribution
     \begin{align*}
         \empdistributionat{\shortcatvariables}
-        \coloneqq \normationof{\rencodingofat{\datamap}{\shortcatvariables,\datvariable}}{\shortcatvariables} \, ,
+        \coloneqq \normationof{\bencodingofat{\datamap}{\shortcatvariables,\datvariable}}{\shortcatvariables} \, ,
     \end{align*}
     where we introduced as single incoming for the basis encoding of the sample selector map the sample selecting variable $\datvariable$ taking values in $[\datanum]$.
 %    where by $\datacore$ we denote the basis encoding (see \defref{def:functionRepresentation}) of the sample selector map, and the distributed variables $\shortcatvariables$ are the head variables of the basis encoding.
@@ -411,9 +411,9 @@ We now exploit this structure to find efficient tensor network decompositions (s
     \end{align*}
     We then have
     \begin{align*}
-        \rencodingofat{\datamap}{\shortcatvariables,\datvariable}
+        \bencodingofat{\datamap}{\shortcatvariables,\datvariable}
         = \contractionof{
-            \{\rencodingofat{\datamap^{\atomenumerator}}{\catvariableof{\atomenumerator},\datvariable} : \atomenumeratorin \}
+            \{\bencodingofat{\datamap^{\atomenumerator}}{\catvariableof{\atomenumerator},\datvariable} : \atomenumeratorin \}
         }{\shortcatvariables,\datvariable}
     \end{align*}
     and
@@ -430,14 +430,14 @@ We now exploit this structure to find efficient tensor network decompositions (s
 \begin{proof}
     The first claim is a special case of Theorem~\ref{the:functionDecompositionBasisCP}, to be shown in \charef{cha:basisCalculus}.
     To show the second claim we notice
-    \[ \contraction{\datacore} = \sum_{\datindexin} \sbcontraction{\rencodingofat{\datamap}{\shortcatvariables,\datvariable=\datindex}} = \datanum \,  . \]
+    \[ \contraction{\datacore} = \sum_{\datindexin} \sbcontraction{\bencodingofat{\datamap}{\shortcatvariables,\datvariable=\datindex}} = \datanum \,  . \]
     With the first claim it now follows that
     \begin{align*}
         \empdistributionat{\shortcatvariables}
         = \normationof{\datacore}{\shortcatvariables}
         = \frac{\contractionof{\datacore}{\shortcatvariables}}{\sbcontraction{\datacore}}
         =  \contractionof{
-            \left\{\rencodingofat{\datamap^{\atomenumerator}}{\catvariableof{\atomenumerator},\datvariable} : \atomenumeratorin \right\} \cup \left\{\frac{1}{\datanum}\onesat{\datvariable}\right\}
+            \left\{\bencodingofat{\datamap^{\atomenumerator}}{\catvariableof{\atomenumerator},\datvariable} : \atomenumeratorin \right\} \cup \left\{\frac{1}{\datanum}\onesat{\datvariable}\right\}
         }{\shortcatvariables}  \, .
     \end{align*}
 \end{proof}
@@ -1388,11 +1388,11 @@ We now utilize these findings and provide by \algoref{alg:baseMeasureRefinement}
     We use basis encodings of the coordinates $\sstatcoordinateof{\selindex}$ of the statistic $\sstat$, with head variables $\catvariableof{\sstatcoordinateof{\selindex}}$ with dimension $\catdimof{\sstatcoordinateof{\selindex}}$ enumerating the image $\imageof{\sstatcoordinateof{\selindex}}\subset\rr$ in an ascending order.
     If $\canparamat{\selvariable}=\lambda\cdot\onehotmapofat{\selindex}{\selvariable}$ with $\lambda>0$, then $\argmax_{\shortcatindices} \contraction{\canparam,\sstat(\shortcatindices)}$ consists of states $\shortcatindices$ with minimal statistic $\sstatcoordinateofat{\selindex}{\indexedshortcatvariables}$, that is
     \[  \basemeasureofat{\sstat,\lambda\cdot\onehotmapof{\selindex}}{\shortcatvariables}
-    = \contractionof{\rencodingofat{\sstatcoordinateof{\selindex}}{\shortcatvariables,\catvariableof{\sstatcoordinateof{\selindex}}},
+    = \contractionof{\bencodingofat{\sstatcoordinateof{\selindex}}{\shortcatvariables,\catvariableof{\sstatcoordinateof{\selindex}}},
         \onehotmapofat{\catdimof{\sstatcoordinateof{\selindex}}-1}{\catvariableof{\sstatcoordinateof{\selindex}}}}{\shortcatvariables}  \, . \]
     If $\canparamat{\selvariable}=\lambda\cdot\onehotmapofat{\selindex}{\selvariable}$ with $\lambda<0$, then at the states with minimal statistic $\sstatcoordinateofat{\selindex}{\indexedshortcatvariables}$, that is
     \[  \basemeasureofat{\sstat,\lambda\cdot\onehotmapof{\selindex}}{\shortcatvariables}
-    = \contractionof{\rencodingofat{\sstatcoordinateof{\selindex}}{\shortcatvariables,\catvariableof{\sstatcoordinateof{\selindex}}},
+    = \contractionof{\bencodingofat{\sstatcoordinateof{\selindex}}{\shortcatvariables,\catvariableof{\sstatcoordinateof{\selindex}}},
         \onehotmapofat{0}{\catvariableof{\sstatcoordinateof{\selindex}}}}{\shortcatvariables}  \, . \]
 \end{example}
 
@@ -1421,7 +1421,7 @@ We now utilize these findings and provide by \algoref{alg:baseMeasureRefinement}
     We then have, that
     \begin{align*}
         \secbasemeasure = \contractionof{
-            \{\rencodingofat{\sstat}{\sstatheadvariables,\shortcatvariables}\} \cup
+            \{\bencodingofat{\sstat}{\sstatheadvariables,\shortcatvariables}\} \cup
             \left\{\sum_{\sstat(\shortcatindices) \, : \, \shortcatindices \in \argmax_{\shortcatindices} \contraction{\canparamof{i},\sstat(\shortcatindices)} }
             \onehotmapofat{\indexinterpretationat{\sstat(\shortcatindices)}}{\sstatheadvariables}
             : i \in [n] \right\}

@@ -51,7 +51,7 @@ Suffixes in the color string (defined in \inlinecode{representation.suffixes}) d
 \begin{itemize}
     \item \inlinecode{values}: Storing the coordinates of the tensors (individual realization for different cores)
     \item \inlinecode{colors}: List of the variables $[\headvariableof{\formula},\catvariableof{0},\catvariableof{1}]$
-    \item \inlinecode{name}: Reflecting the notation such as $\rencodingof{\formula}$
+    \item \inlinecode{name}: Reflecting the notation such as $\bencodingof{\formula}$
     \item \inlinecode{shape}: Storing the dimension of each appearing variable, as a list of integers with the same length as colors.
 \end{itemize}
 
@@ -300,7 +300,7 @@ uses the \inlinecode{contract_with} method of tensor cores to contract in a give
 \sect{Subpackage \sprepresentation}\label{sec:implementationRepresentation}
 
 The \sprepresentation subpackage consists in a collection of core creation methods.
-%Here the relational encodings $\rencodingof{\exfunction}$ of various maps $\exfunction$ are created.
+%Here the basis encodings $\bencodingof{\exfunction}$ of various maps $\exfunction$ are created.
 We arrange the \sprepresentation subpackage into the second layer of the \tnreason architecture, since it specifies tensor cores which formats are specified in \spengine.
 
 \paragraph{Coordinate Calculus}
@@ -311,7 +311,7 @@ Coordinatewise transformations (see \defref{def:coordinatewiseTransform}) are su
 where \inlinecode{coresList} is a list of $\seldim$ tensors with identical variables and \inlinecode{transformFunction} a function $\chainingfunction: \rr^{\seldim} \rightarrow \rr$.
 
 \paragraph{Basis Calculus}
-Relational encodings (see \defref{def:functionRelationEncoding}) of functions $\exfunction:\facstates \rightarrow \secfacstates$ are created by
+Basis encodings (see \defref{def:functionRelationEncoding}) of functions $\exfunction:\facstates \rightarrow \secfacstates$ are created by
 \begin{lstlisting}
 	engine.create_relational_encoding_from_lambda(inshape, outshape, incolors, outcolors, indicesToIndices)
 \end{lstlisting}
@@ -326,7 +326,7 @@ If the \inlinecode{str} to the connective starts with \stringof{n}, then the neg
 \begin{figure}
     \begin{tabular}{|c|c|c|c|c|}
         \hline
-        \textbf{$\exconnective$}          & \textbf{$\synencodingof{\exconnective}$} & \textbf{Notes} & $\baspluscprankof{\exconnective}$ & $\baspluscprankof{\rencodingof{\exconnective}}$ \\
+        \textbf{$\exconnective$}          & \textbf{$\synencodingof{\exconnective}$} & \textbf{Notes} & $\baspluscprankof{\exconnective}$ & $\baspluscprankof{\bencodingof{\exconnective}}$ \\
         \hline
         $\land$                           & \stringof{and}                           &                                                                      & 1                                 & 3                                               \\
         \hline
@@ -345,7 +345,7 @@ If the \inlinecode{str} to the connective starts with \stringof{n}, then the neg
     \end{tabular}
     \caption{Supported connectives in the script language.
     The arity of all connectives is not restricted.
-    We notice, that the basis+ rank $\baspluscprankof{\rencodingof{\exconnective}}$ is independent of the arity and in most cases less than the naive bound of $2^{\catorder}$.
+    We notice, that the basis+ rank $\baspluscprankof{\bencodingof{\exconnective}}$ is independent of the arity and in most cases less than the naive bound of $2^{\catorder}$.
     }\label{tab:connectives}
 \end{figure}
 
@@ -432,7 +432,7 @@ Energy dictionaries are stored as dictionaries with values by tuples \inlinecode
         \item \inlinecode{featureDict} as a dictionary of \inlinecode{representation.SingleSoftFeature} to each feature $\sstatcoordinateof{\selindex}$
         \item \inlinecode{computationCoreDict} $\extnet$ of computation cores such that
         \begin{align*}
-            \extnetat{\headvariableof{[\seldim]},\nodevariables} = \rencodingofat{\sstat}{\headvariableof{[\seldim]},\nodevariables} \, .
+            \extnetat{\headvariableof{[\seldim]},\nodevariables} = \bencodingofat{\sstat}{\headvariableof{[\seldim]},\nodevariables} \, .
         \end{align*}
         Decompositions and redundancies between coordinates $\sstatcoordinateof{\selindex}$ can be exploited to find an efficient tensor network.
         \item \inlinecode{baseMeasureCoreDict} $\secextnet$ to represent the base measure $\basemeasure$
@@ -541,7 +541,7 @@ Propositional formulas $\exformula$ are represented in three schemes:
     \item Syntactical representation by a script language $\synencodingof{\exformula}$ as nested lists (see \secref{subsec:scriptLanguage}).
     %Most practical to choose a formula from a neuro-symbolic architecture.
     \item Syntactical representation by a \inlinecode{str} specifying a color to the categorical variables $\headvariableof{\exformula}$.
-    \item Representation of formulas by tensor networks being contracted to $\rencodingofat{\exformula}{\headvariableof{\exformula},\nodevariables}$
+    \item Representation of formulas by tensor networks being contracted to $\bencodingofat{\exformula}{\headvariableof{\exformula},\nodevariables}$
 \end{itemize}
 
 Conversions of the formats:
@@ -555,12 +555,12 @@ Conversions of the formats:
     \begin{lstlisting}
         application.create_raw_cores(S(f))
     \end{lstlisting}
-    This creates the connective cores for the semantic representation of $\rencodingof{\exformula}$.
+    This creates the connective cores for the semantic representation of $\bencodingof{\exformula}$.
     We encode them by iterative calls of \inlinecode{engine.create_from_iterators}.
 \end{itemize}
 
 %When encoding formulas with hard interpretation, we furthermore add a head core of type \stringof{truthEvaluation} since we have
-%\[ {\exformula} = \sbcontractionof{\rencodingof{\exformula},\tbasis}{\catvariableof{\exformula}} \, . \]
+%\[ {\exformula} = \sbcontractionof{\bencodingof{\exformula},\tbasis}{\catvariableof{\exformula}} \, . \]
 
 \subsect{Script Language}\label{subsec:scriptLanguage}
 
