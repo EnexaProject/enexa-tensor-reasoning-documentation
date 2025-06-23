@@ -20,12 +20,12 @@ For a schematic depiction of this see \figref{fig:dbTensorSketch}.
 
 
 
-\sect{Encoding of Subsets}
+\sect{Basis Encoding of Subsets}
 
 Based on the concept of one-hot encodings of states we in this chapter develop the construction of encodings to sets, relations and functions.
 We start with the definition of subset encodings, which represent set memberships in their boolean coordinates.
 
-\begin{definition}[Subset Encoding]
+\begin{definition}[Basis encoding of subsets]
     \label{def:subsetEncoding}
     We say that an arbitrary set $\arbset$ is enumerated by an enumeration variable $\indvariableof{\arbset}$ taking values in $[\inddimof{\arbset}]$, when $\inddimof{\arbset}=\absof{\arbset}$ and there is a bijective index interpretation function
     \begin{align*}
@@ -105,12 +105,12 @@ For boolean tensors, the partially ordering is equal to a subset relation of the
 % Relation
 Since relations are subsets of cartesian products between two sets, their encoding is a straightforward generalization of \defref{def:subsetEncoding}.
 
-\begin{definition}[Relation Encoding]
+\begin{definition}[Basis encoding of binary relations]
     A relation between two finite sets $\inset$ and $\outset$ is a subset of their cartesian product
     \begin{align*}
         \exrelation \subset \inset \times \outset \, .
     \end{align*}
-    Given an enumeration of $\inset$ and $\outset$ by the categorical variables $\indvariableof{\insymbol}$ and $\indvariableof{\outsymbol}$ and interpretation maps $\indexinterpretationof{\insymbol}$, $\indexinterpretationof{\outsymbol}$, we define the encoding of this subset as the tensor $\onehotmapto{\exrelation}[\indvariableof{\insymbol},\indvariableof{\outsymbol}]$ with the coordinates
+    Given an enumeration of $\inset$ and $\outset$ by the categorical variables $\indvariableof{\insymbol}$ and $\indvariableof{\outsymbol}$ and interpretation maps $\indexinterpretationof{\insymbol}$, $\indexinterpretationof{\outsymbol}$, we define the basis encoding of this subset as the tensor $\onehotmapto{\exrelation}[\indvariableof{\insymbol},\indvariableof{\outsymbol}]$ with the coordinates
     \begin{align*}
         \onehotmapofat{\exrelation}{\indexedindvariableof{\insymbol},\indexedindvariableof{\outsymbol}}
         = \begin{cases}
@@ -121,23 +121,23 @@ Since relations are subsets of cartesian products between two sets, their encodi
 \end{definition}
 
 % Decomposition
-The relation encoding has a decomposition into one-hot encodings as
+The basis encoding has a decomposition into one-hot encodings as
 \begin{align*}
     \onehotmapofat{\exrelation}{\indvariableof{\insymbol},\indvariableof{\outsymbol}}
     = \sum_{\indindexof{\insymbol},\indindexof{\outsymbol} \, : \, (\indexinterpretationofat{\insymbol}{\indindexof{\insymbol}},\indexinterpretationofat{\outsymbol}{\indindexof{\outsymbol}}) \in \exrelation}
     \onehotmapofat{\indindexof{\insymbol}}{\indvariableof{\insymbol}}  \otimes \onehotmapofat{\indindexof{\outsymbol}}{\indvariableof{\outsymbol}}  \, .
 \end{align*}
 
-Relational encodings have a matrix structure by the cartesian product, which can be further folded to tensors, when the sets itself are cartesian products.
-The relational encoding is a bijection between the relations of two sets and the boolean tensors with their enumeration variables.
+basis encodings have a matrix structure by the cartesian product, which can be further folded to tensors, when the sets itself are cartesian products.
+The basis encoding is a bijection between the relations of two sets and the boolean tensors with their enumeration variables.
 
 %They provide representations of generic relations by boolean tensors, in the sense that each relation between two sets is represented
 %\begin{theorem}
-%	The relational encoding is a bijection between the set of relations and the set of boolean tensors.
+%	The basis encoding is a bijection between the set of relations and the set of boolean tensors.
 %\end{theorem}
 %\begin{proof}
 %	% =>
-%	By definition, a relational encoding is the encoding of a subset and thus a boolean tensor.
+%	By definition, a basis encoding is the encoding of a subset and thus a boolean tensor.
 %	% <=
 %	Any matrification of a boolean tensor marks by its $1$ coordinates the elements of a relation.
 %\end{proof}
@@ -151,13 +151,13 @@ The relational encoding is a bijection between the relations of two sets and the
 
 We can extend this contraction to relations of higher order, and arrive at encoding schemes usable for relational databases.
 
-\begin{definition}
+\begin{definition}[Basis encoding of $\atomorder$-ary relations]
     \label{def:daryRelation}
     Given sets $\arbsetof{\atomenumerator}$ for $\atomenumeratorin$, a $\atomorder$-ary relation is a subset of a their cartesian product, that is
     \begin{align*}
         \exrelation \subset\bigtimes_{\atomenumeratorin} \arbsetof{\atomenumerator} \, .
     \end{align*}
-    Given an enumeration of each set $\arbsetof{\atomenumerator}$ by a variable $\indvariableof{\atomenumerator}$ and an interpretation map $\indexinterpretationof{\atomenumerator}$, we define the encoding of the relation as the tensor $\onehotmapto{\exrelation}[\indvariableof{[\atomorder]}]$ with coordinates
+    Given an enumeration of each set $\arbsetof{\atomenumerator}$ by a variable $\indvariableof{\atomenumerator}$ and an interpretation map $\indexinterpretationof{\atomenumerator}$, we define the basis encoding of the relation as the tensor $\onehotmapto{\exrelation}[\indvariableof{[\atomorder]}]$ with coordinates
     \begin{align*}
         \onehotmapofat{\exrelation}{\indexedindvariableof{[\catorder]}}
         = \begin{cases}
@@ -169,7 +169,7 @@ We can extend this contraction to relations of higher order, and arrive at encod
 
 %\begin{example}[Propositional Formulas]
 Let there be for $\atomenumeratorin$ sets $\arbsetof{\atomenumerator}$ of truth assignments to the $\atomenumerator$-th atom, which are all enumerated by $[2]$.
-A propositional formula then corresponds with a $\atomorder$-ary relation and we directly defined them in \defref{def:formulas} by their relational encoding.
+A propositional formula then corresponds with a $\atomorder$-ary relation and we directly defined them in \defref{def:formulas} by their basis encoding.
 %\end{example}
 
 % Minterm interpretation
@@ -224,16 +224,16 @@ Relations are however often sparse, in the sense that
 It is therefore often benefitially to choose sparse encoding schemes, for example by restricted CP formats (see \charef{cha:sparseCalculus}) to represent $\onehotmapof{\exrelation}$.
 
 
-\sect{Encoding of Functions}
+\sect{Basis Encoding of Functions}
 
 Let us now restrict to relations, which have an expression by functions.
 We in this section then show, how contractions of their encodings can be exploited in function evaluation.
 
-\subsect{Relational Encoding of Functions}
+\subsect{Basis encoding of Functions}
 
 %We now generalize the representation scheme towards maps between arbitrary unstructured sets.
 
-\begin{definition}[Relational Encoding of Maps]
+\begin{definition}[Basis encoding of maps]
     \label{def:functionRelationEncoding}
     Any map
     \begin{align*}
@@ -243,7 +243,7 @@ We in this section then show, how contractions of their encodings can be exploit
     \begin{align*}
         \exrelationof{\exfunction} \coloneqq \left\{ (x,\exfunction(x) \, : \, x \in\inset )\right\} \subset \inset \times \outset \, .
     \end{align*}
-    Given a enumeration of the sets by $\indvariableof{\insymbol}$ and $\indvariableof{\outsymbol}$ we define the relational encoding of $\exfunction$ as the tensor
+    Given a enumeration of the sets by $\indvariableof{\insymbol}$ and $\indvariableof{\outsymbol}$ we define the basis encoding of $\exfunction$ as the tensor
     \begin{align*}
         \rencodingofat{\exfunction}{\indvariableof{\insymbol},\indvariableof{\outsymbol}}
         = \onehotmapofat{\exrelationof{\exfunction}}{\indvariableof{\insymbol},\indvariableof{\outsymbol}}  \, .
@@ -258,14 +258,14 @@ We in this section then show, how contractions of their encodings can be exploit
 \end{remark}
 
 % Characterization of the directed and boolean tensors
-We notice, that any relational representation of a function is also a directed tensor with incoming variables to the domain and outgoing variables to the image.
-It furthermore holds, that the set of directed and boolean tensors is characterized by the relational encoding of functions.
-This is shown in the next theorem, by the claim that any boolean tensor which is directed is the relational representation of a function.
+We notice, that any basis representation of a function is also a directed tensor with incoming variables to the domain and outgoing variables to the image.
+It furthermore holds, that the set of directed and boolean tensors is characterized by the basis encoding of functions.
+This is shown in the next theorem, by the claim that any boolean tensor which is directed is the basis representation of a function.
 
 \begin{theorem}
     \label{the:rencodingDirected}
     Let $\inset,\outset$ be sets and $\exrelation\subset\inset\times\outset$ a relation.
-    If and only if there exists a map $\exfunction:\inset\rightarrow\outset$ such that $\exrelation=\exrelationof{\exfunction}$, the relational encoding $\rencodingof{\exfunction}$ is a directed tensor with $\indvariableof{\insymbol}$ incoming and $\indvariableof{\outsymbol}$ outgoing.
+    If and only if there exists a map $\exfunction:\inset\rightarrow\outset$ such that $\exrelation=\exrelationof{\exfunction}$, the basis encoding $\rencodingof{\exfunction}$ is a directed tensor with $\indvariableof{\insymbol}$ incoming and $\indvariableof{\outsymbol}$ outgoing.
 \end{theorem}
 \begin{proof}
     \proofrightsymbol:
@@ -312,11 +312,11 @@ Functions between states of factored systems with $\atomorder_{\insymbol}$ and $
 
 %% NOT NEEDED -> Done in propositional logics
 %% Conditional
-%Since the relational encoding of any map between factored systems is directed, it can be interpreted by a conditional probability tensor, as we state next.
+%Since the basis encoding of any map between factored systems is directed, it can be interpreted by a conditional probability tensor, as we state next.
 %
 %%% Maps
 %\begin{corollary}%\label{the:condProbFunctionRepresentation}
-%	The relational encoding $\rencodingof{\exfunction}$ (see \defref{def:functionRepresentation}) of a function $\exfunction$ between factored systems is a conditional probability tensor, where the legs to the image system are the conditions and the legs to the target system the distribution legs.
+%	The basis encoding $\rencodingof{\exfunction}$ (see \defref{def:functionRepresentation}) of a function $\exfunction$ between factored systems is a conditional probability tensor, where the legs to the image system are the conditions and the legs to the target system the distribution legs.
 %\end{corollary}
 %
 %%% Deterministic by construction
@@ -373,15 +373,15 @@ We now justify the nomenclature of basis calculus, by showing that contraction w
 In comparison with the Coordinate Calculus scheme (see \theref{the:coordinateCalculus}), the Basis Calculus produces basis vectors of a functions evaluation instead of scalars.
 While this seems to produce unnecessary redundancy in representing a function, we will see in the following section, that this scheme is efficient in representing compositions of functions.
 
-\sect{Calculus of relational encodings}
+\sect{Calculus of basis encodings}
 
-We now show the utility of relational encodings for functions, by developing tensor network representation to composed functions.
+We now show the utility of basis encodings for functions, by developing tensor network representation to composed functions.
 \red{We in this section use the notation of factored system representation, as developed in \parref{par:one} and enumerate states of factored systems by variables $\catvariable$ with states in $[\catdim]$, instead of combinations of variables $\indvariable$ with index interpretation functions $\indexinterpretation$ enumerating arbitrary sets.}
 
 \subsect{Composition of function}
 
 We have already used (see \theref{the:formulaDecomposition}), that combination of propositional formulas by connectives can be represented by contractions.
-We now show in a more general perspective, that in basis calculus, any composition of functions in its relational encoding the contraction of the encoded functions.
+We now show in a more general perspective, that in basis calculus, any composition of functions in its basis encoding the contraction of the encoded functions.
 
 \begin{theorem}[Composition of Functions]
     \label{the:compositionByContraction}
@@ -394,7 +394,7 @@ We now show in a more general perspective, that in basis calculus, any compositi
         \secexfunction : \nodestatesof{\nodestwo} \rightarrow \nodestatesof{\nodesthree}
     \end{align*}
     with the image system of $\exfunction$ is the domain system of $\secexfunction$.
-    Then the relational encoding of the composition
+    Then the basis encoding of the composition
     \begin{align*}
         \compositionof{\secexfunction}{\exfunction} : \nodestatesof{\nodesone} \rightarrow \nodestatesof{\nodesthree}
     \end{align*}
@@ -408,14 +408,14 @@ We now show in a more general perspective, that in basis calculus, any compositi
     \end{align*}
 \end{theorem}
 \begin{proof}
-    By definition we have the relational encoding of the composition as
+    By definition we have the basis encoding of the composition as
     \begin{align*}
         \rencodingofat{\compositionof{\secexfunction}{\exfunction}}{\catvariableof{\nodesthree},\catvariableof{\nodesone}}
         = \sum_{\catindexof{\nodesone}\in\nodestatesof{\nodesone}}
         \onehotmapofat{\compositionofat{\secexfunction}{\exfunction}{\catindexof{\nodesone}}}{\catvariableof{\nodesthree}} \otimes
         \onehotmapofat{\catindexof{\nodesone}}{\catvariableof{\nodesone}}  \, .
     \end{align*}
-    By using a similar representation for $\rencodingof{\secexfunction}$ and $\rencodingof{\exfunction}$ we now show, that this coincides with the contraction of these relational encodings with closed variables $\catvariableof{\nodestwo}$.
+    By using a similar representation for $\rencodingof{\secexfunction}$ and $\rencodingof{\exfunction}$ we now show, that this coincides with the contraction of these basis encodings with closed variables $\catvariableof{\nodestwo}$.
     By the linearity of the contraction operation we get
     \begin{align*}
         \contractionof{\rencodingof{\exfunction},\rencodingof{\secexfunction}}{\catvariableof{\nodesthree},\catvariableof{\nodesone}}
@@ -441,7 +441,7 @@ We now show in a more general perspective, that in basis calculus, any compositi
 
 % Iterative usage
 We can use \theref{the:compositionByContraction} iteratively to further decompose the function $\secexfunction$.
-In this way, the relational encoding of a function consistent of multiple compositions can be represented as the contractions of all the functions.
+In this way, the basis encoding of a function consistent of multiple compositions can be represented as the contractions of all the functions.
 This has been applied in \theref{the:formulaDecomposition} to efficiently represent propositional formulas, for which syntactical expressions are given.
 
 \subsect{Compositions with real functions}
@@ -507,6 +507,17 @@ Let us now show, how contractions with these vectors represents compositions wit
     \end{align*}
 \end{proof}
 
+\begin{remark}[Tranform of basis into coordinate encodings]
+    \corref{cor:rhoToNormal} states in particular the transformation of the basis encoding of a function into its coordinate encoding.
+    Given a real function $\exfunction:\facstates\rightarrow\rr$ we have
+    \begin{align*}
+        \cencodingofat{\exfunction}{\shortcatvariables}
+        = \contractionof{\rencodingofat{\exfunction}{\headvariableof{\exfunction},\shortcatvariables},\indexinterpretationofat{\exfunction}{\headvariableof{\exfunction}}}{\shortcatvariables} \, ,
+    \end{align*}
+    where $\headvariableof{\exfunction}$ is a variable, which enumerates the image of $\exfunction$ with the interpretation $\indexinterpretationofat{\exfunction}{\headvariableof{\exfunction}}$.
+\end{remark}
+
+
 \begin{corollary}
     \label{cor:onesHead}
     For any tensor $\hypercore$, which is directed with $\shortcatvariables$ incoming, we have
@@ -570,7 +581,7 @@ When a set is structured as the cartesian product of other sets, that is
     \outset = \bigtimes_{\catenumeratorin} \arbsetof{\catenumerator} \, ,
 \end{align*}
 we can enumerate it by a collection $\{\indvariableof{\catenumerator} \, : \, \catenumeratorin\}$ of enumeration variables, each with respective index interpretation maps.
-When the image of a function admits such a cartesian representation, we now show that the relational encoding can be represented by a contraction of relational encodings to each image coordinate.
+When the image of a function admits such a cartesian representation, we now show that the basis encoding can be represented by a contraction of basis encodings to each image coordinate.
 
 \begin{theorem}
     \label{the:functionImageDecompositionContraction}
@@ -584,7 +595,7 @@ When the image of a function admits such a cartesian representation, we now show
     \end{align*}
     the image coordinate restrictions of $\exfunction$, that is we have $\exfunction=(\exfunctionof{0},\ldots,\exfunctionof{\catorder-1})$.
     Let us assign the variable $\catvariable$ to the factored system in the domain system of $\exfunction$ and the variables $\catvariableof{\atomenumerator}$ for $\atomenumeratorin$ to the image system of $\exfunction$.
-    We can then decompose the relational encoding of $\exfunction$ into the relational encodings of its image coordinate restrictions, that is
+    We can then decompose the basis encoding of $\exfunction$ into the basis encodings of its image coordinate restrictions, that is
     \begin{align*}
         \rencodingofat{\exfunction}{\shortcatvariables,\catvariable}
         = \contractionof{
@@ -610,7 +621,7 @@ When the image of a function admits such a cartesian representation, we now show
 
 % Continue discussion in Sparse TC
 In \charef{cha:sparseCalculus} we will apply \theref{the:functionImageDecompositionContraction} in \theref{the:functionDecompositionBasisCP} to show sparse basis $\cpformat$ decompositions to $\rencodingof{\exfunction}$.
-These decompositions are then applied for efficient the representation of empirical distribution, which involve the relational encoding of data maps (see \exaref{exa:empDistCP}), and for exponential families, which statistics have images, which are included in cartesian products of the images to each coordinate (see \exaref{exa:expFamCP}).
+These decompositions are then applied for efficient the representation of empirical distribution, which involve the basis encoding of data maps (see \exaref{exa:empDistCP}), and for exponential families, which statistics have images, which are included in cartesian products of the images to each coordinate (see \exaref{exa:expFamCP}).
 
 
 
@@ -688,20 +699,20 @@ Basis representations for compositions of linear functions can be computed via c
 \end{proof}
 
 % Comparison with basis representations
-For basis representations we thus have a similar composition theorem as for relational encodings of arbitrary functions (see \theref{the:compositionByContraction}).
-What is more, one can understand each relational encodings as a basis representation of a linear function.
+For basis representations we thus have a similar composition theorem as for basis encodings of arbitrary functions (see \theref{the:compositionByContraction}).
+What is more, one can understand each basis encodings as a basis representation of a linear function.
 Along this line, the composition theorem \theref{the:linearCompositionBasisEncoding} as the principle of linear algebra, which underlies \theref{the:compositionByContraction}.
 % Matrix Multiplication
 A typical interpretation of \theref{the:linearCompositionBasisEncoding} is matrix multiplication, where matrices understood since matrices are basis representations of linear maps.
 
-\begin{example}[Relational encodings as basis representations]
-    Let us justify that we refered to the contractions of relational encodings by basis calculus, by describing that relational encodings are a special case of basis representations.
+\begin{example}[Basis encodings as basis representations]
+    Let us justify that we refered to the contractions of basis encodings by basis calculus, by describing that basis encodings are a special case of basis representations.
     To that end, we understand the sets $\inset=[\inddimof{\insymbol}]$ and $\outset=[\inddimof{\outsymbol}]$ as labels of a basis in $\rr^{\inddimof{\insymbol}}$ and $\rr^{\inddimof{\outsymbol}}$.
     Then, given a relation $\exrelation \subset \inset \times \outset$, we define a linear map $\linmap : \rr^{\inddimof{\insymbol}} \rightarrow \rr^{\inddimof{\outsymbol}}$ through the action on the $i\in[\inddimof{\insymbol}]$-th basis element as
     \begin{align*}
         \linmap(\onehotmapof{i}) = \sum_{j\in[\inddimof{\outsymbol}]\, : \, (i,j) \in \exrelation} \onehotmapof{j} \, .
     \end{align*}
-    Comparing the coefficients of the basis representation of $\linmap$ and the relational encoding $\exrelation$ we get
+    Comparing the coefficients of the basis representation of $\linmap$ and the basis encoding $\exrelation$ we get
     \begin{align*}
         \bencodingofat{\linmap}{\indexedindvariableof{\outsymbol},\indexedindvariableof{\insymbol}}
         = \onehotmapofat{\exrelation}{\indexedindvariableof{\outsymbol},\indexedindvariableof{\insymbol}} \, .
@@ -754,8 +765,8 @@ Selection encodings (see \defref{def:selectionEncoding}) are related to basis re
 %Along that, maps between factored systems are understood as basis decompositions of linear maps between the tensor spaces.}
 
 
-% Comparison with relational encodings - definition
-While relational encoding works for maps from $\facstates$ to arbitrary sets (which are enumerated), selection encodings as introduced in \defref{def:selectionEncoding} require and exploit that their image is embedded in a tensor space.
+% Comparison with basis encodings - definition
+While basis encoding works for maps from $\facstates$ to arbitrary sets (which are enumerated), selection encodings as introduced in \defref{def:selectionEncoding} require and exploit that their image is embedded in a tensor space.
 
 % Slicing
 Given a selection encoding of a function, the function is retrieved by slicing with respect to the
@@ -830,7 +841,7 @@ To see this, we interpret $\sstat$ and $\exfunction$ in Theorem~\ref{the:linComp
 
 \sect{Indicator features to functions}\label{sec:indicatorFeatures}
 
-We here provide a subspace perspective for the sparse representation of decomposable functions as tensor networks in the $\rencodingof{\cdot}$ relational encoding scheme of basis calculus.
+We here provide a subspace perspective for the sparse representation of decomposable functions as tensor networks in the $\rencodingof{\cdot}$ basis encoding scheme of basis calculus.
 
 \begin{definition}
     Given any function $\exfunction:\inset\rightarrow\outset$ and index interpretation functions $\indexinterpretationof{\insymbol},\indexinterpretationof{\outsymbol}$ enumerating $\inset$ and $\outset$ we define the corresponding indicator subspace of $\rr^{\cardof{\inset}}$ as
@@ -1004,7 +1015,7 @@ We now relate the by a function $\exfunction$ computable distributions with thos
     \begin{align*}
         \bigotimes_{\selindexin}\actcoreofat{\selindex}{\headvariableof{\selindex}}
     \end{align*}
-    which reproduces $\probwith$ by contraction with the relational encoding of the indicator features to $\exfunction$. %$\contractionof{}$
+    which reproduces $\probwith$ by contraction with the basis encoding of the indicator features to $\exfunction$. %$\contractionof{}$
     To this end, we define for $\selindexin$ two-dimensional leg vectors
     \begin{align*}
         \actcoreofat{\selindex}{\headvariableof{\selindex}}
@@ -1064,7 +1075,7 @@ Let $\exfunction: \arbsetof{1}\rightarrow\arbsetof{2}$ and $\chainingfunction:\a
 %\end{align}
 
 \begin{example}[Propositional Formulas]
-    Each formula defines by its relational encoding the subspace of $\atomspace$
+    Each formula defines by its basis encoding the subspace of $\atomspace$
     \begin{align*}
         \subspaceof{\exformula} = \spanof{\lnot\formulaat{\shortcatvariables},\formulaat{\shortcatvariables}} \, .
     \end{align*}
@@ -1085,7 +1096,8 @@ Let $\exfunction: \arbsetof{1}\rightarrow\arbsetof{2}$ and $\chainingfunction:\a
 
 \subsect{Effective Representation of Partition Statistics}
 
-\begin{definition}\label{def:partitionStatistic}
+\begin{definition}
+    \label{def:partitionStatistic}
     We call a statistic $\sstat : \facstates \rightarrow \bigtimes_{\selindexin}[2]$ a partition statistic if
     \begin{align*}
         \contractionof{\sencsstatwith}{\shortcatvariables} = \onesat{\shortcatvariables} \, .
@@ -1151,7 +1163,8 @@ We now show, that partition statistics are exactly those statistics, which are c
 We have already observed in \charef{cha:probRepresentation}, that Markov Networks have a tensor-network representation involving the selection encodings of their edge statistics.
 This efficiency gain compared with featurewise releational encodings is in the following generalized to arbitrary partition statistics.
 
-\begin{theorem}\label{the:selectionRepresentationPartitionStatistics}
+\begin{theorem}
+    \label{the:selectionRepresentationPartitionStatistics}
     For any partition statistic and any elementary activation tensor $\bigotimes_{\selindexin}\actcoreofat{\selindex}{\headvariableof{\selindex}}$ we have
     \begin{align*}
         \contractionof{\bigcup_{\selindexin}\{\rencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables},\actcoreofat{\selindex}{\headvariableof{\selindex}}\}}{\shortcatvariables}
@@ -1326,7 +1339,7 @@ A similar decomposition holds for negations, as we show next.
         \lnot\formulaat{\shortcatvariables} = \contractionof{\rencodingofat{\exformula}{\formulavar,\shortcatvariables},\fbasisat{\formulavar}}{\shortcatvariables}
     \end{align*}
     and arrive at the third claim
-        \begin{align*}
+    \begin{align*}
     (\lnot\exformula)[\shortcatvariables]
         = \onesat{\shortcatvariables} - \formulaat{\shortcatvariables}  \, .
     \end{align*}
@@ -1351,10 +1364,10 @@ In \figref{fig:DecompositionExample} we provide an example of this decomposition
 
 
 % Calculus against the direction
-%\red{In an alternative perspective, effective calculus amounts to an contraction against the directionality of the relational encodings.}
-%For specific functions, slices of the relational encodings with respect to head variables are basis vectors.
+%\red{In an alternative perspective, effective calculus amounts to an contraction against the directionality of the basis encodings.}
+%For specific functions, slices of the basis encodings with respect to head variables are basis vectors.
 %In that case, we can perform basis calculus in the inverse direction than suggested by the directions of the tensors.
-%We examplify this situation in the following theorem for relational encodings of logical conjunctions and negations.
+%We examplify this situation in the following theorem for basis encodings of logical conjunctions and negations.
 
 
 
@@ -1370,7 +1383,7 @@ Inference is then performed by contractions with basis tensors representing the 
 These contractions can further be executed neuron-wise.
 
 % + Symbolic -> Neuro-symbolic
-What is more, basis calculus provides an efficient scheme to represent symbols such as logical connectives by their relational encodings.
+What is more, basis calculus provides an efficient scheme to represent symbols such as logical connectives by their basis encodings.
 Basis calculus is therefore a tool for neuro-symbolic AI \cite{garcez_neural-symbolic_2019, sarker_neuro-symbolic_2022, marra_statistical_2024}.
 
 % ADD?

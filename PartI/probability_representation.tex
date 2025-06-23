@@ -273,7 +273,7 @@ We further show, that exactly the directed tensors with non-negative coordinates
 
 %
 \theref{the:conditionalDirected} specifies a broad class of tensors to represent conditional probabilities.
-In combination with \theref{the:rencodingDirected}, which states that relational encodings are directed, we get that any relational encoding of a function is a conditional probability tensor.
+In combination with \theref{the:rencodingDirected}, which states that basis encodings are directed, we get that any basis encoding of a function is a conditional probability tensor.
 
 
 \subsect{Bayes Theorem and the Chain Rule}
@@ -770,8 +770,8 @@ As long as we find a non-vanishing vector $\vectorat{\selvariable}$ and $\lambda
 \subsect{Tensor Network Representation}
 
 As we have observed, the selection encoding formalism can efficiently represent the energy tensor to a member of an exponential family, but through coordinatewise transform by the exponential does not provide an efficient decomposition scheme of the probability distribution itself.
-We now overcome this problem with usage of the relational encoding formalism to represent members of exponential families by a single contraction without nonlinear transforms.
-%The central insight here is a relational encoding of the statistic , which enables representation by tensor network decomposition, when the sufficient statistic is decomposable.
+We now overcome this problem with usage of the basis encoding formalism to represent members of exponential families by a single contraction without nonlinear transforms.
+%The central insight here is a basis encoding of the statistic , which enables representation by tensor network decomposition, when the sufficient statistic is decomposable.
 
 \begin{theorem}[Generic Representation of Exponential Families]
     \label{the:expFamilyTensorRep}
@@ -820,12 +820,12 @@ We now overcome this problem with usage of the relational encoding formalism to 
 \end{proof}
 
 
-In the proof of \theref{the:expFamilyTensorRep} we have observed, that the relational encoding $\rencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}$ of the statistics decomposed into a tensor network of relational encodings $\rencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables}$ to the coordinate of the statistic.
+In the proof of \theref{the:expFamilyTensorRep} we have observed, that the basis encoding $\rencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}$ of the statistics decomposed into a tensor network of basis encodings $\rencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables}$ to the coordinate of the statistic.
 We can exploit further decomposition mechanisms, which will be discussed in full detail in \charef{cha:basisCalculus}, to find even sparser decompositions.
 This is for example the case, when the coordinates of the statistic are compositions of functions depending on small numbers of variables.
 When the coorindates of the statistic furthermore share similar parts in their compositions, these parts can be shared in the decomposition.
 We will investigate such sparsification mechanisms in more detail in \charef{cha:networkRepresentation}, where the coordinates of the statistic are propositional formulas with a natural decomposition by their syntactical description.
-%We used in the proof, that the relational encoding of the statistic decomposes into the relational encoding of the coordinate maps to the statistic as
+%We used in the proof, that the basis encoding of the statistic decomposes into the basis encoding of the coordinate maps to the statistic as
 %\begin{align*}
 %    \rencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}
 %     = \contractionof{\{\rencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables} \, : \, \selindexin\}}{\sstatcatof{[\seldim]},\shortcatvariables} \, .
@@ -836,15 +836,15 @@ We will investigate such sparsification mechanisms in more detail in \charef{cha
 
 % Core types
 The tensor network representation of an exponential family by \theref{the:expFamilyTensorRep} is a Markov Network consistent of two types of cores.
-First, we refer to the relational encodings $\rencodingof{\sstatcoordinateof{\selindex}}$ of the coordinates of a statistic as computation cores.
+First, we refer to the basis encodings $\rencodingof{\sstatcoordinateof{\selindex}}$ of the coordinates of a statistic as computation cores.
 Our intuition is that they compute the hidden variable $\sstatcatof{\selindex}$, based on Basis Calculus (see \charef{cha:basisCalculus}), which encode the value of the coordinate with respect to the image interpretation map $\indexinterpretationof{\selindex}$.
 We notice, that since they are directed with $\sstatcatof{\selindex}$ being the only outgoing variable, they do not influence any contraction with open variables $\shortcatvariables$, unless further tensors sharing the variable $\sstatcatof{\selindex}$ are present in the contraction.
-The influence of the contraction is performed by the activation cores $\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\sstatcatof{\selindex}}$, which exploit the computed statistic variable and provide in combination with the relational encoding a factor
+The influence of the contraction is performed by the activation cores $\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\sstatcatof{\selindex}}$, which exploit the computed statistic variable and provide in combination with the basis encoding a factor
 \begin{align*}
     \contractionof{\rencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables},\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\sstatcatof{\selindex}}}{\shortcatvariables}
 \end{align*}
 to the Markov Network reduced to the observed variables $\shortcatvariables$.
-When the canonical parameter is vanishing at a coordinate, that is $\canparamat{\indexedselvariable}=0$, then this factor is trivial, since $\actcoreofat{\selindex,0}{\sstatcatof{\selindex}}=\onesat{\sstatcatof{\selindex}}$ and as a consequence of the directionality of relational encodings we have
+When the canonical parameter is vanishing at a coordinate, that is $\canparamat{\indexedselvariable}=0$, then this factor is trivial, since $\actcoreofat{\selindex,0}{\sstatcatof{\selindex}}=\onesat{\sstatcatof{\selindex}}$ and as a consequence of the directionality of basis encodings we have
 \begin{align*}
     \contractionof{\rencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables},\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\sstatcatof{\selindex}}}{\shortcatvariables}
     = \contractionof{\rencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables},\onesat{\sstatcatof{\selindex}}}{\shortcatvariables}
@@ -1749,7 +1749,7 @@ Positivity of a distribution with respect to face measures is an equivalent cond
 \end{proof}
 
 
-Let us now investigate tensor network representations of face measures, based on the relational encoding $\rencodingof{\sstat}$ of a statistic.
+Let us now investigate tensor network representations of face measures, based on the basis encoding $\rencodingof{\sstat}$ of a statistic.
 % Vertices
 Vertices of $\genmeanset$ are faces with single elements, that is $\{\meanparamwith\}$.
 By \lemref{lem:faceConvHullPreimage} there must be $\meanparam$ must lie in the image of $\sstatencoding$, since otherwise $\genmeanset$ would be empty.

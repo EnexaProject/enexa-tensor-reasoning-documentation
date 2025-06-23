@@ -38,7 +38,7 @@ Thus, any exponential family of distributions of $\atomstates$, such that $\imag
 The sufficient statistics consistent in a map $\formulaset$ of formulas brings the following advantages:
 \begin{itemize}
 	\item Numerical Advantage: The sufficient statistics is decomposable into logical connectives. 
-	If the formulas are sparse (in the sense of limited number of connectives necessary in their representation), this gives rise to efficient tensor network decompositions of the relational encoding.
+	If the formulas are sparse (in the sense of limited number of connectives necessary in their representation), this gives rise to efficient tensor network decompositions of the basis encoding.
 	\item Statistical Advantage: Since each formula is Boolean valued, the coordinates of the sufficient statistic are Bernoulli variables. 
 	Due to their boundedness, they and their averages (by Hoeffdings inequality) are sub-Gaussian variables with favorable concentration properties (absence of heavy tails).
 \end{itemize}
@@ -54,9 +54,9 @@ The sufficient statistics consistent in a map $\formulaset$ of formulas brings t
 
 Based on the previous discussion on the representation of exponential families by tensor networks in \secref{sec:exponentialFamilies} we now derive a representation for Markov Logic Networks.
 
-\subsubsect{Relational encodings for distributions}
+\subsubsect{Basis encodings for distributions}
 
-\begin{theorem}[Relational Encodings for Markov Logic Networks]\label{the:mlnTensorRep}
+\begin{theorem}[Basis encodings for Markov Logic Networks]\label{the:mlnTensorRep}
 	A Markov Logic Network to a set of formulas $\formulaset = \{\enumformula \, : \, \selindexin\}$ is represented as
 	\begin{align*}
 		\mlnprobat{\shortcatvariables} = 
@@ -122,7 +122,7 @@ With this we get the decomposition
 More precisely, this transformation of the decomposition holds by \theref{the:splittingContractions} to be shown in \charef{cha:messagePassing}, stating that the contraction of computation and activation cores can be performed before the global contraction of the result. 
 
 % Sparsification by trivial variables
-While in the decomposition of \theref{the:mlnTensorRep} the relational encodings of the features carry all distributed variables $\shortcatvariables$, we now seek towards sparser decompositions.
+While in the decomposition of \theref{the:mlnTensorRep} the basis encodings of the features carry all distributed variables $\shortcatvariables$, we now seek towards sparser decompositions.
 To each $\selindexin$ we denote by $\nodesof{\selindex}$ the maximal subset of $[\catorder]$ such that there is a reduced function
 $\tilde{\formula}_{\selindex} : \bigtimes_{} \rightarrow [2]$
 with
@@ -162,12 +162,12 @@ This sparsity inducing mechanism is analogous to the decomposition of probabilit
 % Sparsity by decomposition
 A further sparsity introducing mechanism is through exploiting redundancy in the computation of $\enumformula$, when a decomposition of the feature is known.
 For the propositional formulas $\enumformula$ this amounts to a syntactic representation of the formula as a composition of logical connectives is available (see \figref{fig:mlnDecRep}). % Make a precise definition in logicRepresentation and link it!
-In this case, we exploit the representation by tensor networks of the relational encodings (shown as \theref{the:compositionByContraction} in \charef{cha:basisCalculus})
+In this case, we exploit the representation by tensor networks of the basis encodings (shown as \theref{the:compositionByContraction} in \charef{cha:basisCalculus})
 Note, that this decomposition scheme introduces further auxiliary variables $\headvariable$ with deterministic dependence on the distributed variables $\shortcatvariables$.
 Such variables are often refered to as hidden.
 
 % Shared formulas
-We can further exploit common syntactical structure in the formulas $\enumformula\in\formulaset$ to reduce the number of relational encodings of connectives.
+We can further exploit common syntactical structure in the formulas $\enumformula\in\formulaset$ to reduce the number of basis encodings of connectives.
 This is the case, when the syntax graph of two or more formulas share a subgraph.
 In that case, the respective syntax graph needs to be represented only once an can be incorporated into the decomposition of all formulas, which share this subgraph.
 For an example see \figref{fig:mlnDecRep}, where the syntactical representation of the formula $\formulaof{0}$ is a subgraph of the syntactical representation of $\formulaof{1}$.
@@ -196,17 +196,17 @@ To summarize, there are two sparsity mechanisms, originating from graphical mode
 		This exploits the main sparsity mechanism in graphical models, where factors in sparse representations depend only on a subset of variables.
 %		The underlying assumptions of conditional independence loss generality.
 	\item \textbf{Computation Sparsity:}
-		When the features of an exponential family are compositions of smaller formulas, the computation core is decomposed into a tensor network of their relational encodings.
+		When the features of an exponential family are compositions of smaller formulas, the computation core is decomposed into a tensor network of their basis encodings.
 		This can be regarded as the main sparsity mechanism of propositional logics, where syntactical decompositions of formulas are exploited.
-		Further, when the structure of the smaller formulas is shared among different features, the respective relational encodings need to be instantiated only once.
+		Further, when the structure of the smaller formulas is shared among different features, the respective basis encodings need to be instantiated only once.
 \end{itemize}
 
 
 %%
 %\red{
-%	We can extend the set of variables, by including the hidden formulas, and get a Markov Network of the relational encodings of connectives and headcores.
+%	We can extend the set of variables, by including the hidden formulas, and get a Markov Network of the basis encodings of connectives and headcores.
 %Here hidden variables are additional variables facilitating the decomposition, but not appearing in open variables of contractions when doing reasoning.
-%One can then exploit redundancies and make sure that every subresult is computed just once, by dropping relational encodings with identical head functions.
+%One can then exploit redundancies and make sure that every subresult is computed just once, by dropping basis encodings with identical head functions.
 %}
 
 
@@ -250,7 +250,7 @@ If the number of atoms and parameters gets large, it is important to represent t
 To avoid inefficiency issues, we also have to represent the parameter tensor $\canparam$ in a tensor network format to improve the variance of estimations (see \charef{cha:concentration}) and provide efficient numerical algorithms.
 
 % Fail of full probability representation
-However, when required to instantiate the probability distribution of a Markov Logic Network as a tensor network, we need to exponentiate and normate the energy tensor, a task for which relational encodings are required.
+However, when required to instantiate the probability distribution of a Markov Logic Network as a tensor network, we need to exponentiate and normate the energy tensor, a task for which basis encodings are required.
 For such tasks, contractions of formula selecting networks are not sufficient and each formula with a nonvanishing weight needs to be instantiated as a factor tensor of a Markov Network. 
 
 
@@ -317,7 +317,7 @@ Based on Markov Logic Networks containing only maxterms and minterms (see \defre
 	where $\lambda$ is a constant.
 \end{proof}
 
-We note, that there are $2^{\atomorder}$ maxterms and $2^{\atomorder}$ minterms, which would have to be instantiated by relational encodings to get a tensor network decomposition.
+We note, that there are $2^{\atomorder}$ maxterms and $2^{\atomorder}$ minterms, which would have to be instantiated by basis encodings to get a tensor network decomposition.
 This large number of features originates from the generality of the representation scheme.
 As a fundamental tradeoff, efficient representations come at the expense of a smaller expressivity of the representation scheme.
 
@@ -632,7 +632,7 @@ Hard Logic Network coincide with Knowledge Bases and are thus representable by c
 		\[ \formulaat{\shortcatvariables} =  \contractionof{\formulaccwith,\tbasisat{\formulavar}}{\shortcatvariables} \, .\]
 \end{proof}
 
-We call this representation scheme the $\land$-symmetry, since we can either represent $\kb$ by instantiation of $\rencodingof{\kb}$, which involves a relational encoding of the conjunction $\land$, or by instantiations of a collection of $\rencodingof{\formula}$.
+We call this representation scheme the $\land$-symmetry, since we can either represent $\kb$ by instantiation of $\rencodingof{\kb}$, which involves a basis encoding of the conjunction $\land$, or by instantiations of a collection of $\rencodingof{\formula}$.
 We use the $\land$ symmetry to represent them as a contraction of the formulas building the Knowledge Base as conjunction.
 
 \begin{remark}{$\land$ symmetry does not generalize to Markov Logic Networks} % Strange -> Drop?
@@ -744,7 +744,7 @@ We can employ the formula decompositions to represent both probabilistic facts o
 \end{proof}
 
 % Discussion
-While the statistics computing cores in the relational encoding are shared to compute the soft and the hard logic formulas, their activation cores differ.
+While the statistics computing cores in the basis encoding are shared to compute the soft and the hard logic formulas, their activation cores differ.
 While probabilistic soft formulas get activation cores (see Theorem~\ref{the:mlnTensorRep})
 \begin{align*}
 	\actcoreofat{\exformula}{\formulavar} 
@@ -978,7 +978,7 @@ Hybrid Logic Networks as trainable Machine Learning models:
 Differentiability and structure learning will be investigated in more detail in the next chapter.
 
 \red{When understanding atoms as observed variables, and the computed as hidden, Hybrid Logic Networks are deep higher-order boltzmann machines: 
-More generic correlations can be captured by a logical connective, calculated by a relational encoding and activated by an activation core.}
+More generic correlations can be captured by a logical connective, calculated by a basis encoding and activated by an activation core.}
 
 \red{Hybrid Logic Networks as bridging soft and hard logics within the formalism of exponential families.}
 

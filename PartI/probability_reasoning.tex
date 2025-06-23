@@ -359,12 +359,12 @@ To prepare for reasoning on data, we now derive tensor network representation fo
         \empdistributionat{\shortcatvariables}
         \coloneqq \normationof{\rencodingofat{\datamap}{\shortcatvariables,\datvariable}}{\shortcatvariables} \, ,
     \end{align*}
-    where we introduced as single incoming for the relational encoding of the sample selector map the sample selecting variable $\datvariable$ taking values in $[\datanum]$.
-%    where by $\datacore$ we denote the relational encoding (see \defref{def:functionRepresentation}) of the sample selector map, and the distributed variables $\shortcatvariables$ are the head variables of the relational encoding.
+    where we introduced as single incoming for the basis encoding of the sample selector map the sample selecting variable $\datvariable$ taking values in $[\datanum]$.
+%    where by $\datacore$ we denote the basis encoding (see \defref{def:functionRepresentation}) of the sample selector map, and the distributed variables $\shortcatvariables$ are the head variables of the basis encoding.
 \end{definition}
 
 % Sample Selector map (former data tensor)
-The relational encoding of the sample selector map has a decomposition by
+The basis encoding of the sample selector map has a decomposition by
 \begin{align*}
     \datacoreat{\shortcatvariables,\datvariable}
     = \sum_{\datindexin} \onehotmapofat{\catindicesof{\datindex}}{\shortcatvariables} \otimes \onehotmapofat{\datindex}{\datvariable} \, .
@@ -380,7 +380,7 @@ We can therefore interpret each coordinate of the empirical distribution as the 
 %and is thus interpreted as the frequency of the corresponding world in the data.
 
 %% Basic CP Decomposition
-The relational encoding of the sample selector map is a sum of one-hot encodings of the data indices and the corresponding sample states.
+The basis encoding of the sample selector map is a sum of one-hot encodings of the data indices and the corresponding sample states.
 Such sums of basis tensors will be further investigated in \secref{sec:basisCP} as basis $\cpformat$ decompositions.
 We now exploit this structure to find efficient tensor network decompositions (see \figref{fig:DataDecomposition}) based on matrices encoding its variables.
 
@@ -390,9 +390,9 @@ We now exploit this structure to find efficient tensor network decompositions (s
         \input{PartI/tikz_pics/probability_representation/data_decomposition.tex}
     \end{center}
     \caption{
-        Decomposition of the relational encoding of a sample selector map to a dataset $\dataset$.
+        Decomposition of the basis encoding of a sample selector map to a dataset $\dataset$.
         a) Interpretation as a sample selection variable $\datvariable$ selecting states for the variables $\shortcatvariables$ according to the enumerated dataset.
-        b) Corresponding decomposition of the relational encoding $\datacore$ into a tensor network in the basis $\cpformat$ Format (see \secref{sec:basisCP}), where $\hypercoreof{\edgeof{\atomenumerator}}=\datacoreof{\atomenumerator}$.
+        b) Corresponding decomposition of the basis encoding $\datacore$ into a tensor network in the basis $\cpformat$ Format (see \secref{sec:basisCP}), where $\hypercoreof{\edgeof{\atomenumerator}}=\datacoreof{\atomenumerator}$.
 %Without the contraction with the dashed $\frac{1}{\datanum}\onesat{\datvariable}$ core, the datacore encodes the distribution conditioned on a datapoint.
     }
     \label{fig:DataDecomposition}
@@ -734,7 +734,7 @@ The query $\sstatcoordinateof{\selindex}$ asked against $\expdistwith$ computes 
 %    = \contractionof{\sencodingof{\sstat},\normationof{\basemeasure,\expof{\contraction{\sencodingof{\sstat},\canparam}}}{\shortcatvariables}}{\selvariable} \, .
 %\end{align*}
 % Infeasibility and turn to variational alternatives with selection encodings.
-The contraction by the moment matching condition can, however, be infeasible, since it requires the instantiation of the probability distribution, which can be done by relational encodings of the statistic.
+The contraction by the moment matching condition can, however, be infeasible, since it requires the instantiation of the probability distribution, which can be done by basis encodings of the statistic.
 We in this section provide alternative characterization of the forward map and approximations of it, which can be computed based on the selection encoding instead.
 Following \cite{wainwright_graphical_2008}, we can characterize the forward mapping to exponential families as a variational problem and provide an alternative characterization to this contraction.
 
@@ -1385,7 +1385,7 @@ We now utilize these findings and provide by \algoref{alg:baseMeasureRefinement}
 
 \begin{example}[Faces with normals parallel to one-hot encodings]
     To get some intuition how to represent face base measures, let us consider face normals $\canparam\in\{\lambda\cdot\onehotmapofat{\selindex}{\selvariable} \, : \, \selindexin, \, \lambda\in\rr/\{0\}\}$.
-    We use relational encodings of the coordinates $\sstatcoordinateof{\selindex}$ of the statistic $\sstat$, with head variables $\catvariableof{\sstatcoordinateof{\selindex}}$ with dimension $\catdimof{\sstatcoordinateof{\selindex}}$ enumerating the image $\imageof{\sstatcoordinateof{\selindex}}\subset\rr$ in an ascending order.
+    We use basis encodings of the coordinates $\sstatcoordinateof{\selindex}$ of the statistic $\sstat$, with head variables $\catvariableof{\sstatcoordinateof{\selindex}}$ with dimension $\catdimof{\sstatcoordinateof{\selindex}}$ enumerating the image $\imageof{\sstatcoordinateof{\selindex}}\subset\rr$ in an ascending order.
     If $\canparamat{\selvariable}=\lambda\cdot\onehotmapofat{\selindex}{\selvariable}$ with $\lambda>0$, then $\argmax_{\shortcatindices} \contraction{\canparam,\sstat(\shortcatindices)}$ consists of states $\shortcatindices$ with minimal statistic $\sstatcoordinateofat{\selindex}{\indexedshortcatvariables}$, that is
     \[  \basemeasureofat{\sstat,\lambda\cdot\onehotmapof{\selindex}}{\shortcatvariables}
     = \contractionof{\rencodingofat{\sstatcoordinateof{\selindex}}{\shortcatvariables,\catvariableof{\sstatcoordinateof{\selindex}}},
@@ -2082,7 +2082,7 @@ This condition is equal to the collection of moment matching equations % (see \t
     \end{align*}
     Here we used
     \[ \sstatcoordinateof{\selindex} = \sbcontractionof{\actcoreof{\selindex}, \idrestrictedto{\imageof{\sstatcoordinateof{\selindex}}}}{\shortcatvariables} \]
-    and redundancies of copies of relational encodings.
+    and redundancies of copies of basis encodings.
     It follows that
     \begin{align*}
         \sbcontraction{\expdist,\sstatcoordinateof{\selindex}} = \contraction{\empdistribution,\sstatcoordinateof{\selindex}}
