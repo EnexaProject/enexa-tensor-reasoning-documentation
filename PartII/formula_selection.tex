@@ -4,36 +4,49 @@ In this chapter we will investigate efficient schemes to represent collections o
 
 % basis encoding of the selection map
 \begin{definition}
-	Given a set of $\seldim$ formulas $\{\formulaof{\selindex} : \selindexin\}$, we define the formula selecting map as the map
-		\[  \fselectionmap : \atomstates \rightarrow \bigtimes_{\selindex\in\seldim} [2] \]
-	with the selection encoding having coordinates to $\shortcatindices\in\atomstates$ and $\selindexin$ by
-		\[ \sencfselectionmapat{\shortcatvariables=\atomindices,\selvariable=\selindex} =  \formulaofat{\selindex}{\shortcatvariables=\atomindices} \, . \]
+    Given a set of $\seldim$ formulas $\{\formulaof{\selindex} : \selindexin\}$, the formula selecting map is the map
+    \begin{align*}
+        \fselectionmap : \atomstates \rightarrow \bigtimes_{\selindex\in\seldim} [2]
+    \end{align*}
+    defined for $\shortcatindices\in\atomstates$ as
+    \begin{align*}
+        \fselectionmapat{\shortcatindices}
+        = \bigtimes_{\selindex\in\seldim} \formulaofat{\selindex}{\shortcatindices} \, .
+    \end{align*}
 \end{definition}
 
 % Selection Variables
-We introduce a selection variable $\selvariable$ and depict the formula selection in Figure~\ref{fig:formulaSelectionMap}.
-
-% Depiction
-\begin{figure}[h]
-\begin{center}
-	\input{PartII/tikz_pics/formula_selection/formula_selecting_map.tex}
-\end{center}
-\caption{Representation of the basis encoding to a formula selecting map as an
-a) Factor of a Graphical Model with a selection variable $\selvariable$ and a computed variable $\headvariableof{\fselectionmap}$.
-b) Decorating Tensor Core with selection variable corresponding with an additional axis.}
-\label{fig:formulaSelectionMap}
-\end{figure}
-
-
-% Decomposition
-A naive representation of the formula selecting map is as a sum
+A tensor representation of a formula selecting map is provided by the selection encoding (see \defref{def:selectionEncoding})
 \begin{align*}
-	 \sencfselectionmapat{\shortcatvariables,\selvariable}
-	 = \sum_{\selindexin} \formulaofat{\selindex}{\shortcatvariables}  \otimes \onehotmapofat{\selindex}{\selvariable} \, .
+    \sencfselectionmapat{\shortcatvariables,\selvariable}
+\end{align*}
+where the selection variable $\selvariable$ takes values in $[\seldim]$ and selects specific formulas in the set $\{\formulaof{\selindex} : \selindexin\}$.
+By definition, we have for any $\shortcatindices\in\atomstates$ and $\selindexin$
+\begin{align*}
+    \sencfselectionmapat{\indexedshortcatvariables,\indexedselvariable}
+    =  \formulaofat{\selindex}{\shortcatvariables=\atomindices} \, .
+\end{align*}
+% Decomposition
+This selection encoding is thus the sum
+\begin{align*}
+    \sencfselectionmapat{\shortcatvariables,\selvariable}
+    = \sum_{\selindexin} \formulaofat{\selindex}{\shortcatvariables}
+    \otimes \onehotmapofat{\selindex}{\selvariable} \, .
 \end{align*}
 Such a representation scheme requires linear resources in the number of formulas.
 We will show in the following, that we can exploit common structure in formulas to drastically reduce this resource consumption.
+Central to these sparse representation scheme are basis encodings $\bencodingof{\fselectionmap}$ of the selection encodings $\sencodingof{\fselectionmap}$, which we depict in \figref{fig:formulaSelectionMap}.
 
+% Depiction
+\begin{figure}[h]
+    \begin{center}
+        \input{PartII/tikz_pics/formula_selection/formula_selecting_map.tex}
+    \end{center}
+    \caption{Representation of the basis encoding $\bencodingof{\fselectionmap}$ to a selection encoded formula selecting map as an
+    a) Factor of a Graphical Model with a selection variable $\selvariable$ and a computed variable $\headvariableof{\fselectionmap}$.
+    b) Decorating Tensor Core with selection variable corresponding with an additional axis.}
+    \label{fig:formulaSelectionMap}
+\end{figure}
 
 
 \sect{Construction schemes}
@@ -43,191 +56,216 @@ Let us now investigate efficient schemes to define sets of formulas to be used i
 We will motivate the folding of the selection variable into multiple selection variables by compositions of selection maps.
 
 
-\subsect{Connective Selecting Tensors}
+\subsect{Connective Selecting Maps} % ! This is more or less the same as the general formula selecting map
 
 We represent choices over connectives with a fixed number of arguments by adding a selection variable to the cores and defining each slice by a candidate connective.
 
 % Formal map
-\begin{definition}\label{def:connectiveSelector}
-	Let $\{\connectiveof{0},\ldots,\connectiveof{\seldimof{\cselectionsymbol}-1}\}$ be a set of connectives with $\atomorder$ arguments.
-	The associated connective selection map is
-		\[ \cselectionmapat{\shortcatvariables,\selvariableof{\cselectionsymbol}}
-		: \atomstates \times [\seldimof{\cselectionsymbol}] \rightarrow [2] \]
-	defined for each $\selindexofin{\cselectionsymbol}$ and $\shortcatindices\in\atomstates$ by 
-		\[ \cselectionmapat{\shortcatvariables=\shortcatindices,\indexedselvariableof{\cselectionsymbol}} 
-		= \connectiveofat{\selindexof{\cselectionsymbol}}{\shortcatvariables=\shortcatindices}  \, . \]
+\begin{definition}
+    \label{def:connectiveSelector}
+    Let $\{\connectiveof{0},\ldots,\connectiveof{\seldimof{\cselectionsymbol}-1}\}$ be a set of connectives with $\atomorder$ arguments.
+    The associated connective selection map is
+    \begin{align*}
+        \cselectionmap : \atomstates \rightarrow \bigtimes_{\selindex\in[\seldimof{\cselectionsymbol}]}[2]
+    \end{align*}
+    defined for $\shortcatindices\in\atomstates$ as
+    \begin{align*}
+        \cselectionmapat{\shortcatindices} = \bigtimes_{\selindex\in[\seldimof{\cselectionsymbol}]} \connectiveofat{\selindex}{\shortcatvariables=\shortcatindices} \, .
+    \end{align*}
+%    \[ \cselectionmapat{\shortcatvariables,\selvariableof{\cselectionsymbol}}
+%    : \atomstates \times [\seldimof{\cselectionsymbol}] \rightarrow [2] \]
+%    defined for each $\selindexofin{\cselectionsymbol}$ and $\shortcatindices\in\atomstates$ by
+%    \[ \cselectionmapat{\shortcatvariables=\shortcatindices,\indexedselvariableof{\cselectionsymbol}}
+%    = \connectiveofat{\selindexof{\cselectionsymbol}}{\shortcatvariables=\shortcatindices}  \, . \]
 \end{definition}
 
-We depict the basis encoding of connective selection maps in Figure~\ref{fig:connectiveSelector}.
-
-\begin{figure}[h]
-\begin{center}
-	\input{PartII/tikz_pics/formula_selection/connective_selector.tex}
-\end{center}
-\caption{Connective Selector.}
-\label{fig:connectiveSelector}
-\end{figure}
-
-%Following a different perspective: skeleton+atomindices at atomic expression level, atomindices at complex expression level!
-%Having an parametrization of binary connectives by $\circ_{\selindex}$ we can define the corresponding connective selector tensor by
-%	\[ \bencodingof{\circ}_{\selindex,:,:} = \bencodingof{\circ_{\selindex}}_{:,:} \, . \]
-
-%\begin{remark}[$\htformat$ Interpretation of Superposed Formula Tensor Networks]\label{rem:HTDecomSFT}
-	%Continuing Remark ~\ref{rem:HTDecomFT}:
-%	Superposed Formula Tensors have a decomposition into a $\htformat$ as sketched here, where we distinguish between formula selection subspaces (indices $\selindexof{\selenumerator}$) and atomic subspaces (indices $\atomlegindexof{\atomenumerator})$.
-%	At each formula selection we thus have a decomposition into three subspaces, two of atomic formulas and one for the formula selection.
-%\end{remark}
+%We depict the basis encoding of connective selection maps in \figref{fig:connectiveSelector}.
+%
+%\begin{figure}[h] % Already drawn
+%    \begin{center}
+%        \input{PartII/tikz_pics/formula_selection/connective_selector.tex}
+%    \end{center}
+%    \caption{Connective Selector.}
+%    \label{fig:connectiveSelector}
+%\end{figure}
 
 
+\subsect{Variable Selecting Maps}
 
-
-\subsect{Variable Selecting Tensor Network}
-
-%\red{Works also for categorical variables! -> Into Contraction Calculus?}
+Choices of connectives can be combined with selections of variables assigned building the arguments of a connective.
+To this end, we introduce variable selecting maps.
 
 %% Definition
-\begin{definition}\label{def:variableSelector}
-	The selection of one out of $\seldim$ variables in a list $\catvariableof{[\seldim]}$ is done by variable selecting maps
-	\begin{align}
-		\vselectionmapat{\catvariableof{[\seldim]},\selvariableof{\vselectionsymbol}}:  \left(\bigtimes_{\selindex\in[\seldim]}[2]\right) \times [\seldim]  \rightarrow [2]
-	\end{align}
-	are defined coordinatewise by
-	\begin{align}
-		\vselectionmapat{\indexedcatvariableof{0},\ldots,\indexedcatvariableof{\seldim-1},\indexedselvariableof{\vselectionsymbol}} = \catindexof{\selindex} \, .
-	\end{align}
+\begin{definition}
+    \label{def:variableSelector}
+    The selection of one out of $\seldim$ variables in a list $\catvariableof{[\seldim]}$ is done by variable selecting maps
+    \begin{align}
+        \vselectionmap : \bigtimes_{\selindex\in[\seldim]}[2] \rightarrow \bigtimes_{\selindex\in[\seldim]}[2] \, .
+        % \vselectionmapat{\catvariableof{[\seldim]},\selvariableof{\vselectionsymbol}}:  \left(\bigtimes_{\selindex\in[\seldim]}[2]\right) \times [\seldim]  \rightarrow [2]
+    \end{align}
+    defined as the identity map
+    \begin{align*}
+        \vselectionmapat{\catvariableof{[\seldim]}} = \catvariableof{[\seldim]} \, .
+    \end{align*}
+%    are defined coordinatewise by
+%    \begin{align}
+%        \vselectionmapat{\indexedcatvariableof{0},\ldots,\indexedcatvariableof{\seldim-1},\indexedselvariableof{\vselectionsymbol}} = \catindexof{\selindex} \, .
+%    \end{align}
 \end{definition}
-	
+
+The selection encoding of the variable selecting map is the tensor $\sencvselectionmapat{\catvariableof{[\seldim]},\selvariableof{\vselectionsymbol}}$
+\begin{align*}
+    \sencvselectionmapat{\indexedcatvariableof{0},\ldots,\indexedcatvariableof{\seldim-1},\indexedselvariableof{\vselectionsymbol}} = \catindexof{\selindexof{\vselectionsymbol}} \, .
+\end{align*}
+
+
 % Interpretation as multiplex gate
-Variable selecting maps appear in the literature as multiplex gates (see Definition 5.3 in \cite{koller_probabilistic_2009}).
+Selection encodings of variable selecting maps appear in the literature as multiplex gates (see e.g. Definition 5.3 in \cite{koller_probabilistic_2009}).
 
 The basis encoding of the variable selection map has a decomposition
 \begin{align*}
-	\bencodingofat{\vselectionmap}{\vselectionheadvar,\catvariableof{[\seldimof{\vselectionsymbol}]}}
-	= \sum_{\selindexofin{\vselectionsymbol}} 
-	\bencodingofat{\atomicformulaof{\selindexof{\vselectionsymbol}}}{\vselectionheadvar,\catvariableof{\selindexof{\vselectionsymbol}}} \otimes  \onehotmapofat{\selindexof{\vselectionsymbol}}{\selvariableof{\vselectionsymbol}} \, .
+    \bencodingofat{\vselectionmap}{\vselectionheadvar,\catvariableof{[\seldimof{\vselectionsymbol}]}}
+    = \sum_{\selindexofin{\vselectionsymbol}}
+    \bencodingofat{\atomicformulaof{\selindexof{\vselectionsymbol}}}{\vselectionheadvar,\catvariableof{\selindexof{\vselectionsymbol}}} \otimes  \onehotmapofat{\selindexof{\vselectionsymbol}}{\selvariableof{\vselectionsymbol}} \, .
 \end{align*}
 This structure is exploited in the next theorem to derive a tensor network decomposition of $\bencodingof{\vselectionmap}$.
 
-\begin{theorem}[Decomposition of Variable Selecting Maps]\label{the:varSelectorDecomposition}
-	Given a list $\catvariableof{[\seldimof{\vselectionsymbol}]}$ of variables, we define for each $\selindexofin{\vselectionsymbol}$ the tensors
-		\[ \selectorcomponentofat{\selindexof{\vselectionsymbol}}{\catvariableof{\selindexof{\vselectionsymbol}},\selvariableof{\vselectionsymbol}} 
-		= \identityat{\vselectionheadvar,\catvariableof{\selindexof{\vselectionsymbol}}} \otimes \onehotmapofat{\selindexof{\vselectionsymbol}}{\selvariableof{\vselectionsymbol}} 
-		+ \onesat{\vselectionheadvar,\catvariableof{\selindexof{\vselectionsymbol}}} \otimes \left(\onesat{\selvariableof{\vselectionsymbol}} - \onehotmapofat{\selindexof{\vselectionsymbol}}{\selvariableof{\vselectionsymbol}} \right) \, . 
-		\]
-	Then we have (see Figure~\ref{fig:SelectorDecomposition})
-		\[ \bencodingofat{\vselectionmap}{\vselectionheadvar,\catvariableof{[\seldim]},\selvariableof{\vselectionsymbol}}
-		= \contractionof{
-			\{\selectorcomponentofat{\selindexof{\vselectionsymbol}}{\vselectionheadvar,\catvariableof{\selindexof{\vselectionsymbol}},\selvariableof{\vselectionsymbol}} \, : \, \selindexofin{\vselectionsymbol}\}
-		}{\vselectionheadvar,\catvariableof{[\seldim]},\selvariableof{\vselectionsymbol}} \, .
-		\]
+\begin{theorem}[Decomposition of Variable Selecting Maps]
+    \label{the:varSelectorDecomposition}
+    Given a list $\catvariableof{[\seldimof{\vselectionsymbol}]}$ of variables, we define for each $\selindexofin{\vselectionsymbol}$ the tensors
+    \begin{align*}
+        \selectorcomponentofat{\selindexof{\vselectionsymbol}}{\catvariableof{\selindexof{\vselectionsymbol}},\selvariableof{\vselectionsymbol}}
+        = \identityat{\vselectionheadvar,\catvariableof{\selindexof{\vselectionsymbol}}} \otimes \onehotmapofat{\selindexof{\vselectionsymbol}}{\selvariableof{\vselectionsymbol}}
+        + \onesat{\vselectionheadvar,\catvariableof{\selindexof{\vselectionsymbol}}}
+        \otimes \left(\onesat{\selvariableof{\vselectionsymbol}} - \onehotmapofat{\selindexof{\vselectionsymbol}}{\selvariableof{\vselectionsymbol}} \right) \, .
+    \end{align*}
+    Then we have (see Figure~\ref{fig:SelectorDecomposition})
+    \[ \bencodingofat{\vselectionmap}{\vselectionheadvar,\catvariableof{[\seldim]},\selvariableof{\vselectionsymbol}}
+    = \contractionof{
+        \{\selectorcomponentofat{\selindexof{\vselectionsymbol}}{\vselectionheadvar,\catvariableof{\selindexof{\vselectionsymbol}},\selvariableof{\vselectionsymbol}} \, : \, \selindexofin{\vselectionsymbol}\}
+    }{\vselectionheadvar,\catvariableof{[\seldim]},\selvariableof{\vselectionsymbol}} \, .
+    \]
 \end{theorem}
 \begin{proof}
-	We show the equivalence of the tensors on an arbitrary coordinates.
-	For $\tilde{\selindex}_{\vselectionsymbol}\in[\seldimof{\vselectionsymbol}]$, $\vselectionheadvar\in[2]$ and $\catindexof{[\seldimof{\vselectionsymbol}]}\in\bigtimes_{\catenumerator\in[\seldimof{\vselectionsymbol}]}[2]$ we have
-	\begin{align*}
-		& \contractionof{
-			\{\selectorcomponentofat{\selindexof{\vselectionsymbol}}{\vselectionheadvar,\catvariableof{\selindexof{\vselectionsymbol}},\selvariableof{\vselectionsymbol}} \, : \, \selindexofin{\vselectionsymbol}\}
-		}{\indexedheadvariableof{\vselectionsymbol},\indexedcatvariableof{[\seldim]},\selvariableof{\vselectionsymbol} = \tilde{\selindex}_{\vselectionsymbol}} \\
-		& \quad = 
-		\prod_{\selindexofin{\vselectionsymbol}} \selectorcomponentofat{\selindexof{\vselectionsymbol}}{
-			\indexedheadvariableof{\vselectionsymbol},\indexedcatvariableof{\selindexof{\vselectionsymbol}},\selvariableof{\vselectionsymbol}=\tilde{\selindex}_{\vselectionsymbol}
-			} \\
-		& \quad = \selectorcomponentofat{\tilde{\selindex}_{\vselectionsymbol}}{
-			\indexedheadvariableof{\vselectionsymbol},\indexedcatvariableof{\selindexof{\vselectionsymbol}},\selvariableof{\vselectionsymbol}=\tilde{\selindex}_{\vselectionsymbol}
-		} \\
-		& \quad = 
-		\begin{cases}
-		 	1 & \text{if} \quad \headindexof{\vselectionsymbol} = \catindexof{\selindexof{\vselectionsymbol}} \\
-		 	0 & \text{else}  
-		 \end{cases} \\
-		 & = \bencodingofat{\vselectionmap}{\indexedheadvariableof{\vselectionsymbol},\indexedcatvariableof{[\seldim]},\selvariableof{\vselectionsymbol}=\tilde{\selindex}_{\vselectionsymbol}}
-	\end{align*}
-	In the second equality, we used that the tensor $\selectorcomponentof{\selindexof{\vselectionsymbol}}$ have coordinates $1$ whenever $\tilde{\selindex}_{\vselectionsymbol}\neq\selindexof{\vselectionsymbol}$.
+    We show the equivalence of the tensors on an arbitrary coordinates.
+    For $\tilde{\selindex}_{\vselectionsymbol}\in[\seldimof{\vselectionsymbol}]$, $\vselectionheadvar\in[2]$ and $\catindexof{[\seldimof{\vselectionsymbol}]}\in\bigtimes_{\catenumerator\in[\seldimof{\vselectionsymbol}]}[2]$ we have
+    \begin{align*}
+        & \contractionof{
+            \{\selectorcomponentofat{\selindexof{\vselectionsymbol}}{\vselectionheadvar,\catvariableof{\selindexof{\vselectionsymbol}},\selvariableof{\vselectionsymbol}} \, : \, \selindexofin{\vselectionsymbol}\}
+        }{\indexedheadvariableof{\vselectionsymbol},\indexedcatvariableof{[\seldim]},\selvariableof{\vselectionsymbol} = \tilde{\selindex}_{\vselectionsymbol}} \\
+        & \quad =
+        \prod_{\selindexofin{\vselectionsymbol}} \selectorcomponentofat{\selindexof{\vselectionsymbol}}{
+            \indexedheadvariableof{\vselectionsymbol},\indexedcatvariableof{\selindexof{\vselectionsymbol}},\selvariableof{\vselectionsymbol}=\tilde{\selindex}_{\vselectionsymbol}
+        } \\
+        & \quad = \selectorcomponentofat{\tilde{\selindex}_{\vselectionsymbol}}{
+            \indexedheadvariableof{\vselectionsymbol},\indexedcatvariableof{\selindexof{\vselectionsymbol}},\selvariableof{\vselectionsymbol}=\tilde{\selindex}_{\vselectionsymbol}
+        } \\
+        & \quad =
+        \begin{cases}
+            1 & \text{if} \quad \headindexof{\vselectionsymbol} = \catindexof{\selindexof{\vselectionsymbol}} \\
+            0 & \text{else}
+        \end{cases} \\
+        & = \bencodingofat{\vselectionmap}{\indexedheadvariableof{\vselectionsymbol},\indexedcatvariableof{[\seldim]},\selvariableof{\vselectionsymbol}=\tilde{\selindex}_{\vselectionsymbol}}
+    \end{align*}
+    In the second equality, we used that the tensor $\selectorcomponentof{\selindexof{\vselectionsymbol}}$ have coordinates $1$ whenever $\tilde{\selindex}_{\vselectionsymbol}\neq\selindexof{\vselectionsymbol}$.
 \end{proof}
 
-
-The decomposition provided by \theref{the:varSelectorDecomposition} is in a CP format, as will be further discussed in \charef{cha:sparseCalculus}.
-The introduced tensors $\selectorcomponentof{\selindexof{\vselectionsymbol}}$ are Boolean, but not directed and therefore encodings of relations but not functions (see \charef{cha:basisCalculus}).
-
-%%% Decomposition
-%% ! THIS IS NOT \theref{the:functionDecompositionBasisCP}, but works on slice sparsity!
-
-%Using that the encoding $\bencodingof{\atomicformulaof{\selindex}}$ of atomic formulas admits and elementary decomposition (see \theref{the:AtomicFTensor}) we notice that Equation~\ref{eq:selectorDecomposition} describes a so-called monomial decomposition, which will be introduced in \defref{def:polynomialSparsity}.
-%We can apply \theref{the:sliceToCP} to find a decomposition of $\selectorcore$ in a CP format consisting of cores
-%\begin{align}
-%	\selectorcoreof{\selindex} = \dirdeltaof{\catvariableof{\selindex},\selvariable} \otimes \onehotmapof{\selindex}
-%	+ \sum_{\tilde{\selindex}\in[\seldim] \, , \, \tilde{\selindex}\neq\selindex} \onesof{\catvariableof{\selindex},\selvariable} \otimes \onehotmapof{\tilde{\selindex}} \, .
-%\end{align}	
-%The CP decomposition is depicted in Figure~\ref{fig:SelectorDecomposition}.
-%
-%% Selectorcores are non-functional basis encodings
-%We notice, that the selector cores $\selectorcoreof{\selindex}$ are encodings of a relation, which is not a function.
-%Therefore, they are binary but not directed tensors.
-%Their contraction 
-%\begin{align}\label{eq:selectorDecomposition}
-% 	\selectorcore = 
-%	\contractionof{\{\selectorcomponentof{\selindex}\, : \, \selindexin\}}
-%	{\{\catvariableof{0},\ldots,\catvariableof{\seldim-1},\selvariable\}}
-%\end{align}
-%is the basis encoding of the function $\vselectionmap$ and thus binary and directed.
-
+The decomposition provided by \theref{the:varSelectorDecomposition} is in a $\cpformat$ format (see \charef{cha:sparseCalculus}).
+The introduced tensors $\selectorcomponentof{\selindexof{\vselectionsymbol}}$ are Boolean, but not directed and therefore basis encodings of relations but not functions (see \charef{cha:basisCalculus}).
 
 %% Interpretation
 %The selectorcores $\selectorcoreof{\selindexof{1}}$ are contracted with the parameter cores and select the respective atom when contracted with truth vector tensormultiplied by constant cores (as placeholder for the other possible atoms).
 %Decomposed into disconnected strands for each atomkey, which connect on the selection axis and on the atom truth axis.
 
-
 \begin{figure}[h]
-\begin{center}
-	\input{PartII/tikz_pics/formula_selection/variable_selector.tex}
-\end{center}
-\caption{Decomposition of the basis encoding of a variable selecting tensor into a network of tensors defined in \theref{the:varSelectorDecomposition}.
-	The decomposition is in a $\cpformat$-Format (see \charef{cha:sparseCalculus}. %, when grouping the indices  $\selindexof{\selenumerator}$ and $\atomlegindexof{\atomicformulaof{\selindexof{\selenumerator}}}$).
-	%To ease the notation, we here use $\bencodingof{\selenumerator}$ to denote $\bencodingof{\bencodingof{\selenumerator}}$.
-}
-\label{fig:SelectorDecomposition}
+    \begin{center}
+        \input{PartII/tikz_pics/formula_selection/variable_selector.tex}
+    \end{center}
+    \caption{Decomposition of the basis encoding of a variable selecting tensor into a network of tensors defined in \theref{the:varSelectorDecomposition}.
+    The decomposition is in a $\cpformat$ format (see \charef{cha:sparseCalculus}). %, when grouping the indices  $\selindexof{\selenumerator}$ and $\atomlegindexof{\atomicformulaof{\selindexof{\selenumerator}}}$).
+    %To ease the notation, we here use $\bencodingof{\selenumerator}$ to denote $\bencodingof{\bencodingof{\selenumerator}}$.
+    }
+    \label{fig:SelectorDecomposition}
 \end{figure}
 
 
 
 
-\sect{State Selecting Tensors}
+\sect{State Selecting Maps}
 
-As an alternative, one can select a state of a categorical variable $\catvariable$.
+When the variables to be selected are the atomization variables to the same categorical variable (see \secref{sec:categoricalTN}), one can avoid the instantiation of all atomization cores and instead represent the variable selecting map using the categorical variable only.
+To show this we introduce the state selecting map to a categorical variable $\catvariable$.
 
-\begin{definition}\label{def:stateSelector}
-	Given a categorical variable $\catvariableof{\sselectionsymbol}$ with dimension $\catdimof{\sselectionsymbol}$ and a selection variable $\selvariableof{\sselectionsymbol}$ with dimension $\seldimof{\sselectionsymbol}=\catdimof{\sselectionsymbol}$ the state selecting tensor 
-		\[ \sselectionmapat{\catvariableof{\sselectionsymbol},\selvariableof{\sselectionsymbol}} : [\catdimof{\sselectionsymbol}] \times [\seldimof{\sselectionsymbol}] \rightarrow [2] \]
-	is defined on $\catindexofin{\sselectionsymbol}$ and $\selindexofin{\sselectionsymbol}$ by
-	\begin{align*}
-		\sselectionmapat{\indexedcatvariableof{},\indexedselvariableof{\sselectionsymbol}} = 
-		\begin{cases}
-			1 & \text{if} \quad \catindex = \selindexof{\sselectionsymbol} \\
-			0 & \text{else}
-		\end{cases} \, . 
-	\end{align*}
+\begin{definition}
+    \label{def:stateSelector}
+    Given a categorical variable $\catvariableof{\sselectionsymbol}$ with dimension $\catdimof{\sselectionsymbol}$ and a selection variable $\selvariableof{\sselectionsymbol}$ with dimension $\seldimof{\sselectionsymbol}=\catdimof{\sselectionsymbol}$ the state selecting map is the map
+    \begin{align*}
+        \sselectionmap : [\catdimof{\sselectionsymbol}] \rightarrow \bigtimes_{\catenumerator\in[\catdimof{\sselectionsymbol}]} [2]
+    \end{align*}
+    defined for $\catindexofin{\sselectionsymbol}$ as
+    \begin{align*}
+        \sselectionmapat{\catindexof{\sselectionsymbol}} = \onehotmapofat{\catindexof{\sselectionsymbol}}{\selvariableof{\sselectionsymbol}} \, .
+    \end{align*}
+%    \[ \sselectionmapat{\catvariableof{\sselectionsymbol},\selvariableof{\sselectionsymbol}} : [\catdimof{\sselectionsymbol}] \times [\seldimof{\sselectionsymbol}] \rightarrow [2] \]
+%    is defined on $\catindexofin{\sselectionsymbol}$ and $\selindexofin{\sselectionsymbol}$ by
+%    \begin{align*}
+%        \sselectionmapat{\indexedcatvariableof{},\indexedselvariableof{\sselectionsymbol}} =
+%        \begin{cases}
+%            1 & \text{if} \quad \catindex = \selindexof{\sselectionsymbol} \\
+%            0 & \text{else}
+%        \end{cases} \, .
+%    \end{align*}
 \end{definition}
 
+The selection encoding of the state selecting map coincides with the dirac delta tensor, that is for $\catindexofin{\sselectionsymbol}$ and $\selindexofin{\sselectionsymbol}$ we have
+\begin{align*}
+    \sencsselectionmapat{\catvariableof{\sselectionsymbol},\selvariableof{\sselectionsymbol}} =
+    \begin{cases}
+        1 & \text{if} \quad \catindex = \selindexof{\sselectionsymbol} \\
+        0 & \text{else}
+    \end{cases} \, .
+\end{align*}
+
+The relation of the variable selecting map and the state selecting map is shown in the next lemma.
+
+\begin{lemma}
+    \label{lem:stateSelectorVsVariableSelector}
+    Let $\catvariableof{[\seldim]}$ be a collection of atomization variables to a categorical variable $\catvariable$ taking values in $[\seldim]$.
+    Then we have for
+    \begin{align*}
+        \contractionof{\bencodingofat{\categoricalmap}{\catvariableof{[\seldim]},\catvariable},
+            \sencvselectionmapat{\catvariableof{[\seldim]},\selvariable}
+        }{\catvariable,\selvariable}
+        =
+        \sencsselectionmapat{\catvariable,\selvariable} \, .
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    For each $\catindex,\selindexin$ we have that
+    \begin{align*}
+        \contractionof{\bencodingofat{\categoricalmap}{\catvariableof{[\seldim]},\catvariable},
+            \sencvselectionmapat{\catvariableof{[\seldim]},\selvariable}
+        }{\indexedcatvariable,\indexedselvariable}
+        &=
+        \contraction{\bencodingofat{\categoricalmap}{\catvariableof{[\seldim]},\indexedcatvariable},
+            \sencvselectionmapat{\catvariableof{[\seldim]},\indexedselvariable}
+        } \\
+        &= \begin{cases}
+               1 & \text{if} \quad \catindex = \selindex \\
+               0 & \text{else}
+        \end{cases}
+    \end{align*}
+    which is thus equal to $\sencsselectionmapat{\indexedcatvariable,\indexedselvariable}$.
+\end{proof}
+
+\lemref{lem:stateSelectorVsVariableSelector} shows that when the variables to be selected are the atomization variables to a categorical variable, the state selecting map can thus be used instead of the variable selecting map.
+The state selecting map has the advantage, that the instantiation of the tensor $\bencodingofat{\categoricalmap}{\catvariableof{[\seldim]},\catvariable}$ enforcing the categorical constraint can be avoided.
+
 % Comment: Alternative based on categorical constraints to be introduced later
-State selecting tensors can also be realized by variable selecting tensors.
-In \secref{sec:categoricalTN} we will describe methods to build atomic variables indicating the states of a categorical variable.
-This would, however, increase the number of variables in a tensor network and can thus lead to an exponential overhead of dimensions.
-State selecting tensors can therefore be seen as a mean to avoid such dimension increases.
-
-\red{State Selectors can be integrated in Variable Selection framework. In this perspective, variable selection networks are the specific case to $X=1$. }
-
-
-%% OLD Alternative
-%Such categorical variable cores have the advantage of avoiding a full atomization of the categorical variable, which is the creation of atoms reproducing the values
-%	\[ \catvariable==\catindexof{\catvariable} \, . \]
-%By representing categorical variable choice, one can thus avoid an increase of the order of the encoded tensors, which avoids intractabilities.
-%Categorical selection cores can further be integrated in the decomposition scheme \eqref{eq:selectorDecomposition}. 
-
-
-
-
-
-
+%State selecting tensors can also be realized by variable selecting tensors.
+%In \secref{sec:categoricalTN} we have described methods to build atomic variables indicating the states of a categorical variable.
+%This would, however, increase the number of variables in a tensor network and can thus lead to an exponential overhead of dimensions.
+%State selecting tensors can therefore be seen as a mean to avoid such dimension increases.
 
 \sect{Composition of formula selecting maps}
 %\sect{Folding of the Selection Variable}
@@ -235,25 +273,34 @@ State selecting tensors can therefore be seen as a mean to avoid such dimension 
 We will now parametrize the sets $\formulaset$ with additional indices and define formula selector maps subsuming all formulas.
 To handle large sets of formulas, we further fold the selection variable into tuples of selection variables.
 
-\begin{definition}\label{def:formulaSelector}
-	Let there be a formula $\formulaof{\selindexlist}$ for each index tuple in $\selindexlist\in\selstates$, where $\selorder,\seldimof{0},\ldots,\seldimof{\selorder-1}\in\nn$.
-	The folded formula selector map (see Figure~\ref{fig:foldedSelector}) is the map 
-		\[ \fselectionmapat{\shortcatvariables,\shortselvariables} : \left(\atomstates\right) \times \left(\selstates\right) \rightarrow [2] \]
-	with the coordinates at the indices $\shortcatindices\in\atomstates$, $\shortselindices\in\selstates$
-		\[  \fselectionmapat{\shortcatvariables=\shortcatindices,\shortselvariables=\shortselindices} 
-		= \formulaofat{\shortselindices}{\shortcatvariables=\shortcatindices} \, . \]
+\begin{definition}
+    \label{def:formulaSelector}
+    Let there be a formula $\formulaof{\selindexlist}$ for each index tuple in $\selindexlist\in\selstates$, where $\selorder,\seldimof{0},\ldots,\seldimof{\selorder-1}\in\nn$.
+    The folded formula selection map (see \figref{fig:foldedSelector}) is the map
+    \begin{align*}
+        \fselectionmap : \atomstates \rightarrow \bigtimes_{\selindexofin{0}} \cdots \bigtimes_{\selindexofin{\selorder-1}} [2]
+    \end{align*}
+    defined as
+    \begin{align*}
+        \fselectionmapat{\shortcatindices} = \left( \formulaofat{\shortselindices}{\shortcatvariables=\shortcatindices} \right)_{\seldimof{0},\ldots,\seldimof{\selorder-1}\in\selstates} \, .
+    \end{align*}
+%
+%    \[ \fselectionmapat{\shortcatvariables,\shortselvariables} : \left(\atomstates\right) \times \left(\selstates\right) \rightarrow [2] \]
+%    with the coordinates at the indices $\shortcatindices\in\atomstates$, $\shortselindices\in\selstates$
+%    \[  \fselectionmapat{\shortcatvariables=\shortcatindices,\shortselvariables=\shortselindices}
+%    = \formulaofat{\shortselindices}{\shortcatvariables=\shortcatindices} \, . \]
 \end{definition}
 
-% Formula Section based on skeleton expressions
-We will find formula selector maps by composition variables selector maps (\defref{def:variableSelector}) and connective selector maps (\defref{def:connectiveSelector}).
-This is especially useful to provide efficient decompositions of basis encodings.
+Folding the selection variable into multiple selection variables is especially useful to find efficient decomposition schemes of the formula selecting maps.
+In the reminder of this section we will provide an example, where each selection variable is constructed to parameterize a local change to the formula with the result that the basis encoding of the global formula selecting map decomposes into local formula selecting maps.
+
 
 \begin{figure}[h]
-\begin{center}
-	\input{PartII/tikz_pics/formula_selection/folded_selector.tex}
-\end{center}
-\caption{Basis encoding of the folded map $\fselectionmap$.}
-\label{fig:foldedSelector}
+    \begin{center}
+        \input{PartII/tikz_pics/formula_selection/folded_selector.tex}
+    \end{center}
+    \caption{Basis encoding of the folded map $\fselectionmap$.}
+    \label{fig:foldedSelector}
 \end{figure}
 
 
@@ -264,44 +311,54 @@ This is especially useful to provide efficient decompositions of basis encodings
 
 % Motivating foldings by composition
 The folding of the selection variable is motivated by the composition of selection maps.
-We call the composition of a connective selection with variable selection maps for each argument a formula selecting neuron.
+We call the composition of a connective selection (see \defref{def:connectiveSelector}) with variable selection maps (see \defref{def:variableSelector}) for each argument a formula selecting neuron.
 
 
-\begin{definition}\label{def:fsNeuron}
-	Given an order $\selorder\in\nn$ let there be a connective selector $\selvariable_{\exconnective}$ selecting connectives of order $\selorder$ and let $\vselectionmapof{0},\ldots,\vselectionmapof{\selorder-1}$ be a collection of variable selectors.
-	The corresponding logical neuron is the map
-	\begin{align*}
-		\lneuronat{\shortcatvariablelist,\shortselvariablelist} 
-		: \left(\atomstates\right) \times [\seldimof{\cselectionsymbol}] \times \left( \bigtimes_{\selenumeratorin} [\seldimof{\selenumerator}]\right) \rightarrow [2] 
-	\end{align*}
-	defined for $\shortcatindices\in\atomstates$, $\selindexof{\cselectionsymbol}\in[\seldimof{\cselectionsymbol}]$ and
-	$\selindices\in \bigtimes_{\selenumeratorin} [\seldimof{\selenumerator}]$ by
-	\begin{align*}
-		\lneuron(\atomindices, \selindexof{\cselectionsymbol}, \selindices) =
-		\cselectionmap(\vselectionmapof{0}(\atomindices, \selindexof{0}),\ldots,\vselectionmapof{\selorder-1}(\atomindices,\selindexof{\selorder-1}), \selindexof{\cselectionsymbol}) \, .
-	\end{align*}
+\begin{definition}
+    \label{def:fsNeuron}
+    Given an order $\selorder\in\nn$ let there be a connective selector $\selvariable_{\exconnective}$ selecting connectives of order $\selorder$ and let $\vselectionmapof{0},\ldots,\vselectionmapof{\selorder-1}$ be a collection of variable selectors.
+    The corresponding logical neuron is the map
+    \begin{align*}
+        \lneuron : \atomstates \rightarrow \bigtimes_{\selindexofin{\cselectionsymbol}} \bigtimes_{\selindexofin{0}} \cdots \bigtimes_{\selindexofin{\selorder-1}} [2]
+    \end{align*}
+    defined for $\shortcatindices\in\atomstates$ by
+    \begin{align*}
+        \lneuronat{\shortcatindices}
+        = \left( \connectiveof{\selindexof{\cselectionsymbol}(\catvariableof{\selindexof{0}},\ldots,\catvariableof{\selindexof{\selorder-1}})}\right)_{\selindexofin{\cselectionsymbol},\selindexofin{0},\ldots,\selindexofin{\selorder-1}}
+    \end{align*}
+%    \begin{align*}
+%        \lneuronat{\shortcatvariablelist,\shortselvariablelist}
+%        : \left(\atomstates\right) \times [\seldimof{\cselectionsymbol}] \times \left( \bigtimes_{\selenumeratorin} [\seldimof{\selenumerator}]\right) \rightarrow [2]
+%    \end{align*}
+%    defined for $\shortcatindices\in\atomstates$, $\selindexof{\cselectionsymbol}\in[\seldimof{\cselectionsymbol}]$ and
+%    $\selindices\in \bigtimes_{\selenumeratorin} [\seldimof{\selenumerator}]$ by
+%    \begin{align*}
+%        \lneuron(\atomindices, \selindexof{\cselectionsymbol}, \selindices) =
+%        \cselectionmap(\vselectionmapof{0}(\atomindices, \selindexof{0}),\ldots,\vselectionmapof{\selorder-1}(\atomindices,\selindexof{\selorder-1}), \selindexof{\cselectionsymbol}) \, .
+%    \end{align*}
 \end{definition}
 
 % Tensor Network Decomposition
 Each neuron has a tensor network decomposition by a connective selector tensor and a variable selector tensor network for each argument, as we state in the next theorem.
 
-\begin{theorem}{Decomposition of formula selecting neurons}\label{the:neuronDecomposition}
-	Let $\lneuron$ a logical neuron, defined for a connective selector $\selvariable_{\exconnective}$ and variable selectors $\vselectionmapof{0},\ldots,\vselectionmapof{\selorder-1}$.
-	Then we have (see Figure~\ref{fig:neuronDecomposition} for the example of $\selorder=2$):
-	\begin{align*}
-		&\bencodingofat{\lneuron}{\headvariableof{\lneuron},\shortcatvariables,\selvariableof{\cselectionsymbol},\selvariableof{\vselectionsymbol,0},\ldots,\selvariableof{\vselectionsymbol,\selorder-1}} \\
-		&\quad = \langle\{\bencodingofat{\cselectionmap}{
-				\headvariableof{\lneuron},\headvariableof{\vselectionsymbol,0},\ldots,\headvariableof{\vselectionsymbol,\selorder-1}}, \\
-		& \quad\quad\quad\bencodingofat{\vselectionmapof{0}}{
-				\headvariableof{\vselectionsymbol,0},\shortcatvariables,\selvariableof{\vselectionsymbol,0}},\ldots,
-				\bencodingofat{\vselectionmapof{\selorder-1}}{
-					\headvariableof{\vselectionsymbol,\selorder-1},\shortcatvariables,\selvariableof{\vselectionsymbol,\selorder-1}}
-				\} \rangle
-		\left[\headvariableof{\lneuron},\shortcatvariables, \selvariableof{\cselectionsymbol},\selvariableof{\vselectionsymbol,0},\ldots,\selvariableof{\vselectionsymbol,\selorder-1}\right] \, .
-	\end{align*}
+\begin{theorem}{Decomposition of formula selecting neurons}
+    \label{the:neuronDecomposition}
+    Let $\lneuron$ a logical neuron, defined for a connective selector $\selvariable_{\exconnective}$ and variable selectors $\vselectionmapof{0},\ldots,\vselectionmapof{\selorder-1}$.
+    Then we have (see Figure~\ref{fig:neuronDecomposition} for the example of $\selorder=2$):
+    \begin{align*}
+        &\bencodingofat{\lneuron}{\headvariableof{\lneuron},\shortcatvariables,\selvariableof{\cselectionsymbol},\selvariableof{\vselectionsymbol,0},\ldots,\selvariableof{\vselectionsymbol,\selorder-1}} \\
+        &\quad = \langle\{\bencodingofat{\cselectionmap}{
+            \headvariableof{\lneuron},\headvariableof{\vselectionsymbol,0},\ldots,\headvariableof{\vselectionsymbol,\selorder-1}}, \\
+        & \quad\quad\quad\bencodingofat{\vselectionmapof{0}}{
+            \headvariableof{\vselectionsymbol,0},\shortcatvariables,\selvariableof{\vselectionsymbol,0}},\ldots,
+        \bencodingofat{\vselectionmapof{\selorder-1}}{
+            \headvariableof{\vselectionsymbol,\selorder-1},\shortcatvariables,\selvariableof{\vselectionsymbol,\selorder-1}}
+        \} \rangle
+        \left[\headvariableof{\lneuron},\shortcatvariables, \selvariableof{\cselectionsymbol},\selvariableof{\vselectionsymbol,0},\ldots,\selvariableof{\vselectionsymbol,\selorder-1}\right] \, .
+    \end{align*}
 \end{theorem}
 \begin{proof}
-	By composition \theref{the:compositionByContraction}.
+    By composition \theref{the:compositionByContraction}.
 \end{proof}
 
 
@@ -316,14 +373,14 @@ Each neuron has a tensor network decomposition by a connective selector tensor a
 %We thus have a parameter space $\rr^{\seldim}$ parametrizing the possible assignments to the skeleton in its basis vectors.
 
 \begin{figure}[h]
-\begin{center}
-	\input{PartII/tikz_pics/formula_selection/logical_neuron.tex}
-\end{center}
-\caption{Example of a logical neuron $\lneuron$ of order $\selorder=2$.
-	a) Selection and categorical variables and their interdependencies visualized in a hypergraph.
-	b) Basis encoding of the logical neuron and tensor network decomposition into variable selecting and connective selecting tensors.
-}
-\label{fig:neuronDecomposition}
+    \begin{center}
+        \input{PartII/tikz_pics/formula_selection/logical_neuron.tex}
+    \end{center}
+    \caption{Example of a logical neuron $\lneuron$ of order $\selorder=2$.
+    a) Selection and categorical variables and their interdependencies visualized in a hypergraph.
+    b) Basis encoding of the logical neuron and tensor network decomposition into variable selecting and connective selecting tensors.
+    }
+    \label{fig:neuronDecomposition}
 \end{figure}
 
 
@@ -334,40 +391,41 @@ Single neurons have a limited expressivity, since for each choice of the selecti
 The expressivity is extended to all propositional formulas, when allowing for networks of neurons, which can select each others as input arguments.
 
 
-\begin{definition}\label{def:fsNeuralNetwork}
+\begin{definition}
+    \label{def:fsNeuralNetwork}
 
 %	We call a graph consistent of nodes decorated by formula selecting neurons and directed edges representing the argument dependencies of the neuron on other neurons, an architecture graph.
 %	An acyclic architecture graph is called a formula selecting neural network.	
 %	Formula selecting neurons, which are not included by other formula selecting neurons are called output neurons and collected in the variables $\catvariableof{\larchitecture}$. 
 %	A logical neural network is a collection of logical neurons, such that the network graph (nodes: neurons, edges: directed representing argument dependencies) is acyclic (a DAG).
-	
-	An architecture graph $\graphof{\larchitecture}=(\nodesof{\larchitecture},\edgesof{\larchitecture})$ is an acyclic directed hypergraph with nodes appearing at most once as outgoing nodes.
-	Nodes appearing only as outgoing nodes are input neurons and are labeled by $\inneuronset$ and nodes not appearing as outgoing nodes are the output neurons in the set $\outneuronset$ (see Figure~\ref{fig:architectureGraph} for an example).
 
-	Given an architecture graph $\graphof{\larchitecture}=(\nodesof{\larchitecture},\edgesof{\larchitecture})$, a \emph{formula selecting neural network} $\fsnn$ is a tensor network of logical neurons at each $\lneuron\in\nodesof{\larchitecture}/\inneuronset$, such that each neuron depends on variables $\catvariableof{\parentsof{\lneuron}}$ and on selection variables $\selvariableof{\lneuron}$.
-	The collection of all selection variable is notated by $\selvariableof{\larchitecture}$.
+    An architecture graph $\graphof{\larchitecture}=(\nodesof{\larchitecture},\edgesof{\larchitecture})$ is an acyclic directed hypergraph with nodes appearing at most once as outgoing nodes.
+    Nodes appearing only as outgoing nodes are input neurons and are labeled by $\inneuronset$ and nodes not appearing as outgoing nodes are the output neurons in the set $\outneuronset$ (see Figure~\ref{fig:architectureGraph} for an example).
 
-	The activation tensor of each neuron $\lneuron\in\nodesof{\larchitecture}/\inneuronset$ is
-	\begin{align*}
-		\lneuractivationat{\catvariableof{\inneuronset},\selvariableof{\larchitecture}} 
-		= \contractionof{
-			\{\bencodingof{\tilde{\lneuron}} \, : \, \tilde{\lneuron}\in\nodesof{\larchitecture}/\inneuronset \} \cup \{\onehotmapofat{1}{\headvariableof{\lneuron}}\}
-		}{\catvariableof{\inneuronset},\selvariableof{\larchitecture}} \, . 
-	\end{align*}
-		
-	The activation tensor of the formula selecting neural network is the contraction
-	\begin{align*}
-		\fsnnat{\catvariableof{\inneuronset},\selvariableof{\larchitecture}} 
-		= \contractionof{
-			\{\bencodingofat{\lneuractivation}{\headvariableof{\lneuron},\catvariableof{\parentsof{\lneuron}},\selvariableof{\larchitecture}} \, : \, \lneuron\in\nodesof{\larchitecture}/\inneuronset \} \cup \{\onehotmapofat{1}{\headvariableof{\lneuron}} \, : \, \lneuron\in\outneuronset\}
-		}{\catvariableof{\inneuronset},\selvariableof{\larchitecture}} \, . 
-	\end{align*}
-	
-	The expressivity of a formula selecting neural network $\fsnn$ is the formula set
-	\begin{align*}
-		\formulasetof{\larchitecture} = \left\{ \larchitectureat{\catvariableof{\inneuronset},\indexedselvariableof{\larchitecture}}  : \selindexof{\larchitecture}\in\selstates \right\} \, . 
-	\end{align*}
-	
+    Given an architecture graph $\graphof{\larchitecture}=(\nodesof{\larchitecture},\edgesof{\larchitecture})$, a \emph{formula selecting neural network} $\fsnn$ is a tensor network of logical neurons at each $\lneuron\in\nodesof{\larchitecture}/\inneuronset$, such that each neuron depends on variables $\catvariableof{\parentsof{\lneuron}}$ and on selection variables $\selvariableof{\lneuron}$.
+    The collection of all selection variable is notated by $\selvariableof{\larchitecture}$.
+
+    The activation tensor of each neuron $\lneuron\in\nodesof{\larchitecture}/\inneuronset$ is
+    \begin{align*}
+        \lneuractivationat{\catvariableof{\inneuronset},\selvariableof{\larchitecture}}
+        = \contractionof{
+            \{\bencodingof{\tilde{\lneuron}} \, : \, \tilde{\lneuron}\in\nodesof{\larchitecture}/\inneuronset \} \cup \{\onehotmapofat{1}{\headvariableof{\lneuron}}\}
+        }{\catvariableof{\inneuronset},\selvariableof{\larchitecture}} \, .
+    \end{align*}
+
+    The activation tensor of the formula selecting neural network is the contraction
+    \begin{align*}
+        \fsnnat{\catvariableof{\inneuronset},\selvariableof{\larchitecture}}
+        = \contractionof{
+            \{\bencodingofat{\lneuractivation}{\headvariableof{\lneuron},\catvariableof{\parentsof{\lneuron}},\selvariableof{\larchitecture}} \, : \, \lneuron\in\nodesof{\larchitecture}/\inneuronset \} \cup \{\onehotmapofat{1}{\headvariableof{\lneuron}} \, : \, \lneuron\in\outneuronset\}
+        }{\catvariableof{\inneuronset},\selvariableof{\larchitecture}} \, .
+    \end{align*}
+
+    The expressivity of a formula selecting neural network $\fsnn$ is the formula set
+    \begin{align*}
+        \formulasetof{\larchitecture} = \left\{ \fsnnat{\catvariableof{\inneuronset},\indexedselvariableof{\larchitecture}}  : \selindexof{\larchitecture}\in\selstates \right\} \, .
+    \end{align*}
+
 \end{definition}
 
 % ? Extend by activation cone stuff
@@ -378,31 +436,32 @@ We notice that the architecture graph is a scheme to construct the variable depe
 To this end, we replace each neuron $\lneuron\in\nodesof{\larchitecture}/\inneuronset$ by an output variable $\headvariableof{\lneuron}$ and further add selection variables $\selvariableof{\lneuron}$ to the directed edges, that is to each directed hyperedge $(\{\lneuron\}, \parentsof{\lneuron})\in\edgesof{\larchitecture}$ we construct a directed hyperedge $(\{\headvariableof{\lneuron}\}, \catvariableof{\parentsof{\lneuron}}\cup\selvariableof{\lneuron})$.
 
 \begin{figure}[h]
-\begin{center}
-	\input{PartII/tikz_pics/formula_selection/architecture_graph.tex}
-\end{center}
-\caption{Example of an architecture graph $\graphof{\larchitecture}$ with input neurons $\inneuronset=\{\lneuronof{0},\lneuronof{1},\lneuronof{2},\lneuronof{3}\}$ and output neurons $\outneuronset=\{\lneuronof{6},\lneuronof{7}\}$
-}
-\label{fig:architectureGraph}
+    \begin{center}
+        \input{PartII/tikz_pics/formula_selection/architecture_graph.tex}
+    \end{center}
+    \caption{Example of an architecture graph $\graphof{\larchitecture}$ with input neurons $\inneuronset=\{\lneuronof{0},\lneuronof{1},\lneuronof{2},\lneuronof{3}\}$ and output neurons $\outneuronset=\{\lneuronof{6},\lneuronof{7}\}$
+    }
+    \label{fig:architectureGraph}
 \end{figure}
 
 
 \begin{theorem}
-	Given fixed selection variables $\selvariableof{\larchitecture}$, the formula selecting neural network is the conjunction of output neurons, that is
-	\begin{align*}
-		\fsnnat{\catvariableof{\inneuronset},\selvariableof{\larchitecture}} = \bigwedge_{\lneuron\in\outneuronset} \lneuronat{\catvariableof{\inneuronset},\selvariableof{\larchitecture}} \, . 
-	\end{align*}
+    Given fixed selection variables $\selvariableof{\larchitecture}$, the formula selecting neural network is the conjunction of output neurons, that is
+    \begin{align*}
+        \fsnnat{\catvariableof{\inneuronset},\selvariableof{\larchitecture}} %= \bigwedge_{\lneuron\in\outneuronset} \lneuronat{\catvariableof{\inneuronset},\selvariableof{\larchitecture}}
+        = \contractionof{\left\{\lneuractivationat{\catvariableof{\inneuronset},\selvariableof{\larchitecture}} : \lneuron\in\outneuronset\right\}}{\catvariableof{\inneuronset},\selvariableof{\larchitecture}} \, .
+    \end{align*}
 \end{theorem}
 \begin{proof}
-	By effective calculus (see \theref{the:effectiveConjunction}), we have
-		\[ \contractionof{\bencodingofat{\land}{\catvariableof{\land},\shortcatvariables},\onehotmapofat{1}{\catvariableof{\land}}}{\shortcatvariables} = \bigotimes_{\catenumeratorin} \onehotmapofat{1}{\catvariableof{\catenumerator}} \]
-	and thus
-	\begin{align*}
-		\fsnnat{\catvariableof{\inneuronset},\selvariableof{\larchitecture}}
-		= \contractionof{
-			\{\bencodingof{\lneuron} \, : \, \lneuron\in\nodesof{\larchitecture}/\inneuronset \} \cup \{\bencodingofat{\land}{\catvariableof{\land},\headvariableof{\lneuron}  \, : \, \lneuron\in\outneuronset}, \onehotmapofat{1}{\catvariableof{\land}}\}
-		}{\catvariableof{\inneuronset},\selvariableof{\larchitecture}} \, . 
-	\end{align*}
+    By effective calculus (see \theref{the:effectiveConjunction}), we have
+    \[ \contractionof{\bencodingofat{\land}{\catvariableof{\land},\shortcatvariables},\onehotmapofat{1}{\catvariableof{\land}}}{\shortcatvariables} = \bigotimes_{\catenumeratorin} \onehotmapofat{1}{\catvariableof{\catenumerator}} \]
+    and thus
+    \begin{align*}
+        \fsnnat{\catvariableof{\inneuronset},\selvariableof{\larchitecture}}
+        = \contractionof{
+            \{\bencodingof{\lneuron} \, : \, \lneuron\in\nodesof{\larchitecture}/\inneuronset \} \cup \{\bencodingofat{\land}{\catvariableof{\land},\headvariableof{\lneuron}  \, : \, \lneuron\in\outneuronset}, \onehotmapofat{1}{\catvariableof{\land}}\}
+        }{\catvariableof{\inneuronset},\selvariableof{\larchitecture}} \, .
+    \end{align*}
 \end{proof}
 
 
@@ -436,8 +495,6 @@ By the commutation of contractions, we can further use \theref{the:neuronDecompo
 %In case of multiple output neurons, the retrieval needs to be performed separately as in \theref{the:formulaRetrieval}, since contracting basis vectors $\onehotmapof{1}$ at multiple output neurons will retrieve the conjunction of those output neurons.
 
 
-
-
 %\subsect{Skeleton Expressions}
 %
 %When only allowing for argument selections at the leaf level of the network, we get a skeleton expression.
@@ -461,14 +518,7 @@ By the commutation of contractions, we can further use \theref{the:neuronDecompo
 %\end{definition}
 
 
-
-
-
-
 %% ANOTHER EXAMPLE:
-
-
-
 
 
 %\begin{definition}
@@ -504,20 +554,21 @@ The main application of formula selecting networks in this work is the efficient
 This will be exploited in the sparse representation of exponential families by energies and in structure learning.
 In the next lemma we will show the correspondence of formula selecting networks and selection encodings.
 
-\begin{lemma}\label{lem:relToSelFSN}
-	Given a set $\{\formulaof{\selindexlist} : \selindexlist\in\selstates\}$ of propositional formulas we define the statistic
-		 \[ \formulaset : \catindices \rightarrow (\formulaof{\selindexlist}(\catindices))_{\selindexlist} \, . \]
-	and the formula selecting map
-		\[ \fselectionmap: \catindices , \selindexlist \rightarrow \formulaof{\selindexlist} (\catindices) \, . \]
-	Then 
-		\[ \sencodingofat{\formulaset}{\shortcatvariablelist, \shortselvariablelist} = \fselectionmap\left[\shortcatvariablelist, \shortselvariablelist \right] \, .  \]
+\begin{lemma}
+    \label{lem:relToSelFSN}
+    Given a set $\{\formulaof{\selindexlist} : \selindexlist\in\selstates\}$ of propositional formulas we define the statistic
+    \[ \formulaset : \catindices \rightarrow (\formulaof{\selindexlist}(\catindices))_{\selindexlist} \, . \]
+    and the formula selecting map
+    \[ \fselectionmap: \catindices , \selindexlist \rightarrow \formulaof{\selindexlist} (\catindices) \, . \]
+    Then
+    \[ \sencodingofat{\formulaset}{\shortcatvariablelist, \shortselvariablelist} = \fselectionmap\left[\shortcatvariablelist, \shortselvariablelist \right] \, .  \]
 \end{lemma}
 \begin{proof}
-	For any indices $\shortselindices\in\selstates$ and $\shortcatindices\in\atomstates$ we have
-	\begin{align*}
-		\sencodingofat{\formulaset}{\shortcatvariablelist=\shortcatindices, \shortselvariablelist=\shortselindices}
-		=  \formulaof{\selindexlist}(\catindices) =  \fselectionmap\left[\shortcatvariablelist=\shortcatindices, \shortselvariablelist=\shortselindices \right] \, . 
-	\end{align*}
+    For any indices $\shortselindices\in\selstates$ and $\shortcatindices\in\atomstates$ we have
+    \begin{align*}
+        \sencodingofat{\formulaset}{\shortcatvariablelist=\shortcatindices, \shortselvariablelist=\shortselindices}
+        =  \formulaof{\selindexlist}(\catindices) =  \fselectionmap\left[\shortcatvariablelist=\shortcatindices, \shortselvariablelist=\shortselindices \right] \, .
+    \end{align*}
 \end{proof}
 
 %% Reason for basis encodings and selection encodings.
@@ -535,11 +586,11 @@ This is possible due to redundancies in logical calculus due to modular combinat
 
 % Retrieve functions
 We can retrieve specific formulas by slicing the selection variables, i.e. for $\selindices$ we have
-	\[ \exformula_{\selindices}[\shortcatvariables] = \fselectionmapat{\shortcatvariables,\selvariable=\selindices} \, .  \]
+\[ \exformula_{\selindices}[\shortcatvariables] = \fselectionmapat{\shortcatvariables,\selvariable=\selindices} \, .  \]
 
 In a tensor network diagram we depict this by
 \begin{center}
-	\input{PartII/tikz_pics/formula_selection/formula_retrieval.tex}
+    \input{PartII/tikz_pics/formula_selection/formula_retrieval.tex}
 \end{center}
 
 % Interpretation by dynamic programming
@@ -563,13 +614,13 @@ In Gibbs Sampling (\algoref{alg:Gibbs}), one can use the energy-based approach t
 \subsect{Batch contraction of parametrized formulas}
 
 Given a set $\formulaset$ of formulas, we build a formula selecting network parametrizing the formulas.
-The contraction 
+The contraction
 \begin{align*}
-	\contractionof{\extnet,\fselectionmap}{\shortselvariables} 
+    \contractionof{\extnet,\fselectionmap}{\shortselvariables}
 \end{align*}
 is a tensor containing the contractions of the formulas $\formulaof{\shortselindices}$ with an arbitrary tensor network $\extnet$ as
 \begin{align*}
-	\contraction{\extnet,\formulaof{\shortselindices}} = \contractionof{\extnet,\fselectionmap}{\shortselvariables=\shortselindices} \, .
+    \contraction{\extnet,\formulaof{\shortselindices}} = \contractionof{\extnet,\fselectionmap}{\shortselvariables=\shortselindices} \, .
 \end{align*}
 
 
@@ -578,21 +629,20 @@ is a tensor containing the contractions of the formulas $\formulaof{\shortselind
 We show in the next two examples, how a full contraction of the formula selecting map with a probability distribution or a knowledge base can be interpreted.
 
 \begin{example}[Average satisfaction of formulas]
-	The average of the formula satisfactions in $\formulaset$ giben a probability tensor $\probtensor$ is 
-		\[ \frac{1}{\prod_{\selenumeratorin}\seldimof{\selenumerator}} \cdot \contraction{\probtensor,\sencodingof{\formulaset}} \, . \]
+    The average of the formula satisfactions in $\formulaset$ giben a probability tensor $\probtensor$ is
+    \[ \frac{1}{\prod_{\selenumeratorin}\seldimof{\selenumerator}} \cdot \contraction{\probtensor,\sencodingof{\formulaset}} \, . \]
 \end{example}
 
 
 \begin{example}[Deciding whether any formula is not contradicted]
-	For example: We want to decide, whether there is a formula in $\formulaset$ not contradicted by a Knowledge base $\kb$.
-	This is the case if and only if 
-		\[ \contraction{\kb,\sencodingof{\formulaset}} = 0 \, .  \]
-	We use \lemref{lem:relToSelFSN} to get that $\sencodingof{\formulaset}=\fselectionmap$.
-	When the formulas are representable in a folded scheme, we find tensor network decompositions of $\fselectionmap$ and exploit them along efficient representations of $\kb$ in an efficient calculation of $\contraction{\kb,\sencodingof{\formulaset}} $.
-	This is further equal to 
-		\[ \kb \models \lnot \left( \bigvee_{\exformula\in\formulaset} \exformula\right) \, . \]
+    For example: We want to decide, whether there is a formula in $\formulaset$ not contradicted by a Knowledge base $\kb$.
+    This is the case if and only if
+    \[ \contraction{\kb,\sencodingof{\formulaset}} = 0 \, .  \]
+    We use \lemref{lem:relToSelFSN} to get that $\sencodingof{\formulaset}=\fselectionmap$.
+    When the formulas are representable in a folded scheme, we find tensor network decompositions of $\fselectionmap$ and exploit them along efficient representations of $\kb$ in an efficient calculation of $\contraction{\kb,\sencodingof{\formulaset}} $.
+    This is further equal to
+    \[ \kb \models \lnot \left( \bigvee_{\exformula\in\formulaset} \exformula\right) \, . \]
 \end{example}
-
 
 
 %\subsect{Neuro-Symbolic Architectures}
@@ -614,28 +664,26 @@ We show in the next two examples, how a full contraction of the formula selectin
 
 For example (see Figure \ref{fig:AndSupFTDecomposition}) consider the logical neuron with single activation candidate $\{\land\}$ and two variable selectors selecting $\catorder$ atomic variables $\shortcatvariables$.
 The expressivity of this network is the set of all conjunctions of the atoms
-	\[ \{\catvariableof{\atomenumerator} \land \catvariableof{\secatomenumerator} \, : \, \atomenumerator,\secatomenumerator\in[\atomorder] \} \]
+\[ \{\catvariableof{\atomenumerator} \land \catvariableof{\secatomenumerator} \, : \, \atomenumerator,\secatomenumerator\in[\atomorder] \} \]
 
 
 % Covariance measure
 Contracting with a probability distribution, we use the tensor
-	\[ \hypercoreat{\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}} = \contractionof{\fsnn}{\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}} \]
+\[ \hypercoreat{\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}} = \contractionof{\fsnn}{\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}} \]
 to read of covariances as
-	\[ \mathrm{Cov}(\catvariableof{\atomenumerator},\catvariableof{\secatomenumerator}) = \hypercoreat{\selvariableof{\vselectionsymbol,0}=\atomenumerator,\selvariableof{\vselectionsymbol,1}=\secatomenumerator}  - 
-	\hypercoreat{\selvariableof{\vselectionsymbol,0}=\atomenumerator,\selvariableof{\vselectionsymbol,1}=\atomenumerator}  \cdot \hypercoreat{\selvariableof{\vselectionsymbol,0}=\secatomenumerator,\selvariableof{\vselectionsymbol,1}=\secatomenumerator} \, .  \]
-	
-	
-	
+\[ \mathrm{Cov}(\catvariableof{\atomenumerator},\catvariableof{\secatomenumerator}) = \hypercoreat{\selvariableof{\vselectionsymbol,0}=\atomenumerator,\selvariableof{\vselectionsymbol,1}=\secatomenumerator}  -
+\hypercoreat{\selvariableof{\vselectionsymbol,0}=\atomenumerator,\selvariableof{\vselectionsymbol,1}=\atomenumerator}  \cdot \hypercoreat{\selvariableof{\vselectionsymbol,0}=\secatomenumerator,\selvariableof{\vselectionsymbol,1}=\secatomenumerator} \, .  \]
+
 
 %	\[ \skeleton = \placeholderof{1} \land \placeholderof{2} \]
 %with the candidates for each placeholder being a set of $\atomorder$ atoms.
 
 \begin{figure}[h]
-\begin{center}
-	\input{PartII/tikz_pics/formula_selection/and_supft_decomposition.tex}
-\end{center}
-\caption{Superposition of the encoded formulas $\bencodingof{\atomicformulaof{\selindexof{1}} \land \atomicformulaof{\selindexof{2}}}$ with weight $\canparam_{\selindexof{1} \selindexof{2}}$}
-\label{fig:AndSupFTDecomposition}
+    \begin{center}
+        \input{PartII/tikz_pics/formula_selection/and_supft_decomposition.tex}
+    \end{center}
+    \caption{Superposition of the encoded formulas $\bencodingof{\atomicformulaof{\selindexof{1}} \land \atomicformulaof{\selindexof{2}}}$ with weight $\canparam_{\selindexof{1} \selindexof{2}}$}
+    \label{fig:AndSupFTDecomposition}
 \end{figure}
 
 
@@ -644,22 +692,22 @@ to read of covariances as
 
 % Architecture
 \red{
-We can represent any propositional knowledge base by the following scheme:
-Literal selecting neurons are logical neurons with connective identity/negation (selecting positive/negative literal) and selecting neurons select for each an atom.
-The single output neuron represents the disjunction, respectively the conjunction, combining the literal selecting neurons.
-The number of neurons defined by the maximal clause size plus one.
-Smaller clauses can be covered when adding False as a possible choice (The respective neuron has to choose the identity, otherwise the full clause will be trivial).
-This architecture will be discussed in more detail in \charef{cha:approximation} as $\cpformat$ selecting networks.
+    We can represent any propositional knowledge base by the following scheme:
+    Literal selecting neurons are logical neurons with connective identity/negation (selecting positive/negative literal) and selecting neurons select for each an atom.
+    The single output neuron represents the disjunction, respectively the conjunction, combining the literal selecting neurons.
+    The number of neurons defined by the maximal clause size plus one.
+    Smaller clauses can be covered when adding False as a possible choice (The respective neuron has to choose the identity, otherwise the full clause will be trivial).
+    This architecture will be discussed in more detail in \charef{cha:approximation} as $\cpformat$ selecting networks.
 % Parameter
-The parameter core is in the basis $\cpformat$ format and each slice selects a clause of the knowledge base.
-In combination with polynomial decompositions, which will be provided in \charef{cha:networkRepresentation}, one can exploit this architecture to find sparse formula decompositions.
+    The parameter core is in the basis $\cpformat$ format and each slice selects a clause of the knowledge base.
+    In combination with polynomial decompositions, which will be provided in \charef{cha:networkRepresentation}, one can exploit this architecture to find sparse formula decompositions.
 %When taking the slice values to infinity (e.g. by an annealing procedure), the represented member of the exponential family converges to the uniform distribution of the models of the knowledge base.
 }
 
 % Representation by selection tensor networks
 \begin{remark}[Minterms and Maxterms]
-	All minterms and maxterms can be represented by a two layer selection tensor networks without variable selection in two layers.
-	The bottom layer has an $\lnot/\mathrm{Id}$ connective selection neuron to each atom and the upper layer consists of a single $\atomorder$ary conjunction.
+    All minterms and maxterms can be represented by a two layer selection tensor networks without variable selection in two layers.
+    The bottom layer has an $\lnot/\mathrm{Id}$ connective selection neuron to each atom and the upper layer consists of a single $\atomorder$ary conjunction.
 \end{remark}
 
 
@@ -669,34 +717,34 @@ In combination with polynomial decompositions, which will be provided in \charef
 
 While we here restricted on boolean variables, formula selecting networks can be extended to variables of larger cardinality.
 \begin{itemize}
-	\item Connective selecting tensors: Can encode arbitrary functions $h_{\selindex}$ of discrete variables, but need $\catvariableof{\cselectionmap}$ to be an enumeration of the states, in particular to be of dimension
-	\[ \catdimof{\cselectionmap} = \cardof{ \cup_{\selindexin} \imageof{h_{\selindex}} } \, . \]
-	\item Variable selecting tensors can be understood as specific cases of connective selecting tensors and can thus also be generalized in a straight forward manner by
-	\[ \catdimof{\cselectionmap} = \cardof{ \cup_{\selindexin} \imageof{h_{\selindex}} } \, .  \]
-	\item State selecting tensors are directly defined for larger dimensions
+    \item Connective selecting tensors: Can encode arbitrary functions $h_{\selindex}$ of discrete variables, but need $\catvariableof{\cselectionmap}$ to be an enumeration of the states, in particular to be of dimension
+    \[ \catdimof{\cselectionmap} = \cardof{ \cup_{\selindexin} \imageof{h_{\selindex}} } \, . \]
+    \item Variable selecting tensors can be understood as specific cases of connective selecting tensors and can thus also be generalized in a straight forward manner by
+    \[ \catdimof{\cselectionmap} = \cardof{ \cup_{\selindexin} \imageof{h_{\selindex}} } \, .  \]
+    \item State selecting tensors are directly defined for larger dimensions
 \end{itemize}
 
 
 An example of such a more generic usage is a discretization scheme for continuous neurons.
 
 \begin{example}[Discretization of a continuous neuron]
-	Let there be a neuron by a map of weight vectors and input vectors to $\rr$, that is
-		\[ \sigma( w, x) : \rr^{\catorder} \times \rr^{\catorder} \rightarrow \rr \, .\]
+    Let there be a neuron by a map of weight vectors and input vectors to $\rr$, that is
+    \[ \sigma( w, x) : \rr^{\catorder} \times \rr^{\catorder} \rightarrow \rr \, .\]
 %	When $w \in \arbsetof{weight}\subset \rr^{\catorder}$ and $x \in \arbsetof{x}\subset \rr^{\catorder}$ have
-	We restrict the weights to a subset $\arbsetof{weight}\subset\rr^{\catorder}$ and the input vectors to $\arbsetof{x}\subset\rr^{\catorder}$,
-	If follows that
-		\[ \cardof{\imageof{\restrictionofto{\sigma}{\arbsetof{weight}\times\arbsetof{x}}}} \leq \cardof{\arbsetof{weight}} \cdot \cardof{\arbsetof{x}} \, . \]
-	To discretize the neuron, we use the subset encoding scheme of \defref{def:subsetEncoding} and define enumeration variables $\indvariableof{weight}$, $\indvariableof{x}$ and $\indvariableof{\sigma}$ enumerating $\arbsetof{weight}$, $\arbsetof{x}$ and $\imageof{\restrictionofto{\sigma}{\arbsetof{weight}\times\arbsetof{x}}}$, which are accompanied by respective index interpretation functions.
-	Then the basis encoding of the discretized neuron is
-	\begin{align*}
+    We restrict the weights to a subset $\arbsetof{weight}\subset\rr^{\catorder}$ and the input vectors to $\arbsetof{x}\subset\rr^{\catorder}$,
+    If follows that
+    \[ \cardof{\imageof{\restrictionofto{\sigma}{\arbsetof{weight}\times\arbsetof{x}}}} \leq \cardof{\arbsetof{weight}} \cdot \cardof{\arbsetof{x}} \, . \]
+    To discretize the neuron, we use the subset encoding scheme of \defref{def:subsetEncoding} and define enumeration variables $\indvariableof{weight}$, $\indvariableof{x}$ and $\indvariableof{\sigma}$ enumerating $\arbsetof{weight}$, $\arbsetof{x}$ and $\imageof{\restrictionofto{\sigma}{\arbsetof{weight}\times\arbsetof{x}}}$, which are accompanied by respective index interpretation functions.
+    Then the basis encoding of the discretized neuron is
+    \begin{align*}
         \bencodingofat{\sigma}{\indvariableof{\sigma},\indvariableof{weight},\indvariableof{x}} \, .
         = \sum_{\indindexofin{weight},\indindexofin{x}}
-		\onehotmapof{\invindexinterpretationofat{\sigma(\indexinterpretationofat{weight}{\indindexof{weight}},\indexinterpretationofat{x}{\indindexof{x}})}{\sigma}}{\indvariableof{\sigma}}
-		\otimes \onehotmapofat{\indindexof{weight}}{\indvariableof{weight}}
-		\otimes \onehotmapofat{\indindexof{x}}{\indvariableof{x}} \, .
+        \onehotmapof{\invindexinterpretationofat{\sigma(\indexinterpretationofat{weight}{\indindexof{weight}},\indexinterpretationofat{x}{\indindexof{x}})}{\sigma}}{\indvariableof{\sigma}}
+        \otimes \onehotmapofat{\indindexof{weight}}{\indvariableof{weight}}
+        \otimes \onehotmapofat{\indindexof{x}}{\indvariableof{x}} \, .
     \end{align*}
-	If the neuron is of the form
-		\[ \sigma(w,x) = \psi(\sum_i w_i \cdot x_i)\]
-	a decomposition into multiplication at each coordinate and summation of the results, with basis encodings for each, can be done.
-	\red{Here the index interpretation variables are split into a selection enumerated by $i$ and each variable gets assigned to single cores in the decomposition.}
+    If the neuron is of the form
+    \[ \sigma(w,x) = \psi(\sum_i w_i \cdot x_i)\]
+    a decomposition into multiplication at each coordinate and summation of the results, with basis encodings for each, can be done.
+    \red{Here the index interpretation variables are split into a selection enumerated by $i$ and each variable gets assigned to single cores in the decomposition.}
 \end{example}
