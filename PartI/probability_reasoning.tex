@@ -56,7 +56,13 @@ Expectation queries are further contractions of marginal queries with the identi
     = \contraction{\probat{\headvariableof{\exfunction}},\idrestrictedto{\imageof{\exfunction}}{\headvariableof{\exfunction}} } \, .
 \end{align*}
 This contraction equations follows from the more general \corref{cor:rhoToNormal}, which will be shown in \charef{cha:basisCalculus}.
-\red{Expectation queries on statistics build the mean parameter of a distribution.}
+
+% Mean parameters
+Expectation queries compute mean parameters to a distribution, see \defref{def:meanPolytope}.
+Given a statistic $\sstat$ and a distribution $\probwith$, each feature $\sstatcoordinateof{\selindex}$ for $\selindexin$ corresponds with a mean parameter
+\begin{align*}
+    \expectationof{\exfunction} = \contraction{\probwith,\sstatcoordinateof{\selindex}} = \meanparamat{\indexedselvariable} \, .
+\end{align*}
 
 %% Conditional Probabilities and conditional queries
 %Conditional probabilities are queries, where the tensors $\exfunction$ and $\secexfunction$ are identity mappings in the respective variable state spaces.
@@ -154,16 +160,16 @@ We therefore investigate here schemes to answer queries based on the energy tens
     Based on this we get
     \begin{align*}
         \condprobof{\catvariableof{\nodesa}}{\indexedcatvariableof{\nodesb}}
-        = \normalizationofwrt{\expof{\energytensorat{\catvariableof{\nodesa},\catvariableof{\nodesb}}}}{\catvariableof{\nodesa}}{\indexedcatvariableof{\nodesb}} \\
-        = \frac{\contractionof{\expof{\energytensorat{\catvariableof{\nodesa},\catvariableof{\nodesb}}}}{\catvariableof{\nodesa},\indexedcatvariableof{\nodesb}}}{
+        &= \normalizationofwrt{\expof{\energytensorat{\catvariableof{\nodesa},\catvariableof{\nodesb}}}}{\catvariableof{\nodesa}}{\indexedcatvariableof{\nodesb}} \\
+        &= \frac{\contractionof{\expof{\energytensorat{\catvariableof{\nodesa},\catvariableof{\nodesb}}}}{\catvariableof{\nodesa},\indexedcatvariableof{\nodesb}}}{
             \contractionof{\expof{\energytensorat{\catvariableof{\nodesa},\catvariableof{\nodesb}}}}{\indexedcatvariableof{\nodesb}}
         } \\
-        = \frac{\contractionof{\expof{\energytensorat{\catvariableof{\nodesa},\indexedcatvariableof{\nodesb}}}}{\catvariableof{\nodesa}}}{
+        &= \frac{\contractionof{\expof{\energytensorat{\catvariableof{\nodesa},\indexedcatvariableof{\nodesb}}}}{\catvariableof{\nodesa}}}{
             \contraction{\expof{\energytensorat{\catvariableof{\nodesa},\indexedcatvariableof{\nodesb}}}}
         } \\
-        = \normalizationof{
+        &= \normalizationof{
             \expof{\energytensorat{\catvariableof{\nodesa},\indexedcatvariableof{\nodesb}}}
-        }{\catvariableof{\nodesa}} \, .
+        }{\catvariableof{\nodesa}} \, . \qedhere
     \end{align*}
 \end{proof}
 
@@ -434,11 +440,11 @@ We now exploit this structure to find efficient tensor network decompositions (s
     With the first claim it now follows that
     \begin{align*}
         \empdistributionat{\shortcatvariables}
-        = \normalizationof{\datacore}{\shortcatvariables}
-        = \frac{\contractionof{\datacore}{\shortcatvariables}}{\contraction{\datacore}}
-        =  \contractionof{
+        &= \normalizationof{\datacore}{\shortcatvariables}
+        = \frac{\contractionof{\datacore}{\shortcatvariables}}{\contraction{\datacore}} \\
+        &=  \contractionof{
             \left\{\bencodingofat{\datamap^{\atomenumerator}}{\catvariableof{\atomenumerator},\datvariable} : \atomenumeratorin \right\} \cup \left\{\frac{1}{\datanum}\onesat{\datvariable}\right\}
-        }{\shortcatvariables}  \, .
+        }{\shortcatvariables}  \, . \qedhere
     \end{align*}
 \end{proof}
 
@@ -499,7 +505,11 @@ Motivated by this property, we use the transformed form to define the loss-likel
 
 \begin{definition}
     \label{def:loss}
-    The log-likelihood loss of a distribution $\probtensor$ given a dataset $\dataset$ is the functional
+    The log-likelihood loss of a distribution $\probtensor$ given a dataset
+    \begin{align*}
+        \dataset
+    \end{align*}
+    is the functional
     \begin{align*}
         \lossof{\probtensor}
         = -\contractionof{\lnof{\probwith},\empdistributionwith} \, .
@@ -648,7 +658,8 @@ The differences of both are discussed in Chapter~8 in \cite{koller_probabilistic
 
 \sect{Variational Inference in Exponential Families}
 
-
+With the maximum likelihood method we have already formulated inference tasks by optimization problem with variations of the probability distribution.
+In a broader perspective, we now investigate variational inference problems using the canonical and mean parametrization of exponential families.
 
 \subsect{Forward and Backward Mappings}
 
@@ -663,7 +674,7 @@ We first formalize these inference problems by the forward and backward mapping 
     The map
     \begin{align*}
         \forwardmap : \parspace\rightarrow\genmeanset\subset\parspace
-        \defspace \forwardmapof{\canparam} = \contractionof{\expdistwith,\sencsstatwith}{\selvariable}
+        \defspace \forwardmapof{\canparam} = \contractionof{\expdistwith,\sencsstatwith}{\selvariable}+
     \end{align*}
     is called the forward map of the exponential family and inverse, that is a map
     \begin{align*}
@@ -709,7 +720,7 @@ We now state that the elements of the corresponding exponential family $\expfami
     \end{align*}
     and using that $\secsstat$ is minimal we get
     \begin{align*}
-        \imageof{\forwardmap} = \genmeanset / \bigcup_{\genfaceset\neq\genmeanset} \genfaceset \, .
+        \imageof{\forwardmap} = \genmeanset / \bigcup_{\genfaceset\neq\genmeanset} \genfaceset \, . & \qedhere
     \end{align*}
 %    For any $\canparam$
 \end{proof}
@@ -816,7 +827,7 @@ the backward map returns the position of the maximum in $\parspace$.
     \begin{align*}
         \dualcumfunction(\meanparam) = \contraction{\expdistwith,\sencsstatwith,\canparam} - \cumfunctionof{\canparam}
         = \contraction{\expdistwith, \lnof{\expdistwith}}
-        = - \sentropyof{\expdist} \, .
+        = - \sentropyof{\expdist} \, . & \qedhere
     \end{align*}
 \end{proof}
 
@@ -847,6 +858,27 @@ We can use this insight to provide a variational characterization of the forward
 %\begin{align*}
 %    \meanparamat{\selvariable} = \argmax_{\meanparam\in\meanset}
 %\end{align*}
+
+\subsect{Mode queries by annealing}
+
+%% ANNEALING
+The mode of a distribution is related to the forward mapping of $\invtemp\cdot\canparam$ in the limit $\invtemp\rightarrow\infty$ of low temperatures.
+To sketch this relation, we recall the variational formulation of mode queries by
+\begin{align*}
+    \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\cansstatcatindicesargmax}
+    = \genmeansetargmax \contraction{\meanparam,\canparam}  \, .
+\end{align*}
+Further, for any by the inverse temperature $\invtemp\neq0$ annealed canonical parameter $\canparamwith$ (see \secref{sec:simulatedAnnealing}) we have
+\begin{align*}
+    \genmeansetargmax  \contraction{\meanparam,\invtemp\cdot\canparam}+ \sentropyof{\meanrepprob}
+    = \genmeansetargmax  \contraction{\meanparam,\canparam} + \frac{1}{\invtemp} \cdot \sentropyof{\meanrepprob} \, .
+\end{align*}
+In the annealing limit, that is for large $\invtemp$, the entropy term becomes negligible and the forward mapping tends to the convex hull
+\begin{align*}
+    \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\cansstatcatindicesargmax}
+    = \genmeansetargmax \contraction{\meanparam,\canparam}  \, .
+\end{align*}
+For a more detailed discussion of this relation, see Theorem~8.1 in \cite{wainwright_graphical_2008}.
 
 
 \sect{Maximum entropy distributions}
@@ -907,13 +939,11 @@ We then drop this assumption and generalize the statement to exponential familie
         &= - \contraction{\canparam,\meanparam} + \cumfunctionof{\canparam} \\
         &= \sentropyof{\expdistof{(\sstat,\canparam,\basemeasure)}} \, .
     \end{align*}
-
     With the Gibbs inequality we have if $\secprobtensor\neq\expdistof{(\sstat,\canparam,\basemeasure)}$
     \begin{align*}
         \sentropyof{\expdistof{(\sstat,\estcanparam,\basemeasure)}} - \sentropyof{\secprobtensor}
         = \centropyof{\secprobtensor}{\expdistof{(\sstat,\estcanparam,\basemeasure)}} - \sentropyof{\secprobtensor} > 0 \, .
     \end{align*}
-
     Therefore, if $\secprobtensor$ does not coincide with$\expdistof{(\sstat,\estcanparam,\basemeasure)}$, it is not a solution of \probref{prob:maxEntropy}.
 \end{proof}
 
@@ -1098,7 +1128,7 @@ As we show next, also a converse statement holds, namely that for any vector $\c
     Further, since the contraction with $\canparamwith$ is linear, the set $\cangenmeansetargmax$ is contained in the boundary of the polytope $\genmeanset$.
     We can conlcude, that the set is a face, that is we find a subset $\mathcal{I}\subset[n]$ with
     \begin{align*}
-        \genfacesetof{\facecondset} = \cangenmeansetargmax \, .
+        \genfacesetof{\facecondset} = \cangenmeansetargmax \, . & \qedhere
     \end{align*}
 \end{proof}
 
@@ -1183,7 +1213,6 @@ We define for each face the normal cone
         \genfaceset = \argmax_{\meanparam\in\genmeanset} \contraction{\lambda\cdot\canparam+(1-\lambda)\cdot\seccanparam,\meanparam}
     \end{align*}
     and $\lambda\cdot\canparam+(1-\lambda)\cdot\seccanparam \in\maxcone$.
-
     % Show that Effectively open - Missing!
 \end{proof}
 
@@ -1227,7 +1256,7 @@ We define for each face the normal cone
             \genfacesetof{\facecondsetof{0}}
             &= \convhullof{\sstatencodingat{\catindex}\wcols\catindex\in\argmax_{\seccatindex\in\stateset}\contraction{\canparamof{1},\sstatencodingat{\seccatindex}}} \\
             &\subset \convhullof{\sstatencodingat{\catindex}\wcols\catindex\in\argmax_{\seccatindex\in\stateset}\contraction{\canparam,\sstatencodingat{\seccatindex}}} \\
-            &= \genfacesetof{\facecondsetof{1}} \, .
+            &= \genfacesetof{\facecondsetof{1}} \, . \qedhere
         \end{align*}
 \end{proof}
 
@@ -1261,7 +1290,7 @@ We now consider the set of cones with this partial order, and show that this set
     % Non-empty faces
     For all pairs of non-empty faces $\genfacesetof{\facecondsetof{0}},\genfacesetof{\facecondsetof{1}}$, \lemref{lem:faceSetsToMaxCones} ensures that
     \begin{align*}
-        \psi(\genfacesetof{\facecondsetof{0}}) \prec \psi(\genfacesetof{\facecondsetof{1}}) \quad \Leftrightarrow \quad \genfacesetof{\facecondsetof{0}} \prec \genfacesetof{\facecondsetof{1}} \, .
+        \psi(\genfacesetof{\facecondsetof{0}}) \prec \psi(\genfacesetof{\facecondsetof{1}}) \quad \Leftrightarrow \quad \genfacesetof{\facecondsetof{0}} \prec \genfacesetof{\facecondsetof{1}} \, . & \qedhere
     \end{align*}
 \end{proof}
 
@@ -1487,7 +1516,7 @@ This alternations are sketched in \figref{fig:hs_mean_sketch} in red.
 
 
 
-\sect{Forward Mapping in Exponential Families}
+%\sect{Forward Mapping in Exponential Families}
 
 %\subsect{Variational Formulation}
 %Besides the direct computation of the mean parameter we can give a variational characterization of the forward mapping.
@@ -1521,26 +1550,6 @@ This alternations are sketched in \figref{fig:hs_mean_sketch} in red.
 %\end{proof}
 
 
-\subsect{Mode queries by annealing}
-
-%% ANNEALING
-The mode of a distribution is related to the forward mapping of $\invtemp\cdot\canparam$ in the limit $\invtemp\rightarrow\infty$ of low temperatures.
-To sketch this relation, we recall the variational formulation of mode queries by
-\begin{align*}
-    \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\cansstatcatindicesargmax}
-    = \genmeansetargmax \contraction{\meanparam,\canparam}  \, .
-\end{align*}
-Further, for any by the inverse temperature $\invtemp\neq0$ annealed canonical parameter $\canparamwith$ (see \secref{sec:simulatedAnnealing}) we have
-\begin{align*}
-    \genmeansetargmax  \contraction{\meanparam,\invtemp\cdot\canparam}+ \sentropyof{\meanrepprob}
-    = \genmeansetargmax  \contraction{\meanparam,\canparam} + \frac{1}{\invtemp} \cdot \sentropyof{\meanrepprob} \, .
-\end{align*}
-In the annealing limit, that is for large $\invtemp$, the entropy term becomes negligible and the forward mapping tends to the convex hull
-\begin{align*}
-    \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\cansstatcatindicesargmax}
-    = \genmeansetargmax \contraction{\meanparam,\canparam}  \, .
-\end{align*}
-For a more detailed discussion of this relation, see Theorem~8.1 in \cite{wainwright_graphical_2008}.
 
 
 
@@ -1596,7 +1605,7 @@ We show next, that the mean field problem is an instance of an information proje
     \begin{align*}
         \argmax_{\probtensorin} \contraction{\energytensor,\probtensor}+ \sentropyof{\probtensor}
         = \argmax_{\probtensorin} -\kldivof{\probtensor}{\probof{\energytensor}}
-        = \argmax_{\probtensorin} \kldivof{\probtensor}{\probof{\energytensor}} \, .
+        = \argmax_{\probtensorin} \kldivof{\probtensor}{\probof{\energytensor}} \, . & \qedhere
     \end{align*}
 \end{proof}
 
@@ -1662,10 +1671,12 @@ The optimal update equations are derived as the next theorem.
         \onesat{\catvariableof{\catenumerator}} + \contractionof{\{\energytensor\}\cup\{\legcoreof{\seccatenumerator} \, : \, \seccatenumeratorin ,\, \seccatenumerator\neq\catenumerator \}}{\catvariableof{\catenumerator}} \, .
     \end{align*}
     Together with the condition $\contraction{\legcoreof{\catenumerator}}=1$ this is satisfied at
-    \[ \legcoreofat{\catenumerator}{\catvariableof{\catenumerator}}
+    \begin{align*}
+        \legcoreofat{\catenumerator}{\catvariableof{\catenumerator}}
     = \normalizationof{ \expof{ \contractionof{ \{\energytensor\}\cup
     \{\legcoreof{\seccatenumerator} \, : \, \seccatenumerator\neq\catenumerator\} }{\catvariableof{\catenumerator}} }
-    }{\catvariableof{\catenumerator}} \, . \]
+    }{\catvariableof{\catenumerator}} \, . & \qedhere
+    \end{align*}
 \end{proof}
 
 \algoref{alg:NMF} is the alternation of legwise updates until a stopping criterion is met.
@@ -1852,7 +1863,9 @@ We approximate the solution of this problem again by an alternating algorithm, w
         }
     \end{align*}
     and reparametrization of $\lambda_1$ to
-    \[ \lambda = \expof{\lambda_1} \, . \]
+    \begin{align*}
+        \lambda = \expof{\lambda_1} \, . & \qedhere
+    \end{align*}
 \end{proof}
 
 %% MISSING: ALGORITHM?
@@ -2091,7 +2104,7 @@ This condition is equal to the collection of moment matching equations % (see \t
     is equal to
     \begin{align*}
         \contraction{\actcoreof{\selindex}, \idrestrictedto{\imageof{\sstatcoordinateof{\selindex}}}, \hypercoreat{\catvariableof{\sstatcoordinateof{\selindex}}}}
-        = \contraction{\actcoreof{\selindex},\hypercoreat{\catvariableof{\sstatcoordinateof{\selindex}}}} \cdot \meanparamat{\indexedselvariable} \, .
+        = \contraction{\actcoreof{\selindex},\hypercoreat{\catvariableof{\sstatcoordinateof{\selindex}}}} \cdot \meanparamat{\indexedselvariable} \, . & \qedhere
     \end{align*}
 \end{proof}
 
@@ -2157,8 +2170,8 @@ The Hesse matrix of $\cumfunction$ at $\canparam$ is the covariance of the featu
     It further holds
     \begin{align*}
         \gradwrtat{\seccanparamat{\secselvariable}}{\canparam} \expdistwith
-        = \contractionof{\expdistwith,\sencsstatat{\shortcatvariables,\secselvariable}}{\shortcatvariables,\secselvariable}
-        - \contractionof{\expdistwith,\sencsstatat{\shortcatvariables,\secselvariable}}{\secselvariable} \otimes \expdistwith \, .
+        = & \contractionof{\expdistwith,\sencsstatat{\shortcatvariables,\secselvariable}}{\shortcatvariables,\secselvariable} \\
+        & - \contractionof{\expdistwith,\sencsstatat{\shortcatvariables,\secselvariable}}{\secselvariable} \otimes \expdistwith \, .
     \end{align*}
     Combining both equations, we get the claim.
 \end{proof}
