@@ -1078,9 +1078,9 @@ Both results use in addition to \theref{the:formulaSlicePolynomialDecomposition}
 % Polytope
 While mean parameter polytopes $\genmeanset$ to generic exponential families have been subject to \charef{cha:probReasoning}, we in this section restrict to the mean polytopes of hybrid logic networks, which we characterize using propositional logics.
 Hybrid Logic Networks are exponential families, which statistic $\sstat$ consists of coordinates with $\imageof{\sstatcoordinateof{\selindex}}\subset\ozset$ and are therefore propositional formulas.
-The convex polytope of mean parameters (see \defref{def:meanPolytope}) is for a statistic $\mlnstat$ of propositional formulas and a base measure $\basemeasure$
+The convex polytope of mean parameters (see \defref{def:meanPolytope}) is for a statistic $\mlnstat$ of propositional formulas and a base measure $\basemeasure$ the set
 \begin{align*}
-	\hlnmeanset = \left\{ \contractionof{\probtensor,\sencmlnstat}{\selvariable} \, : \, \probtensor\in\bmrealprobof{\basemeasure} \right\} \, ,
+	\hlnmeanset = \left\{ \contractionof{\probwith,\sencmlnstatwith}{\selvariable} \, : \, \probwith\in\bmrealprobof{\basemeasure} \right\} \, ,
 \end{align*}
 where by $\bmrealprobof{\basemeasure}$ we denote the set of all by $\basemeasure$ representable probability distributions.
 By \theref{the:meanPolytopeConvHull} the convex polytope has a characterization as a convex hull
@@ -1090,19 +1090,17 @@ By \theref{the:meanPolytopeConvHull} the convex polytope has a characterization 
 \end{align}
 
 % 0/1 Polytopes
-We notice, that all $\sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable}$ are boolean vectors in $\parspace$.
-The mean parameter polytopes are thus of $0/1$-polytopes \cite{ziegler_lectures_2000,gillmann_01-polytopes_2007}, from which a few obvious properties follow.
-Since those are convex subsets of the cube $[0,1]^\seldim$, which vertices are all binary vectors, also each $\sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable}$ (with $\basemeasureat{\indexedshortcatvariables}=1$) is an extreme point.
-Further, if for any $\selindexin$ we have $\meanparamat{\indexedselvariable}\in\{0,1\}$, then $\meanparamwith$ is in the boundary of the cube and thus also of $\hlnmeanset$
-
+We notice, that for boolean statistics $\formulaset$ all $\sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable}$ are boolean vectors in $\parspace$.
+The mean parameter polytopes are thus $0/1$-polytopes \cite{ziegler_lectures_2000,gillmann_01-polytopes_2007}, from which a few obvious properties follow.
+Since those are convex subsets of the cube $[0,1]^\seldim$, which vertices are all boolean vectors in $\parspace$, also each $\sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable}$ (with $\basemeasureat{\indexedshortcatvariables}=1$) is a vertex.
+Further, if for any $\selindexin$ we have $\meanparamat{\indexedselvariable}\in\ozset$, then $\meanparamwith$ is on a proper face of the cube and thus also of $\hlnmeanset$.
 \red{In the following, we characterize the faces of the mean parameter polytope.}
 
-
-\subsect{Vertices by hard logic networks}
+\subsect{Vertices by hard logic networks} % -> More general: Face measures by hard logic networks
 
 \red{$\basemeasureofat{\formulaset,\meanparam}{\shortcatvariables}$ are the subset encodings of preimages of the statistics encoding.}
 
-We exploit this characterization to show, that the vertices of $\hlnmeanset$ are exactly those reproducable by Hard Logic Networks.
+We exploit this characterization to show, that the vertices of $\hlnmeanset$ are exactly those reproducable by Hard Logic Networks for which all activation cores are either $\tbasisat{\headvariableof{\selindex}}$ or $\fbasisat{\headvariableof{\selindex}}$.
 
 \begin{theorem}\label{the:extremeCharacterizationHLN}
 	Any set $\{\meanparamwith\}\subset\hlnmeanset$ of cardinality $1$ is a vertex of $\hlnmeanset$, if and only if its unique element $\meanparamwith$ is boolean and the formula
@@ -1403,18 +1401,19 @@ Its faces are enumerated by tuples $(\variableset,\catindexof{\variableset})$, w
 %	Any $\meanparam$ being the statistic encoding of a coordinate in the support of this contraction thus satisfies contraint $\meanparamat{\indexedselvariable}=0$ respectively $\meanparamat{\indexedselvariable}=1$, which are known to define faces of the cube.
 \end{proof}
 
-The vertices of $\hlnmeanset$ consist of $\{\meanparam\}$ where $\meanparamat{\selvariable}=\sencsstatat{\indexedshortcatvariables,\selvariable}$ for an $\shortcatindices$.
-As a corollary of \theref{the:HLNExpressivity}, their pre-image is always in $\hlnsetof{\formulaset}$.
-
-\begin{corollary}
-	All encoded pre-images of vertices are in $\hlnsetof{\formulaset}$.
-\end{corollary}
-\begin{proof}
-	Since vertices in $\hlnmeanset$ are also vertices of the cube.
-\end{proof}
-
-% Vertices as Basis
-Pre-images of vertices have a representation with basis tensors as activation tensors.
+%% As example $\exaref{exa:vertexMeasure}
+%The vertices of $\hlnmeanset$ consist of $\{\meanparam\}$ where $\meanparamat{\selvariable}=\sencsstatat{\indexedshortcatvariables,\selvariable}$ for an $\shortcatindices$.
+%As a corollary of \theref{the:HLNExpressivity}, their pre-image is always in $\hlnsetof{\formulaset}$.
+%
+%\begin{corollary}
+%	All encoded pre-images of vertices are in $\hlnsetof{\formulaset}$.
+%\end{corollary}
+%\begin{proof}
+%	Since vertices in $\hlnmeanset$ are also vertices of the cube.
+%\end{proof}
+%
+%% Vertices as Basis
+%Pre-images of vertices have a representation with basis tensors as activation tensors.
 
 \begin{corollary}
 	When $\formulaset$ is the set of atomic formulas, all encoded pre-images of faces are in $\hlnsetof{\formulaset}$.
@@ -1434,14 +1433,14 @@ Since for leg dimensions larger than 2 the boolean tensors with elementary decom
 
 
 
-%
-\begin{theorem}
-	The encoded pre-image of any face of rank $r$ is represented by an activation core of basis $\cpformat$ rank $r$.
-\end{theorem}
-\begin{proof}
-	We build for each vertex $\{\meanparam\}$ a basis vector $\bigotimes_{\selindex\in\seldim}\onehotmapofat{\meanparamat{\indexedselvariable}}{\headvariableof{\selindex}}$, which contraction with $\bencodingof{\formulaset}$.
-	Note, that the vertex base measures have disjoint support and their disjunction is thus a summation.
-\end{proof}
+%% To prabilitiy distribution
+%\begin{theorem}
+%	The encoded pre-image of any face of rank $r$ is represented by an activation core of basis $\cpformat$ rank $r$.
+%\end{theorem}
+%\begin{proof}
+%	We build for each vertex $\{\meanparam\}$ a basis vector $\bigotimes_{\selindex\in\seldim}\onehotmapofat{\meanparamat{\indexedselvariable}}{\headvariableof{\selindex}}$, which contraction with $\bencodingof{\formulaset}$.
+%	Note, that the vertex base measures have disjoint support and their disjunction is thus a summation.
+%\end{proof}
 
 % COMMENT: BASIS+ VECTORS
 % Activation vectors of hard logic networks are on the other side basis+, so they might be more efficiently representable

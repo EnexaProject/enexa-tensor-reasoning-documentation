@@ -1722,19 +1722,20 @@ The vertex measure is then
     For any face $\genfacesetof{\facecondset}$ of $\meanset$ we have
     \begin{align*}
          \basemeasureofat{\sstat,\facecondset}{\shortcatvariables}
-         =\contractionof{\bencodingofat{\sstat}{\headvariableof{[\seldim]},\shortcatvariables},\kcoreat{\headvariableof{[\seldim]}}}{\shortcatvariables}
+         =\contractionof{\sstatccwith,\kcoreofat{\facecondset}{\headvariableof{[\seldim]}}}{\shortcatvariables}
     \end{align*}
     where
     \begin{align*}
-        \kcoreat{\headvariableof{[\seldim]}}
+        \kcoreofat{\facecondset}{\headvariableof{[\seldim]}}
         = \sum_{\meanparam\in\genfacesetof{\facecondset}\cup\imageof{\sstatencoding}} \onehotmapofat{\headindex^{\meanparam}_{[\seldim]}}{\headvariableof{[\seldim]}} \, .
     \end{align*}
+    Here we denote by $\headindex^{\meanparam}_{[\seldim]}$ the index, which is assigned to $\meanparam$ by the interpretation functions to the variables $\sstatheadvariables$.
 \end{theorem}
 \begin{proof}
     For any $\meanparam\in\genfacesetof{\facecondset}\cup\imageof{\sstatencoding}$ the tensor
     \begin{align*}
         \hypercoreofat{\meanparam}{\shortcatvariables}
-        = \contractionof{\bencodingofat{\sstat}{\headvariableof{[\seldim]},\shortcatvariables},\onehotmapofat{\headindex^{\meanparam}_{[\seldim]}}{\headvariableof{[\seldim]}}}{\shortcatvariables}
+        = \contractionof{\sstatccwith,\onehotmapofat{\headindex^{\meanparam}_{[\seldim]}}{\headvariableof{[\seldim]}}}{\shortcatvariables}
     \end{align*}
     is the indicator of the preimage of $\meanparam$ under $\sstatencoding$.
     Since preimages of different $\meanparam$ are disjoint, the support of $\hypercoreofat{\meanparam}{\shortcatvariables}$ is disjoint and their sum
@@ -1747,11 +1748,50 @@ The vertex measure is then
         \basemeasureofat{\sstat,\facecondset}{\shortcatvariables}
         &= \sum_{\meanparam\in\genfacesetof{\facecondset}\cup\imageof{\sstatencoding}} \hypercoreofat{\meanparam}{\shortcatvariables} \\
         &= \contractionof{\bencodingofat{\sstat}{\headvariableof{[\seldim]},\shortcatvariables},\sum_{\meanparam\in\genfacesetof{\facecondset}\cup\imageof{\sstatencoding}}\onehotmapofat{\headindex^{\meanparam}_{[\seldim]}}{\headvariableof{[\seldim]}}}{\shortcatvariables} \\
-        &= \contractionof{\bencodingofat{\sstat}{\headvariableof{[\seldim]},\shortcatvariables},\kcoreat{\headvariableof{[\seldim]}}}{\shortcatvariables} \, . \qedhere
+        &= \contractionof{\bencodingofat{\sstat}{\headvariableof{[\seldim]},\shortcatvariables},\kcoreofat{\facecondset}{\headvariableof{[\seldim]}}}{\shortcatvariables} \, . \qedhere
     \end{align*}
 \end{proof}
 
-Let us notice, that $\kcoreat{\headvariableof{[\seldim]}}$ in \theref{the:faceMeasureCharacterization} is a sparse tensor with basis $\cpformat$ rank $\cardof{\genfacesetof{\facecondset}\cup\imageof{\sstatencoding}}$ (see \charef{cha:sparseRepresentation}).
+%
+Let us now investigate, which normalized face measures can be computed using $\sstat$ and a hypergraph $\graph$.
+
+\begin{example}[Vertices]\label{exa:vertexMeasures}
+    Vertices $\genfaceset$ are proper faces of affine dimension $0$, that is they consist in single vectors.
+    Since all vertices are in the image $\sstatencodingat{\stateset}$, there exists an index tuple $\shortcatindices\in\stateset$ such that $\basemeasureat{\indexedshortcatvariables}=1$ and
+    \begin{align*}
+        \genfaceset = \{\sencsstatat{\indexedshortcatvariables,\selvariable}\} \, .
+    \end{align*}
+    Then $\kcoreofat{\facecondset}{\sstatheadvariables}$ is the one-hot encoding of the by an interpretation map $\indexinterpretation$ assigned index to $\sencsstatat{\indexedshortcatvariables,\selvariable}$, that is
+    \begin{align*}
+        \kcoreofat{\facecondset}{\sstatheadvariables} = \onehotmapofat{\invindexinterpretationat{\sencsstatat{\indexedshortcatvariables,\selvariable}}}{\sstatheadvariables} \, .
+    \end{align*}
+    In particular, the activation core is elementary and the face measure to any vertex is in $\realizabledistsof{\sstat,\elgraph,\basemeasure}$.
+\end{example}
+
+
+% basis CP bound
+Extending \exaref{exa:vertexMeasures}, we can provide a coarse estimation of the hypergraph $\graph$ required to decompose $\kcoreof{\facecondset}$ for generic faces $\genfaceset$.
+We notice that $\kcoreofat{\facecondset}{\headvariableof{[\seldim]}}$ in \theref{the:faceMeasureCharacterization} is a sparse tensor with basis $\cpformat$ rank $\cardof{\genfacesetof{\facecondset}\cup\imageof{\sstatencoding}}$ (see \charef{cha:sparseRepresentation}).
+\begin{align*}
+    \sparsityof{\kcoreofat{\facecondset}{\headvariableof{[\seldim]}}}
+    = \cardof{
+        \sstatencodingat{\genfacemeasure}
+    }
+\end{align*}
+where $\cardof{\sstatencodingat{\genfacemeasure}}$ is the number of different statistic encoding vectors to the support of the face measure $\genfacemeasure$.
+Using the formalism of sparse $\cpformat$ decompositions \charef{cha:sparseRepresentation}, this characterize the basis $\cpformat$ rank of $\kcoreofat{\facecondset}{\sstatheadvariables}$.
+However, the basis $\cpformat$ rank is only an upper bound to generic $\cpformat$ rank, which can be loose.
+By \exaref{ex:maximalFaceMeasure} we provide with the maximal face an example, where the basis $\cpformat$ rank is given by the tensor space dimension, whereas the generic $\cpformat$ rank is one and the normalized face measure is thus still in $\realizabledistsof{\sstat,\elgraph}$.
+
+\begin{example}[Maximal face]\label{exa:maximalFaceMeasure}
+    The maximal face $\genfacesetof{\varnothing}=\genmeanset$ coincides with the mean parameter itself.
+    In this case the corresponding activation tensor to the face measure is trivial, that is
+    \begin{align*}
+        \kcoreofat{\varnothing}{\sstatheadvariables} = \onesat{\sstatheadvariables} \, .
+    \end{align*}
+    $\kcoreof{\varnothing}$ is elementary and the normalized face measure $\basemeasureof{\sstat,\varnothing}$ to the maximal face is in $\realizabledistsof{\sstat,\elgraph}$.
+\end{example}
+
 
 
 \subsect{Base measure centers}
