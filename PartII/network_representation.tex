@@ -550,11 +550,11 @@ We notice, that these three activation cores are all non-vanishing boolean cores
 This motivates the definition of Hard Logic Networks as follows.
 
 \begin{definition}\label{def:hardLogicNetwork}
-	Given a boolean statistic $\formulaset$, and for $\selindexin$ boolean vectors $\kcoreofat{\selindex}{\headvariableof{\selindex}}$ the Hard Logic Network is the distribution
+	Given a boolean statistic $\formulaset$ and for $\selindexin$ boolean vectors $\kcoreofat{\selindex}{\headvariableof{\selindex}}$ the Hard Logic Network is the distribution
 	\begin{align*}
 		\probofat{\formulaset,\{\kcoreofat{\selindex}\wcols\selindexin\}}{\shortcatvariables}
 		= \normalizationof{
-			\bigcup_{\selindexin}\{\bencodingofat{\shortcatvariables}{\headvariableof{\selindex},\shortcatvariables},\kcoreofat{\selindex}{\headvariableof{\selindex}}\}
+			\bigcup_{\selindexin}\{\enumformulaacwith,\kcoreofat{\selindex}{\headvariableof{\selindex}}\}
 		}{\shortcatvariables}
 	\end{align*}
 	provided that the normalization exists.
@@ -596,13 +596,13 @@ Based on these insights we can characterize Hard Logic Networks by propositional
 	\begin{align*}
 		& \contractionof{
 			\bigcup_{\selindexin}\{\bencodingofat{\shortcatvariables}{\headvariableof{\selindex},\shortcatvariables},\kcoreofat{\selindex}{\headvariableof{\selindex}}\}
-		}{\shortcatvariables}
+		}{\shortcatvariables} \\
 		& \quad = 	\contractionof{
 			\left\{
 			\contractionof{\bencodingofat{\shortcatvariables}{\headvariableof{\selindex},\shortcatvariables},\kcoreofat{\selindex}{\headvariableof{\selindex}}}{\shortcatvariables}
 			\wcols\selindexin\right\}
 		}{\shortcatvariables} \\
-		& = \contractionof{
+		& \quad = \contractionof{
 			\{
 			\enumformulaat{\shortcatvariables}
 			\wcols\kcoreofat{\selindex}{\headvariableof{\selindex}} = \tbasisat{\headvariableof{\selindex}}
@@ -832,8 +832,8 @@ The assumption of a satisfiable set $\hardformulaset$ is necessary, as we show n
 	Since the conjunction of $\hardformulaset$ is satisfiable we find a $\shortcatindices$ with $\formulaat{\indexedcatvariableof{[\catorder]}}=1$ for all $\exformula\in\hardformulaset$.
 	Then 
 	\begin{align*}
-		\contractionof{\{\exformula : \exformula\in\hardformulaset\} \cup \{\expof{\weightof{\exformula}\cdot\exformula} : \exformula\in\softformulaset\}}{\indexedcatvariableof{[\catorder]}}
-		 & \quad = \left( \prod_{\exformula\in\hardformulaset}\formulaat{\indexedcatvariableof{[\catorder]}} \right) \\
+		& \contractionof{\{\exformula : \exformula\in\hardformulaset\} \cup \{\expof{\weightof{\exformula}\cdot\exformula} : \exformula\in\softformulaset\}}{\indexedcatvariableof{[\catorder]}} \\
+		 & \quad = \left( \prod_{\exformula\in\hardformulaset}\formulaat{\indexedcatvariableof{[\catorder]}} \right)
 		 \cdot \left( \prod_{\exformula\in\softformulaset}\expof{\weightof{\exformula}\cdot\exformula}[\indexedcatvariableof{[\catorder]}] \right) \\
 		 & \quad =  \left( \prod_{\exformula\in\softformulaset}\expof{\weightof{\exformula}\cdot\exformula}[\indexedcatvariableof{[\catorder]}] \right) \\
 		 & \quad > 0 \, .
@@ -957,7 +957,7 @@ Hybrid Logic Networks extend the expressivity result of Theorem~\ref{the:minterm
 		\end{cases} \, . 
 	\end{align*}
 	Then the probability tensor is the member of the minterm exponential family with base measure $\hardformulaset$ and parameter $\canparam$, that is
-		\[ \probat{(\mintermformulaset,\canparam,\hfbasemeasure)}\]
+		\[ \probwith = \probofat{(\mintermformulaset,\canparam,\hfbasemeasure)}{\shortcatvariables} \, . \]
 \end{theorem}
 \begin{proof}
 	It suffices to show that 
@@ -1095,7 +1095,7 @@ The mean parameter polytopes are thus of $0/1$-polytopes \cite{ziegler_lectures_
 Since those are convex subsets of the cube $[0,1]^\seldim$, which vertices are all binary vectors, also each $\sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable}$ (with $\basemeasureat{\indexedshortcatvariables}=1$) is an extreme point.
 Further, if for any $\selindexin$ we have $\meanparamat{\indexedselvariable}\in\{0,1\}$, then $\meanparamwith$ is in the boundary of the cube and thus also of $\hlnmeanset$
 
-\red{In the following, we characterize the faces of the mean parameter }
+\red{In the following, we characterize the faces of the mean parameter polytope.}
 
 
 \subsect{Vertices by hard logic networks}
@@ -1141,7 +1141,7 @@ We exploit this characterization to show, that the vertices of $\hlnmeanset$ are
 % True?
 Since the by inclusion partially ordered set of faces is a graded lattice (see Theorem~2.7 in \cite{ziegler_lectures_2013}), the faces are ranked by the affine dimension of the convex hull. % the number of included vertices.
 
-The face base measure is thus
+\red{The face measure is thus}
 \begin{align*}
 	\basemeasureof{\facecondset}
 	= \bigvee_{\meanparam\in\genfaceset\cup\{0,1\}^{\seldim}} \formula^{\meanparam}
@@ -1175,6 +1175,9 @@ In this case, the next theorem provides us with a procedure to refine the base m
 		\[ \secbasemeasureat{\shortcatvariables} =  \contractionof{\basemeasure,\basemeasureof{\formulaset,\meanparam}}{\shortcatvariables} \, . \]
 \end{theorem}
 \begin{proof}
+	\red{This is a special case of face measure to $\meanparam$.
+	When mean param in 0/1, then the corresponding face is contained in the cube face.
+	}
 	Let $\probtensor$ be a distribution representable with respect to $\basemeasure$ and reproducing $\meanparam$, that is
 		\[ \contractionof{\probtensor,\sencmlnstat}{\selvariable} = \meanparamwith \, . \]
 	For any $\selindexin$, if $\meanparamat{\indexedselvariable}=1$ we have

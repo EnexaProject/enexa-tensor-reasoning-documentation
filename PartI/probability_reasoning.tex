@@ -357,7 +357,7 @@ To prepare for reasoning on data, we now derive tensor network representation fo
     \end{align*}
     elementwise by
     \begin{align*}
-         \datamapat{\datindex} = (\catindicesof{\datindex}) \, .
+        \datamapat{\datindex} = (\catindicesof{\datindex}) \, .
     \end{align*}
 %% Empirical Distribution
     The empirical distribution to the sample selector map $\datamap$ is the probability distribution
@@ -759,7 +759,8 @@ The conjugate dual of the cumulative function is
     \dualcumfunction(\meanparam) = \max_{\canparam\in\parspace} \contraction{\meanparam,\canparam} - \cumfunctionof{\canparam} \, .
 \end{align*}
 
-\begin{lemma}\label{lem:gradientCumfunction}
+\begin{lemma}
+    \label{lem:gradientCumfunction}
     Let $\canparam\in\parspace$ and $\meanparamwith$ the corresponding mean parameter.
     For the gradient of $\cumfunction$ evaluated at $\canparam$ we have
     \begin{align*}
@@ -808,7 +809,8 @@ In particular, while the conjugate dual is defined by the maximization problem
 \end{align*}
 the backward map returns the position of the maximum in $\parspace$.
 
-\begin{lemma}\label{lem:dualCumEntropy}
+\begin{lemma}
+    \label{lem:dualCumEntropy}
     For any $\canparam$ with mean parameter $\meanparam$ we have
     \begin{align*}
         \dualcumfunction(\meanparam) = - \sentropyof{\expdist} \, .
@@ -837,7 +839,7 @@ We can use this insight to provide a variational characterization of the forward
     Let $\sstat$ be a minimal statistic with respect to $\basemeasure$.
     Given $\canparam$, there is a unique $\meanparam$ with
     \begin{align*}
-         \meanparam \in \argmax_{\meanparam\in\meanset} \contraction{\meanparam,\canparam} + \sentropyof{\expdistof{\sstat,\meanparam,\basemeasure}} %-  \dualcumfunction(\meanparam)
+        \meanparam \in \argmax_{\meanparam\in\meanset} \contraction{\meanparam,\canparam} + \sentropyof{\expdistof{\sstat,\meanparam,\basemeasure}} %-  \dualcumfunction(\meanparam)
     \end{align*}
     and $\meanparam$ is the mean parameter to $\expdistwith$.
     Here, we denote by $\expdistof{\sstat,\meanparam,\basemeasure}$ the member of the exponential family with the mean parameter $\meanparam$.
@@ -914,8 +916,9 @@ If this condition holds, we now characterize the solution of \probref{prob:maxEn
 First of all, we show that the maximum entropy distribution is in the exponential family $\genexpfamily$, when $\meanparam$ does not lie on a proper face of $\genmeanset$.
 We then drop this assumption and generalize the statement to exponential families with refined base measures.
 
-\begin{theorem}\label{the:maxEntropyInterior}
-    If the only face $\genfacesetof{\facecondset}$ of $\genmeanset$ with $\meanparam\in\genfacesetof{\facecondset}$ is $\genmeanset$ itself, then the solution of the maximum entropy distribution is the unique distribution
+\begin{theorem}
+    \label{the:maxEntropyInterior}
+    If the only face $\genfacesetof{\facecondset}$ of $\genmeanset$ with $\meanparam\in\genfacesetof{\facecondset}$ is $\genmeanset$ itself, then the unique solution of the maximum entropy problem \probref{prob:maxEntropy} is the distribution
     \begin{align*}
         \expdistofat{\sstat,\meanparam,\basemeasure}{\shortcatvariables}\in\expfamilyof{\sstat,\basemeasure}
     \end{align*}
@@ -985,7 +988,8 @@ When $\genmean\notin\sbinteriorof{\genmeanset}$, the mean paramater is by \there
 Instead, in combination with the base measure refinement \algoref{alg:baseMeasureRefinement}, we show that the solution is in a refined exponential family.
 % dropping the assumption that the mean parameters are in the interior of the mean parameter polytope.
 
-\begin{theorem}\label{the:maxEntropyFace}
+\begin{theorem}
+    \label{the:maxEntropyFace}
     Let $\genfacesetof{\facecondset}$ be the minimal face of $\genmeanset$ such that $\meanparamat{\selvariable}\in\genfacesetof{\facecondset}$.
     Then, the solution of the maximum entropy problem is the distribution
     \begin{align*}
@@ -1021,21 +1025,89 @@ Instead, in combination with the base measure refinement \algoref{alg:baseMeasur
 %\end{proof}
 
 % Minimality of the refined base measure
-\theref{the:maxEntropyInterior} implies, that the by the face measure refined base measure $\secbasemeasure$ is minimal for the maximum entropy problem, in the sense that the solving distribution is positive with respect to it and all feasible distributions have to be representable by it.
+\theref{the:maxEntropyFace} implies, that the by the face measure refined base measure $\secbasemeasure$ is minimal for the maximum entropy problem, in the sense that the solving distribution is positive with respect to it and all feasible distributions have to be representable by it.
 This highlights the fact, that the maximum entropy distribution does not vanish beyond those states, which are necessary to vanish to lie on the respective face. %by \theref{the:baseMeasureRefinement}.
 
 
 \subsect{Tensor Network Representation}
 
+Let us now state a criterion based on face measures for maximum entropy distributions to be in the set of by $\sstat$ and $\graph$ computable distributions $\realizabledistsof{\sstat,\graph,\basemeasure}$.
+
+\begin{theorem}
+    \label{the:tnRepresentationMaxEntropy}
+    Given $\sstat$ and $\meanparamwith\in\genmeanset$, let $\facecondset$ be the smallest face of $\genmeanset$ such that
+    \begin{align*}
+        \meanparamat{\selvariable} \in \genfaceset \, .
+    \end{align*}
+    Then the corresponding maximum entropy distribution is in $\realizabledistsof{\sstat,\graph,\basemeasure}$ if the sum of vertices
+    \begin{align*}
+        \kcoreofat{\facecondset}{\headvariableof{[\seldim]}}
+        = \sum_{\shortcatindices\wcols\basemeasureat{\indexedshortcatvariables}=1\ncond\sencsstatat{\indexedshortcatvariables,\selvariable}\in\genfaceset}
+        \sencsstatat{\indexedshortcatvariables,\selvariable}
+    \end{align*}
+    has a tensor network decomposition with respect to the hypergraph $\graph$.
+\end{theorem}
+\begin{proof}
+    By \theref{the:maxEntropyFace} the maximum entropy distribution is an element of the exponential family with by the face measure refined base measure $\secbasemeasure$.
+    Let $\canparamwith$ be a canonical parameter such that
+    \begin{align*}
+        \contractionof{\sencsstatwith,\probofat{\sstat,\canparam,\secbasemeasure}{\shortcatvariables}}{\selvariable} = \meanparamwith \, ,
+    \end{align*}
+    that is $\probofat{\sstat,\canparam,\secbasemeasure}{\shortcatvariables}$ is the maximum entropy distribution.
+    We apply \theref{the:faceMeasureCharacterization} to represent the face measure by
+    \begin{align*}
+        \basemeasureofat{\sstat,\facecondset}{\shortcatvariables} =
+        \contractionof{\bencodingofat{\sstat}{\headvariableof{[\seldim]},\shortcatvariables},\kcoreofat{\facecondset}{\headvariableof{[\seldim]}}}{\shortcatvariables}
+    \end{align*}
+    Then for the tensor
+    \begin{align*}
+        \hypercoreat{\headvariableof{[\seldim]}}
+        = \contractionof{
+            \{\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\headvariableof{\selindex}}\wcols\selindexin\}
+            \cup\{\kcoreofat{\facecondset}{\headvariableof{[\seldim]}}\}}{\headvariableof{[\seldim]}}
+    \end{align*}
+    we have
+    \begin{align*}
+        \probofat{\sstat,\canparam,\secbasemeasure}{\shortcatvariables}
+        = \normalizationof{
+            \bencodingofat{\sstat}{\headvariableof{[\seldim]},\shortcatvariables}, \hypercoreat{\headvariableof{[\seldim]}}, \basemeasurewith
+        }{\shortcatvariables} \, .
+    \end{align*}
+    Thus, the maximum entropy distribution is in $\realizabledistsof{\sstat,\graph,\basemeasure}$, if $\hypercore$ admits a tensor network decomposition with respect to $\graph$.
+    Since the hard activation cores are elementary, this is the case when $\kcoreof{\facecondset}$ admits a tensor network decomposition with respect to $\graph$.
+\end{proof}
+
+In the special case of a mean parameter in the interior, \theref{the:tnRepresentationMaxEntropy} implies that the maximum entropy distribution is in $\realizabledistsof{\sstat,\elgraph,\basemeasure}$, as we show next.
+
+\begin{theorem}
+    For any statistic $\sstat$, base measure $\basemeasure$ and a mean parameter $\meanparamwith\in\sbinteriorof{\genmeanset}$ in the interior of the mean parameter polytope, the corresponding maximum entropy distribution is in $\realizabledistsof{\sstat,\elgraph,\basemeasure}$.
+\end{theorem}
+\begin{proof}
+    If $\meanparamwith\in\interiorof{\genmeanset}$ then the only face of $\genmeanset$ containing $\meanparamwith$ is $\genmeanset$ itself, that is the face with $\facecondset=\varnothing$.
+    In this case we have $\kcoreofat{\varnothing}{\headvariableof{[\seldim]}}=\onesat{\headvariableof{[\seldim]}}$, which is an elementary tensor.
+    The claim then follows from \theref{the:tnRepresentationMaxEntropy}, when choosing $\graph=\elgraph$.
+\end{proof}
+
 % Representation
-Maximum entropy distributions with respect to constraints $\meanparamat{\selvariable}=\contractionof{\probtensor,\sencsstat}{\selvariable}$ always have the sufficient statistic $\sstat$.
-They are represented in $\hlnsetof{\sstat}$, if and only if the face measure of any face $\facecondset$ such that
-\begin{align*}
-    \meanparamat{\selvariable} \in \genfaceset{\facecondset}
-\end{align*}
-is in $\hlnsetof{\sstat}$.
-This is for example the case when $\meanparamat{\selvariable}\in\sbinteriorof{\genmeanset}$.
-In general, we find a $\cpformat$ decomposition as sketched in \figref{fig:maxEntropyActcore}.
+In general, we find a $\cpformat$ decomposition to the face measure as sketched in \figref{fig:maxEntropyActcore}.
+
+%They are represented in $\hlnsetof{\sstat}$, if and only if the face measure of any face $\facecondset$ such that
+%\begin{align*}
+%    \meanparamat{\selvariable} \in \genfaceset
+%\end{align*}
+%is in $\hlnsetof{\sstat}$.
+%This is for example the case when $\meanparamat{\selvariable}\in\sbinteriorof{\genmeanset}$.
+
+
+\begin{example}[Representation by the maximal graph]
+    Let us consider the maximal graph $\maxgraph=([\seldim],\{[\seldim]\})$, which has a single hyperedge containing all head variables.
+    Since any tensor admits a tensor network decomposition with respect to $\maxgraph$, by \theref{the:tnRepresentationMaxEntropy} all maximum entropy distributions are in $\realizabledistsof{\sstat,\maxgraph}$.
+    Maximum entropy distributions with respect to constraints $\meanparamat{\selvariable}=\contractionof{\probtensor,\sencsstat}{\selvariable}$ therefore always have the sufficient statistic $\sstat$.
+    We in particular have
+    \begin{align*}
+        \genmeanset = \left\{ \contractionof{\probat{\shortcatvariables},\sencodingofat{\sstat}{\shortcatvariables,\selvariable}}{\shortcatvariables} \, , \, \probtensor \in\realizabledistsof{\sstat,\maxgraph} \right\} \, .
+    \end{align*}
+\end{example}
 
 \begin{figure}
     \begin{center}
@@ -1062,33 +1134,21 @@ In general, we find a $\cpformat$ decomposition as sketched in \figref{fig:maxEn
     }\label{fig:meansetSketchFace}
 \end{figure}
 
-\red{We now show, that the face base measures coincide with the solutions of mode queries.
-Motivated by this fact, we define max cones of canonical parameters, which parametrized distributions coincide in their modes.}
-
-%% To Reasoning: Characterization of faces by maxima
-Let us now investigate, that faces of $\genmeanset$ are the solutions of linear optimization problems constrained by $\genmeanset$ (see \figref{fig:meansetSketchFace}).
+Let us now investigate, that faces of $\genmeanset$ are the solutions of mode queries, which are linear optimization problems constrained by $\genmeanset$ (see \figref{fig:meansetSketchFace}).
 Since such solution sets are intersections of the boundary of $\genmeanset$ with half-spaces, they are faces.
 In the next theorem we show, how linear optimization problems are constructed to match a given face.
 
-%which is build by faces, we
-%Let us now connect faces with the solutions of maximization problems.
-
-\begin{theorem}
-    \label{the:faceNormal}
-    For any non-empty face $\genfacesetof{\facecondset}$ to a subset $\mathcal{I}\subset[n]$ there is a vector $\canparamwith$, which we call a normal of the face, such that
+\begin{lemma}
+    For any non-empty face $\genfaceset$ to a subset $\facecondset\subset[n]$ there is a vector $\canparamwith$, which we call a normal of the face, such that
     \begin{align*}
-        \genfacesetof{\facecondset} = \cangenmeansetargmax  \, .
+        \genfaceset = \cangenmeansetargmax  \, .
     \end{align*}
     For any collection of positive $\lambda_i$, where $i\in\facecondset$, the vector
     \begin{align*}
         \canparamwith = \sum_{i\in\facecondset} \lambda_i\cdot\normalvecofat{i}{\selvariable}
     \end{align*}
     is a normal for $\genfacesetof{\facecondset}$.
-    %% UNCLEAR if this is true-> Are all possible normals in the span
-%	If $\canparamwith$ is a normal to a face, then for any positive scalars $\lambda[\selvariable]$ also the vector
-%		\[ \seccanparam\left[\selvariable\right] = \contractionof{\canparamwith,\labmda[\selvariable]}{\selvariable} \]
-%	is a normal to the same face.
-\end{theorem}
+\end{lemma}
 \begin{proof}
     The first claim follows trivially from the second.
     To show the second claim, let there be for $i\in\facecondset$ arbitrary positive scalars $\lambda_i$.
@@ -1112,28 +1172,65 @@ In the next theorem we show, how linear optimization problems are constructed to
 
 As we show next, also a converse statement holds, namely that for any vector $\canparamwith$ we find a face $\genfacesetof{\facecondset}$, such that the $\canparamwith$ is a face normal to that face.
 
-\begin{theorem}
-    \label{the:modeQueryFaceBM}
-    For any $\canparamwith$ we find a subset $\mathcal{I}\subset[n]$, such that
+\begin{lemma}
+    \label{lem:faceToCanparam}
+    For any $\canparamwith$ we find a face $\genfaceset$ such that
     \begin{align*}
-        \cangenmeansetargmax = \genfacesetof{\facecondset} \, .
+        \cangenmeansetargmax = \genfaceset \, .
     \end{align*}
-\end{theorem}
+    We denote this face by $\genfacesetof{\canparam} := \genfacesetof{\facecondset}$.
+\end{lemma}
 \begin{proof} % Not a smooth proof, improve!
     We first notice, that
     \begin{align*}
-       & \cangenmeansetargmax \\
-       & \quad  = \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\argmax_{\shortcatindicesin} \contraction{\canparamwith,\sstatat{\shortcatindices}}} \, .
+        & \cangenmeansetargmax \\
+        & \quad  = \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\argmax_{\shortcatindicesin} \contraction{\canparamwith,\sstatat{\shortcatindices}}} \, .
     \end{align*}
     Further, since the contraction with $\canparamwith$ is linear, the set $\cangenmeansetargmax$ is contained in the boundary of the polytope $\genmeanset$.
-    We can conlcude, that the set is a face, that is we find a subset $\mathcal{I}\subset[n]$ with
+    We can conclude, that the set is a face, that is we find a subset $\mathcal{I}\subset[n]$ with
     \begin{align*}
         \genfacesetof{\facecondset} = \cangenmeansetargmax \, . & \qedhere
     \end{align*}
 \end{proof}
 
 % Notation
-In a slide abuse of notation, we denote in this case $\genfacesetof{\canparam} = \genfacesetof{\facecondset}$.
+%In a slide abuse of notation, we denote the face in \theref{the:modeQueryFaceBM} in this case $\genfacesetof{\canparam} = \genfacesetof{\facecondset}$.
+
+Based on \lemref{lem:faceToCanparam} we can now characterize the solution of mode queries.
+To this end, we recall the statistic encoding from \secref{sec:meanPolytopeConvexHull}, which is defined as
+\begin{align*}
+    \sstatencoding : \stateset \rightarrow \parspace \quad,\quad
+    \sstatencodingat{\catindex} = \sencsstatat{\indexedshortcatvariables,\selvariable} \, .
+\end{align*}
+%This encoding generalizes the one-hot encoding, which corresponds with the special case $\sstat=\naivestat$.
+%
+%%
+%The mean polytope is then the subset of the polytope $\meansetof{\sstat,\trivbm}$,
+%\begin{align*}
+%    \meansetof{\sstat,\basemeasure}
+%    = \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable}\wcols\basemeasureat{\indexedshortcatvariables}=1}
+%\end{align*}
+
+\begin{theorem}
+    \label{the:modeQueryFaceBM}
+    For any $\canparamwith$ we have
+    \begin{align*}
+        \argmax_{\shortcatindicesin} \contraction{\canparamwith,\sencsstatat{\shortcatindices,\selvariable}} =
+        \invsstatencodingat{\genfacesetof{\canparam}} \, .
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    We have
+    \begin{align*}
+        \max_{\shortcatindicesin} \contraction{\canparamwith,\sencsstatat{\shortcatindices,\selvariable}} =
+        \max_{\meanparamwith\in\genmeanset} \contraction{\canparamwith,\meanparamwith}
+    \end{align*}
+    since $\genmeanset$ is the convex hull of the vectors $\sencsstatat{\indexedshortcatvariables,\selvariable}$.
+    By \theref{lem:faceToCanparam} the maximum is taken at the face $\genfacesetof{\canparam}$.
+    We further have, since any face contains vertices, that $\sstatencodingof{\stateset}\cap\genfacesetof{\canparam}\neq\varnothing$.
+    The solutions of the mode query are thus the states $\shortcatindices$, which statistics encoding is in the face $\genfaceset$.
+    This set is the pre-image $\invsstatencodingat{\genfacesetof{\canparam}}$.
+\end{proof}
 
 % Mode queries
 \theref{the:modeQueryFaceBM} provides a geometric perspective for mode queries.
@@ -1151,43 +1248,55 @@ The maximum is attained exactly for the mean parameters
 \end{align*}
 Answering the mode query is thus the characterization of the face of the standard simplex with face normal $\hypercorewith$.
 
+\begin{example}[Mode queries on tensor networks]
 % Decompositions of \hypercore
-Let us now consider cases where the queried tensor $\hypercore$ has a tensor network decomposition.
-This is the case for energy tensors to members of exponential families, for which we have a decomposition into selection encodings $\sencsstatwith$ and canonical parameters $\canparamwith$.
-In most generality we assume a decomposition of $\hypercore$ by a tensor network on a hypergraph $\graph=(\nodes,\edges)$, where $[\catorder]\subset\nodes$ as
-\begin{align*}
-    \hypercorewith = \contractionof{\extnetasset}{\shortcatvariables} \, .
-\end{align*}
-Let us choose a subset $\secedges\subset\edges$ and
-\begin{align*}
-    \max_{\shortcatindices\in\arbset} \hypercoreat{\indexedshortcatvariables}
-    = \max_{\shortcatindices\in\arbset} \contraction{\{\onehotmapofat{\shortcatindices}{\shortcatvariables}\} \cup \extnetasset}
+    Let us now consider cases where the queried tensor $\hypercore$ has a tensor network decomposition.
+    This is the case for energy tensors to members of exponential families, for which we have a decomposition into selection encodings $\sencsstatwith$ and canonical parameters $\canparamwith$.
+    In most generality we assume a decomposition of $\hypercore$ by a tensor network on a hypergraph $\graph=(\nodes,\edges)$, where $[\catorder]\subset\nodes$ as
+    \begin{align*}
+        \hypercorewith = \contractionof{\extnetasset}{\shortcatvariables} \, .
+    \end{align*}
+    Let us choose a subset $\secedges\subset\edges$ and
+    \begin{align*}
+        \max_{\shortcatindices\in\arbset} \hypercoreat{\indexedshortcatvariables}
+        = \max_{\shortcatindices\in\arbset} \contraction{\{\onehotmapofat{\shortcatindices}{\shortcatvariables}\} \cup \extnetasset}
 %        = \max_{\shortcatindices\in\arbset} \contraction{\onehotmapofat{\shortcatindices}{\shortcatvariables},\hypercoreat{\indexedshortcatvariables}}
-\end{align*}
-We now split the contractions (see \theref{the:splittingContractions}) to contract the cores $\edges/\secedges$ with the one-hot encoding first and keeping $\secnodes=\bigcup_{\edge\in\secedges}\edge$ open.
-With this we get
-\begin{align*}
-    & \max_{\shortcatindices\in\arbset} \hypercoreat{\indexedshortcatvariables} \\
-    & = \max_{\shortcatindices\in\arbset}
-    \contraction{
-        \contractionof{\{\onehotmapofat{\shortcatindices}{\shortcatvariables}\} \cup \left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\, : \, \edge\in\edges/\secedges\right\}}{\catvariableof{\secnodes}},
-        \contractionof{\left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\, : \, \edge\in\secedges\right\}}{\catvariableof{\secnodes}}
-    } \, .
-\end{align*}
-This optimization problem is the characterization of vectors, which convex hull is the face in the polytope
-\begin{align*}
-    \meanset = \left\{\{\contractionof{\onehotmapofat{\shortcatindices}{\shortcatvariables}\} \cup \left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\, : \, \edge\in\edges/\secedges\right\}}{\catvariableof{\secnodes}} \, : \, \shortcatindices\in\arbset \right\}
-\end{align*}
-with the face normal
-\begin{align*}
-    \canparamat{\catvariableof{\secnodes}} =
-    \contractionof{\left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\, : \, \edge\in\secedges\right\}}{\catvariableof{\secnodes}} \, .
-\end{align*}
+    \end{align*}
+    We now split the contractions (see \theref{the:splittingContractions}) to contract the cores $\edges/\secedges$ with the one-hot encoding first and keeping $\secnodes=\bigcup_{\edge\in\secedges}\edge$ open.
+    With this we get
+    \begin{align*}
+        & \max_{\shortcatindices\in\arbset} \hypercoreat{\indexedshortcatvariables} \\
+        & = \max_{\shortcatindices\in\arbset}
+        \contraction{
+            \contractionof{\{\onehotmapofat{\shortcatindices}{\shortcatvariables}\} \cup \left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\, : \, \edge\in\edges/\secedges\right\}}{\catvariableof{\secnodes}},
+            \contractionof{\left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\, : \, \edge\in\secedges\right\}}{\catvariableof{\secnodes}}
+        } \, .
+    \end{align*}
+    This optimization problem is the characterization of vectors, which convex hull is the face in the polytope
+    \begin{align*}
+        \meanset = \left\{\{\contractionof{\onehotmapofat{\shortcatindices}{\shortcatvariables}\} \cup \left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\, : \, \edge\in\edges/\secedges\right\}}{\catvariableof{\secnodes}} \, : \, \shortcatindices\in\arbset \right\}
+    \end{align*}
+    with the face normal
+    \begin{align*}
+        \canparamat{\catvariableof{\secnodes}} =
+        \contractionof{\left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\, : \, \edge\in\secedges\right\}}{\catvariableof{\secnodes}} \, .
+    \end{align*}
+\end{example}
 
-We define for each face the normal cone
-\begin{align*}
-    \maxcone = \{\canparam\wcols\canparam\in\parspace\ncond\argmax_{\meanparam\in\genmeanset}\contraction{\canparam,\meanparam}=\genfaceset\} \, .
-\end{align*}
+
+\subsect{Cones of constant modes}
+
+We have observed, that the modes of maximum entropy distributions are characterized by the corresponding face measures.
+Let us now investigate in more detail the sets of maximum entropy distributions, which coincide in their modes.
+
+\begin{definition}
+    To each face $\genfaceset$ the normal cone is the set %is the set of canonical parameters, which modes coincide with the face
+    \begin{align*}
+        \maxcone = \{\canparamwith\wcols\canparamwith\in\parspace\ncond\argmax_{\meanparam\in\genmeanset}\contraction{\canparamwith,\meanparamwith}=\genfaceset\} \, .
+    \end{align*}
+\end{definition}
+
+Each $\maxcone$ is a convex cone, as we show now.
 
 % Maybe earlier to avoid minimal statistics discussion
 %\begin{definition}
@@ -1216,9 +1325,11 @@ We define for each face the normal cone
     % Show that Effectively open - Missing!
 \end{proof}
 
+The faces $\genfaceset$ of the mean parameter polytope build a partially ordered set, which is called the face lattice (see \cite{ziegler_lectures_2013}).
+We now investigate a corresponding partial order on the max cones to the faces.
 
-
-\begin{lemma}\label{lem:faceSetsToMaxCones}
+\begin{lemma}
+    \label{lem:faceSetsToMaxCones}
     For two non-empty faces $\facecondsetof{0}$ and $\facecondsetof{1}$ we have % Non-empty needed? Can deal with face 1 empty, but with face 0 empty?
     \begin{align*}
         \genfacesetof{\facecondsetof{0}} \subset \genfacesetof{\facecondsetof{1}}
@@ -1230,40 +1341,41 @@ We define for each face the normal cone
 \end{lemma}
 \begin{proof}
     \proofrightsymbol Let us assume $\genfacesetof{\facecondsetof{0}} \subset \genfacesetof{\facecondsetof{1}}$ and let us choose arbitrary $\canparamof{0}\in\genmaxconeof{\facecondsetof{0}},\,\canparamof{1}\in\genmaxconeof{\facecondsetof{1}}$.
-        It suffices to show, that for all $\lambda\in(0,1)$ we have $\lambda\cdot\canparamof{0}+(1-\lambda)\cdot\canparamof{1}\in\genmaxconeof{\facecondsetof{0}}$, since this implies $\canparamof{1}\in\closureof{\genmaxconeof{\facecondsetof{0}}}$.
-        By assumption we have
-        \begin{align*}
-            \argmax_{\meanparam\in\genmeanset} \contraction{\canparamof{0},\meanparam} \subset  \argmax_{\meanparam\in\genmeanset} \contraction{\canparamof{1},\meanparam}
-        \end{align*}
-        and thus
-        \begin{align*}
-            \argmax_{\meanparam\in\genmeanset} \contraction{\lambda\cdot\canparamof{0}+(1-\lambda)\cdot\canparamof{1},\meanparam} = \argmax_{\meanparam\in\genmeanset} \contraction{\canparamof{0},\meanparam}
-        \end{align*}
-        which implies $\lambda\cdot\canparamof{0}+(1-\lambda)\cdot\canparamof{1}\in\genmaxconeof{\facecondsetof{0}}$.
+    It suffices to show, that for all $\lambda\in(0,1)$ we have $\lambda\cdot\canparamof{0}+(1-\lambda)\cdot\canparamof{1}\in\genmaxconeof{\facecondsetof{0}}$, since this implies $\canparamof{1}\in\closureof{\genmaxconeof{\facecondsetof{0}}}$.
+    By assumption we have
+    \begin{align*}
+        \argmax_{\meanparam\in\genmeanset} \contraction{\canparamof{0},\meanparam} \subset  \argmax_{\meanparam\in\genmeanset} \contraction{\canparamof{1},\meanparam}
+    \end{align*}
+    and thus
+    \begin{align*}
+        \argmax_{\meanparam\in\genmeanset} \contraction{\lambda\cdot\canparamof{0}+(1-\lambda)\cdot\canparamof{1},\meanparam} = \argmax_{\meanparam\in\genmeanset} \contraction{\canparamof{0},\meanparam}
+    \end{align*}
+    which implies $\lambda\cdot\canparamof{0}+(1-\lambda)\cdot\canparamof{1}\in\genmaxconeof{\facecondsetof{0}}$.
     \proofleftsymbol Conversely, let us assume $\genmaxconeof{\facecondsetof{1}} \subset \closureof{\genmaxconeof{\facecondsetof{0}}}$.
-        We then find a sequence $\left(\canparamof{n}\right)_{n\in\nn}$ with $\canparamof{n}\in\genmaxconeof{\facecondsetof{0}}$ for $n\in\nn$ and which limit $\canparam$ exists in $\genmaxconeof{\facecondsetof{1}}$.
-        For an arbitrary $\catindex\in\stateset$ with $\sstatencodingat{\catindex}\in\genfacesetof{\facecondsetof{0}}$ we have
-        \begin{align*}
-            \contraction{\canparam,\sstatencodingat{\catindex}}
-            &= \lim_{n\rightarrow\infty} \contraction{\canparamof{n},\sstatencodingat{\catindex}} \\
-            &= \lim_{n\rightarrow\infty} \max_{\seccatindex\in\stateset} \contraction{\canparamof{n},\sstatencodingat{\seccatindex}} \\
-            &= \max_{\seccatindex\in\stateset} \contraction{\canparam,\sstatencodingat{\seccatindex}}
-        \end{align*}
-        and therefore $\sstatencodingat{\catindex}\in\genfacesetof{\facecondsetof{1}}$.
-        Note, that we used in the third equation, that $\stateset$ is finite.% and thus avoided to justify these equations based on convexity. -> More precise statement needed !
-        We use this property for all elements of the preimage of $\facecondsetof{0}$ and get
-        \begin{align*}
-            \genfacesetof{\facecondsetof{0}}
-            &= \convhullof{\sstatencodingat{\catindex}\wcols\catindex\in\argmax_{\seccatindex\in\stateset}\contraction{\canparamof{1},\sstatencodingat{\seccatindex}}} \\
-            &\subset \convhullof{\sstatencodingat{\catindex}\wcols\catindex\in\argmax_{\seccatindex\in\stateset}\contraction{\canparam,\sstatencodingat{\seccatindex}}} \\
-            &= \genfacesetof{\facecondsetof{1}} \, . \qedhere
-        \end{align*}
+    We then find a sequence $\left(\canparamof{n}\right)_{n\in\nn}$ with $\canparamof{n}\in\genmaxconeof{\facecondsetof{0}}$ for $n\in\nn$ and which limit $\canparam$ exists in $\genmaxconeof{\facecondsetof{1}}$.
+    For an arbitrary $\catindex\in\stateset$ with $\sstatencodingat{\catindex}\in\genfacesetof{\facecondsetof{0}}$ we have
+    \begin{align*}
+        \contraction{\canparam,\sstatencodingat{\catindex}}
+        &= \lim_{n\rightarrow\infty} \contraction{\canparamof{n},\sstatencodingat{\catindex}} \\
+        &= \lim_{n\rightarrow\infty} \max_{\seccatindex\in\stateset} \contraction{\canparamof{n},\sstatencodingat{\seccatindex}} \\
+        &= \max_{\seccatindex\in\stateset} \contraction{\canparam,\sstatencodingat{\seccatindex}}
+    \end{align*}
+    and therefore $\sstatencodingat{\catindex}\in\genfacesetof{\facecondsetof{1}}$.
+    Note, that we used in the third equation, that $\stateset$ is finite.% and thus avoided to justify these equations based on convexity. -> More precise statement needed !
+    We use this property for all elements of the preimage of $\facecondsetof{0}$ and get
+    \begin{align*}
+        \genfacesetof{\facecondsetof{0}}
+        &= \convhullof{\sstatencodingat{\catindex}\wcols\catindex\in\argmax_{\seccatindex\in\stateset}\contraction{\canparamof{1},\sstatencodingat{\seccatindex}}} \\
+        &\subset \convhullof{\sstatencodingat{\catindex}\wcols\catindex\in\argmax_{\seccatindex\in\stateset}\contraction{\canparam,\sstatencodingat{\seccatindex}}} \\
+        &= \genfacesetof{\facecondsetof{1}} \, . \qedhere
+    \end{align*}
 \end{proof}
 
 \lemref{lem:faceSetsToMaxCones} suggests that the partial order of faces by inclusion is mimiked by another partial order on the max cones, sketched in \figref{fig:max_cone_sketch}.
 We now consider the set of cones with this partial order, and show that this set is homomorphic to the face lattice.
 
-\begin{theorem}\label{the:faceSetsToMaxCones}
+\begin{theorem}
+    \label{the:faceSetsToMaxCones}
     The max cone lattice of $\genmeanset$, partially order by the
     \begin{align*}
         \genmaxconeof{\facecondsetof{0}} \prec \genmaxconeof{\facecondsetof{1}} \quad \text{if and only if} \quad
@@ -1306,216 +1418,6 @@ As a consequence of \theref{the:faceSetsToMaxCones}, the max cone lattice inheri
     }\label{fig:max_cone_sketch}
 \end{figure}
 
-
-
-\subsect{Base measure refinement}
-
-For mean parameters $\meanparamwith$ outside the interior of $\genmeanset$ we know by \theref{the:meanPolytopeInteriorCharacterization}, that any distribution with mean parameter $\meanparamwith$ is not positive with respect to $\basemeasure$ and is therefore not in the exponential family.
-We investigate this situation further and provide here a construction scheme to adapt the base measure such that there are exponential families containing these boundary distributions.
-
-\begin{theorem}
-    \label{the:faceToArgmax}
-    Let there be a statistic $\sstat$, which is minimal with respect to a base measure $\basemeasure$, and $\meanparamwith\notin\interiorof{\genmeanset}$.
-    Then there is a vector $\canparamwithin$ with
-    \begin{align*}
-        \meanparamwith\in\cangenmeansetargmax
-    \end{align*}
-    and all distributions reproducing the mean parameter $\meanparamwith$ are representable with respect to the base measure
-    \begin{align*}
-        \secbasemeasureat{\shortcatvariables} = \contractionof{\basemeasure, \indicatorofat{\arbset}{\shortcatvariables}}{\shortcatvariables} \, ,
-    \end{align*}
-    where the indicator is on the set
-    \begin{align*}
-        \arbset = \cansstatcatindicesargmax  \, .
-    \end{align*}
-\end{theorem}
-\begin{proof}
-    When $\meanparam\notin\interiorof{\genmeanset}$ we find a face such that $\meanparam\in\genfacesetof{\facecondset}$.
-    The existence of $\canparamat{\selvariable}$ follows from \theref{the:faceNormal}, in which also a construction procedure is provided given a half-space representation (see \theref{the:meanPolytopeHalfspaces}).
-    Now, we have
-    \begin{align*}
-        \meanparamwith \in \cangenmeansetargmax
-    \end{align*}
-    and thus
-    \begin{align*}
-        \meanparamwith \in \convhullof{ \sencsstat{\indexedshortcatvariables,\selvariable} \, : \,
-        \shortcatindices \in \argmax_{\shortcatindices \, : \, \basemeasureat{\indexedshortcatvariables}=1} \contraction{\canparamat{\selvariable},\sencsstat{\indexedshortcatvariables,\selvariable}} }
-    \end{align*}
-    Thus, any distribution reproducing the mean parameter is a convex combination of the one-hot encodings of the states in $\argmax_{\shortcatindices} \contraction{\canparamat{\selvariable},\sencsstat{\indexedshortcatvariables,\selvariable}}$, and therefore representable with respect to the base measure $\secbasemeasure$.
-\end{proof}
-
-Each face of $\genmeanset$ thus defines a refinement of a base measure, which is sufficient to reproduce the mean parameters on that face.
-
-% Face base measures defined before!
-\begin{definition}
-    %\label{def:faceBaseMeasure}
-    The base measure to the face of $\meanset$ with normal $\canparam$ is
-    \begin{align*}
-        \basemeasureofat{\sstat,\facecondset}{\shortcatvariables}
-        =\basemeasureofat{\sstat,\canparam}{\shortcatvariables}
-        %= \indicatorofat{\cansstatcatindicesargmax}{\shortcatvariables} \, .
-    \end{align*}
-\end{definition}
-
-% Also interesting: The mean parameter of face base measures, giving a weighted center of the face, which is the limit of the mean parameter to the annealed canonical parameter.
-The mean parameter to the normalized face base measure is
-\begin{align*}
-    \meanparam(\genfacesetof{\canparam}) = \contractionof{\sencsstatwith,\normalizationof{\basemeasureof{\sstat,\canparam}}{\shortcatvariables}}{\selvariable} \, .
-\end{align*}
-This quantity will be interesting as the limit of annealing (see \charef{cha:probReasoning}).
-
-\theref{the:faceToArgmax} implies that any mean parameter on a face of $\genmeanset$ can be reproduced with a distribution representable with respect to the refined base measure
-\begin{align*}
-    \secbasemeasureat{\shortcatvariables} = \contractionof{\basemeasure,\basemeasureof{\sstat,\canparam}}{\shortcatvariables} \, .
-\end{align*}
-
-% Base Measure Refinement algorithm
-We now utilize these findings and provide by \algoref{alg:baseMeasureRefinement} a procedure to refine the base measure until the reduced mean parameter is in the interior of a reduced mean parameter polytope.
-
-\begin{algorithm}[h!]
-    \caption{Base Measure Refinement}\label{alg:baseMeasureRefinement}
-    \begin{algorithmic}
-        \Require $\basemeasure$, statistic $\sstat$ and mean parameter $\meanparam\in\genmeanset$
-        \Ensure Refined base measure $\secbasemeasure$, reduced statistic $\secsstat$ and reduced mean parameter $\secmeanparam$ with properties described in \theref{the:baseMeasureRefinement}
-        \hrule
-        \While{$\meanparam\notin\sbinteriorof{\genmeanset}$}
-            \While{$\sstat$ not minimal with respect to $\basemeasure$ (see \defref{def:minimalStatistics})}
-                \State Find non-vanishing vector $\vectorat{\selvariable}$ and scalar $\lambda\in\rr$ such that
-                \[ \contractionof{\sencsstatat{\shortcatvariables,\selvariable},\vectorat{\selvariable},\basemeasureat{\shortcatvariables}}{\shortcatvariables} = \lambda\cdot\basemeasureat{\shortcatvariables} \, . \]
-                \State Choose a coordinate $\selindexin$ with $\vectorat{\indexedselvariable}\neq0$ and drop it from $\sstat$ and $\meanparam$
-            \EndWhile
-            \State Find a non-trivial face (i.e. a non-empty face, which is a proper subset of $\genmeanset$) with normal $\canparam$, such that
-            \[ \meanparam\in\genfacesetof{\canparam} \]
-            \State Refine base measure
-            \[ \basemeasure \algdefsymbol \contractionof{\basemeasure,\basemeasureof{\sstat,\canparam}}{\shortcatvariables} \]
-        \EndWhile
-        \State \textbf{return} $\basemeasure, \, \sstat,\,\meanparam$
-    \end{algorithmic}
-\end{algorithm}
-
-\begin{theorem}
-    \label{the:baseMeasureRefinement}
-    For arbitrary inputs $\basemeasure,\sstat$ and $\meanparam\in\genmeanset$, \algoref{alg:baseMeasureRefinement} terminates in finite time and outputs a triple of base measure $\secbasemeasure$, statistic $\secsstat$ and mean parameter $\secmeanparam$ such that the following holds.
-    Any probability distribution $\probtensor$ reproduces $\meanparam$, if and only if it reproduces $\secmeanparam$.
-    Further, any probability distribution reproducing $\meanparam$ is representable with respect to $\secbasemeasure$ and $\secmeanparam\in\sbinteriorof{\meansetof{\secsstat,\secbasemeasure}}$.
-%	Thus, there is a member of the exponential family $\expfamilyof{\secsstat,\secbasemeasure}$ reproducing $\meanparam$.
-\end{theorem}
-\begin{proof}
-    Let us first show, that \algoref{alg:baseMeasureRefinement} always terminates.
-    The inner while loop of \algoref{alg:baseMeasureRefinement} always terminates, since $\sstat$ has a finite number of coordinates, and in each iteration one of the coordinates is dropped.
-    To show that the outer while loop also terminates, it suffices to show, that the non-vanishing coordinates of the refined base measure are a proper subset of the base measure before refinement.
-    But if this would not be the case, we would have
-    \[ \basemeasureat{\shortcatvariables} = \contractionof{\basemeasure,\basemeasureof{\sstat,\canparam}}{\shortcatvariables} \]
-    and thus $\genfacesetof{\canparam}=\genmeanset$, which is a contradiction with the assumption of a non-trivial face.
-
-    The second and third claim follow from an iterative application of \theref{the:faceToArgmax} and the fact, that a probability distribution reproduces $\meanparam$ in a non-minimal representation, if and only if it reproduces the corresponding reduced $\secmeanparam$ with respect to the reduced statistics.
-\end{proof}
-
-
-\begin{example}[Faces with normals parallel to one-hot encodings]
-    To get some intuition how to represent face base measures, let us consider face normals $\canparam\in\{\lambda\cdot\onehotmapofat{\selindex}{\selvariable} \, : \, \selindexin, \, \lambda\in\rr/\{0\}\}$.
-    We use basis encodings of the coordinates $\sstatcoordinateof{\selindex}$ of the statistic $\sstat$, with head variables $\catvariableof{\sstatcoordinateof{\selindex}}$ with dimension $\catdimof{\sstatcoordinateof{\selindex}}$ enumerating the image $\imageof{\sstatcoordinateof{\selindex}}\subset\rr$ in an ascending order.
-    If $\canparamat{\selvariable}=\lambda\cdot\onehotmapofat{\selindex}{\selvariable}$ with $\lambda>0$, then $\argmax_{\shortcatindices} \contraction{\canparam,\sstat(\shortcatindices)}$ consists of states $\shortcatindices$ with minimal statistic $\sstatcoordinateofat{\selindex}{\indexedshortcatvariables}$, that is
-    \[  \basemeasureofat{\sstat,\lambda\cdot\onehotmapof{\selindex}}{\shortcatvariables}
-    = \contractionof{\bencodingofat{\sstatcoordinateof{\selindex}}{\shortcatvariables,\catvariableof{\sstatcoordinateof{\selindex}}},
-        \onehotmapofat{\catdimof{\sstatcoordinateof{\selindex}}-1}{\catvariableof{\sstatcoordinateof{\selindex}}}}{\shortcatvariables}  \, . \]
-    If $\canparamat{\selvariable}=\lambda\cdot\onehotmapofat{\selindex}{\selvariable}$ with $\lambda<0$, then at the states with minimal statistic $\sstatcoordinateofat{\selindex}{\indexedshortcatvariables}$, that is
-    \[  \basemeasureofat{\sstat,\lambda\cdot\onehotmapof{\selindex}}{\shortcatvariables}
-    = \contractionof{\bencodingofat{\sstatcoordinateof{\selindex}}{\shortcatvariables,\catvariableof{\sstatcoordinateof{\selindex}}},
-        \onehotmapofat{0}{\catvariableof{\sstatcoordinateof{\selindex}}}}{\shortcatvariables}  \, . \]
-\end{example}
-
-
-% Define sets of realizable distributions
-\begin{theorem}%\label{the:maxGraphExpressivity}
-    For the maximal graph $\maxgraph=([\seldim],\{[\seldim]\})$, which has a single hyperedge containing all head variables we have
-    \begin{align*}
-        \genmeanset = \left\{ \contractionof{\probat{\shortcatvariables},\sencodingofat{\sstat}{\shortcatvariables,\selvariable}}{\shortcatvariables} \, , \, \probtensor \in\realizabledistsof{\sstat,\maxgraph} \right\} \, .
-    \end{align*}
-\end{theorem}
-\begin{proof}
-    It is enough show, that for any output tuples $\secbasemeasure$, $\secsstat$ of the Base Measure Refinement \algoref{alg:baseMeasureRefinement} we have
-    \[ \expfamilyof{\secbasemeasure,\secsstat} \subset  \realizabledistsof{\sstat,\maxgraph} \, . \]
-    We notice, that the normalization of any face base measure is realizable by $\realizabledistsof{\sstat,\maxgraph}$. %since the objective in the maximation problem in \defref{def:faceBaseMeasure} depends only on $\sstat$. ?
-    Providing a more technical argument, we have
-    \begin{align*}
-        \indicatorofat{\argmax_{\shortcatindices} \contraction{\canparam,\sstat(\shortcatindices)}}{\shortcatvariables}
-        = \contractionof{
-            \sstatcc,
-            \sum_{\sstat(\shortcatindices) \, : \, \shortcatindices \in \argmax_{\shortcatindices} \contraction{\canparam,\sstat(\shortcatindices)} }
-            \onehotmapofat{\indexinterpretationat{\sstat(\shortcatindices)}}{\sstatheadvariables}
-        }{\shortcatvariables} \, .
-    \end{align*}
-    Since during the execution of \algoref{alg:baseMeasureRefinement}, $\secsstat$ is a subset of $\sstat$, we can find a corresponding $\canparamof{i}$ extending the face normal by vanishing coordinates to $\sstat$.
-    We then have, that
-    \begin{align*}
-        \secbasemeasure = \contractionof{
-            \{\bencodingofat{\sstat}{\sstatheadvariables,\shortcatvariables}\} \cup
-            \left\{\sum_{\sstat(\shortcatindices) \, : \, \shortcatindices \in \argmax_{\shortcatindices} \contraction{\canparamof{i},\sstat(\shortcatindices)} }
-            \onehotmapofat{\indexinterpretationat{\sstat(\shortcatindices)}}{\sstatheadvariables}
-            : i \in [n] \right\}
-        }{\sstatheadvariables}
-    \end{align*}
-    represents the output base measure, where $i\in[n]$ label the faces chosen during in the loop of \algoref{alg:baseMeasureRefinement}.
-    Now, any member $\expdistof{\secbasemeasure,\canparam,\secsstat}\in\expfamilyof{\secsstat,\secbasemeasure}$ can be represented by a member of  $\realizabledistsof{\sstat,\maxgraph}$, by contracting these base measure representing cores with the activation cores $\bigotimes_{\selindexin}\sstatacwith$.
-\end{proof}
-
-
-\subsect{Mean parameters by soft and hard constraints}
-
-We provide further intuition on the position of the mean parameter, when interpreting $\basemeasure$ and $\sstat$ as soft and hard constraint meachanisms on a distribution.
-To this end, let $\stateset$ be an arbitrary finite state set, where we so far had the set $\facstates$ for factored representations.
-
-% Statistics encoding
-We recall the statistics encoding of states as a map
-\begin{align*}
-    \sstatencoding : \stateset \rightarrow \parspace \quad, \quad
-    \sstatencodingat{\catindex} = \sencsstatat{\indexedshortcatvariables,\selvariable} \, .
-\end{align*}
-%This encoding generalizes the one-hot encoding, which corresponds with the special case $\sstat=\naivestat$.
-
-%
-The mean polytope is then the subset of the polytope $\meansetof{\sstat,\trivbm}$,
-\begin{align*}
-    \meansetof{\sstat,\basemeasure}
-    = \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable}\wcols\basemeasureat{\indexedshortcatvariables}=1}
-\end{align*}
-
-% Mean parameter of base measure
-The mean parameter of a base measure $\basemeasure$, which normalization is understood as a distribution is then
-\begin{align*}
-    \meanparamat{\sstat,\zeros,\basemeasure}
-    &= \frac{1}{\contraction{\basemeasure}} \sum_{\shortcatindices\wcols\basemeasureat{\indexedshortcatvariables}=1}  \sencsstatat{\indexedshortcatvariables,\selvariable} \\
-    &= \contractionof{\normalizationof{\basemeasure}{\shortcatvariables},\sencsstatat{\shortcatvariables,\selvariable}}{\selvariable} \, .
-\end{align*}
-We understand $\meanparamat{\sstat,\zeros,\basemeasure}$ as the weighted center of $\meansetof{\sstat,\basemeasure}$, where weights are allocated on the image of the statistics encoding by the cardinality of their pre-images.
-These concepts are sketched in \figref{fig:hs_mean_sketch} in blue.
-
-The choice of a base measure $\basemeasure$ can be regarded as the hard structure of a distribution.
-Given $\basemeasure$, let us now implement soft structure in form of distributions in exponential families $\expfamily$.
-While the normalized base measure $\basemeasure$ reproduces only the weighted center of $\meansetof{\sstat,\basemeasure}$, canonical parameters can be chosen to alter to any interior point in $\meansetof{\sstat,\basemeasure}$. % ! Here the effective interior, when not minimal !
-This alternations are sketched in \figref{fig:hs_mean_sketch} in red.
-
-\begin{figure}
-    \begin{center}
-        \input{PartI/tikz_pics/probability_reasoning/hs_meanset_sketch}
-    \end{center}
-    \caption{
-        Sketch of hard constraints (blue) and soft constraints (red) determing the position of the mean parameter in $\meanparamof{\sstat,\trivbm}$.
-        In the set of states $\stateset$, the support of a base measure $\basemeasure$ is marked blue, and the base measure is the corresponding subset encoding.
-        The normalized $\basemeasure$ has the mean parameter $\meanparamof{\sstat,\zeros,\basemeasure}$, and the mean polytope $\meansetof{\sstat,\basemeasure}$ is the convex hull of the image to the statistics encoding $\sstatencoding$ restricted on the support set of $\basemeasure$.
-        Given a base measure $\basemeasure$, the corresponding forward and backward maps implement soft contraints depedning on canonical parameters $\canparam$.
-        The forward mapping maps the zero canonical parameter to $\meanparamof{\sstat,\zeros,\basemeasure}$, correspond with the normalized base measure.
-        Generic parameters $\canparam$ (red) are mapped onto the interior $\interiorof{\meansetof{\sstat,\basemeasure}}$.
-    }\label{fig:hs_mean_sketch}
-\end{figure}
-
-
-
-
-
-
-
 %\sect{Forward Mapping in Exponential Families}
 
 %\subsect{Variational Formulation}
@@ -1556,7 +1458,7 @@ This alternations are sketched in \figref{fig:hs_mean_sketch} in red.
 \sect{Mean Field Methods}\label{sec:meanField}
 
 Mean field methods are approximation schemes for forward mappings, designed for efficient inference.
-To introduce them we turn the maximization over the mean parameter polytope in the the variational principle of forwards mappings into a maximization over the reproducing distributions, that is
+To introduce them we turn the maximization over the mean parameter polytope in the variational principle of forwards mappings into a maximization over the reproducing distributions, that is
 \begin{align*}
     \max_{\meanparam\in\genmeanset}  \contraction{\meanparam,\canparam} + \sentropyof{\meanrepprob}
     =
@@ -1673,9 +1575,9 @@ The optimal update equations are derived as the next theorem.
     Together with the condition $\contraction{\legcoreof{\catenumerator}}=1$ this is satisfied at
     \begin{align*}
         \legcoreofat{\catenumerator}{\catvariableof{\catenumerator}}
-    = \normalizationof{ \expof{ \contractionof{ \{\energytensor\}\cup
-    \{\legcoreof{\seccatenumerator} \, : \, \seccatenumerator\neq\catenumerator\} }{\catvariableof{\catenumerator}} }
-    }{\catvariableof{\catenumerator}} \, . & \qedhere
+        = \normalizationof{ \expof{ \contractionof{ \{\energytensor\}\cup
+        \{\legcoreof{\seccatenumerator} \, : \, \seccatenumerator\neq\catenumerator\} }{\catvariableof{\catenumerator}} }
+        }{\catvariableof{\catenumerator}} \, . & \qedhere
     \end{align*}
 \end{proof}
 
@@ -2008,10 +1910,6 @@ In that case, we choose $\meanparamwith=\contractionof{\sencsstatwith,\empdistri
 %\end{proof}
 
 
-
-
-
-
 %\begin{theorem}\label{the:maxEntMaxLikeDuality} % In Koller Book, Theorem 20.2
 %	If $\genmean\in\imageof{\forwardmap}$, we have that any distribution solving Problem~\ref{prob:maxEntropy} has a representation by $\expdistof{(\sstat,\estcanparam,\basemeasure)}$, 
 %	where $\estcanparam=\backwardmapof{\genmean}$ for any backward map of the exponential family. 
@@ -2123,7 +2021,7 @@ Since the log likelihood is concave, the algorithm converges to a global minimum
         \hrule
         \State Set $\canparamat{\selvariable}=\zerosat{\selvariable}$
         \State Compute $\datameanat{\selvariable}= \contractionof{\empdistribution,\sencsstat}{\selvariable}$
-        \While{Stopping criterion is not met}
+        \While{Convergence criterion not met}
             \For{$\selindexin$}
                 \State Compute
                 \begin{align*}
@@ -2153,11 +2051,12 @@ The computation of $\hypercoreof{\selindex}$ in Algorithm~\ref{alg:AMM} can be i
 
 The Hesse matrix of $\cumfunction$ at $\canparam$ is the covariance of the features with respect to $\expdist$, as we show next.
 
-\begin{lemma}\label{lem:hesseCumfunction}
+\begin{lemma}
+    \label{lem:hesseCumfunction}
     At any $\canparam\in\parspace$ we have
     \begin{align*}
-       \gradwrt{\seccanparamat{\secselvariable}}\gradwrtat{\seccanparamat{\selvariable}}{\canparam} \cumfunctionof{\seccanparam}
-       =& \contractionof{\expdistwith,\sencsstatat{\shortcatvariables,\selvariable},\sencsstatat{\shortcatvariables,\secselvariable}}{\secselvariable,\selvariable} \\
+        \gradwrt{\seccanparamat{\secselvariable}}\gradwrtat{\seccanparamat{\selvariable}}{\canparam} \cumfunctionof{\seccanparam}
+        =& \contractionof{\expdistwith,\sencsstatat{\shortcatvariables,\selvariable},\sencsstatat{\shortcatvariables,\secselvariable}}{\secselvariable,\selvariable} \\
         &-  \contractionof{\expdistwith,\sencsstatat{\shortcatvariables,\secselvariable}}{\secselvariable} \otimes \contractionof{\expdistwith,\sencsstatat{\shortcatvariables,\selvariable}}{\selvariable} \, .
     \end{align*}
 \end{lemma}
@@ -2189,15 +2088,16 @@ With this characterization, we can perform second order optimization algorithms 
         \While{Convergence criterion not met}
             \State Calulate $\gradwrt{\seccanparamat{\secselvariable}}\gradwrtat{\seccanparamat{\selvariable}}{\canparam} \cumfunctionof{\seccanparam}$ and  $\gradwrtat{\seccanparamat{\selvariable}}{\canparam} \cumfunctionof{\seccanparam}$ as in \lemref{lem:hesseCumfunction}. %and \lemref{lem:cumulativeGradient}.
             \State Solve the linear equation
-                \begin{align*}
-                   \left(\gradwrt{\seccanparamat{\secselvariable}}\gradwrtat{\seccanparamat{\selvariable}}{\canparam} \cumfunctionof{\seccanparam}\right)  \Delta\left[\selvariable\right]
-                    = \meanparamwith - \gradwrtat{\seccanparamat{\selvariable}}{\canparam} \cumfunctionof{\seccanparam}
-                \end{align*}
+            \begin{align*}
+                \left(\gradwrt{\seccanparamat{\secselvariable}}\gradwrtat{\seccanparamat{\selvariable}}{\canparam} \cumfunctionof{\seccanparam}\right)  \Delta\left[\selvariable\right]
+                = \meanparamwith - \gradwrtat{\seccanparamat{\selvariable}}{\canparam} \cumfunctionof{\seccanparam}
+            \end{align*}
             \State Update the canonical parameter
-                \begin{align*}
-                    \canparamwith \algdefsymbol \canparamwith - \Delta\left[\selvariable\right]
-                \end{align*}
+            \begin{align*}
+                \canparamwith \algdefsymbol \canparamwith - \Delta\left[\selvariable\right]
+            \end{align*}
         \EndWhile
+        \Return $\canparamwith$
     \end{algorithmic}
 \end{algorithm}
 

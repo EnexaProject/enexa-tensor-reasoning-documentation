@@ -863,6 +863,11 @@ A straightforward generalization of probability distributions representable by e
     \end{align*}
     Note that we restrict to non-negative activation cores by demanding $\zerosat{\sstatcatof{\edge}}\prec\hypercoreofat{\edge}{\sstatcatof{\edge}}$, a notation which will be introduced in more detail in \charef{cha:logicalReasoning} as partial order of tensors.
     We refer to any member $\probat{\shortcatvariables}\in\realizabledistsof{\sstat,\graph}$ as a by $\sstat$ and $\graph$ computable distribution.
+    \red{Given a base measure $\basemeasurewith$, by $\realizabledistsof{\sstat,\graph, \basemeasure}$ we refer to the set }
+    \begin{align*}
+        \realizabledistsof{\sstat,\graph}
+        = \left\{ \normalizationof{\{\bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}\} \cup \{\hypercoreofat{\edge}{\sstatcatof{\edge}} \wcols \edge\in\edges \} \cup \{\basemeasurewith\}}{\shortcatvariables}  \, : \,\hypercoreofat{\edge}{\sstatcatof{\edge}}\in\bigotimes_{\selindex\in\edge}\rr^{\headdimof{\selindex}}, \, \zerosat{\sstatcatof{\edge}}\prec\hypercoreofat{\edge}{\sstatcatof{\edge}} \right\} \, .
+    \end{align*}
 \end{definition}
 
 For unary activation cores, that is for the elementary graph $\elgraph$, any member of $\realizabledistsof{\sstat,\elgraph}$ has up to a normalization factor a tensor network decomposition by the diagram
@@ -1425,7 +1430,7 @@ We in the reminder of this section prepare for this application and derive tenso
 %where by $\bmrealprobof{\basemeasure}$ we note the set of by $\basemeasure$ representable distributions (see \defref{def:representationBaseMeasure}).
 %We in this section, we will further characterize the polytope of realizable mean parameters.
 
-\subsect{Representation by convex hulls}
+\subsect{Representation by convex hulls}\label{sec:meanPolytopeConvexHull}
 
 \begin{figure}[t!]
     \begin{center}
@@ -1717,11 +1722,11 @@ The vertex measure is then
     For any face $\genfacesetof{\facecondset}$ of $\meanset$ we have
     \begin{align*}
          \basemeasureofat{\sstat,\facecondset}{\shortcatvariables}
-         =\contractionof{\bencodingofat{\sstat}{\headvariableof{[\seldim]},\shortcatvariables},\actcoreat{\headvariableof{[\seldim]}}}{\shortcatvariables}
+         =\contractionof{\bencodingofat{\sstat}{\headvariableof{[\seldim]},\shortcatvariables},\kcoreat{\headvariableof{[\seldim]}}}{\shortcatvariables}
     \end{align*}
     where
     \begin{align*}
-        \actcoreat{\headvariableof{[\seldim]}}
+        \kcoreat{\headvariableof{[\seldim]}}
         = \sum_{\meanparam\in\genfacesetof{\facecondset}\cup\imageof{\sstatencoding}} \onehotmapofat{\headindex^{\meanparam}_{[\seldim]}}{\headvariableof{[\seldim]}} \, .
     \end{align*}
 \end{theorem}
@@ -1742,11 +1747,62 @@ The vertex measure is then
         \basemeasureofat{\sstat,\facecondset}{\shortcatvariables}
         &= \sum_{\meanparam\in\genfacesetof{\facecondset}\cup\imageof{\sstatencoding}} \hypercoreofat{\meanparam}{\shortcatvariables} \\
         &= \contractionof{\bencodingofat{\sstat}{\headvariableof{[\seldim]},\shortcatvariables},\sum_{\meanparam\in\genfacesetof{\facecondset}\cup\imageof{\sstatencoding}}\onehotmapofat{\headindex^{\meanparam}_{[\seldim]}}{\headvariableof{[\seldim]}}}{\shortcatvariables} \\
-        &= \contractionof{\bencodingofat{\sstat}{\headvariableof{[\seldim]},\shortcatvariables},\actcoreat{\headvariableof{[\seldim]}}}{\shortcatvariables} \, . \qedhere
+        &= \contractionof{\bencodingofat{\sstat}{\headvariableof{[\seldim]},\shortcatvariables},\kcoreat{\headvariableof{[\seldim]}}}{\shortcatvariables} \, . \qedhere
     \end{align*}
 \end{proof}
 
-Let us notice, that $\actcoreat{\headvariableof{[\seldim]}}$ in \theref{the:faceMeasureCharacterization} is a sparse tensor with basis $\cpformat$ rank $\cardof{\genfacesetof{\facecondset}\cup\imageof{\sstatencoding}}$ (see \charef{cha:sparseRepresentation}).
+Let us notice, that $\kcoreat{\headvariableof{[\seldim]}}$ in \theref{the:faceMeasureCharacterization} is a sparse tensor with basis $\cpformat$ rank $\cardof{\genfacesetof{\facecondset}\cup\imageof{\sstatencoding}}$ (see \charef{cha:sparseRepresentation}).
+
+
+\subsect{Base measure centers}
+
+We provide further intuition on the position of the mean parameter, when interpreting $\basemeasure$ and $\sstat$ as soft and hard constraint meachanisms on a distribution.
+To this end, let $\stateset$ be an arbitrary finite state set, where we so far had the set $\facstates$ for factored representations.
+
+\begin{definition}
+    We call the mean parameter of a normalized base measure, that is the vector
+    \begin{align*}
+        \meanparamat{\sstat,\zeros,\basemeasure}
+        &= \contractionof{\normalizationof{\basemeasure}{\shortcatvariables},\sencsstatat{\shortcatvariables,\selvariable}}{\selvariable} \, .
+    \end{align*}
+    the center of $\genmeanset$ (see \figref{fig:hs_mean_sketch}).
+\end{definition}
+
+We have
+\begin{align*}
+    \meanparamat{\sstat,\zeros,\basemeasure} = \frac{1}{\contraction{\basemeasure}} \sum_{\shortcatindices\wcols\basemeasureat{\indexedshortcatvariables}=1}  \sencsstatat{\indexedshortcatvariables,\selvariable}
+\end{align*}
+and therefore understand $\meanparamat{\sstat,\zeros,\basemeasure}$ as the weighted center of $\meansetof{\sstat,\basemeasure}$, where weights are allocated on the image of the statistics encoding by the cardinality of their pre-images.
+These concepts are sketched in \figref{fig:hs_mean_sketch} in blue.
+
+%% Mean parameter of base measure
+%The mean parameter of a base measure $\basemeasure$, which normalization is understood as a distribution is then
+%\begin{align*}
+%    \meanparamat{\sstat,\zeros,\basemeasure}
+%    &= \frac{1}{\contraction{\basemeasure}} \sum_{\shortcatindices\wcols\basemeasureat{\indexedshortcatvariables}=1}  \sencsstatat{\indexedshortcatvariables,\selvariable} \\
+%    &= \contractionof{\normalizationof{\basemeasure}{\shortcatvariables},\sencsstatat{\shortcatvariables,\selvariable}}{\selvariable} \, .
+%\end{align*}
+%We understand $\meanparamat{\sstat,\zeros,\basemeasure}$ as the weighted center of $\meansetof{\sstat,\basemeasure}$, where weights are allocated on the image of the statistics encoding by the cardinality of their pre-images.
+%These concepts are sketched in \figref{fig:hs_mean_sketch} in blue.
+
+The choice of a base measure $\basemeasure$ can be regarded as the hard structure of a distribution.
+Given $\basemeasure$, let us now implement soft structure in form of distributions in exponential families $\expfamily$.
+While the normalized base measure $\basemeasure$ reproduces only the weighted center of $\meansetof{\sstat,\basemeasure}$, canonical parameters can be chosen to alter to any interior point in $\meansetof{\sstat,\basemeasure}$. % ! Here the effective interior, when not minimal !
+This alternations are sketched in \figref{fig:hs_mean_sketch} in red.
+
+\begin{figure}
+    \begin{center}
+        \input{PartI/tikz_pics/probability_reasoning/hs_meanset_sketch}
+    \end{center}
+    \caption{
+        Sketch of hard constraints (blue) and soft constraints (red) determing the position of the mean parameter in $\meanparamof{\sstat,\trivbm}$.
+        In the set of states $\stateset$, the support of a base measure $\basemeasure$ is marked blue, and the base measure is the corresponding subset encoding.
+        The normalized $\basemeasure$ has the mean parameter $\meanparamof{\sstat,\zeros,\basemeasure}$, and the mean polytope $\meansetof{\sstat,\basemeasure}$ is the convex hull of the image to the statistics encoding $\sstatencoding$ restricted on the support set of $\basemeasure$.
+        Given a base measure $\basemeasure$, the corresponding forward and backward maps implement soft contraints depedning on canonical parameters $\canparam$.
+        The forward mapping maps the zero canonical parameter to $\meanparamof{\sstat,\zeros,\basemeasure}$, correspond with the normalized base measure.
+        Generic parameters $\canparam$ (red) are mapped onto the interior $\interiorof{\meansetof{\sstat,\basemeasure}}$.
+    }\label{fig:hs_mean_sketch}
+\end{figure}
 
 
 \sect{Discussion and Outlook}
