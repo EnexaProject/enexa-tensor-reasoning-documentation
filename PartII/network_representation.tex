@@ -578,12 +578,12 @@ Based on these insights we can characterize Hard Logic Networks by propositional
     \begin{align*}
         \probofat{\formulaset,\{\kcoreofat{\selindex}\wcols\selindexin\}}{\shortcatvariables}
     \end{align*}
-    coincides with the uniform distribution $\normalizationof{\formulaofat{\{\kcoreofat{\selindex}\wcols\selindexin\}}{\shortcatvariables}}{\shortcatvariables}$, where
+    coincides with the uniform distribution $\normalizationof{\formulaofat{\{\kcoreofat{\selindex}{\headvariableof{\selindex}}\wcols\selindexin\}}{\shortcatvariables}}{\shortcatvariables}$, where
     \begin{align*}
-        \formulaofat{\{\kcoreofat{\selindex}\wcols\selindexin\}}{\shortcatvariables} =
-        \left(\bigwedge_{\selindexin\wcols\kcoreofat{\selindex}=\tbasisat{\headvariableof{\selindex}}} \enumformulaat{\shortcatvariables}\right)
+        \formulaofat{\{\kcoreofat{\selindex}{\headvariableof{\selindex}}\wcols\selindexin\}}{\shortcatvariables} =
+        \left(\bigwedge_{\selindexin\wcols\kcoreofat{\selindex}{\headvariableof{\selindex}}=\tbasisat{\headvariableof{\selindex}}} \enumformulaat{\shortcatvariables}\right)
         \land
-        \left(\bigwedge_{\selindexin\wcols\kcoreofat{\selindex}=\fbasisat{\headvariableof{\selindex}}} \lnot\enumformulaat{\shortcatvariables}\right) \, .
+        \left(\bigwedge_{\selindexin\wcols\kcoreofat{\selindex}{\headvariableof{\selindex}}=\fbasisat{\headvariableof{\selindex}}} \lnot\enumformulaat{\shortcatvariables}\right) \, .
     \end{align*}
 \end{theorem}
 \begin{proof}
@@ -791,6 +791,8 @@ In contrary, Hard Logic Networks model uniform distributions over model sets of 
 They are represented by boolean activation tensors in $\elrealizabledistsof{\mlnstat}$.
 Having discussed these representation approaches, let us now investigate the general case of distributions in $\elrealizabledistsof{\mlnstat}$, which we call Hybrid Logic Networks.
 
+\subsect{Definition}
+
 \begin{definition}
     \label{def:hln}
     Given a boolean statistic of propositional formulas
@@ -803,6 +805,7 @@ Having discussed these representation approaches, let us now investigate the gen
 We now extract from a Hybrid Logic Network, defined as a distribution computable by $\mlnstat$ and $\elgraph$, a Hard Logic Network and a Markov Logic Network, which contraction builds the Hybrid Logic Network.
 
 \begin{theorem}
+    \label{the:hybridNetworkRepresentation}
     Any Hybrid Logic Network $\probwith\in\elrealizabledistsof{\mlnstat}$ is a normalized contraction of a Hard Logic Network and a Markov Logic Network, that is there are for $\selindexin$ boolean cores $\kcoreofat{\selindex}{\headvariableof{\selindex}}$ and a weight vector $\canparamat{\selvariable}$ such that
     \begin{align*}
         \probwith =
@@ -855,11 +858,11 @@ We now extract from a Hybrid Logic Network, defined as a distribution computable
     \end{align*}
     We therefore have
     \begin{align*}
-        \contractionof{
+        &\contractionof{
             \{\bencodingofat{\mlnstat}{\sstatheadvariables,\shortcatvariables}\}
             \cup \{\hypercoreofat{\selindex}{\headvariableof{\selindex}}\wcols\selindexin\}
-        }{\shortcatvariables}
-        =\left(\prod_{\selindexin}\lambda_{\selindex}\right)\cdot\contractionof{
+        }{\shortcatvariables}\\
+        &\quad =\left(\prod_{\selindexin}\lambda_{\selindex}\right)\cdot\contractionof{
             \{\bencodingofat{\mlnstat}{\sstatheadvariables,\shortcatvariables}\}
             \cup \left(\bigcup_{\selindexin}\{\kcoreofat{\selindex}{\headvariableof{\selindex}},\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\headvariableof{\selindex}}\}\right)
         }{\shortcatvariables}
@@ -867,154 +870,113 @@ We now extract from a Hybrid Logic Network, defined as a distribution computable
     and the claim follows, since the normalization of a tensor is invariant under multiplication with the positive scalar $\left(\prod_{\selindexin}\lambda_{\selindex}\right)$.
 \end{proof}
 
-
-%%%%%
-%% OLD:
-%%%%
-
-\begin{definition}
-%    \label{def:hln}
-    Given a set of formulas $\softformulaset$ with weights $\canparam$ and set $\hardformulaset$ of formulas, which conjunction is satisfiable, the hybrid logic network is the probability distribution
-    \begin{align*}
-        \probtensorof{(\softformulaset,\canparam,\hfbasemeasure)}[\shortcatvariables]
-        = \normalizationof{
-            \{\exformula : \exformula\in\hardformulaset\} \cup \{\expof{\weightof{\exformula}\cdot\exformula} : \exformula\in\softformulaset\}
-        }{\shortcatvariables} \, ,
-    \end{align*}
-    which is the member of the exponential family with statistic by $\softformulaset$ and the base measure
-    \[ \hfbasemeasure[\shortcatvariables] = \contractionof{\{\formula : \formula \in \hardformulaset\}}{\shortcatvariables} \, .\]
-
-    Given a set of formulas $\formulaset$, we define the set of hybrid logic networks realizable with $\formulaset$ and elementary activation cores as
-    \begin{align*}
-        \hlnsetof{\formulaset}
-        = \bigcup_{\secformulaset\subset\formulaset \, , \, \meanparam\in\{0,1\}^{\cardof{\formulaset}}}
-        \expfamilyof{\formulaset/\secformulaset,\basemeasureof{\secformulaset,\meanparam}}
-    \end{align*}
-    where we denote base measures
-    \begin{align*}
-        \basemeasureofat{\secformulaset,\meanparam}{\shortcatvariables}
-        = \bigwedge_{\enumformula\in\secformulaset} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables} \, .
-    \end{align*}
-\end{definition}
-
-The assumption of a satisfiable set $\hardformulaset$ is necessary, as we show next.
+We now relate with the formalism of exponential families and determine the base measures which are used to build Hybrid Logic Networks.
 
 \begin{theorem}
-    If any only if $\bigwedge_{\formula\in\hardformulaset}\formula$ is satisfiable, the tensor
-    \[  \contractionof{
-        \{\exformula : \exformula\in\hardformulaset\} \cup \{\expof{\weightof{\exformula}\cdot\exformula} : \exformula\in\softformulaset\}
-    }{\shortcatvariables} \]
-    is normable.
+    Given a boolean statistic $\mlnstat$, we build for any $\meanparamwith\in\{0,0.5,1\}^{\seldim}$ the formula
+    \begin{align*}
+        \mpformula \coloneqq
+        \left(\bigwedge_{\selindex\wcols\indexedmeanparam=1} \enumformulaat{\shortcatvariables}\right)
+        \land
+        \left(\bigwedge_{\selindex\wcols\indexedmeanparam=0} \lnot\enumformulaat{\shortcatvariables}\right) \, .
+    \end{align*}
+    Then we have
+    \begin{align*}
+        \elrealizabledistsof{\mlnstat}
+        = \bigcup_{\meanparamwith\in\{0,0.5,1\}^{\seldim}\wcols\contraction{\formulaof{\mlnstat,\meanparamwith}}>0} \expfamilyof{\mlnstat,\mpformula} \, ,
+    \end{align*}
+    where the union is over the satisfiable formulas $\formulaof{\mlnstat,\meanparamwith}$.
 \end{theorem}
 \begin{proof}
-    We need to show that
-    \begin{align}
-        \label{eq:tbsWellDefinedHLN}
-        \contraction{\{\exformula : \exformula\in\hardformulaset\} \cup \{\expof{\weightof{\exformula}\cdot\exformula} : \exformula\in\softformulaset\}} > 0 \, .
-    \end{align}
-    Since the conjunction of $\hardformulaset$ is satisfiable we find a $\shortcatindices$ with $\formulaat{\indexedcatvariableof{[\catorder]}}=1$ for all $\exformula\in\hardformulaset$.
-    Then
+    % Base Measure as formula
+    "$\subset$":\\
+    To any Hybrid Logic Network $\probwith$ in $\elrealizabledistsof{\mlnstat}$ we find by \theref{the:hybridNetworkRepresentation} hard activation cores $\{\kcoreofat{\selindex}{\headvariableof{\selindex}}\wcols\selindexin\}$.
+    We build a vector $\meanparamwith\in\{0,0.5,1\}^{\seldim}$ with coordinates
     \begin{align*}
-        & \contractionof{\{\exformula : \exformula\in\hardformulaset\} \cup \{\expof{\weightof{\exformula}\cdot\exformula} : \exformula\in\softformulaset\}}{\indexedcatvariableof{[\catorder]}} \\
-        & \quad = \left( \prod_{\exformula\in\hardformulaset}\formulaat{\indexedcatvariableof{[\catorder]}} \right)
-        \cdot \left( \prod_{\exformula\in\softformulaset}\expof{\weightof{\exformula}\cdot\exformula}[\indexedcatvariableof{[\catorder]}] \right) \\
-        & \quad =  \left( \prod_{\exformula\in\softformulaset}\expof{\weightof{\exformula}\cdot\exformula}[\indexedcatvariableof{[\catorder]}] \right) \\
-        & \quad > 0 \, .
+        \indexedmeanparam =
+        \begin{cases}
+            0 & \text{if} \quad \kcoreofat{\selindex}{\headvariableof{\selindex}}=\fbasisat{\headvariableof{\selindex}} \\
+            0.5 & \text{if} \quad \kcoreofat{\selindex}{\headvariableof{\selindex}}=\onesat{\headvariableof{\selindex}} \\
+            1 & \text{if} \quad \kcoreofat{\selindex}{\headvariableof{\selindex}}=\tbasisat{\headvariableof{\selindex}} \\
+        \end{cases}
     \end{align*}
-    Condition \eqref{eq:tbsWellDefinedHLN} follows from this and the Hybrid Logic Network is well-defined.
+    and notice that
+    \begin{align*}
+        \contractionof{\{\bencodingofat{\mlnstat}{\sstatheadvariables,\shortcatvariables}\}
+        \cup \{\kcoreofat{\selindex}{\headvariableof{\selindex}} \wcols \selindexin\}
+        }{\shortcatvariables}
+        =
+        \left(\bigwedge_{\selindex\wcols\indexedmeanparam=1} \enumformulaat{\shortcatvariables}\right)
+        \land
+        \left(\bigwedge_{\selindex\wcols\indexedmeanparam=0} \lnot\enumformulaat{\shortcatvariables}\right)
+        = \formulaofat{\mlnstat,\meanparamwith}{\shortcatvariables} \, .
+    \end{align*}
+    We notice, that $\formulaofat{\mlnstat,\meanparamwith}{\shortcatvariables}$ is satisfiable, since $\probwith$ is representable with respect to the base measure $\formulaofat{\mlnstat,\meanparam}{\shortcatvariables}$.
+    It follows that $\probwith$ is an element of the exponential family $\expfamilyof{\mlnstat,\mpformula}$.
+
+    "$\subset$":\\
+    Conversely, given an arbitrary $\meanparamwith\in\{0,0.5,1\}^{\seldim}$ we have, provided that $\mpformula$ is satisfiable
+    \begin{align*}
+        \expfamilyof{\mlnstat,\mpformula}
+    \end{align*}
 \end{proof}
+
+% COMMENT: 0.5 a dummy variable
+We strengthen, that $\meanparamwith$ does not coincide with the mean parameter of the Hybrid Logic Network, since here $0.5$ has been chosen as a dummy value whereas the index is in the open interval $(0,1)$.
 
 % Base Measure trick
-We can understand Hybrid Logic Networks, as a union of exponential families, where the union is over all boolean activation cores understood as generating a base measure.
+We can thus understand Hybrid Logic Networks, as a union of exponential families, where the union is over all boolean activation cores understood as generating a base measure.
 This trick is known to the field of variational inference, see for Example~3.6 in \cite{wainwright_graphical_2008}.
-
-\subsect{Tensor Network Representation}
-
-We can employ the formula decompositions to represent both probabilistic facts of the MLN and hard facts (seen as the limit of large weights).
-
-\begin{theorem}
-    \label{the:hybridNetworkRepresentation}
-    For any hybrid logic network we have
-    \begin{align*}
-        \probtensorof{(\softformulaset,\canparam,\hardformulaset)}[\shortcatvariables]
-        = \breakablenormalizationofwrt{
-            &\{\formulaccwith : \exformula\in\softformulaset\cup\hardformulaset \} \\
-            &\cup \{\tbasisat{\formulavar} : \exformula\in\hardformulaset \}
-            \cup \{\actcoreofat{\exformula}{\formulavar} : \exformula\in\softformulaset \}
-        }{\shortcatvariables}{\varnothing} \, .
-    \end{align*}
-\end{theorem}
-\begin{proof}
-    By \lemref{lem:formulaEncodingDecomposition}.
-\end{proof}
-
-% Discussion
-While the statistics computing cores in the basis encoding are shared to compute the soft and the hard logic formulas, their activation cores differ.
-While probabilistic soft formulas get activation cores (see Theorem~\ref{the:mlnTensorRep})
-\begin{align*}
-    \actcoreofat{\exformula}{\formulavar}
-    = \begin{bmatrix}
-          1 \\
-          \expof{\canparamat{\indexedselvariableof{}}}
-    \end{bmatrix}[\enumformulavar] \,
-\end{align*}
-the hard formulas get activation cores by unit vectors
-\begin{align*}
-    \tbasisat{\formulavar}
-    = \begin{bmatrix}
-          0 \\
-          1
-    \end{bmatrix}[\enumformulavar] \, .
-\end{align*}
-As shown in \secref{sec:hardLogicLimit}, the soft activation cores converge to these hard activation cores in the limit of large parameters, when imposing a local normalization.
-%
-We further notice, that the probabilistic activation cores are trivial tensors if and only if the corresponding parameter coordinate vanishes.
+For an example of a tensor network representation of a hybrid logic netaork see \figref{fig:ActivatedHeads}.
 
 
-%The reason for this is the Slicing Theorem, enabling the operations by both (exponentiation and selection of one slice) by the activation cores.
-For an example see Figure~\ref{fig:ActivatedHeads}.
+
+
+
 
 \begin{figure}[h]
     \begin{center}
         \input{PartII/tikz_pics/network_representation/activated_heads.tex}
     \end{center}
-    \caption{Diagram of a formula tensor with activated heads, containing one \textcolor{\concolor}{constraint hard activation core $\kcoreat{\headvariableof{a\lor b \lor \lnot c}}$} and one \textcolor{\probcolor}{probabilistic soft activation core $\actcoreat{\headvariableof{a\lor b}}$} .}
+    \caption{Tensor network representation of a Hybrid Logic Network with statistics $\mlnstat=(\catvariableof{a}\lor\catvariableof{b},\catvariableof{a}\lor\catvariableof{b}\lor \lnot c)$, following \theref{the:hybridNetworkRepresentation}.
+    Besides the computation cores required to compute the statistics, we have one non-trivial \textcolor{\probcolor}{probabilistic soft activation core $\actcoreofat{0,\canparamat{\selvariable=0}}{\headvariableof{a\lor b}}$} and one non-trivial \textcolor{\concolor}{constraint hard activation core $\kcoreofat{1}{\headvariableof{a\lor b \lor \lnot c}}$}.
+    The trivial activation cores $\kcoreofat{0}{\headvariableof{a\lor b}}$ and $\actcoreofat{1,0}{\headvariableof{a\lor b \lor \lnot c}}$ are omitted from the diagram, since leaving the contraction invariant.}
     \label{fig:ActivatedHeads}
 \end{figure}
 
+%\begin{remark}{Probability interpretation using the Partition function}
+%    The tensor networks here represent unnormalized probability distributions.
+%    The probability distribution can be normed by the quotient with the naive contraction of the network, the partition function.
+%\end{remark}
 
 
-\begin{remark}{Probability interpretation using the Partition function}
-    The tensor networks here represent unnormalized probability distributions.
-    The probability distribution can be normed by the quotient with the naive contraction of the network, the partition function.
-\end{remark}
-
-
-\subsect{Reasoning Properties}
+\subsect{Logical Reasoning Properties}
 
 Deciding probabilistic entailment (see \defref{def:probEntailment}) with respect to Hybrid Logic Networks can be reduced to the hard logic parts of the network.
 
 \begin{theorem}
     \label{the:hlnEntailmentReduction}
-    Let $(\softformulaset,\canparam,\hardformulaset)$ define a Hybrid Logic Network.
+    Let $\probofat{(\mlnstat,\canparam,\mpformula)}{\shortcatvariables}$ be a Hybrid Logic Network.
     Given a query formula $\exformula$ we have that
-    \[ \probtensorof{(\softformulaset,\canparam,\hardformulaset)} \models \exformula \]
+    \begin{align*}
+        \probtensorof{\mlnstat,\canparam,\mpformula} \models \exformula
+    \end{align*}
     if and only if
-    \[ \hardformulaset \models \exformula \, . \]
+    \[ \mpformula \models \exformula \, . \]
 \end{theorem}
 \begin{proof}
-    This follows from Theorem~\ref{the:factorReduction} on the representation of Hybrid Logic Networks as Markov Networks in Theorem~\ref{the:hybridNetworkRepresentation}.
+    This follows from Theorem~\ref{the:factorReduction} on the representation of Hybrid Logic Networks as exponential distributions in \theref{the:hybridNetworkRepresentation}.
 \end{proof}
 
 
 Formulas in $\softformulaset$, which are entailed or contradicted by $\hardformulaset$ are redundant, as we show next.
 
 \begin{theorem}%\label{the:hlnRepRedundancy}
-    If for a formula $\exformula$ and $\hardformulaset$ we have
-    \[ \hardformulaset \models \exformula \, \quad \text{or} \quad \hardformulaset \models \lnot\exformula \]
-    then for any $(\softformulaset,\canparam,\hardformulaset)$
-    \[ \probofat{(\softformulaset/\{\exformula\},\tilde{\canparam},\hardformulaset)}{\shortcatvariables} =  \probofat{(\softformulaset,\canparam,\hardformulaset)}{\shortcatvariables}  \, , \]
-    where $\tilde{\canparam}$ denotes the tensor $\canparam$, where the coordinate to $\exformula$ is dropped, if $\exformula\in\softformulaset$.
+    If for a Hybrid Logic Network $\probof{(\formulaset,\canparam,\mpformula)}$ and any formula $\exformula\in\formulaset$ we have
+    \[ \mpformula \models \exformula \, \quad \text{or} \quad \mpformula \models \lnot\exformula \]
+    then
+    \[ \probofat{(\formulaset/\{\exformula\},\tilde{\canparam},\mpformula)}{\shortcatvariables} =  \probofat{(\formulaset,\canparam,\mpformula)}{\shortcatvariables}  \, , \]
+    where $\tilde{\canparam}$ denotes the tensor $\canparam$, where the coordinate to $\exformula$ is dropped. %, if $\exformula\in\softformulaset$.
 \end{theorem}
 \begin{proof}
     Isolate the factor to the hard formula, which is constant for all situations.
@@ -1022,7 +984,7 @@ Formulas in $\softformulaset$, which are entailed or contradicted by $\hardformu
 
 %% Now in the 
 A similar statement holds for the hard formulas itself, as shown in Theorem~\ref{the:ReduncancyOfEntailed}.
-However, notice that if $\hardformulaset/\{\exformula\}\models\lnot\exformula$, then $\hardformulaset\cup\{\exformula\}$ is not satisfiable and a hybrid logic network cannot be defined for $\hardformulaset\cup\{\exformula\}$ as hard logic formulas.
+%However, notice that if $\hardformulaset/\{\exformula\}\models\lnot\exformula$, then $\hardformulaset\cup\{\exformula\}$ is not satisfiable and a hybrid logic network cannot be defined for $\hardformulaset\cup\{\exformula\}$ as hard logic formulas.
 
 %If the conjunction of $\hardformulaset/\{\exformula\}$ entails $\exformula$, we can erase $\exformula$ from $\hardformulaset$ without changing the contraction, therefore without changing the base measure of the Hybrid Logic Network.
 
@@ -1037,8 +999,9 @@ Hybrid Logic Networks extend the expressivity result of Theorem~\ref{the:minterm
 
 \begin{theorem}
     \label{the:mintermExpressivityHLN}
-    Let $\probat{\shortcatvariables}$ a possibly not positive probability tensor we build a base measure
-    \[ \hfbasemeasure = \nonzeroof{\probat{\shortcatvariables}} \]
+    Let $\probat{\shortcatvariables}$ a (possibly not positive) probability tensor.
+    We build a base measure
+    \[ \basemeasure = \nonzeroof{\probat{\shortcatvariables}} \]
     and a parameter tensor
     \begin{align*}
         \canparamat{\selvariableof{[\catorder]}=\shortcatindices}
@@ -1223,7 +1186,7 @@ We can further provide an equivalent criterion for a vertex by the satisfaction 
         \item The set $\{\meanparamwith\}$ is a vertex of $\hlnmeanset$.
         \item The formula
         \begin{align*}
-            \formulaof{\meanparam} := \bigwedge_{\selindexin} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables}
+            \mpformula = \bigwedge_{\selindexin} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables}
         \end{align*}
         is satisfiable.
     \end{itemize}
@@ -1239,12 +1202,12 @@ We can further provide an equivalent criterion for a vertex by the satisfaction 
     \begin{align*}
         \exists{\shortcatindices\in\atomstates}: \uniquantwrtof{\selindexin}{\enumformulaat{\indexedshortcatvariables}=\meanparamat{\indexedselvariable}} \, .
     \end{align*}
-    Finally, this is equivalent to the existence of a model of $\formulaof{\meanparam}$, i.e. the satisfiability of $\formulaof{\meanparam}$.
+    Finally, this is equivalent to the existence of a model of $\mpformula$, i.e. the satisfiability of $\mpformula$.
     %ii$\Rightarrow$i \\
 \end{proof}
 
 % Hard Logic Network representation -> Another theorem?
-Let us notice, that the normalization of $\formulaof{\meanparam}$ is a Hard Logic Network using the statistic $\formulaset$ and the base measure $\basemeasure$.
+Let us notice, that the normalization of $\mpformula$ is a Hard Logic Network using the statistic $\formulaset$ and the base measure $\basemeasure$.
 Any model of this formula is furthermore mapped by the statistics encoding onto the corresponding vertex $\{\meanparamwith\}$ and the mean parameter of the Hard Logic Network is the unique vertex element $\meanparamwith$.
 We will in \charef{cha:networkReasoning} show, that among the distributions having the vertex as mean parameter, the corresponding Hard Logic Network is the one with maximal entropy.
 
@@ -1348,14 +1311,8 @@ In general, we can express any face measure by a propositional formula.
 \end{theorem}
 \begin{proof}
     By representing the contraction with $\kcoreofat{\facecondset}{\sstatheadvariables}$.
-    Any basis tensors is a disjoint propositional formulas, the vertex formula $\formulaof{\meanparam}$ and their sum is thus represented by the disjunction.
+    Any basis tensors is a disjoint propositional formulas, the vertex formula $\mpformula$ and their sum is thus represented by the disjunction.
 \end{proof}
-%\red{The face measure is thus}
-%\begin{align*}
-%    \basemeasureof{\facecondset}
-%    = \bigvee_{\meanparam\in\genfaceset\cup\boundaryparcube} \formula^{\meanparam}
-%    = \bigvee_{\meanparam\in\genfaceset\cup\boundaryparcube} \bigwedge_{\selindexin} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformula \, .
-%\end{align*}
 
 
 \subsect{Mean parameters reproducable by Hybrid Logic Networks} % Generalize to any mean parameter reproduction by hybrid logic networks
@@ -1669,44 +1626,14 @@ We can relate our two standard examples of the atomic and the minterm formula se
 \end{example}
 
 
-
-
-\sect{Applications}
-
-Hybrid Logic Networks as neuro-symbolic architectures:
-\begin{itemize}
-    \item Neural Paradigm here by decompositions of logical formulas into their connectives.
-    In more generality by decompositions of sufficient statistics into composed functions, using Basis Calculus.
-    Deeper nodes as carrying correlations of lower nodes.
-    \item Symbolic Paradigm by interpretability of propositional logics.
-\end{itemize}
-
-
-Hybrid Logic Networks as trainable Machine Learning models:
-\begin{itemize}
-    \item Expressivity: Can represent any positive distribution, as shown by Theorem~\ref{the:maximalClausesRepresentation}, with $2^d$ formulas.
-    \item Efficiency: Can only handle small subsets of possible formulas, since their possible number is huge.
-    Tensor networks provide means to efficiently represent formulas depending on many variables and reason based on contractions.
-    \item Differentiability: Distributions are differentiable functions of their weights, see Parameter Estimation Chapter.
-    The log-likelihood of data is therefore also differentiable function of their weights and we can exploit first-order methods in their optimization.
-    \item Structure Learning: We need to find differentiable parametrizations of logical formulas respecting a chosen architecture.
-    In \charef{cha:formulaSelection} such representations are described based on Selector Tensor Networks.
-\end{itemize}
-Differentiability and structure learning will be investigated in more detail in the next chapter.
-
-\red{When understanding atoms as observed variables, and the computed as hidden, Hybrid Logic Networks are deep higher-order boltzmann machines:
-More generic correlations can be captured by a logical connective, calculated by a basis encoding and activated by an activation core.}
-
-\red{Hybrid Logic Networks as bridging soft and hard logics within the formalism of exponential families.}
-
 %\begin{remark}[Hopfield networks]
 %	Also interesting for MLNs is a Hopfield perspective.
 %	Having an initialization the update can be interpreted as a Gibbs sampling step at temperature $0$ (since deterministic update).
 %\end{remark}
 
 
-% CSP
-A more general class of problems, which have natural representations by Hard Logic Networks are Constraint Satisfaction Problems (see Chapter~5 in \cite{russell_artificial_2021}).
-Solving such problems is then equivalent to sampling from the worlds in a logical interpretation, and can be approached by the methods of \charef{cha:logicalReasoning}.
-Among these classed, we have only discussed the Sudoku game in Example~\ref{exa:sudoku}.
-Extensions by Hybrid Logic Networks can be interpreted as implementations of preferences among possible solutions by probabilities.
+%% CSP
+%A more general class of problems, which have natural representations by Hard Logic Networks are Constraint Satisfaction Problems (see Chapter~5 in \cite{russell_artificial_2021}).
+%Solving such problems is then equivalent to sampling from the worlds in a logical interpretation, and can be approached by the methods of \charef{cha:logicalReasoning}.
+%Among these classed, we have only discussed the Sudoku game in Example~\ref{exa:sudoku}.
+%Extensions by Hybrid Logic Networks can be interpreted as implementations of preferences among possible solutions by probabilities.
