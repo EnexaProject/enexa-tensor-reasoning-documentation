@@ -19,8 +19,11 @@ Markov Logic Networks exploit the efficiency and interpretability of logical cal
 We introduce Markov Logic Networks in the formalism of exponential families (see \secref{sec:exponentialFamilies}).
 
 \begin{definition}[Markov Logic Networks]
+    \label{def:mln}
     Markov Logic Networks are exponential families $\mlnexpfamily$ with sufficient statistics by functions
-    \[ \mlnstat : \atomstates \rightarrow \bigtimes_{\exformulain}[2] \subset \rr^{\cardof{\formulaset}} \]
+    \begin{align*}
+        \mlnstat : \atomstates \rightarrow \bigtimes_{\exformulain}[2] \subset \rr^{\cardof{\formulaset}}
+    \end{align*}
     defined coordinatewise by propositional formulas $\exformulain$.
 \end{definition}
 
@@ -58,12 +61,6 @@ Based on the previous discussion on the representation of exponential families b
               \expof{\canparamat{\indexedselvariable}} & \text{for} \quad \headindexof{\selindex}  = 1
         \end{cases}  \, .
     \end{align*}
-%	\begin{align*}
-%		\enumformulaacwith
-%		= \begin{bmatrix} 1 \\
-%		 \expof{\canparamat{\indexedselvariable}}
-%		 \end{bmatrix}[\enumformulavar] \, .
-%	\end{align*}
 \end{theorem}
 \begin{proof}
     Markov Logic Networks are exponential families, which base measure is trivial and which statistic consist of boolean features.
@@ -789,13 +786,94 @@ Based on these insights we can characterize Hard Logic Networks by propositional
 
 \sect{Hybrid Logic Network}\label{sec:hybridNetworks}
 
-Markov Logic Networks are by definition positive distributions.
+Markov Logic Networks are by definition positive distributions and are represented by positive activation tensors in $\elrealizabledistsof{\mlnstat}$ (see \figref{fig:elementaryComputableSketch}).
 In contrary, Hard Logic Networks model uniform distributions over model sets of the respective Knowledge Base and therefore have vanishing coordinates.
-We now show how to combine both approaches by defining Hybrid Logic Networks, when understanding Hard Logic Networks as base measures.
-This trick is known to the field of variational inference, see for Example~3.6 in \cite{wainwright_graphical_2008}.
+They are represented by boolean activation tensors in $\elrealizabledistsof{\mlnstat}$.
+Having discussed these representation approaches, let us now investigate the general case of distributions in $\elrealizabledistsof{\mlnstat}$, which we call Hybrid Logic Networks.
 
 \begin{definition}
     \label{def:hln}
+    Given a boolean statistic of propositional formulas
+    \begin{align*}
+        \mlnstat : \atomstates \rightarrow \bigtimes_{\selindexin}[2]
+    \end{align*}
+    any element of $\elrealizabledistsof{\mlnstat}$ is called a Hybrid Logic Network (HLN).
+\end{definition}
+
+We now extract from a Hybrid Logic Network, defined as a distribution computable by $\mlnstat$ and $\elgraph$, a Hard Logic Network and a Markov Logic Network, which contraction builds the Hybrid Logic Network.
+
+\begin{theorem}
+    Any Hybrid Logic Network $\probwith\in\elrealizabledistsof{\mlnstat}$ is a normalized contraction of a Hard Logic Network and a Markov Logic Network, that is there are for $\selindexin$ boolean cores $\kcoreofat{\selindex}{\headvariableof{\selindex}}$ and a weight vector $\canparamat{\selvariable}$ such that
+    \begin{align*}
+        \probwith =
+        \normalizationof{
+            \{\bencodingofat{\mlnstat}{\sstatheadvariables,\shortcatvariables}\}
+            \cup \left(\bigcup_{\selindexin}\{\kcoreofat{\selindex}{\headvariableof{\selindex}},\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\headvariableof{\selindex}}\}\right)
+        }{\shortcatvariables} \, .
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    We show the claim by splitting the activation cores into a contraction of hard (i.e. logical) and soft (i.e. probabilistic) activation cores.
+    Since $\probwith\in\elrealizabledistsof{\mlnstat}$ we find for $\selindexin$ non-negative vectors $\hypercoreofat{\selindex}{\headvariableof{\selindex}}$ such that
+    \begin{align*}
+        \probwith =
+        \normalizationof{
+            \{\bencodingofat{\mlnstat}{\sstatheadvariables,\shortcatvariables}\}
+            \cup \{\hypercoreofat{\selindex}{\headvariableof{\selindex}}\wcols\selindexin\}
+        }{\shortcatvariables} \, .
+    \end{align*}
+    We now define for $\selindexin$ boolean cores by
+    \begin{align*}
+        \kcoreofat{\selindex}{\headvariableof{\selindex}} =
+        \greaterzeroof{\hypercoreofat{\selindex}{\headvariableof{\selindex}}} \, .
+    \end{align*}
+    And a canonical parameter vector $\canparamwith$ by
+    \begin{align*}
+        \canparamat{\indexedselvariable} =
+        \begin{cases}
+            0 & \text{if} \quad \kcoreofat{\selindex}{\headvariableof{\selindex}}\neq\onesat{\headvariableof{\selindex}} \\
+            \lnof{\frac{\hypercoreofat{\selindex}{\headvariableof{\selindex}=1}}{\hypercoreofat{\selindex}{\headvariableof{\selindex}=0}}} & \text{else} \\
+        \end{cases} \, .
+    \end{align*}
+    For all $\selindexin$ we have that $\canparamat{\indexedselvariable}$ is well-defined, since by assumption $\hypercoreofat{\selindex}{\headvariableof{\selindex}}$ is positive, if $\kcoreofat{\selindex}{\headvariableof{\selindex}}=\onesat{\headvariableof{\selindex}}$.
+    If for $\selindexin$ we have $\kcoreofat{\selindex}{\headvariableof{\selindex}}\neq\onesat{\headvariableof{\selindex}}$, then $\hypercoreofat{\selindex}{\headvariableof{\selindex}}\in\{\tbasisat{\headvariableof{\selindex}},\fbasisat{\headvariableof{\selindex}}\}$, since $\hypercoreofat{\selindex}{\headvariableof{\selindex}}=\zerosat{\headvariableof{\selindex}}$ would lead to a vanishing contraction with the basis encoding of $\mlnstat$.
+    Then is a real number $\lambda_{\selindex}>0$ such that
+    \begin{align*}
+        \hypercoreofat{\selindex}{\headvariableof{\selindex}}
+        = \lambda_{\selindex} \cdot \kcoreofat{\selindex}{\headvariableof{\selindex}}
+    \end{align*}
+    and, since $\actcoreofat{\selindex,0}{\headvariableof{\selindex}} = \onesat{\headvariableof{\selindex}}$ also
+    \begin{align*}
+        \hypercoreofat{\selindex}{\headvariableof{\selindex}}
+        = \lambda_{\selindex} \cdot \contractionof{\kcoreofat{\selindex}{\headvariableof{\selindex}},\actcoreofat{\selindex,\indexedcanparam}{\headvariableof{\selindex}}}{\headvariableof{\selindex}} \, .
+    \end{align*}
+    Conversely, if for $\selindexin$ we have $\kcoreofat{\selindex}{\headvariableof{\selindex}}=\onesat{\headvariableof{\selindex}}$, then there is a scalar $\lambda_{\selindex}>0$ such that
+    \begin{align*}
+        \hypercoreofat{\selindex}{\headvariableof{\selindex}}
+        &= \lambda_{\selindex} \cdot \actcoreofat{\selindex,\indexedcanparam}{\headvariableof{\selindex}} \\
+        &= \lambda_{\selindex} \cdot \contractionof{\kcoreofat{\selindex}{\headvariableof{\selindex}},\actcoreofat{\selindex,\indexedcanparam}{\headvariableof{\selindex}}}{\headvariableof{\selindex}} \, . \\
+    \end{align*}
+    We therefore have
+    \begin{align*}
+        \contractionof{
+            \{\bencodingofat{\mlnstat}{\sstatheadvariables,\shortcatvariables}\}
+            \cup \{\hypercoreofat{\selindex}{\headvariableof{\selindex}}\wcols\selindexin\}
+        }{\shortcatvariables}
+        =\left(\prod_{\selindexin}\lambda_{\selindex}\right)\cdot\contractionof{
+            \{\bencodingofat{\mlnstat}{\sstatheadvariables,\shortcatvariables}\}
+            \cup \left(\bigcup_{\selindexin}\{\kcoreofat{\selindex}{\headvariableof{\selindex}},\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\headvariableof{\selindex}}\}\right)
+        }{\shortcatvariables}
+    \end{align*}
+    and the claim follows, since the normalization of a tensor is invariant under multiplication with the positive scalar $\left(\prod_{\selindexin}\lambda_{\selindex}\right)$.
+\end{proof}
+
+
+%%%%%
+%% OLD:
+%%%%
+
+\begin{definition}
+%    \label{def:hln}
     Given a set of formulas $\softformulaset$ with weights $\canparam$ and set $\hardformulaset$ of formulas, which conjunction is satisfiable, the hybrid logic network is the probability distribution
     \begin{align*}
         \probtensorof{(\softformulaset,\canparam,\hfbasemeasure)}[\shortcatvariables]
@@ -846,6 +924,9 @@ The assumption of a satisfiable set $\hardformulaset$ is necessary, as we show n
     Condition \eqref{eq:tbsWellDefinedHLN} follows from this and the Hybrid Logic Network is well-defined.
 \end{proof}
 
+% Base Measure trick
+We can understand Hybrid Logic Networks, as a union of exponential families, where the union is over all boolean activation cores understood as generating a base measure.
+This trick is known to the field of variational inference, see for Example~3.6 in \cite{wainwright_graphical_2008}.
 
 \subsect{Tensor Network Representation}
 
@@ -897,7 +978,7 @@ For an example see Figure~\ref{fig:ActivatedHeads}.
     \begin{center}
         \input{PartII/tikz_pics/network_representation/activated_heads.tex}
     \end{center}
-    \caption{Diagram of a formula tensor with activated heads, containing \textcolor{\concolor}{hard constraint cores} and \textcolor{\probcolor}{probabilistic weight cores} .} %along \textcolor{\inactivecolor}{inactive cores}.}
+    \caption{Diagram of a formula tensor with activated heads, containing one \textcolor{\concolor}{constraint hard activation core $\kcoreat{\headvariableof{a\lor b \lor \lnot c}}$} and one \textcolor{\probcolor}{probabilistic soft activation core $\actcoreat{\headvariableof{a\lor b}}$} .}
     \label{fig:ActivatedHeads}
 \end{figure}
 
@@ -1113,7 +1194,8 @@ Further, if for any $\selindexin$ we have $\meanparamat{\indexedselvariable}\in\
 
 First of all, we show that the vertices of $\hlnmeanset$ are the boolean vectors contained in $\hlnmeanset$.
 
-\begin{theorem}\label{the:vertexByHardLogicNetworks}
+\begin{theorem}
+    \label{the:vertexByHardLogicNetworks}
     Given a boolean statistic $\formulaset$, a basemeasure $\basemeasurewith$ and let $\meanparamwith\in\hlnmeanset$.
     Then the following are equivalent:
     \begin{itemize}
@@ -1122,7 +1204,8 @@ First of all, we show that the vertices of $\hlnmeanset$ are the boolean vectors
     \end{itemize}
 \end{theorem}
 \begin{proof}
-    (i)$\Rightarrow$(ii): \\
+(i)
+    $\Rightarrow$(ii): \\
     We use that any set of vectors, which convex hull forms a polytope, contains all vertices of that polytope (see Proposition 2.2 in \cite{ziegler_lectures_2013}).
     %For any polytope, and any set of vectors spanning the polytope as convex hull, all vertices are contained in all sets, which convex hull is $\hlnmeanset$,
     Since by definition $\hlnmeanset$ is the convex hull of boolean vectors $\sencmlnstatat{\indexedshortcatvariables,\selvariable}$, all vertices are boolean vectors.
@@ -1173,7 +1256,8 @@ We will in \charef{cha:networkReasoning} show, that among the distributions havi
 With \theref{the:vertexByHardLogicNetworks} we showed that all vertices are reproduced by Hard Logic Networks.
 In general, as we show next, Hard Logic Networks are face measures to a set of faces which we characterize in the next theorem.
 
-\begin{theorem}\label{the:faceMeasureHardLogicNetworks}
+\begin{theorem}
+    \label{the:faceMeasureHardLogicNetworks}
     Let $\genfaceset$ be a face of $\genmeanset$, then the following are equivalent:
     \begin{itemize}
         \item[(i)] There is a face $\cubeface$ of $\fullparcube$ such that $\genfaceset=\genmeanset\cup\cubeface$.
@@ -1217,9 +1301,9 @@ In general, as we show next, Hard Logic Networks are face measures to a set of f
     Given a basis+ elementary tensor decomposition of $\kcoreof{\facecondset}$ we construct a face of the cube $\fullparcube$ by sets
     \begin{align*}
         \arbsetof{\selindex} = \begin{cases}
-            \{0\} & \text{if} \quad \kcoreofat{\selindex}{\headvariableof{\selindex}} = \tbasisat{\headvariableof{\selindex}} \\
-            \{1\} & \text{if} \quad \kcoreofat{\selindex}{\headvariableof{\selindex}} = \fbasisat{\headvariableof{\selindex}} \\
-            [0,1] & \text{else}
+                                   \{0\} & \text{if} \quad \kcoreofat{\selindex}{\headvariableof{\selindex}} = \tbasisat{\headvariableof{\selindex}} \\
+                                   \{1\} & \text{if} \quad \kcoreofat{\selindex}{\headvariableof{\selindex}} = \fbasisat{\headvariableof{\selindex}} \\
+                                   [0,1] & \text{else}
         \end{cases}
     \end{align*}
     and define a face by the cartesian product of these sets as
@@ -1279,7 +1363,8 @@ In general, we can express any face measure by a propositional formula.
 % Check: Where to define cube face and effective interior
 Based on the representation results for face measures, we now study the mean parameters of Hybrid Logic Networks.
 
-\begin{theorem}\label{the:hlnInteriorCharacterization}
+\begin{theorem}
+    \label{the:hlnInteriorCharacterization}
     Hybrid Logic Networks reproduce exactly those mean parameters $\meanparamwith$, which are in the effective interior of cube faces $\fullparcube$, i.e. for which there is a face $\genfaceset$ of $\hlnmeanset$ and a face $\cubeface$ of the cube $\fullparcube$ such that
     \begin{align*}
         \meanparamwith\in\sbinteriorof{\genfaceset} \quad\text{and}\quad \genfaceset = \hlnmeanset\cup\cubeface \, .
@@ -1294,7 +1379,8 @@ Based on the representation results for face measures, we now study the mean par
 We now provide a procedure to investigate, whether a mean parameter $\meanparamwith\in\hlnmeanset$ is reproduceable by a Hybrid Logic Network in $\elrealizabledistsof{\formulaset}$.
 To this end, we first determine the minimal face with respect to face inclusion (the partial order of the face lattice, see \cite{ziegler_lectures_2013}), which includes $\meanparamwith$.
 
-\begin{lemma}\label{lem:minimalContainingFace}
+\begin{lemma}
+    \label{lem:minimalContainingFace}
     For each mean parameter $\meanparamwith\in\hlnmeanset$ the minimal face of the cube $\fullparcube$ containing $\meanparamwith$ is
     \begin{align*}
         \cubeface^{\meanparam}
@@ -1303,8 +1389,8 @@ To this end, we first determine the minimal face with respect to face inclusion 
     where for each $\selindexin$
     \begin{align*}
         \arbsetof{\selindex} = \begin{cases}
-            \{\meanparamat{\indexedselvariable}\} & \text{if} \quad \meanparamat{\indexedselvariable} \in \ozset \\
-            [0,1] & \text{else}
+                                   \{\meanparamat{\indexedselvariable}\} & \text{if} \quad \meanparamat{\indexedselvariable} \in \ozset \\
+                                   [0,1] & \text{else}
         \end{cases} \, .
     \end{align*}
 \end{lemma}
