@@ -1,113 +1,172 @@
 \chapter{\chatextnetworkReasoning}\label{cha:networkReasoning}
 
-In this chapter we investigate the inference properties of Hybrid Logic Networks starting with characterizations of its mean parameter polytopes.
+In this chapter we investigate the inference properties of Hybrid Logic Networks, exploiting the characterizations of the corresponding mean parameter polytopes in \charef{cha:networkRepresentation}.
 We investigate unconstrained parameter estimated for Markov Logic Networks and Hybrid Logic Networks, which are special cases of the backward maps introduced in \charef{cha:probRepresentation}.
 We then motivate structure learning based on sparsity constraints on the parameters on the minterm exponential family and present heuristic strategies leading to efficient structure learning algorithms.
 
 
 
-\sect{Entropic Motivation of unconstrained Parameter Estimation} \label{sec:parameterEstimation} % Check for redundancy with the mln introduction chapter!
+\sect{Entropy Optimization on Hybrid Logic Networks} \label{sec:parameterEstimation} % Check for redundancy with the mln introduction chapter!
 
-% Repetition and result transfering
-Markov Logic Networks are exponential families with statistics by a set $\formulaset$ of propositional formulas.
-We furthermore allow for propositional formulas as base measures, to also include the discussion of Hybrid Logic Networks.
-Based on this, we apply the theory of probabilistic inference, developed in \charef{cha:probReasoning} for the generic exponential families.
+We will investigate two entropic approaches towards unconstrained parameter estimation.
+First of all, we characterize Maximum Entropy distributions with a moment constraint.
+Maximum Likelihood Estimation restricts the distributions optimized over to a specific set, here the Hybrid Logic Networks.
 
-\subsect{Maximum Likelihood in Hybrid Logic Networks}
+\subsect{Entropy Maximization}
 
-% Special example: MLE
-The Maximum Likelihood Problem on a hybrid logic network family is the moment projection
-\begin{align*}
-    \argmax_{\canparamat{\selvariable}\in\rr^{\seldim}} \quad
-    \centropyof{\probtensor}{\expdistof{(\sstat,\canparam,\basemeasure)}}
-\end{align*}
-in the case $\probtensor=\empdistribution$ for a sample selector map $\datamap$.
-
-% Backward map
-The moment projection coincides, after dropping constant terms in case of non-trivial base measure, with the backward map
-\begin{align*}
-    \argmax_{\canparamat{\selvariable}\in\rr^{\seldim}} \quad
-    \contraction{\canparamat{\selvariable},\meanparamwith} - \cumfunctionof{\canparamat{\selvariable}}
-\end{align*}
-where
-\begin{align*}
-    \meanparamwith
-    = \contractionof{\sencmlnstat,\probtensor}{\selvariable}
-    \quad \text{and} \quad
-    \cumfunctionof{\canparamat{\selvariable}}
-    = \contraction{\expof{ \contractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables} }, \basemeasure} \, .
-\end{align*}
-
-% Extension to HLN
-We now extend to Hybrid Logic Networks
-\begin{align*}
-    \argmax_{\secprobtensor\in\hlnsetof{\formulaset}} \quad
-    \centropyof{\probtensor}{\secprobtensor}
-\end{align*}
-
-
-
-\begin{corollary}
-    Let $\meanparamwith = \contractionof{\probtensor,\sencfset}{\selvariable}$ and
-    \[ \secformulaset = \{\enumformula \, : \, \meanparamat{\indexedselvariable} \in \{0,1\}\} \quad , \quad
-    \basemeasureofat{\secformulaset,\meanparam}{\shortcatvariables}
-    = \bigwedge_{\enumformula\in\secformulaset} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables}
-    \, . \]
-    If $\meanparamwith$ is reproduceable by a positive distribution with respect to $\basemeasureofat{\secformulaset,\meanparam}{\shortcatvariables} $, then the solution of the M-projection of $\probtensor$ onto the set of hybrid logic networks is representable by $\formulaset$ then coincides with the projection of $\probtensor$ onto $\expfamilyof{\formulaset/\secformulaset,\basemeasureof{\secformulaset,\meanparam}}$.
-\end{corollary}
-%\begin{proof}
-%	Work by weight cutoff, in the limit of hard logics?
-%\end{proof}
-
-\subsect{Maximum Entropy in Hybrid Logic Networks}
-
-
-% Special example: MaxEnt
-The Maximum Entropy Problem for a statistic $\mlnstat$ is %Markov Logic Networks is
+The Maximum Entropy Problem for a statistic $\mlnstat$ and a base measure $\basemeasure$ is %Markov Logic Networks is
 \begin{align}
-    \argmax_{\probtensor} \quad \sentropyof{\probtensor}
+    \tag{$\probtagtypeinst{\entropysymbol}{\mlnstat,\basemeasure,\genmean}$}\label{prob:maxEntropyHLN}
+    \argmax_{\probtensor\in\bmrealprobof{\basemeasure}} \quad \sentropyof{\probtensor}
     \quad \text{subject to} \quad
     \contractionof{\probtensor,\sencmlnstat}{\selvariable}
-    =  \meanparamwith
+    =  \genmeanwith
 \end{align}
 
-
-
-\begin{corollary}% THEOREM DOES NOT EXIST! [of \theref{the:maxEntMaxLikeDuality}]
-    %\red{Works only for $\meanparamat{\indexedselvariable}\in\interiorof{\hlnmeanset}$}
-    Let $\empdistribution$ be a distribution such that there is a positive distribution $\probtensor$ with $\contractionof{\probtensor,\sencmlnstat}{\selvariable} = \contractionof{\empdistribution,\sencmlnstat}{\selvariable}$.
-    Among all positive distributions $\probtensor$ of $\atomstates$ satisfying this moment matching condition, the Markov Logic Network with formulas $\formulaset$ and weights $\canparam$ being the solution of the maximum likelihood problem has minimal entropy.
-\end{corollary}
-
-% Unique property of MLN
-We notice, that the solution of the maximum entropy problem is thus a Markov Logic Network.
-This is remarkable, because this motivates our restriction to Markov Logic Networks as those distributions with maximal entropy given satisfaction rates of formulas in $\formulaset$.
-
-
-% Extension to HLN
-When now extend to the situations $\meanparamat{\indexedselvariable}\in\{0,1\}$ can appear.
-It that case the formula is entailed or contradicted by the facts, and dropping should be considered in both cases.
-
-The max entropy - max likelihood duality still holds for hybrid logic networks as we show in the next theorem.
-
 \begin{theorem}
-    Given a set of formulas $\tilde{\formulaset}$ and $\tilde{\meanparam}$, with coordinates $\tilde{\meanparam}_\selindex\in[0,1]$ in the closed interval $[0,1]$.
-    If the corresponding maximum entropy problem is feasible, its solution is a hybrid logic network with
-    \begin{itemize}
-        \item $\hardformulaset= \{\enumformula : \selindexin, \meanparamat{\indexedselvariable} = 1\} \cup \{\lnot\enumformula : \selindexin, \meanparamat{\indexedselvariable} = 0\} $
-        \item $\softformulaset = \{\enumformula : \selindexin, \meanparamat{\indexedselvariable} \in (0,1)\}$
-        \item $\canparam$ being the backward map evaluated at the vector $\meanparam$ consisting of the coordinates of $\tilde{\meanparam}$ not in $\{0,1\}$
-    \end{itemize}
+    \label{the:maxEntropyCharacterizationHLN}
+    Let $\genmeanwith\in\genmeanset$ and the minimal face of $\genmeanset$, which includes $\genmeanwith$, be $\genfaceset$, and let $\backwardmapwrtof{\mlnstat,\hlnfacemeasure}$ be a backward map in the exponential family $\expfamilyof{\mlnstat,\hlnfacemeasure}$.
+    The solution of the Maximum Entropy Problem \probref{prob:maxEntropyHLN} is then
+    \begin{align*}
+        \probwith = \expdistof{(\mlnstat,\backwardmapwrtof{\mlnstat,\hlnfacemeasure}{\genmean},\hlnfacemeasure)} \, .
+    \end{align*}
 \end{theorem}
 \begin{proof}
-    Feasible distributions have a density with base measure by $\hardformulaset$, we therefore reduce the set of distributions in the argmax to those with density to the base measure.
-    The max entropy is a max entropy problem with respect to that base measure, where we only keep the constraints to the mean parameters different from $\{0,1\}$ (those are trivially satisfied).
-    The statement then follows from the generic property (see Sec 3.1 in \cite{wainwright_graphical_2008}).
+    Any feasible distribution has to be representable by $\hlnfacemeasure$, since $\genmeanwith\in\hlnfaceset$.
+    The solution therefore coincides with the solution of the maximum entropy problem with respect to $\mlnstat$ and $\hlnfacemeasure$ as a base measure.
+    Since $\genfaceset$ is minimal, $\meanparamwith$ is on the effective interior of the face and the claim follows with \theref{the:maxEntropyFace}.
+\end{proof}
+
+\theref{the:maxEntropyCharacterizationHLN} characterizes the solution of the Maximum Entropy Problem for arbitrary positions of the mean parameter.
+Note, that if $\genmeanwith\notin\genmeanset$ then no distribution is feasible for \probref{prob:maxEntropyHLN} and there is no solution.
+We are especially interested in situations, where the solution is a Hybrid Logic Network.
+As we show next, this is exactly the case if the mean parameter is reproducable by a Hybrid Logic Network (see \secref{sec:HLNrepMean}).
+
+\begin{theorem}
+    Let $\genmeanwith$ be a mean parameter reproducable by a Hybrid Logic Network (see \defref{def:HLNrepMean}).
+    Then the unique Hybrid Logic Network reproducing $\genmeanwith$ is the solution of the Maximum Entropy Problem \probref{prob:maxEntropyHLN}.
+\end{theorem}
+\begin{proof}
+    We notice, that if $\genmeanwith$ is reproducable by a Hybrid Logic Network, then the normalization of the corresponding face measure $\hlnfacemeasure$ of the minimal face containing $\genmeanwith$ is a Hybrid Logic Network in $\elrealizabledistsof{\mlnstat}$.
+    The solution of \probref{prob:maxEntropyHLN} characterized in \theref{the:maxEntropyCharacterizationHLN} is then also in $\elrealizabledistsof{\mlnstat}$.
 \end{proof}
 
 
 
 
+\subsect{Cross Entropy Minimization}
+
+Different to Maximum Entropy Problems, we formulate the Maximum Likelihood Problem as cross entropy minimization with respect to Hybrid Logic Networks, that is
+\begin{align}
+    \tag{$\probtagtypeinst{\mathrm{M}}{\Gamma,\gendistribution}$}\label{prob:minCrossEntropyHLN}
+    \argmin_{\probtensor\in\elrealizabledistsof{\mlnstat}} \centropyof{\gendistribution}{\probtensor}
+\end{align}
+When choosing $\gendistribution$ by an empirical distribution, this minimization problem is the Maximum Likelihood Problem (see \secref{cha:probReasoning}).
+% LEMMA TO CHA:PROBREASONING?
+In order to characterize the solution of the cross entropy minimization problem on Hybrid Logic Networks, we first characterize the solution of the cross entropy minimization on exponential families.
+
+\begin{lemma}\lemref{lem:minCrossEntropyExponential}
+    For any $\meanparamwith\in\{0,0.5,1\}^\seldim$ we have
+    \begin{align*}
+        \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\mpformula}}
+        = \begin{cases}
+              -\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\mpformula}{\genmeanwith},\mpformula}} & \text{if} \quad \genmeanwith \in \sbinteriorof{\meansetof{\mlnstat,\mpformula}} \\
+              \lim_{\meanparamofat{n}{\selvariable}\rightarrow\genmeanwith}-\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\mpformula}{\meanparamofat{n}{\selvariable}},\mpformula}} & \text{if} \quad \genmeanwith \in \closureof{\meansetof{\mlnstat,\mpformula}} \\
+              \infty & \text{if} \quad \genmeanwith \notin \closureof{\meansetof{\mlnstat,\mpformula}}
+        \end{cases} \, ,
+    \end{align*}
+    where in the second case, $\left(\meanparamofat{n}{\selvariable}\right)_{n\in\nn}$ denotes a sequence converging coordinatewise to $\genmeanwith$, for which $\uniquantwrtof{n\in\nn}{\meanparamofat{n}{\selvariable}\in\sbinteriorof{\meansetof{\mlnstat,\mpformula}}}$ \\
+\end{lemma}
+\begin{proof}
+    See Theorem~3.4 in \cite{wainwright_graphical_2008}.
+\end{proof}
+
+Based on this lemma we can characterize the solution of the Maximum Likelihood Problem \probref{prob:minCrossEntropyHLN} with respect to Hybrid Logic Networks.
+
+\begin{theorem}
+    Let $\gendistribution$ be any distribution, such that $\genmeanwith$ is reproducable by a Hybrid Logic Network.
+    Then the solution of the Maximum Likelihood Problem \probref{prob:minCrossEntropyHLN} is the Hybrid Logic Network $\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\mpformula}{\genmeanwith},\mpformula}$.
+\end{theorem}
+\begin{proof}
+    We exploit the parameterization of Hybrid Logic Networks by hard parameters $\meanparamwith\in\{0,0.5,1\}^\seldim$ and by soft parameters $\canparamwithin$, to express \probref{prob:minCrossEntropyHLN} as
+    \begin{align*}
+        \min_{\meanparamwith\in\{0,0.5,1\}^\seldim}\left(\min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\mpformula}}\right) \, .
+    \end{align*}
+    For any $\meanparamwith\in\{0,0.5,1\}^\seldim$ we apply the lemma above and get a characterization of the inner minimum
+    \begin{align*}
+        \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\mpformula}}
+    \end{align*}
+    dependent on the stated tree cases.
+    There is exactly one face $\genfaceset$, for which $\meanparamwith\in\sbinteriorof{\genfaceset}$ and by assumption of reproducability there is a face parameter $\secmeanparamat{\selvariable}\in\{0,0.5,1\}^\seldim$ such that $\genfaceset=\genmeanset\cap\cubeface^{\secmeanparam}$.
+    For this face parameter we have
+    \begin{align*}
+        \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\mpformulaof{\secmeanparam}}}
+        = -\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\mpformulaof{\secmeanparam}}{\genmean},\mpformulaof{\secmeanparam}}} \, .
+    \end{align*}
+    The following two arguments show that this is the minimum among all other cube faces parametrized by $\meanparamwith$.
+    If for $\meanparamwith\in\{0,0.5,1\}^\seldim$ we have $\genmeanwith\notin\bmrealprobof{\mpformula}$ (i.e. the third case in \lemref{lem:minCrossEntropyExponential}) then the respective inner minimum is $\infty$ and the outer minimum is not taken.
+    If for $\meanparamwith\in\{0,0.5,1\}^\seldim$ we have $\genmeanwith\in\bmrealprobof{\mpformula}$ but $\genmeanwith\notin\sbinteriorof{\genmeanset\cup\cubeface^{\meanparam}}$ (i.e. the second case in \lemref{lem:minCrossEntropyExponential}), then the face $\genmeanset\cap\cubeface^{\secmeanparam}$ is contained in $\genmeanset\cap\cubeface^{\meanparam}$ and the minimum is taken on that face.
+\end{proof}
+
+
+When $\genmeanwith$ is not reproduceable by a Hybrid Logic Network, we are in the case where the smallest face, such that $\genmeanwith$ is contained is not an intersection of $\genmeanset$ with a cube face.
+In this case, there is no solution of the Maximum Likelihood Problem \probref{prob:minCrossEntropyHLN} in the set of Hybrid Logic Networks, since the minimum is not taken.
+The reason for this lies in the expressivity problem of Hybrid Logic Networks, which do not reproduce the interior of such faces, but tend in a limit of large canonical parameters to any mean parameter on such faces.
+We can instead state a Maximum Likelihood Problem over $\maxrealizabledistsof{\mlnstat}$, which provides enough expressivity to represent all faces.
+
+\begin{theorem}
+    Let $\gendistribution$ be any distribution, $\genmeanwith=\contractionof{\gendistribution,\sencmlnstatwith}{\selvariable}$ and $\genfaceset$ be the smallest face of $\genmeanset$, which contains $\genmeanwith$.
+    Then the solution of the Maximum Likelihood Problem \probref{prob:minCrossEntropyHLN} over $\realizabledistsof{\mlnstat,\maxgraph}$ is $\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnfacemeasure}{\genmeanwith},\hlnfacemeasure}$, where $\hlnfacemeasure$ is the face measure of $\genfaceset$.
+\end{theorem}
+\begin{proof}
+    Again by application of \lemref{lem:minCrossEntropyExponential} on each face of $\genmeanset$.
+    The outer minimum is taken at the smallest face
+\end{proof}
+
+
+%%% OLD FROM HERE
+%
+%% Special example: MLE
+%The Maximum Likelihood Problem on an exponential family with boolean statistics is the moment projection
+%\begin{align*}
+%    \argmin_{\canparamat{\selvariable}\in\rr^{\seldim}} \quad
+%    \centropyof{\probtensor}{\expdistof{(\sstat,\canparam,\basemeasure)}}
+%\end{align*}
+%in the case $\probtensor=\empdistribution$ for a sample selector map $\datamap$.
+%
+%% Backward map
+%The moment projection coincides with the backward map
+%\begin{align*}
+%    \argmax_{\canparamat{\selvariable}\in\rr^{\seldim}} \quad
+%    \contraction{\canparamat{\selvariable},\meanparamwith} - \cumfunctionof{\canparamat{\selvariable}}
+%\end{align*}
+%where
+%\begin{align*}
+%    \meanparamwith
+%    = \contractionof{\sencmlnstat,\probtensor}{\selvariable}
+%    \quad \text{and} \quad
+%    \cumfunctionof{\canparamat{\selvariable}}
+%    = \contraction{\expof{ \contractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables} }, \basemeasure} \, .
+%\end{align*}
+%
+%% Extension to HLN
+%We now extend the optimization to Hybrid Logic Networks, which are the union of exponential families with same statistics but different base measures.
+%\begin{align*}
+%    \argmin_{\secprobtensor\in\hlnsetof{\formulaset}} \quad
+%    \centropyof{\probtensor}{\secprobtensor}
+%\end{align*}
+%
+%\begin{corollary}
+%    Let $\meanparamwith = \contractionof{\probtensor,\sencfset}{\selvariable}$ and
+%    \[ \secformulaset = \{\enumformula \, : \, \meanparamat{\indexedselvariable} \in \{0,1\}\} \quad , \quad
+%    \basemeasureofat{\secformulaset,\meanparam}{\shortcatvariables}
+%    = \bigwedge_{\enumformula\in\secformulaset} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables}
+%    \, . \]
+%    If $\meanparamwith$ is reproduceable by a positive distribution with respect to $\basemeasureofat{\secformulaset,\meanparam}{\shortcatvariables} $, then the solution of the M-projection of $\probtensor$ onto the set of hybrid logic networks is representable by $\formulaset$ then coincides with the projection of $\probtensor$ onto $\expfamilyof{\formulaset/\secformulaset,\basemeasureof{\secformulaset,\meanparam}}$.
+%\end{corollary}
+%%\begin{proof}
+%%	Work by weight cutoff, in the limit of hard logics?
+%%\end{proof}
 
 
 \sect{Alternating Algorithms to Approximate the Backward Map}\label{sec:alternatingParEstMLN}
@@ -158,6 +217,7 @@ To solve the moment matching condition at a formula $\enumformula$ we refine \le
     \end{align*}
     We notice that the right side is well defined, since we have by assumption $\datameanat{\indexedselvariable}, (1- \datameanat{\indexedselvariable}) \neq 0$ and $\hypercoreat{\catvariableof{\enumformula}=0}, \hypercoreat{\catvariableof{\enumformula}=1} \neq 0$ since Markov Logic networks are positive distributions and $\enumformula \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
 \end{proof}
+
 
 
 %% Hard network reference!
@@ -237,6 +297,9 @@ This is an coordinate ascent algorithm, when interpreted the loss $\lossof{\expd
         \State \Return $\canparamwith$
     \end{algorithmic}
 \end{algorithm}
+
+%
+\red{The canonical parameters in \algoref{alg:AWO} converge, if and only if the mean parameter $\genmeanwith$ is reproducable by a Hybrid Logic Network.}
 
 
 % Independent formulas

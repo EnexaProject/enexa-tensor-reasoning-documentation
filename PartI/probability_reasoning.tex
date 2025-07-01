@@ -561,7 +561,7 @@ The problem of maximal entropy with respect to coinciding expectation queries wi
     \argmax_{\probtensor\in\bmrealprobof{\ones}} \sentropyof{\probtensor} \quad \text{subject to} \quad \uniquantwrtof{\selindexin}{\contraction{\probtensor,\exfunction^{\selindex}} = \contraction{\empdistribution,\exfunction^{\selindex}}}
 \end{align*}
 where $\bmrealprobof{\ones}$ is the set of probability distributions given a factored system.
-We study instances of this maximal entropy problem later in \secref{sec:maxEntDuality}, where we show that its solution is a member of the exponential family, which statistic is build by the query tensors.
+We study instances of this maximal entropy problem later in \secref{sec:maxEntProblem}, where we show that its solution is a member of the exponential family, which statistic is build by the query tensors.
 We will further provide connections between the problems of maximal entropy and maximum likelihood estimation.
 
 While the Shannon entropy is a property of a single distribution, the cross-entropy is a straight forward generalization towards pairs of distributions.
@@ -624,7 +624,7 @@ We in the next lemma provide an entropic interpretation of maximum likehlihood e
 More general than Maximum Likelihood Estimation, we define the moment projection of an arbitrary distribution $\gendistribution$ onto a set $\Gamma$ of probability distributions as the problem
 \begin{align}
     \tag{$\probtagtypeinst{\mathrm{M}}{\Gamma,\gendistribution}$}\label{prob:mProjection}
-    \argmax_{\probtensorin} \centropyof{\gendistribution}{\probtensor} \, .
+    \argmin_{\probtensorin} \centropyof{\gendistribution}{\probtensor} \, .
 \end{align}
 With \lemref{lem:centropyMLE} we have established, that maximum likelihood estimation is the moment projection of the empirical distribution onto a set $\Gamma$.
 
@@ -632,7 +632,7 @@ With \lemref{lem:centropyMLE} we have established, that maximum likelihood estim
 We further define the information projection an arbitrary distribution $\gendistribution$ onto a set $\Gamma$ of probability distributions as the problem
 \begin{align}
     \tag{$\probtagtypeinst{\mathrm{I}}{\Gamma,\gendistribution}$}\label{prob:iProjection}
-    \argmax_{\probtensorin} \centropyof{\probtensor}{\gendistribution} \, .
+    \argmin_{\probtensorin} \centropyof{\probtensor}{\gendistribution} \, .
 \end{align}
 The cross-entropy is not symmetric, thus the information and the moment projections do not coincide in general.
 The differences of both are discussed in Chapter~8 in \cite{koller_probabilistic_2009}.
@@ -775,9 +775,11 @@ The conjugate dual of the cumulative function is
 \begin{proof}
     We have
     \begin{align*}
-        \gradwrtat{\canparam}{\seccanparam} \cumfunctionof{\seccanparam} \\
+        \gradwrtat{\canparam}{\seccanparam} \cumfunctionof{\seccanparam}
         & = \gradwrtat{\canparam}{\seccanparam} \lnof{\contraction{\expof{\contractionof{\sencsstatwith,\canparamwith}{\shortcatvariables}},\basemeasure}} \\
-        & = \frac{1}{\contraction{\expof{\contractionof{\sencsstatwith,\canparamwith}{\shortcatvariables}}}}  \cdot \contractionof{\sencsstatwith,\expof{\contractionof{\sencsstatwith,\canparamwith}{\shortcatvariables}},\basemeasure}{\selvariable}\\
+        & = \frac{
+            \contractionof{\sencsstatwith,\expof{\contractionof{\sencsstatwith,\canparamwith}{\shortcatvariables}},\basemeasure}{\selvariable}
+            }{\contraction{\expof{\contractionof{\sencsstatwith,\canparamwith}{\shortcatvariables}}}}  \\
         & = \contractionof{\expdistwith,\sencsstatwith}{\selvariable} \, .
     \end{align*}
     For the proof of the second claim we refer to Appendix B.2 in \cite{wainwright_graphical_2008}.
@@ -827,9 +829,10 @@ the backward map returns the position of the maximum in $\parspace$.
     \end{align*}
     Therefore
     \begin{align*}
-        \dualcumfunction(\meanparam) = \contraction{\expdistwith,\sencsstatwith,\canparam} - \cumfunctionof{\canparam}
-        = \contraction{\expdistwith, \lnof{\expdistwith}}
-        = - \sentropyof{\expdist} \, . & \qedhere
+        \dualcumfunction(\meanparam)
+        &= \contraction{\expdistwith,\sencsstatwith,\canparam} - \cumfunctionof{\canparam} \\
+        &= \contraction{\expdistwith, \lnof{\expdistwith}} \\
+        &= - \sentropyof{\expdist} \, .  \qedhere
     \end{align*}
 \end{proof}
 
@@ -885,21 +888,10 @@ For a more detailed discussion of this relation, see Theorem~8.1 in \cite{wainwr
 
 \sect{Maximum entropy distributions}
 
-\red{We characterize in this section to any mean parameter the reproducing distribution with maximum entropy, and investigate their modes and tensor network representation.
-As we will show, the distributions with maximal entropy are in exponential families with base measure determined by the smallest face, which contains the mean parameter.
-}
+We characterize in this section to any mean parameter the reproducing distribution with maximum entropy, and investigate the tensor network representation of them and their modes.
+As we will show, the distributions with maximal entropy are in exponential families with base measure by the minimal face, which contains the mean parameter.
 
-% To expectation queries, as an example!
-The mean parameters are computed as collections of expectation queries to $\sstatcoordinateof{\selindex}$, which are answered against distributions in $\bmrealprobof{\basemeasure}$.
-For any $\selindexin$ we have for the mean parameter $\meanparamwith$ reproduced by a distribution $\probwith$
-\begin{align*}
-    \meanparamat{\indexedselvariable}
-    = \expectationof{\sstatcoordinateof{\selindex}}
-    = \contraction{\sencsstatat{\shortcatvariables,\indexedselvariable},\probwith} \, .
-\end{align*}
-
-
-\subsect{Entropy maximization problem}\label{sec:maxEntDuality}
+\subsect{Entropy maximization problem}\label{sec:maxEntProblem}
 
 
 The entropy maximization problem with respect to matching expected statistics $\genmean\in\genmeanset$ is the optimization problem
@@ -909,6 +901,15 @@ The entropy maximization problem with respect to matching expected statistics $\
     \contractionof{\probtensor,\sencsstat}{\selvariable} = \genmeanat{\selvariable}
 \end{align}
 where by $\bmrealprobof{\basemeasure}$ we denote all distributions, which are representable with respect to a base measure $\basemeasure$.
+
+% To expectation queries, as an example!
+The mean parameters are computed as collections of expectation queries to $\sstatcoordinateof{\selindex}$, which are answered against distributions in $\bmrealprobof{\basemeasure}$.
+For any $\selindexin$ we have for the mean parameter $\meanparamwith$ reproduced by a distribution $\probwith$
+\begin{align*}
+    \meanparamat{\indexedselvariable}
+    = \expectationof{\sstatcoordinateof{\selindex}}
+    = \contraction{\sencsstatat{\shortcatvariables,\indexedselvariable},\probwith} \, .
+\end{align*}
 
 % Feasibility
 By definition of the mean polytope, \probref{prob:maxEntropy} has a feasible distribution if and only if $\genmeanat{\selvariable}\in\genmeanset$.
@@ -1605,7 +1606,7 @@ The optimal update equations are derived as the next theorem.
                 }{\catvariableof{\catenumerator}} \]
             \EndFor
         \EndWhile
-        \Return $\{\legcoreofat{\catenumerator} \, : \, \catenumeratorin\}$
+        \State \Return $\{\legcoreofat{\catenumerator}{\catvariableof{\catenumerator}} \, : \, \catenumeratorin\}$
     \end{algorithmic}
 \end{algorithm}
 
@@ -2035,7 +2036,7 @@ Since the log likelihood is concave, the algorithm converges to a global minimum
                 \end{align*}
             \EndFor
         \EndWhile
-        \Return $\canparamat{\selvariable}$
+        \State \Return $\canparamat{\selvariable}$
     \end{algorithmic}
 \end{algorithm}
 
@@ -2097,7 +2098,7 @@ With this characterization, we can perform second order optimization algorithms 
                 \canparamwith \algdefsymbol \canparamwith - \Delta\left[\selvariable\right]
             \end{align*}
         \EndWhile
-        \Return $\canparamwith$
+        \State \Return $\canparamwith$
     \end{algorithmic}
 \end{algorithm}
 
