@@ -555,14 +555,16 @@ This motivates the definition of Hard Logic Networks as follows.
 
 \begin{definition}
     \label{def:hardLogicNetwork}
-    Given a boolean statistic $\formulaset$ and for $\selindexin$ boolean vectors $\kcoreofat{\selindex}{\headvariableof{\selindex}}$ the Hard Logic Network is the distribution
+    Given a boolean statistic $\mlnstat$ and for $\selindexin$ boolean vectors $\kcoreofat{\selindex}{\headvariableof{\selindex}}$ the Hard Logic Network is the distribution
     \begin{align*}
-        \probofat{\formulaset,\{\kcoreofat{\selindex}\wcols\selindexin\}}{\shortcatvariables}
-        = \normalizationof{
-            \bigcup_{\selindexin}\{\enumformulaacwith,\kcoreofat{\selindex}{\headvariableof{\selindex}}\}
-        }{\shortcatvariables}
+        \probofat{\mlnstat,\{\kcoreofat{\selindex}\wcols\selindexin\}}{\shortcatvariables} =
+        \normalizationof{
+            \{\mlnstatccwith\} \cup
+            \{\kcorewith\wcols\selindexin\}
+        }{\shortcatvariables} \, .
     \end{align*}
     provided that the normalization exists.
+    %We denote the distribution by $\probofat{\formulaset,\{\kcoreofat{\selindex}\wcols\selindexin\}}{\shortcatvariables}$
 %	The set of Hard Logic Networks is defined as
 %	\begin{align*}
 %		\left\{\probofat{\{\kcoreofat{\selindex}\wcols\selindexin\}}{\shortcatvariables} \wcols \kcoreofat{\selindex}{\headvariableof{\selindex}}\in\{\tbasisat{\headvariableof{\selindex}},\fbasisat{\headvariableof{\selindex}},\onesat{\headvariableof{\selindex}}\} \right\}
@@ -577,34 +579,65 @@ Any core $\onesat{\headvariableof{\selindex}}$ furthermore results in a trivial 
 Based on these insights we can characterize Hard Logic Networks by propositional formulas.
 
 \begin{theorem}
-    The Hard Logic Network
+    Given a Hard Logic Network
     \begin{align*}
-        \probofat{\formulaset,\{\kcoreofat{\selindex}\wcols\selindexin\}}{\shortcatvariables}
+        \probofat{\formulaset,\{\kcoreof{\selindex}\wcols\selindexin\}}{\shortcatvariables}
     \end{align*}
-    coincides with the uniform distribution $\normalizationof{\formulaofat{\{\kcoreofat{\selindex}{\headvariableof{\selindex}}\wcols\selindexin\}}{\shortcatvariables}}{\shortcatvariables}$, where
+    we build the set
     \begin{align*}
-        \formulaofat{\{\kcoreofat{\selindex}{\headvariableof{\selindex}}\wcols\selindexin\}}{\shortcatvariables} =
-        \left(\bigwedge_{\selindexin\wcols\kcoreofat{\selindex}{\headvariableof{\selindex}}=\tbasisat{\headvariableof{\selindex}}} \enumformulaat{\shortcatvariables}\right)
+        \variableset = \{\selindex\wcols\selindexin\ncond\kcorewith\in\{\fbasisat{\headvariableof{\selindex}},\tbasisat{\headvariableof{\selindex}}\}\}
+    \end{align*}
+    and the tuple $\headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]$ by coordinates
+    \begin{align*}
+        \headindexof{\selindex}
+        = \begin{cases}
+              0 & \text{if} \quad \kcoreofat{\selindex}{\headvariableof{\selindex}} = \fbasisat{\headvariableof{\selindex}} \\
+              1 & \text{if} \quad \kcoreofat{\selindex}{\headvariableof{\selindex}} = \tbasisat{\headvariableof{\selindex}} \\
+        \end{cases} \, .
+%        = \{\selindex\wcols\selindexin\ncond\kcorewith\in\{\fbasisat{\headvariableof{\selindex}},\tbasisat{\headvariableof{\selindex}}\}\}
+    \end{align*}
+    Then we have for the formula
+    \begin{align*}
+        \mpformula =
+        \left(\bigwedge_{\selindex\in\variableset\wcols\headindexof{\selindex}=1} \enumformulaat{\shortcatvariables}\right)
         \land
-        \left(\bigwedge_{\selindexin\wcols\kcoreofat{\selindex}{\headvariableof{\selindex}}=\fbasisat{\headvariableof{\selindex}}} \lnot\enumformulaat{\shortcatvariables}\right) \, .
+        \left(\bigwedge_{\selindex\in\variableset\wcols\headindexof{\selindex}=0} \lnot\enumformulaat{\shortcatvariables}\right)
     \end{align*}
+    that
+    \begin{align*}
+        \probofat{\formulaset,\{\kcoreof{\selindex}\wcols\selindexin\}}{\shortcatvariables}
+        = \normalizationof{\mpformula}{\shortcatvariables} \, .
+    \end{align*}
+%
+%
+%    coincides with the uniform distribution % $\normalizationof{\mpformula}{\shortcatvariables}$, where
+%%    \begin{align*}
+%%        \mpfo
+%%    \end{align*}
+%    $\normalizationof{\formulaofat{\{\kcoreofat{\selindex}{\headvariableof{\selindex}}\wcols\selindexin\}}{\shortcatvariables}}{\shortcatvariables}$, where
+%    \begin{align*}
+%        \formulaofat{\{\kcoreofat{\selindex}{\headvariableof{\selindex}}\wcols\selindexin\}}{\shortcatvariables} =
+%        \left(\bigwedge_{\selindexin\wcols\kcoreofat{\selindex}{\headvariableof{\selindex}}=\tbasisat{\headvariableof{\selindex}}} \enumformulaat{\shortcatvariables}\right)
+%        \land
+%        \left(\bigwedge_{\selindexin\wcols\kcoreofat{\selindex}{\headvariableof{\selindex}}=\fbasisat{\headvariableof{\selindex}}} \lnot\enumformulaat{\shortcatvariables}\right) \, .
+%    \end{align*}
 \end{theorem}
 \begin{proof}
     The claim is shown by performing the contraction
     \begin{align*}
         \contractionof{
-            \bigcup_{\selindexin}\{\bencodingofat{\shortcatvariables}{\headvariableof{\selindex},\shortcatvariables},\kcoreofat{\selindex}{\headvariableof{\selindex}}\}
+            \bigcup_{\selindexin}\{\bencodingofat{\enumformula}{\headvariableof{\selindex},\shortcatvariables},\kcoreofat{\selindex}{\headvariableof{\selindex}}\}
         }{\shortcatvariables}
     \end{align*}
     defining the Hard Logic Network.
     We notice, that for each $\selindexin$ the variables $\headvariableof{\selindex}$ appear only in the cores $\bencodingofat{\shortcatvariables}{\headvariableof{\selindex},\shortcatvariables}$ and $\kcoreofat{\selindex}{\headvariableof{\selindex}}$ and thus
     \begin{align*}
         & \contractionof{
-            \bigcup_{\selindexin}\{\bencodingofat{\shortcatvariables}{\headvariableof{\selindex},\shortcatvariables},\kcoreofat{\selindex}{\headvariableof{\selindex}}\}
+            \bigcup_{\selindexin}\{\bencodingofat{\enumformula}{\headvariableof{\selindex},\shortcatvariables},\kcoreofat{\selindex}{\headvariableof{\selindex}}\}
         }{\shortcatvariables} \\
         & \quad =    \contractionof{
             \left\{
-            \contractionof{\bencodingofat{\shortcatvariables}{\headvariableof{\selindex},\shortcatvariables},\kcoreofat{\selindex}{\headvariableof{\selindex}}}{\shortcatvariables}
+            \contractionof{\bencodingofat{\enumformula}{\headvariableof{\selindex},\shortcatvariables},\kcoreofat{\selindex}{\headvariableof{\selindex}}}{\shortcatvariables}
             \wcols\selindexin\right\}
         }{\shortcatvariables} \\
         & \quad = \contractionof{
@@ -618,7 +651,7 @@ Based on these insights we can characterize Hard Logic Networks by propositional
             \wcols\kcoreofat{\selindex}{\headvariableof{\selindex}} = \fbasisat{\headvariableof{\selindex}}
             \}
         }{\shortcatvariables} \\
-        & = \formulaofat{\{\kcoreofat{\selindex}\wcols\selindexin\}}{\shortcatvariables}
+        & = \mpformulawith \, .
     \end{align*}
     Here we used in the second equation \lemref{lem:formulaEncodingDecomposition} and \corref{cor:onesHead} to simplify the contraction of the basis encodings with the activation cores.
     In the third equation we use the representation of conjunctions by contraction to be shown in \theref{the:effectiveConjunction}.
@@ -798,10 +831,10 @@ Having discussed these representation approaches, let us now investigate the gen
 
 \begin{definition}
     \label{def:hln}
-    Given a boolean statistic of propositional formulas
-    \begin{align*}
-        \mlnstat : \atomstates \rightarrow \bigtimes_{\selindexin}[2]
-    \end{align*}
+    Given a boolean statistic $\mlnstat$ %of propositional formulas
+    %\begin{align*}
+    %    \mlnstat : \atomstates \rightarrow \bigtimes_{\selindexin}[2]
+    %\end{align*}
     any element of $\elrealizabledistsof{\mlnstat}$ is called a Hybrid Logic Network (HLN).
 \end{definition}
 
@@ -875,18 +908,36 @@ We now extract from a Hybrid Logic Network, defined as a distribution computable
 
 We now relate with the formalism of exponential families and determine the base measures which are used to build Hybrid Logic Networks.
 
+
+%\begin{lemma}
+%    To any Hybrid Logic Network $\probwith\in\elrealizabledistsof{\mlnstat}$ we find $\variableset\subset[\seldim]$ and $\headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]$ such that
+%    \begin{align*}
+%        \probwith \in \expfamilyof{\mlnstat,\mpformula} \, ,
+%    \end{align*}
+%    where
+%    \begin{align*}
+%        \mpformula \coloneqq
+%        \left(\bigwedge_{\selindex\in\variableset\wcols\headindexof{\selindex}=1} \enumformulaat{\shortcatvariables}\right)
+%        \land
+%        \left(\bigwedge_{\selindex\in\variableset\wcols\headindexof{\selindex}=1} \lnot\enumformulaat{\shortcatvariables}\right) \, .
+%    \end{align*}
+%\end{lemma}
+
+
 \begin{theorem}
-    Given a boolean statistic $\mlnstat$, we build for any $\meanparamwith\in\{0,0.5,1\}^{\seldim}$ the formula
+    Given a boolean statistic $\mlnstat$, we build for any $\variableset\subset[\seldim]$ and $\headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]$ the formula
+%    %for any $\meanparamwith\in\{0,0.5,1\}^{\seldim}$ the formula
     \begin{align*}
         \mpformula \coloneqq
-        \left(\bigwedge_{\selindex\wcols\indexedmeanparam=1} \enumformulaat{\shortcatvariables}\right)
+        \left(\bigwedge_{\selindex\in\variableset\wcols\headindexof{\selindex}=1} \enumformulaat{\shortcatvariables}\right)
         \land
-        \left(\bigwedge_{\selindex\wcols\indexedmeanparam=0} \lnot\enumformulaat{\shortcatvariables}\right) \, .
+        \left(\bigwedge_{\selindex\in\variableset\wcols\headindexof{\selindex}=1} \lnot\enumformulaat{\shortcatvariables}\right) \, .
     \end{align*}
     Then we have
     \begin{align*}
         \elrealizabledistsof{\mlnstat}
-        = \bigcup_{\meanparamwith\in\{0,0.5,1\}^{\seldim}\wcols\contraction{\formulaof{\mlnstat,\meanparamwith}}>0} \expfamilyof{\mlnstat,\mpformula} \, ,
+        = \bigcup_{\variableset\subset[\seldim]} \bigcup_{\headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]\wcols\contraction{\mpformula}>0} \expfamilyof{\mlnstat,\mpformula} \, ,
+       % = \bigcup_{\meanparamwith\in\{0,0.5,1\}^{\seldim}\wcols\contraction{\formulaof{\mlnstat,\meanparamwith}}>0} \expfamilyof{\mlnstat,\mpformula} \, ,
     \end{align*}
     where the union is over the satisfiable formulas $\formulaof{\mlnstat,\meanparamwith}$.
 \end{theorem}
@@ -894,43 +945,80 @@ We now relate with the formalism of exponential families and determine the base 
     % Base Measure as formula
     "$\subset$":\\
     To any Hybrid Logic Network $\probwith$ in $\elrealizabledistsof{\mlnstat}$ we find by \theref{the:hybridNetworkRepresentation} hard activation cores $\{\kcoreofat{\selindex}{\headvariableof{\selindex}}\wcols\selindexin\}$.
-    We build a vector $\meanparamwith\in\{0,0.5,1\}^{\seldim}$ with coordinates
+    We build a set
     \begin{align*}
-        \indexedmeanparam =
+        \variableset =
+        \left\{\selindex\wcols\kcoreofat{\selindex}{\headvariableof{\selindex}}\in\{\fbasisat{\headvariableof{\selindex}},\tbasisat{\headvariableof{\selindex}}\}\right\}
+    \end{align*}
+    and a boolean tuple $\headindexof{\variableset}$ by
+    \begin{align*}
+        \headindexof{\selindex} =
         \begin{cases}
             0 & \text{if} \quad \kcoreofat{\selindex}{\headvariableof{\selindex}}=\fbasisat{\headvariableof{\selindex}} \\
-            0.5 & \text{if} \quad \kcoreofat{\selindex}{\headvariableof{\selindex}}=\onesat{\headvariableof{\selindex}} \\
             1 & \text{if} \quad \kcoreofat{\selindex}{\headvariableof{\selindex}}=\tbasisat{\headvariableof{\selindex}} \\
-        \end{cases}
+        \end{cases} \, .
     \end{align*}
-    and notice that
+%    We build a vector $\meanparamwith\in\{0,0.5,1\}^{\seldim}$ with coordinates
+%    \begin{align*}
+%        \indexedmeanparam =
+%        \begin{cases}
+%            0 & \text{if} \quad \kcoreofat{\selindex}{\headvariableof{\selindex}}=\fbasisat{\headvariableof{\selindex}} \\
+%            0.5 & \text{if} \quad \kcoreofat{\selindex}{\headvariableof{\selindex}}=\onesat{\headvariableof{\selindex}} \\
+%            1 & \text{if} \quad \kcoreofat{\selindex}{\headvariableof{\selindex}}=\tbasisat{\headvariableof{\selindex}} \\
+%        \end{cases}
+%    \end{align*}
+    For the constructed pair $(\variableset,\headindexof{\variableset})$ it holds that
     \begin{align*}
         \contractionof{\{\bencodingofat{\mlnstat}{\sstatheadvariables,\shortcatvariables}\}
         \cup \{\kcoreofat{\selindex}{\headvariableof{\selindex}} \wcols \selindexin\}
         }{\shortcatvariables}
-        =
-        \left(\bigwedge_{\selindex\wcols\indexedmeanparam=1} \enumformulaat{\shortcatvariables}\right)
+        &=
+        \left(\bigwedge_{\selindex\in\variableset\wcols\headindexof{\selindex}=1} \enumformulaat{\shortcatvariables}\right)
         \land
-        \left(\bigwedge_{\selindex\wcols\indexedmeanparam=0} \lnot\enumformulaat{\shortcatvariables}\right)
-        = \formulaofat{\mlnstat,\meanparamwith}{\shortcatvariables} \, .
+        \left(\bigwedge_{\selindex\in\variableset\wcols\headindexof{\selindex}=1} \lnot\enumformulaat{\shortcatvariables}\right) \\
+        &= \mpformulawith \, .
     \end{align*}
-    We notice, that $\formulaofat{\mlnstat,\meanparamwith}{\shortcatvariables}$ is satisfiable, since $\probwith$ is representable with respect to the base measure $\formulaofat{\mlnstat,\meanparam}{\shortcatvariables}$.
+    We notice, that $\mpformulawith$ is satisfiable, since $\probwith$ is representable with respect to the base measure $\mpformulawith$.
     It follows that $\probwith$ is an element of the exponential family $\expfamilyof{\mlnstat,\mpformula}$.
-
-    "$\subset$":\\
-    Conversely, given an arbitrary $\meanparamwith\in\{0,0.5,1\}^{\seldim}$ we have, provided that $\mpformula$ is satisfiable
+    Since $\probwith$ was an arbitary element of $\elrealizabledistsof{\mlnstat}$, we have shown the inclusion
     \begin{align*}
-        \expfamilyof{\mlnstat,\mpformula}
+        \elrealizabledistsof{\mlnstat}
+        \subset \bigcup_{\variableset\subset[\seldim]} \bigcup_{\headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]\wcols\contraction{\mpformula}>0} \expfamilyof{\mlnstat,\mpformula} \, ,
+    \end{align*}
+
+    "$\supset$":\\
+    Conversely, given an arbitrary pair $(\variableset,\headindexof{\variableset})$ we choose an arbitary element
+    \begin{align*}
+        \probofat{(\mlnstat,\canparam,\mpformula)}{\shortcatvariables} \in \expfamilyof{\mlnstat,\mpformula} \, .
+    \end{align*}
+    We build for $\selindexin$ the knowledge cores
+    \begin{align*}
+        \kcorewith =
+        \begin{cases}
+            \onesat{\headvariableof{\selindex}} & \text{if} \quad \selindex\notin\variableset \\
+            \tbasisat{\headvariableof{\selindex}} & \text{if} \quad \selindex\in\variableset \quad \text{and} \quad \headindexof{\selindex}=1 \\
+            \fbasisat{\headvariableof{\selindex}} & \text{if} \quad \selindex\in\variableset \quad \text{and} \quad \headindexof{\selindex}=0 \\
+        \end{cases}
+    \end{align*}
+    Then we have $\probofat{(\mlnstat,\canparam,\mpformula)}{\shortcatvariables}\in\elrealizabledistsof{\mlnstat}$ since
+    \begin{align*}
+        \probwith =
+        \contractionof{\{\mlnstatccwith\}\cup\left(\bigcup_{\selindexin}\{\kcorewith,\actcorewith\}\right)}{\shortcatvariables} \, .
+    \end{align*}
+    This shows that
+    \begin{align*}
+        \bigcup_{\variableset\subset[\seldim]} \bigcup_{\headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]\wcols\contraction{\mpformula}>0} \expfamilyof{\mlnstat,\mpformula}
+        \subset \elrealizabledistsof{\mlnstat} \, . & \qedhere
     \end{align*}
 \end{proof}
 
 % COMMENT: 0.5 a dummy variable
-We strengthen, that $\meanparamwith$ does not coincide with the mean parameter of the Hybrid Logic Network, since here $0.5$ has been chosen as a dummy value whereas the index is in the open interval $(0,1)$.
+%We strengthen, that $\meanparamwith$ does not coincide with the mean parameter of the Hybrid Logic Network, since here $0.5$ has been chosen as a dummy value whereas the index is in the open interval $(0,1)$.
 
 % Base Measure trick
 We can thus understand Hybrid Logic Networks, as a union of exponential families, where the union is over all boolean activation cores understood as generating a base measure.
 This trick is known to the field of variational inference, see for Example~3.6 in \cite{wainwright_graphical_2008}.
-For an example of a tensor network representation of a hybrid logic netaork see \figref{fig:ActivatedHeads}.
+For an example of a tensor network representation of a hybrid logic network see \figref{fig:ActivatedHeads}.
 
 
 
@@ -1183,34 +1271,73 @@ First of all, we show that the vertices of $\hlnmeanset$ are the boolean vectors
 We can further provide an equivalent criterion for a vertex by the satisfaction of a corresponding formula.
 
 \begin{theorem}
-    Given a boolean statistic $\formulaset$, a basemeasure $\basemeasurewith$ and let $\meanparamwith$ be boolean.
+    Given a boolean statistic $\formulaset$, a basemeasure $\basemeasurewith$ and let $\meanparamwith$ be a boolean vector.
     Then the following are equivalent:
     \begin{itemize}
-        \item The set $\{\meanparamwith\}$ is a vertex of $\hlnmeanset$.
-        \item The formula
+        \item[(i)] The set $\{\meanparamwith\}$ is a vertex of $\hlnmeanset$.
+        \item[(ii)] The formula
         \begin{align*}
-            \mpformula = \bigwedge_{\selindexin} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables}
+            \vertexformula = \bigwedge_{\selindexin} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables}
         \end{align*}
         is satisfiable.
+        \item[(iii)] There is a Hard Logic Network $\probwith\in\hlnsetof{\mlnstat}$ such that
+        \begin{align*}
+            \meanparamwith = \contractionof{\probwith,\sencmlnstatwith}{\selvariable} \, .
+        \end{align*}
     \end{itemize}
     Here we denote by $\lnot^0$ the identity connective and by $\lnot^1=\lnot$ the logical negation.
 \end{theorem}
 \begin{proof}
-    %i$\Rightarrow$ii \\
-    If and only if $\{\meanparamwith\}$ is a vertex of $\hlnmeanset$, then there is $\shortcatindices\in\atomstates$ such that % in particular $\meanparamwith\in$.
+    (i)$\Rightarrow$(ii):
+    If $\{\meanparamwith\}$ is a vertex of $\hlnmeanset$, then there is $\shortcatindices\in\atomstates$ such that % in particular $\meanparamwith\in$.
     \begin{align*}
         \meanparamwith = \sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable} \, .
     \end{align*}
-    This is equivalent to
+    For all $\selindexin$ we have
     \begin{align*}
-        \exists{\shortcatindices\in\atomstates}: \uniquantwrtof{\selindexin}{\enumformulaat{\indexedshortcatvariables}=\meanparamat{\indexedselvariable}} \, .
+        \lnot^{(1-\meanparamat{\indexedselvariable})}\enumformulaat{\indexedshortcatvariables} \, .
     \end{align*}
-    Finally, this is equivalent to the existence of a model of $\mpformula$, i.e. the satisfiability of $\mpformula$.
-    %ii$\Rightarrow$i \\
+    The index $\shortcatindices$ is therefore a model of $\vertexformula$ and $\vertexformula$ is satisfiable.
+
+    (ii)$\Rightarrow$(iii):
+    We choose for $\selindexin$
+    \begin{align*}
+        \kcorewith = \begin{cases}
+                         \fbasisat{\headvariableof{\selindex}} & \text{if} \quad \meanparamat{\indexedselvariable}=0 \\
+                         \tbasisat{\headvariableof{\selindex}} & \text{if} \quad \meanparamat{\indexedselvariable}=1 \\
+        \end{cases}
+    \end{align*}
+    and notice that
+    \begin{align*}
+        \normalizationof{\{\bencodingofat{\mlnstat}{\sstatheadvariables,\shortcatvariables}\}
+        \cup \{\kcoreofat{\selindex}{\headvariableof{\selindex}} \wcols \selindexin\}
+        }{\shortcatvariables} = \normalizationof{\vertexformula}{\shortcatvariables} \, .
+    \end{align*}
+    Thus, the normalized formula $\vertexformula$ is a Hard Logic Network.
+    We then have for any $\selindexin$ that
+    \begin{align*}
+        \meanparamat{\indexedselvariable} = \contraction{\normalizationof{\vertexformula}{\shortcatvariables},\enumformulawith}\, .
+    \end{align*}
+
+    (iii)$\Rightarrow$(i):
+    Since $\probwith$ reproduces $\meanparamwith$ we have $\meanparamwith\in\hlnmeanset$ and since $\meanparamwith$ is boolean by \theref{the:vertexByHardLogicNetworks} $\{\meanparamwith\}$ is a vertex.
+
+
+%    %i$\Rightarrow$ii \\
+%    If and only if $\{\meanparamwith\}$ is a vertex of $\hlnmeanset$, then there is $\shortcatindices\in\atomstates$ such that % in particular $\meanparamwith\in$.
+%    \begin{align*}
+%        \meanparamwith = \sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable} \, .
+%    \end{align*}
+%    This is equivalent to
+%    \begin{align*}
+%        \exists{\shortcatindices\in\atomstates}: \uniquantwrtof{\selindexin}{\enumformulaat{\indexedshortcatvariables}=\meanparamat{\indexedselvariable}} \, .
+%    \end{align*}
+%    Finally, this is equivalent to the existence of a model of $\vertexformula$, i.e. the satisfiability of $\vertexformula$.
+%    %ii$\Rightarrow$i \\
 \end{proof}
 
 % Hard Logic Network representation -> Another theorem?
-Let us notice, that the normalization of $\mpformula$ is a Hard Logic Network using the statistic $\formulaset$ and the base measure $\basemeasure$.
+Let us notice, that the normalization of $\vertexformula$ is a Hard Logic Network using the statistic $\formulaset$ and the base measure $\basemeasure$.
 Any model of this formula is furthermore mapped by the statistics encoding onto the corresponding vertex $\{\meanparamwith\}$ and the mean parameter of the Hard Logic Network is the unique vertex element $\meanparamwith$.
 We will in \charef{cha:networkReasoning} show, that among the distributions having the vertex as mean parameter, the corresponding Hard Logic Network is the one with maximal entropy.
 
@@ -1302,7 +1429,6 @@ The corresponding mean parameters are the face centers.
 \end{remark}
 
 \subsect{Faces of larger rank}
-
 
 \red{When the normalized face measure to a face is not reproduceable by a Hard Logic Network, it does not lie in $\realizabledistsof{\sstat,\elgraph,\basemeasure}$.
 On the other side, \theref{the:faceMeasureCharacterization} implies, that in general $\sstat$ is a sufficient statistic and it thus lies in $\realizabledistsof{\sstat,\maxgraph,\basemeasure}$.

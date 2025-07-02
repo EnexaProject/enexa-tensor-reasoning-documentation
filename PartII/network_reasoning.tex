@@ -14,13 +14,16 @@ Maximum Likelihood Estimation restricts the distributions optimized over to a sp
 
 \subsect{Entropy Maximization}
 
-The Maximum Entropy Problem for a statistic $\mlnstat$ and a base measure $\basemeasure$ is %Markov Logic Networks is
-\begin{align}
-    \tag{$\probtagtypeinst{\entropysymbol}{\mlnstat,\basemeasure,\genmean}$}\label{prob:maxEntropyHLN}
+
+The Maximum Entropy Problem $\probtagtypeinst{\entropysymbol}{\mlnstat,\basemeasure,\genmean}$ for a statistic $\mlnstat$ and a base measure $\basemeasure$ is %Markov Logic Networks is
+\begin{align}\label{prob:maxEntropyHLN}
+    %\custtag{\probtagtypeinst{\entropysymbol}{\mlnstat,\basemeasure,\genmean}}
     \argmax_{\probtensor\in\bmrealprobof{\basemeasure}} \quad \sentropyof{\probtensor}
     \quad \text{subject to} \quad
     \contractionof{\probtensor,\sencmlnstat}{\selvariable}
     =  \genmeanwith
+    % & \hfill \probtagtypeinst{\entropysymbol}{\mlnstat,\basemeasure,\genmean}
+    \tag{$\probtagtypeinst{\entropysymbol}{\mlnstat,\basemeasure,\genmean}$}
 \end{align}
 
 \begin{theorem}
@@ -56,7 +59,7 @@ As we show next, this is exactly the case if the mean parameter is reproducable 
 
 \subsect{Cross Entropy Minimization}
 
-Different to Maximum Entropy Problems, we formulate the Maximum Likelihood Problem as cross entropy minimization with respect to Hybrid Logic Networks, that is
+Different to Maximum Entropy Problems, we formulate the Maximum Likelihood Problem $\probtagtypeinst{\mathrm{M}}{\Gamma,\gendistribution}$ as cross entropy minimization with respect to Hybrid Logic Networks, that is
 \begin{align}
     \tag{$\probtagtypeinst{\mathrm{M}}{\Gamma,\gendistribution}$}\label{prob:minCrossEntropyHLN}
     \argmin_{\probtensor\in\elrealizabledistsof{\mlnstat}} \centropyof{\gendistribution}{\probtensor}
@@ -65,7 +68,8 @@ When choosing $\gendistribution$ by an empirical distribution, this minimization
 % LEMMA TO CHA:PROBREASONING?
 In order to characterize the solution of the cross entropy minimization problem on Hybrid Logic Networks, we first characterize the solution of the cross entropy minimization on exponential families.
 
-\begin{lemma}\lemref{lem:minCrossEntropyExponential}
+\begin{lemma}
+    \label{lem:minCrossEntropyExponential}
     For any $\meanparamwith\in\{0,0.5,1\}^\seldim$ we have
     \begin{align*}
         \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\mpformula}}
@@ -176,11 +180,11 @@ To solve the moment matching condition at a formula $\enumformula$ we refine \le
 
 \begin{lemma}
     \label{ref:lemMMinMLN}
-    Let there be a base measure $\basemeasure$, a formula selecting map $\formulaset=\{\enumformula \, : \, \selindexin\}$ and weights $\canparam$, and choose $\selindexin$ such that $\enumformula  \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
+    Let there be a base measure $\basemeasure$, a formula selecting map $\formulaset=\{\enumformula \, : \, \selindexin\}$ and a canonical parameter $\canparam$, and choose $\selindexin$ such that $\enumformula  \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
     The moment matching condition relative to $\canparam$, $\selindexin$ and $\datameanat{\indexedselvariable}\in(0,1)$ is then satisfied, if
     \begin{align}
         \label{sol:momentMatchingExformula}
-        \weightat{\indexedselvariable} = \lnof{
+        \indexedcanparam = \lnof{
             \frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})}
             \cdot \frac{\hypercoreat{\catvariableof{\enumformula }=0}}{\hypercoreat{\catvariableof{\enumformula }=1}}
         }
@@ -219,7 +223,6 @@ To solve the moment matching condition at a formula $\enumformula$ we refine \le
 \end{proof}
 
 
-
 %% Hard network reference!
 In the case $\datameanat{\indexedselvariable}\in\{0,1\}$ the moment matching conditions are not satisfiable for $\canparamat{\indexedselvariable}\in\rr$.
 But, we notice, that in the limit $\canparamat{\indexedselvariable}\rightarrow \infty $ (respectively $-\infty$) we have
@@ -241,7 +244,7 @@ We suggest an alternating optimization by Algorithm~\ref{alg:AWO}, solving the m
 This is an coordinate ascent algorithm, when interpreted the loss $\lossof{\expdist}$ as an objective depending on the vector $\canparam$.
 
 \begin{algorithm}[hbt!]
-    \caption{Alternating Weight Optimization (AWO)}\label{alg:AWO}
+    \caption{Alternating Weight Optimization (AWO)}\label{alg:AWO} % Call it parameter instead?
     \begin{algorithmic}
 %% INPUT: Numerated formula set, mean parameter $\datameanat{\selvariable}$
 %\For{$\exformula\in\formulaset$}
@@ -319,7 +322,7 @@ This can be a bottleneck and circumvented by approximative inference, see e.g. C
 
 
 \begin{remark}[Grouping of coordinates with trivial sum]
-    When having a set of coordinates, such that the coordinate functions are binary and sum to the trivial tensor, one can find simultaneous updates to the canonical parameters, such that the partition function is staying invariant.
+    When having a set of coordinates, such that the coordinate functions are boolean and sum to the trivial tensor, one can find simultaneous updates to the canonical parameters, such that the partition function is staying invariant.
     Given a parameter $\canparam^t$ we compute
     \[ \meanparam^t = \contractionof{\expdistof{(\sstat,\canparam^t)}, \sstat}{\selvariable} \]
     and build the update
@@ -330,6 +333,8 @@ This can be a bottleneck and circumvented by approximative inference, see e.g. C
     The assumptions are met when taking all features to any hyperedge in a Markov Network seen as an exponential family.
     In that case, the update algorithm is refered to as Iterative Proportional Fitting \cite{wainwright_graphical_2008}.
     Further, when activating both $\exformula$ and $\lnot\exformula$.
+
+    \red{We will investigate these statistics as partition statistics in \secref{sec:partitionStatistics}.}
 \end{remark}
 
 
