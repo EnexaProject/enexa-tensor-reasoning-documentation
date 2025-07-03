@@ -28,10 +28,14 @@ The Maximum Entropy Problem $\probtagtypeinst{\entropysymbol}{\mlnstat,\basemeas
 
 \begin{theorem}
     \label{the:maxEntropyCharacterizationHLN}
-    Let $\genmeanwith\in\genmeanset$ and the minimal face of $\genmeanset$, which includes $\genmeanwith$, be $\genfaceset$, and let $\backwardmapwrtof{\mlnstat,\hlnfacemeasure}$ be a backward map in the exponential family $\expfamilyof{\mlnstat,\hlnfacemeasure}$.
+    Let $\genmeanwith\in\genmeanset$ and the minimal face of $\genmeanset$, which includes $\genmeanwith$, be $\genfaceset$, and let
+    \begin{align*}
+        \gencanparam = \backwardmapwrtof{\mlnstat,\hlnfacemeasure}{\genmeanwith} \, ,
+    \end{align*}
+    where $\backwardmapwrt{\mlnstat,\hlnfacemeasure}$ is a backward map in the exponential family $\expfamilyof{\mlnstat,\hlnfacemeasure}$.
     The solution of the Maximum Entropy Problem \probref{prob:maxEntropyHLN} is then
     \begin{align*}
-        \probwith = \expdistof{(\mlnstat,\backwardmapwrtof{\mlnstat,\hlnfacemeasure}{\genmean},\hlnfacemeasure)} \, .
+        \probwith = \expdistof{(\mlnstat,\gencanparam,\hlnfacemeasure)} \, .
     \end{align*}
 \end{theorem}
 \begin{proof}
@@ -55,8 +59,6 @@ As we show next, this is exactly the case if the mean parameter is reproducable 
 \end{proof}
 
 
-
-
 \subsect{Cross Entropy Minimization}
 
 Different to Maximum Entropy Problems, we formulate the Maximum Likelihood Problem $\probtagtypeinst{\mathrm{M}}{\Gamma,\gendistribution}$ as cross entropy minimization with respect to Hybrid Logic Networks, that is
@@ -70,16 +72,36 @@ In order to characterize the solution of the cross entropy minimization problem 
 
 \begin{lemma}
     \label{lem:minCrossEntropyExponential}
-    For any $\meanparamwith\in\{0,0.5,1\}^\seldim$ we have
-    \begin{align*}
-        \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\mpformula}}
-        = \begin{cases}
-              -\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\mpformula}{\genmeanwith},\mpformula}} & \text{if} \quad \genmeanwith \in \sbinteriorof{\meansetof{\mlnstat,\mpformula}} \\
-              \lim_{\meanparamofat{n}{\selvariable}\rightarrow\genmeanwith}-\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\mpformula}{\meanparamofat{n}{\selvariable}},\mpformula}} & \text{if} \quad \genmeanwith \in \closureof{\meansetof{\mlnstat,\mpformula}} \\
-              \infty & \text{if} \quad \genmeanwith \notin \closureof{\meansetof{\mlnstat,\mpformula}}
-        \end{cases} \, ,
-    \end{align*}
-    where in the second case, $\left(\meanparamofat{n}{\selvariable}\right)_{n\in\nn}$ denotes a sequence converging coordinatewise to $\genmeanwith$, for which $\uniquantwrtof{n\in\nn}{\meanparamofat{n}{\selvariable}\in\sbinteriorof{\meansetof{\mlnstat,\mpformula}}}$ \\
+    Let $\gendistributionwith$ be a distribution, $\mlnstat$ a boolean statistic, and choose a subset $\variableset\subset[\seldim]$ and a boolean tuple $\headindexof{\variableset}$.
+    We build the mean parameter $\genmeanwith=\contractionof{\gendistributionwith,\sencmlnstatwith}{\selvariable}$ and have the following:
+%    For any $\variableset\subset[\seldim]$ and boolean tuple $\headindexof{\variableset}$ we have
+    \begin{itemize}
+        \item[(1)] If $\genmeanwith \in \sbinteriorof{\meansetof{\mlnstat,\hlnformula}}$ then
+            \begin{align*}
+                \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}
+                = -\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnformula}{\genmeanwith},\hlnformula}} \, .
+            \end{align*}
+        \item[(2)] If $\genmeanwith\in\closureof{\meansetof{\mlnstat,\hlnformula}}$ then there is a sequence $\left(\meanparamofat{n}{\selvariable}\right)_{n\in\nn}\subset\hlnmeanset$ converging coordinatewise to $\genmeanwith$ and
+            \begin{align*}
+                \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}
+                = \lim_{\meanparamofat{n}{\selvariable}\rightarrow\genmeanwith}-\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnformula}{\meanparamofat{n}{\selvariable}},\hlnformula}} \, .
+            \end{align*}
+        \item[(3)] If $\genmeanwith\notin\closureof{\meansetof{\mlnstat,\hlnformula}}$ then
+            \begin{align*}
+                \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}
+                = \infty \, .
+            \end{align*}
+    \end{itemize}
+%    %$\meanparamwith\in\{0,0.5,1\}^\seldim$ we have
+%    \begin{align*}
+%        \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}
+%        = \begin{cases}
+%              -\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnformula}{\genmeanwith},\hlnformula}} & \text{if} \quad \genmeanwith \in \sbinteriorof{\meansetof{\mlnstat,\hlnformula}} \\
+%              \lim_{\meanparamofat{n}{\selvariable}\rightarrow\genmeanwith}-\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnformula}{\meanparamofat{n}{\selvariable}},\hlnformula}} & \text{if} \quad \genmeanwith \in \closureof{\meansetof{\mlnstat,\hlnformula}} \\
+%              \infty & \text{if} \quad \genmeanwith \notin \closureof{\meansetof{\mlnstat,\hlnformula}}
+%        \end{cases} \, ,
+%    \end{align*}
+%    where in the second case, $\left(\meanparamofat{n}{\selvariable}\right)_{n\in\nn}$ denotes a sequence converging coordinatewise to $\genmeanwith$, for which $\uniquantwrtof{n\in\nn}{\meanparamofat{n}{\selvariable}\in\sbinteriorof{\meansetof{\mlnstat,\hlnformula}}}$ \\
 \end{lemma}
 \begin{proof}
     See Theorem~3.4 in \cite{wainwright_graphical_2008}.
@@ -89,27 +111,30 @@ Based on this lemma we can characterize the solution of the Maximum Likelihood P
 
 \begin{theorem}
     Let $\gendistribution$ be any distribution, such that $\genmeanwith$ is reproducable by a Hybrid Logic Network.
-    Then the solution of the Maximum Likelihood Problem \probref{prob:minCrossEntropyHLN} is the Hybrid Logic Network $\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\mpformula}{\genmeanwith},\mpformula}$.
+    Then the solution of the Maximum Likelihood Problem \probref{prob:minCrossEntropyHLN} is the Hybrid Logic Network $\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnformula}{\genmeanwith},\hlnformula}$.
 \end{theorem}
 \begin{proof}
-    We exploit the parameterization of Hybrid Logic Networks by hard parameters $\meanparamwith\in\{0,0.5,1\}^\seldim$ and by soft parameters $\canparamwithin$, to express \probref{prob:minCrossEntropyHLN} as
+    We exploit the parameterization of Hybrid Logic Networks by tuples $\hlnformulaparams$ (parametrizing the corresponding Hard Logic Network) and canonical parameters $\canparamwith$ (parametrizing the corresponding Markov Logic Network).
+    The cross entropy minimization is then
+    %We exploit the parameterization of Hybrid Logic Networks by hard parameters $\meanparamwith\in\{0,0.5,1\}^\seldim$ and by soft parameters $\canparamwithin$, to express \probref{prob:minCrossEntropyHLN} as
     \begin{align*}
-        \min_{\meanparamwith\in\{0,0.5,1\}^\seldim}\left(\min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\mpformula}}\right) \, .
+        \min_{\variableset\subset[\seldim]}\min_{\headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]} \left(\min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}\right) \, .
+%        \min_{\meanparamwith\in\{0,0.5,1\}^\seldim}\, .
     \end{align*}
-    For any $\meanparamwith\in\{0,0.5,1\}^\seldim$ we apply the lemma above and get a characterization of the inner minimum
+    For any pair $\variableset,\headindexof{\variableset}$ we apply the lemma above and get a characterization of the inner minimum
     \begin{align*}
-        \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\mpformula}}
+        \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}
     \end{align*}
     dependent on the stated tree cases.
-    There is exactly one face $\genfaceset$, for which $\meanparamwith\in\sbinteriorof{\genfaceset}$ and by assumption of reproducability there is a face parameter $\secmeanparamat{\selvariable}\in\{0,0.5,1\}^\seldim$ such that $\genfaceset=\genmeanset\cap\cubeface^{\secmeanparam}$.
-    For this face parameter we have
+    There is exactly one face $\genfaceset$, for which $\genmeanwith\in\sbinteriorof{\genfaceset}$ and by assumption of reproducability there is a parameter tuple $\hlnformulaparams$ such that $\hlnformula$ is the face measure of $\genfaceset$.
+    For this parameter tuple we have
     \begin{align*}
-        \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\mpformulaof{\secmeanparam}}}
-        = -\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\mpformulaof{\secmeanparam}}{\genmean},\mpformulaof{\secmeanparam}}} \, .
+        \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}
+        = -\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnformula}{\genmean},\hlnformula}} \, .
     \end{align*}
-    The following two arguments show that this is the minimum among all other cube faces parametrized by $\meanparamwith$.
-    If for $\meanparamwith\in\{0,0.5,1\}^\seldim$ we have $\genmeanwith\notin\bmrealprobof{\mpformula}$ (i.e. the third case in \lemref{lem:minCrossEntropyExponential}) then the respective inner minimum is $\infty$ and the outer minimum is not taken.
-    If for $\meanparamwith\in\{0,0.5,1\}^\seldim$ we have $\genmeanwith\in\bmrealprobof{\mpformula}$ but $\genmeanwith\notin\sbinteriorof{\genmeanset\cup\cubeface^{\meanparam}}$ (i.e. the second case in \lemref{lem:minCrossEntropyExponential}), then the face $\genmeanset\cap\cubeface^{\secmeanparam}$ is contained in $\genmeanset\cap\cubeface^{\meanparam}$ and the minimum is taken on that face.
+    The following two arguments show that this is the minimum among all other faces.
+    If for another tuple $\sechlnformulaparams$ we have $\genmeanwith\notin\bmrealprobof{\hlnformulaof{\sechlnformulaparams}}$ (i.e. the third case in \lemref{lem:minCrossEntropyExponential}) then the respective inner minimum is $\infty$ and the outer minimum is not taken.
+    If for another tuple $\sechlnformulaparams$ we have $\genmeanwith\in\bmrealprobof{\hlnformulaof{\sechlnformulaparams}}$ but $\genmeanwith\notin\sbinteriorof{\genmeanset\cup\cubeface^{\sechlnformulaparams}}$ (i.e. the second case in \lemref{lem:minCrossEntropyExponential}), then the face $\genmeanset\cap\cubeface^{\hlnformulaparams}$ is contained in $\genmeanset\cap\cubeface^{\sechlnformulaparams}$ and the minimum is taken on that face.
 \end{proof}
 
 
@@ -124,7 +149,7 @@ We can instead state a Maximum Likelihood Problem over $\maxrealizabledistsof{\m
 \end{theorem}
 \begin{proof}
     Again by application of \lemref{lem:minCrossEntropyExponential} on each face of $\genmeanset$.
-    The outer minimum is taken at the smallest face
+    %The outer minimum is taken at the smallest face
 \end{proof}
 
 
