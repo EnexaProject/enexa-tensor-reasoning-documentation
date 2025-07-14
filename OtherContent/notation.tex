@@ -419,75 +419,127 @@ In our graphical tensor notation, we depict directed tensors by directed hypered
 
 \sect{\bnencoding}
 
-Tensors are defined here as real-valued functions on the state set of a system described by categorical variables.
-We provide further schemes to represent functions in order to perform sparse calculus and to handle more generic functions.
+The tensor formalism, which treats tensors as collections of coordinates, can be used to encode functions.
+While we introduce only the basic notation here, which will be applied later in \parref{par:one} and \parref{par:two}, a more detailed discussion of these representation schemes is deferred to \parref{par:three}.
 
+\subsect{Coordinate encodings}
 
+The most direct encoding scheme represents real valued functions on a discrete set of states by tensors.
+Since it identifies each function evaluation at a state with a coordinate, we refer to it as coordinate encoding.
 
-%
-%\subsect{Real-valued functions}
-%\begin{example}[Uncertainty about States]\label{exa:onehotUncertainty}
-%	The uncertainty about the state of a categorical variable $\catvariable$ can be expressed in vectors.
-%	For example let there be real numbers $\probat{\catvariable=\catindex} \in [0,1]$ for $\catindex\in[\catdim]$ with $\sum_{\catindex\in[\catdim]}\probat{\catvariable=\catindex}=1$ with the interpretation that $\probat{\catvariable=\catindex}$ is the probability of a system being in state $\catindex$.
-%	We can represent this uncertain state simply by a vector 
-%		\[ \probat{\catvariable}\in\rr^{\catdim} \]
-%	defined as the sum of one-hot representations weighted by $\probat{\catvariable=\catindex}$
-%	\[ \sum_{\catindex\in[\catdim]} \probat{\catvariable=\catindex} \cdot \onehotmapofat{\catindex}{\catvariable} =
-%		\begin{bmatrix}
-%		\probat{\catvariable=0} & \probat{\catvariable=1} & \cdots & \probat{\catvariable=\catdim-1}
-%		\end{bmatrix} \, . 
-%	\]
-%\end{example}
+\begin{definition}[Coordinate encoding of real-valued functions]
+	Let there be a factored representation of a system by variables $\shortcatvariables$ and a real-valued function
+	\begin{align*}
+		\realvaluedfunction : \facstates \rightarrow \rr \
+	\end{align*}
+	on the systems state set.
+	Then the coordinate encoding of $\realvaluedfunction$ is the tensor $\cencodingofat{\realvaluedfunction}{\shortcatvariables}$ with the coordinates
+	\begin{align*}
+		\cencodingofat{\realvaluedfunction}{\indexedshortcatvariables} = \realvaluedfunctionev{\shortcatindices}
+	\end{align*}
+	for any $\shortcatindicesin$.
+\end{definition}
 
+To ease the notation, we will denote the coordinate encoding of a real-valued function by
+\begin{align*}
+	\realvaluedfunctionat{\shortcatvariables}
+	\coloneqq \cencodingofat{\realvaluedfunction}{\shortcatvariables} \, .
+\end{align*}
+Fore a more detailed discussion of coordinate encodings, see \charef{cha:coordinateCalculus}.
 
 
 \subsect{Basis encodings}
 
-%We have already observed in Example~\ref{exa:atomicFunction}, that any function of a categorical variable has a representation as a linear function acting on the one-hot encoding of the variable.
-Let us now show how we can encode maps between factored systems.
+Let us now encode functions between the state sets of systems in factored representation.
 The scheme is described in more generality and detail (encoding of subsets and relations) in \charef{cha:basisCalculus}, see \defref{def:functionRelationEncoding}.
 
-\begin{definition}[Relation encoding of maps between Factored Systems]\label{def:functionRepresentation}
-	Let $\exfunction$ be a function
-		\[ \exfunction : \facstates \rightarrow  \secfacstates \]
-	which maps the states of a factored system to variables $\catvariables$ to the states of another factored system with variables $\seccatvariables$.
-	Then the tensor representation of $\exfunction$ is a tensor
-		\[ \bencodingofat{\exformula}{\catvariables,\seccatvariables} \in  \left(\secfacspace\right) \otimes \left(\facspace\right)  \]
+\begin{definition}[Basis encoding of maps between state sets]\label{def:functionRepresentation}
+	Let there be two systems with factored representations by variables $\shortcatvariables$ and $\headvariables$, and a map
+	\begin{align*}
+		 \statesetfunction : \facstates \rightarrow  \headstates
+	\end{align*}
+	between there state sets.
+	Then the basis encoding of $\statesetfunction$ is a tensor
+	\begin{align*}
+		\bencodingofat{\statesetfunction}{\headvariables,\shortcatvariables}
+		\in \left(\secfacspace\right) \otimes \left(\facspace\right)
+	\end{align*}
 	defined by
 	\begin{align*}
-		& \bencodingofat{\exformula}{\seccatvariables,\catvariables} \\
+		& \bencodingofat{\statesetfunction}{\headvariables,\shortcatvariables} \\
 		& \quad = \sum_{\catindices\in\facstates}
-		\onehotmapofat{\exfunction(\catindices)}{\seccatvariables} \otimes  \onehotmapofat{\catindices}{\catvariables} \, .
+		\onehotmapofat{\statesetfunctionev{\shortcatindices}}{\headvariables} \otimes  \onehotmapofat{\shortcatindices}{\shortcatvariables} \, .
 	\end{align*}
 \end{definition}
 
-We depict basis encodings by directed tensors:
+Basis encodings are directed tensors (see \theref{the:bencodingDirected}) and are thus depicted as decoreations of directed edges in hypergraphs:
 \begin{center}
 	\input{OtherContent/tikz_pics/notation/bencoding.tex}
 \end{center}
 
+% Generalization to arbitrary image sets
+To extend the basis encoding scheme to represent any function on the state set of a system in factored representation, we now define enumeration variables (for more detail see \charef{cha:basisCalculus}).
 
-% Notation with image categorical variable
-%When the categorical variables of the image factored system to a map $\exfunction$ are not specified otherwise, we will denote them by $\catvariableof{\exfunction}$.
-
-
-
-
-\subsect{Tensor-valued functions}
-
-
-%% TO DETAILLED HERE -> Part III?
-\begin{definition}[Selection encoding of Maps between Factored Systems]\label{def:selectionEncoding}
-	Given a tensor space $\selspace$ described by categorical variables $\selvariables$ and a tensor-valued function
-		\[ \exfunction : \facstates \rightarrow \selspace \]
-	the selection encoding of $\exfunction$ is a tensor
-		\[ \sencodingofat{\exfunction}{\shortcatvariables,\shortselvariables} \in \left(\facspace\right) \otimes \left(\selspace\right) \]
-	defined by the basis decomposition
-		\[ \sencodingofat{\exfunction}{\shortcatvariables,\shortselvariables} = \sum_{\shortcatindicesin} \onehotmapofat{\catindices}{\shortcatvariables} \otimes \exfunction(\catindices)[\shortselvariables] \, .  \]
+\begin{definition}[Set enumeration variables]
+    We say that an arbitrary finite set $\arbset$ is enumerated by an enumeration variable $\indvariableof{\arbset}$ taking values in $[\inddimof{\arbset}]$, when $\inddimof{\arbset}=\absof{\arbset}$ and there is a bijective index interpretation function
+    \begin{align*}
+        \indexinterpretation : [\inddimof{\arbset}] \rightarrow \arbset \, .
+    \end{align*}
 \end{definition}
 
-%%
-We call these tensor representation of maps selection encodings, since the coordinate of a function $\exfunction$ to be processed is selected by another argument to $\sencodingof{\exfunction}$.
+Given an arbitrary function
+\begin{align*}
+	\exfunction : \facstates \rightarrow \arbset
+\end{align*}
+and an enumeration of $\arbset$ by the variable $\indvariableof{\arbset}$, we define the basis encoding of $\exfunction$ as
+\begin{align*}
+	\bencodingofat{\exfunction}{\indvariableof{\arbset},\shortcatvariables}
+	\coloneqq \bencodingofat{\invindexinterpretation\circ\exfunction}{\indvariableof{\arbset},\shortcatvariables} \, .
+\end{align*}
+
+
+\subsect{Selection encodings}
+
+We now turn to tensor-valued functions, for which we introduce the selection encodings next.
+We call these tensor representation selection encodings, since the tensor structure of the image is captured by additional selection variables.
+
+\begin{definition}[Selection encoding of tensor-valued functions]\label{def:selectionEncoding}
+	Let there be a system with factored respresentation by the variables $\shortcatvariables$, a tensor space $\selspace$ described by categorical variables $\selvariables$ and a tensor-valued function
+	\begin{align*}
+		\tenvaluedfunction : \facstates \rightarrow \selspace \, .
+	\end{align*}
+	The selection encoding of $\tenvaluedfunction$ is the tensor
+	\begin{align*}
+		\sencodingofat{\tenvaluedfunction}{\shortcatvariables,\shortselvariables}
+		\in \left(\facspace\right) \otimes \left(\selspace\right)
+	\end{align*}
+	defined as the sum
+	\begin{align*}
+		 \sencodingofat{\tenvaluedfunction}{\shortcatvariables,\shortselvariables}
+		 = \sum_{\shortcatindicesin} \onehotmapofat{\shortcatindices}{\shortcatvariables} \otimes \tenvaluedfunctionev{\shortcatindices}\left[\shortselvariables\right] \, .
+	\end{align*}
+\end{definition}
+
+
+%% Basis encoding
+We exploit the selection encoding formalism to further define basis encodings of tensor-valued functions.
+To this end, we enumerate the coordinates
+\begin{align*}
+	\left\{ \sencodingofat{\tenvaluedfunction}{\indexedshortcatvariables,\indexedshortselvariables} \wcols \shortcatindicesin\ncond \shortselindicesin \right\}
+\end{align*}
+by an interpretation variable $\indvariableof{\tenvaluedfunction}$ and a map $\indexinterpretationof{\tenvaluedfunction}$.
+Let us construct a function $\invindexinterpretationof{\tenvaluedfunction}\circ\sencodingof{\shortcatvariables,\shortselvariables}$ by
+\begin{align*}
+	\left(\invindexinterpretationof{\tenvaluedfunction}\circ\sencodingof{\shortcatvariables,\shortselvariables}\right)\left(\shortcatindices,\shortselindices\right)
+	= \invindexinterpretationofat{\tenvaluedfunction}{\sencodingofat{\tenvaluedfunction}{\indexedshortcatvariables,\indexedshortselvariables}} \, .
+\end{align*}
+The basis encoding of $\tenvaluedfunction$ is then defined as the basis encoding of this function, that is
+\begin{align*}
+	\bencodingofat{\tenvaluedfunction}{\indvariableof{\tenvaluedfunction},\shortcatvariables,\shortselvariables}
+	\coloneqq \bencodingofat{\invindexinterpretationof{\tenvaluedfunction}\circ\sencodingof{\shortcatvariables,\shortselvariables}}{\indvariableof{\tenvaluedfunction},\shortcatvariables,\shortselvariables} \, .
+\end{align*}
+
+
 
 %\begin{example}[Vector valued functions]\label{exa:atomicFunction} %% CONFUSIN, since already needs selection variables?
 %	When using a one-hot representation of the state of a categorical variable, any real valued function has a representation by a real valued matrix acting on the one-hot encoding. 
@@ -509,13 +561,4 @@ We call these tensor representation of maps selection encodings, since the coord
 %		\]
 %	This can easily be verified, since matrix multiplication with basis vectors amounts to selection of rows (when the basis vector is acting from the left) or columns (when the basis vector is acting from the right).
 %	Thus, linear transforms (matrices) acting on the one-hot representation are sufficient to represent any vector valued function of the states of a categorical variable.
-%\end{example} 
-
-
-%% 
-We will provide more detail to the tensor representation of functions in \parref{par:three}, where we distinguish between embeddings for basis and coordinate calculus. %where we show that domain encodings coincide with selection encodings.
-
-
-
-
-
+%\end{example}
