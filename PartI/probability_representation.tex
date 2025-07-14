@@ -99,7 +99,7 @@ and can therefore safely ignore the base measures.
 This enables the characterization of by $\basemeasure$ representable distributions by
 \begin{align*}
     \bmrealprobof{\basemeasure}
-    = \left\{ \probat{\shortcatvariables} \, : \, \uniquantwrtof{\shortcatindicesin}{\probat{\indexedshortcatvariables}\geq0}, \, \contractionof{\probwith,\basemeasurewith}{\shortcatvariables}
+    = \left\{ \probat{\shortcatvariables} \wcols\uniquantwrtof{\shortcatindicesin}{\probat{\indexedshortcatvariables}\geq0}, \, \contractionof{\probwith,\basemeasurewith}{\shortcatvariables}
     = \probwith \right\} \, .
 \end{align*}
 
@@ -533,7 +533,7 @@ Following our motivation of sparse decompositions, we now combine this result wi
         \input{PartI/tikz_pics/probability_representation/markov_chain.tex}
     \end{center}
     \caption{Depiction of a Markov Chain Decomposition by a
-    a) hypergraph with the nodes $\nodes=[\catorder]$ and edges $\edges=\big\{\{0\}\cup\{\{\catenumerator,\catenumerator+1\} \, : \, \catenumeratorin, \, \catenumerator>1\} \big\}$ and
+    a) hypergraph with the nodes $\nodes=[\catorder]$ and edges $\edges=\big\{\{0\}\cup\{\{\catenumerator,\catenumerator+1\} \wcols\catenumeratorin, \, \catenumerator>1\} \big\}$ and
     b) a decorating Tensor Network representing the sparsified conditional probabilities.}
     \label{fig:MC}
 \end{figure}
@@ -593,16 +593,15 @@ In the following section, we will investigate decomposition schemes, which relax
 The computation of marginal distribution by consecutive transition matrix multiplications will then be replaced by more general tensor network contractions.
 
 
-
 %\subsect{Sufficient Statistics and Exponential Families}
 
 
 \subsect{Computation Mechanism}
 
 \red{
-We have seen, that conditional independence of variables corresponds with decomposition properties of probability tensors.
-We now explore a further approach towards tensor network decomposition based on sufficient statistics, which leads to exponential families.
-When restricting exponential families to graphical models in \secref{sec:graphicalModels}, we will see that both the indepence and the computation mechanisms are related through the Hammersley-Clifford theorem.
+    We have seen, that conditional independence of variables corresponds with decomposition properties of probability tensors.
+    We now explore a further approach towards tensor network decomposition based on sufficient statistics, which leads to exponential families.
+    When restricting exponential families to graphical models in \secref{sec:graphicalModels}, we will see that both the indepence and the computation mechanisms are related through the Hammersley-Clifford theorem.
 }
 
 Let us consider a tuple of random variables $\shortcatvariables$, which take values in $\facstates$.
@@ -622,7 +621,8 @@ We now understand the probability $\probat{\shortcatvariables}$ as another rando
 
 When a probability distribution has a sufficient statistic, we can represent the distribution as a tensor network involving the basis encoding of the statistic, as we show next.
 
-\begin{theorem}\label{the:sufficientStatisticActCoreExistence}
+\begin{theorem}
+    \label{the:sufficientStatisticActCoreExistence}
     If and only if $\sstatat{\shortcatvariables,\selvariable}$ is a sufficient statistic, i.e. $\shortcatvariables$ is independent of $\probat{\shortcatvariables}$ conditioned on $\sstatat{\shortcatvariables,\selvariable}$, there is a tensor $\actcoreat{\headvariables}$ with
     \begin{align*}
         \probat{\shortcatvariables}
@@ -661,6 +661,9 @@ where by $\zerosat{\headvariables}\prec\hypercoreof{\headvariables}$ we restrict
 %where by $\maxgraph$ we refer to the maximal graph to be explained later
 
 %A straightforward generalization of probability distributions representable by exponential families then allows for arbitrary decomposition formats for activation tensors, as we define next.
+
+\subsect{Computation Activation Networks}\label{sec:computationActivationNetworks}
+
 The curse of dimensionality appears again in cases of large cardinality of the image of the statistic $\sstat$.
 To describe classes of probability distributions with efficient representations in these cases, we now define classes of distributions with tensor network decompositions of their activation cores.
 
@@ -670,14 +673,14 @@ To describe classes of probability distributions with efficient representations 
     Given a statistic $\sstat : \facstates \rightarrow \rr^{\seldim}$, and a hypergraph $\graph=(\nodes,\edges)$ with nodes $[\seldim]\subset\nodes$ containing the image coordinates of $\sstat$, we define the by $\sstat$ and $\graph$ computable family of distributions by
     \begin{align*}
         \realizabledistsof{\sstat,\graph}
-        = \left\{ \normalizationof{\{\bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}\} \cup \{\hypercoreofat{\edge}{\sstatcatof{\edge}} \wcols \edge\in\edges \}}{\shortcatvariables}  \wcols \hypercoreofat{\edge}{\sstatcatof{\edge}}\in\bigotimes_{\selindex\in\edge}\rr^{\headdimof{\selindex}}\ncond\zerosat{\sstatcatof{\edge}}\prec\hypercoreofat{\edge}{\sstatcatof{\edge}} \right\} \, .
+        = \left\{ \normalizationof{\{\bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}\} \cup \{\hypercoreofat{\edge}{\sstatcatof{\edge}} \wcols \edgein \}}{\shortcatvariables}  \wcols \hypercoreofat{\edge}{\sstatcatof{\edge}}\in\bigotimes_{\selindex\in\edge}\rr^{\headdimof{\selindex}}\ncond\zerosat{\sstatcatof{\edge}}\prec\hypercoreofat{\edge}{\sstatcatof{\edge}} \right\} \, .
     \end{align*}
     Note that we restrict to non-negative activation cores by demanding $\zerosat{\sstatcatof{\edge}}\prec\hypercoreofat{\edge}{\sstatcatof{\edge}}$, a notation which will be introduced in more detail in \charef{cha:logicalReasoning} as partial order of tensors.
     We refer to any member $\probat{\shortcatvariables}\in\realizabledistsof{\sstat,\graph}$ as a by $\sstat$ and $\graph$ computable distribution.
     \red{Given a base measure $\basemeasurewith$, by $\realizabledistsof{\sstat,\graph, \basemeasure}$ we refer to the set }
     \begin{align*}
         \realizabledistsof{\sstat,\graph}
-        = \left\{ \normalizationof{\{\bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}\} \cup \{\hypercoreofat{\edge}{\sstatcatof{\edge}} \wcols \edge\in\edges \} \cup \{\basemeasurewith\}}{\shortcatvariables}  \, : \,\hypercoreofat{\edge}{\sstatcatof{\edge}}\in\bigotimes_{\selindex\in\edge}\rr^{\headdimof{\selindex}}, \, \zerosat{\sstatcatof{\edge}}\prec\hypercoreofat{\edge}{\sstatcatof{\edge}} \right\} \, .
+        = \left\{ \normalizationof{\{\bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}\} \cup \{\hypercoreofat{\edge}{\sstatcatof{\edge}} \wcols \edgein \} \cup \{\basemeasurewith\}}{\shortcatvariables}  \, : \,\hypercoreofat{\edge}{\sstatcatof{\edge}}\in\bigotimes_{\selindex\in\edge}\rr^{\headdimof{\selindex}}, \, \zerosat{\sstatcatof{\edge}}\prec\hypercoreofat{\edge}{\sstatcatof{\edge}} \right\} \, .
     \end{align*}
 \end{definition}
 
@@ -692,7 +695,17 @@ For any hypergraph $\graph$ we further have
     \realizabledistsof{\sstat,\graph} \subseteq \realizabledistsof{\sstat,\maxgraph} \, .
 \end{align*}
 
-
+% Computation - Activation
+To represent a distribution $\probwith$ in $\realizabledistsof{\sstat,\graph}$ we need two tensor networks:
+\begin{itemize}
+    \item[\textbf{Computation Cores:}] These are a tensor network $\extnet$, which contraction is the basis encoding of the statistic
+    \begin{align*}
+        \bencodingofat{\sstat}{\headvariables,\shortcatvariables} = \contractionof{\extnet}{\headvariables,\shortcatvariables} \, .
+    \end{align*}
+    Further decompositions of the basis encoding of the statistic is often necessary to avoid the curse of dimensions and possible in case of sparse statistics.
+    We refer to these as computation cores, since they are computing the variables $\headvariables$ using the basis calculus scheme (see \charef{cha:basisCalculus}).
+    \item[\textbf{Activation Cores:}] These are the activation tensors $\hypercoreofat{\edge}{\sstatcatof{\edge}}$ for each hyperedge $\edgein$.
+\end{itemize}
 
 % Usage of the selection encoding -> Can also make a theorem out of this
 
@@ -716,7 +729,7 @@ We now restrict the activation cores to specific elementary tensors, which corre
     \begin{align*}
         \basemeasure : \facstates \rightarrow \ozset
     \end{align*}
-    with $\contraction{\basemeasure}\neq0$, the set $\expfamily=\{\expdist \, : \, \canparamwithin\}$ of probability distributions
+    with $\contraction{\basemeasure}\neq0$, the set $\expfamily=\{\expdist \wcols\canparamwithin\}$ of probability distributions
     \begin{align*}
         \expdistat{\shortcatvariables} = \normalizationof{\expof{\contractionof{\sencsstatat{\shortcatvariables,\selvariable},\canparamwith}{\shortcatvariables},\basemeasurewith}}{\shortcatvariables}
     \end{align*}
@@ -826,7 +839,7 @@ We now overcome this problem with usage of the basis encoding formalism to repre
     and have
     \begin{align*}
         \expdistwith =
-        \normalizationof{\{\basemeasurewith\} \cup \{\bencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables} \, : \, \selindexin\}\cup\{\sstatac \, : \, \selindexin\}}{\shortcatvariables} \, .
+        \normalizationof{\{\basemeasurewith\} \cup \{\bencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables} \wcols \selindexin\}\cup\{\sstatac \wcols \selindexin\}}{\shortcatvariables} \, .
     \end{align*}
 \end{theorem}
 \begin{proof}
@@ -852,7 +865,7 @@ We now overcome this problem with usage of the basis encoding formalism to repre
     We further have (see \theref{the:functionImageDecompositionContraction} in \charef{cha:basisCalculus})
     \begin{align*}
         \bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}
-        = \contractionof{\{\bencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables} \, : \, \selindexin\}}{\sstatcatof{[\seldim]},\shortcatvariables} \, .
+        = \contractionof{\{\bencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables} \wcols\selindexin\}}{\sstatcatof{[\seldim]},\shortcatvariables} \, .
     \end{align*}
     Refining the above decomposition of $\expof{\contractionof{\sencsstat,\canparam}{\shortcatvariables}}$ by these further decompositions we arrive at the claim.
 \end{proof}
@@ -861,28 +874,26 @@ We now overcome this problem with usage of the basis encoding formalism to repre
 In the proof of \theref{the:expFamilyTensorRep} we have observed, that the basis encoding $\bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}$ of the statistics decomposed into a tensor network of basis encodings $\bencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables}$ to the coordinate of the statistic.
 We can exploit further decomposition mechanisms, which will be discussed in full detail in \charef{cha:basisCalculus}, to find even sparser decompositions.
 This is for example the case, when the coordinates of the statistic are compositions of functions depending on small numbers of variables.
-When the coorindates of the statistic furthermore share similar parts in their compositions, these parts can be shared in the decomposition.
+When the coordindates of the statistic furthermore share similar parts in their compositions, these parts can be shared in the decomposition.
 We will investigate such sparsification mechanisms in more detail in \charef{cha:networkRepresentation}, where the coordinates of the statistic are propositional formulas with a natural decomposition by their syntactical description.
-%We used in the proof, that the basis encoding of the statistic decomposes into the basis encoding of the coordinate maps to the statistic as
-%\begin{align*}
-%    \bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}
-%     = \contractionof{\{\bencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables} \, : \, \selindexin\}}{\sstatcatof{[\seldim]},\shortcatvariables} \, .
-%\end{align*}
-%One strategy to decompose $\bencodingof{\sstat}$ is thus by the .
-%When the coordinate maps are sharing common components, a sparser representation can be derived through encodings of the components shared among the coordinate map encodings.
 
 
-% Core types
-The tensor network representation of an exponential family by \theref{the:expFamilyTensorRep} is a Markov Network consistent of two types of cores.
-First, we refer to the basis encodings $\bencodingof{\sstatcoordinateof{\selindex}}$ of the coordinates of a statistic as computation cores.
-Our intuition is that they compute the hidden variable $\sstatcatof{\selindex}$, based on Basis Calculus (see \charef{cha:basisCalculus}), which encode the value of the coordinate with respect to the image interpretation map $\indexinterpretationof{\selindex}$.
-We notice, that since they are directed with $\sstatcatof{\selindex}$ being the only outgoing variable, they do not influence any contraction with open variables $\shortcatvariables$, unless further tensors sharing the variable $\sstatcatof{\selindex}$ are present in the contraction.
-The influence of the contraction is performed by the activation cores $\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\sstatcatof{\selindex}}$, which exploit the computed statistic variable and provide in combination with the basis encoding a factor
-\begin{align*}
-    \contractionof{\bencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables},\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\sstatcatof{\selindex}}}{\shortcatvariables}
-\end{align*}
-to the Markov Network reduced to the observed variables $\shortcatvariables$.
-When the canonical parameter is vanishing at a coordinate, that is $\canparamat{\indexedselvariable}=0$, then this factor is trivial, since $\actcoreofat{\selindex,0}{\sstatcatof{\selindex}}=\onesat{\sstatcatof{\selindex}}$ and as a consequence of the directionality of basis encodings we have
+% Core types - See for implementation example \exaref{exa:expFamilyCARep}.
+The tensor network representation of an exponential family by \theref{the:expFamilyTensorRep} is splitted into computation and activation cores (see \secref{sec:computationActivationNetworks}):
+\begin{itemize}
+    \item[Computation Cores:] The basis encodings $\bencodingof{\sstatcoordinateof{\selindex}}$ of the coordinates of a statistic form the computation cores.
+    Our intuition is that they compute the hidden variable $\sstatcatof{\selindex}$, based on Basis Calculus (see \charef{cha:basisCalculus}), which encode the value of the coordinate with respect to the image interpretation map $\indexinterpretationof{\selindex}$.
+    We notice, that since they are directed with $\sstatcatof{\selindex}$ being the only outgoing variable, they do not influence any contraction with open variables $\shortcatvariables$, unless further tensors sharing the variable $\sstatcatof{\selindex}$ are present in the contraction.
+    \item[Activation Cores:] The influence of the contraction is performed by the activation cores $\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\sstatcatof{\selindex}}$, which exploit the computed statistic variables $\headvariables$ and provide in combination with the basis encoding a factor
+    \begin{align*}
+        \contractionof{\bencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables},\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\sstatcatof{\selindex}}}{\shortcatvariables}
+    \end{align*}
+    to the tensor network representing the distribution of the observed variables $\shortcatvariables$.
+\end{itemize}
+For the implementation of an exponential family as a computation activation network, see \exaref{exa:expFamilyCARep}. % in \charef{cha:implementation}.
+
+%Note that the activation core is contrained to be positive and
+When the canonical parameter is vanishing at a coordinate, that is $\canparamat{\indexedselvariable}=0$, then the corresponding factor is trivial, since $\actcoreofat{\selindex,0}{\sstatcatof{\selindex}}=\onesat{\sstatcatof{\selindex}}$ and as a consequence of the directionality of basis encodings we have
 \begin{align*}
     \contractionof{\bencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables},\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\sstatcatof{\selindex}}}{\shortcatvariables}
     = \contractionof{\bencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables},\onesat{\sstatcatof{\selindex}}}{\shortcatvariables}
@@ -891,17 +902,21 @@ When the canonical parameter is vanishing at a coordinate, that is $\canparamat{
 In that case both the activation core and the corresponding computation core can be dropped from the network without changing its distribution.
 
 % Interpretation as elementary
-By \theref{the:expFamilyTensorRep} any member of an exponential family is represented by the normed contraction of a collection of unary activation cores contracted with the computation network $\bencodingofat{\sstat}{\headvariables,\shortcatvariables}$.
-We understand these activation cores as a member of a simple Markov Network distributing the head variables $\headvariables$.
-This Markov Network has a graph, where the edges contain single variables, that is $\elgraph=([\seldim],\{\{\selindex\}\wcols\selindexin\})$.
-We call this graph the elementary graph, since it also corresponds with elementary tensor network formats consistent of tensor products of vectors.
-\red{For unary activation cores, that is for the elementary graph $\elgraph$,} any member of $\realizabledistsof{\sstat,\elgraph}$ has up to a normalization factor a tensor network decomposition by the diagram
+By \theref{the:expFamilyTensorRep} any member of an exponential family is represented by the normed contraction of a collection of unary activation cores contracted with the computation cores $\bencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables}$.
+%We understand these activation cores as a tensor network distributing the head variables $\headvariables$.
+The unary activation cores form a tensor network on the elementary hypergraph
+\begin{align*}
+    \elgraph=([\seldim],\{\{\selindex\}\wcols\selindexin\}) \, ,
+\end{align*}
+which hyperedges contain single variables.
+We call this graph elementary, since it corresponds with elementary tensor network formats consistent of tensor products of vectors.
+For unary activation cores, that is for the elementary graph $\elgraph$, any member of $\realizabledistsof{\sstat,\elgraph}$ has up to a normalization factor a tensor network decomposition by the diagram
 \begin{center}
     \input{PartI/tikz_pics/probability_representation/unary_realizable.tex}
 \end{center}
 Comparing this representation scheme with \theref{the:expFamilyTensorRep}, we conclude as the next corollary, that any member of an exponential family with trivial base measure can be represented by an elementary activation tensors.
 
-\begin{corollary}[Corollary of \theref{the:expFamilyTensorRep}]
+\begin{corollary}[of \theref{the:expFamilyTensorRep}]
     \label{cor:unaryActivationExpdistRealization}
     For any statistic $\sstat:\facstates\rightarrow[\seldim]$ and trivial base measure $\basemeasurewith=\onesat{\shortcatvariables}$ we have
     \begin{align*}
@@ -958,14 +973,14 @@ In a more canonical way, Markov Networks are instead defined by graphs, where in
     Then the Markov Network $\probof{\graph}$ to $\tnetof{\graph}$ is the probability distribution of $\catvariableof{\node}$ defined by the tensor
     \begin{align*}
         \probofat{\graph}{\nodevariables} = \frac{
-            \contractionof{\{\hypercoreof{\edge} : \edge \in \edges\}}{\nodevariables}
+            \contractionof{\{\hypercoreof{\edge} \wcols \edgein\}}{\nodevariables}
         }{
-            \contraction{\{\hypercoreof{\edge} : \edge \in \edges\}}
+            \contraction{\{\hypercoreof{\edge} \wcols \edgein\}}
         } = \normalizationof{\tnetof{\graph}}{\nodevariables} \, .
     \end{align*}
     We call the denominator
     \begin{align*}
-        \partitionfunctionof{\tnetof{\graph}} = \contraction{\{\hypercoreof{\edge} : \edge \in \edges\}}
+        \partitionfunctionof{\tnetof{\graph}} = \contraction{\{\hypercoreof{\edge} \wcols \edgein\}}
     \end{align*}
     the partition function of the tensor network $\tnetof{\graph}$.
 \end{definition}
@@ -988,7 +1003,7 @@ While we have directly defined Markov Networks as decomposed probability distrib
 As we will see, the sets of conditional independencies encoded by a hypergraph are captured by its seperation properties, as we define next.
 
 \begin{definition}[Separation of Hypergraph]
-    A path in a hypergraph is a sequence of nodes $\node_{\atomenumerator}$ for $\atomenumeratorin$, such that for any $\atomenumerator\in[\atomorder-1]$ we find a hyperedge $\edge\in\edges$ such that $(\node_{\atomenumerator}, \node_{\atomenumerator+1})\subset \edge$.
+    A path in a hypergraph is a sequence of nodes $\node_{\atomenumerator}$ for $\atomenumeratorin$, such that for any $\atomenumerator\in[\atomorder-1]$ we find a hyperedge $\edgein$ such that $(\node_{\atomenumerator}, \node_{\atomenumerator+1})\subset \edge$.
     Given disjoint subsets $\nodesa$, $\nodesb$, $\nodesc$ of nodes in a hypergraph $\graph$ we say that $\nodesc$ separates $\nodesa$ and $\nodesb$ with respect to $\graph$, when any path starting at a node in $\nodesa$ and ending in a node in $\nodesb$ contains a node in $\nodesc$.
 \end{definition}
 
@@ -997,7 +1012,7 @@ This property of clique-capturing established a correspondence of hyperedges wit
 
 \begin{definition}[Clique-Capturing Hypergraph]
     \label{def:ccHypergraph}
-    We call a hypergraph $\graph$ clique-capturing, when each subset $\secnodes\subset\nodes$ is contained in a hyperedge, if for any $a,b\in\secnodes$ there is a hyperedge $\edge\in\edges$ with $a,b\in\secnodes$.
+    We call a hypergraph $\graph$ clique-capturing, when each subset $\secnodes\subset\nodes$ is contained in a hyperedge, if for any $a,b\in\secnodes$ there is a hyperedge $\edgein$ with $a,b\in\secnodes$.
 \end{definition}
 
 Let us now show a characterization of Markov Networks in terms of conditional independencies, which is analogous to \theref{the:condIndBN}.
@@ -1018,8 +1033,8 @@ Let us now show a characterization of Markov Networks in terms of conditional in
     \begin{align*}
         \normalizationofwrt{\extnetasset}{\catvariableof{\nodesa},\catvariableof{\nodesb}}{\indexedcatvariableof{\nodesc}}
         = & \normalizationof{\extnetasset\cup\{\onehotmapof{\catindexof{\nodesc}}\}}{\catvariableof{\nodesa},\catvariableof{\nodesb}} \\
-        = &  \normalizationof{\{\hypercoreof{\edge}\, : \, \edge\in\edges_0\}\cup\{\onehotmapof{\catindexof{\nodesc}}\}}{\catvariableof{\nodesa}} \\
-        & \quad \otimes \normalizationof{\{\hypercoreof{\edge}\, : \, \edge\in\edges_1\}\cup\{\onehotmapof{\catindexof{\nodesc}}\}}{\catvariableof{\nodesb}} \, .
+        = &  \normalizationof{\{\hypercoreof{\edge}\wcols\edgein_0\}\cup\{\onehotmapof{\catindexof{\nodesc}}\}}{\catvariableof{\nodesa}} \\
+        & \quad \otimes \normalizationof{\{\hypercoreof{\edge}\wcols\edgein_1\}\cup\{\onehotmapof{\catindexof{\nodesc}}\}}{\catvariableof{\nodesb}} \, .
     \end{align*}
     By \theref{the:condIndependenceProductCriterion}, it now follows that $\catvariableof{\nodesa}$ is independent of $\catvariableof{\nodesb}$ conditioned on $\catvariableof{\nodesc}$.
 
@@ -1050,7 +1065,7 @@ To introduce Bayesian Networks, we extend \defref{def:hypergraphs} by introducin
     A directed path is a sequence $\node_{0},\ldots\node_{\secatomorder}$ such that for any $\secatomenumeratorin$ there is an hyperedge $\edge=(\incomingnodes,\outgoingnodes)\in\edges$ such that $\node_{\secatomenumerator}\in\incomingnodes$ and $\node_{\secatomenumerator+1}\in\outgoingnodes$.
     We call the hypergraph $\graph$ acyclic, if there is no path with $\secatomorder>0$ such that $\node_{0}=\node_{\secatomorder}$.
     Given a directed hypergraph $\graph=(\nodes,\edges)$ we define for any node $\nodein$ its parents by
-    \[ \parentsof{\node} = \{\secnode \, : \, \exists\edge=(\incomingnodes,\outgoingnodes)\in\edges: \secnode\in\incomingnodes,\node\in\outgoingnodes \} \]
+    \[ \parentsof{\node} = \{\secnode \wcols\exists\edge=(\incomingnodes,\outgoingnodes)\in\edges: \secnode\in\incomingnodes,\node\in\outgoingnodes \} \]
     and its non-descendants $\nondescendantsof{\node}$ as the set of nodes $\secnode$, such that there is no directed path from $\node$ to $\secnode$.
 \end{definition}
 
@@ -1064,7 +1079,7 @@ Based on these additional graphical properties, we now define Bayesian Networks.
     \[ \condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \]
     which represents the probability distribution
     \begin{align*}
-        \probat{\nodevariables} = \contractionof{\{\condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \, : \, \nodein\}}{\nodevariables} \, .
+        \probat{\nodevariables} = \contractionof{\{\condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \wcols\nodein\}}{\nodevariables} \, .
     \end{align*}
 \end{definition}
 
@@ -1076,7 +1091,7 @@ This allows us to verify with \theref{the:conditionalContractionPreservation} th
 % Contraction -> Now in definition!
 %By definition we can represent a Bayesian network by the contraction
 %\begin{align*}
-%	\probtensorof{\graph} = \contractionof{\{ \condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \, : \, \node\in\nodes\}}{\nodes} \, .
+%	\probtensorof{\graph} = \contractionof{\{ \condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \wcols\node\in\nodes\}}{\nodes} \, .
 %\end{align*}
 
 % Dual
@@ -1108,12 +1123,12 @@ Conditioned Bayesian Network do not have a simple Bayesian Network representatio
     \begin{align*}
         \probat{\nodevariables} =
         \contractionof{
-            \condprobof{\catvariableof{\node}}{\catvariableof{\secnode} : \secnode \prec \node}
+            \condprobof{\catvariableof{\node}}{\catvariableof{\secnode} \wcols \secnode \prec \node}
         }
         {\nodevariables} \, .
     \end{align*}
     Since $\prec$ is a topological ordering we have
-    \[ \parentsof{\node} \subset \{\secnode : \secnode \prec \node\} \]
+    \[ \parentsof{\node} \subset \{\secnode \wcols \secnode \prec \node\} \]
     We apply the assumed conditional independence with \theref{the:conditionDropping} and get
     \begin{align*}
         \probat{\nodevariables} =
@@ -1130,21 +1145,21 @@ Conditioned Bayesian Network do not have a simple Bayesian Network representatio
     \begin{align*}
         & \condprobof{\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}}{\indexedcatvariableof{\parentsof{\node}}} \\
         & \quad\quad = \normalizationofwrt{
-            \{\condprobof{\catvariableof{\secnode}}{\catvariableof{\parentsof{\secnode}}} \, : \, \secnode\in\nodes\}
+            \{\condprobof{\catvariableof{\secnode}}{\catvariableof{\parentsof{\secnode}}} \wcols\secnode\in\nodes\}
         }
         {\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}}
         {\indexedcatvariableof{\parentsof{\node}}} \\
         & \quad\quad  = \normalizationof{
-            \{\condprobof{\catvariableof{\secnode}}{\catvariableof{\parentsof{\secnode}}} \, : \, \secnode\in\nodes\} \cup \{\onehotmapof{\catindexof{\parentsof{\node}}}\}
+            \{\condprobof{\catvariableof{\secnode}}{\catvariableof{\parentsof{\secnode}}} \wcols\secnode\in\nodes\} \cup \{\onehotmapof{\catindexof{\parentsof{\node}}}\}
         }
         {\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}}\\
         &  \quad\quad = \normalizationof{
-            \{\condprobof{\catvariableof{\secnode}}{\catvariableof{\parentsof{\secnode}}} \, : \, \secnode\in\nondescendantsof{\node}\} \cup \{\onehotmapof{\catindexof{\parentsof{\node}}}, \condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \}
+            \{\condprobof{\catvariableof{\secnode}}{\catvariableof{\parentsof{\secnode}}} \wcols\secnode\in\nondescendantsof{\node}\} \cup \{\onehotmapof{\catindexof{\parentsof{\node}}}, \condprobof{\catvariableof{\node}}{\catvariableof{\parentsof{\node}}} \}
         }
         {\catvariableof{\node},\catvariableof{\nondescendantsof{\node}}} \\
         &  \quad\quad =  %\contractionof{
         \normalizationof{
-            \{\condprobof{\catvariableof{\secnode}}{\catvariableof{\parentsof{\secnode}}} \, : \, \secnode\in\nondescendantsof{\node}\} \cup \{\onehotmapof{\catindexof{\parentsof{\node}}}\}
+            \{\condprobof{\catvariableof{\secnode}}{\catvariableof{\parentsof{\secnode}}} \wcols\secnode\in\nondescendantsof{\node}\} \cup \{\onehotmapof{\catindexof{\parentsof{\node}}}\}
         }
         {\catvariableof{\nondescendantsof{\node}}} \\
         & \quad\quad  \quad  \cdot \normalizationof{
@@ -1211,7 +1226,7 @@ In the next theorem we provide the conditions for the interpretation of a Markov
 
 %\begin{theorem}\label{the:BayesianToMarkov}
 %	Any Bayesian Network on a directed graph $\graph=(\nodes,\edges)$ is a Markov Network on a hypergraph $\secgraph=(\nodes,\secedges)$ with identical nodes and hyperedges consistent of  a hyeredge to each node with $\node$ being the only outgoing node and
-%		\[  \{\tilde{\node} \, : \, (\tilde{\node},\node) \in \edges\} \,  \]
+%		\[  \{\tilde{\node} \wcols(\tilde{\node},\node) \in \edges\} \,  \]
 %	being the incoming nodes.
 %	Each hyperedge of the Markov Network is decorated with the conditional probability distribution and the partition function is vanishing.
 %\end{theorem}
@@ -1307,12 +1322,13 @@ We here show this claim by a construction of exponential families representing M
 %Since Markov Networks have been shown to also contain Bayesian Networks
 %Given a hypergraph with fixed node decoration, the different decorations of the hyperedges by tensors can be represented by an exponential family, as we show next.
 
-\begin{theorem}[Exponential Representation of Markov Networks]\label{the:markovNetworkExponentialFamilies}
+\begin{theorem}[Exponential Representation of Markov Networks]
+    \label{the:markovNetworkExponentialFamilies}
     Let there be a hypergraph $\graph=(\nodes,\edges)$ with a coloring of the nodes by dimensions $\catdimof{\node}$, we define a sufficient statistics
     \begin{align*}
-        \sstatof{\graph} \, : \bigtimes_{\node\in\nodes} [\catdimof{\node}] \rightarrow \bigtimes_{\edge\in\edges}\left(\bigtimes_{\node\in\edge}[\catdimof{\node}]\right)
+        \sstatof{\graph} \, : \bigtimes_{\node\in\nodes} [\catdimof{\node}] \rightarrow \bigtimes_{\edgein}\left(\bigtimes_{\node\in\edge}[\catdimof{\node}]\right)
     \end{align*}
-    by a cartesian product $\sstatof{\graph} = \bigtimes_{\edge\in\edges} \sstatcoordinateof{\edge}$ of statistics
+    by a cartesian product $\sstatof{\graph} = \bigtimes_{\edgein} \sstatcoordinateof{\edge}$ of statistics
     \begin{align*}
         \sstatcoordinateof{\edge} : \bigtimes_{\node\in\nodes} [\catdimof{\node}] \rightarrow \bigtimes_{\node\in\edge} [\catdimof{\node}]
     \end{align*}
@@ -1320,9 +1336,9 @@ We here show this claim by a construction of exponential families representing M
     \begin{align*}
         \sstatcoordinateof{\edge}(\catindexof{\nodes}) = \catindexof{\edge} \, .
     \end{align*}
-    Given any Markov Network with positive tensors $\{\hypercoreof{\edge} \, : \, \edge\in\edges\}$ decorating the hyperedges of $\graph$ we define
+    Given any Markov Network with positive tensors $\{\hypercoreof{\edge} \wcols\edgein\}$ decorating the hyperedges of $\graph$ we define
     \begin{align*}
-         \canparamat{\selvariable} = \bigtimes_{\edge\in\edges} \canparamofat{\edge}{\catvariableof{\edge}}
+        \canparamat{\selvariable} = \bigtimes_{\edgein} \canparamofat{\edge}{\catvariableof{\edge}}
     \end{align*}
     where
     \begin{align*}
@@ -1334,25 +1350,25 @@ We here show this claim by a construction of exponential families representing M
 \begin{proof}
     We have for any $\catindexof{\nodes}$
     \begin{align*}
-        \prod_{\edge\in\edges} \hypercoreofat{\edge}{\indexedcatvariableof{\edge}}
-        &= \expof{\sum_{\edge\in\edges} \lnof{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}}} \\
-        &= \expof{\sum_{\edge\in\edges} \canparamofat{\edge}{\indexedcatvariableof{\edge}}} \\
-        &= \expof{\sum_{\edge\in\edges} \contraction{\canparamofat{\edge}{\catvariableof{\edge}},\sstatcoordinateof{\edge}(\catindexof{\nodes})}}  \, .
+        \prod_{\edgein} \hypercoreofat{\edge}{\indexedcatvariableof{\edge}}
+        &= \expof{\sum_{\edgein} \lnof{\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}}} \\
+        &= \expof{\sum_{\edgein} \canparamofat{\edge}{\indexedcatvariableof{\edge}}} \\
+        &= \expof{\sum_{\edgein} \contraction{\canparamofat{\edge}{\catvariableof{\edge}},\sstatcoordinateof{\edge}(\catindexof{\nodes})}}  \, .
     \end{align*}
     By contraction, we further have
     \begin{align*}
         \contractionof{\sstatat{\nodevariables,\selvariable},\canparamwith}{\nodevariables}
-        = \sum_{\edge\in\edges} \contractionof{\sstatcoordinateofat{\edge}{\nodevariables,\catvariableof{\edge}},\canparamofat{\edge}{\catvariableof{\edge}}}{\nodevariables}
+        = \sum_{\edgein} \contractionof{\sstatcoordinateofat{\edge}{\nodevariables,\catvariableof{\edge}},\canparamofat{\edge}{\catvariableof{\edge}}}{\nodevariables}
     \end{align*}
     we thus get with the above
     \begin{align}
-        \contractionof{\{\hypercoreof{\edge}: \edge\in\edges\}}{\nodevariables}
+        \contractionof{\{\hypercoreof{\edge}: \edgein\}}{\nodevariables}
         = \expof{\contractionof{\sstatat{\nodevariables,\selvariable},\canparamwith}{\nodevariables}} \, .
     \end{align}
     This implies, that the contraction of the tensors in the Markov Network coincides with the exponential of the energy tensor of the constructed member of the exponential family.
     It follows for the normalization, that
     \begin{align}
-        \normalizationof{\{\hypercoreof{\edge}: \edge\in\edges\}}{\nodevariables}
+        \normalizationof{\{\hypercoreof{\edge}: \edgein\}}{\nodevariables}
         = \normalizationof{\expof{\contractionof{\canparam,\sstat}{\nodevariables}}}{\nodevariables} \, .
     \end{align}
     We thus conclude, that the Markov Network coincides with the constructed member of the exponential family.
@@ -1365,7 +1381,7 @@ For Markov Networks on tree hypergraphs, and their embedding into junction tree 
 More precisely, it can be shown, that for the statistic constructed in \theref{the:markovNetworkExponentialFamilies}, in case of tree hypergraphs, the
 \begin{align*}
     \meansetof{\sstatof{\graph}}
-    = \Big\{ \meanparamwith=\big(\meanparamofat{\edge}{\catvariableof{\edge}}\big)_{\edge\in\edges} \, : \,
+    = \Big\{ \meanparamwith=\big(\meanparamofat{\edge}{\catvariableof{\edge}}\big)_{\edgein} \, : \,
     & \uniquantwrtof{\edge,\secedge\in\edges}{
         \contractionof{\meanparamofat{\edge}{\catvariableof{\edge}}}{\catvariableof{\edge\cap\secedge}} = \contractionof{\meanparamofat{\edge}{\catvariableof{\edge}}}{\catvariableof{\edge\cap\secedge}}}, \\
     & \uniquantwrtof{\edge}{\zerosat{\catvariableof{\edge}} \prec \meanparamofat{\edge}{\catvariableof{\edge}} \land \contraction{\meanparamofat{\edge}{\catvariableof{\edge}}}=1} \Big\} \, .
@@ -1388,7 +1404,7 @@ Taking for the statistic the identity function $\identityat{\shortcatvariables,\
     = \begin{cases}
           1 & \text{if} \quad \shortcatindices = \selindexof{[\catorder]} \\
           0 & \text{else}
-     \end{cases} \, ,
+    \end{cases} \, ,
 \end{align*}
 we can represent any positive probability distribution $\probwith$ as a member of the exponential family $\expfamilyof{\identity,\ones}$.
 To see this, it is enough to choose
@@ -1398,7 +1414,7 @@ To see this, it is enough to choose
 where the contraction with $\identity$ copies the variables $\shortcatvariables$ to $\selvariableof{[\catorder]}$.
 The energy tensor of this member of $\expfamilyof{\identity,\ones}$ is then
 \begin{align*}
-   \contractionof{\canparamat{\selvariableof{[\catorder]}},\identityat{\indexedshortcatvariables,\indexedselvariableof{[\catorder]}}}{\shortcatvariables}
+    \contractionof{\canparamat{\selvariableof{[\catorder]}},\identityat{\indexedshortcatvariables,\indexedselvariableof{[\catorder]}}}{\shortcatvariables}
     = \lnof{\probat{\shortcatvariables}}
 \end{align*}
 and thus
@@ -1450,7 +1466,7 @@ We in the reminder of this section prepare for this application and derive tenso
 %Given a pair of a statistic $\sstat:\facstates\rightarrow\parspace$ and a boolean base measure $\basemeasurewith$, the polytope of mean parameters is the set (see \defref{def:meanPolytope})
 %\begin{align*}
 %    \genmeanset
-%    = \convhullof{\contractionof{\sencsstatwith,\probwith}{\selvariable} \, : \, \probwith\in\bmrealprobof{\basemeasure}} \, ,
+%    = \convhullof{\contractionof{\sencsstatwith,\probwith}{\selvariable} \wcols\probwith\in\bmrealprobof{\basemeasure}} \, ,
 %\end{align*}
 %where by $\bmrealprobof{\basemeasure}$ we note the set of by $\basemeasure$ representable distributions (see \defref{def:representationBaseMeasure}).
 %We in this section, we will further characterize the polytope of realizable mean parameters.
@@ -1494,8 +1510,8 @@ Convex hulls of finite vectors are called $\mathcal{V}$-polytopes (see Lecture~1
     It follows that
     \begin{align*}
         \genmeanset
-        &= \convhullof{\contractionof{\sencsstatat{\shortcatvariables,\selvariable},\onehotmapofat{\shortcatindices}{\shortcatvariables}}{\selvariable} \, : \, \basemeasureat{\indexedshortcatvariables}=1 } \\
-        &= \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \basemeasureat{\indexedshortcatvariables}=1} \, . \qedhere
+        &= \convhullof{\contractionof{\sencsstatat{\shortcatvariables,\selvariable},\onehotmapofat{\shortcatindices}{\shortcatvariables}}{\selvariable} \wcols\basemeasureat{\indexedshortcatvariables}=1 } \\
+        &= \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \wcols\basemeasureat{\indexedshortcatvariables}=1} \, . \qedhere
     \end{align*}
 \end{proof}
 
@@ -1517,7 +1533,7 @@ A generic mean polytope $\genmeanset$ is then the linear transform of the simple
 
 For any vector $\normalvec[\selvariable]\in\rr^{\seldim}$ and a scalar $\normalbound\in\rr$, we call the set
 \begin{align*}
-    \left\{\meanparamwith \, : \, \contraction{\meanparamwith,\normalvec[\selvariable]} \leq \normalbound \right\} \subset \rr^{\seldim}
+    \left\{\meanparamwith \wcols\contraction{\meanparamwith,\normalvec[\selvariable]} \leq \normalbound \right\} \subset \rr^{\seldim}
 \end{align*}
 a half-space of $\rr^\seldim$.
 Bounded intersections of finitely many half-spaces are called $\mathcal{H}$-polytopes \cite{ziegler_lectures_2013}.
@@ -1534,7 +1550,7 @@ We state next, that the polytope $\genmeanset$ of mean parameters is a $\mathcal
     where $a_i[\selvariable]$ a vector and $b_i\in\rr$ for all $i\in[n]$ such that
     \begin{align*}
         \genmeanset
-        = \left\{\meanparamwith \, : \, \forall_{i\in[n]} \, \contraction{\meanparamwith,\normalvecofat{i}{\selvariable}}\leq\normalboundof{i} \right\} \, .
+        = \left\{\meanparamwith \wcols\forall_{i\in[n]} \, \contraction{\meanparamwith,\normalvecofat{i}{\selvariable}}\leq\normalboundof{i} \right\} \, .
     \end{align*}
 \end{theorem}
 \begin{proof}
@@ -1555,9 +1571,9 @@ The interior of the mean polytope consists of the mean parameters to positive di
     For any minimal statistics $\sstat$ with respect to a boolean base measure $\basemeasure$ (see \defref{def:minimalStatistics}) and a with respect to $\basemeasure$ positive distribution $\probwith$ we have
 %    we have for some $\meanparamwith$ that $\meanparamwith\in\sbinteriorof{\genmeanset}$ if and only if there is a positive distribution with respect to $\basemeasure$ such that
     \begin{align*}
-         %\meanparamwith
-         %=
-         \contractionof{\probwith,\sencsstatwith}{\selvariable} \in \sbinteriorof{\genmeanset} \, .
+        %\meanparamwith
+        %=
+        \contractionof{\probwith,\sencsstatwith}{\selvariable} \in \sbinteriorof{\genmeanset} \, .
     \end{align*}
 \end{theorem}
 \begin{proof}
@@ -1569,7 +1585,7 @@ The interior of the mean polytope consists of the mean parameters to positive di
 %    \end{align*}
 %    We notice, that $\expdist$ is positive with respect to $\basemeasure$, as is any member of an exponential family with base measure $\basemeasure$.
 
-   % \proofleftsymbol: % Orient on proof of Theorem~3.3
+    % \proofleftsymbol: % Orient on proof of Theorem~3.3
     Since by assumption the statistics is minimal, the convex set $\genmeanset$ is full dimensional (see e.g. Appendix B in \cite{wainwright_graphical_2008}).
     We thus use a well-known property for full-dimensional convex sets (see \cite{rockafellar_convex_1997,hiriart-urruty_convex_1993}), that $\meanparam\in\interiorof{\genmeanset}$ if for any non-vanishing vector $\vectorat{\selvariable}$ there is a  % citations from Wainwright - Appendix B
     there is a $\tilde{\meanparam}[\selvariable]$ with
@@ -1656,7 +1672,8 @@ We conclude, that in the case of non-minimal statistics, the whole polytope $\ge
 
 %\subsect{Base measures on faces}
 
-\begin{lemma}\label{lem:faceConvHullPreimage}
+\begin{lemma}
+    \label{lem:faceConvHullPreimage}
     For each face $\genfacesetof{\facecondset}$ we have
     \begin{align*}
         \genfacesetof{\facecondset}
@@ -1686,7 +1703,8 @@ For reference in later chapters, we define these refined base measures next as f
 We now specify the mean parameter polytope to any face using the face measure as a refinement of the base measure.
 
 %
-\begin{theorem}\label{the:faceAsRefinedPolytope}
+\begin{theorem}
+    \label{the:faceAsRefinedPolytope}
     For any face $\genfacesetof{\facecondset}$ of $\genmeanset$, we have with the refined base measure
     \begin{align*}
         \secbasemeasureat{\shortcatvariables} = \contractionof{\basemeasureat{\shortcatvariables},\basemeasureofat{\sstat,\facecondset}{\shortcatvariables}}{\shortcatvariables}
@@ -1714,7 +1732,8 @@ We now specify the mean parameter polytope to any face using the face measure as
 
 Positivity of a distribution with respect to face measures is an equivalent condition for the mean parameter of a distribution to be on a face, as we show next.
 
-\begin{theorem}\label{the:facePolytopeCharacterization}
+\begin{theorem}
+    \label{the:facePolytopeCharacterization}
     If and only if for a distribution $\probwith$ and a face $\facecondset$ we have
     \begin{align*}
         \contractionof{\probwith,\sencsstatwith}{\selvariable}\in\genfacesetof{\facecondset}\, ,
@@ -1743,11 +1762,12 @@ The vertex measure is then
     = \contractionof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\onehotmapofat{\headindex^{\meanparam}_{[\seldim]}}{\headvariables}}{\shortcatvariables}
 \end{align*}
 
-\begin{theorem}[Face measure representation]\label{the:faceMeasureCharacterization}
+\begin{theorem}[Face measure representation]
+    \label{the:faceMeasureCharacterization}
     For any face $\genfacesetof{\facecondset}$ of $\meanset$ we have
     \begin{align*}
-         \genfacemeasureat{\shortcatvariables}
-         =\contractionof{\sstatccwith,\kcoreofat{\facecondset}{\headvariables}}{\shortcatvariables}
+        \genfacemeasureat{\shortcatvariables}
+        =\contractionof{\sstatccwith,\kcoreofat{\facecondset}{\headvariables}}{\shortcatvariables}
     \end{align*}
     where
     \begin{align*}
@@ -1780,7 +1800,8 @@ The vertex measure is then
 %
 Let us now investigate, which normalized face measures can be computed using $\sstat$ and a hypergraph $\graph$.
 
-\begin{example}[Vertices]\label{exa:vertexMeasures}
+\begin{example}[Vertices]
+    \label{exa:vertexMeasures}
     Vertices $\genfaceset$ are proper faces of affine dimension $0$, that is they consist in single vectors.
     Since all vertices are in the image $\sstatencodingat{\stateset}$, there exists an index tuple $\shortcatindices\in\stateset$ such that $\basemeasureat{\indexedshortcatvariables}=1$ and
     \begin{align*}
@@ -1808,7 +1829,8 @@ Using the formalism of sparse $\cpformat$ decompositions \charef{cha:sparseRepre
 However, the basis $\cpformat$ rank is only an upper bound to generic $\cpformat$ rank, which can be loose.
 By \exaref{ex:maximalFaceMeasure} we provide with the maximal face an example, where the basis $\cpformat$ rank is given by the tensor space dimension, whereas the generic $\cpformat$ rank is one and the normalized face measure is thus still in $\realizabledistsof{\sstat,\elgraph}$.
 
-\begin{example}[Maximal face]\label{exa:maximalFaceMeasure}
+\begin{example}[Maximal face]
+    \label{exa:maximalFaceMeasure}
     The maximal face $\genfacesetof{\varnothing}=\genmeanset$ coincides with the mean parameter itself.
     In this case the corresponding activation tensor to the face measure is trivial, that is
     \begin{align*}
