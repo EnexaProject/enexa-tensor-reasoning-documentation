@@ -438,26 +438,55 @@ For any unary connective $\exconnective: [2] \rightarrow[2]$ we have
 \end{align*}
 
 Let us now generalize this observation to arbitrary arity of connectives and provide a proof of its correctness.
+To this end, we provide a hypergraph-based definition of syntactical compositions of a propositional formula. % Compare with boolean circuits
 
-% CLASH OF NOTATION: HEADVARIABLES - CATVARIABLES
-\begin{theorem}[Composition of Formulas]\label{the:formulaDecomposition}
-	Let there be a formula $\formulaat{\shortcatvariables}$, which has a syntactical decomposition into connectives $\{\connectiveofat{\selindex}{\headvariableof{\nodesof{\selindex}}} : \selindexin\}$ taking their inputs by variables $\headvariableof{\nodesof{\selindex}}\subset \headvariableof{\nodes}$ and output by a variable $\headvariableof{\connectiveof{\selindex}}$
-	%Let there be a set of boolean variables $\headvariableof{\formulaset}$, where $\formulaset$ is  and boolean atom variables $\shortcatvariables$.
-	We here denote by $\formulaset$ the set of sub-formulas and use a boolean variable $\headvariableof{\secexformula}$ for each $\secexformula\in\formulaset$.
-	In particular, we denote for each atom in $\formulaset$ the corresponding boolean variable by $\headvariableof{\atomenumerator}$.
-	It then holds
+\begin{definition}\label{def:formulaDecomposition}
+	A syntactical hypergraph is a directed acyclic hypergraph $\graph=(\nodes,\edges)$ (see \defref{def:hypergraphs}) such that
+	\begin{itemize}
+		\item each hyperedge $\edge=(\incomingnodes,\outgoingnodes)$ has exactly one outgoing node, i.e. $\cardof{\outgoingnodes}=1$
+		\item each node $\nodein$ carries a boolean variable $\headvariableof{\node}$ and appears at most once as the outgoing node of a hyperedge % well-definedness
+		\item exatly one node $\secnode$ does not appear as an incoming node of a hyperedge % head node
+		\item each hyperedge $(\incomingnodes,\{\node\})$ with $\incomingnodes\neq\varnothing$ is decorated by a logical connective
+			\begin{align*}
+				\connectiveofat{\node}{\headvariableof{\incomingnodes}} : \bigtimes_{\node\in\incomingnodes} [2] \rightarrow [2]
+			\end{align*}
+		\item the node not appearing as an outgoing node are labeled by $[\atomorder]$
+	\end{itemize}
+	We then say, that the composition of the syntax hypergraph is the formula %$\exformulaat{\catvariableof{[\atomorder]}}$
 	\begin{align*}
-		\bencodingofat{\formula}{\formulavar,\shortcatvariables} =
-		\contractionof{\left\{
-		\bencodingofat{\connectiveof{\selindex}}{\headvariableof{\connectiveof{\selindex}},\headvariableof{\nodesof{\selindex}}} : \selindexin
-		\right\} \cup \{\identityat{\headvariableof{\atomenumerator},\catvariableof{\atomenumerator}} \, : \, \atomenumeratorin\}}
-		{\formulavar,\shortcatvariables} \, . 
+%		\bencodingofat{\exformula}{\formulavar,\shortcatvariables}
+		\exformulaat{\shortcatvariables}
+		= \breakablecontractionof{
+		&\left\{
+		\bencodingofat{\connectiveof{\node}}{\headvariableof{\node},\headvariableof{\incomingnodes}} \wcols (\incomingnodes,\{\node\})\in\edges
+		\right\} \cup \\
+		& \{\identityat{\headvariableof{\atomenumerator},\catvariableof{\atomenumerator}} \wcols \atomenumeratorin\}
+		\cup \{\tbasisat{\headvariableof{\secnode}}\}
+		}{\shortcatvariables} \, .
 	\end{align*}
-\end{theorem}
-\begin{proof}
-	When a variable in $\headvariableof{\formulaset}$ appears multiple times as input to connectives, we replace it by a set of copies (which wont change the contraction, since all tensors are binary and \theref{the:invarianceAddingSubcontractions} can be applied).
-	This follows from an iterative application of \theref{the:compositionByContraction} to be shown in \charef{cha:basisCalculus}.
-\end{proof}
+\end{definition}
+
+An example of a syntactical decomposition is provided in \figref{fig:decompositionExample}.
+
+%% NOW A DEFINITION
+%\begin{theorem}[Composition of Formulas]\label{the:formulaDecomposition}
+%	Let there be a formula $\formulaat{\shortcatvariables}$, which has a syntactical decomposition into connectives $\{\connectiveofat{\selindex}{\headvariableof{\nodesof{\selindex}}} : \selindexin\}$ taking their inputs by variables $\headvariableof{\nodesof{\selindex}}\subset \headvariableof{\nodes}$ and output by a variable $\headvariableof{\connectiveof{\selindex}}$
+%	%Let there be a set of boolean variables $\headvariableof{\formulaset}$, where $\formulaset$ is  and boolean atom variables $\shortcatvariables$.
+%	We here denote by $\formulaset$ the set of sub-formulas and use a boolean variable $\headvariableof{\secexformula}$ for each $\secexformula\in\formulaset$.
+%	In particular, we denote for each atom in $\formulaset$ the corresponding boolean variable by $\headvariableof{\atomenumerator}$.
+%	It then holds
+%	\begin{align*}
+%		\bencodingofat{\formula}{\formulavar,\shortcatvariables} =
+%		\contractionof{\left\{
+%		\bencodingofat{\connectiveof{\selindex}}{\headvariableof{\connectiveof{\selindex}},\headvariableof{\nodesof{\selindex}}} : \selindexin
+%		\right\} \cup \{\identityat{\headvariableof{\atomenumerator},\catvariableof{\atomenumerator}} \, : \, \atomenumeratorin\}}
+%		{\formulavar,\shortcatvariables} \, .
+%	\end{align*}
+%\end{theorem}
+%\begin{proof}
+%	When a variable in $\headvariableof{\formulaset}$ appears multiple times as input to connectives, we replace it by a set of copies (which wont change the contraction, since all tensors are binary and \theref{the:invarianceAddingSubcontractions} can be applied).
+%	This follows from an iterative application of \theref{the:compositionByContraction} to be shown in \charef{cha:basisCalculus}.
+%\end{proof}
 
 \begin{remark}[$\atomorder$-ary connectives such as $\land$ and $\lor$]\label{rem:naryConnectives}
 	Since the decomposition of basis encoding can be applied to generic function compositions (see \theref{the:compositionByContraction}), we can also allow for $\atomorder$-ary connectives
@@ -481,9 +510,10 @@ An example of such a decomposition is depicted in \figref{fig:decompositionExamp
 	\input{PartI/tikz_pics/logic_representation/decomposition_example.tex}
 \end{center}
 \caption{Decomposition of the formula tensor to $\exformula = a \land b \land \lnot c$ into unary (matrix) and binary (third order tensor) cores.
-	a) Visualization of $\exformula$ as a graph.
-	b) Tensor Network decomposition of $\exformula$.
-	We can make use of the invariance of a Hadamard product with a constant tensor $\ones$ and thus not draw axis to atoms not affected by a formula.}
+	a) Syntactical decomposition of $\exformula$ as a hypergraph $\graph$.
+	b) Decorating tensor network on $\graph$.
+	%CONFUSING? We can make use of the invariance of a Hadamard product with a constant tensor $\ones$ and thus not draw axis to atoms not affected by a formula.
+}
 \label{fig:decompositionExample}
 \end{figure}
 
