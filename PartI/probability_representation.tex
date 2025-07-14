@@ -1,51 +1,57 @@
 \chapter{\chatextprobRepresentation}\label{cha:probRepresentation}
 
 In this chapter we will establish relations between the formalism of tensor networks and basic concepts of probability theory.
-We will first understand distributions as tensors and connect their marginalizations and conditionings to the tensor operations of contractions and normalizations.
-Then we discuss independence assumptions as examples of contraction equations, which lead to tensor network decompositions known as graphical models.
-We then treat more generic exponential families and investigate their representation as tensor networks.
+We will first introduce joint distributions by tensors and connect their marginalizations and conditionings to basic tensor operations.
+Sparse representations of these tensors by tensor networks will be motivated based on independence properties and sufficient statistics.
+These mechanisms lead towards exponential families and graphical models, for which we provide tensor network representations.
+We then investigate the representation of probability distributions by mean parameters, which build convex polytopes and relate properties of distributions with the position of their mean parameters in the corresponding polytope.
 
 
-\sect{Classical Properties of Distributions}
+\sect{Tensor Formalism in Probability Theory}
 
-To start, we first relate classical properties of distributions, such as independent variables, with the tensor network formalism.
+To start, we first relate the main terminology of probability theory with the tensor network formalism.
+As such, any joint distribution of finitely valued variables is a tensor.
+Further, the operations of marginalization and conditioning of distributions are equal to contractions and normalizations of tensors.
 
-\subsect{Probability Tensors}
+\subsect{Joint Probability Distributions}
 
-%% Random Variables: Introduction in Bayesian way by uncertainties
-After having discussed how to represent states of factored systems by one-hot encodings, let us now take advantage of these representation by associating properties with these states.
-Let there be uncertainties of the assignments $\catindexof{\atomenumerator}$ to the categorical variables $\catvariableof{\atomenumerator}$ of a factored system.
-We then understand $\catvariableof{\atomenumerator}$ as random variables, which have a joint distribution defined by the uncertainties of the state assignments.
-To capture these uncertainties we now make use of the one-hot representation of factored systems.
+% Tensor structure of probabilities
+Let there be uncertainties of the assignments $\catindexof{\atomenumerator}$ to the categorical variables $\catvariableof{\atomenumerator}$ of a system.
+In this scenario we understand each $\catvariableof{\atomenumerator}$ as random variables, which together have a joint distribution defined by the uncertainties of the state assignments.
+The uncertainty of a state $\shortcatindices$ is then quantified by probabilities
+\begin{align*}
+    \probat{\indexedshortcatvariables} \in [0,1] \, .
+\end{align*}
+Joint probability distributions are therefore naturally represented by tensors, which coordinates store the probabilities to each state.
+These tensors have additional properties as we state in the next definition.
+%To respect the first two axioms on probabilities by Kolmogorov we define pro%(see e.q. \cite{degroot_probability_2016}), we demand that the probabilities are non-negative and sum to $1$.
 
-\begin{definition}[Probability Distribution]
+\begin{definition}[Joint Probability Distribution]
     \label{def:probabilityDistribution} % From the axioms of Kolmogorov!
     Let there be for each $\catenumeratorin$ a categorical variable $\catvariableof{\catenumerator}$ taking values in $[\catdimof{\atomenumerator}]$.
-    A joint probability distribution of these categorical variables is a tensor
+    A joint probability distribution of these categorical variables is a function
     \begin{align*}
-        \probwith\in\bigotimes_{\catenumeratorin}\rr^{\catdimof{\atomenumerator}} \, ,
+        \probwith : \facstates \rightarrow \rr
+        %\in\bigotimes_{\catenumeratorin}\rr^{\catdimof{\atomenumerator}} \, ,
     \end{align*}
-    such that
+    which is non-negative, that is for any $\shortcatindicesin$
     \begin{align*}
-        \contraction{\probat{\catvariableof{0},\ldots,\catvariableof{\atomorder-1}}} = 1
+        \probat{\indexedshortcatvariables} \geq 0 \, ,
     \end{align*}
-    and for all $\shortcatindices\in\facstates$
+    and which is normalized, that is
     \begin{align*}
-        \probat{\indexedshortcatvariables} \in [0,1] \, .
+%        \sum_{\shortcatindicesin}\probat{\indexedshortcatvariables}=
+        \contraction{\probat{\shortcatvariables}} = 1 \, .
     \end{align*}
 \end{definition}
 
-%%% One-hot Decomposition -> Contraction Equivalences
-%The probability tensor to the distribution is a tensor
-%\begin{align*}
-%    \probwith\in\bigotimes_{\catenumeratorin}\rr^{\catdimof{\atomenumerator}} \, ,
-%\end{align*}
-%where we again use the abbreviation $\shortcatvariables$ for the list of variables $\catvariableof{0},\ldots,\catvariableof{\catorder-1}$.
-The probability tensor can be decomposed as the sum (see \lemref{lem:tensorBasisDecomposition} in \parref{par:three} for more details)
+In a slide abuse of notation, we directly applied the coordinate encoding scheme (see \defref{def:notationCoordinateEncoding} and for more details \charef{cha:coordinateCalculus}) to represent a probability distribution as a tensor.
+Along this scheme, any probability distribution is a weighted sum of one-hot encodings (see \lemref{lem:tensorBasisDecomposition}) by
+%The probability tensor can be decomposed as the sum (see \lemref{lem:tensorBasisDecomposition} in \parref{par:three} for more details)
 \begin{align*} % To be more precise: This is the coordinate encoding of a map \atomstates \rightarrow \rr
     \probwith = \sum_{\shortcatindices\in\facstates} \probat{\indexedshortcatvariables} \cdot \onehotmapofat{\shortcatindices}{\shortcatvariables} \, ,
 \end{align*}
-where we understand $\probat{\indexedshortcatvariables}$ as the probability of the categorical variables to take the state $\shortcatindices\in\facstates$.
+where we understand $\probat{\indexedshortcatvariables}$ as the probability of the categorical variables to take the state $\shortcatindicesin$.
 %% normalization condition by Kolmogorovs second axiom
 The normalization condition $1=\contraction{\probwith}$ has a more convenient equivalence by the coordinate sum
 \begin{align*}
@@ -53,7 +59,7 @@ The normalization condition $1=\contraction{\probwith}$ has a more convenient eq
     =  \sum_{\shortcatindices\in\facstates}\probat{\indexedshortcatvariables} \, ,
 \end{align*}
 and thus ensures that all probabilities sum to $1$, which is necessary for the probabilistic interpretation.
-While the assumptions of non-negative coordinates in \defref{def:probabilityDistribution} reflects the first probability axiom of Kolmogorov, the assumption of contraction $1$ implements the second axiom (see for example \cite{degroot_probability_2016}).
+While the assumptions of non-negative coordinates in \defref{def:probabilityDistribution} reflects the first probability axiom of Kolmogorov, the assumption of normalization, that is a contraction $1$, implements the second axiom (see for example \cite{degroot_probability_2016}).
 Since probability distributions contract to $1$, they are directed (see \defref{def:directedTensor}) with all distributed variables outgoing and empty incoming variables (see \figref{fig:probabilityTensor}).
 
 \begin{figure}[hbt!]
@@ -333,9 +339,19 @@ Following the insight of the Bayes \theref{the:bayes}, probability distributions
 We observe, that the chain rule provides a generic decomposition scheme of probability distributions into conditional distributions.
 The conditional distribution to $\atomenumerator=\atomorder-1$, which appears in the chain decomposition, is in the same tensor space as the decomposed distribution $\probat{\shortcatvariables}$.
 To achieve our main goal of tensor network decompositions, which is an efficient storage format of the decomposed tensor, we need to further sparsify the appearing conditional probabilities (to be more precise, we aim at basis+ $\cpformat$ decompositions, to be introduced in \charef{cha:sparseRepresentation}).
-These simplification require additional assumptions on the distribution, which we will introduce in the next section.
+These simplification require additional assumptions on independencies in the distribution, which we will introduce in the next section.
 
-\subsect{Independence}
+\sect{Decomposition of Probability Distributions}
+
+The number of coordinates in a tensor representation of probability distributions is the product
+\begin{align*}
+    \prod_{\catenumeratorin}\catdimof{\catvariableof{\catenumerator}} \, ,
+\end{align*}
+and therefore scales exponentially in the number of coordinates.
+To find efficient representation schemes of probability distributions by tensor networks, we need to exploit additional properties of the distribution.
+In this section, we introduce the independence and the computation mechanisms towards tensor network decompositions of probability distributions.
+
+\subsect{Independence Mechanism}
 
 Independence leads to severe sparsifications of conditional probabilities and is therefore the key assumption to gain sparse decompositions of probability distributions.
 Before showing such decomposition schemes, we first provide a coordinatewise definition of independent variables.
@@ -578,46 +594,39 @@ The computation of marginal distribution by consecutive transition matrix multip
 
 
 
-\sect{Sufficient Statistics and Exponential Families}\label{sec:exponentialFamilies}
+%\subsect{Sufficient Statistics and Exponential Families}
 
+
+\subsect{Computation Mechanism}
+
+\red{
 We have seen, that conditional independence of variables corresponds with decomposition properties of probability tensors.
 We now explore a further approach towards tensor network decomposition based on sufficient statistics, which leads to exponential families.
-When restricting to graphical models in the next section, we will see that both mechanisms are related through the Hammersley-Clifford theorem.
-
-\subsect{Sufficient Statistics}
+When restricting exponential families to graphical models in \secref{sec:graphicalModels}, we will see that both the indepence and the computation mechanisms are related through the Hammersley-Clifford theorem.
+}
 
 Let us consider a tuple of random variables $\shortcatvariables$, which take values in $\facstates$.
 We now understand the probability $\probat{\shortcatvariables}$ as another random variable taking values in $[0,1]$, which has a deterministic dependence on $\shortcatvariables$.
 
 \begin{definition}[Sufficient Statistics]
-    Let $\shortcatvariables$ be a tuple of by $\probat{\shortcatvariables}$ jointly distributed random variables and $\sstatat{\shortcatvariables,\selvariable}$ be a tensor.
-    We consider the tuple of random variables $(\shortcatvariables,\probat{\shortcatvariables},\sstatat{\shortcatvariables,\selvariable})$, which takes for $\shortcatindices\in\facstates$ with probability $\probat{\indexedshortcatvariables}$ the value
+    Let $\shortcatvariables$ be a list of by $\probat{\shortcatvariables}$ jointly distributed random variables and $\sstatat{\shortcatvariables,\selvariable}$ be a tensor.
+    Consider the tuple of random variables $(\shortcatvariables,\probat{\shortcatvariables},\sstatat{\shortcatvariables,\selvariable})$, which takes for $\shortcatindicesin$ with probability $\probat{\indexedshortcatvariables}$ the value
     \begin{align*}
         \left(\shortcatindices,\probat{\indexedshortcatvariables},\sstatat{\indexedshortcatvariables,\selvariable}\right) \, .
     \end{align*}
-    We say, that $\sstat$ is a sufficient statistic for $\probtensor$, if this tuple obeys
+    We say that $\sstat$ is a sufficient statistic for $\probtensor$, if this tuple obeys
     \begin{align*}
         \condindependent{\shortcatvariables}{\probat{\shortcatvariables}}{\sstatat{\shortcatvariables,\selvariable}} \, .
     \end{align*}
 \end{definition}
-
-%In the notation of this reads as
-%\begin{align*}
-%    \shortcatvariables\rightarrow\probat{\shortcatvariables} \, .
-%\end{align*}
-
-%A sufficient statistic is another random variables $\sstatat{\shortcatvariables,\selvariable}$ taking values in $\rr^{\seldim}$, such that $\shortcatvariables$ is independent of $\probat{\shortcatvariables}$ conditioned on $\sstatat{\shortcatvariables,\selvariable}$.
-%We then have a Markov Chain (see \cite{cover_elements_2006})
-%\begin{align*}
-%    \shortcatvariables \rightarrow \sstatat{\shortcatvariables} \rightarrow \probat{\shortcatvariables} \, .
-%\end{align*}
 
 When a probability distribution has a sufficient statistic, we can represent the distribution as a tensor network involving the basis encoding of the statistic, as we show next.
 
 \begin{theorem}\label{the:sufficientStatisticActCoreExistence}
     If and only if $\sstatat{\shortcatvariables,\selvariable}$ is a sufficient statistic, i.e. $\shortcatvariables$ is independent of $\probat{\shortcatvariables}$ conditioned on $\sstatat{\shortcatvariables,\selvariable}$, there is a tensor $\actcoreat{\headvariables}$ with
     \begin{align*}
-        \probat{\shortcatvariables} = \contractionof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\actcoreof{\headvariables}}{\shortcatvariables} \, .
+        \probat{\shortcatvariables}
+        = \contractionof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\hypercoreof{\headvariables}}{\shortcatvariables} \, .
     \end{align*}
 \end{theorem}
 \begin{proof}
@@ -634,25 +643,60 @@ When a probability distribution has a sufficient statistic, we can represent the
     \end{align*}
     For an index interpretation function $\indexinterpretation$, enumerating $\bigtimes_{\selindexin}\imageof{\sstatcoordinateof{\selindex}}$ using the variables $\headvariables$, we define
     \begin{align*}
-        \actcore := \exfunction \circ \indexinterpretation \, .
+        \hypercore := \exfunction \circ \indexinterpretation \, .
     \end{align*}
     Using basis calculus (see \charef{cha:basisCalculus}) and in particular \theref{the:tensorFunctionComposition} we have
     \begin{align*}
-        \probat{\shortcatvariables} = \contractionof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\actcoreof{\headvariables}}{\shortcatvariables} \, . & \qedhere
+        \probat{\shortcatvariables} = \contractionof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\hypercoreof{\headvariables}}{\shortcatvariables} \, . & \qedhere
     \end{align*}
 \end{proof}
 
 Given a statistic $\sstat$, we can thus characterize the set of probability distributions, for which $\sstat$ is sufficient, as
 \begin{align*} % ! First occurance of realizabledists ?
     \realizabledistsof{\sstat,\maxgraph}
-    := \left\{\normalizationof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\actcoreof{\headvariables}}{\shortcatvariables} \right\}
+    \coloneqq \left\{\normalizationof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\hypercoreof{\headvariables}}{\shortcatvariables}
+    \wcols \zerosat{\headvariables}\prec\hypercoreof{\headvariables} \right\} \, ,
 \end{align*}
+where by $\zerosat{\headvariables}\prec\hypercoreof{\headvariables}$ we restrict to the activation tensors with non-negative coordinates.
 %where by $\maxgraph$ we refer to the maximal graph to be explained later
+
+%A straightforward generalization of probability distributions representable by exponential families then allows for arbitrary decomposition formats for activation tensors, as we define next.
+The curse of dimensionality appears again in cases of large cardinality of the image of the statistic $\sstat$.
+To describe classes of probability distributions with efficient representations in these cases, we now define classes of distributions with tensor network decompositions of their activation cores.
+
+% Define sets of realizable distributions
+\begin{definition}
+    \label{def:realizableStatDistributions}
+    Given a statistic $\sstat : \facstates \rightarrow \rr^{\seldim}$, and a hypergraph $\graph=(\nodes,\edges)$ with nodes $[\seldim]\subset\nodes$ containing the image coordinates of $\sstat$, we define the by $\sstat$ and $\graph$ computable family of distributions by
+    \begin{align*}
+        \realizabledistsof{\sstat,\graph}
+        = \left\{ \normalizationof{\{\bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}\} \cup \{\hypercoreofat{\edge}{\sstatcatof{\edge}} \wcols \edge\in\edges \}}{\shortcatvariables}  \wcols \hypercoreofat{\edge}{\sstatcatof{\edge}}\in\bigotimes_{\selindex\in\edge}\rr^{\headdimof{\selindex}}\ncond\zerosat{\sstatcatof{\edge}}\prec\hypercoreofat{\edge}{\sstatcatof{\edge}} \right\} \, .
+    \end{align*}
+    Note that we restrict to non-negative activation cores by demanding $\zerosat{\sstatcatof{\edge}}\prec\hypercoreofat{\edge}{\sstatcatof{\edge}}$, a notation which will be introduced in more detail in \charef{cha:logicalReasoning} as partial order of tensors.
+    We refer to any member $\probat{\shortcatvariables}\in\realizabledistsof{\sstat,\graph}$ as a by $\sstat$ and $\graph$ computable distribution.
+    \red{Given a base measure $\basemeasurewith$, by $\realizabledistsof{\sstat,\graph, \basemeasure}$ we refer to the set }
+    \begin{align*}
+        \realizabledistsof{\sstat,\graph}
+        = \left\{ \normalizationof{\{\bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}\} \cup \{\hypercoreofat{\edge}{\sstatcatof{\edge}} \wcols \edge\in\edges \} \cup \{\basemeasurewith\}}{\shortcatvariables}  \, : \,\hypercoreofat{\edge}{\sstatcatof{\edge}}\in\bigotimes_{\selindex\in\edge}\rr^{\headdimof{\selindex}}, \, \zerosat{\sstatcatof{\edge}}\prec\hypercoreofat{\edge}{\sstatcatof{\edge}} \right\} \, .
+    \end{align*}
+\end{definition}
+
+% Special case of maxgraph
+The set $\realizabledistsof{\sstat,\maxgraph}$ of probability distributions with a sufficient statistic $\sstat$ is the special case of the maximal graph
+\begin{align*}
+    \maxgraph = \big([\seldim],\{[\seldim]\}\big)
+\end{align*}
+which has a single hyperedge containing all nodes $\nodes=[\seldim]$.
+For any hypergraph $\graph$ we further have
+\begin{align*}
+    \realizabledistsof{\sstat,\graph} \subseteq \realizabledistsof{\sstat,\maxgraph} \, .
+\end{align*}
+
 
 
 % Usage of the selection encoding -> Can also make a theorem out of this
 
-\subsect{Exponential families}
+\sect{Exponential families}\label{sec:exponentialFamilies}
 
 \theref{the:sufficientStatisticActCoreExistence} states the existence of an activation core, once a sufficient vector statistic has been identified.
 However, since the dimension of the activation core space is increasing exponential with the number of features (it is the product of the image cardinalities of the features), representation of generic $\actcore$ is not feasible.
@@ -849,28 +893,9 @@ In that case both the activation core and the corresponding computation core can
 % Interpretation as elementary
 By \theref{the:expFamilyTensorRep} any member of an exponential family is represented by the normed contraction of a collection of unary activation cores contracted with the computation network $\bencodingofat{\sstat}{\headvariables,\shortcatvariables}$.
 We understand these activation cores as a member of a simple Markov Network distributing the head variables $\headvariables$.
-This Markov Network has a graph, where the edges contain single variables, that is $\elgraph=([\seldim],\{\{\selindex\} \, : \, \selindexin\})$.
+This Markov Network has a graph, where the edges contain single variables, that is $\elgraph=([\seldim],\{\{\selindex\}\wcols\selindexin\})$.
 We call this graph the elementary graph, since it also corresponds with elementary tensor network formats consistent of tensor products of vectors.
-A straightforward generalization of probability distributions representable by exponential families then allows for arbitrary decomposition formats for activation tensors, as we define next.
-
-% Define sets of realizable distributions
-\begin{definition}
-    \label{def:realizableStatDistributions}
-    Given a statistic $\sstat : \facstates \rightarrow \rr^{\seldim}$, and a hypergraph $\graph=([\seldim],\edges)$ with nodes associated to the coordinates of the statistic, we define the by $\sstat$ and $\graph$ computable family of distributions by
-    \begin{align*}
-        \realizabledistsof{\sstat,\graph}
-        = \left\{ \normalizationof{\{\bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}\} \cup \{\hypercoreofat{\edge}{\sstatcatof{\edge}} \wcols \edge\in\edges \}}{\shortcatvariables}  \, : \,\hypercoreofat{\edge}{\sstatcatof{\edge}}\in\bigotimes_{\selindex\in\edge}\rr^{\headdimof{\selindex}}, \, \zerosat{\sstatcatof{\edge}}\prec\hypercoreofat{\edge}{\sstatcatof{\edge}} \right\} \, .
-    \end{align*}
-    Note that we restrict to non-negative activation cores by demanding $\zerosat{\sstatcatof{\edge}}\prec\hypercoreofat{\edge}{\sstatcatof{\edge}}$, a notation which will be introduced in more detail in \charef{cha:logicalReasoning} as partial order of tensors.
-    We refer to any member $\probat{\shortcatvariables}\in\realizabledistsof{\sstat,\graph}$ as a by $\sstat$ and $\graph$ computable distribution.
-    \red{Given a base measure $\basemeasurewith$, by $\realizabledistsof{\sstat,\graph, \basemeasure}$ we refer to the set }
-    \begin{align*}
-        \realizabledistsof{\sstat,\graph}
-        = \left\{ \normalizationof{\{\bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}\} \cup \{\hypercoreofat{\edge}{\sstatcatof{\edge}} \wcols \edge\in\edges \} \cup \{\basemeasurewith\}}{\shortcatvariables}  \, : \,\hypercoreofat{\edge}{\sstatcatof{\edge}}\in\bigotimes_{\selindex\in\edge}\rr^{\headdimof{\selindex}}, \, \zerosat{\sstatcatof{\edge}}\prec\hypercoreofat{\edge}{\sstatcatof{\edge}} \right\} \, .
-    \end{align*}
-\end{definition}
-
-For unary activation cores, that is for the elementary graph $\elgraph$, any member of $\realizabledistsof{\sstat,\elgraph}$ has up to a normalization factor a tensor network decomposition by the diagram
+\red{For unary activation cores, that is for the elementary graph $\elgraph$,} any member of $\realizabledistsof{\sstat,\elgraph}$ has up to a normalization factor a tensor network decomposition by the diagram
 \begin{center}
     \input{PartI/tikz_pics/probability_representation/unary_realizable.tex}
 \end{center}
@@ -911,7 +936,7 @@ While we have restricted our discussion on the elementary decomposition of the a
 Given a $\cpformat$ decomposition of the activation tensor (see for more details \charef{cha:sparseRepresentation}), the corresponding distributions are weighted mixture distributions built from the elementary decompositions.
 In general, the expressivity increases monotonously with the introduction of additional auxiliary variables and hyperedges in the representation format of activation tensors.
 
-\sect{Graphical Models}
+\sect{Graphical Models}\label{sec:graphicalModels}
 
 % Specific instances of exponential families
 Specific instances of Exponential families are graphical models \cite{wainwright_graphical_2008, murphy_probabilistic_2022}.
