@@ -72,6 +72,7 @@
     Quantum circuits are contractions of multiple tensors and therefore tensor networks, and measurement probabilities are given by contractions.
     Here we investigate how we can exploit these as contraction provider for \tnreason.
 
+
     \section{Comparing tensor networks and quantum circuits}
 
     First of all, we need to extend to complex tensors, which are maps
@@ -83,36 +84,70 @@
     A coarse comparison of the nomenclature used for quantum circuits and tensor networks:
 
     \begin{center}
-    \begin{tabular}{l|l}
-        \textbf{Quantum Circuit} & \textbf{Tensor Network}\\
-        \hline
-        Qubit & Boolean Variable \\
-        Quantum Gate & Unitary Tensor \\
-        Quantum Circuit & Tensor Network on a graph
-    \end{tabular}
+        \begin{tabular}{l|l}
+            \textbf{Quantum Circuit} & \textbf{Tensor Network}   \\
+            \hline
+            Qubit                    & Boolean Variable          \\
+            Quantum Gate             & Unitary Tensor            \\
+            Quantum Circuit          & Tensor Network on a graph
+        \end{tabular}
     \end{center}
 
-    Some contraints appear for a tensor network to be a quantum circuit
+    Some constraints appear for a tensor network to be a quantum circuit
     \begin{itemize}
         \item \textbf{Unitarity of each gate:} That is the variables of each tensor are bipartite into sets $\variablesetof{\insymbol}$ and $\variablesetof{\outsymbol}$ of same cardinality and the basis encoding with respect to this bipartition, that is
-            \begin{align*}
-                T_{\insymbol \rightarrow \outsymbol}[\catvariableof{\insymbol},\catvariableof{\outsymbol}] : \bigotimes_{\atomenumerator\in\variablesetof{\insymbol}} \mathbb{C}^2 \rightarrow \bigotimes_{\atomenumerator\in\variablesetof{\outsymbol}} \mathbb{C}^2  \, ,
-            \end{align*}
-            is a unitary map, that is
-            \begin{align*}
-                 \left(T_{\insymbol \rightarrow \outsymbol}\right)^H \circ \left(T_{\insymbol \rightarrow \outsymbol}\right)
-                 = \contractionof{
-                     T_{\insymbol \rightarrow \outsymbol}[\catvariableof{\insymbol},\seccatvariable],
-                     \overline{T}_{\insymbol \rightarrow \outsymbol}[\seccatvariable,\catvariableof{\outsymbol}]
-                 }{\catvariableof{\outsymbol},\catvariableof{\insymbol}}
-                 = \identityat{\catvariableof{\outsymbol},\catvariableof{\insymbol}}.
-            \end{align*}
+        \begin{align*}
+            T_{\insymbol \rightarrow \outsymbol}[\catvariableof{\insymbol},\catvariableof{\outsymbol}] : \bigotimes_{\atomenumerator\in\variablesetof{\insymbol}} \mathbb{C}^2 \rightarrow \bigotimes_{\atomenumerator\in\variablesetof{\outsymbol}} \mathbb{C}^2  \, ,
+        \end{align*}
+        is a unitary map, that is
+        \begin{align*}
+            \left(T_{\insymbol \rightarrow \outsymbol}\right)^H \circ \left(T_{\insymbol \rightarrow \outsymbol}\right)
+            = \contractionof{
+                T_{\insymbol \rightarrow \outsymbol}[\catvariableof{\insymbol},\seccatvariable],
+                \overline{T}_{\insymbol \rightarrow \outsymbol}[\seccatvariable,\catvariableof{\outsymbol}]
+            }{\catvariableof{\outsymbol},\catvariableof{\insymbol}}
+            = \identityat{\catvariableof{\outsymbol},\catvariableof{\insymbol}}.
+        \end{align*}
         \item \textbf{Acylicity:} Incoming and outgoing variables of each tensor core provide a direction of each edge tensor. With respect to this directionality the graph underlying the tensor network has to be acyclic.
         \item \textbf{Incoming-Outgoing structure:} Variable appear at most once as incoming and at most once as outgoing variables.
-            Those appearing either as incoming or as outgoing are the input and the output variables of the whole circuit.
+        Those appearing either as incoming or as outgoing are the input and the output variables of the whole circuit.
     \end{itemize}
 
     The unitary tensors can be aligned layerwise, if and only if the last two assumption hold, i.e. the directed graph is acylic and each variable appears at most once as an incoming and at most once as an outgoing variable.
+
+
+    \section{Representing Computation Activation Networks as Quantum Circuits}
+
+    \tnreason provides tensor network representations of knowledge bases and exponential families following a Computation Activation architecture.
+    Here are some ideas to represent such networks by quantum circuits.
+
+    \subsection{Value Qubits}
+
+    We introduce a value qubit, which stores in its coefficient to the first state the probability of the configuration.
+    When we have a probability tensor, this can be prepared, since all values are in $[0,1]$.
+    The value qubit is intialized by the zeroth one hot encoding ($\ket{0}$) and rotated by a controlled rotation gate, which is controlled by the variable qubits.
+
+    \subsection{Polynomial Sparsity}
+
+    Each monomial can be prepared by a multiple-controlled NOT gate, where the control qubits are the affected variables and the target qubit is the value qubit.
+    When we sum monomials wrt modulus 2 calculus, then the preparation is a sequence of such circuits.
+    In such way, we can prepare any propositional formula.
+
+    \subsection{Decomposition Sparsity}
+
+    We can decompose any propositional formula into logical connectives and prepare to each a modulus 2 circuit implementation.
+    This works, when the target qubit of one connective is used as a value qubit of another.
+
+    \subsection{Quantum Rejection Sampling}
+
+    Note, that the variable qubits are uniformly distributed when only the computation circuit is applied.
+    When sampling the probability distribution, we need the value qubit to be in state $1$ in order for the sample to be valid.
+    Any other states will have to be rejected.
+
+    Classically, this can be simulated in the same way: Just draw the variables from uniform, calculate the value qubit by a logical circuit inference and accept with probability by the computed value.
+
+    For this procedure to be more effective (and in particular not having an efficient classical pendant), we need amplitude amplification on the value qubit.
+    This can provide a square root speedup in the complexity compared with classical rejection sampling.
 
 
     \section{POVM measurements as contractions}
