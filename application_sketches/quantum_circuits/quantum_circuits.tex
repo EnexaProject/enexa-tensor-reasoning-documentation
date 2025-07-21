@@ -114,12 +114,83 @@
     \end{itemize}
 
     The unitary tensors can be aligned layerwise, if and only if the last two assumption hold, i.e. the directed graph is acylic and each variable appears at most once as an incoming and at most once as an outgoing variable.
+    
+    \section{Encoding Schemes}
+
+    We investigate here quantum pendants to the function encoding schemes used in \tnreason.
+
+    \subsection{Coordinate encoding}
+
+    \begin{definition}
+        Given a function $\probtensor:\atomstates\rightarrow\rr^+$ with $\contraction{\probtensor}=1$ the coordinate encoding quantum state is
+        \begin{align*}
+            \psi^\probtensor[\shortcatvariables] = \sum_{\shortcatindicesin} \sqrt{\probat{\indexedshortcatvariables}} \cdot \onehotmapofat{\shortcatindices}{\shortcatvariables} \, .
+        \end{align*}
+    \end{definition}
+
+    This coincides with the q-sample scheme of encoding in [Low et al. - Quantum Inference on Bayesian Networks].
+
+    \subsection{Basis encoding}
+    
+    \begin{definition}
+        Given a function $\exfunction:\atomstates\rightarrow\bigtimes_{\selindexin}[2]$ the basis encoding circuit is the unitary tensor
+        \begin{align*}
+            &U^{\exfunction}[\indexedcatvariableof{\insymbol,[\atomorder]},\indexedcatvariableof{\outsymbol,[\atomorder]},\headvariableof{\insymbol,\exfunction},\headvariableof{\outsymbol,\exfunction}] \\
+            &\quad=
+            \begin{cases}
+                0[\headvariableof{\insymbol},\headvariableof{\outsymbol}]
+                & \text{if} \quad \catvariableof{\insymbol,[\atomorder]}\neq\catvariableof{\outsymbol,[\atomorder]} \\
+                \onehotmapofat{0}{\headvariableof{\insymbol}} \otimes \onehotmapofat{\exfunctionat{\indexedcatvariableof{\insymbol,[\atomorder]}}}{\headvariableof{\outsymbol,\exfunction}}
+                +(\onesat{\headvariableof{\insymbol}}-\onehotmapofat{0}{\headvariableof{\insymbol}}) \otimes \onehotmapofat{\lnot\exfunctionat{\indexedcatvariableof{\insymbol,[\atomorder]}}}{\headvariableof{\outsymbol,\exfunction}}
+                & \text{else}
+            \end{cases}
+        \end{align*}
+    \end{definition}
+
+    Here by $\lnot\exfunction$ we denote an arbitrary function which never coincides with $\exfunction$.
+
+    The decomposition by contraction property of basis encodings is now a composition of circuits property, as stated in the next lemma.
+
+    \begin{lemma}
+        We have for functions $\exfunction:\atomstates\rightarrow\bigtimes_{\selindexin}[2]$, $\secexfunction:\bigtimes_{\selindexin}[2]\rightarrow\bigtimes_{s\in[r]}[2]$
+        \begin{align*}
+            U^{\secexfunction\circ\exfunction}[\catvariableof{\insymbol,[\atomorder]},\catvariableof{\outsymbol,[\atomorder]},\headvariableof{\insymbol,\secexfunction\circ\exfunction},\headvariableof{\outsymbol,\secexfunction\circ\exfunction}]
+            = \breakablecontractionof{
+            &\onehotmapofat{0}{\headvariableof{\insymbol,\exfunction}},\\
+            &U^{\exfunction}[\catvariableof{\insymbol,[\atomorder]},\catvariableof{\outsymbol,[\atomorder]},\headvariableof{\insymbol,\exfunction},\headvariableof{\outsymbol,\exfunction}],\\
+            &U^{\secexfunction}[\headvariableof{\outsymbol,\exfunction},\headvariableof{\outsymbol,},\headvariableof{\insymbol,\secexfunction\circ\exfunction},\headvariableof{\outsymbol,\secexfunction\circ\exfunction}]
+            }{
+            \catvariableof{\insymbol,[\atomorder]},\catvariableof{\outsymbol,[\atomorder]},\headvariableof{\insymbol,\secexfunction\circ\exfunction},\headvariableof{\outsymbol,\secexfunction\circ\exfunction}
+            } \, .
+        \end{align*}
+    \end{lemma}
+
+    Concatenating two basis encoding circuits is the basis encoding circuit of their modulus 2 sum.
+
+    A basis+ elementary function can be encoded by a single controlled NOT operation with auxiliary X qubits.
+
+    This motivates the mod2-basis+ CP decomposition of tensors.
+
+    \begin{definition}
+        Given a boolean tensor $\hypercore$, a mod2-basis+ CP decomposition is a collection $\sliceset$ of tuples $(\variableset,\catindexof{\variableset})$ with such that for any $\shortcatindicesin$
+        \begin{align*}
+            \hypercoreat{\indexedshortcatvariables}
+            = \bigoplus_{(\variableset,\catindexof{\variableset})\in\sliceset} \contractionof{\onehotmapofat{\catindexof{\variableset}}{\catvariableof{\variableset}}}{\indexedshortcatvariables} \, .
+        \end{align*}
+    \end{definition}
+
+    Having a mod2-basis+ CP decomposition of rank $r$ to a connective, we need $r$ controlled NOT gates to prepare the basis encoding.
+    Given a syntactical decomposition of a boolean statistics, we prepare the basis encoding as a circuit with:
+    \begin{itemize}
+        \item \textbf{Fine Structure:} Represent each logical connective based on its mod2-basis+ CP decomposition, as a concatenation of basis encoding circuits with the same variables.
+        \item \textbf{Coarse Structure:} Arrange the logical connective representing circuits according to the syntactical hypergraph, where parent head variables appear as distributed variables at their children.
+    \end{itemize}
 
 
     \section{Representing Computation Activation Networks as Quantum Circuits}
 
     \tnreason provides tensor network representations of knowledge bases and exponential families following a Computation Activation architecture.
-    Here are some ideas to represent such networks by quantum circuits.
+    Here are some ideas to utilize quantum circuits for sampling Computation Activation Networks.
 
     \subsection{Value Qubits}
 
