@@ -1,29 +1,29 @@
 \chapter{\chatextnetworkRepresentation}\label{cha:networkRepresentation}
 
-Hybrid logic networks are graphical models with an interpretation by propositional logics.
+\HybridLogicNetworks{} are graphical models with an interpretation by propositional logics.
 Since they unify probalisitic and logical reasoning, we call them hybrid.
 In this chapter we investigate their representation based on tensor networks, while the reasoning mechanisms are discussed in \charef{cha:networkReasoning}.
-We first distinguish between Markov Logic Networks, which are an approach to soft logics in the framework of exponential families, and Hard Logic Networks, which correspond with propositional knowledge bases.
-Then we exploit non-trivial boolean base measures to unify both approaches by Hybrid Logic Networks, which are itself in exponential families.
-We then investigate the corresponding mean parameter polytopes of Hybrid Logic Networks and show expressivity results.
+We first distinguish between \MarkovLogicNetworks{}, which are an approach to soft logics in the framework of exponential families, and \HardLogicNetworks{}, which correspond with propositional knowledge bases.
+Then we exploit non-trivial boolean base measures to unify both approaches by \HybridLogicNetworks{}, which are itself in exponential families.
+We then investigate the corresponding mean parameter polytopes of \HybridLogicNetworks{} and show expressivity results.
 
-%Markov Logic Networks are probability functions of truth assignments to logical functions.
+%\MarkovLogicNetworks{} are probability functions of truth assignments to logical functions.
 %They respect propositional logic as hard constraints, but have beyond that freedom to shape probability distributions on possible situations.
 %To capture these properties, we define them as graphical models with structure cores representing propositional logics and activation cores representing the specification of probability distributions.
 % We in this part employ them to combine the probabilistic and the logical paradigm.
 
 
-\sect{Markov Logic Networks}
+\sect{\MarkovLogicNetworks{}}
 
-Markov Logic Networks exploit the efficiency and interpretability of logical calculus as well as the expressivity of graphical models.
+\MarkovLogicNetworks{} exploit the efficiency and interpretability of logical calculus as well as the expressivity of graphical models.
 
-\subsect{Markov Logic Networks as Exponential Families}
+\subsect{\MarkovLogicNetworks{} as Exponential Families}
 
-We introduce Markov Logic Networks in the formalism of exponential families (see \secref{sec:exponentialFamilies}).
+We introduce \MarkovLogicNetworks{} in the formalism of exponential families (see \secref{sec:exponentialFamilies}).
 
-\begin{definition}[Markov Logic Networks]
+\begin{definition}[\MarkovLogicNetwork]
     \label{def:mln}
-    Markov Logic Networks are exponential families $\mlnexpfamily$ with sufficient statistics by functions
+    \MarkovLogicNetworks{} are exponential families $\mlnexpfamily$ with sufficient statistics by functions
     \begin{align*}
         \mlnstat : \atomstates \rightarrow \bigtimes_{\exformulain}[2] \subset \rr^{\cardof{\formulaset}}
     \end{align*}
@@ -33,10 +33,10 @@ We introduce Markov Logic Networks in the formalism of exponential families (see
 % Characterization of MLNs among exponential families: When choosing binary features
 Since the image of each coordinate $\sstatcoordinateof{\selindex}$ is contained in $\ozset$, each is a propositional formulas (see \defref{def:formulas}).
 %Conversely, any boolean feature $\sstatcoordinateof{\selindex}$ of an exponential family defines a propositional formula (see \defref{def:formulas}).
-Thus, any exponential family of distributions of $\atomstates$, such that $\imageof{\sstatcoordinateof{\selindex}}\subset\ozset$ for all $\selindexin$ is a set of Markov Logic Networks with fixed formulas.
+Thus, any exponential family of distributions of $\atomstates$, such that $\imageof{\sstatcoordinateof{\selindex}}\subset\ozset$ for all $\selindexin$ is a set of \MarkovLogicNetworks{} with fixed formulas.
 
 \begin{remark}[Alternative Definitions]
-    We here defined Markov Logic Networks on propositional logic, while originally they are defined in the more expressive first-order logics \cite{richardson_markov_2006}.
+    We here defined \MarkovLogicNetworks{} on propositional logic, while originally they are defined in the more expressive first-order logics \cite{richardson_markov_2006}.
     The relation of both frameworks will be discussed further in \charef{cha:folModels}.
 \end{remark}
 
@@ -44,13 +44,13 @@ Thus, any exponential family of distributions of $\atomstates$, such that $\imag
 
 \subsect{Tensor Network Representation}
 
-Based on the previous discussion on the representation of exponential families by tensor networks in \secref{sec:exponentialFamilies} we now derive a representation for Markov Logic Networks.
+Based on the previous discussion on the representation of exponential families by tensor networks in \secref{sec:exponentialFamilies} we now derive a representation for \MarkovLogicNetworks{}.
 
 \subsubsect{Basis encodings for distributions}
 
-\begin{theorem}[Basis encodings for Markov Logic Networks]
+\begin{theorem}[Basis encodings for \MarkovLogicNetworks{}]
     \label{the:mlnTensorRep}
-    A Markov Logic Network to a set of formulas $\formulaset = \{\enumformula \, : \, \selindexin\}$ is represented as
+    A \MarkovLogicNetwork{} to a set of formulas $\formulaset = \{\enumformula \, : \, \selindexin\}$ is represented as
     \begin{align*}
         \mlnprobat{\shortcatvariables} =
         \normalizationof{\{\enumformulaccwith : \selindexin \} \cup \{\enumformulaacwith : \selindexin \}
@@ -66,7 +66,7 @@ Based on the previous discussion on the representation of exponential families b
     \end{align*}
 \end{theorem}
 \begin{proof}
-    Markov Logic Networks are exponential families, which base measure is trivial and which statistic consist of boolean features.
+    \MarkovLogicNetworks{} are exponential families, which base measure is trivial and which statistic consist of boolean features.
     We apply the tensor network decomposition of more generic exponential families \theref{the:expFamilyTensorRep} to this case and get
     \begin{align*}
         \mlnprobat{\shortcatvariables} =
@@ -92,14 +92,14 @@ Based on the previous discussion on the representation of exponential families b
     \begin{center}
         \input{PartII/tikz_pics/network_representation/factor.tex}
     \end{center}
-    \caption{Factor of a Markov Logic Network to a formula $\enumformula$, represented as the contraction of a computation core $\enumformulacc$ and an activation core $\enumformulaac$.
+    \caption{Factor of a \MarkovLogicNetwork{} to a formula $\enumformula$, represented as the contraction of a computation core $\enumformulacc$ and an activation core $\enumformulaac$.
     While the computation core $\enumformulacc$ prepares based on basis calculus a categorical variable representing the value of the statistic formula $\enumformula$ dependent on assignments to the distributed variables, the activation core multiplies an exponential weight to coordinates satisfying the formula.
     }
     \label{fig:mlnFactor}
 \end{figure}
 
 % Graphical model representation
-\theref{the:mlnTensorRep} provides a decomposition of markov logic networks by a tensor network of computation cores $\bencodingof{\enumformula}$ and accompanying activation cores $\enumformulaac$.
+\theref{the:mlnTensorRep} provides a decomposition of \MarkovLogicNetworks{} by a tensor network of computation cores $\bencodingof{\enumformula}$ and accompanying activation cores $\enumformulaac$.
 Since the head variable $\headvariableof{\selindex}$ appears exclusively in these pairs, we can contract each computation core with the corresponding activation core to get a factor, see \figref{fig:mlnFactor}.
 With this we get the decomposition
 \begin{align*}
@@ -128,18 +128,18 @@ and
     \mlnprobat{\shortcatvariables}
     = \normalizationof{\{\expof{\canparamat{\indexedselvariable}\cdot\tilde{\formula}_{\selindex}[\catvariableof{\nodesof{\selindex}}]} \, : \, \selindexin\}}{\shortcatvariables} \, .
 \end{align*}
-Thus, any markov logic network has a sparse representation by a markov network on the graph
+Thus, any \MarkovLogicNetwork{} has a sparse representation by a markov network on the graph
 \begin{align*}
     \graphof{\formulaset} = ([\catorder],\{\nodesof{\selindex} \, : \, \selindexin\}) \, .
 \end{align*}
-This sparsity inducing mechanism is analogous to the decomposition of probability distributions based on conditional independence assumptions, when understanding each formula in the markov logic network as an introduced dependency among the affected variables $\nodesof{\selindex}$.
+This sparsity inducing mechanism is analogous to the decomposition of probability distributions based on conditional independence assumptions, when understanding each formula in the \MarkovLogicNetwork{} as an introduced dependency among the affected variables $\nodesof{\selindex}$.
 
 
 \begin{figure}[t]
     \begin{center}
         \input{PartII/tikz_pics/network_representation/decomposed_representation.tex}
     \end{center}
-    \caption{Example of a decomposed Markov Network representation of a Markov Logic Network with formulas $\{\formulaof{0} = a\lor b, \formulaof{1} = a \lor b \lor \lnot c\}$.
+    \caption{Example of a decomposed Markov Network representation of a \MarkovLogicNetwork{} with formulas $\{\formulaof{0} = a\lor b, \formulaof{1} = a \lor b \lor \lnot c\}$.
     Since both formulas share the subformula $a\lor b$, their contracted factors have a representation by a connected tensor network.}
 % Where $\actcoreofat{\enumformula}{\enumformulavar} =\begin{bmatrix} 1 & \expof{\weightof{\exformula}} \end{bmatrix}[\formulavar] $}
     \label{fig:mlnDecRep}
@@ -160,24 +160,24 @@ In that case, the respective syntax graph needs to be represented only once an c
 For an example see \figref{fig:mlnDecRep}, where the syntactical representation of the formula $\formulaof{0}$ is a subgraph of the syntactical representation of $\formulaof{1}$.
 
 
-%Since any member of an exponential family is a Markov Network with tensors to each coordinate of the statistic, also Markov Logic Networks are Markov Networks.
+%Since any member of an exponential family is a Markov Network with tensors to each coordinate of the statistic, also \MarkovLogicNetworks{} are Markov Networks.
 
 %\begin{corollary}\label{cor:MLNasMN}
 %	Given a set $\formulaset$ of formulas on atomic variables $\catvariableof{\nodes}$, we construct a $\graph=(\nodes,\edges)$, where $\nodes$ are decorated by the atoms and
 %		\[ \edges = \{ \nodesof{\formula}: \formula\in\formulaset \} \, , \]
 %	where by $\nodesof{\formula}$ we denote the minimal set such that there exists a tensor $\hypercoreat{\catvariableof{\nodesof{\formula}}}$ with
 %		\[ \formulaat{\catvariableof{\nodes}} = \hypercoreat{\catvariableof{\nodesof{\formula}}} \otimes \onesat{\catvariableof{\nodes/\nodesof{\formula}}} \, . \]
-%	Any Markov Logic Network $\mlnprobat{\shortcatvariables}$ is then a Markov Network given the graph $\graphof{\formulaset}$
+%	Any \MarkovLogicNetwork{} $\mlnprobat{\shortcatvariables}$ is then a Markov Network given the graph $\graphof{\formulaset}$
 %	$\{\expof{\canparamat{\indexedselvariable}\cdot\enumformula}
 %\, :\,\selindexin\}$.
 %\end{corollary}
 
 
 % MLN as graphical models
-%Markov Logic Networks are Markov Networks with the factors given in a restricted form from the weighted truth of a formula.
+%\MarkovLogicNetworks{} are Markov Networks with the factors given in a restricted form from the weighted truth of a formula.
 %Each formula is seen as a factor of the graphical model.
 
-To summarize, there are two sparsity mechanisms, originating from graphical models and propositional syntax, providing sparse representations of markov logic network:
+To summarize, there are two sparsity mechanisms, originating from graphical models and propositional syntax, providing sparse representations of \MarkovLogicNetwork{}:
 \begin{itemize}
     \item \textbf{Dependence Sparsity:} Formulas depend only on subsets of atoms.
     This exploits the main sparsity mechanism in graphical models, where factors in sparse representations depend only on a subset of variables.
@@ -190,7 +190,7 @@ To summarize, there are two sparsity mechanisms, originating from graphical mode
 
 %\begin{theorem}[Selection encodings for Energy representation]
 %	\red{More the definition of exponential families.}
-%	The energy of Markov Logic Networks is the contraction
+%	The energy of \MarkovLogicNetworks{} is the contraction
 %		\[ \mlnenergy = \contractionof{\sencodingof{\formulaset},\canparam}{\shortcatvariables} \, . \]
 %\end{theorem}
 
@@ -199,8 +199,8 @@ To summarize, there are two sparsity mechanisms, originating from graphical mode
 
 %% Tensor Representation of MLN
 
-As for generic exponential families, we can represent markov logic networks in terms of their energy tensors
-%The energy tensor of an markov logic network is the contraction
+As for generic exponential families, we can represent \MarkovLogicNetworks{} in terms of their energy tensors
+%The energy tensor of an \MarkovLogicNetwork{} is the contraction
 \begin{align}
     \mlnenergy\left[\shortcatvariables\right]
     = \sum_{\selindexin} \canparamat{\indexedselvariable} \cdot \enumformulaat{\shortcatvariables}
@@ -211,9 +211,9 @@ The energy tensor provides an exponential representation of the distribution by
     \mlnprobat{\shortcatvariables} = \normalizationof{\expof{\mlnenergy}}{\shortcatvariables} \, .
 \end{align}
 
-In case of a common structure of the formulas in a Markov Logic Network, formula selecting networks (see \charef{cha:formulaSelection}) can be applied to represent their energies.
+In case of a common structure of the formulas in a \MarkovLogicNetwork{}, formula selecting networks (see \charef{cha:formulaSelection}) can be applied to represent their energies.
 % Energy representation
-%The weighted sum of formulas is then the energy of the Markov Logic Network.
+%The weighted sum of formulas is then the energy of the \MarkovLogicNetwork{}.
 We represent the superposition of formulas as a contraction with a parameter tensor.
 Given a factored parametrization of formulas $\exformula_{\selindices}$ with indices $\selindexof{\selenumerator}$ we have the superposition by the network representation:
 \begin{center}
@@ -226,7 +226,7 @@ If the number of atoms and parameters gets large, it is important to represent t
 To avoid inefficiency issues, we also have to represent the parameter tensor $\canparam$ in a tensor network format to improve the variance of estimations (see \charef{cha:concentration}) and provide efficient numerical algorithms.
 
 % Fail of full probability representation
-However, when required to instantiate the probability distribution of a Markov Logic Network as a tensor network, we need to exponentiate and normate the energy tensor, a task for which basis encodings are required.
+However, when required to instantiate the probability distribution of a \MarkovLogicNetwork{} as a tensor network, we need to exponentiate and normate the energy tensor, a task for which basis encodings are required.
 For such tasks, contractions of formula selecting networks are not sufficient and each formula with a nonvanishing weight needs to be instantiated as a factor tensor of a Markov Network.
 
 
@@ -236,20 +236,20 @@ For such tasks, contractions of formula selecting networks are not sufficient an
 
 \subsect{Expressivity}\label{sec:MLNMaxMintermRep}
 
-Based on Markov Logic Networks containing only maxterms and minterms (see \defref{def:clauses}), we now show that any positive probability distribution has a representation by a markov logic network.
+Based on \MarkovLogicNetworks{} containing only maxterms and minterms (see \defref{def:clauses}), we now show that any positive probability distribution has a representation by a \MarkovLogicNetwork{}.
 
 \begin{theorem}
     \label{the:maximalClausesRepresentation}\label{the:mintermExpressivityMLN}
     Let there be a positive probability distribution
     \[ \probat{\shortcatvariables} \in \bigotimes_{\atomenumeratorin}\rr^2 \, . \]
-    Then the Markov Logic Network of minterms (see \defref{def:clauses})
+    Then the \MarkovLogicNetwork{} of minterms (see \defref{def:clauses})
     \[ \mintermformulaset = \{\mintermof{\atomindices} \, : \, \atomindices\in\atomstates \}\]
     with parameters %with nonzero weights at the maxterms indexed by $\atomindicesin$
     \[ \canparamat{\selvariableof{0}=\catindexof{0},\ldots,\selvariableof{\atomorder-1}=\catindexof{\atomorder-1}}% \weightof{\mintermof{\atomindices}}
     = \ln \probat{\indexedcatvariables} \]
     coincides with $\probat{\shortcatvariables}$.
 
-    Further, the Markov Logic Network of maxterms
+    Further, the \MarkovLogicNetwork{} of maxterms
     \[ \maxtermformulaset = \{\maxtermof{\atomindices} \, : \, \atomindices\in\atomstates \}\]
     with parameters
     \[ \canparamat{\selvariableof{0}=\catindexof{0},\ldots,\selvariableof{\atomorder-1}=\catindexof{\atomorder-1}} %\weightof{\maxtermof{\atomindices}}
@@ -308,13 +308,13 @@ Theorem~\ref{the:maximalClausesRepresentation} is the analogue in Markov Logic t
 Here we require positive distributions for well-defined energy tensors.
 
 % Markov Networks
-Sparser representation formats based on the same principle as used in \theref{the:maximalClausesRepresentation} can be constructed to represent markov networks by markov logic networks.
+Sparser representation formats based on the same principle as used in \theref{the:maximalClausesRepresentation} can be constructed to represent markov networks by \MarkovLogicNetworks{}.
 Here, we can separately instantiate the factors by combinations of terms and clauses only involving the variables containted in the factor.
 \red{The reason for this is, that minterms form a partition statistics, which will be discussed in more detail in \charef{cha:basisCalculus}, see \defref{def:partitionStatistic}.}
 
 \subsect{Examples}
 
-Let us now provide examples of markov logic networks.
+Let us now provide examples of \MarkovLogicNetworks{}.
 
 \subsubsect{Distribution of independent variables}
 
@@ -323,7 +323,7 @@ We show next, the independent positive distributions are representable by tuning
 \begin{theorem}
     \label{the:independentAtomicMLN}
     Let $\probat{\shortcatvariables}$ be a positive probability distribution, such that atomic formulas are independent from each other.
-    Then $\probat{\shortcatvariables}$ is the Markov Logic Network of atomic formulas
+    Then $\probat{\shortcatvariables}$ is the \MarkovLogicNetwork{} of atomic formulas
     \[ \atomformulaset = \{\atomicformulaof{\catenumerator} \, : \, \catenumeratorin \} \]
     and parameters
     \[ \canparamat{\selvariable=\catenumerator}
@@ -371,7 +371,7 @@ We show next, the independent positive distributions are representable by tuning
 % Failing to be positive -> Hybrid networks
 In Theorem~\ref{the:independentAtomicMLN} we made the assumption of positive distributions.
 If the distribution fails to be positive, we still get a decomposition into distributions of each variable, but there is at least one factor failing to be positive.
-Such factors need to be treated by hybrid logic networks, that is they are base measure for an exponential family coinciding with a logical literal (see \secref{sec:hardNetworks}).
+Such factors need to be treated by \HybridLogicNetworks{}, that is they are base measure for an exponential family coinciding with a logical literal (see \secref{sec:hardNetworks}).
 
 % Energy representation
 All atomic formulas can be selected by a single variable selecting tensor, that is
@@ -400,7 +400,7 @@ where its energy tensor is
 \sum_{\atomenumerator,\secatomenumerator \in [\atomorder]}
 W[\selvariableof{\vselectionsymbol,0}=\atomenumerator, \selvariableof{\vselectionsymbol,1}=\secatomenumerator] \cdot \catindexof{\atomenumerator} \cdot \catindexof{\secatomenumerator}
 + \sum_{\atomenumerator\in[\atomorder]} b[\selvariableof{\vselectionsymbol,0}=\atomenumerator] \cdot \catindexof{\atomenumerator}\, . \]
-We notice, that this tensor coincides with the energy tensor of a markov logic network with formula set
+We notice, that this tensor coincides with the energy tensor of a \MarkovLogicNetwork{} with formula set
 \[ \formulaset = \{ \catvariableof{\atomenumerator} \Leftrightarrow \catvariableof{\secatomenumerator} \, : \, \atomenumerator,\secatomenumerator \in[\atomorder] \}
 \cup \{ \catvariableof{\atomenumerator}\, : \, \atomenumeratorin \} \, \]
 with cardinality $\atomorder^2+\atomorder$.
@@ -416,8 +416,8 @@ we have (see \figref{fig:boltzmannEnergy})
 \contractionof{\fsnnat{\shortcatvariables,\selvariableof{\cselectionsymbol},\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}},
     \canparamat{\selvariableof{\cselectionsymbol},\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}}}{\shortcatvariables} \, . \]
 
-Therefore, Boltzmann machines are specific markov logic networks with the statistic being biimplications between atoms and atoms itself.
-Generic markov logic networks are more expressive than Boltzmann machines, by the flexibility to create further features by propositional formulas.
+Therefore, Boltzmann machines are specific \MarkovLogicNetworks{} with the statistic being biimplications between atoms and atoms itself.
+Generic \MarkovLogicNetworks{} are more expressive than Boltzmann machines, by the flexibility to create further features by propositional formulas.
 %We can use any binary logical connective and have an associated formula where we can put a weight on.
 
 \begin{figure}[t]
@@ -461,19 +461,19 @@ Generic markov logic networks are more expressive than Boltzmann machines, by th
 
 
 
-\sect{Hard Logic Networks}\label{sec:hardNetworks} % To be dropped in the unification with the MLN chapter
+\sect{\HardLogicNetworks{}}\label{sec:hardNetworks} % To be dropped in the unification with the MLN chapter
 
 % Hard logic vs markov logic
 While exponential families are positive distributions, in logics probability distributions can assign states zero probability.
-As a consequence, Markov Logic Networks have a soft logic interpretation in the sense that violation of activated formulas have nonzero probability.
+As a consequence, \MarkovLogicNetworks{} have a soft logic interpretation in the sense that violation of activated formulas have nonzero probability.
 We now discuss their hard logic counterparts, where worlds not satisfying activated formulas have zero probability.
 
 %\subsect{The limit of hard logic}\label{sec:hardLogicLimit} % To be merged with the above
 
-The probability function of Markov Logic Networks with positive weights mimiks the tensor network representation of the knowledge base, which is the conjunction of the formulas.
+The probability function of \MarkovLogicNetworks{} with positive weights mimiks the tensor network representation of the knowledge base, which is the conjunction of the formulas.
 The maxima of the probability function coincide with the models of the corresponding knowledge base, if the latter is satisfiable.
-However, since the Markov Logic Network is defined as a normed exponentiation of the weighted formula sum, it is a positive distribution whereas uniform distributions among the models of a knowledge base assign zero probability to world failing to be a model.
-Since both distributions are tensors in the same space to a factored system, we can take the limits of large weights and observe, that Markov Logic Networks indeed converge to normed knowledge bases.
+However, since the \MarkovLogicNetwork{} is defined as a normed exponentiation of the weighted formula sum, it is a positive distribution whereas uniform distributions among the models of a knowledge base assign zero probability to world failing to be a model.
+Since both distributions are tensors in the same space to a factored system, we can take the limits of large weights and observe, that \MarkovLogicNetworks{} indeed converge to normed knowledge bases.
 
 \begin{lemma}
     \label{lem:localHardLimit}
@@ -529,7 +529,7 @@ If there are multiple formulas the limiting distribution gets more involved.
 We will characterize the generic limiting distributions later in \secref{sec:hardLogicLimit} based on face measures in corresponding mean parameter polytopes.
 
 %% Generalization to face base measures
-%We here assumed, that the conjunction $\kb$ of the formulas in $\formulaset$ is satisfiable, and showed, that the markov logic network converges in the limit of large weights to the uniform distribution of the models of $\kb$.
+%We here assumed, that the conjunction $\kb$ of the formulas in $\formulaset$ is satisfiable, and showed, that the \MarkovLogicNetwork{} converges in the limit of large weights to the uniform distribution of the models of $\kb$.
 %In \charef{cha:networkReasoning} we will drop this assumption and show that the limit is the face base measure associated with the corresponding face of the mean parameter polytope.
 %The face base measure coincides thereby with $\kb$, if $\kb$ is satisfiable.
 
@@ -551,11 +551,11 @@ we have
 \end{align*}
 
 We notice, that these three activation cores are all non-vanishing boolean cores in dimension $2$.
-This motivates the definition of Hard Logic Networks as follows.
+This motivates the definition of \HardLogicNetworks{} as follows.
 
-\begin{definition}
+\begin{definition}[\HardLogicNetwork{}]
     \label{def:hardLogicNetwork}
-    Given a boolean statistic $\mlnstat$ and for $\selindexin$ boolean vectors $\kcoreofat{\selindex}{\headvariableof{\selindex}}$ the Hard Logic Network is the distribution
+    Given a boolean statistic $\mlnstat$ and for $\selindexin$ boolean vectors $\kcoreofat{\selindex}{\headvariableof{\selindex}}$ the \HardLogicNetwork{} is the distribution
     \begin{align*}
         \probofat{\mlnstat,\{\kcoreofat{\selindex}\wcols\selindexin\}}{\shortcatvariables} =
         \normalizationof{
@@ -565,7 +565,7 @@ This motivates the definition of Hard Logic Networks as follows.
     \end{align*}
     provided that the normalization exists.
     %We denote the distribution by $\probofat{\formulaset,\{\kcoreofat{\selindex}\wcols\selindexin\}}{\shortcatvariables}$
-%	The set of Hard Logic Networks is defined as
+%	The set of \HardLogicNetworks{} is defined as
 %	\begin{align*}
 %		\left\{\probofat{\{\kcoreofat{\selindex}\wcols\selindexin\}}{\shortcatvariables} \wcols \kcoreofat{\selindex}{\headvariableof{\selindex}}\in\{\tbasisat{\headvariableof{\selindex}},\fbasisat{\headvariableof{\selindex}},\onesat{\headvariableof{\selindex}}\} \right\}
 %	\end{align*}
@@ -576,10 +576,10 @@ We notice, that from the assumption that the normation exists, each activation c
     \kcoreofat{\selindex}{\headvariableof{\selindex}}\in\{\tbasisat{\headvariableof{\selindex}},\fbasisat{\headvariableof{\selindex}},\onesat{\headvariableof{\selindex}}\}    \, .
 \end{align*}
 Any core $\onesat{\headvariableof{\selindex}}$ furthermore results in a trivial contraction with the corresponding computation core.
-Based on these insights we can characterize Hard Logic Networks by propositional formulas.
+Based on these insights we can characterize \HardLogicNetworks{} by propositional formulas.
 
 \begin{theorem}
-    Given a Hard Logic Network
+    Given a \HardLogicNetwork{}
     \begin{align*}
         \probofat{\formulaset,\{\kcoreof{\selindex}\wcols\selindexin\}}{\shortcatvariables}
     \end{align*}
@@ -629,7 +629,7 @@ Based on these insights we can characterize Hard Logic Networks by propositional
             \bigcup_{\selindexin}\{\bencodingofat{\enumformula}{\headvariableof{\selindex},\shortcatvariables},\kcoreofat{\selindex}{\headvariableof{\selindex}}\}
         }{\shortcatvariables}
     \end{align*}
-    defining the Hard Logic Network.
+    defining the \HardLogicNetwork{}.
     We notice, that for each $\selindexin$ the variables $\headvariableof{\selindex}$ appear only in the cores $\bencodingofat{\shortcatvariables}{\headvariableof{\selindex},\shortcatvariables}$ and $\kcoreofat{\selindex}{\headvariableof{\selindex}}$ and thus
     \begin{align*}
         & \contractionof{
@@ -767,7 +767,7 @@ Based on these insights we can characterize Hard Logic Networks by propositional
 %
 %\subsect{Tensor Network Representation}
 %
-%Hard Logic Network coincide with Knowledge Bases and are thus representable by contractions of formulas (which can be interpreted as a hybrid calculus scheme, see \secref{sec:hybridCalculus}).
+%\HardLogicNetwork{} coincide with Knowledge Bases and are thus representable by contractions of formulas (which can be interpreted as a hybrid calculus scheme, see \secref{sec:hybridCalculus}).
 %
 %
 %\begin{theorem}[Conjunction Decomposition of Knowledge Bases]\label{the:conDecKB}
@@ -789,9 +789,9 @@ Based on these insights we can characterize Hard Logic Networks by propositional
 %We call this representation scheme the $\land$-symmetry, since we can either represent $\kb$ by instantiation of $\bencodingof{\kb}$, which involves a basis encoding of the conjunction $\land$, or by instantiations of a collection of $\bencodingof{\formula}$.
 %We use the $\land$ symmetry to represent them as a contraction of the formulas building the Knowledge Base as conjunction.
 %
-%\begin{remark}{$\land$ symmetry does not generalize to Markov Logic Networks} % Strange -> Drop?
+%\begin{remark}{$\land$ symmetry does not generalize to \MarkovLogicNetworks{}} % Strange -> Drop?
 %	% Comparison to Markov Logic
-%	In Markov Logic Networks, similar decompositions are not possible.
+%	In \MarkovLogicNetworks{}, similar decompositions are not possible.
 %	For example, consider a MLN with a single formula $\atomicformulaof{0}\land\atomicformulaof{1}$ and nonvanishing weight $\canparam$.
 %	This does not coincide with the distribution of a MLN of two formulas $\atomicformulaof{0}$ and $\atomicformulaof{1}$.
 %	To see this, we notice that with respect to the distribution of the first MLN, both variables are not independent, while for any MLN constructed by the two atomic formulas they are.
@@ -820,29 +820,29 @@ Based on these insights we can characterize Hard Logic Networks by propositional
 %We can use the $\land$ symmetry (Theorem~\ref{the:landSymmetry}) to propagate $\tbasis$ to all clause cores and get an alternative representation.
 %Those are especially interesting when using Modus Ponens/Resolution as local sub-KB reasoners (see \secref{subsec:LocalEntailment}).
 
-\sect{Hybrid Logic Network}\label{sec:hybridNetworks}
+\sect{\HybridLogicNetworks{}}\label{sec:hybridNetworks}
 
-Markov Logic Networks are by definition positive distributions and are represented by positive activation tensors in $\elrealizabledistsof{\mlnstat}$ (see \figref{fig:elementaryComputableSketch}).
-In contrary, Hard Logic Networks model uniform distributions over model sets of the respective Knowledge Base and therefore have vanishing coordinates.
+\MarkovLogicNetworks{} are by definition positive distributions and are represented by positive activation tensors in $\elrealizabledistsof{\mlnstat}$ (see \figref{fig:elementaryComputableSketch}).
+In contrary, \HardLogicNetworks{} model uniform distributions over model sets of the respective Knowledge Base and therefore have vanishing coordinates.
 They are represented by boolean activation tensors in $\elrealizabledistsof{\mlnstat}$.
-Having discussed these representation approaches, let us now investigate the general case of distributions in $\elrealizabledistsof{\mlnstat}$, which we call Hybrid Logic Networks.
+Having discussed these representation approaches, let us now investigate the general case of distributions in $\elrealizabledistsof{\mlnstat}$, which we call \HybridLogicNetworks{}.
 
 \subsect{Definition}
 
-\begin{definition}
+\begin{definition}[\HybridLogicNetwork{}]
     \label{def:hln}
     Given a boolean statistic $\mlnstat$ %of propositional formulas
     %\begin{align*}
     %    \mlnstat : \atomstates \rightarrow \bigtimes_{\selindexin}[2]
     %\end{align*}
-    any element of $\elrealizabledistsof{\mlnstat}$ is called a Hybrid Logic Network (HLN).
+    any element of $\elrealizabledistsof{\mlnstat}$ is called a \HybridLogicNetwork{} (HLN).
 \end{definition}
 
-We now extract from a Hybrid Logic Network, defined as a distribution computable by $\mlnstat$ and $\elgraph$, a Hard Logic Network and a Markov Logic Network, which contraction builds the Hybrid Logic Network.
+We now extract from a Hybrid Logic Network, defined as a distribution computable by $\mlnstat$ and $\elgraph$, a \HardLogicNetwork{} and a \MarkovLogicNetwork{}, which contraction builds the Hybrid Logic Network.
 
 \begin{theorem}
     \label{the:hybridNetworkRepresentation}
-    Any Hybrid Logic Network $\probwith\in\elrealizabledistsof{\mlnstat}$ is a normalized contraction of a Hard Logic Network and a Markov Logic Network, that is there are for $\selindexin$ boolean cores $\kcoreofat{\selindex}{\headvariableof{\selindex}}$ and a weight vector $\canparamat{\selvariable}$ such that
+    Any Hybrid Logic Network $\probwith\in\elrealizabledistsof{\mlnstat}$ is a normalized contraction of a \HardLogicNetwork{} and a \MarkovLogicNetwork{}, that is there are for $\selindexin$ boolean cores $\kcoreofat{\selindex}{\headvariableof{\selindex}}$ and a weight vector $\canparamat{\selvariable}$ such that
     \begin{align*}
         \probwith =
         \normalizationof{
@@ -906,7 +906,7 @@ We now extract from a Hybrid Logic Network, defined as a distribution computable
     and the claim follows, since the normalization of a tensor is invariant under multiplication with the positive scalar $\left(\prod_{\selindexin}\lambda_{\selindex}\right)$.
 \end{proof}
 
-We now relate with the formalism of exponential families and determine the base measures which are used to build Hybrid Logic Networks.
+We now relate with the formalism of exponential families and determine the base measures which are used to build \HybridLogicNetworks{}.
 
 
 %\begin{lemma}
@@ -1016,7 +1016,7 @@ We now relate with the formalism of exponential families and determine the base 
 %We strengthen, that $\meanparamwith$ does not coincide with the mean parameter of the Hybrid Logic Network, since here $0.5$ has been chosen as a dummy value whereas the index is in the open interval $(0,1)$.
 
 % Base Measure trick
-We can thus understand Hybrid Logic Networks, as a union of exponential families, where the union is over all boolean activation cores understood as generating a base measure.
+We can thus understand \HybridLogicNetworks{}, as a union of exponential families, where the union is over all boolean activation cores understood as generating a base measure.
 This trick is known to the field of variational inference, see for Example~3.6 in \cite{wainwright_graphical_2008}.
 For an example of a tensor network representation of a hybrid logic network see \figref{fig:ActivatedHeads}.
 
@@ -1043,7 +1043,7 @@ For an example of a tensor network representation of a hybrid logic network see 
 
 \subsect{Logical Reasoning Properties}
 
-Deciding probabilistic entailment (see \defref{def:probEntailment}) with respect to Hybrid Logic Networks can be reduced to the hard logic parts of the network.
+Deciding probabilistic entailment (see \defref{def:probEntailment}) with respect to \HybridLogicNetworks{} can be reduced to the hard logic parts of the network.
 
 \begin{theorem}
     \label{the:hlnEntailmentReduction}
@@ -1056,7 +1056,7 @@ Deciding probabilistic entailment (see \defref{def:probEntailment}) with respect
     \[ \hlnformula \models \exformula \, . \]
 \end{theorem}
 \begin{proof}
-    This follows from Theorem~\ref{the:factorReduction} on the representation of Hybrid Logic Networks as exponential distributions in \theref{the:hybridNetworkRepresentation}.
+    This follows from Theorem~\ref{the:factorReduction} on the representation of \HybridLogicNetworks{} as exponential distributions in \theref{the:hybridNetworkRepresentation}.
 \end{proof}
 
 
@@ -1086,7 +1086,7 @@ By Theorem~\ref{the:hlnEntailmentReduction} only the hard logic parts of a Hybri
 
 \subsect{Expressivity}
 
-Hybrid Logic Networks extend the expressivity result of Theorem~\ref{the:mintermExpressivityMLN} to arbitrary probability tensors, dropping the positivity constraints for Markov Logic Networks.
+\HybridLogicNetworks{} extend the expressivity result of Theorem~\ref{the:mintermExpressivityMLN} to arbitrary probability tensors, dropping the positivity constraints for \MarkovLogicNetworks{}.
 
 \begin{theorem}
     \label{the:mintermExpressivityHLN}
@@ -1132,10 +1132,11 @@ Hybrid Logic Networks extend the expressivity result of Theorem~\ref{the:minterm
 
 
 
-\sect{Polynomial Representation}
+\sect{Polynomial Representation}\label{sec:HLNpolyRepresentation}
 
 %We now apply the representation symmetries to represent a propositional Knowledge Base in conjunctive normal form.
-We now sparse representation formats for the introduced logic networks, namely the basis+ $\cpformat$ format introduced in \charef{cha:sparseRepresentation} which are understood as polynomial decompositions.
+We now introduce a further mechanism to find sparse representation formats for the introduced hybrid logic networks, which we call \polynomialSparsity{}.
+This is an application of the basis+ $\cpformat$ format introduced in \charef{cha:sparseRepresentation}, which is connected to polynomial decompositions of boolean functions.
 First of all, we establish a sparsity result for terms and clauses (see \defref{def:clauses}).
 
 \begin{lemma}
@@ -1161,7 +1162,7 @@ First of all, we establish a sparsity result for terms and clauses (see \defref{
 
 A formula in conjunctive normal form is a conjunction of clauses, where clauses are disjunctions of literals being atoms (positive literals) or negated atoms (negative literals).
 Based on these normal forms, we show representations of formulas as sparse polynomials. %, which will be discussed in more detail in \charef{cha:sparseRepresentation} (see \defref{def:polynomialSparsity}).
-We apply \lemref{lem:clauseTermBasisPlus} to show the following sparsity bound. % on the energy tensor of Markov Logic Networks.
+We apply \lemref{lem:clauseTermBasisPlus} to show the following sparsity bound. % on the energy tensor of \MarkovLogicNetworks{}.
 
 \begin{theorem}
     \label{the:formulaSlicePolynomialDecomposition}
@@ -1177,11 +1178,11 @@ We apply \lemref{lem:clauseTermBasisPlus} to show the following sparsity bound. 
     \end{align*}
 \end{proof}
 
-We apply this result on the sparse representation of a single formula to derive sparse representations for Hard Logic Networks and the energy tensor of Hybrid Logic Networks.
+We apply this result on the sparse representation of a single formula to derive sparse representations for \HardLogicNetworks{} and the energy tensor of \HybridLogicNetworks{}.
 Both results use in addition to \theref{the:formulaSlicePolynomialDecomposition} sparsity bounds, which are shown by explicit representation construction in \charef{cha:sparseRepresentation}.
 
 \begin{corollary}
-    Any Hard Logic Network $\hardformulaset$ obeys
+    Any \HardLogicNetwork{} $\hardformulaset$ obeys
     \begin{align*}
         \slicesparsityof{\hardformulaset} \leq \prod_{\exformula\in\hardformulaset} 2^{\clausedimof{\exformula}}
     \end{align*}
@@ -1220,11 +1221,11 @@ Both results use in addition to \theref{the:formulaSlicePolynomialDecomposition}
 \end{proof}
 
 
-\sect{Mean parameters of Hybrid Logic Networks}
+\sect{Mean parameters of \HybridLogicNetworks{}}
 
 % Polytope
-While mean parameter polytopes $\genmeanset$ to generic exponential families have been subject to \charef{cha:probReasoning}, we in this section restrict to the mean polytopes of hybrid logic networks, which we characterize using propositional logics.
-Hybrid Logic Networks are exponential families, which statistic $\sstat$ consists of coordinates with $\imageof{\sstatcoordinateof{\selindex}}\subset\ozset$ and are therefore propositional formulas.
+While mean parameter polytopes $\genmeanset$ to generic exponential families have been subject to \charef{cha:probReasoning}, we in this section restrict to the mean polytopes of \HybridLogicNetworks{}, which we characterize using propositional logics.
+\HybridLogicNetworks{} are exponential families, which statistic $\sstat$ consists of coordinates with $\imageof{\sstatcoordinateof{\selindex}}\subset\ozset$ and are therefore propositional formulas.
 The convex polytope of mean parameters (see \defref{def:meanPolytope}) is for a statistic $\mlnstat$ of propositional formulas and a base measure $\basemeasure$ the set
 \begin{align*}
     \hlnmeanset = \left\{ \contractionof{\probwith,\sencmlnstatwith}{\selvariable} \wcols \probwith\in\bmrealprobof{\basemeasure} \right\} \, ,
@@ -1244,7 +1245,7 @@ Since those are convex subsets of the cube $[0,1]^\seldim$, which vertices are a
 Further, if for any $\selindexin$ we have $\meanparamat{\indexedselvariable}\in\ozset$, then $\meanparamwith$ is on a proper face of the cube and thus also of $\hlnmeanset$.
 \red{In the following, we characterize the faces of the mean parameter polytope.}
 
-\subsect{Vertices by hard logic networks} % -> More general: Face measures by hard logic networks
+\subsect{Vertices by \HardLogicNetworks{}} % -> More general: Face measures by \HardLogicNetworks{}
 
 First of all, we show that the vertices of $\hlnmeanset$ are the boolean vectors contained in $\hlnmeanset$.
 
@@ -1280,7 +1281,7 @@ We can further provide an equivalent criterion for a vertex by the satisfaction 
             \vertexformula = \bigwedge_{\selindexin} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables}
         \end{align*}
         is satisfiable.
-        \item[(iii)] There is a Hard Logic Network $\probwith\in\hlnsetof{\mlnstat}$ such that
+        \item[(iii)] There is a \HardLogicNetwork{} $\probwith\in\hlnsetof{\mlnstat}$ such that
         \begin{align*}
             \meanparamwith = \contractionof{\probwith,\sencmlnstatwith}{\selvariable} \, .
         \end{align*}
@@ -1313,7 +1314,7 @@ We can further provide an equivalent criterion for a vertex by the satisfaction 
         \cup \{\kcoreofat{\selindex}{\headvariableof{\selindex}} \wcols \selindexin\}
         }{\shortcatvariables} = \normalizationof{\vertexformula}{\shortcatvariables} \, .
     \end{align*}
-    Thus, the normalized formula $\vertexformula$ is a Hard Logic Network.
+    Thus, the normalized formula $\vertexformula$ is a \HardLogicNetwork{}.
     We then have for any $\selindexin$ that
     \begin{align*}
         \meanparamat{\indexedselvariable} = \contraction{\normalizationof{\vertexformula}{\shortcatvariables},\enumformulawith}\, .
@@ -1323,25 +1324,25 @@ We can further provide an equivalent criterion for a vertex by the satisfaction 
     Since $\probwith$ reproduces $\meanparamwith$ we have $\meanparamwith\in\hlnmeanset$ and since $\meanparamwith$ is boolean by \theref{the:vertexByHardLogicNetworks} $\{\meanparamwith\}$ is a vertex.
 \end{proof}
 
-% Hard Logic Network representation -> Another theorem?
-%Let us notice, that the normalization of $\vertexformula$ is a Hard Logic Network using the statistic $\formulaset$ and the base measure $\basemeasure$.
-%Any model of this formula is furthermore mapped by the statistics encoding onto the corresponding vertex $\{\meanparamwith\}$ and the mean parameter of the Hard Logic Network is the unique vertex element $\meanparamwith$.
-%We will in \charef{cha:networkReasoning} show, that among the distributions having the vertex as mean parameter, the corresponding Hard Logic Network is the one with maximal entropy.
+% \HardLogicNetwork{} representation -> Another theorem?
+%Let us notice, that the normalization of $\vertexformula$ is a \HardLogicNetwork{} using the statistic $\formulaset$ and the base measure $\basemeasure$.
+%Any model of this formula is furthermore mapped by the statistics encoding onto the corresponding vertex $\{\meanparamwith\}$ and the mean parameter of the \HardLogicNetwork{} is the unique vertex element $\meanparamwith$.
+%We will in \charef{cha:networkReasoning} show, that among the distributions having the vertex as mean parameter, the corresponding \HardLogicNetwork{} is the one with maximal entropy.
 
 
 
 
-\subsect{Faces represented by Hard Logic Networks}
+\subsect{Faces represented by \HardLogicNetworks{}}
 
-With \theref{the:vertexByHardLogicNetworks} we showed that all vertices are reproduced by Hard Logic Networks.
-In general, as we show next, Hard Logic Networks are face measures to a set of faces which we characterize in the next theorem.
+With \theref{the:vertexByHardLogicNetworks} we showed that all vertices are reproduced by \HardLogicNetworks{}.
+In general, as we show next, \HardLogicNetworks{} are face measures to a set of faces which we characterize in the next theorem.
 
 \begin{theorem}
     \label{the:faceMeasureHardLogicNetworks}
     Let $\genfaceset$ be a face of $\hlnmeanset$, then the following are equivalent:
     \begin{itemize}
         \item[(i)] There is a face $\cubeface$ of $\fullparcube$ such that $\genfaceset=\hlnmeanset\cap\cubeface$.
-        \item[(ii)] There is a Hard Logic Network which coincides with the normalized face measure $\normalizationof{\basemeasureof{\formulaset,\facecondset}}{\shortcatvariables}$.
+        \item[(ii)] There is a \HardLogicNetwork{} which coincides with the normalized face measure $\normalizationof{\basemeasureof{\formulaset,\facecondset}}{\shortcatvariables}$.
         \item[(iii)] The normalized face measure $\normalizationof{\basemeasureof{\formulaset,\facecondset}}{\shortcatvariables}$ is in $\realizabledistsof{\sstat,\elgraph,\basemeasure}$.
     \end{itemize}
 \end{theorem}
@@ -1369,7 +1370,7 @@ In general, as we show next, Hard Logic Networks are face measures to a set of f
     \end{align*}
 
     (ii)$\Rightarrow$(iii):
-    By definition any Hard Logic Network is in $\realizabledistsof{\sstat,\elgraph,\basemeasure}$.
+    By definition any \HardLogicNetwork{} is in $\realizabledistsof{\sstat,\elgraph,\basemeasure}$.
 
     (iii)$\Rightarrow$(i):
     If the normalized face measure $\normalizationof{\basemeasureof{\formulaset,\facecondset}}{\shortcatvariables}$ is in $\realizabledistsof{\sstat,\elgraph,\basemeasure}$,
@@ -1399,8 +1400,8 @@ In general, as we show next, Hard Logic Networks are face measures to a set of f
     Therefore, the parametrized face is the intersection of $\hlnmeanset$ with $\cubeface$.
 \end{proof}
 
-% Hard Logic Network
-\theref{the:faceMeasureHardLogicNetworks} characterizes the faces, which measures are reproducable by Hard Logic Networks.
+% \HardLogicNetwork{}
+\theref{the:faceMeasureHardLogicNetworks} characterizes the faces, which measures are reproducable by \HardLogicNetworks{}.
 The corresponding mean parameters are the face centers.
 
 
@@ -1417,7 +1418,7 @@ The corresponding mean parameters are the face centers.
 
 \subsect{Generic faces}
 
-\red{When the normalized face measure to a face is not reproduceable by a Hard Logic Network, it does not lie in $\realizabledistsof{\sstat,\elgraph,\basemeasure}$.
+\red{When the normalized face measure to a face is not reproduceable by a \HardLogicNetwork{}, it does not lie in $\realizabledistsof{\sstat,\elgraph,\basemeasure}$.
 On the other side, \theref{the:faceMeasureCharacterization} implies, that in general $\sstat$ is a sufficient statistic and it thus lies in $\realizabledistsof{\sstat,\maxgraph,\basemeasure}$.
 The core $\kcoreofat{\facecondset}{\headvariables}$ has then $\cpformat$ rank of at least two.}
 
@@ -1467,10 +1468,10 @@ In general, we can express any face measure by a propositional formula.
 \end{proof}
 
 
-\subsect{Mean parameters reproducable by Hybrid Logic Networks}\label{sec:HLNrepMean} % Generalize to any mean parameter reproduction by hybrid logic networks
+\subsect{Mean parameters reproducable by \HybridLogicNetworks{}}\label{sec:HLNrepMean} % Generalize to any mean parameter reproduction by \HybridLogicNetworks{}
 
 % Check: Where to define cube face and effective interior
-Based on the representation results for face measures, we now study the mean parameters of Hybrid Logic Networks.
+Based on the representation results for face measures, we now study the mean parameters of \HybridLogicNetworks{}.
 
 \begin{definition}\label{def:HLNrepMean}
     We say that a mean parameter $\meanparamwith\in\hlnfaceset$ is reproducable by a Hybrid Logic Network in $\elrealizabledistsof{\mlnstat}$, if the minimal face of $\hlnfaceset$, which includes $\meanparamwith$ is an intersection of $\genmeanset$ and a face $\cubeface$ of the cube $\fullparcube$.
@@ -1480,13 +1481,13 @@ Let us show, that the condition of reproduceability in \defref{def:HLNrepMean} i
 
 \begin{theorem}
     \label{the:hlnInteriorCharacterization}
-    Hybrid Logic Networks reproduce exactly those mean parameters $\meanparamwith$, which are in the effective interior of cube faces $\fullparcube$, i.e. for which there is a face $\genfaceset$ of $\hlnmeanset$ and a face $\cubeface$ of the cube $\fullparcube$ such that
+    \HybridLogicNetworks{} reproduce exactly those mean parameters $\meanparamwith$, which are in the effective interior of cube faces $\fullparcube$, i.e. for which there is a face $\genfaceset$ of $\hlnmeanset$ and a face $\cubeface$ of the cube $\fullparcube$ such that
     \begin{align*}
         \meanparamwith\in\sbinteriorof{\genfaceset} \quad\text{and}\quad \genfaceset = \hlnmeanset\cap\cubeface \, .
     \end{align*}
 \end{theorem}
 \begin{proof}
-    \theref{the:faceMeasureHardLogicNetworks} implies that the normalization of the face measure $\basemeasureof{\sstat,\facecondset}$ to $\genfaceset$ is a Hard Logic Network and in $\elrealizabledistsof{\formulaset}$.
+    \theref{the:faceMeasureHardLogicNetworks} implies that the normalization of the face measure $\basemeasureof{\sstat,\facecondset}$ to $\genfaceset$ is a \HardLogicNetwork{} and in $\elrealizabledistsof{\formulaset}$.
     By assumption, $\meanparamwith$ is in the effective interior of $\meansetof{\formulaset,\basemeasureof{\sstat,\facecondset}}$ and therefore reproduced by a distribution $\probwith$ in $\expfamilyof{\formulaset,\basemeasureof{\sstat,\facecondset}}$.
     Since $\probwith\in\elrealizabledistsof{\formulaset}$ we found a Hybrid Logic Network reproducing $\meanparamwith$.
 \end{proof}
@@ -1588,14 +1589,14 @@ we have
 \end{align*}
 
 
-\subsect{Expressivity of Hybrid Logic Networks}
+\subsect{Expressivity of \HybridLogicNetworks{}}
 
 \begin{figure}[t]
     \begin{center}
         \input{PartII/tikz_pics/network_representation/reproducable_sketch.tex}
     \end{center}
     \caption{Sketch of distributions and their mean parameters with respect to .
-    The hybrid logic networks are also maximum entropy distribution, as we will show in \charef{cha:networkReasoning}.}
+    The \HybridLogicNetworks{} are also maximum entropy distribution, as we will show in \charef{cha:networkReasoning}.}
     \label{fig:reproducableSketch}
 \end{figure}
 
@@ -1605,17 +1606,17 @@ we have
     \end{center}
     \caption{Sketch of the mean polytope ${\hlnmeanset}$ to a statistic $\mlnstat$ which is minimal with respect to $\basemeasure$, as a special case of the more generic sketch \figref{fig:meansetSketchGeneric}.
     The mean polytope is a subset of the $\seldim$-dimensional cube $\fullparcube$ (dashed in the sketch), where each mean parameter in one of the three cases $\meanparamof{1},\meanparamof{2}$ or $\meanparamof{3}$.
-    \textcolor{\concolor}{Face centers} $\meanparamof{1}$ (in particular the vertices $\hlnmeanset\cap\boundaryparcube$) are reproducable by a Hard Logic Network given $\mlnstat$.
-    Mean points on non-vertex faces outside the interior $\meanparamof{2}\in\hlnmeanset/(\interiorof{\hlnmeanset}\cap\boundaryparcube)$ are reproducable by Hybrid Logic Networks with statistic $\mlnstat$ and refined base measure $\secbasemeasure$.
-    \textcolor{\probcolor}{Interior points} $\meanparamof{3}\in\interiorof{\hlnmeanset}$ are reproducable by a Markov Logic Network with statistic $\mlnstat$.
+    \textcolor{\concolor}{Face centers} $\meanparamof{1}$ (in particular the vertices $\hlnmeanset\cap\boundaryparcube$) are reproducable by a \HardLogicNetwork{} given $\mlnstat$.
+    Mean points on non-vertex faces outside the interior $\meanparamof{2}\in\hlnmeanset/(\interiorof{\hlnmeanset}\cap\boundaryparcube)$ are reproducable by \HybridLogicNetworks{} with statistic $\mlnstat$ and refined base measure $\secbasemeasure$.
+    \textcolor{\probcolor}{Interior points} $\meanparamof{3}\in\interiorof{\hlnmeanset}$ are reproducable by a \MarkovLogicNetwork{} with statistic $\mlnstat$.
     }\label{fig:meansetSketch}
 \end{figure}
 
 In \figref{fig:reproducableSketch} we classify the distributions by their mean parameters in $\hlnmeanset$ and draw a corresponding sketch of the mean parameter polytope in \figref{fig:meansetSketch}.
 We have already shown, that the distributions in $\realizabledistsof{\formulaset,\maxgraph}$ suffice to reproduce all mean parameters in $\hlnmeanset$.
-The Hybrid Logic Networks are the subset $\hlnsetof{\formulaset}\subset\realizabledistsof{\formulaset,\maxgraph}$, which can be computed with elementary activation cores.
-% Reduction to Hybrid Logic Networks, question of sufficient expressivity
-%Let us recall, that the set $\hlnsetof{\formulaset}$ contains all Hybrid Logic Networks, which can be realized as tensor networks with the same structure of computation and activation cores.
+The \HybridLogicNetworks{} are the subset $\hlnsetof{\formulaset}\subset\realizabledistsof{\formulaset,\maxgraph}$, which can be computed with elementary activation cores.
+% Reduction to \HybridLogicNetworks{}, question of sufficient expressivity
+%Let us recall, that the set $\hlnsetof{\formulaset}$ contains all \HybridLogicNetworks{}, which can be realized as tensor networks with the same structure of computation and activation cores.
 We now investigate, in which cases also $\hlnsetof{\formulaset}$ suffices to reproduce all mean parameters in $\hlnmeanset$, that is in which cases $\hlnmeanset$ coincides with
 %whether we can reduce the set of probability distributions in the definition of the convex polytope of mean parameters to the set $\hlnsetof{\formulaset}$ , that is
 \begin{align*}
@@ -1629,10 +1630,10 @@ In the next example we provide a class of formulas, for which $\hlnsetof{\formul
 % Insufficient Expressivity
 \begin{example}[Insufficient expressivity of $\hlnsetof{\formulaset}$ in cases of disjoint models]
     \label{exa:insufficentHLNsetExpressivity}
-    To provide an example, where the set of hybrid logic networks does not suffice to reproduce all possible mean parameters, consider the formulas
+    To provide an example, where the set of \HybridLogicNetworks{} does not suffice to reproduce all possible mean parameters, consider the formulas
     \[ \formulaof{0} = \exrandom \land \secexrandom \quad, \quad \formulaof{1} = \lnot\exrandom \land \lnot\secexrandom \, . \]
     The probability distributions on the facet with normal $\canparam=[1\,\, 1]$ are those with support on the models of $\formulaof{0}\lor\formulaof{1}$.
-    The Hybrid Logic Networks can only reproduce those with are supported on the model of $\formulaof{0}$ or the model of $\formulaof{1}$, but not their convex combinations.
+    The \HybridLogicNetworks{} can only reproduce those with are supported on the model of $\formulaof{0}$ or the model of $\formulaof{1}$, but not their convex combinations.
 
     %% EXTENSION
     %More generally, one can construct similar examples by arbitrary sets of formulas with pairwise disjoint model sets.
@@ -1672,7 +1673,7 @@ This can be done by adding activation cores with multiple variables, or further 
 %\end{proof}
 
 % COMMENT: BASIS+ VECTORS
-% Activation vectors of hard logic networks are on the other side basis+, so they might be more efficiently representable
+% Activation vectors of \HardLogicNetworks{} are on the other side basis+, so they might be more efficiently representable
 
 %\subsect{Case of tree computation networks} % NEED TO DEFINE FIRST!
 %In this case, the mean polytope can be embedded into a markov network and characterized by local consistency of the mean parameters of the markov network.
@@ -1700,14 +1701,14 @@ We can relate our two standard examples of the atomic and the minterm formula se
 
 \sect{Discussion}
 
-We understand Hybrid Logic Networks can be understood as neuro-symbolic models:
+We understand \HybridLogicNetworks{} can be understood as neuro-symbolic models:
 \begin{itemize}
     \item \textbf{Neural Paradigm} is the representation of models as compositions of smaller models.
-    For Hybrid Logic Networks, the decompositions of logical formulas into their connectives implements this neural paradigm.
+    For \HybridLogicNetworks{}, the decompositions of logical formulas into their connectives implements this neural paradigm.
     In more generality the decompositions of sufficient statistics into composed functions has a tensor network representation based on basis calculus.
     Deeper nodes as carrying correlations of lower nodes.
     \item \textbf{Symbolic Paradigm} refers to the formalization of reasoning by human-interpretable symbols.
-    Since the sufficient statistics of Hybrid Logic Networks are propositional formulas, they can be verbalized and interpreted based on their syntactical decompositions.
+    Since the sufficient statistics of \HybridLogicNetworks{} are propositional formulas, they can be verbalized and interpreted based on their syntactical decompositions.
 \end{itemize}
 
 %Hybrid Logic Networks are trainable Machine Learning models:

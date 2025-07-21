@@ -1,21 +1,21 @@
 \chapter{\chatextnetworkReasoning}\label{cha:networkReasoning}
 
-In this chapter we investigate the inference properties of Hybrid Logic Networks, exploiting the characterizations of the corresponding mean parameter polytopes in \charef{cha:networkRepresentation}.
-We investigate unconstrained parameter estimated for Markov Logic Networks and Hybrid Logic Networks, which are special cases of the backward maps introduced in \charef{cha:probRepresentation}.
+In this chapter we investigate the inference properties of \HybridLogicNetworks{}, exploiting the characterizations of the corresponding mean parameter polytopes in \charef{cha:networkRepresentation}.
+We investigate unconstrained parameter estimated for \MarkovLogicNetworks{} and \HybridLogicNetworks{}, which are special cases of the backward maps introduced in \charef{cha:probRepresentation}.
 We then motivate structure learning based on sparsity constraints on the parameters on the minterm exponential family and present heuristic strategies leading to efficient structure learning algorithms.
 
 
 
-\sect{Entropy Optimization on Hybrid Logic Networks} \label{sec:parameterEstimation} % Check for redundancy with the mln introduction chapter!
+\sect{Entropy Optimization on \HybridLogicNetworks{}} \label{sec:parameterEstimation} % Check for redundancy with the mln introduction chapter!
 
 We will investigate two entropic approaches towards unconstrained parameter estimation.
 First of all, we characterize Maximum Entropy distributions with a moment constraint.
-Maximum Likelihood Estimation restricts the distributions optimized over to a specific set, here the Hybrid Logic Networks.
+Maximum Likelihood Estimation restricts the distributions optimized over to a specific set, here the \HybridLogicNetworks{}.
 
 \subsect{Entropy Maximization}
 
 
-The Maximum Entropy Problem $\probtagtypeinst{\entropysymbol}{\mlnstat,\basemeasure,\genmean}$ for a statistic $\mlnstat$ and a base measure $\basemeasure$ is %Markov Logic Networks is
+The Maximum Entropy Problem $\probtagtypeinst{\entropysymbol}{\mlnstat,\basemeasure,\genmean}$ for a statistic $\mlnstat$ and a base measure $\basemeasure$ is %\MarkovLogicNetworks{} is
 \begin{align}\label{prob:maxEntropyHLN}
     %\custtag{\probtagtypeinst{\entropysymbol}{\mlnstat,\basemeasure,\genmean}}
     \argmax_{\probtensor\in\bmrealprobof{\basemeasure}} \quad \sentropyof{\probtensor}
@@ -61,14 +61,14 @@ As we show next, this is exactly the case if the mean parameter is reproducable 
 
 \subsect{Cross Entropy Minimization}
 
-Different to Maximum Entropy Problems, we formulate the Maximum Likelihood Problem $\probtagtypeinst{\mathrm{M}}{\Gamma,\gendistribution}$ as cross entropy minimization with respect to Hybrid Logic Networks, that is
+Different to Maximum Entropy Problems, we formulate the Maximum Likelihood Problem $\probtagtypeinst{\mathrm{M}}{\Gamma,\gendistribution}$ as cross entropy minimization with respect to \HybridLogicNetworks{}, that is
 \begin{align}
     \tag{$\probtagtypeinst{\mathrm{M}}{\Gamma,\gendistribution}$}\label{prob:minCrossEntropyHLN}
     \argmin_{\probtensor\in\elrealizabledistsof{\mlnstat}} \centropyof{\gendistribution}{\probtensor}
 \end{align}
 When choosing $\gendistribution$ by an empirical distribution, this minimization problem is the Maximum Likelihood Problem (see \secref{cha:probReasoning}).
 % LEMMA TO CHA:PROBREASONING?
-In order to characterize the solution of the cross entropy minimization problem on Hybrid Logic Networks, we first characterize the solution of the cross entropy minimization on exponential families.
+In order to characterize the solution of the cross entropy minimization problem on \HybridLogicNetworks{}, we first characterize the solution of the cross entropy minimization on exponential families.
 
 \begin{lemma}
     \label{lem:minCrossEntropyExponential}
@@ -107,16 +107,16 @@ In order to characterize the solution of the cross entropy minimization problem 
     See Theorem~3.4 in \cite{wainwright_graphical_2008}.
 \end{proof}
 
-Based on this lemma we can characterize the solution of the Maximum Likelihood Problem \probref{prob:minCrossEntropyHLN} with respect to Hybrid Logic Networks.
+Based on this lemma we can characterize the solution of the Maximum Likelihood Problem \probref{prob:minCrossEntropyHLN} with respect to \HybridLogicNetworks{}.
 
 \begin{theorem}
     Let $\gendistribution$ be any distribution, such that $\genmeanwith$ is reproducable by a Hybrid Logic Network.
     Then the solution of the Maximum Likelihood Problem \probref{prob:minCrossEntropyHLN} is the Hybrid Logic Network $\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnformula}{\genmeanwith},\hlnformula}$.
 \end{theorem}
 \begin{proof}
-    We exploit the parameterization of Hybrid Logic Networks by tuples $\hlnformulaparams$ (parametrizing the corresponding Hard Logic Network) and canonical parameters $\canparamwith$ (parametrizing the corresponding Markov Logic Network).
+    We exploit the parameterization of \HybridLogicNetworks{} by tuples $\hlnformulaparams$ (parametrizing the corresponding \HardLogicNetwork{}) and canonical parameters $\canparamwith$ (parametrizing the corresponding \MarkovLogicNetwork{}).
     The cross entropy minimization is then
-    %We exploit the parameterization of Hybrid Logic Networks by hard parameters $\meanparamwith\in\{0,0.5,1\}^\seldim$ and by soft parameters $\canparamwithin$, to express \probref{prob:minCrossEntropyHLN} as
+    %We exploit the parameterization of \HybridLogicNetworks{} by hard parameters $\meanparamwith\in\{0,0.5,1\}^\seldim$ and by soft parameters $\canparamwithin$, to express \probref{prob:minCrossEntropyHLN} as
     \begin{align*}
         \min_{\variableset\subset[\seldim]}\min_{\headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]} \left(\min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}\right) \, .
 %        \min_{\meanparamwith\in\{0,0.5,1\}^\seldim}\, .
@@ -139,8 +139,8 @@ Based on this lemma we can characterize the solution of the Maximum Likelihood P
 
 
 When $\genmeanwith$ is not reproduceable by a Hybrid Logic Network, we are in the case where the smallest face, such that $\genmeanwith$ is contained is not an intersection of $\genmeanset$ with a cube face.
-In this case, there is no solution of the Maximum Likelihood Problem \probref{prob:minCrossEntropyHLN} in the set of Hybrid Logic Networks, since the minimum is not taken.
-The reason for this lies in the expressivity problem of Hybrid Logic Networks, which do not reproduce the interior of such faces, but tend in a limit of large canonical parameters to any mean parameter on such faces.
+In this case, there is no solution of the Maximum Likelihood Problem \probref{prob:minCrossEntropyHLN} in the set of \HybridLogicNetworks{}, since the minimum is not taken.
+The reason for this lies in the expressivity problem of \HybridLogicNetworks{}, which do not reproduce the interior of such faces, but tend in a limit of large canonical parameters to any mean parameter on such faces.
 We can instead state a Maximum Likelihood Problem over $\maxrealizabledistsof{\mlnstat}$, which provides enough expressivity to represent all faces.
 
 \begin{theorem}
@@ -179,7 +179,7 @@ We can instead state a Maximum Likelihood Problem over $\maxrealizabledistsof{\m
 %\end{align*}
 %
 %% Extension to HLN
-%We now extend the optimization to Hybrid Logic Networks, which are the union of exponential families with same statistics but different base measures.
+%We now extend the optimization to \HybridLogicNetworks{}, which are the union of exponential families with same statistics but different base measures.
 %\begin{align*}
 %    \argmin_{\secprobtensor\in\hlnsetof{\formulaset}} \quad
 %    \centropyof{\probtensor}{\secprobtensor}
@@ -191,7 +191,7 @@ We can instead state a Maximum Likelihood Problem over $\maxrealizabledistsof{\m
 %    \basemeasureofat{\secformulaset,\meanparam}{\shortcatvariables}
 %    = \bigwedge_{\enumformula\in\secformulaset} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables}
 %    \, . \]
-%    If $\meanparamwith$ is reproduceable by a positive distribution with respect to $\basemeasureofat{\secformulaset,\meanparam}{\shortcatvariables} $, then the solution of the M-projection of $\probtensor$ onto the set of hybrid logic networks is representable by $\formulaset$ then coincides with the projection of $\probtensor$ onto $\expfamilyof{\formulaset/\secformulaset,\basemeasureof{\secformulaset,\meanparam}}$.
+%    If $\meanparamwith$ is reproduceable by a positive distribution with respect to $\basemeasureofat{\secformulaset,\meanparam}{\shortcatvariables} $, then the solution of the M-projection of $\probtensor$ onto the set of \HybridLogicNetworks{} is representable by $\formulaset$ then coincides with the projection of $\probtensor$ onto $\expfamilyof{\formulaset/\secformulaset,\basemeasureof{\secformulaset,\meanparam}}$.
 %\end{corollary}
 %%\begin{proof}
 %%	Work by weight cutoff, in the limit of hard logics?
@@ -200,7 +200,7 @@ We can instead state a Maximum Likelihood Problem over $\maxrealizabledistsof{\m
 
 \sect{Alternating Algorithms to Approximate the Backward Map}\label{sec:alternatingParEstMLN}
 
-Let us now introduce an implementation of the Alternating Moment Matching Algorithm~\ref{alg:AMM} in case of Markov Logic Networks.
+Let us now introduce an implementation of the Alternating Moment Matching Algorithm~\ref{alg:AMM} in case of \MarkovLogicNetworks{}.
 To solve the moment matching condition at a formula $\enumformula$ we refine \lemref{lem:mmContractionEquation} in the following.
 
 \begin{lemma}
@@ -244,7 +244,7 @@ To solve the moment matching condition at a formula $\enumformula$ we refine \le
         \cup\{\actcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
         \cup\{\basemeasure\}}{\selvariable} \, .
     \end{align*}
-    We notice that the right side is well defined, since we have by assumption $\datameanat{\indexedselvariable}, (1- \datameanat{\indexedselvariable}) \neq 0$ and $\hypercoreat{\catvariableof{\enumformula}=0}, \hypercoreat{\catvariableof{\enumformula}=1} \neq 0$ since Markov Logic networks are positive distributions and $\enumformula \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
+    We notice that the right side is well defined, since we have by assumption $\datameanat{\indexedselvariable}, (1- \datameanat{\indexedselvariable}) \neq 0$ and $\hypercoreat{\catvariableof{\enumformula}=0}, \hypercoreat{\catvariableof{\enumformula}=1} \neq 0$ since \MarkovLogicNetworks{} are positive distributions and $\enumformula \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
 \end{proof}
 
 
@@ -258,7 +258,7 @@ As a consequence, we will able to fit graphical models, which we will call hybri
 
 %
 The cases $\hypercoreat{\catvariableof{\enumformula}=1}=0$, respectively $\hypercoreat{\catvariableof{\enumformula}=1}=0$ only appear for nontrivial formulas when the distribution is not positive.
-This is not the case for Markov Logic Networks, but will happen when formulas are added as cores of a Markov Network.
+This is not the case for \MarkovLogicNetworks{}, but will happen when formulas are added as cores of a Markov Network.
 This situation will has been investigated in \secref{sec:hardNetworks}.
 
 
@@ -333,7 +333,7 @@ This is an coordinate ascent algorithm, when interpreted the loss $\lossof{\expd
 % Independent formulas
 In the initialization phase of Algorithm~\ref{alg:AWO}, each parameters is initialized relative to a uniform distribution.
 The algorithm would be finished, if the variables $\catvariableof{\exformula}$ are independent.
-This would be the case, if the Markov Logic Network consists of atomic formulas only.
+This would be the case, if the \MarkovLogicNetwork{} consists of atomic formulas only.
 When they fail to be independent, the adjustment of the weights influence the marginal distribution of other formulas and we need an alternating optimization.
 % 
 This situation corresponds with couplings of the weights by a partition contraction, which does not factorize into terms to each formula.
@@ -395,7 +395,7 @@ and $\meanparam = \onesat{}-\probtensor$.
 We can use these insights to provide a characterization of the forward and backward maps of the minterm and maxterm family.
 
 \begin{theorem}
-    Given the Markov Logic Networks to the formula sets
+    Given the \MarkovLogicNetworks{} to the formula sets
     \[ \mintermformulaset := \{ \mintermof{\atomindices} \, : \, \atomindicesin\} \quad \text{and} \quad
     \maxtermformulaset := \{ \maxtermof{\atomindices} \, : \, \atomindicesin\}  \]
     of all minterms, respectively of all mapterms, the forward mapping are
@@ -472,7 +472,7 @@ The mean parameters coincide with the queries on the atomic formulas, that is th
 \[ \meanparamat{\selvariable=\atomenumerator} = \probat{\catvariableof{\atomenumerator}=1}  \, . \]
 
 \begin{theorem}
-    Given a Markov Logic Network with the statistic $\atomformulaset$ of atomic formulas, the forward mapping from canonical parameters to mean parameters is the coordinatewise sigmoid, that is
+    Given a \MarkovLogicNetwork{} with the statistic $\atomformulaset$ of atomic formulas, the forward mapping from canonical parameters to mean parameters is the coordinatewise sigmoid, that is
     \[ \forwardmapwrtof{\mlnatomsymbol}{\canparamat{\selvariable}} = \frac{\expof{\canparamat{\selvariable}}}{\onesat{\selvariable}+\expof{\canparamat{\selvariable}}}   \]
     where the quotient is performed coordinatewise.
 
@@ -513,7 +513,7 @@ The mean parameters coincide with the queries on the atomic formulas, that is th
 
 % Representation by selection tensor networks
 In a selection tensor networks they are represented by a single neuron with identity connective and variable selection to all atoms.
-We will investigate such examples in more detail in \charef{cha:sparseRepresentation}, where atomic formulas Markov Logic Networks are specific cases of monomial decomposition of order 1.
+We will investigate such examples in more detail in \charef{cha:sparseRepresentation}, where atomic formulas \MarkovLogicNetworks{} are specific cases of monomial decomposition of order 1.
 
 % Interpretation of the result as independence approximation
 The maximum likelihood estimator of a positive probability distribution by the MLN of atomic formulas is therefore the tensor product of the marginal distributions.
@@ -544,7 +544,7 @@ Each basis vector is an extreme point is an extreme point.
 }
 
 
-By \theref{the:mintermExpressivityMLN} all positive distributions are member of the minterm markov logic network family.
+By \theref{the:mintermExpressivityMLN} all positive distributions are member of the minterm \MarkovLogicNetwork{} family.
 This expressivity result was generalized to arbitrary distributions, when allowing for formulas as basemeasures by \theref{the:mintermExpressivityHLN}.
 
 Finding the distribution maximizing the likelihood of data would then be the empirical distribution.
@@ -633,7 +633,7 @@ Each formula set $\formulaset$ represents a subspace in the parameters of the mi
 It can be impracticle to learn all formulas at once, since the set $\formulasuperset$ often grows combinatorically, for example when choosing as a powerset of formulas.
 \red{Further, we need to avoid overfitting and carefully choose a hypothesis.}
 To avoid intractabilities and overfitting, one can choose a greedy approach and learn in addition formulas $\exformula$ when already having learned a set $\formulaset$ of formulas.
-We in this section assume a current model $\currentdistribution$, which is a generic positive distribution not necessarily a Markov Logic Network. % or Hybrid Logic Network.
+We in this section assume a current model $\currentdistribution$, which is a generic positive distribution not necessarily a \MarkovLogicNetwork{}. % or Hybrid Logic Network.
 
 % 
 We will use the effective selection tensor network representation of exponentially many formulas described in \charef{cha:formulaSelection} and select from them a small subset.
@@ -947,8 +947,8 @@ The proposal distribution is in the exponential family with sufficient statistic
 Of further interest are tempered proposal distributions, which are in the same exponential family with canonical parameters $\invtemp\cdot(\empdistribution-\currentdistribution)$ where $\invtemp>0$ is the inverse temperature parameter.
 
 % MLN
-As Markov Logic Networks, the proposal distributions are in exponential families with the sufficient statistic defined in terms of formula selecting maps.
-While Markov Logic Networks contract the maps on the selection variables $\selvariable$, the proposal distributions contract them along the categorical variables $\catvariable$ to define energy tensors.
+As \MarkovLogicNetworks{}, the proposal distributions are in exponential families with the sufficient statistic defined in terms of formula selecting maps.
+While \MarkovLogicNetworks{} contract the maps on the selection variables $\selvariable$, the proposal distributions contract them along the categorical variables $\catvariable$ to define energy tensors.
 
 % Methods to solve mode search
 The grafting Problem~\eqref{prob:greedyGrad} is the search for the mode of the proposal distribution.
@@ -966,7 +966,7 @@ The mean parameter polytope of the proposal distribution with statistic $\propos
 
 
 % 0/1
-As it was the case for Markov Logic Networks, the mean parameter polytopes are instances of a $0/1$-polytopes \cite{ziegler_lectures_2000,gillmann_01-polytopes_2007}.
+As it was the case for \MarkovLogicNetworks{}, the mean parameter polytopes are instances of a $0/1$-polytopes \cite{ziegler_lectures_2000,gillmann_01-polytopes_2007}.
 
 % Interpretation as formulas
 The extreme points are the formulas selectable by the formula selecting map $\fselectionmap$.
@@ -978,7 +978,7 @@ The extreme points are the formulas selectable by the formula selecting map $\fs
     We only treated the estimation of a single resulting distribution by the data, while in a Bayesian approach one typically considers an uncertainty over possible distributions.
     % MAP
     \red{When treating $\canparam$ as a random tensor, which prior distribution is given and posteriori distribution wanted, we have a more involved Bayesian approach.}
-    When having a prior $\probat{\mlnparameters}$ over the Markov Logic Networks we alternatively want to find the parameters $\mlnparameters$ solving the maximum a posteriori problem
+    When having a prior $\probat{\mlnparameters}$ over the \MarkovLogicNetworks{} we alternatively want to find the parameters $\mlnparameters$ solving the maximum a posteriori problem
     \begin{align}
         \argmax_{\mlnparameters} \mlnprobat{\data}\cdot \probat{\mlnparameters}\, .
     \end{align}
@@ -986,15 +986,15 @@ The extreme points are the formulas selectable by the formula selecting map $\fs
 
 To summarize some insights on the mean polytopes $\hlnmeanset$:
 \begin{itemize}
-    \item If and only íf all coordinates are in $\{0,1\}$ then an extreme points, then $\meanparam$ is reproduced by a hard logic network.
-    \item If some mean params in $\{0,1\}$, then not in the interior, and not reproduced by a markov logic network.
+    \item If and only íf all coordinates are in $\{0,1\}$ then an extreme points, then $\meanparam$ is reproduced by a \HardLogicNetwork{}.
+    \item If some mean params in $\{0,1\}$, then not in the interior, and not reproduced by a \MarkovLogicNetwork{}.
     Back direction not correct: There are interior points where no coordinate in $\{0,1\}$.
     \item If not in the interior, we can identify with base measure refinement a base measure, such that reproducable by a distribution representable by the base measure.
 \end{itemize}
 
 
 % Polytopes - MLN 
-The polytopes of mean parameters to hybrid logic networks and proposal distributions are an interesting connection between the fields of combinatorical optimization and the study of expressivity of tensor networks.
+The polytopes of mean parameters to \HybridLogicNetworks{} and proposal distributions are an interesting connection between the fields of combinatorical optimization and the study of expressivity of tensor networks.
 % Minimal Connectivity: Local consitency - Hierarchical Tucker
 This is of special interest, when the computation cores of a hybrid logic network are minimally connected, the mean parameters are captured by local consistencies.
 Similar investigations have been made in the field of tensor networks, where minimal connected tensor networks are refered to by Hierarchical Tucker formats (HT).
