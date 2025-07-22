@@ -223,6 +223,7 @@ Given a factored parametrization of formulas $\exformula_{\selindices}$ with ind
 
 % Representation 
 If the number of atoms and parameters gets large, it is important to represent the tensor ${\exformula_{\selindices}}$ efficiently in tensor network format and avoid contractions.
+Such efficient decomposition schemes can be found using \decompositionSparsity{}, see \secref{sec:selectionSparsityHLN}.
 To avoid inefficiency issues, we also have to represent the parameter tensor $\canparam$ in a tensor network format to improve the variance of estimations (see \charef{cha:concentration}) and provide efficient numerical algorithms.
 
 % Fail of full probability representation
@@ -385,52 +386,33 @@ The probability distribution is left invariant, when also replacing $\canparamat
 
 
 
-\subsubsect{Boltzmann machines}
+\subsubsect{Boltzmann machines}\label{sec:boltzmannMachines}
 
-A Boltzmann machine is a distribution of boolean variables $\shortcatvariables$ depending on weight tensors %(see e.g. Chapter 43 in \cite{mackay_information_2003})
+A Boltzmann machine is a distribution of boolean variables $\shortcatvariables$ depending on a weight matrix %(see e.g. Chapter 43 in \cite{mackay_information_2003})
 \begin{align*}
-    W[\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}] \in\rr^{\catorder}\otimes\rr^{\catorder} \quad \text{and} \quad b[\selvariableof{\vselectionsymbol,0}] \in\rr^{\catorder} \, .
+    W[\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}] \in\rr^{\catorder}\otimes\rr^{\catorder}
+    \quad \text{and a bias vector} \quad b[\selvariableof{\vselectionsymbol,0}] \in\rr^{\catorder} \, .
 \end{align*}
 Its distribution is
 \begin{align*}
     \probofat{W,b}{\shortcatvariables} = \normalizationof{\expof{\energytensorofat{W,b}{\shortcatvariables}}}{\shortcatvariables}
 \end{align*}
 where its energy tensor is
-\[ \energytensorofat{W,b}{\indexedshortcatvariables} =
-\sum_{\atomenumerator,\secatomenumerator \in [\atomorder]}
-W[\selvariableof{\vselectionsymbol,0}=\atomenumerator, \selvariableof{\vselectionsymbol,1}=\secatomenumerator] \cdot \catindexof{\atomenumerator} \cdot \catindexof{\secatomenumerator}
-+ \sum_{\atomenumerator\in[\atomorder]} b[\selvariableof{\vselectionsymbol,0}=\atomenumerator] \cdot \catindexof{\atomenumerator}\, . \]
+\begin{align*}
+    \energytensorofat{W,b}{\indexedshortcatvariables} =
+    \sum_{\atomenumerator,\secatomenumerator \in [\atomorder]}
+    W[\selvariableof{\vselectionsymbol,0}=\atomenumerator, \selvariableof{\vselectionsymbol,1}=\secatomenumerator] \cdot \catindexof{\atomenumerator} \cdot \catindexof{\secatomenumerator}
+    + \sum_{\atomenumerator\in[\atomorder]} b[\selvariableof{\vselectionsymbol,0}=\atomenumerator] \cdot \catindexof{\atomenumerator}\, .
+\end{align*}
 We notice, that this tensor coincides with the energy tensor of a \MarkovLogicNetwork{} with formula set
-\[ \formulaset = \{ \catvariableof{\atomenumerator} \Leftrightarrow \catvariableof{\secatomenumerator} \wcols \atomenumerator,\secatomenumerator \in[\atomorder] \}
-\cup \{ \catvariableof{\atomenumerator}\wcols \atomenumeratorin \} \, \]
+\begin{align*}
+    \formulaset = \{ \catvariableof{\atomenumerator} \Leftrightarrow \catvariableof{\secatomenumerator} \wcols \atomenumerator,\secatomenumerator \in[\atomorder] \}
+    \cup \{ \catvariableof{\atomenumerator}\wcols \atomenumeratorin \} \,
+\end{align*}
 with cardinality $\atomorder^2+\atomorder$.
-Each formula is in the expressivity of an architecture consisting of a single binary logical neuron selecting any variable of $\shortcatvariables$ in each argument and selecting connectives $\{\eqbincon,\lpasbincon\}$, where by $\lpasbincon$ we refer to a connective passing the first argument, defined for $\catindexofin{0}, \catindexofin{1}$ as
-\[ \lpasbincon[\indexedcatvariableof{0},\indexedcatvariableof{1}] = \vselectionmapat{\indexedcatvariableof{0},\indexedcatvariableof{1},\selvariableof{\vselectionsymbol}=0} \, . \]
-When we choose the canonical parameter as
-\[ \canparamat{\selvariableof{\cselectionsymbol},\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}}
-= \onehotmapofat{0}{\selvariableof{\cselectionsymbol}} \otimes W[\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}]
-+ \onehotmapofat{1}{\selvariableof{\cselectionsymbol}} \otimes b[\selvariableof{\vselectionsymbol,0}] \otimes  \onehotmapofat{0}{\selvariableof{\vselectionsymbol,1}} \, .
-\]
-we have (see \figref{fig:boltzmannEnergy})
-\[ \energytensorofat{W,b}{\shortcatvariables} =
-\contractionof{\fsnnat{\shortcatvariables,\selvariableof{\cselectionsymbol},\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}},
-    \canparamat{\selvariableof{\cselectionsymbol},\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}}}{\shortcatvariables} \, . \]
-
+For an sparse representation of this energy tensor using a formula selecting network, see \exaref{exa:boltzmannEnergySelection}.
 Therefore, Boltzmann machines are specific \MarkovLogicNetworks{} with the statistic being biimplications between atoms and atoms itself.
 Generic \MarkovLogicNetworks{} are more expressive than Boltzmann machines, by the flexibility to create further features by propositional formulas.
-%We can use any binary logical connective and have an associated formula where we can put a weight on.
-
-\begin{figure}[t]
-    \begin{center}
-        \input{PartII/tikz_pics/network_representation/boltzmann_energy.tex}
-    \end{center}
-    \caption{Tensor network representation of the energy of a Boltzmann machine}
-    \label{fig:boltzmannEnergy}
-\end{figure}
-
-
-%where by $(\cdot,\cdot)|_{0}$
-%To connect with the formalism of Boltzmann machines, let us identify the visible units of a Boltzmann machines with the atoms in a propositional theory.
 
 %Boltzmann machines are then reproduced by taking $\atomorder^2+\atomorder$ many formulas, namely those measuring the correlations and the marginal distributions.
 %To be more precise, the correlation between atom $\atomicformulaof{\atomenumerator}$ and $\atomicformulaof{\secatomenumerator}$ is measured by the satisfaction rate of the formula 
@@ -442,23 +424,6 @@ Generic \MarkovLogicNetworks{} are more expressive than Boltzmann machines, by t
 %	and 
 %		\[ \weightof{ \exformula_{\atomenumerator,\secatomenumerator} } = U_{\atomenumerator, \secatomenumerator} \quad , \quad \atomenumerator,\secatomenumerator \in [\atomorder]\] 
 %\end{theorem}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 \sect{\HardLogicNetworks{}}\label{sec:hardNetworks} % To be dropped in the unification with the MLN chapter
@@ -937,7 +902,7 @@ We now relate with the formalism of exponential families and determine the base 
     \begin{align*}
         \elrealizabledistsof{\mlnstat}
         = \bigcup_{\variableset\subset[\seldim]} \bigcup_{\headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]\wcols\contraction{\hlnformula}>0} \expfamilyof{\mlnstat,\hlnformula} \, ,
-       % = \bigcup_{\meanparamwith\in\{0,0.5,1\}^{\seldim}\wcols\contraction{\formulaof{\mlnstat,\meanparamwith}}>0} \expfamilyof{\mlnstat,\hlnformula} \, ,
+        % = \bigcup_{\meanparamwith\in\{0,0.5,1\}^{\seldim}\wcols\contraction{\formulaof{\mlnstat,\meanparamwith}}>0} \expfamilyof{\mlnstat,\hlnformula} \, ,
     \end{align*}
     where the union is over the satisfiable formulas $\formulaof{\mlnstat,\meanparamwith}$.
 \end{theorem}
@@ -1133,6 +1098,8 @@ By Theorem~\ref{the:hlnEntailmentReduction} only the hard logic parts of a Hybri
 
 \sect{Sparse Representation Mechanisms}
 
+Let us now investigate sparsity mechanisms, which can be exploited for efficient representations of \HybridLogicNetworks{}.
+
 \subsect{\DecompositionSparsity{}}
 
 \DecompositionSparsity{} aims at a tensor network representation of the computation network.
@@ -1142,25 +1109,62 @@ Denoting the nodes to $\enumformula$ by $\node_\selindex$ we get
 \begin{align*}
     \bencodingofat{\mlnstat}{\sstatheadvariables,\shortcatvariables} =
     \breakablecontractionof{
-       &\left\{
-            \bencodingofat{\connectiveof{\node}}{\headvariableof{\node},\headvariableof{\incomingnodes}} \wcols (\incomingnodes,\{\node\})\in\edges
-       \right\} \cup \\
-       & \{\identityat{\headvariableof{\atomenumerator},\catvariableof{\atomenumerator}} \wcols \atomenumeratorin\} \cup \\
-       &\left\{
-            \identityat{\headvariableof{\selindex},\headvariableof{\node_{\selindex}}} \wcols \selindexin
-       \right\}
+        &\left\{
+        \bencodingofat{\connectiveof{\node}}{\headvariableof{\node},\headvariableof{\incomingnodes}} \wcols (\incomingnodes,\{\node\})\in\edges
+        \right\} \cup \\
+        & \{\identityat{\headvariableof{\atomenumerator},\catvariableof{\atomenumerator}} \wcols \atomenumeratorin\} \cup \\
+        &\left\{
+        \identityat{\headvariableof{\selindex},\headvariableof{\node_{\selindex}}} \wcols \selindexin
+        \right\}
     }{\shortcatvariables} \, .
 \end{align*}
+In \figref{fig:ActivatedHeads} is an example of a \HybridLogicNetwork{}, which computation network is represented using \decompositionSparsity{}.
 
-\subsect{\SelectionSparsity{}}
+\subsect{\SelectionSparsity{}}\label{sec:selectionSparsityHLN}
 
-\SelectionSparsity{} is more flexible than \DecompositionSparsity, since it does not demand identical subformulas, but only an identical decomposition graph.
-The limitation of this scheme is that it can only represent weighted sums of the formulas.
-An example, where this is useful are the energy tensors of \MarkovLogicNetworks{}, for example for Boltzmann machines.
+\SelectionSparsity{} exploits formula selecting networks, which expressivity is the statistic $\mlnstat$ to a \HybridLogicNetwork{}.
+In this sense \selectionSparsity{} is more flexible than \DecompositionSparsity{}, since it does not demand identical subformulas, but only an identical decomposition graph.
+The limitation of this scheme is that it can only represent weighted sums of the formulas by contractions of the formula selecting tensor with a weight tensor.
+Such weighted sums appear in the energy tensor of \MarkovLogicNetworks{}, but note that the energy tensor of generic \HybridLogicNetworks{} is not defined.
+In \exaref{exa:boltzmannEnergySelection} we now demonstrate this representation mechanism on the energy tensors of Boltzmann machines.
+
+\begin{example}[Energy tensors of Boltzmann machines]
+    \label{exa:boltzmannEnergySelection}
+    In \secref{sec:boltzmannMachines} we have described Boltzmann machines as an example of \MarkovLogicNetworks{}, with formulas by
+    \begin{align*}
+        \formulaset = \{ \catvariableof{\atomenumerator} \Leftrightarrow \catvariableof{\secatomenumerator} \wcols \atomenumerator,\secatomenumerator \in[\atomorder] \}
+        \cup \{ \catvariableof{\atomenumerator}\wcols \atomenumeratorin \} \,
+    \end{align*}
+    To demonstrate a representation of the energy tensor of a Boltzmann machine using \SelectionSparsity{}, we now define a formula selecting network to $\formulaset$ (see \figref{fig:boltzmannEnergy}).
+    Each formula is in the expressivity of an architecture consisting of a single binary logical neuron selecting any variable of $\shortcatvariables$ in each argument and selecting connectives $\{\eqbincon,\lpasbincon\}$, where by $\lpasbincon$ we refer to a connective passing the first argument, defined for $\catindexofin{0}, \catindexofin{1}$ as
+    \begin{align*}
+        \lpasbincon[\indexedcatvariableof{0},\indexedcatvariableof{1}] = \vselectionmapat{\indexedcatvariableof{0},\indexedcatvariableof{1},\selvariableof{\vselectionsymbol}=0} \, .
+    \end{align*}
+    Given a weight matrix $W[\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}] \in\rr^{\catorder}\otimes\rr^{\catorder}$ and a bias vector $b[\selvariableof{\vselectionsymbol,0}] \in\rr^{\catorder}$ we choose a canonical parameter as
+    \begin{align*}
+        \canparamat{\selvariableof{\cselectionsymbol},\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}}
+    = \onehotmapofat{0}{\selvariableof{\cselectionsymbol}} \otimes W[\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}]
+    + \onehotmapofat{1}{\selvariableof{\cselectionsymbol}} \otimes b[\selvariableof{\vselectionsymbol,0}] \otimes  \onehotmapofat{0}{\selvariableof{\vselectionsymbol,1}} \, .
+    \end{align*}
+    We then have (see \figref{fig:boltzmannEnergy})
+    \begin{align*}
+        \energytensorofat{W,b}{\shortcatvariables} =
+    \contractionof{\fsnnat{\shortcatvariables,\selvariableof{\cselectionsymbol},\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}},
+        \canparamat{\selvariableof{\cselectionsymbol},\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}}}{\shortcatvariables} \, .
+    \end{align*}
+\end{example}
+
+\begin{figure}[t]
+    \begin{center}
+        \input{PartII/tikz_pics/network_representation/boltzmann_energy.tex}
+    \end{center}
+    \caption{Tensor network representation of the energy of a Boltzmann machine}
+    \label{fig:boltzmannEnergy}
+\end{figure}
 
 \subsect{\PolynomialSparsity{}}\label{sec:HLNpolyRepresentation}
 
-%% First occurance of bas+ tensors!
+%% First occurance of bas+ tensors and polynomial sparsity
 We now introduce a further mechanism to find sparse representation formats for the introduced hybrid logic networks, which we call \polynomialSparsity{}.
 The motivation of this mechanism is the observation, that terms and clauses can be represented storing the signs of the literals only.
 
@@ -1317,7 +1321,8 @@ We can further provide an equivalent criterion for a vertex by the satisfaction 
     Here we denote by $\lnot^0$ the identity connective and by $\lnot^1=\lnot$ the logical negation.
 \end{theorem}
 \begin{proof}
-    (i)$\Rightarrow$(ii):
+(i)
+    $\Rightarrow$(ii):
     If $\{\meanparamwith\}$ is a vertex of $\hlnmeanset$, then there is $\shortcatindices\in\atomstates$ such that % in particular $\meanparamwith\in$.
     \begin{align*}
         \meanparamwith = \sencodingofat{\formulaset}{\indexedshortcatvariables,\selvariable} \, .
@@ -1470,8 +1475,8 @@ In general, we can express any face measure by a propositional formula.
 \begin{proof}
     By \theref{the:faceMeasureCharacterization} we have
     \begin{align*}
-         \hlnfacemeasureat{\shortcatvariables}
-         =\contractionof{\mlnstatccwith,\kcoreofat{\facecondset}{\headvariables}}{\shortcatvariables}
+        \hlnfacemeasureat{\shortcatvariables}
+        =\contractionof{\mlnstatccwith,\kcoreofat{\facecondset}{\headvariables}}{\shortcatvariables}
     \end{align*}
     where
     \begin{align*}
@@ -1486,13 +1491,13 @@ In general, we can express any face measure by a propositional formula.
     Further, the formulas $\vertexformula$ have disjoint model sets and their disjunction is therefore represented by their sum.
     We therefore have
     \begin{align*}
-         \hlnfacemeasureat{\shortcatvariables}
-            &=\sum_{\meanparam\in\genfacesetof{\facecondset}\cap\imageof{\sstatencoding}} \vertexformulaat{\shortcatvariables} \\
-            &=\bigvee_{\meanparam\in\genfaceset\cap\boundaryparcube}
-            \bigwedge_{\selindexin} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables} \, . \qedhere
+        \hlnfacemeasureat{\shortcatvariables}
+        &=\sum_{\meanparam\in\genfacesetof{\facecondset}\cap\imageof{\sstatencoding}} \vertexformulaat{\shortcatvariables} \\
+        &=\bigvee_{\meanparam\in\genfaceset\cap\boundaryparcube}
+        \bigwedge_{\selindexin} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables} \, . \qedhere
     \end{align*}
 %    By representing the contraction with $\kcoreofat{\facecondset}{\sstatheadvariables}$.
- %   Any basis tensors is a disjoint propositional formulas, the vertex formula $\hlnformula$ and their sum is thus represented by the disjunction.
+    %   Any basis tensors is a disjoint propositional formulas, the vertex formula $\hlnformula$ and their sum is thus represented by the disjunction.
 \end{proof}
 
 
@@ -1501,7 +1506,8 @@ In general, we can express any face measure by a propositional formula.
 % Check: Where to define cube face and effective interior
 Based on the representation results for face measures, we now study the mean parameters of \HybridLogicNetworks{}.
 
-\begin{definition}\label{def:HLNrepMean}
+\begin{definition}
+    \label{def:HLNrepMean}
     We say that a mean parameter $\meanparamwith\in\hlnfaceset$ is reproducable by a Hybrid Logic Network in $\elrealizabledistsof{\mlnstat}$, if the minimal face of $\hlnfaceset$, which includes $\meanparamwith$ is an intersection of $\genmeanset$ and a face $\cubeface$ of the cube $\fullparcube$.
 \end{definition}
 
