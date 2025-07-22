@@ -92,16 +92,6 @@ In order to characterize the solution of the cross entropy minimization problem 
                 = \infty \, .
             \end{align*}
     \end{itemize}
-%    %$\meanparamwith\in\{0,0.5,1\}^\seldim$ we have
-%    \begin{align*}
-%        \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}
-%        = \begin{cases}
-%              -\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnformula}{\genmeanwith},\hlnformula}} & \text{if} \quad \genmeanwith \in \sbinteriorof{\meansetof{\mlnstat,\hlnformula}} \\
-%              \lim_{\meanparamofat{n}{\selvariable}\rightarrow\genmeanwith}-\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnformula}{\meanparamofat{n}{\selvariable}},\hlnformula}} & \text{if} \quad \genmeanwith \in \closureof{\meansetof{\mlnstat,\hlnformula}} \\
-%              \infty & \text{if} \quad \genmeanwith \notin \closureof{\meansetof{\mlnstat,\hlnformula}}
-%        \end{cases} \, ,
-%    \end{align*}
-%    where in the second case, $\left(\meanparamofat{n}{\selvariable}\right)_{n\in\nn}$ denotes a sequence converging coordinatewise to $\genmeanwith$, for which $\uniquantwrtof{n\in\nn}{\meanparamofat{n}{\selvariable}\in\sbinteriorof{\meansetof{\mlnstat,\hlnformula}}}$ \\
 \end{lemma}
 \begin{proof}
     See Theorem~3.4 in \cite{wainwright_graphical_2008}.
@@ -116,10 +106,8 @@ Based on this lemma we can characterize the solution of the Maximum Likelihood P
 \begin{proof}
     We exploit the parameterization of \HybridLogicNetworks{} by tuples $\hlnformulaparams$ (parametrizing the corresponding \HardLogicNetwork{}) and canonical parameters $\canparamwith$ (parametrizing the corresponding \MarkovLogicNetwork{}).
     The cross entropy minimization is then
-    %We exploit the parameterization of \HybridLogicNetworks{} by hard parameters $\meanparamwith\in\{0,0.5,1\}^\seldim$ and by soft parameters $\canparamwithin$, to express \probref{prob:minCrossEntropyHLN} as
     \begin{align*}
         \min_{\variableset\subset[\seldim]}\min_{\headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]} \left(\min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}\right) \, .
-%        \min_{\meanparamwith\in\{0,0.5,1\}^\seldim}\, .
     \end{align*}
     For any pair $\variableset,\headindexof{\variableset}$ we apply the lemma above and get a characterization of the inner minimum
     \begin{align*}
@@ -198,126 +186,92 @@ We can instead state a Maximum Likelihood Problem over $\maxrealizabledistsof{\m
 %%\end{proof}
 
 
-\sect{Alternating Algorithms to Approximate the Backward Map}\label{sec:alternatingParEstMLN}
+\sect{Alternating Algorithms for Parameter Estimation}\label{sec:alternatingParEstMLN}
 
-Let us now introduce an implementation of the Alternating Moment Matching Algorithm~\ref{alg:AMM} in case of \MarkovLogicNetworks{}.
+Parameter estimation is the Maximum Likelihood Problem for exponential families.
+It is solved by the backward map, when the mean parameter is in the interior of the mean parameter polytope.
+
+\subsect{\MarkovLogicNetworks{}}
+
+In case of boolean statistics, we can provide a particular simple implementation of the Alternating Moment Matching Algorithm~\ref{alg:AMM}.
+%The moment matching condition of \lemref{lem:mmContractionEquation} simplifies as follows.
 To solve the moment matching condition at a formula $\enumformula$ we refine \lemref{lem:mmContractionEquation} in the following.
 
 \begin{lemma}
     \label{ref:lemMMinMLN}
     Let there be a base measure $\basemeasure$, a formula selecting map $\formulaset=\{\enumformula \, : \, \selindexin\}$ and a canonical parameter $\canparam$, and choose $\selindexin$ such that $\enumformula  \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
-    The moment matching condition relative to $\canparam$, $\selindexin$ and $\datameanat{\indexedselvariable}\in(0,1)$ is then satisfied, if
+    The moment matching condition relative to $\canparamwith$, and $\datameanat{\indexedselvariable}\in(0,1)$ is then satisfied, if for all $\selindexin$
     \begin{align}
         \label{sol:momentMatchingExformula}
         \indexedcanparam = \lnof{
             \frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})}
-            \cdot \frac{\hypercoreat{\catvariableof{\enumformula }=0}}{\hypercoreat{\catvariableof{\enumformula }=1}}
+            \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
         }
     \end{align}
-    where by $\hypercoreat{\catvariableof{\enumformula }}$ we denote the contraction
+    where by $\hypercoreat{\headvariableof{\selindex}}$ we denote the contraction
     \begin{align*}
-        \hypercoreat{\catvariableof{\enumformula}}
-        = \contractionof{\{\bencodingof{\enumformula} \, : \, \selindexin\}
-        \cup\{\actcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
-        \cup\{\basemeasure\}}{\catvariableof{\enumformula}} \, .
+        \hypercoreat{\headvariableof{\selindex}}
+        = \contractionof{\{\bencodingof{\enumformula} \wcols \selindexin\}
+        \cup\{\actcoreof{\tilde{\selindex},\canparamat{\selvariable=\tilde{\selindex}}} \wcols \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
+        \cup\{\basemeasure\}}{\headvariableof{\selindex}} \, .
     \end{align*}
 \end{lemma}
 \begin{proof}
     Since $\imageof{\enumformula}\subset[2]$ we have
     \begin{align*}
-        \idrestrictedto{\imageof{\enumformula}} = \onehotmapofat{1}{\catvariableof{\enumformula}}
+        \idrestrictedto{\imageof{\enumformula}} = \onehotmapofat{1}{\headvariableof{\selindex}}
     \end{align*}
     and the moment matching condition is by \lemref{lem:mmContractionEquation} satisfied if
     \begin{align*}
-        \contraction{\actcoreof{\selindex}, \onehotmapof{1}, \hypercore}
-        = \contraction{\actcoreof{\selindex},\hypercore} \cdot \datameanat{\indexedselvariable} \, .
+        \contraction{\actcorewith, \onehotmapofat{1}{\headvariableof{\selindex}}, \hypercoreat{\headvariableof{\selindex}}}
+        = \contraction{\actcorewith,\hypercoreat{\headvariableof{\selindex}}} \cdot \datameanat{\indexedselvariable} \, .
     \end{align*}
     This is equal to
     \begin{align*}
-        \expof{\canparamat{\indexedselvariable}} \cdot \hypercoreat{\catvariableof{\enumformula}=1}
-        = \left( \expof{\canparamat{\indexedselvariable}} \cdot \hypercoreat{\catvariableof{\enumformula}=1} + \hypercoreat{\catvariableof{\enumformula}=0} \right) \cdot \datameanat{\indexedselvariable} \, .
+        \expof{\canparamat{\indexedselvariable}} \cdot \hypercoreat{\headvariableof{\selindex}=1}
+        = \left( \expof{\canparamat{\indexedselvariable}} \cdot \hypercoreat{\headvariableof{\selindex}=1} + \hypercoreat{\headvariableof{\selindex}=0} \right) \cdot \datameanat{\indexedselvariable} \, .
     \end{align*}
     Rearranging the equations this is equal to
     \begin{align*}
-        \hypercoreat{\catvariableof{\enumformula}}
+        \hypercoreat{\headvariableof{\selindex}}
         = \contractionof{\{\bencodingof{\enumformula}\}
         \cup\{\actcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
         \cup\{\basemeasure\}}{\selvariable} \, .
     \end{align*}
-    We notice that the right side is well defined, since we have by assumption $\datameanat{\indexedselvariable}, (1- \datameanat{\indexedselvariable}) \neq 0$ and $\hypercoreat{\catvariableof{\enumformula}=0}, \hypercoreat{\catvariableof{\enumformula}=1} \neq 0$ since \MarkovLogicNetworks{} are positive distributions and $\enumformula \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
+    We notice that the right side is well defined, since we have by assumption $\datameanat{\indexedselvariable}, (1- \datameanat{\indexedselvariable}) \neq 0$ and $\hypercoreat{\headvariableof{\selindex}=0}, \hypercoreat{\headvariableof{\selindex}=1} \neq 0$ since \MarkovLogicNetworks{} are positive distributions and $\enumformula \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
 \end{proof}
 
+We now investigate, for which mean parameters the moment matching equations are satisfiable.
 
-%% Hard network reference!
-In the case $\datameanat{\indexedselvariable}\in\{0,1\}$ the moment matching conditions are not satisfiable for $\canparamat{\indexedselvariable}\in\rr$.
-But, we notice, that in the limit $\canparamat{\indexedselvariable}\rightarrow \infty $ (respectively $-\infty$) we have
-\[ \meanparamat{\indexedselvariable} \rightarrow  1 \quad \text{(respectively $0$)}\, ,  \]
-and the moment matching can be satisfied up to arbitrary precision.
-In \secref{sec:hardNetworks} we will allow infinite weights and interpret the corresponding factors by logical formulas.
-As a consequence, we will able to fit graphical models, which we will call hybrid networks on arbitrary satisfiable mean parameters.
-
-%
-The cases $\hypercoreat{\catvariableof{\enumformula}=1}=0$, respectively $\hypercoreat{\catvariableof{\enumformula}=1}=0$ only appear for nontrivial formulas when the distribution is not positive.
-This is not the case for \MarkovLogicNetworks{}, but will happen when formulas are added as cores of a Markov Network.
-This situation will has been investigated in \secref{sec:hardNetworks}.
+\begin{lemma}
+    The moment matching conditions of \lemref{ref:lemMMinMLN} are satisfied for some $\canparamwith$, if and only if $\meanparamwith\in\sbinteriorof{\hlnmeanset}$.
+\end{lemma}
 
 
-% Concave likelihood 
-Since the likelihood is concave (see \cite{koller_probabilistic_2009}), there are not local maxima the coordinate descent could run into and coordinate descent will give a monotonic improvement of the likelihood.
+Let us now introduce an implementation of the Alternating Moment Matching Algorithm~\ref{alg:AMM} in case of \MarkovLogicNetworks{}.
+Note that while $\uniquantwrtof{\selindexin}{\meanparamat{\indexedselvariable}\notin\{0,1\}}$ ensures the well-definedness of the algorithm (otherwise the update could not be computed), it is only a necessary but not always sufficient criterion for the existence of a solution.
 
-We suggest an alternating optimization by Algorithm~\ref{alg:AWO}, solving the moment matching equation iteratively for all formulas $\exformulain$ and repeat the optimization until a convergence criterion is met.
-This is an coordinate ascent algorithm, when interpreted the loss $\lossof{\expdist}$ as an objective depending on the vector $\canparam$.
 
 \begin{algorithm}[hbt!]
-    \caption{Alternating Weight Optimization (AWO)}\label{alg:AWO} % Call it parameter instead?
+    \caption{Alternating Moment Matching for Markov Logic Networks}\label{alg:AMM_MLN}
     \begin{algorithmic}
-%% INPUT: Numerated formula set, mean parameter $\datameanat{\selvariable}$
-%\For{$\exformula\in\formulaset$}
-        \Require Empirical distribution $\empdistribution$, boolean features $\mlnstat$ %and base measure $\basemeasure$
+        \Require Mean parameter $\meanparamwith$ with $\uniquantwrtof{\selindexin}{\meanparamat{\indexedselvariable}\notin\{0,1\}}$
         \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\expfamily$
         \hrule
-        \State Compute $\datameanat{\selvariable}= \contractionof{\empdistribution,\sencsstat}{\selvariable}$
-        \State $\kb = \ones$, $\secnodes=\varnothing$
-        \For{$\selindexin$}
-            \If{$\meanparamat{\indexedselvariable}=1$}
-                \[ \hardformulaset \algdefsymbol \hardformulaset \cup \{\enumformula\}\]
-            \ElsIf
-                    {$\meanparamat{\indexedselvariable}=0$}
-                \[ \hardformulaset \algdefsymbol \hardformulaset \cup \{\lnot\enumformula\}\]
-            \Else
-                \State $\secnodes\algdefsymbol \secnodes \cup \{\selindex\}$
-            \EndIf
-        \EndFor
-        \For{$\selindex\in\secnodes$}
-            \State Compute
-            \[ \hypercoreat{\catvariableof{\enumformula}}
-            \algdefsymbol \contractionof{\bencodingof{\enumformula}}{\catvariableof{\enumformula}} \]
-            \State Set
-            \begin{align*}
-                \canparamat{\indexedselvariable}
-                \algdefsymbol \lnof{
-                    \frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})}
-                    \cdot \frac{\hypercoreat{\catvariableof{\enumformula}=0}}{\hypercoreat{\catvariableof{\enumformula}=1}}
-                }
-            \end{align*}
-        \EndFor
-        \If {$\contraction{\kb}=0$}
-            \State \textbf{raise} "Inconsistent Knowledge Base"
-        \EndIf
         \While{Convergence criterion is not met}
             \For{$\selindex\in\secnodes$}
                 \State Compute
                 \begin{align*}
-                    \hypercoreat{\catvariableof{\enumformula}}
+                    \hypercoreat{\headvariableof{\selindex}}
                     = \contractionof{\{\bencodingof{\enumformula} \, : \, \selindexin\}
-                    \cup\{\actcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
-                    \cup\{\basemeasure\}}{\catvariableof{\enumformula}}
+                    \cup\{\actcoreof{\tilde{\selindex}} \wcols \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
+                    \cup\{\basemeasure\}}{\headvariableof{\selindex}}
                 \end{align*}
                 \State Set
                 \begin{align*}
                     \canparamat{\indexedselvariable} = \lnof{
-                        \frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})}
-                        \cdot \frac{\hypercoreat{\catvariableof{\enumformula}=0}}{\hypercoreat{\catvariableof{\enumformula}=1}}
+                        \frac{\meanparamat{\indexedselvariable}}{(1-\meanparamat{\indexedselvariable})}
+                        \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
                     }
                 \end{align*}
             \EndFor
@@ -326,27 +280,134 @@ This is an coordinate ascent algorithm, when interpreted the loss $\lossof{\expd
     \end{algorithmic}
 \end{algorithm}
 
-%
-\red{The canonical parameters in \algoref{alg:AWO} converge, if and only if the mean parameter $\genmeanwith$ is reproducable by a Hybrid Logic Network.}
-
-
 % Independent formulas
-In the initialization phase of Algorithm~\ref{alg:AWO}, each parameters is initialized relative to a uniform distribution.
+In the initialization phase of \algoref{alg:AMM_MLN}, each parameters is initialized relative to a uniform distribution.
 The algorithm would be finished, if the variables $\catvariableof{\exformula}$ are independent.
 This would be the case, if the \MarkovLogicNetwork{} consists of atomic formulas only.
 When they fail to be independent, the adjustment of the weights influence the marginal distribution of other formulas and we need an alternating optimization.
-% 
+%
 This situation corresponds with couplings of the weights by a partition contraction, which does not factorize into terms to each formula.
 
+% Concave likelihood
+Since the likelihood is concave (see \cite{koller_probabilistic_2009}), there are not local maxima the coordinate descent could run into and coordinate descent will give a monotonic improvement of the likelihood.
 
-% Inference
-\red{
-    Solving Equation~\ref{sol:momentMatchingExformula} requires inference of a current model by answering a query.}
+% Inference in inner loop
+Solving Equation~\ref{sol:momentMatchingExformula} requires inference of a current model by answering a query.
 This can be a bottleneck and circumvented by approximative inference, see e.g. CAMEL \cite{ganapathi_constrained_2008}.
 
+\subsect{\HybridLogicNetworks{}}
+
+We now extend the alternating parameter estimation algorithm to \HybridLogicNetworks{}, by allowing for mean parameters on the interior of cube faces.
+
+\begin{lemma}
+    The moment matching conditions of \lemref{ref:lemMMinMLN} are satisfied for some $\canparamwith$, if and only if $\meanparamwith$ is on the interior of a cube face of $\hlnmeanset$.
+\end{lemma}
+
+\begin{algorithm}[hbt!]
+    \caption{Alternating Moment Matching for Hybrid Logic Networks}
+    \begin{algorithmic}
+        \Require Mean parameter $\meanparamwith$ % with $\uniquantwrtof{\selindexin}{\meanparamat{\indexedselvariable}\notin\{0,1\}}$
+        \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\hlnsetof{\formulaset}$
+        \hrule
+        \State Set
+            \[ \variableset = \Big\{ \selindex \wcols \selindexin \ncond \meanparamat{\indexedselvariable}\in\{0,1\} \Big\}\]
+            and a tuple $\headindexof{\variableset}$ with $\headindexof{\selindex}=\meanparamat{\indexedselvariable}$ for $\selindex\in\variableset$ .
+%            \[ \variableset = \Big\{ \selindex \wcols \selindexin \ncond \meanparamat{\indexedselvariable}\in\{0,1\} \Big\}\]
+        \State \Return AMM in case of Markov Logic Networks with base measure by $\exformulaof{\variableset,\headindexof{\variableset}}$
+    \end{algorithmic}
+\end{algorithm}
 
 
-\begin{remark}[Grouping of coordinates with trivial sum]
+
+
+
+%\sect{Alternating Algorithms to Approximate the Backward Map}
+
+%%% Hard network reference!
+%In the case $\datameanat{\indexedselvariable}\in\{0,1\}$ the moment matching conditions are not satisfiable for $\canparamat{\indexedselvariable}\in\rr$.
+%But, we notice, that in the limit $\canparamat{\indexedselvariable}\rightarrow \infty $ (respectively $-\infty$) we have
+%\[ \meanparamat{\indexedselvariable} \rightarrow  1 \quad \text{(respectively $0$)}\, ,  \]
+%and the moment matching can be satisfied up to arbitrary precision.
+%In \secref{sec:hardNetworks} we will allow infinite weights and interpret the corresponding factors by logical formulas.
+%As a consequence, we will able to fit graphical models, which we will call hybrid networks on arbitrary satisfiable mean parameters.
+
+%%
+%The cases $\hypercoreat{\headvariableof{\selindex}=1}=0$, respectively $\hypercoreat{\headvariableof{\selindex}=1}=0$ only appear for nontrivial formulas when the distribution is not positive.
+%This is not the case for \MarkovLogicNetworks{}, but will happen when formulas are added as cores of a Markov Network.
+%This situation will has been investigated in \secref{sec:hardNetworks}.
+
+%
+%We suggest an alternating optimization by Algorithm~\ref{alg:AWO}, solving the moment matching equation iteratively for all formulas $\exformulain$ and repeat the optimization until a convergence criterion is met.
+%This is an coordinate ascent algorithm, when interpreted the loss $\lossof{\expdist}$ as an objective depending on the vector $\canparam$.
+%
+%\begin{algorithm}[hbt!]
+%    \caption{Alternating Weight Optimization (AWO)}\label{alg:AWO} % Call it parameter instead?
+%    \begin{algorithmic}
+%%% INPUT: Numerated formula set, mean parameter $\datameanat{\selvariable}$
+%%\For{$\exformula\in\formulaset$}
+%        \Require Empirical distribution $\empdistribution$, boolean features $\mlnstat$ %and base measure $\basemeasure$
+%        \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\expfamily$
+%        \hrule
+%        \State Compute $\datameanat{\selvariable}= \contractionof{\empdistribution,\sencsstat}{\selvariable}$
+%        \State $\kb = \ones$, $\secnodes=\varnothing$
+%        \For{$\selindexin$}
+%            \If{$\meanparamat{\indexedselvariable}=1$}
+%                \[ \hardformulaset \algdefsymbol \hardformulaset \cup \{\enumformula\}\]
+%            \ElsIf
+%                    {$\meanparamat{\indexedselvariable}=0$}
+%                \[ \hardformulaset \algdefsymbol \hardformulaset \cup \{\lnot\enumformula\}\]
+%            \Else
+%                \State $\secnodes\algdefsymbol \secnodes \cup \{\selindex\}$
+%            \EndIf
+%        \EndFor
+%        \For{$\selindex\in\secnodes$}
+%            \State Compute
+%            \[ \hypercoreat{\headvariableof{\selindex}}
+%            \algdefsymbol \contractionof{\bencodingof{\enumformula}}{\headvariableof{\selindex}} \]
+%            \State Set
+%            \begin{align*}
+%                \canparamat{\indexedselvariable}
+%                \algdefsymbol \lnof{
+%                    \frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})}
+%                    \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
+%                }
+%            \end{align*}
+%        \EndFor
+%        \If {$\contraction{\kb}=0$}
+%            \State \textbf{raise} "Inconsistent Knowledge Base"
+%        \EndIf
+%        \While{Convergence criterion is not met}
+%            \For{$\selindex\in\secnodes$}
+%                \State Compute
+%                \begin{align*}
+%                    \hypercoreat{\headvariableof{\selindex}}
+%                    = \contractionof{\{\bencodingof{\enumformula} \, : \, \selindexin\}
+%                    \cup\{\actcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
+%                    \cup\{\basemeasure\}}{\headvariableof{\selindex}}
+%                \end{align*}
+%                \State Set
+%                \begin{align*}
+%                    \canparamat{\indexedselvariable} = \lnof{
+%                        \frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})}
+%                        \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
+%                    }
+%                \end{align*}
+%            \EndFor
+%        \EndWhile
+%        \State \Return $\canparamwith$
+%    \end{algorithmic}
+%\end{algorithm}
+
+%
+%\red{The canonical parameters in \algoref{alg:AWO} converge, if and only if the mean parameter $\genmeanwith$ is reproducable by a Hybrid Logic Network.}
+
+
+
+
+
+
+
+\begin{remark}[Grouping of partition statistics]
     When having a set of coordinates, such that the coordinate functions are boolean and sum to the trivial tensor, one can find simultaneous updates to the canonical parameters, such that the partition function is staying invariant.
     Given a parameter $\canparam^t$ we compute
     \[ \meanparam^t = \contractionof{\expdistof{(\sstat,\canparam^t)}, \sstat}{\selvariable} \]
@@ -676,7 +737,7 @@ Here we denote by $\canparam$ the first $\cardof{\formulaset}$ coordinates of th
         &\argmin_{\formula\in\fselectionmap} \left( \argmin_{\canparam\in\rr^{\cardof{\formulaset}+1}}
         \centropyof{\empdistribution}{\expdistof{(\formulaset\cup\{\formula\},\canparam,\basemeasure)}} \right) \\
         &\quad \leq    \argmin_{\formula\in\fselectionmap} \left ( \argmin_{\canparamat{\cardof{\formulaset}}\in\rr}
-        \centropyof{\empdistribution}{\expdistof{(\formulaset\cup\{\formula\},\canparam,\basemeasure)}} \right) \, .
+        \centropyof{\empdistribution}{\expdistof{(\formulaset\cup\{\formula\},\canparam,\basemeasure)}} \right) \, . \qedhere
     \end{align*}
 \end{proof}
 
@@ -763,7 +824,9 @@ We state the solution of this condition in the next theorem.
     By definition, this is the Kullback-Leibler divergence between Bernoulli distributions with parameters $\datamean$ and $\currentmean$.
     %
     Since the gain in the likelihood loss when restricting to $\energyhypothesis = \spanof{\formula}$ is thus given by $\kldivof{\contraction{\empdistribution,\formula}}{\contraction{\currentdistribution,\formula}}$, we have that Problem~\ref{prob:restrictedNaiveCE}  in the case $\energyhypothesis = \bigcup_{\formula\in\formulaset}\spanof{\formula}$ is solved at $\estcanparam = \weightof{\hat{\formula}}\cdot \hat{\formula}$ where
-    \[ \hat{\formula} = \kldivof{\contraction{\empdistribution,\formula}}{\contraction{\currentdistribution,\formula}} \, . \]
+    \begin{align*}
+        \hat{\formula} = \kldivof{\contraction{\empdistribution,\formula}}{\contraction{\currentdistribution,\formula}} \, . & \qedhere
+    \end{align*}
 \end{proof}
 
 \red{Thus, we solve the grain heuristic with a coordinatewise transform of the mean parameter tensors to $\empdistribution$ and $\currentdistribution$, using the Bernoulli Kullback-Leibler divergence as transform function.}

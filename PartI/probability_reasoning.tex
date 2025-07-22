@@ -1117,7 +1117,7 @@ In general, we find a $\cpformat$ decomposition to the face measure as sketched 
     \caption{
         Tensor network decomposition of maximum entropy distributions to the constraint $\meanparamat{\selvariable}=\contractionof{\probtensor,\sencsstat}{\selvariable}$.
         Blue: Constraint activation cores $\conactcoreof{\selindex}$ in an $\cpformat$ decomposition, representing the face measure to the minimal face, such that $\meanparam\in\genfacesetof{\facecondset}$.
-        Red: Probabilistic activation cores $\actcoreof{\selindex}$ in an elementary decomposition, where each leg core is a scaled exponentials evaluated on the enumerated image $\imageof{\sstatcoordinateof{\selindex}}$.
+        Red: Probabilistic activation cores $\actcorewith$ in an elementary decomposition, where each leg core is a scaled exponentials evaluated on the enumerated image $\imageof{\sstatcoordinateof{\selindex}}$.
     }\label{fig:maxEntropyActcore}
 \end{figure}
 
@@ -1966,44 +1966,49 @@ This condition is equal to the collection of moment matching equations % (see \t
     \label{lem:mmContractionEquation}
     For any sufficient statistic $\sstat$ a parameter vector $\canparam$ and an index $\selindexin$ we define
     \begin{align*}
-        \hypercoreat{\catvariableof{\sstatcoordinateof{\selindex}}}
-        = \contractionof{\{\sstatcc\}\cup\{\actcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}}{\catvariableof{\sstatcoordinateof{\selindex}}} \, .
+        \hypercoreat{\headvariableof{\selindex}}
+        = \contractionof{\{\sstatccwith\}\cup\{\actcoreofat{\tilde{\selindex},\canparamat{\selvariable=\tilde{\selindex}}}{\headvariableof{\tilde{\selindex}}} \wcols \tilde{\selindex} \in [\seldim] \ncond \tilde{\selindex}\neq\selindex\} \cup \{\basemeasurewith\}}{\headvariableof{\selindex}} \, .
     \end{align*}
     Then the moment matching condition for $\sstatcoordinateof{\selindex}$ relative to $\canparam$ and $\meanparam$ is satisfied for any $\canparamat{\indexedselvariable}$ with
     \begin{align*}
-        \contraction{\actcoreof{\selindex}, \idrestrictedto{\imageof{\sstatcoordinateof{\selindex}}}, \hypercoreat{\selvariable_\sstat}}
-        = \contraction{\actcoreof{\selindex}, \hypercoreat{\selvariable_\sstat}} \cdot \meanparamat{\indexedselvariable} \, .
+        \contraction{\actcorewith, \indinttensorofat{\selindex}{\headvariableof{\selindex}}, \hypercoreat{\headvariableof{\selindex}}}
+        = \contraction{\actcorewith, \hypercoreat{\headvariableof{\selindex}}} \cdot \meanparamat{\indexedselvariable} \, .
     \end{align*}
 \end{lemma}
 \begin{proof}
     We have
     \begin{align*}
         \expdist = \frac{
-            \contractionof{\actcoreof{\selindex}, \hypercore}{\shortcatvariables}
+            \contractionof{\actcorewith,\hypercoreat{\headvariableof{\selindex}}}{\shortcatvariables}
         }{
-            \contraction{\actcoreof{\selindex}, \hypercore}
+            \contraction{\actcorewith,\hypercoreat{\headvariableof{\selindex}}}
         }
     \end{align*}
     and
     \begin{align*}
-        \contraction{\expdist, \sstatcoordinateof{\selindex}}
+        \contraction{\expdist,\sstatcoordinateof{\selindex}}
         = \frac{
-            \contractionof{\actcoreof{\selindex}, \idrestrictedto{\imageof{\sstatcoordinateof{\selindex}}}, \hypercore}{\shortcatvariables}
+            \contractionof{\actcorewith,\indinttensorofat{\selindex}{\headvariableof{\selindex}}, \hypercoreat{\headvariableof{\selindex}}}{\shortcatvariables}
         }{
-            \contraction{\actcoreof{\selindex}, \hypercore}
+            \contraction{\actcorewith, \hypercoreat{\headvariableof{\selindex}}}
         } \, .
     \end{align*}
-    Here we used
-    \[ \sstatcoordinateof{\selindex} = \contractionof{\actcoreof{\selindex}, \idrestrictedto{\imageof{\sstatcoordinateof{\selindex}}}}{\shortcatvariables} \]
+    Here we used (see \corref{cor:rhoToNormal})
+    \begin{align*}
+        \sstatcoordinateof{\selindex}
+        = \contractionof{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables},\indinttensorofat{\selindex}{\headvariableof{\selindex}}}{\shortcatvariables}
+    \end{align*}
+    %\[ \sstatcoordinateof{\selindex} = \contractionof{\actcorewith, \indinttensorofat{\selindex}{\headvariableof{\selindex}}}{\shortcatvariables} \]
     and redundancies of copies of basis encodings.
     It follows that
     \begin{align*}
-        \contraction{\expdist,\sstatcoordinateof{\selindex}} = \contraction{\empdistribution,\sstatcoordinateof{\selindex}}
+        \contraction{\expdist,\sstatcoordinateof{\selindex}} 
+        = \contraction{\empdistribution,\sstatcoordinateof{\selindex}}
     \end{align*}
     is equal to
     \begin{align*}
-        \contraction{\actcoreof{\selindex}, \idrestrictedto{\imageof{\sstatcoordinateof{\selindex}}}, \hypercoreat{\catvariableof{\sstatcoordinateof{\selindex}}}}
-        = \contraction{\actcoreof{\selindex},\hypercoreat{\catvariableof{\sstatcoordinateof{\selindex}}}} \cdot \meanparamat{\indexedselvariable} \, . & \qedhere
+        \contraction{\actcorewith, \indinttensorofat{\selindex}{\headvariableof{\selindex}}, \hypercoreat{\headvariableof{\selindex}}}
+        = \contraction{\actcorewith,\hypercoreat{\headvariableof{\selindex}}} \cdot \meanparamat{\indexedselvariable} \, . & \qedhere
     \end{align*}
 \end{proof}
 
@@ -2026,13 +2031,13 @@ Since the log likelihood is concave, the algorithm converges to a global minimum
             \For{$\selindexin$}
                 \State Compute
                 \begin{align*}
-                    \hypercoreofat{\selindex}{\catvariableof{\sstatcoordinateof{\selindex}}}
-                    \algdefsymbol \contractionof{\{\sstatcc\}\cup\{\actcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}}{\catvariableof{\sstatcoordinateof{\selindex}}}
+                    \hypercoreofat{\selindex}{\headvariableof{\selindex}}
+                    \algdefsymbol \contractionof{\{\sstatcc\}\cup\{\actcoreof{\tilde{\selindex},\canparamat{\selvariable=\tilde{\selindex}}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}}{\headvariableof{\selindex}}
                 \end{align*}
                 \State Set $\canparamat{\indexedselvariable}$ to a solution of
                 \begin{align*}
-                    \contraction{\actcoreof{\selindex},\idrestrictedto{\imageof{\sstatcoordinateof{\selindex}}},\hypercoreof{\selindex}}
-                    = \contraction{\actcoreof{\selindex},\hypercoreof{\selindex}} \cdot \datameanat{\indexedselvariable} \, .
+                    \contraction{\actcorewith,\indinttensorofat{\selindex}{\headvariableof{\selindex}},\hypercoreof{\selindex}}
+                    = \contraction{\actcorewith,\hypercoreof{\selindex}} \cdot \datameanat{\indexedselvariable} \, .
                 \end{align*}
             \EndFor
         \EndWhile
