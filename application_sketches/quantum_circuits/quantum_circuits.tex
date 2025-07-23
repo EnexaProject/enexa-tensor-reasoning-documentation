@@ -11,7 +11,7 @@
     linkcolor=gray,
     citecolor=gray,
     urlcolor=gray,
-    pdftitle={The Tensor Network Approach to Efficient and Explainable AI},
+    pdftitle={},
     pdfauthor={Alex Goessmann}
 }
 
@@ -63,14 +63,22 @@
 \newcommand{\red}[1]{\textcolor{red}{#1}}
 
 \begin{document}
-    \title{Quantum Circuits as Contraction providers for \tnreason}
+    \title{Quantum Circuits for \tnreason}
 
     \maketitle
     \date{\today}
 
     By its central axioms, quantum mechanics of multiple qubits is formulated by tensors capturing states and discrete time evolutions.
-    Quantum circuits are contractions of multiple tensors and therefore tensor networks, and measurement probabilities are given by contractions.
+    Motivated by the structural similarity, we investigate how quantum circuits can be utilized for the tensor-network based approach towards efficient and explainable AI in the \tnreason framework.
+
+    We follow two main ideas:
+    \begin{itemize}
+        \item \textbf{Sampling of Computation Activation Networks:} Prepare quantum states, which measurement statistics can be utilized to prepare samples from Computation Activation Networks.
+        \item \textbf{Quantum Circuits as Contraction providers:} Quantum circuits are contractions of multiple tensors and therefore tensor networks, and measurement probabilities are given by contractions.
     Here we investigate how we can exploit these as contraction provider for \tnreason.
+    \end{itemize}
+
+
 
 
     \section{Comparing tensor networks and quantum circuits}
@@ -121,33 +129,45 @@
 
     \subsection{Coordinate encoding}
 
+    In [Low et al. - Quantum Inference on Bayesian Networks] the q-sample of a distribution is introduced:
+
     \begin{definition}
-        Given a function $\probtensor:\atomstates\rightarrow\rr^+$ with $\contraction{\probtensor}=1$ the coordinate encoding quantum state is
+        Given a probability distribution $\probtensor:\atomstates\rightarrow\rr^+$ (i.e. $\contraction{\probtensor}=1$) its q-sample state is
         \begin{align*}
             \psi^\probtensor[\shortcatvariables] = \sum_{\shortcatindicesin} \sqrt{\probat{\indexedshortcatvariables}} \cdot \onehotmapofat{\shortcatindices}{\shortcatvariables} \, .
         \end{align*}
     \end{definition}
 
-    This coincides with the q-sample scheme of encoding in [Low et al. - Quantum Inference on Bayesian Networks].
+    The q-sample coincides with the coordinate encoding of $\sqrt{\probtensor}$ (see Chapter Coordinate Calculus).
+    It prepares a scheme to realize property 1 (purity) + 2 (q-sampling) of a qpdf, but fails to realize property 3 (q-stochasticity).
+    The q-sample can be prepared for Bayesian Networks, where each child qubit is prepared densely by C-NOTs conditioning on parent qubits.
 
     \subsection{Basis encoding}
-    
+
+    We here suggest a quantum pendant to basis encodings (see Chapter Basis Calculus), which has the decomposition by contraction property.
+
     \begin{definition}
-        Given a function $\exfunction:\atomstates\rightarrow\bigtimes_{\selindexin}[2]$ the basis encoding circuit is the unitary tensor
+        Given a boolean function $\exfunction:\atomstates\rightarrow[2]$ the basis encoding circuit is the unitary tensor
         \begin{align*}
             &U^{\exfunction}[\indexedcatvariableof{\insymbol,[\atomorder]},\indexedcatvariableof{\outsymbol,[\atomorder]},\headvariableof{\insymbol,\exfunction},\headvariableof{\outsymbol,\exfunction}] \\
             &\quad=
             \begin{cases}
-                0[\headvariableof{\insymbol},\headvariableof{\outsymbol}]
-                & \text{if} \quad \catvariableof{\insymbol,[\atomorder]}\neq\catvariableof{\outsymbol,[\atomorder]} \\
-                \onehotmapofat{0}{\headvariableof{\insymbol}} \otimes \onehotmapofat{\exfunctionat{\indexedcatvariableof{\insymbol,[\atomorder]}}}{\headvariableof{\outsymbol,\exfunction}}
-                +(\onesat{\headvariableof{\insymbol}}-\onehotmapofat{0}{\headvariableof{\insymbol}}) \otimes \onehotmapofat{\lnot\exfunctionat{\indexedcatvariableof{\insymbol,[\atomorder]}}}{\headvariableof{\outsymbol,\exfunction}}
-                & \text{else}
+                \zerosat{\headvariableof{\insymbol},\headvariableof{\outsymbol}}
+                & \text{if} \quad \catindexof{\insymbol,[\atomorder]}\neq\catindexof{\outsymbol,[\atomorder]} \\
+                \onesat{\headvariableof{\insymbol},\headvariableof{\outsymbol}} - \identityat{\headvariableof{\insymbol},\headvariableof{\outsymbol}}
+                & \text{if} \quad \exfunctionof{\catindexof{\insymbol,[\atomorder]}} == 1 \\
+                \identityat{\headvariableof{\insymbol},\headvariableof{\outsymbol}}
+                & \text{if} \quad \exfunctionof{\catindexof{\insymbol,[\atomorder]}} == 0 \\
             \end{cases}
         \end{align*}
     \end{definition}
 
-    Here by $\lnot\exfunction$ we denote an arbitrary function which never coincides with $\exfunction$.
+    Notice, that $U^{\lnot} = \mathrm{CNOT}$, which is obvious from $\onesat{\headvariableof{\insymbol},\headvariableof{\outsymbol}} - \identityat{\headvariableof{\insymbol},\headvariableof{\outsymbol}}$ being the Pauli-X gate (not to be confused with $X$ denoting distributed variables here).
+    The basis encoding circuit is therefore a generalized controlled $\mathrm{NOT}$ gate, where the control is by a boolean function.
+
+    Functions with multiple output variables, i.e. $\exfunction:\atomstates\rightarrow\bigtimes_{\selindexin}[2]$, can be encoded image coordinate wise as a concatenation of the respective circuits.
+
+    \subsubsection{Composition by Contraction}
 
     The decomposition by contraction property of basis encodings is now a composition of circuits property, as stated in the next lemma.
 
@@ -158,14 +178,19 @@
             = \breakablecontractionof{
             &\onehotmapofat{0}{\headvariableof{\insymbol,\exfunction}},\\
             &U^{\exfunction}[\catvariableof{\insymbol,[\atomorder]},\catvariableof{\outsymbol,[\atomorder]},\headvariableof{\insymbol,\exfunction},\headvariableof{\outsymbol,\exfunction}],\\
-            &U^{\secexfunction}[\headvariableof{\outsymbol,\exfunction},\headvariableof{\outsymbol,},\headvariableof{\insymbol,\secexfunction\circ\exfunction},\headvariableof{\outsymbol,\secexfunction\circ\exfunction}]
+            &U^{\secexfunction}[\headvariableof{\outsymbol,\exfunction},\headvariableof{\outsymbol,\mathrm{aux}},\headvariableof{\insymbol,\secexfunction\circ\exfunction},\headvariableof{\outsymbol,\secexfunction\circ\exfunction}]
             }{
             \catvariableof{\insymbol,[\atomorder]},\catvariableof{\outsymbol,[\atomorder]},\headvariableof{\insymbol,\secexfunction\circ\exfunction},\headvariableof{\outsymbol,\secexfunction\circ\exfunction}
             } \, .
         \end{align*}
     \end{lemma}
 
-    Concatenating two basis encoding circuits is the basis encoding circuit of their modulus 2 sum.
+    Note, that the variables $\headvariableof{\outsymbol,\mathrm{aux}}$ are auxiliar and not left open in the contraction.
+    This amounts to not measuring them.
+
+    \subsubsection{Construction for mod2-basis+ CP decompositions}
+
+    Concatenating two basis encoding circuits is the basis encoding circuit of their mod2 sum.
 
     A basis+ elementary function can be encoded by a single controlled NOT operation with auxiliary X qubits.
 
@@ -178,6 +203,20 @@
             = \bigoplus_{(\variableset,\catindexof{\variableset})\in\sliceset} \contractionof{\onehotmapofat{\catindexof{\variableset}}{\catvariableof{\variableset}}}{\indexedshortcatvariables} \, .
         \end{align*}
     \end{definition}
+
+    Using that basis CP decompositions are a special case of basis+ CP decompositions, we get the following rank bound.
+
+    \begin{lemma}
+        The mod2-basis+ CP rank is bounded by the basis CP rank.
+    \end{lemma}
+    \begin{proof}
+        Use $\variableset=[\atomorder]$, and $\catindexof{\variableset}$ to each supported state.
+        Then the mod2-sum is a usual sum and the basis CP decomposition is also a mod2-basis+ CP decomposition.
+    \end{proof}
+
+    This shows in particular, that any propositional formula can be represented by a mod2-basis+ CP decomposition.
+
+    \subsubsection{Preparation by fine and coarse structure}
 
     Having a mod2-basis+ CP decomposition of rank $r$ to a connective, we need $r$ controlled NOT gates to prepare the basis encoding.
     Given a syntactical decomposition of a boolean statistics, we prepare the basis encoding as a circuit with:
@@ -192,20 +231,29 @@
     \tnreason provides tensor network representations of knowledge bases and exponential families following a Computation Activation architecture.
     Here are some ideas to utilize quantum circuits for sampling Computation Activation Networks.
 
-    \subsection{Value Qubits}
+    \subsection{Preparation of Value Qubits}
 
     We introduce a value qubit, which stores in its coefficient to the first state the probability of the configuration.
     When we have a probability tensor, this can be prepared, since all values are in $[0,1]$.
-    The value qubit is intialized by the zeroth one hot encoding ($\ket{0}$) and rotated by a controlled rotation gate, which is controlled by the variable qubits.
+    For the rejection sampling, only the quotients of the values are important, we can therefore scale the value by a scalar such that the mode is $1$.
+    The value qubit is initialized by the zeroth one hot encoding ($\ket{0}$) and rotated by a controlled rotation gate, which is controlled by the variable qubits.
+
+    To prepare a distribution with sufficient statistics, we prepare the statistic qubits by a basis encoding circuit and do controlled rotations on the value qubit controlled by the statistic qubits.
+
+    Maximum entropy distribution under moment constraints are a special case of distributions with sufficient statistics.
+    In many cases (precisely by mean parameters on the interior of cube faces), they have a factored representation by the features.
+    It is unclear, how to exploit this factored representation in the preparation of the controlled value rotations.
 
     \subsection{Polynomial Sparsity}
 
     Each monomial can be prepared by a multiple-controlled NOT gate, where the control qubits are the affected variables and the target qubit is the value qubit.
     When we sum monomials wrt modulus 2 calculus, then the preparation is a sequence of such circuits.
-    In such way, we can prepare any propositional formula.
+    In such way, we can prepare the basis encoding circuit to any propositional formula.
+    This encoding strategy exploits a modified (by mod2 calculus) polynomial sparsity.
 
     \subsection{Decomposition Sparsity}
 
+    When having a syntactical decomposition of a propositional formula, we can iteratively apply the basis encoding circuit decomposition theorem and prepare each connective by a circuit.
     We can decompose any propositional formula into logical connectives and prepare to each a modulus 2 circuit implementation.
     This works, when the target qubit of one connective is used as a value qubit of another.
 

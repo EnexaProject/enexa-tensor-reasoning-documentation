@@ -516,7 +516,7 @@ Motivated by this property, we use the transformed form to define the loss-likel
     \end{align*}
     Having a hypothesis $\Gamma\subset\bmrealprobof{\ones}$, that is a set of probability distributions, the maximum likelihood estimation is the problem
     \begin{align}
-        \tag{$\probtagtypeinst{M}{\Gamma,\empdistribution}$}\label{prob:parameterMaxLikelihood}
+        \label{prob:parameterMaxLikelihood}\tag{$\probtagtypeinst{M}{\Gamma,\empdistribution}$}
         \argmin_{\probtensorin} \lossof{\probtensor} \, .
     \end{align}
 \end{definition}
@@ -623,7 +623,7 @@ We in the next lemma provide an entropic interpretation of maximum likehlihood e
 % M-projection
 More general than Maximum Likelihood Estimation, we define the moment projection of an arbitrary distribution $\gendistribution$ onto a set $\Gamma$ of probability distributions as the problem
 \begin{align}
-    \tag{$\probtagtypeinst{\mathrm{M}}{\Gamma,\gendistribution}$}\label{prob:mProjection}
+    \label{prob:mProjection}\tag{$\probtagtypeinst{\mathrm{M}}{\Gamma,\gendistribution}$}
     \argmin_{\probtensorin} \centropyof{\gendistribution}{\probtensor} \, .
 \end{align}
 With \lemref{lem:centropyMLE} we have established, that maximum likelihood estimation is the moment projection of the empirical distribution onto a set $\Gamma$.
@@ -631,10 +631,10 @@ With \lemref{lem:centropyMLE} we have established, that maximum likelihood estim
 % I-projection
 We further define the information projection an arbitrary distribution $\gendistribution$ onto a set $\Gamma$ of probability distributions as the problem
 \begin{align}
-    \tag{$\probtagtypeinst{\mathrm{I}}{\Gamma,\gendistribution}$}\label{prob:iProjection}
+    \label{prob:iProjection}\tag{$\probtagtypeinst{\mathrm{I}}{\Gamma,\gendistribution}$}
     \argmin_{\probtensorin} \centropyof{\probtensor}{\gendistribution} \, .
 \end{align}
-The cross-entropy is not symmetric, thus the information and the moment projections do not coincide in general.
+The cross-entropy is not symmetric, thus the information projection \eqref{prob:iProjection} and the moment projections do not coincide in general.
 The differences of both are discussed in Chapter~8 in \cite{koller_probabilistic_2009}.
 
 \begin{example}[Cross entropy with respect to exponential families]
@@ -896,7 +896,7 @@ As we will show, the distributions with maximal entropy are in exponential famil
 
 The entropy maximization problem with respect to matching expected statistics $\genmean\in\genmeanset$ is the optimization problem
 \begin{align}
-    \tag{$\probtagtypeinst{\entropysymbol}{\sstat,\basemeasure,\genmean}$}\label{prob:maxEntropy} % Notation clash with cross-entropy!
+    \label{prob:maxEntropy}\tag{$\probtagtypeinst{\entropysymbol}{\sstat,\basemeasure,\genmean}$}% Notation clash with cross-entropy!
     \argmax_{\probtensor\in\bmrealprobof{\basemeasure}} \sentropyof{\probtensor} \quad \text{subject to} \quad
     \contractionof{\probtensor,\sencsstat}{\selvariable} = \genmeanat{\selvariable}
 \end{align}
@@ -1474,7 +1474,7 @@ Mean field methods now provide lower bounds on this maximization by restricting 
 Let $\Gamma$ be a subset of $\bmrealprobof{\ones}$, we state the mean field problem as
 %Let $\graph$ be any hypergraph, we define the problem
 \begin{align}
-    \tag{$\probtagtypeinst{I}{\Gamma,\probof{\energytensor}}$}\label{prob:meanField}
+    \label{prob:meanField}\tag{$\probtagtypeinst{I}{\Gamma,\probof{\energytensor}}$}
     \argmax_{\probtensor\in \mnexpfamily} \contraction{\energytensor,\probtensor} + \sentropyof{\probtensor}
 \end{align}
 %% KL Divergence
@@ -1487,7 +1487,7 @@ We show next, that the mean field problem is an instance of an information proje
         \argmax_{\probtensorin} \contraction{\energytensor,\probtensor} + \sentropyof{\probtensor}
         = \argmin_{\probtensorin} \kldivof{\probtensor}{\probof{\energytensor}}
     \end{align*}
-    Problem~\ref{prob:meanField} is thus the information projection of a distribution $\probofat{\energytensor}{\shortcatvariables}=\normalizationof{\energytensor}{\shortcatvariables}$ onto the exponential family $\mnexpfamily$.
+    Problem~\eqref{prob:meanField} is thus the information projection of a distribution $\probofat{\energytensor}{\shortcatvariables}=\normalizationof{\energytensor}{\shortcatvariables}$ onto the exponential family $\mnexpfamily$.
 \end{theorem}
 \begin{proof}
 %	This follows from the fact, that the objective is the cross-entropy and the position of the maximum is invariant under substracting $\sentropyof{\probtensor}$.
@@ -1525,7 +1525,7 @@ Markov Networks on this graph are represented by normed leg cores
     \probwith
     = \bigotimes_{\catenumeratorin} \legcoreofat{\catenumerator}{\catvariableof{\catenumerator}}
 \end{align*}
-\probref{prob:meanField} is for this instance of the form
+Problem~\eqref{prob:meanField} is for this instance of the form
 %The approximation is then  $\legcoreof{\catenumerator}$, that is
 \begin{align*}
     \argmax_{\legcoreofat{\catenumerator}{\catvariableof{\catenumerator}} \, : \, \contraction{\legcoreof{\catenumerator}}=1,\, \catenumeratorin}
@@ -1618,14 +1618,10 @@ The optimal update equations are derived as the next theorem.
 %In this section we use any Markov Network as the approximating family.
 
 We now generalize the naive mean field method towards generic families of Markov Networks.
-Let $\graph$ be any hypergraph, the structured variational approximation method is \probref{prob:meanField} with
+Let $\graph$ be any hypergraph, the structured variational approximation method is Problem~\eqref{prob:meanField} with
 \begin{align*}
     \probtensorset = \mnexpfamily \, .
 \end{align*}
-%\begin{align}
-%    \tag{$\mathrm{P}_{\mnexpfamily, \probtensor}$}\label{prob:structuredApproximation}
-%    \argmax_{\probtensor\in \mnexpfamily} \contraction{\energytensor,\probtensor} + \sentropyof{\probtensor}
-%\end{align}
 %% IPROJECTION UNDEFINED!
 %By \theref{the:meanFieldIProjection} the structured approximation is the information projection \probref{def:iProjection} onto the exponential family of Markov Networks given a hypergraph $\graph$.
 
@@ -1839,7 +1835,7 @@ We show this as a more general statement for moment projections onto exponential
 
 \begin{theorem}
     Let there be any exponential family, a mean parameter vector $\genmean\in\imageof{\forwardmap}$ and a backward map $\backwardmap$.
-    Then $\estcanparam=\backwardmapof{\genmean}$ is the canonical parameter to the solution of the moment projection \probref{prob:mProjection} of any $\gendistribution$ with
+    Then $\estcanparam=\backwardmapof{\genmean}$ is the canonical parameter to the solution of the moment projection Problem~\eqref{prob:mProjection} of any $\gendistribution$ with
     \begin{align*}
         \contractionof{\sencsstat,\gendistribution}{\selvariable}=\genmeanat{\selvariable}
     \end{align*}
@@ -1869,14 +1865,6 @@ In particular, if we choose $\meanparamwith=\contractionof{\sencsstatwith,\empdi
 This holds, since by \lemref{lem:centropyMLE} maximum likelihood estimation is a special instance of moment projection, when projecting $\empdistribution$.
 In that case, we choose $\meanparamwith=\contractionof{\sencsstatwith,\empdistribution}{\selvariable}$.
 
-
-%The backward mapping to $\datameanat{\selvariable} = \contractionof{\empdistribution,\sencsstat}{\selvariable}$ is Maximum Likelihood estimation and the solution of the maximum entropy problem.
-%The Maximum Likelihood Problem with hypothesis by an emponential family is also called the M-Projection (see Chapter~8 in \cite{koller_probabilistic_2009}) of a distribution $\empdistribution$ onto a set $\expfamily$ of probability tensors.
-%\begin{align}
-%    \tag{$\mathrm{P}_{\Gamma, \gendistribution}$}\label{prob:mProjection}
-%    \argmax_{\probtensorin} \centropyof{\gendistribution}{\probtensor}
-%\end{align}
-%where the Maximum Likelihood Estimation is the special case $\gendistribution=\empdistribution$.
 
 
 %\begin{lemma}
