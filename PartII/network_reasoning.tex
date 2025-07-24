@@ -12,23 +12,70 @@ We then motivate structure learning based on sparsity constraints on the paramet
 Forward and backward mappings have been introduced for exponential families in \charef{cha:probRepresentation}.
 We now generalize them to \HybridLogicNetworks{}.
 
-\begin{definition}
+We parametrize each elementary activation tensors $\extnetat{\headvariables}=\bigotimes_{\selindexin}\hypercoreofat{\selindex}{\headvariableof{\selindex}}$ by a tuple
+$(\variableset,\headindexof{\variableset},\canparam)$ as follows
+\begin{itemize}
+    \item The axis set of hard leg vectors
+    \begin{align*}
+        \variableset = \Big\{ \selindex \wcols \selindexin \ncond \hypercoreofat{\selindex}{\indexedheadvariableof{\selindex}=0}=0 \,\,\text{or}\,\,  \hypercoreofat{\selindex}{\indexedheadvariableof{\selindex}=1}=0  \Big\}
+    \end{align*}
+    \item The indices of the hard leg vector $\headindexof{\variableset}$ where for $\selindex\in\variableset$
+    \begin{align*}
+        \headindexof{\selindex} =
+        \begin{cases}
+            0 & \text{if } \hypercoreofat{\selindex}{\headvariableof{\selindex}=1}=0 \\
+            1 & \text{if } \hypercoreofat{\selindex}{\headvariableof{\selindex}=0}=0
+        \end{cases}
+    \end{align*}
+    Note, that exactly one of the cases is true, since both would imply a vanishing activation tensor.
+    \item A canonical parameter $\canparamat{\selvariable}$ where $\canparamat{\indexedselvariable}=0$ for $\selindex\in\variableset$ and for $\selindex\notin\variableset$
+    \begin{align*}
+        \canparamat{\indexedselvariable} = \lnof{
+            \frac{\hypercoreofat{\selindex}{\headvariableof{\selindex}=1}}{\hypercoreofat{\selindex}{\headvariableof{\selindex}=0}}
+        }
+    \end{align*}
+\end{itemize}
+Conversely, for a tuple $(\variableset,\headindexof{\variableset},\canparam)$ we define leg vectors
+\begin{align*}
+    \hypercoreofat{\selindex}{\headvariableof{\selindex}} =
+    \begin{cases}
+        \onehotmapofat{\headindexof{\selindex}}{\headvariableof{\selindex}} & \text{if} \quad \selindex\in\variableset \\
+        \expof{\canparamat{\indexedselvariable}\cdot \indexinterpretationof{\headvariableof{\selindex}}} & \text{else}
+    \end{cases}
+\end{align*}
+and an activation tensor
+\begin{align*}
+    \tnetofat{(\variableset,\headindexof{\variableset},\canparam)}{\headvariables}
+    =\bigotimes_{\selindexin}\hypercoreofat{\selindex}{\headvariableof{\selindex}} \, .
+\end{align*}
 
+Note that the tuple $(\variableset,\headindexof{\variableset},\canparam)$ to a elementary activation tensor determines the corresponding \HybridLogicNetwork{}, since it determines the activation tensor up to an irrelevant scalar multiplication.
+
+
+
+
+\begin{definition}
+    The extended canonical parameter set to a boolean statistic is the set
+    \begin{align*}
+       \mathcal{N}_{\seldim}\coloneqq
+       \{(\variableset,\headindexof{\variableset})\wcols \variableset\subset[\seldim]\ncond \headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]\} \times \parspace \, .
+    \end{align*}
     The forward map for a \HybridLogicNetwork{} is
     \begin{align*}
-         \forwardmapwrt{\mlnstat} :  \eltnset \rightarrow \hlnmeanset \subset \parspace
-         \quad \text{where} \quad
-         \forwardmapwrtof{\mlnstat}{\tnetof{\elgraph}}
-         = \contractionof{
-             \normalizationof{\tnetofat{\elgraph}{\headvariables},\bencodingofat{\mlnstat}{\headvariables,\shortcatvariables}}{\shortcatvariables}
-             ,\sencodingofat{\mlnstat}{\shortcatvariables,\selvariable}}{\selvariable} \, .
-     \end{align*}
+        \forwardmapwrt{\mlnstat} :  \mathcal{N}_{\seldim}
+        \rightarrow \hlnmeanset \subset \parspace
+        \quad \text{where} \quad
+        \forwardmapwrtof{\mlnstat}{(\variableset,\headindexof{\variableset},\canparam)}
+        = \contractionof{
+            \normalizationof{\tnetofat{(\variableset,\headindexof{\variableset},\canparam)}{\headvariables},\bencodingofat{\mlnstat}{\headvariables,\shortcatvariables}}{\shortcatvariables}
+            ,\sencodingofat{\mlnstat}{\shortcatvariables,\selvariable}}{\selvariable} \, .
+    \end{align*}
 
     A backward map for a \HybridLogicNetwork{} is any map
-    \begin{align*}
-         \backwardmapwrt{\mlnstat} :  \imageof{\forwardmapwrt{\mlnstat}} \rightarrow \eltnset
-    \end{align*}
-    such that for any $\tnetof{\elgraph}\in\eltnset$ $\backwardmapwrtof{\mlnstat}{\forwardmapwrtof{\mlnstat}{\tnetof{\elgraph}}}$.
+    %\begin{align*}
+    %    \backwardmapwrt{\mlnstat} :  \imageof{\forwardmapwrt{\mlnstat}} \rightarrow \eltnset
+    %\end{align*}
+    such that for any $(\variableset,\headindexof{\variableset},\canparam)\in\mathcal{N}_{\seldim}$ we have $\backwardmapwrtof{\mlnstat}{\forwardmapwrtof{\mlnstat}{\tnetof{\elgraph}}}$.
 
 \end{definition}
 
@@ -47,18 +94,19 @@ In particular, the theorem implies that the image of $\forwardmapwrt{\mlnstat}$ 
 
 A backward map can be constructed as follows:
 \begin{itemize}
-    \item Choose $\variableset=\{\selindex\wcols\meanparamat{\indexedselvariable}\in\{0,1\}\}$, and for $\selindex\in\variableset$ $\headindexof{\selvariable}=\meanparamat{\indexedselvariable}$ and build
-        \begin{align*}
-            \kcoreofat{\selindex}{\headvariableof{\selindex}}
-        \end{align*}
+    \item Choose $\variableset=\{\selindex\wcols\meanparamat{\indexedselvariable}\in\{0,1\}\}$, and for $\selindex\in\variableset$ $\headindexof{\selvariable}=\meanparamat{\indexedselvariable}$
+    %\item and build
+    %\begin{align*}
+    %    \kcoreofat{\selindex}{\headvariableof{\selindex}}
+    %\end{align*}
     \item Use the backward map of the exponential family $\expfamilyof{\mlnstat,\hlnformula}$ to compute
-        \begin{align*}
-            \canparamat{\selvariable} = \backwardmapwrtof{\mlnstat,\hlnformula}{\meanparamwith}
-        \end{align*}
-    \item Set
-        \begin{align*}
-            \hypercoreofat{\selindex}{\headvariableof{\selindex}} = \contractionof{\actcorewith,\kcoreofat{\selindex}{\headvariableof{\selindex}}}{\headvariableof{\selindex}}
-        \end{align*}
+    \begin{align*}
+        \canparamat{\selvariable} = \backwardmapwrtof{\mlnstat,\hlnformula}{\meanparamwith}
+    \end{align*}
+    %\item Set
+    %\begin{align*}
+    %    \hypercoreofat{\selindex}{\headvariableof{\selindex}} = \contractionof{\actcorewith,\kcoreofat{\selindex}{\headvariableof{\selindex}}}{\headvariableof{\selindex}}
+    %\end{align*}
 \end{itemize}
 
 
@@ -78,7 +126,7 @@ To solve the moment matching condition at a formula $\enumformula$ we refine \le
 
 \begin{lemma}
     \label{ref:lemMMinMLN}
-    Let there be a base measure $\basemeasure$, a formula selecting map $\formulaset=\{\enumformula \, : \, \selindexin\}$ and a canonical parameter $\canparam$, and choose $\selindexin$ such that $\enumformula  \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
+    Let there be a base measure $\basemeasure$, a formula selecting map $\formulaset=\{\enumformula \wcols \selindexin\}$ and a canonical parameter $\canparam$, and choose $\selindexin$ such that $\enumformula  \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
     The moment matching condition relative to $\canparamwith$, and $\datameanat{\indexedselvariable}\in(0,1)$ is then satisfied, if for all $\selindexin$
     \begin{align}
         \label{sol:momentMatchingExformula}
@@ -189,10 +237,11 @@ We now extend the alternating parameter estimation algorithm to \HybridLogicNetw
         \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\hlnsetof{\formulaset}$
         \hrule
         \State Set
-            \[ \variableset = \Big\{ \selindex \wcols \selindexin \ncond \meanparamat{\indexedselvariable}\in\{0,1\} \Big\}\]
-            and a tuple $\headindexof{\variableset}$ with $\headindexof{\selindex}=\meanparamat{\indexedselvariable}$ for $\selindex\in\variableset$ .
+        \[ \variableset = \Big\{ \selindex \wcols \selindexin \ncond \meanparamat{\indexedselvariable}\in\{0,1\} \Big\}\]
+        and a tuple $\headindexof{\variableset}$ with $\headindexof{\selindex}=\meanparamat{\indexedselvariable}$ for $\selindex\in\variableset$ .
 %            \[ \variableset = \Big\{ \selindex \wcols \selindexin \ncond \meanparamat{\indexedselvariable}\in\{0,1\} \Big\}\]
-        \State \Return AMM in case of Markov Logic Networks with base measure by $\exformulaof{\variableset,\headindexof{\variableset}}$
+        \State Run AMM in case of Markov Logic Networks with base measure by $\exformulaof{\variableset,\headindexof{\variableset}}$ to get $\canparamwith$
+        \State \Return $(\variableset,\headindexof{\variableset},\canparamwith)$
     \end{algorithmic}
 \end{algorithm}
 
@@ -214,8 +263,6 @@ We now extend the alternating parameter estimation algorithm to \HybridLogicNetw
 
     \red{We will investigate these statistics as partition statistics in \secref{sec:partitionStatistics}.}
 \end{remark}
-
-
 
 
 %\sect{Alternating Algorithms to Approximate the Backward Map}
@@ -317,86 +364,157 @@ In these cases, parameter estimation can thus be solved by application of the in
 \subsubsect{Maxterms and Minterms}
 
 Minterms (respectively maxterms) are ways in propositional logics to get a syntactical formula representation based on a formula to each world which is a model (respectively fails to be a model).
-We have already studied in \secref{sec:MLNMaxMintermRep} how to represent any distribution as a MLN of maxterms (respectively minterms), see \theref{the:maximalClausesRepresentation}.
+We have already studied in \secref{sec:MLNMaxMintermRep} how to represent any positive distribution by a distribution in the family of minterms (respectively maxterms), see \theref{the:maximalClausesRepresentation}.
+Here we extend to the representation of distributions with arbitrary supports and provide forward and backward maps.
 
 We use the tuple enumeration of the maxterms and minterms by $\atomstates$ introduced in \secref{sec:termClauseDecomposition}.
 With respect to this enumeration the canonical parameters and mean parameters are tensors in $\bigotimes_{\atomenumeratorin}\rr^2$.
 %% Interpretation of the mean parameters
-Since the statistic of the minterm family is the identity, the mean parameters for the minterm family are
-\[ \meanparamat{\selvariableof{[\atomorder]}=\catindexof{[\atomorder]}}
-= \probat{\catindexof{[\atomorder]}}
-\]
-and therefore after a relabeling of categorical variables to selection variables $\meanparam=\probtensor$.
-For maxterms we have analogously
-\[ \meanparamat{\selvariableof{[\atomorder]}=\catindexof{[\atomorder]}}
-= 1-\probat{\catindexof{[\atomorder]}}
-\]
-and $\meanparam = \onesat{}-\probtensor$.
-We can use these insights to provide a characterization of the forward and backward maps of the minterm and maxterm family.
 
 \begin{theorem}
-    Given the \MarkovLogicNetworks{} to the formula sets
-    \[ \mintermformulaset := \{ \mintermof{\atomindices} \, : \, \atomindicesin\} \quad \text{and} \quad
-    \maxtermformulaset := \{ \maxtermof{\atomindices} \, : \, \atomindicesin\}  \]
-    of all minterms, respectively of all mapterms, the forward mapping are
-    %\[ \forwardmapwrt{\mintermformulaset}: \bigotimes_{\atomenumeratorin}\rr^{2} \rightarrow \bigotimes_{\atomenumeratorin}\rr^{2} \]
-    \[ \forwardmapwrt{\mlnmintermsymbol}(\canparam) = \normalizationofwrt{\expof{\canparam}}{\shortcatvariables}{\varnothing}
-    \quad \text{and} \quad
-    \forwardmapwrt{\mlnmaxtermsymbol}(\canparam) = \normalizationofwrt{\expof{-\canparam}}{\shortcatvariables}{\varnothing} \, , \]
-    where in a slight abuse of notation we assigned the variables $\shortcatvariables$ to the canonical parameters $\canparam$.
+    For the \HybridLogicNetworks{} to the minterm and maxterm statistics
+    \begin{align*}
+        \mintermformulaset \coloneqq \{ \mintermof{\shortcatindices} \wcols \shortcatindices\in\atomstates\}
+        \quad \text{and} \quad
+        \maxtermformulaset \coloneqq \{ \maxtermof{\shortcatindices} \wcols \shortcatindices\in\atomstates\}
+    \end{align*}
+    we have the forward maps
+    \begin{align*}
+        \forwardmapwrtof{\mlnmintermsymbol}{(\variableset,\headindexof{\variableset},\canparam)}
+        = \normalizationof{\bencodingofat{\mintermformulaset}{\headvariableof{\mlnmintermsymbol},\shortcatvariables},
+            \tnetofat{(\variableset,\headindexof{\variableset},\canparam)}{\headvariableof{\mlnmintermsymbol}},\identityat{\shortcatvariables,\selvariableof{[\atomorder]}}}{\selvariableof{[\atomorder]}}
+    \end{align*}
+    and
+    \begin{align*}
+        \forwardmapwrtof{\mlnmaxtermsymbol}{(\variableset,\headindexof{\variableset},\canparam)}
+        = \onesat{\selvariableof{[\atomorder]}} - \normalizationof{\bencodingofat{\maxtermformulaset}{\headvariableof{\mlnmaxtermsymbol},\shortcatvariables},
+            \tnetofat{(\variableset,\headindexof{\variableset},\canparam)}{\headvariableof{\mlnmaxtermsymbol}},\identityat{\shortcatvariables,\selvariableof{[\atomorder]}}}{\selvariableof{[\atomorder]}} \, .
+    \end{align*}
 
-    Possible choices of the backward mappings are
-    %\[ \backwardmapwrt{\mlnmintermsymbol}: \bigotimes_{\atomenumeratorin}\rr^{2} \rightarrow \bigotimes_{\atomenumeratorin}\rr^{2} \]
-    \[ \backwardmapwrt{\mlnmintermsymbol}(\meanparam) = \lnof{\meanparam}
-    \quad \text{and} \quad
-    \backwardmapwrt{\mlnmaxtermsymbol}(\meanparam) = -\lnof{\meanparam} \, .
-    \]
+    Further, the map
+    \begin{align*}
+        \backwardmapwrtof{\mlnmintermsymbol}{\meanparamat{\selvariableof{[\atomorder]}}}
+        = \Big(\Big\{ \selindex \wcols \selindexin \ncond \meanparamat{\indexedselvariable}=0 \Big\},0_{\variableset},\lnof{\meanparamat{\selvariableof{[\atomorder]}}}\Big)
+    \end{align*}
+    (we set here $\lnof{0}=0$) is a backward map for the minterm statistic.
+
+    The map
+    \begin{align*}
+        \backwardmapwrtof{\mlnmaxtermsymbol}{\meanparamat{\selvariableof{[\atomorder]}}}
+        = \Big(\Big\{ \selindex \wcols \selindexin \ncond \meanparamat{\indexedselvariable}=0 \Big\},1_{\variableset},-\lnof{\meanparamat{\selvariableof{[\atomorder]}}}\Big)
+    \end{align*}
+    (we set here $\lnof{0}=0$) is a backward map for the minterm statistic.
+
+
 \end{theorem}
 \begin{proof}
-    For the minterms we use that
-    \[ \mintermformulaset[\shortcatvariables,\catvariableof{\mintermformulaset}]  = \identityat{\shortcatvariables,\catvariableof{\maxtermformulaset}}\]
-    and get
-    \[ \forwardmapwrt{\mlnmintermsymbol}(\canparam)
-    = \normalizationof{
-        \expof{\contractionof{\{\mintermformulaset, \canparam\}}{\shortcatvariables}}
-    }{\shortcatvariables}
-    =
-    \normalizationof{\expof{\canparam}}{\shortcatvariables} \, .
-    \]
-
-    We notice that for any $\meanparam$ in the image of the forward map we have
-    \[ \forwardmapwrt{\mlnmintermsymbol}(\backwardmapwrt{\mlnmintermsymbol}(\meanparam)) = \meanparam \]
-    Therefore, $\backwardmapwrt{\mintermformulaset}$ is indeed a backward mapping to the exponential family of minterms.
-
-    For the maxterms we use that
-    \[ \maxtermformulaset[\shortcatvariables,\catvariableof{\maxtermformulaset}] = \onesat{\shortcatvariables,\catvariableof{\maxtermformulaset}}-\identityat{\shortcatvariables,\catvariableof{\maxtermformulaset}} \]
-    and get
+    The minterm statistic $\mintermformulaset$ has a selection encoding
     \begin{align*}
-        \forwardmapwrt{\mlnmaxtermsymbol}(\canparam)
-        & = \normalizationof{
-            \expof{\contractionof{\{\mintermformulaset, \canparam\}}{\shortcatvariables}}
-        }{\shortcatvariables} \\
-        & = \normalizationof{\{
-        \expof{\contractionof{\{\ones, \canparam\}}{\shortcatvariables}},
-            \expof{-\contractionof{\canparam}{\shortcatvariables}} \}
-        }{\shortcatvariables} \\
-        & = \normalizationof{
-            \expof{-\canparam}
-        }{\shortcatvariables}
+        \sencodingofat{\mintermformulaset}{\shortcatvariables,\selvariableof{[\atomorder]}}
+        = \identityat{\shortcatvariables,\selvariableof{[\atomorder]}}
     \end{align*}
-    where we used, that $\expof{\contractionof{\{\ones, \canparam\}}{\shortcatvariables}}$ is a multiple of $\onesat{\shortcatvariables}$ and is thus eliminated in the normalization.
-    For any $\meanparam\in\imageof{\forwardmapwrt{\mlnmaxtermsymbol}}$ we have
-    \[ \forwardmapwrt{\mlnmaxtermsymbol}(\backwardmapwrt{\mlnmaxtermsymbol}(\meanparam) )
-    = \meanparam
-        %-\lnof{\expof{-\canparam}} + \contractionof{\expof{-\canparam}}{\varnothing} \cdot \onesat{\shortcatvariables}
-        %= \canparam + \contractionof{\expof{-\canparam}}{\varnothing} \cdot \onesat{\shortcatvariables}
-    \]
-    and $\backwardmapwrt{\mlnmintermsymbol}$ is thus a backward map for the exponential family of maxterms.
+    and the mean parameter to any distribution $\probwith$ has therefore the coordinates to $\selindexof{[\atomorder]}\in\atomstates$ by
+    \begin{align*}
+        \meanparamat{\indexedselvariableof{[\atomorder]}}
+        = \contractionof{\identityat{\shortcatvariables,\selvariableof{[\atomorder]}}}{\indexedselvariableof{[\atomorder]}}
+        = \probat{\shortcatvariables=\selindexof{[\atomorder]}} \, .
+    \end{align*}
+    For the maxterm statistic $\maxtermformulaset$ we analogously have
+    \begin{align*}
+        \sencodingofat{\maxtermformulaset}{\shortcatvariables,\selvariableof{[\atomorder]}}
+        = \onesat{\shortcatvariables,\selvariableof{[\atomorder]}}-\identityat{\shortcatvariables,\selvariableof{[\atomorder]}}
+    \end{align*}
+    and thus the mean parameter to any distribution $\probwith$ has therefore the coordinates to $\selindexof{[\atomorder]}\in\atomstates$ by
+    \begin{align*}
+        \meanparamat{\indexedselvariableof{[\atomorder]}}
+        = 1-\probat{\shortcatvariables=\selindexof{[\atomorder]}} \, .
+    \end{align*}
+    The claim on the forward maps follows for
+    \begin{align*}
+        \probwith=\normalizationof{\bencodingofat{\maxtermformulaset}{\headvariableof{\mlnmaxtermsymbol},\shortcatvariables},
+        \tnetofat{\elgraph}{\headvariableof{\mlnmaxtermsymbol}}}{\shortcatvariables} \, .
+    \end{align*}
+
+
 \end{proof}
 
 % Fitting arbitrary distributions
-Any positive probability distribution can thus be fitted by minterms when we choose $\canparam=\lnof{\probtensor}$, respectively by maxterms when we choose $\canparam=\ones-\lnof{\probtensor}$.
-Thus, we have identified a subset of $2^{\atomorder}$ formulas, which is rich enough to fit any distribution.
+Any probability distribution can thus be represented by a minterm, respectively maxterm, \HybridLogicNetwork{}. %when we choose $\canparam=\lnof{\probtensor}$, respectively by maxterms when we choose $\canparam=\ones-\lnof{\probtensor}$.
+%Thus, we have identified a subset of $2^{\atomorder}$ formulas, which is rich enough to fit any distribution.
+
+
+%Since the statistic of the minterm family is the identity, the mean parameters for the minterm family are
+%\[ \meanparamat{\selvariableof{[\atomorder]}=\catindexof{[\atomorder]}}
+%= \probat{\catindexof{[\atomorder]}}
+%\]
+%and therefore after a relabeling of categorical variables to selection variables $\meanparam=\probtensor$.
+%For maxterms we have analogously
+%\[ \meanparamat{\selvariableof{[\atomorder]}=\catindexof{[\atomorder]}}
+%= 1-\probat{\catindexof{[\atomorder]}}
+%\]
+%and $\meanparam = \onesat{}-\probtensor$.
+%We can use these insights to provide a characterization of the forward and backward maps of the minterm and maxterm family.
+%
+%\begin{theorem} % TO BE DROPPED! Generalized to HLN
+%    Given the \MarkovLogicNetworks{} to the formula sets
+%    \[   \]
+%    of all minterms, respectively of all mapterms, the forward mapping are
+%    %\[ \forwardmapwrt{\mintermformulaset}: \bigotimes_{\atomenumeratorin}\rr^{2} \rightarrow \bigotimes_{\atomenumeratorin}\rr^{2} \]
+%    \[ \forwardmapwrt{\mlnmintermsymbol}(\canparam) = \normalizationofwrt{\expof{\canparam}}{\shortcatvariables}{\varnothing}
+%    \quad \text{and} \quad
+%    \forwardmapwrt{\mlnmaxtermsymbol}(\canparam) = \normalizationofwrt{\expof{-\canparam}}{\shortcatvariables}{\varnothing} \, , \]
+%    where in a slight abuse of notation we assigned the variables $\shortcatvariables$ to the canonical parameters $\canparam$.
+%
+%    Possible choices of the backward mappings are
+%    %\[ \backwardmapwrt{\mlnmintermsymbol}: \bigotimes_{\atomenumeratorin}\rr^{2} \rightarrow \bigotimes_{\atomenumeratorin}\rr^{2} \]
+%    \[ \backwardmapwrt{\mlnmintermsymbol}(\meanparam) = \lnof{\meanparam}
+%    \quad \text{and} \quad
+%    \backwardmapwrt{\mlnmaxtermsymbol}(\meanparam) = -\lnof{\meanparam} \, .
+%    \]
+%\end{theorem}
+%\begin{proof}
+%    For the minterms we use that
+%    \[ \mintermformulaset[\shortcatvariables,\catvariableof{\mintermformulaset}]  = \identityat{\shortcatvariables,\catvariableof{\maxtermformulaset}}\]
+%    and get
+%    \[ \forwardmapwrt{\mlnmintermsymbol}(\canparam)
+%    = \normalizationof{
+%        \expof{\contractionof{\{\mintermformulaset, \canparam\}}{\shortcatvariables}}
+%    }{\shortcatvariables}
+%    =
+%    \normalizationof{\expof{\canparam}}{\shortcatvariables} \, .
+%    \]
+%
+%    We notice that for any $\meanparam$ in the image of the forward map we have
+%    \[ \forwardmapwrt{\mlnmintermsymbol}(\backwardmapwrt{\mlnmintermsymbol}(\meanparam)) = \meanparam \]
+%    Therefore, $\backwardmapwrt{\mintermformulaset}$ is indeed a backward mapping to the exponential family of minterms.
+%
+%    For the maxterms we use that
+%    \[ \maxtermformulaset[\shortcatvariables,\catvariableof{\maxtermformulaset}] = \onesat{\shortcatvariables,\catvariableof{\maxtermformulaset}}-\identityat{\shortcatvariables,\catvariableof{\maxtermformulaset}} \]
+%    and get
+%    \begin{align*}
+%        \forwardmapwrt{\mlnmaxtermsymbol}(\canparam)
+%        & = \normalizationof{
+%            \expof{\contractionof{\{\mintermformulaset, \canparam\}}{\shortcatvariables}}
+%        }{\shortcatvariables} \\
+%        & = \normalizationof{\{
+%        \expof{\contractionof{\{\ones, \canparam\}}{\shortcatvariables}},
+%            \expof{-\contractionof{\canparam}{\shortcatvariables}} \}
+%        }{\shortcatvariables} \\
+%        & = \normalizationof{
+%            \expof{-\canparam}
+%        }{\shortcatvariables}
+%    \end{align*}
+%    where we used, that $\expof{\contractionof{\{\ones, \canparam\}}{\shortcatvariables}}$ is a multiple of $\onesat{\shortcatvariables}$ and is thus eliminated in the normalization.
+%    For any $\meanparam\in\imageof{\forwardmapwrt{\mlnmaxtermsymbol}}$ we have
+%    \[ \forwardmapwrt{\mlnmaxtermsymbol}(\backwardmapwrt{\mlnmaxtermsymbol}(\meanparam) )
+%    = \meanparam
+%        %-\lnof{\expof{-\canparam}} + \contractionof{\expof{-\canparam}}{\varnothing} \cdot \onesat{\shortcatvariables}
+%        %= \canparam + \contractionof{\expof{-\canparam}}{\varnothing} \cdot \onesat{\shortcatvariables}
+%    \]
+%    and $\backwardmapwrt{\mlnmintermsymbol}$ is thus a backward map for the exponential family of maxterms.
+%\end{proof}
+
+
 
 
 
@@ -540,20 +658,20 @@ In order to characterize the solution of the cross entropy minimization problem 
 %    For any $\variableset\subset[\seldim]$ and boolean tuple $\headindexof{\variableset}$ we have
     \begin{itemize}
         \item[(1)] If $\genmeanwith \in \sbinteriorof{\meansetof{\mlnstat,\hlnformula}}$ then
-            \begin{align*}
-                \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}
-                = -\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnformula}{\genmeanwith},\hlnformula}} \, .
-            \end{align*}
-        \item[(2)] If $\genmeanwith\in\closureof{\meansetof{\mlnstat,\hlnformula}}$ then there is a sequence $\left(\meanparamofat{n}{\selvariable}\right)_{n\in\nn}\subset\hlnmeanset$ converging coordinatewise to $\genmeanwith$ and
-            \begin{align*}
-                \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}
-                = \lim_{\meanparamofat{n}{\selvariable}\rightarrow\genmeanwith}-\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnformula}{\meanparamofat{n}{\selvariable}},\hlnformula}} \, .
-            \end{align*}
+        \begin{align*}
+            \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}
+            = -\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnformula}{\genmeanwith},\hlnformula}} \, .
+        \end{align*}
+        \item[(2)] If $\genmeanwith \notin \sbinteriorof{\meansetof{\mlnstat,\hlnformula}}$ and $\genmeanwith\in\closureof{\meansetof{\mlnstat,\hlnformula}}$ then there is a sequence $\left(\meanparamofat{n}{\selvariable}\right)_{n\in\nn}\subset\hlnmeanset$ converging coordinatewise to $\genmeanwith$ and
+        \begin{align*}
+            \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}
+            = \lim_{\meanparamofat{n}{\selvariable}\rightarrow\genmeanwith}-\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnformula}{\meanparamofat{n}{\selvariable}},\hlnformula}} \, .
+        \end{align*}
         \item[(3)] If $\genmeanwith\notin\closureof{\meansetof{\mlnstat,\hlnformula}}$ then
-            \begin{align*}
-                \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}
-                = \infty \, .
-            \end{align*}
+        \begin{align*}
+            \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}
+            = \infty \, .
+        \end{align*}
     \end{itemize}
 \end{lemma}
 \begin{proof}
@@ -1044,19 +1162,19 @@ During learning, one needs to instantiate the proposal distribution, which requi
 
 
 
-\sect{Proposal distribution}
+\subsect{Proposal distribution}
 
 
 % Proposal distribution
 Let us now understand the likelihood gradient as the energy tensor of a probability distribution, which we call the proposal distribution.
 
 \begin{definition}[Proposal Distribution]
-    Let there be a base distribution $\currentdistribution$, a targeted distribution $\empdistribution$ and a formula selecting map $\fselectionmap[\shortcatvariables, \selvariable]$.
+    Let there be a base distribution $\currentdistribution$, a targeted distribution $\empdistribution$ and a formula selecting map $\fselectionmap$.
     The proposal distribution at inverse temperature $\invtemp>0$ is the distribution of $\selvariable$ defined by
     \begin{align*}
-        \normalizationof{\expof{\contractionof{\invtemp\cdot(\empdistribution-\currentdistribution),\fselectionmap}{\selvariable}} }{\selvariable} \, .
+        \normalizationof{\expof{\contractionof{\invtemp\cdot(\empdistribution[\shortcatvariables]-\currentdistribution[\shortcatvariables]),\fselectionmapat{\shortcatvariables,\selvariable}}{\selvariable}} }{\selvariable} \, .
     \end{align*}
-    The proposal distribution is the member of the exponential family with statistics $\fselectionmap$ and parameter $\invtemp\cdot(\empdistribution-\currentdistribution)$.
+    The proposal distribution is the member of the exponential family with statistics $\fselectionmap$ and canonical parameter $\invtemp\cdot(\empdistribution-\currentdistribution)$.
 \end{definition}
 
 
@@ -1073,7 +1191,7 @@ The grafting Problem~\eqref{prob:greedyGrad} is the search for the mode of the p
 To solve grafting, we thus need to answer a mode query, for which we can apply the methods introduced in \charef{cha:probReasoning}, such as Gibbs Sampling or Mean Field Approximations in combination with annealing.
 
 
-\subsect{Mean parameter polytope}
+%\subsect{Mean parameter polytope}
 
 The mean parameter polytope of the proposal distribution with statistic $\proposalstat$ is the convex hull of the formulas in $\formulaset$, that is
 \begin{align*}
