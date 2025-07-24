@@ -6,6 +6,471 @@ We then motivate structure learning based on sparsity constraints on the paramet
 
 
 
+
+\sect{Forward and backward mappings}
+
+Forward and backward mappings have been introduced for exponential families in \charef{cha:probRepresentation}.
+We now generalize them to \HybridLogicNetworks{}.
+
+\begin{definition}
+
+    The forward map for a \HybridLogicNetwork{} is
+    \begin{align*}
+         \forwardmapwrt{\mlnstat} :  \eltnset \rightarrow \hlnmeanset \subset \parspace
+         \quad \text{where} \quad
+         \forwardmapwrtof{\mlnstat}{\tnetof{\elgraph}}
+         = \contractionof{
+             \normalizationof{\tnetofat{\elgraph}{\headvariables},\bencodingofat{\mlnstat}{\headvariables,\shortcatvariables}}{\shortcatvariables}
+             ,\sencodingofat{\mlnstat}{\shortcatvariables,\selvariable}}{\selvariable} \, .
+     \end{align*}
+
+    A backward map for a \HybridLogicNetwork{} is any map
+    \begin{align*}
+         \backwardmapwrt{\mlnstat} :  \imageof{\forwardmapwrt{\mlnstat}} \rightarrow \eltnset
+    \end{align*}
+    such that for any $\tnetof{\elgraph}\in\eltnset$ $\backwardmapwrtof{\mlnstat}{\forwardmapwrtof{\mlnstat}{\tnetof{\elgraph}}}$.
+
+\end{definition}
+
+From the expressivity study of \charef{cha:networkRepresentation} we have the following.
+
+% Backward map
+\begin{theorem}
+    For any $\meanparamwith$ there is a $\tnetofat{\elgraph}{\headvariables}$ with $\forwardmapwrtof{\mlnstat}{\tnetofat{\elgraph}{\headvariables}}=\meanparamwith$, if and only if $\meanparamwith\in\elhlnmeanset$.
+\end{theorem}
+\begin{proof}
+    From the expressivity of Hybrid Logic Networks.
+\end{proof}
+
+% Image characterization
+In particular, the theorem implies that the image of $\forwardmapwrt{\mlnstat}$ is the subset $\elhlnmeanset\subset\hlnmeanset$, which is the union of cube face interiors.
+
+A backward map can be constructed as follows:
+\begin{itemize}
+    \item Choose $\variableset=\{\selindex\wcols\meanparamat{\indexedselvariable}\in\{0,1\}\}$, and for $\selindex\in\variableset$ $\headindexof{\selvariable}=\meanparamat{\indexedselvariable}$ and build
+        \begin{align*}
+            \kcoreofat{\selindex}{\headvariableof{\selindex}}
+        \end{align*}
+    \item Use the backward map of the exponential family $\expfamilyof{\mlnstat,\hlnformula}$ to compute
+        \begin{align*}
+            \canparamat{\selvariable} = \backwardmapwrtof{\mlnstat,\hlnformula}{\meanparamwith}
+        \end{align*}
+    \item Set
+        \begin{align*}
+            \hypercoreofat{\selindex}{\headvariableof{\selindex}} = \contractionof{\actcorewith,\kcoreofat{\selindex}{\headvariableof{\selindex}}}{\headvariableof{\selindex}}
+        \end{align*}
+\end{itemize}
+
+
+
+
+
+\subsect{Alternating Algorithms for Backward Maps}\label{sec:alternatingParEstMLN}
+
+Parameter estimation is the Maximum Likelihood Problem for exponential families.
+It is solved by the backward map, when the mean parameter is in the interior of the mean parameter polytope.
+
+\subsubsect{\MarkovLogicNetworks{}}
+
+In case of boolean statistics, we can provide a particular simple implementation of the Alternating Moment Matching Algorithm~\ref{alg:AMM}.
+%The moment matching condition of \lemref{lem:mmContractionEquation} simplifies as follows.
+To solve the moment matching condition at a formula $\enumformula$ we refine \lemref{lem:mmContractionEquation} in the following.
+
+\begin{lemma}
+    \label{ref:lemMMinMLN}
+    Let there be a base measure $\basemeasure$, a formula selecting map $\formulaset=\{\enumformula \, : \, \selindexin\}$ and a canonical parameter $\canparam$, and choose $\selindexin$ such that $\enumformula  \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
+    The moment matching condition relative to $\canparamwith$, and $\datameanat{\indexedselvariable}\in(0,1)$ is then satisfied, if for all $\selindexin$
+    \begin{align}
+        \label{sol:momentMatchingExformula}
+        \indexedcanparam = \lnof{
+            \frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})}
+            \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
+        }
+    \end{align}
+    where by $\hypercoreat{\headvariableof{\selindex}}$ we denote the contraction
+    \begin{align*}
+        \hypercoreat{\headvariableof{\selindex}}
+        = \contractionof{\{\bencodingof{\enumformula} \wcols \selindexin\}
+        \cup\{\actcoreof{\tilde{\selindex},\canparamat{\selvariable=\tilde{\selindex}}} \wcols \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
+        \cup\{\basemeasure\}}{\headvariableof{\selindex}} \, .
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    Since $\imageof{\enumformula}\subset[2]$ we have
+    \begin{align*}
+        \idrestrictedto{\imageof{\enumformula}} = \onehotmapofat{1}{\headvariableof{\selindex}}
+    \end{align*}
+    and the moment matching condition is by \lemref{lem:mmContractionEquation} satisfied if
+    \begin{align*}
+        \contraction{\actcorewith, \onehotmapofat{1}{\headvariableof{\selindex}}, \hypercoreat{\headvariableof{\selindex}}}
+        = \contraction{\actcorewith,\hypercoreat{\headvariableof{\selindex}}} \cdot \datameanat{\indexedselvariable} \, .
+    \end{align*}
+    This is equal to
+    \begin{align*}
+        \expof{\canparamat{\indexedselvariable}} \cdot \hypercoreat{\headvariableof{\selindex}=1}
+        = \left( \expof{\canparamat{\indexedselvariable}} \cdot \hypercoreat{\headvariableof{\selindex}=1} + \hypercoreat{\headvariableof{\selindex}=0} \right) \cdot \datameanat{\indexedselvariable} \, .
+    \end{align*}
+    Rearranging the equations this is equal to
+    \begin{align*}
+        \hypercoreat{\headvariableof{\selindex}}
+        = \contractionof{\{\bencodingof{\enumformula}\}
+        \cup\{\actcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
+        \cup\{\basemeasure\}}{\selvariable} \, .
+    \end{align*}
+    We notice that the right side is well defined, since we have by assumption $\datameanat{\indexedselvariable}, (1- \datameanat{\indexedselvariable}) \neq 0$ and $\hypercoreat{\headvariableof{\selindex}=0}, \hypercoreat{\headvariableof{\selindex}=1} \neq 0$ since \MarkovLogicNetworks{} are positive distributions and $\enumformula \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
+\end{proof}
+
+We now investigate, for which mean parameters the moment matching equations are satisfiable.
+
+\begin{lemma}
+    The moment matching conditions of \lemref{ref:lemMMinMLN} are satisfied for some $\canparamwith$, if and only if $\meanparamwith\in\sbinteriorof{\hlnmeanset}$.
+\end{lemma}
+
+
+Let us now introduce an implementation of the Alternating Moment Matching Algorithm~\ref{alg:AMM} in case of \MarkovLogicNetworks{}.
+Note that while $\uniquantwrtof{\selindexin}{\meanparamat{\indexedselvariable}\notin\{0,1\}}$ ensures the well-definedness of the algorithm (otherwise the update could not be computed), it is only a necessary but not always sufficient criterion for the existence of a solution.
+
+
+\begin{algorithm}[hbt!]
+    \caption{Alternating Moment Matching for Markov Logic Networks}\label{alg:AMM_MLN}
+    \begin{algorithmic}
+        \Require Mean parameter $\meanparamwith$ with $\uniquantwrtof{\selindexin}{\meanparamat{\indexedselvariable}\notin\{0,1\}}$
+        \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\expfamily$
+        \hrule
+        \While{Convergence criterion is not met}
+            \For{$\selindex\in\secnodes$}
+                \State Compute
+                \begin{align*}
+                    \hypercoreat{\headvariableof{\selindex}}
+                    = \contractionof{\{\bencodingof{\enumformula} \, : \, \selindexin\}
+                    \cup\{\actcoreof{\tilde{\selindex}} \wcols \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
+                    \cup\{\basemeasure\}}{\headvariableof{\selindex}}
+                \end{align*}
+                \State Set
+                \begin{align*}
+                    \canparamat{\indexedselvariable} = \lnof{
+                        \frac{\meanparamat{\indexedselvariable}}{(1-\meanparamat{\indexedselvariable})}
+                        \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
+                    }
+                \end{align*}
+            \EndFor
+        \EndWhile
+        \State \Return $\canparamwith$
+    \end{algorithmic}
+\end{algorithm}
+
+% Independent formulas
+In the initialization phase of \algoref{alg:AMM_MLN}, each parameters is initialized relative to a uniform distribution.
+The algorithm would be finished, if the variables $\catvariableof{\exformula}$ are independent.
+This would be the case, if the \MarkovLogicNetwork{} consists of atomic formulas only.
+When they fail to be independent, the adjustment of the weights influence the marginal distribution of other formulas and we need an alternating optimization.
+%
+This situation corresponds with couplings of the weights by a partition contraction, which does not factorize into terms to each formula.
+
+% Concave likelihood
+Since the likelihood is concave (see \cite{koller_probabilistic_2009}), there are not local maxima the coordinate descent could run into and coordinate descent will give a monotonic improvement of the likelihood.
+
+% Inference in inner loop
+Solving Equation~\ref{sol:momentMatchingExformula} requires inference of a current model by answering a query.
+This can be a bottleneck and circumvented by approximative inference, see e.g. CAMEL \cite{ganapathi_constrained_2008}.
+
+\subsubsect{\HybridLogicNetworks{}}
+
+We now extend the alternating parameter estimation algorithm to \HybridLogicNetworks{}, by allowing for mean parameters on the interior of cube faces.
+
+\begin{lemma}
+    The moment matching conditions of \lemref{ref:lemMMinMLN} are satisfied for some $\canparamwith$, if and only if $\meanparamwith$ is on the interior of a cube face of $\hlnmeanset$.
+\end{lemma}
+
+\begin{algorithm}[hbt!]
+    \caption{Alternating Moment Matching for Hybrid Logic Networks}
+    \begin{algorithmic}
+        \Require Mean parameter $\meanparamwith$ % with $\uniquantwrtof{\selindexin}{\meanparamat{\indexedselvariable}\notin\{0,1\}}$
+        \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\hlnsetof{\formulaset}$
+        \hrule
+        \State Set
+            \[ \variableset = \Big\{ \selindex \wcols \selindexin \ncond \meanparamat{\indexedselvariable}\in\{0,1\} \Big\}\]
+            and a tuple $\headindexof{\variableset}$ with $\headindexof{\selindex}=\meanparamat{\indexedselvariable}$ for $\selindex\in\variableset$ .
+%            \[ \variableset = \Big\{ \selindex \wcols \selindexin \ncond \meanparamat{\indexedselvariable}\in\{0,1\} \Big\}\]
+        \State \Return AMM in case of Markov Logic Networks with base measure by $\exformulaof{\variableset,\headindexof{\variableset}}$
+    \end{algorithmic}
+\end{algorithm}
+
+
+\subsect{Iterative Proportional Fitting}
+
+\begin{remark}[Grouping of partition statistics]
+    When having a set of coordinates, such that the coordinate functions are boolean and sum to the trivial tensor, one can find simultaneous updates to the canonical parameters, such that the partition function is staying invariant.
+    Given a parameter $\canparam^t$ we compute
+    \[ \meanparam^t = \contractionof{\expdistof{(\sstat,\canparam^t)}, \sstat}{\selvariable} \]
+    and build the update
+    \[ \canparam^{t+1} = \canparam^t + \lnof{\meanparam^{\datamap}}{\meanparam^t} \, . \]
+    Then, $\canparam^{t+1}$ satisfies the moment matching equations for all coordinates in the set.
+
+
+    The assumptions are met when taking all features to any hyperedge in a Markov Network seen as an exponential family.
+    In that case, the update algorithm is refered to as Iterative Proportional Fitting \cite{wainwright_graphical_2008}.
+    Further, when activating both $\exformula$ and $\lnot\exformula$.
+
+    \red{We will investigate these statistics as partition statistics in \secref{sec:partitionStatistics}.}
+\end{remark}
+
+
+
+
+%\sect{Alternating Algorithms to Approximate the Backward Map}
+
+%%% Hard network reference!
+%In the case $\datameanat{\indexedselvariable}\in\{0,1\}$ the moment matching conditions are not satisfiable for $\canparamat{\indexedselvariable}\in\rr$.
+%But, we notice, that in the limit $\canparamat{\indexedselvariable}\rightarrow \infty $ (respectively $-\infty$) we have
+%\[ \meanparamat{\indexedselvariable} \rightarrow  1 \quad \text{(respectively $0$)}\, ,  \]
+%and the moment matching can be satisfied up to arbitrary precision.
+%In \secref{sec:hardNetworks} we will allow infinite weights and interpret the corresponding factors by logical formulas.
+%As a consequence, we will able to fit graphical models, which we will call hybrid networks on arbitrary satisfiable mean parameters.
+
+%%
+%The cases $\hypercoreat{\headvariableof{\selindex}=1}=0$, respectively $\hypercoreat{\headvariableof{\selindex}=1}=0$ only appear for nontrivial formulas when the distribution is not positive.
+%This is not the case for \MarkovLogicNetworks{}, but will happen when formulas are added as cores of a Markov Network.
+%This situation will has been investigated in \secref{sec:hardNetworks}.
+
+%
+%We suggest an alternating optimization by Algorithm~\ref{alg:AWO}, solving the moment matching equation iteratively for all formulas $\exformulain$ and repeat the optimization until a convergence criterion is met.
+%This is an coordinate ascent algorithm, when interpreted the loss $\lossof{\expdist}$ as an objective depending on the vector $\canparam$.
+%
+%\begin{algorithm}[hbt!]
+%    \caption{Alternating Weight Optimization (AWO)}\label{alg:AWO} % Call it parameter instead?
+%    \begin{algorithmic}
+%%% INPUT: Numerated formula set, mean parameter $\datameanat{\selvariable}$
+%%\For{$\exformula\in\formulaset$}
+%        \Require Empirical distribution $\empdistribution$, boolean features $\mlnstat$ %and base measure $\basemeasure$
+%        \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\expfamily$
+%        \hrule
+%        \State Compute $\datameanat{\selvariable}= \contractionof{\empdistribution,\sencsstat}{\selvariable}$
+%        \State $\kb = \ones$, $\secnodes=\varnothing$
+%        \For{$\selindexin$}
+%            \If{$\meanparamat{\indexedselvariable}=1$}
+%                \[ \hardformulaset \algdefsymbol \hardformulaset \cup \{\enumformula\}\]
+%            \ElsIf
+%                    {$\meanparamat{\indexedselvariable}=0$}
+%                \[ \hardformulaset \algdefsymbol \hardformulaset \cup \{\lnot\enumformula\}\]
+%            \Else
+%                \State $\secnodes\algdefsymbol \secnodes \cup \{\selindex\}$
+%            \EndIf
+%        \EndFor
+%        \For{$\selindex\in\secnodes$}
+%            \State Compute
+%            \[ \hypercoreat{\headvariableof{\selindex}}
+%            \algdefsymbol \contractionof{\bencodingof{\enumformula}}{\headvariableof{\selindex}} \]
+%            \State Set
+%            \begin{align*}
+%                \canparamat{\indexedselvariable}
+%                \algdefsymbol \lnof{
+%                    \frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})}
+%                    \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
+%                }
+%            \end{align*}
+%        \EndFor
+%        \If {$\contraction{\kb}=0$}
+%            \State \textbf{raise} "Inconsistent Knowledge Base"
+%        \EndIf
+%        \While{Convergence criterion is not met}
+%            \For{$\selindex\in\secnodes$}
+%                \State Compute
+%                \begin{align*}
+%                    \hypercoreat{\headvariableof{\selindex}}
+%                    = \contractionof{\{\bencodingof{\enumformula} \, : \, \selindexin\}
+%                    \cup\{\actcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
+%                    \cup\{\basemeasure\}}{\headvariableof{\selindex}}
+%                \end{align*}
+%                \State Set
+%                \begin{align*}
+%                    \canparamat{\indexedselvariable} = \lnof{
+%                        \frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})}
+%                        \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
+%                    }
+%                \end{align*}
+%            \EndFor
+%        \EndWhile
+%        \State \Return $\canparamwith$
+%    \end{algorithmic}
+%\end{algorithm}
+
+%
+%\red{The canonical parameters in \algoref{alg:AWO} converge, if and only if the mean parameter $\genmeanwith$ is reproducable by a Hybrid Logic Network.}
+
+
+
+\subsect{Backward Maps in Closed Form}
+
+\red{For the universal and the atomic family we have $\elhlnmeanset=\hlnmeanset$.
+Furthermore, we can provide the backward mapping in a closed form expression.}
+
+% Closed form availability
+We recall from \charef{cha:probReasoning}, that while forward mappings are always in closed form by contractions, backward mapping in general do not have a closed form representation.
+Instead, the backward map is in general implicitly characterized by a maximum entropy problem constrained to matching expected sufficient statistics.
+We investigate in this section specific examples, where closed forms are available for both.
+In these cases, parameter estimation can thus be solved by application of the inverse on the expected sufficient statistics with respect to the empirical distribution, and iterative algorithms can be avoided.
+
+% Usage
+%When the backward map $\backwardmap$ is available in closed form, we directly get optimal parameters by the inversion acting on the satisfaction rate and can avoid iterative algorithms of parameter estimation.
+
+\subsubsect{Maxterms and Minterms}
+
+Minterms (respectively maxterms) are ways in propositional logics to get a syntactical formula representation based on a formula to each world which is a model (respectively fails to be a model).
+We have already studied in \secref{sec:MLNMaxMintermRep} how to represent any distribution as a MLN of maxterms (respectively minterms), see \theref{the:maximalClausesRepresentation}.
+
+We use the tuple enumeration of the maxterms and minterms by $\atomstates$ introduced in \secref{sec:termClauseDecomposition}.
+With respect to this enumeration the canonical parameters and mean parameters are tensors in $\bigotimes_{\atomenumeratorin}\rr^2$.
+%% Interpretation of the mean parameters
+Since the statistic of the minterm family is the identity, the mean parameters for the minterm family are
+\[ \meanparamat{\selvariableof{[\atomorder]}=\catindexof{[\atomorder]}}
+= \probat{\catindexof{[\atomorder]}}
+\]
+and therefore after a relabeling of categorical variables to selection variables $\meanparam=\probtensor$.
+For maxterms we have analogously
+\[ \meanparamat{\selvariableof{[\atomorder]}=\catindexof{[\atomorder]}}
+= 1-\probat{\catindexof{[\atomorder]}}
+\]
+and $\meanparam = \onesat{}-\probtensor$.
+We can use these insights to provide a characterization of the forward and backward maps of the minterm and maxterm family.
+
+\begin{theorem}
+    Given the \MarkovLogicNetworks{} to the formula sets
+    \[ \mintermformulaset := \{ \mintermof{\atomindices} \, : \, \atomindicesin\} \quad \text{and} \quad
+    \maxtermformulaset := \{ \maxtermof{\atomindices} \, : \, \atomindicesin\}  \]
+    of all minterms, respectively of all mapterms, the forward mapping are
+    %\[ \forwardmapwrt{\mintermformulaset}: \bigotimes_{\atomenumeratorin}\rr^{2} \rightarrow \bigotimes_{\atomenumeratorin}\rr^{2} \]
+    \[ \forwardmapwrt{\mlnmintermsymbol}(\canparam) = \normalizationofwrt{\expof{\canparam}}{\shortcatvariables}{\varnothing}
+    \quad \text{and} \quad
+    \forwardmapwrt{\mlnmaxtermsymbol}(\canparam) = \normalizationofwrt{\expof{-\canparam}}{\shortcatvariables}{\varnothing} \, , \]
+    where in a slight abuse of notation we assigned the variables $\shortcatvariables$ to the canonical parameters $\canparam$.
+
+    Possible choices of the backward mappings are
+    %\[ \backwardmapwrt{\mlnmintermsymbol}: \bigotimes_{\atomenumeratorin}\rr^{2} \rightarrow \bigotimes_{\atomenumeratorin}\rr^{2} \]
+    \[ \backwardmapwrt{\mlnmintermsymbol}(\meanparam) = \lnof{\meanparam}
+    \quad \text{and} \quad
+    \backwardmapwrt{\mlnmaxtermsymbol}(\meanparam) = -\lnof{\meanparam} \, .
+    \]
+\end{theorem}
+\begin{proof}
+    For the minterms we use that
+    \[ \mintermformulaset[\shortcatvariables,\catvariableof{\mintermformulaset}]  = \identityat{\shortcatvariables,\catvariableof{\maxtermformulaset}}\]
+    and get
+    \[ \forwardmapwrt{\mlnmintermsymbol}(\canparam)
+    = \normalizationof{
+        \expof{\contractionof{\{\mintermformulaset, \canparam\}}{\shortcatvariables}}
+    }{\shortcatvariables}
+    =
+    \normalizationof{\expof{\canparam}}{\shortcatvariables} \, .
+    \]
+
+    We notice that for any $\meanparam$ in the image of the forward map we have
+    \[ \forwardmapwrt{\mlnmintermsymbol}(\backwardmapwrt{\mlnmintermsymbol}(\meanparam)) = \meanparam \]
+    Therefore, $\backwardmapwrt{\mintermformulaset}$ is indeed a backward mapping to the exponential family of minterms.
+
+    For the maxterms we use that
+    \[ \maxtermformulaset[\shortcatvariables,\catvariableof{\maxtermformulaset}] = \onesat{\shortcatvariables,\catvariableof{\maxtermformulaset}}-\identityat{\shortcatvariables,\catvariableof{\maxtermformulaset}} \]
+    and get
+    \begin{align*}
+        \forwardmapwrt{\mlnmaxtermsymbol}(\canparam)
+        & = \normalizationof{
+            \expof{\contractionof{\{\mintermformulaset, \canparam\}}{\shortcatvariables}}
+        }{\shortcatvariables} \\
+        & = \normalizationof{\{
+        \expof{\contractionof{\{\ones, \canparam\}}{\shortcatvariables}},
+            \expof{-\contractionof{\canparam}{\shortcatvariables}} \}
+        }{\shortcatvariables} \\
+        & = \normalizationof{
+            \expof{-\canparam}
+        }{\shortcatvariables}
+    \end{align*}
+    where we used, that $\expof{\contractionof{\{\ones, \canparam\}}{\shortcatvariables}}$ is a multiple of $\onesat{\shortcatvariables}$ and is thus eliminated in the normalization.
+    For any $\meanparam\in\imageof{\forwardmapwrt{\mlnmaxtermsymbol}}$ we have
+    \[ \forwardmapwrt{\mlnmaxtermsymbol}(\backwardmapwrt{\mlnmaxtermsymbol}(\meanparam) )
+    = \meanparam
+        %-\lnof{\expof{-\canparam}} + \contractionof{\expof{-\canparam}}{\varnothing} \cdot \onesat{\shortcatvariables}
+        %= \canparam + \contractionof{\expof{-\canparam}}{\varnothing} \cdot \onesat{\shortcatvariables}
+    \]
+    and $\backwardmapwrt{\mlnmintermsymbol}$ is thus a backward map for the exponential family of maxterms.
+\end{proof}
+
+% Fitting arbitrary distributions
+Any positive probability distribution can thus be fitted by minterms when we choose $\canparam=\lnof{\probtensor}$, respectively by maxterms when we choose $\canparam=\ones-\lnof{\probtensor}$.
+Thus, we have identified a subset of $2^{\atomorder}$ formulas, which is rich enough to fit any distribution.
+
+
+
+
+
+\subsubsect{Atomic formulas}
+
+% Repeat atomic formulas
+Let us now derive a closed form backward mapping for the statistic
+\[ \atomformulaset := \{\atomicformulaof{\atomenumerator}: \atomenumeratorin\} \, . \]
+
+The mean parameters coincide with the queries on the atomic formulas, that is the marginal
+\[ \meanparamat{\selvariable=\atomenumerator} = \probat{\catvariableof{\atomenumerator}=1}  \, . \]
+
+\begin{theorem}
+    Given a \MarkovLogicNetwork{} with the statistic $\atomformulaset$ of atomic formulas, the forward mapping from canonical parameters to mean parameters is the coordinatewise sigmoid, that is
+    \[ \forwardmapwrtof{\mlnatomsymbol}{\canparamat{\selvariable}} = \frac{\expof{\canparamat{\selvariable}}}{\onesat{\selvariable}+\expof{\canparamat{\selvariable}}}   \]
+    where the quotient is performed coordinatewise.
+
+    A backward mapping is the coordinatewise logit, that is
+    \[ \backwardmapwrt{\mlnatomsymbol}(\meanparamwith)
+    = \lnof{\frac{
+        \meanparamwith
+    }{
+        \onesat{\selvariable}-\meanparamwith
+    }}  \, . \]
+\end{theorem}
+\begin{proof}
+    We have for any $\canparamat{\selvariable}\in\rr^{\atomorder}$
+    \[ \probofat{(\atomformulaset,\canparam)}{\shortcatvariables}
+    = \bigotimes_{\atomenumeratorin} \normalizationof{\expof{\canparamat{\selvariable=\atomenumerator}\cdot \atomicformulaof{\atomenumerator}}}{\catvariableof{\atomenumerator}}  \, . \]
+
+
+    For any $\atomenumeratorin$ it therefore holds, that
+    \begin{align*}
+        \forwardmapwrtof{\mlnatomsymbol}{\canparamat{\selvariable}}[\selvariable=\atomenumerator]
+        &=\contraction{\atomicformulaof{\atomenumerator},  \probofat{(\atomformulaset,\canparam)}{\shortcatvariables}} \\
+        &=\contraction{\atomicformulaof{\atomenumerator},  \normalizationof{\expof{\canparamat{\selvariable=\atomenumerator}\cdot \atomicformulaof{\atomenumerator}}}{\catvariableof{\atomenumerator}}} \\
+        & = \frac{\expof{\canparamat{\selvariable=\atomenumerator}}}{1+\expof{\canparamat{\selvariable=\atomenumerator}}} \, .
+    \end{align*}
+
+    Since the coordinatewise logit is the inverse function of the coordinatewise sigmoid the map
+    \begin{align*}
+        \backwardmapwrtof{\mlnatomsymbol}{\meanparamwith}[\selvariable=\atomenumerator]
+        & = \lnof{\frac{\meanparamat{\selvariable=\atomenumerator}}{1- \meanparamat{\selvariable=\atomenumerator}}}
+    \end{align*}
+    satisfies for any $\meanparam$ in the image of the forward map
+    \begin{align*}
+        \forwardmapwrt{\mlnatomsymbol}(\backwardmapwrt{\mlnatomsymbol}(\meanparam)) = \meanparam
+    \end{align*}
+    and is therefore a backward map.
+\end{proof}
+
+
+% Representation by selection tensor networks
+In a selection tensor networks they are represented by a single neuron with identity connective and variable selection to all atoms.
+We will investigate such examples in more detail in \charef{cha:sparseRepresentation}, where atomic formulas \MarkovLogicNetworks{} are specific cases of monomial decomposition of order 1.
+
+% Interpretation of the result as independence approximation
+The maximum likelihood estimator of a positive probability distribution by the MLN of atomic formulas is therefore the tensor product of the marginal distributions.
+The Kullback-Leibler divergence between the distribution and its projection is the mutual information of the atoms, see for example Chapter~8 in \cite{mackay_information_2003}.
+
+\begin{remark}[Decomposition into systems of atomic networks]
+    \red{By Independence Decomposition we reduce to a system of atomic MLN.
+    The minterms of such MLNs are the literals.
+    By redundancy (literals sum up to $\ones$), it suffices to take only the positive or the negative literal.
+    }
+%	We set the weights of $\weightof{\lnot\atomicformulaof{\atomenumerator}}=0$ (corresponding with a gauge normalization of the energy offset symmetry). % Not needed!
+\end{remark}
+
+
+
+
+
 \sect{Entropy Optimization on \HybridLogicNetworks{}} \label{sec:parameterEstimation} % Check for redundancy with the mln introduction chapter!
 
 We will investigate two entropic approaches towards unconstrained parameter estimation.
@@ -182,412 +647,6 @@ We can instead state a Maximum Likelihood Problem over $\maxrealizabledistsof{\m
 %%\begin{proof}
 %%	Work by weight cutoff, in the limit of hard logics?
 %%\end{proof}
-
-
-\sect{Alternating Algorithms for Parameter Estimation}\label{sec:alternatingParEstMLN}
-
-Parameter estimation is the Maximum Likelihood Problem for exponential families.
-It is solved by the backward map, when the mean parameter is in the interior of the mean parameter polytope.
-
-\subsect{\MarkovLogicNetworks{}}
-
-In case of boolean statistics, we can provide a particular simple implementation of the Alternating Moment Matching Algorithm~\ref{alg:AMM}.
-%The moment matching condition of \lemref{lem:mmContractionEquation} simplifies as follows.
-To solve the moment matching condition at a formula $\enumformula$ we refine \lemref{lem:mmContractionEquation} in the following.
-
-\begin{lemma}
-    \label{ref:lemMMinMLN}
-    Let there be a base measure $\basemeasure$, a formula selecting map $\formulaset=\{\enumformula \, : \, \selindexin\}$ and a canonical parameter $\canparam$, and choose $\selindexin$ such that $\enumformula  \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
-    The moment matching condition relative to $\canparamwith$, and $\datameanat{\indexedselvariable}\in(0,1)$ is then satisfied, if for all $\selindexin$
-    \begin{align}
-        \label{sol:momentMatchingExformula}
-        \indexedcanparam = \lnof{
-            \frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})}
-            \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
-        }
-    \end{align}
-    where by $\hypercoreat{\headvariableof{\selindex}}$ we denote the contraction
-    \begin{align*}
-        \hypercoreat{\headvariableof{\selindex}}
-        = \contractionof{\{\bencodingof{\enumformula} \wcols \selindexin\}
-        \cup\{\actcoreof{\tilde{\selindex},\canparamat{\selvariable=\tilde{\selindex}}} \wcols \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
-        \cup\{\basemeasure\}}{\headvariableof{\selindex}} \, .
-    \end{align*}
-\end{lemma}
-\begin{proof}
-    Since $\imageof{\enumformula}\subset[2]$ we have
-    \begin{align*}
-        \idrestrictedto{\imageof{\enumformula}} = \onehotmapofat{1}{\headvariableof{\selindex}}
-    \end{align*}
-    and the moment matching condition is by \lemref{lem:mmContractionEquation} satisfied if
-    \begin{align*}
-        \contraction{\actcorewith, \onehotmapofat{1}{\headvariableof{\selindex}}, \hypercoreat{\headvariableof{\selindex}}}
-        = \contraction{\actcorewith,\hypercoreat{\headvariableof{\selindex}}} \cdot \datameanat{\indexedselvariable} \, .
-    \end{align*}
-    This is equal to
-    \begin{align*}
-        \expof{\canparamat{\indexedselvariable}} \cdot \hypercoreat{\headvariableof{\selindex}=1}
-        = \left( \expof{\canparamat{\indexedselvariable}} \cdot \hypercoreat{\headvariableof{\selindex}=1} + \hypercoreat{\headvariableof{\selindex}=0} \right) \cdot \datameanat{\indexedselvariable} \, .
-    \end{align*}
-    Rearranging the equations this is equal to
-    \begin{align*}
-        \hypercoreat{\headvariableof{\selindex}}
-        = \contractionof{\{\bencodingof{\enumformula}\}
-        \cup\{\actcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
-        \cup\{\basemeasure\}}{\selvariable} \, .
-    \end{align*}
-    We notice that the right side is well defined, since we have by assumption $\datameanat{\indexedselvariable}, (1- \datameanat{\indexedselvariable}) \neq 0$ and $\hypercoreat{\headvariableof{\selindex}=0}, \hypercoreat{\headvariableof{\selindex}=1} \neq 0$ since \MarkovLogicNetworks{} are positive distributions and $\enumformula \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
-\end{proof}
-
-We now investigate, for which mean parameters the moment matching equations are satisfiable.
-
-\begin{lemma}
-    The moment matching conditions of \lemref{ref:lemMMinMLN} are satisfied for some $\canparamwith$, if and only if $\meanparamwith\in\sbinteriorof{\hlnmeanset}$.
-\end{lemma}
-
-
-Let us now introduce an implementation of the Alternating Moment Matching Algorithm~\ref{alg:AMM} in case of \MarkovLogicNetworks{}.
-Note that while $\uniquantwrtof{\selindexin}{\meanparamat{\indexedselvariable}\notin\{0,1\}}$ ensures the well-definedness of the algorithm (otherwise the update could not be computed), it is only a necessary but not always sufficient criterion for the existence of a solution.
-
-
-\begin{algorithm}[hbt!]
-    \caption{Alternating Moment Matching for Markov Logic Networks}\label{alg:AMM_MLN}
-    \begin{algorithmic}
-        \Require Mean parameter $\meanparamwith$ with $\uniquantwrtof{\selindexin}{\meanparamat{\indexedselvariable}\notin\{0,1\}}$
-        \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\expfamily$
-        \hrule
-        \While{Convergence criterion is not met}
-            \For{$\selindex\in\secnodes$}
-                \State Compute
-                \begin{align*}
-                    \hypercoreat{\headvariableof{\selindex}}
-                    = \contractionof{\{\bencodingof{\enumformula} \, : \, \selindexin\}
-                    \cup\{\actcoreof{\tilde{\selindex}} \wcols \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
-                    \cup\{\basemeasure\}}{\headvariableof{\selindex}}
-                \end{align*}
-                \State Set
-                \begin{align*}
-                    \canparamat{\indexedselvariable} = \lnof{
-                        \frac{\meanparamat{\indexedselvariable}}{(1-\meanparamat{\indexedselvariable})}
-                        \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
-                    }
-                \end{align*}
-            \EndFor
-        \EndWhile
-        \State \Return $\canparamwith$
-    \end{algorithmic}
-\end{algorithm}
-
-% Independent formulas
-In the initialization phase of \algoref{alg:AMM_MLN}, each parameters is initialized relative to a uniform distribution.
-The algorithm would be finished, if the variables $\catvariableof{\exformula}$ are independent.
-This would be the case, if the \MarkovLogicNetwork{} consists of atomic formulas only.
-When they fail to be independent, the adjustment of the weights influence the marginal distribution of other formulas and we need an alternating optimization.
-%
-This situation corresponds with couplings of the weights by a partition contraction, which does not factorize into terms to each formula.
-
-% Concave likelihood
-Since the likelihood is concave (see \cite{koller_probabilistic_2009}), there are not local maxima the coordinate descent could run into and coordinate descent will give a monotonic improvement of the likelihood.
-
-% Inference in inner loop
-Solving Equation~\ref{sol:momentMatchingExformula} requires inference of a current model by answering a query.
-This can be a bottleneck and circumvented by approximative inference, see e.g. CAMEL \cite{ganapathi_constrained_2008}.
-
-\subsect{\HybridLogicNetworks{}}
-
-We now extend the alternating parameter estimation algorithm to \HybridLogicNetworks{}, by allowing for mean parameters on the interior of cube faces.
-
-\begin{lemma}
-    The moment matching conditions of \lemref{ref:lemMMinMLN} are satisfied for some $\canparamwith$, if and only if $\meanparamwith$ is on the interior of a cube face of $\hlnmeanset$.
-\end{lemma}
-
-\begin{algorithm}[hbt!]
-    \caption{Alternating Moment Matching for Hybrid Logic Networks}
-    \begin{algorithmic}
-        \Require Mean parameter $\meanparamwith$ % with $\uniquantwrtof{\selindexin}{\meanparamat{\indexedselvariable}\notin\{0,1\}}$
-        \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\hlnsetof{\formulaset}$
-        \hrule
-        \State Set
-            \[ \variableset = \Big\{ \selindex \wcols \selindexin \ncond \meanparamat{\indexedselvariable}\in\{0,1\} \Big\}\]
-            and a tuple $\headindexof{\variableset}$ with $\headindexof{\selindex}=\meanparamat{\indexedselvariable}$ for $\selindex\in\variableset$ .
-%            \[ \variableset = \Big\{ \selindex \wcols \selindexin \ncond \meanparamat{\indexedselvariable}\in\{0,1\} \Big\}\]
-        \State \Return AMM in case of Markov Logic Networks with base measure by $\exformulaof{\variableset,\headindexof{\variableset}}$
-    \end{algorithmic}
-\end{algorithm}
-
-
-
-
-
-%\sect{Alternating Algorithms to Approximate the Backward Map}
-
-%%% Hard network reference!
-%In the case $\datameanat{\indexedselvariable}\in\{0,1\}$ the moment matching conditions are not satisfiable for $\canparamat{\indexedselvariable}\in\rr$.
-%But, we notice, that in the limit $\canparamat{\indexedselvariable}\rightarrow \infty $ (respectively $-\infty$) we have
-%\[ \meanparamat{\indexedselvariable} \rightarrow  1 \quad \text{(respectively $0$)}\, ,  \]
-%and the moment matching can be satisfied up to arbitrary precision.
-%In \secref{sec:hardNetworks} we will allow infinite weights and interpret the corresponding factors by logical formulas.
-%As a consequence, we will able to fit graphical models, which we will call hybrid networks on arbitrary satisfiable mean parameters.
-
-%%
-%The cases $\hypercoreat{\headvariableof{\selindex}=1}=0$, respectively $\hypercoreat{\headvariableof{\selindex}=1}=0$ only appear for nontrivial formulas when the distribution is not positive.
-%This is not the case for \MarkovLogicNetworks{}, but will happen when formulas are added as cores of a Markov Network.
-%This situation will has been investigated in \secref{sec:hardNetworks}.
-
-%
-%We suggest an alternating optimization by Algorithm~\ref{alg:AWO}, solving the moment matching equation iteratively for all formulas $\exformulain$ and repeat the optimization until a convergence criterion is met.
-%This is an coordinate ascent algorithm, when interpreted the loss $\lossof{\expdist}$ as an objective depending on the vector $\canparam$.
-%
-%\begin{algorithm}[hbt!]
-%    \caption{Alternating Weight Optimization (AWO)}\label{alg:AWO} % Call it parameter instead?
-%    \begin{algorithmic}
-%%% INPUT: Numerated formula set, mean parameter $\datameanat{\selvariable}$
-%%\For{$\exformula\in\formulaset$}
-%        \Require Empirical distribution $\empdistribution$, boolean features $\mlnstat$ %and base measure $\basemeasure$
-%        \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\expfamily$
-%        \hrule
-%        \State Compute $\datameanat{\selvariable}= \contractionof{\empdistribution,\sencsstat}{\selvariable}$
-%        \State $\kb = \ones$, $\secnodes=\varnothing$
-%        \For{$\selindexin$}
-%            \If{$\meanparamat{\indexedselvariable}=1$}
-%                \[ \hardformulaset \algdefsymbol \hardformulaset \cup \{\enumformula\}\]
-%            \ElsIf
-%                    {$\meanparamat{\indexedselvariable}=0$}
-%                \[ \hardformulaset \algdefsymbol \hardformulaset \cup \{\lnot\enumformula\}\]
-%            \Else
-%                \State $\secnodes\algdefsymbol \secnodes \cup \{\selindex\}$
-%            \EndIf
-%        \EndFor
-%        \For{$\selindex\in\secnodes$}
-%            \State Compute
-%            \[ \hypercoreat{\headvariableof{\selindex}}
-%            \algdefsymbol \contractionof{\bencodingof{\enumformula}}{\headvariableof{\selindex}} \]
-%            \State Set
-%            \begin{align*}
-%                \canparamat{\indexedselvariable}
-%                \algdefsymbol \lnof{
-%                    \frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})}
-%                    \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
-%                }
-%            \end{align*}
-%        \EndFor
-%        \If {$\contraction{\kb}=0$}
-%            \State \textbf{raise} "Inconsistent Knowledge Base"
-%        \EndIf
-%        \While{Convergence criterion is not met}
-%            \For{$\selindex\in\secnodes$}
-%                \State Compute
-%                \begin{align*}
-%                    \hypercoreat{\headvariableof{\selindex}}
-%                    = \contractionof{\{\bencodingof{\enumformula} \, : \, \selindexin\}
-%                    \cup\{\actcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
-%                    \cup\{\basemeasure\}}{\headvariableof{\selindex}}
-%                \end{align*}
-%                \State Set
-%                \begin{align*}
-%                    \canparamat{\indexedselvariable} = \lnof{
-%                        \frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})}
-%                        \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
-%                    }
-%                \end{align*}
-%            \EndFor
-%        \EndWhile
-%        \State \Return $\canparamwith$
-%    \end{algorithmic}
-%\end{algorithm}
-
-%
-%\red{The canonical parameters in \algoref{alg:AWO} converge, if and only if the mean parameter $\genmeanwith$ is reproducable by a Hybrid Logic Network.}
-
-
-
-
-
-
-
-\begin{remark}[Grouping of partition statistics]
-    When having a set of coordinates, such that the coordinate functions are boolean and sum to the trivial tensor, one can find simultaneous updates to the canonical parameters, such that the partition function is staying invariant.
-    Given a parameter $\canparam^t$ we compute
-    \[ \meanparam^t = \contractionof{\expdistof{(\sstat,\canparam^t)}, \sstat}{\selvariable} \]
-    and build the update
-    \[ \canparam^{t+1} = \canparam^t + \lnof{\meanparam^{\datamap}}{\meanparam^t} \, . \]
-    Then, $\canparam^{t+1}$ satisfies the moment matching equations for all coordinates in the set.
-
-
-    The assumptions are met when taking all features to any hyperedge in a Markov Network seen as an exponential family.
-    In that case, the update algorithm is refered to as Iterative Proportional Fitting \cite{wainwright_graphical_2008}.
-    Further, when activating both $\exformula$ and $\lnot\exformula$.
-
-    \red{We will investigate these statistics as partition statistics in \secref{sec:partitionStatistics}.}
-\end{remark}
-
-
-\sect{Forward and backward mappings in closed form}
-
-% Closed form availability
-We recall from \charef{cha:probReasoning}, that while forward mappings are always in closed form by contractions, backward mapping in general do not have a closed form representation.
-Instead, the backward map is in general implicitly characterized by a maximum entropy problem constrained to matching expected sufficient statistics.
-We investigate in this section specific examples, where closed forms are available for both.
-In these cases, parameter estimation can thus be solved by application of the inverse on the expected sufficient statistics with respect to the empirical distribution, and iterative algorithms can be avoided.
-
-% Usage
-%When the backward map $\backwardmap$ is available in closed form, we directly get optimal parameters by the inversion acting on the satisfaction rate and can avoid iterative algorithms of parameter estimation.
-
-\subsect{Maxterms and Minterms}
-
-Minterms (respectively maxterms) are ways in propositional logics to get a syntactical formula representation based on a formula to each world which is a model (respectively fails to be a model).
-We have already studied in \secref{sec:MLNMaxMintermRep} how to represent any distribution as a MLN of maxterms (respectively minterms), see \theref{the:maximalClausesRepresentation}.
-
-We use the tuple enumeration of the maxterms and minterms by $\atomstates$ introduced in \secref{sec:termClauseDecomposition}.
-With respect to this enumeration the canonical parameters and mean parameters are tensors in $\bigotimes_{\atomenumeratorin}\rr^2$.
-%% Interpretation of the mean parameters
-Since the statistic of the minterm family is the identity, the mean parameters for the minterm family are
-\[ \meanparamat{\selvariableof{[\atomorder]}=\catindexof{[\atomorder]}}
-= \probat{\catindexof{[\atomorder]}}
-\]
-and therefore after a relabeling of categorical variables to selection variables $\meanparam=\probtensor$.
-For maxterms we have analogously
-\[ \meanparamat{\selvariableof{[\atomorder]}=\catindexof{[\atomorder]}}
-= 1-\probat{\catindexof{[\atomorder]}}
-\]
-and $\meanparam = \onesat{}-\probtensor$.
-We can use these insights to provide a characterization of the forward and backward maps of the minterm and maxterm family.
-
-\begin{theorem}
-    Given the \MarkovLogicNetworks{} to the formula sets
-    \[ \mintermformulaset := \{ \mintermof{\atomindices} \, : \, \atomindicesin\} \quad \text{and} \quad
-    \maxtermformulaset := \{ \maxtermof{\atomindices} \, : \, \atomindicesin\}  \]
-    of all minterms, respectively of all mapterms, the forward mapping are
-    %\[ \forwardmapwrt{\mintermformulaset}: \bigotimes_{\atomenumeratorin}\rr^{2} \rightarrow \bigotimes_{\atomenumeratorin}\rr^{2} \]
-    \[ \forwardmapwrt{\mlnmintermsymbol}(\canparam) = \normalizationofwrt{\expof{\canparam}}{\shortcatvariables}{\varnothing}
-    \quad \text{and} \quad
-    \forwardmapwrt{\mlnmaxtermsymbol}(\canparam) = \normalizationofwrt{\expof{-\canparam}}{\shortcatvariables}{\varnothing} \, , \]
-    where in a slight abuse of notation we assigned the variables $\shortcatvariables$ to the canonical parameters $\canparam$.
-
-    Possible choices of the backward mappings are
-    %\[ \backwardmapwrt{\mlnmintermsymbol}: \bigotimes_{\atomenumeratorin}\rr^{2} \rightarrow \bigotimes_{\atomenumeratorin}\rr^{2} \]
-    \[ \backwardmapwrt{\mlnmintermsymbol}(\meanparam) = \lnof{\meanparam}
-    \quad \text{and} \quad
-    \backwardmapwrt{\maxtermformulaset}(\meanparam) = -\lnof{\meanparam} \, .
-    \]
-\end{theorem}
-\begin{proof}
-    For the minterms we use that
-    \[ \mintermformulaset[\shortcatvariables,\catvariableof{\mintermformulaset}]  = \identityat{\shortcatvariables,\catvariableof{\maxtermformulaset}}\]
-    and get
-    \[ \forwardmapwrt{\mlnmintermsymbol}(\canparam)
-    = \normalizationof{
-        \expof{\contractionof{\{\mintermformulaset, \canparam\}}{\shortcatvariables}}
-    }{\shortcatvariables}
-    =
-    \normalizationof{\expof{\canparam}}{\shortcatvariables} \, .
-    \]
-
-    We notice that for any $\meanparam$ in the image of the forward map we have
-    \[ \forwardmapwrt{\mlnmintermsymbol}(\backwardmapwrt{\mlnmintermsymbol}(\meanparam)) = \meanparam \]
-    Therefore, $\backwardmapwrt{\mintermformulaset}$ is indeed a backward mapping to the exponential family of minterms.
-
-    For the maxterms we use that
-    \[ \maxtermformulaset[\shortcatvariables,\catvariableof{\maxtermformulaset}] = \onesat{\shortcatvariables,\catvariableof{\maxtermformulaset}}-\identityat{\shortcatvariables,\catvariableof{\maxtermformulaset}} \]
-    and get
-    \begin{align*}
-        \forwardmapwrt{\mlnmaxtermsymbol}(\canparam)
-        & = \normalizationof{
-            \expof{\contractionof{\{\mintermformulaset, \canparam\}}{\shortcatvariables}}
-        }{\shortcatvariables} \\
-        & = \normalizationof{\{
-        \expof{\contractionof{\{\ones, \canparam\}}{\shortcatvariables}},
-            \expof{-\contractionof{\canparam}{\shortcatvariables}} \}
-        }{\shortcatvariables} \\
-        & = \normalizationof{
-            \expof{-\canparam}
-        }{\shortcatvariables}
-    \end{align*}
-    where we used, that $\expof{\contractionof{\{\ones, \canparam\}}{\shortcatvariables}}$ is a multiple of $\onesat{\shortcatvariables}$ and is thus eliminated in the normalization.
-    For any $\meanparam\in\imageof{\forwardmapwrt{\mlnmaxtermsymbol}}$ we have
-    \[ \forwardmapwrt{\mlnmaxtermsymbol}(\backwardmapwrt{\mlnmaxtermsymbol}(\meanparam) )
-    = \meanparam
-        %-\lnof{\expof{-\canparam}} + \contractionof{\expof{-\canparam}}{\varnothing} \cdot \onesat{\shortcatvariables}
-        %= \canparam + \contractionof{\expof{-\canparam}}{\varnothing} \cdot \onesat{\shortcatvariables}
-    \]
-    and $\backwardmapwrt{\mlnmintermsymbol}$ is thus a backward map for the exponential family of maxterms.
-\end{proof}
-
-% Fitting arbitrary distributions
-Any positive probability distribution can thus be fitted by minterms when we choose $\canparam=\lnof{\probtensor}$, respectively by maxterms when we choose $\canparam=\ones-\lnof{\probtensor}$.
-Thus, we have identified a subset of $2^{\atomorder}$ formulas, which is rich enough to fit any distribution.
-
-
-
-
-
-\subsect{Atomic formulas}
-
-% Repeat atomic formulas
-Let us now derive a closed form backward mapping for the statistic
-\[ \atomformulaset := \{\atomicformulaof{\atomenumerator}: \atomenumeratorin\} \, . \]
-
-The mean parameters coincide with the queries on the atomic formulas, that is the marginal
-\[ \meanparamat{\selvariable=\atomenumerator} = \probat{\catvariableof{\atomenumerator}=1}  \, . \]
-
-\begin{theorem}
-    Given a \MarkovLogicNetwork{} with the statistic $\atomformulaset$ of atomic formulas, the forward mapping from canonical parameters to mean parameters is the coordinatewise sigmoid, that is
-    \[ \forwardmapwrtof{\mlnatomsymbol}{\canparamat{\selvariable}} = \frac{\expof{\canparamat{\selvariable}}}{\onesat{\selvariable}+\expof{\canparamat{\selvariable}}}   \]
-    where the quotient is performed coordinatewise.
-
-    A backward mapping is the coordinatewise logit, that is
-    \[ \backwardmapwrt{\mlnatomsymbol}(\meanparamwith)
-    = \lnof{\frac{
-        \meanparamwith
-    }{
-        \onesat{\selvariable}-\meanparamwith
-    }}  \, . \]
-\end{theorem}
-\begin{proof}
-    We have for any $\canparamat{\selvariable}\in\rr^{\atomorder}$
-    \[ \probofat{(\atomformulaset,\canparam)}{\shortcatvariables}
-    = \bigotimes_{\atomenumeratorin} \normalizationof{\expof{\canparamat{\selvariable=\atomenumerator}\cdot \atomicformulaof{\atomenumerator}}}{\catvariableof{\atomenumerator}}  \, . \]
-
-
-    For any $\atomenumeratorin$ it therefore holds, that
-    \begin{align*}
-        \forwardmapwrtof{\mlnatomsymbol}{\canparamat{\selvariable}}[\selvariable=\atomenumerator]
-        &=\contraction{\atomicformulaof{\atomenumerator},  \probofat{(\atomformulaset,\canparam)}{\shortcatvariables}} \\
-        &=\contraction{\atomicformulaof{\atomenumerator},  \normalizationof{\expof{\canparamat{\selvariable=\atomenumerator}\cdot \atomicformulaof{\atomenumerator}}}{\catvariableof{\atomenumerator}}} \\
-        & = \frac{\expof{\canparamat{\selvariable=\atomenumerator}}}{1+\expof{\canparamat{\selvariable=\atomenumerator}}} \, .
-    \end{align*}
-
-    Since the coordinatewise logit is the inverse function of the coordinatewise sigmoid the map
-    \begin{align*}
-        \backwardmapwrtof{\mlnatomsymbol}{\meanparamwith}[\selvariable=\atomenumerator]
-        & = \lnof{\frac{\meanparamat{\selvariable=\atomenumerator}}{1- \meanparamat{\selvariable=\atomenumerator}}}
-    \end{align*}
-    satisfies for any $\meanparam$ in the image of the forward map
-    \begin{align*}
-        \forwardmapwrt{\mlnatomsymbol}(\backwardmapwrt{\mlnatomsymbol}(\meanparam)) = \meanparam
-    \end{align*}
-    and is therefore a backward map.
-\end{proof}
-
-
-% Representation by selection tensor networks
-In a selection tensor networks they are represented by a single neuron with identity connective and variable selection to all atoms.
-We will investigate such examples in more detail in \charef{cha:sparseRepresentation}, where atomic formulas \MarkovLogicNetworks{} are specific cases of monomial decomposition of order 1.
-
-% Interpretation of the result as independence approximation
-The maximum likelihood estimator of a positive probability distribution by the MLN of atomic formulas is therefore the tensor product of the marginal distributions.
-The Kullback-Leibler divergence between the distribution and its projection is the mutual information of the atoms, see for example Chapter~8 in \cite{mackay_information_2003}.
-
-\begin{remark}[Decomposition into systems of atomic networks]
-    \red{By Independence Decomposition we reduce to a system of atomic MLN.
-    The minterms of such MLNs are the literals.
-    By redundancy (literals sum up to $\ones$), it suffices to take only the positive or the negative literal.
-    }
-%	We set the weights of $\weightof{\lnot\atomicformulaof{\atomenumerator}}=0$ (corresponding with a gauge normalization of the energy offset symmetry). % Not needed!
-\end{remark}
-
-
-
 
 
 
