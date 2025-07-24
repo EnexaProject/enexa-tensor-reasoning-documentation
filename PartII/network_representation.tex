@@ -1506,12 +1506,17 @@ In general, we can express any face measure by a propositional formula.
 % Check: Where to define cube face and effective interior
 Based on the representation results for face measures, we now study the mean parameters of \HybridLogicNetworks{}.
 
-\begin{definition}
-    \label{def:HLNrepMean}
-    We say that a mean parameter $\meanparamwith\in\hlnfaceset$ is reproducable by a Hybrid Logic Network in $\elrealizabledistsof{\mlnstat}$, if the minimal face of $\hlnfaceset$, which includes $\meanparamwith$ is an intersection of $\genmeanset$ and a face $\cubeface$ of the cube $\fullparcube$.
+\begin{definition}[Effective Interior]
+    Let $\arbset\subset\parspace$ be an arbitrary set and $\mathcal{L}$ the minimal affine subspace of $\parspace$ containing $\arbset$.
+    Then the effective interior, denoted $\sbinteriorof{\arbset}$ is the the interior of $\arbset$ in the space $\mathcal{L}$.
 \end{definition}
 
-Let us show, that the condition of reproduceability in \defref{def:HLNrepMean} is equivalent to the existence of a Hybrid Logic Network reproducing $\meanparamwith$.
+%\begin{definition}
+%    \label{def:HLNrepMean}
+%    We say that a mean parameter $\meanparamwith\in\hlnfaceset$ is reproducable by a Hybrid Logic Network in $\elrealizabledistsof{\mlnstat}$, if the minimal face of $\hlnfaceset$, which includes $\meanparamwith$ is an intersection of $\genmeanset$ and a face $\cubeface$ of the cube $\fullparcube$.
+%\end{definition}
+
+Let us find conditions on a mean parameter $\meanparamwith$ for the existence of a Hybrid Logic Network reproducing it. %$\meanparamwith$.
 
 \begin{theorem}
     \label{the:hlnInteriorCharacterization}
@@ -1554,13 +1559,13 @@ To this end, we first determine the minimal face with respect to face inclusion 
 \end{proof}
 
 % Determine whether reproducable
-\begin{theorem}
+\begin{lemma}
     $\meanparamwith$ is reproducable by a Hybrid Logic Network, if and only if it is in the effective interior of the set
     \begin{align*}
         \hlnmeanset\cap \cubeface^{\meanparam} \, .
     \end{align*}
     Here $\cubeface^{\meanparam}$ is the minimal face of the cube containing $\meanparamwith$.
-\end{theorem}
+\end{lemma}
 \begin{proof}
     This follows from \theref{the:hlnInteriorCharacterization} and \lemref{lem:minimalContainingFace}.
 \end{proof}
@@ -1575,6 +1580,159 @@ Whenever a normalized face measure is in $\realizabledistsof{\formulaset,\graph}
 %    \label{cor:interiorCharacterizationHLN}
 %    If $\meanparamwith\in\interiorof{\hlnmeanset}$, or equivalently the statistic is minimal and $\meanparamwith$ is reproduceable by a distribution positive with respect to $\basemeasure$, then there is $\canparamat{\selvariable}$ such that $\expdistof{\formulaset,\canparam,\basemeasure}$ reproduces $\meanparamwith$.
 %\end{corollary}
+
+
+
+\subsect{Expressivity of \HybridLogicNetworks{}}
+
+\begin{figure}[t]
+    \begin{center}
+        \input{PartII/tikz_pics/network_representation/reproducable_sketch.tex}
+    \end{center}
+    \caption{Sketch of distributions and their mean parameters with respect to .
+    The \HybridLogicNetworks{} are also maximum entropy distribution, as we will show in \charef{cha:networkReasoning}.}
+    \label{fig:reproducableSketch}
+\end{figure}
+
+\begin{figure}[t]
+    \begin{center}
+        \input{PartII/tikz_pics/network_representation/meanset_sketch_hln.tex}
+    \end{center}
+    \caption{Sketch of the mean polytope ${\hlnmeanset}$ to a statistic $\mlnstat$ which is minimal with respect to $\basemeasure$, as a special case of the more generic sketch \figref{fig:meansetSketchGeneric}.
+    The mean polytope is a subset of the $\seldim$-dimensional cube $\fullparcube$ (dashed in the sketch), where each mean parameter in one of the three cases $\meanparamof{1},\meanparamof{2}$ or $\meanparamof{3}$.
+    \textcolor{\concolor}{Face centers} $\meanparamof{1}$ (in particular the vertices $\hlnmeanset\cap\boundaryparcube$) are reproducable by a \HardLogicNetwork{} given $\mlnstat$.
+    Mean points on non-vertex faces outside the interior $\meanparamof{2}\in\hlnmeanset/(\interiorof{\hlnmeanset}\cap\boundaryparcube)$ are reproducable by \HybridLogicNetworks{} with statistic $\mlnstat$ and refined base measure $\secbasemeasure$.
+    \textcolor{\probcolor}{Interior points} $\meanparamof{3}\in\interiorof{\hlnmeanset}$ are reproducable by a \MarkovLogicNetwork{} with statistic $\mlnstat$.
+    }\label{fig:meansetSketch}
+\end{figure}
+
+In \figref{fig:reproducableSketch} we classify the distributions by their mean parameters in $\hlnmeanset$ and draw a corresponding sketch of the mean parameter polytope in \figref{fig:meansetSketch}.
+We have already shown, that the distributions in $\realizabledistsof{\formulaset,\maxgraph}$ suffice to reproduce all mean parameters in $\hlnmeanset$.
+The \HybridLogicNetworks{} are the subset $\hlnsetof{\formulaset}\subset\realizabledistsof{\formulaset,\maxgraph}$, which can be computed with elementary activation cores.
+% Reduction to \HybridLogicNetworks{}, question of sufficient expressivity
+%Let us recall, that the set $\hlnsetof{\formulaset}$ contains all \HybridLogicNetworks{}, which can be realized as tensor networks with the same structure of computation and activation cores.
+We now investigate, in which cases also $\hlnsetof{\formulaset}$ suffices to reproduce all mean parameters in $\hlnmeanset$, that is in which cases $\hlnmeanset$ coincides with
+%whether we can reduce the set of probability distributions in the definition of the convex polytope of mean parameters to the set $\hlnsetof{\formulaset}$ , that is
+\begin{align*}
+    %\hlnmeanset|_{\hlnsetof{\formulaset}}
+    %=
+    \left\{ \contractionof{\probtensor,\sencmlnstat}{\selvariable} \wcols \probtensor\in\hlnsetof{\formulaset} \right\} \, .
+\end{align*}
+While this set is obviously a subset of $\hlnmeanset$, we investigate, for which $\formulaset$ there is an equivalence.
+We will refer to the equality of both sets as sufficient expressivity of $\hlnsetof{\formulaset}$.
+In the next example we provide a class of formulas, for which $\hlnsetof{\formulaset}$ does not have sufficient expressivity.
+
+% Insufficient Expressivity
+\begin{example}[Insufficient expressivity of $\hlnsetof{\formulaset}$ in cases of disjoint models]
+    \label{exa:insufficentHLNsetExpressivity}
+    To provide an example, where the set of \HybridLogicNetworks{} does not suffice to reproduce all possible mean parameters, consider the formulas
+    \[ \formulaof{0} = \exrandom \land \secexrandom \quad, \quad \formulaof{1} = \lnot\exrandom \land \lnot\secexrandom \, . \]
+    The probability distributions on the facet with normal $\canparam=[1\,\, 1]$ are those with support on the models of $\formulaof{0}\lor\formulaof{1}$.
+    The \HybridLogicNetworks{} can only reproduce those with are supported on the model of $\formulaof{0}$ or the model of $\formulaof{1}$, but not their convex combinations.
+
+    %% EXTENSION
+    %More generally, one can construct similar examples by arbitrary sets of formulas with pairwise disjoint model sets.
+    %If they do not sum to $\ones$, i.e. there is a world which is not a model to any formula, the statistic is minimal.
+    %The vector $\canparamat{\selvariable} = \onesat{\selvariable}$ is then the normal of the facet with
+    %All probabilities supported on the models of the formulas have mean parameters on this facet.
+    %Such statistics will be further investigated as partition statistics in \secref{sec:partitionStatistics}. % Most precise: Partition statistics do sum to one
+\end{example}
+
+
+%\subsect{Examples}
+
+We can relate our two standard examples of the atomic and the minterm formula sets to well-studied polytopes, namely the $\catorder$-dimensional hypercube and the standard simplex (see Lecture~0 in \cite{ziegler_lectures_2013}).
+
+\begin{example}[Atomic formulas]\label{exa:atomicFormulasHypercube}
+    %The assumption of \theref{the:sufficientHLNExpressivity} is satisfied in
+    Let us consider the case of atomic formulas. % where the formulas $\formulaof{\formulaset,\canparam}$ are the atoms.
+    The mean polytope in this case is the $\catorder$-dimensional hypercube
+    \begin{align*}
+        \meansetof{\atomformulaset,\ones} = \fullparcube
+    \end{align*}
+    which is called a simple polytope, since each vertex is contained in the minimal number of $\catorder$ facets.
+    %Since the cube $\fullparcube$ is a face of itself, \theref{the:sufficientHLNExpressivity} implies $\hlnmeanset|_{\hlnsetof{\atomformulaset}}=\hlnmeanset$.
+
+    The faces of a hypercube are enumerated in the following way.
+    Each face is characterized by the projections onto each variable, which is either $\{0\}$, $\{1\}$ or $[0,1]$.
+    The projections are represented by the tuple $\cubefaceparam$ defined in the following way:
+    \begin{itemize}
+        \item We define the set $\variableset\subset[\atomorder]$ of variables, such that the projection onto the variable is $\{0\}$ or $\{1\}$
+        \item We define to each $\selindex\in\variableset$ an index $\headindexof{\selindex}=0$ if the projection is $\{0\}$ and $\headindexof{\selindex}=1$ if the projection is $\{1\}$.
+    \end{itemize}
+
+%    There are thus $2^{\atomorder}$ different sets $\variableset$, each with $2^{\variableset}$ faces by a choice of $\headindexof{\selindex}$.
+
+    Trivially, each face of the hypercube is a cube face and $\elmeansetof{\atomformulaset}=\meansetof{\atomformulaset}$.
+\end{example}
+
+\begin{example}[Minterm formulas]
+    The mean polytope is in the case of the minterm exponential family is the $2^\catorder-1$-dimensional standard simplex.
+    In this case, $\hlnsetof{\mintermformulaset}$ contains any distribution and therefore trivially realizes any mean parameter in $\meansetof{\mintermformulaset,\ones}$.
+
+    The faces of the standard simplex are cartesian products of $\bigtimes_{\selindex\in\variableset}\{0\}$ with standard simplices.
+    We store them by the tuple $\cubefaceparam$, where $\headindexof{\selindex}=0$ for $\selindex\in\variableset$.
+
+    Each face is a cube face, since it is the intersection of $\hlnsetof{\mintermformulaset}$ with the cube face $\cubefaceparam$.
+    In particular, we have $\elmeansetof{\mintermformulaset}=\meansetof{\mintermformulaset}$.
+\end{example}
+
+%\subsect{Elementary realizable mean parameters}
+
+With the findings of the above sections, we can not characterize the set of mean parameters realizable by \HybridLogicNetworks{}.
+
+\begin{definition}
+    The elementary realizable mean parameters to a statistic $\mlnstat$ and a base measure $\basemeasure$ is the set
+    \begin{align*}
+        \elmeansetof{\mlnstat,\basemeasure}
+        = \bigcup_{\variableset\subset[\seldim]} \bigcup_{\headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]} \sbinteriorof{\hlnmeanset}
+    \end{align*}
+    where $\cubeface^{\variableset,\headindexof{\variableset}}$ is the face of the hypercube (see \exaref{exa:atomicFormulasHypercube}).
+\end{definition}
+
+\begin{theorem}
+    We have
+    \begin{align*}
+        \elmeansetof{\mlnstat,\basemeasure}
+        = \left\{ \contractionof{\probtensor,\sencmlnstat}{\selvariable} \wcols \probtensor\in\hlnsetof{\formulaset} \right\} \, .
+    \end{align*}
+\end{theorem}
+
+% Sufficient Expressivity
+%Before presenting the example class of atomic formulas as a case, where $\hlnsetof{\formulaset}$ has sufficient expressivity, let us first proof a generic criterion.
+
+%\begin{theorem}
+%    \label{the:sufficientHLNExpressivity}
+%    The set $\hlnmeanset|_{\hlnsetof{\formulaset}}$ of mean parameters realizable by $\hlnsetof{\mlnstat}$ coincides with $\hlnmeanset$, if and only if $\hlnmeanset$ is a face of the cube $\fullparcube$.
+%\end{theorem}
+%\begin{proof}
+%    The mean parameters to the effective interior of any face $\genfaceset$ of $\hlnsetof{\mlnstat}$ are reproducable by $\hlnsetof{\mlnstat}$, if and only if the normalization of the corresponding face measure is in $\hlnsetof{\mlnstat}$.
+%    This is exactly the case, when the face is the intersection $\genfaceset=\hlnmeanset\cap\cubeface$ for a face $\cubeface$ of $\fullparcube$.
+%    The polytopes $\hlnmeanset\subset\fullparcube$ such that for all its faces we find such a $\cubeface$, are the faces of $\fullparcube$.
+%\end{proof}
+%
+%% Refinements of $\hlnsetof{\formulaset}$
+%When the assumptions of \theref{the:sufficientHLNExpressivity} are not satisfied, there are mean parameters, which can not be reproduced by a distribution in $\hlnsetof{\formulaset}$.
+%In that case, we can flexibilize the distribution, to also represent the base measures used for refinement in \theref{the:hlnFaceBaseMeasureCharacterization}.
+%This can be done by adding activation cores with multiple variables, or further computation cores calculating the disjunctions of formulas.
+
+
+%% To prabilitiy distribution
+%\begin{theorem}
+%	The encoded pre-image of any face of rank $r$ is represented by an activation core of basis $\cpformat$ rank $r$.
+%\end{theorem}
+%\begin{proof}
+%	We build for each vertex $\{\meanparam\}$ a basis vector $\bigotimes_{\selindex\in\seldim}\onehotmapofat{\meanparamat{\indexedselvariable}}{\headvariableof{\selindex}}$, which contraction with $\bencodingof{\formulaset}$.
+%	Note, that the vertex base measures have disjoint support and their disjunction is thus a summation.
+%\end{proof}
+
+% COMMENT: BASIS+ VECTORS
+% Activation vectors of \HardLogicNetworks{} are on the other side basis+, so they might be more efficiently representable
+
+%\subsect{Case of tree computation networks} % NEED TO DEFINE FIRST!
+%In this case, the mean polytope can be embedded into a markov network and characterized by local consistency of the mean parameters of the markov network.
+
+
 
 \subsect{The limit of hard logic}\label{sec:hardLogicLimit}
 
@@ -1619,123 +1777,13 @@ We notice, that $\exformula$ is computable with elementary activation cores, tha
 we have
 \begin{align*}
     \formulaat{\shortcatvariables} =
-    \normalizationof{\bencodingofat{\mlnstat}{\sstatheadvariables,\shortcatvariables}\kcoreat{\headvariables}}{\shortcatvariables} \, .
+    \normalizationof{\bencodingofat{\mlnstat}{\sstatheadvariables,\shortcatvariables},\kcoreat{\headvariables}}{\shortcatvariables} \, .
 \end{align*}
-
-
-\subsect{Expressivity of \HybridLogicNetworks{}}
-
-\begin{figure}[t]
-    \begin{center}
-        \input{PartII/tikz_pics/network_representation/reproducable_sketch.tex}
-    \end{center}
-    \caption{Sketch of distributions and their mean parameters with respect to .
-    The \HybridLogicNetworks{} are also maximum entropy distribution, as we will show in \charef{cha:networkReasoning}.}
-    \label{fig:reproducableSketch}
-\end{figure}
-
-\begin{figure}[t]
-    \begin{center}
-        \input{PartII/tikz_pics/network_representation/meanset_sketch_hln.tex}
-    \end{center}
-    \caption{Sketch of the mean polytope ${\hlnmeanset}$ to a statistic $\mlnstat$ which is minimal with respect to $\basemeasure$, as a special case of the more generic sketch \figref{fig:meansetSketchGeneric}.
-    The mean polytope is a subset of the $\seldim$-dimensional cube $\fullparcube$ (dashed in the sketch), where each mean parameter in one of the three cases $\meanparamof{1},\meanparamof{2}$ or $\meanparamof{3}$.
-    \textcolor{\concolor}{Face centers} $\meanparamof{1}$ (in particular the vertices $\hlnmeanset\cap\boundaryparcube$) are reproducable by a \HardLogicNetwork{} given $\mlnstat$.
-    Mean points on non-vertex faces outside the interior $\meanparamof{2}\in\hlnmeanset/(\interiorof{\hlnmeanset}\cap\boundaryparcube)$ are reproducable by \HybridLogicNetworks{} with statistic $\mlnstat$ and refined base measure $\secbasemeasure$.
-    \textcolor{\probcolor}{Interior points} $\meanparamof{3}\in\interiorof{\hlnmeanset}$ are reproducable by a \MarkovLogicNetwork{} with statistic $\mlnstat$.
-    }\label{fig:meansetSketch}
-\end{figure}
-
-In \figref{fig:reproducableSketch} we classify the distributions by their mean parameters in $\hlnmeanset$ and draw a corresponding sketch of the mean parameter polytope in \figref{fig:meansetSketch}.
-We have already shown, that the distributions in $\realizabledistsof{\formulaset,\maxgraph}$ suffice to reproduce all mean parameters in $\hlnmeanset$.
-The \HybridLogicNetworks{} are the subset $\hlnsetof{\formulaset}\subset\realizabledistsof{\formulaset,\maxgraph}$, which can be computed with elementary activation cores.
-% Reduction to \HybridLogicNetworks{}, question of sufficient expressivity
-%Let us recall, that the set $\hlnsetof{\formulaset}$ contains all \HybridLogicNetworks{}, which can be realized as tensor networks with the same structure of computation and activation cores.
-We now investigate, in which cases also $\hlnsetof{\formulaset}$ suffices to reproduce all mean parameters in $\hlnmeanset$, that is in which cases $\hlnmeanset$ coincides with
-%whether we can reduce the set of probability distributions in the definition of the convex polytope of mean parameters to the set $\hlnsetof{\formulaset}$ , that is
-\begin{align*}
-    \hlnmeanset|_{\hlnsetof{\formulaset}}
-    = \left\{ \contractionof{\probtensor,\sencmlnstat}{\selvariable} \wcols \probtensor\in\hlnsetof{\formulaset} \right\} \, .
-\end{align*}
-While $\hlnmeanset|_{\hlnsetof{\formulaset}}\subset\hlnmeanset$ is obvious, we investigate, for which $\formulaset$ there is an equivalence.
-We will refer to the equality of both sets as sufficient expressivity of $\hlnsetof{\formulaset}$.
-In the next example we provide a class of formulas, for which $\hlnsetof{\formulaset}$ does not have sufficient expressivity.
-
-% Insufficient Expressivity
-\begin{example}[Insufficient expressivity of $\hlnsetof{\formulaset}$ in cases of disjoint models]
-    \label{exa:insufficentHLNsetExpressivity}
-    To provide an example, where the set of \HybridLogicNetworks{} does not suffice to reproduce all possible mean parameters, consider the formulas
-    \[ \formulaof{0} = \exrandom \land \secexrandom \quad, \quad \formulaof{1} = \lnot\exrandom \land \lnot\secexrandom \, . \]
-    The probability distributions on the facet with normal $\canparam=[1\,\, 1]$ are those with support on the models of $\formulaof{0}\lor\formulaof{1}$.
-    The \HybridLogicNetworks{} can only reproduce those with are supported on the model of $\formulaof{0}$ or the model of $\formulaof{1}$, but not their convex combinations.
-
-    %% EXTENSION
-    %More generally, one can construct similar examples by arbitrary sets of formulas with pairwise disjoint model sets.
-    %If they do not sum to $\ones$, i.e. there is a world which is not a model to any formula, the statistic is minimal.
-    %The vector $\canparamat{\selvariable} = \onesat{\selvariable}$ is then the normal of the facet with
-    %All probabilities supported on the models of the formulas have mean parameters on this facet.
-    %Such statistics will be further investigated as partition statistics in \secref{sec:partitionStatistics}. % Most precise: Partition statistics do sum to one
-\end{example}
-
-% Sufficient Expressivity
-Before presenting the example class of atomic formulas as a case, where $\hlnsetof{\formulaset}$ has sufficient expressivity, let us first proof a generic criterion.
-
-
-\begin{theorem}
-    \label{the:sufficientHLNExpressivity}
-    The set $\hlnmeanset|_{\hlnsetof{\formulaset}}$ of mean parameters realizable by $\hlnsetof{\mlnstat}$ coincides with $\hlnmeanset$, if and only if $\hlnmeanset$ is a face of the cube $\fullparcube$.
-\end{theorem}
-\begin{proof}
-    The mean parameters to the effective interior of any face $\genfaceset$ of $\hlnsetof{\mlnstat}$ are reproducable by $\hlnsetof{\mlnstat}$, if and only if the normalization of the corresponding face measure is in $\hlnsetof{\mlnstat}$.
-    This is exactly the case, when the face is the intersection $\genfaceset=\hlnmeanset\cap\cubeface$ for a face $\cubeface$ of $\fullparcube$.
-    The polytopes $\hlnmeanset\subset\fullparcube$ such that for all its faces we find such a $\cubeface$, are the faces of $\fullparcube$.
-\end{proof}
-
-% Refinements of $\hlnsetof{\formulaset}$
-When the assumptions of \theref{the:sufficientHLNExpressivity} are not satisfied, there are mean parameters, which can not be reproduced by a distribution in $\hlnsetof{\formulaset}$.
-In that case, we can flexibilize the distribution, to also represent the base measures used for refinement in \theref{the:hlnFaceBaseMeasureCharacterization}.
-This can be done by adding activation cores with multiple variables, or further computation cores calculating the disjunctions of formulas.
-
-
-%% To prabilitiy distribution
-%\begin{theorem}
-%	The encoded pre-image of any face of rank $r$ is represented by an activation core of basis $\cpformat$ rank $r$.
-%\end{theorem}
-%\begin{proof}
-%	We build for each vertex $\{\meanparam\}$ a basis vector $\bigotimes_{\selindex\in\seldim}\onehotmapofat{\meanparamat{\indexedselvariable}}{\headvariableof{\selindex}}$, which contraction with $\bencodingof{\formulaset}$.
-%	Note, that the vertex base measures have disjoint support and their disjunction is thus a summation.
-%\end{proof}
-
-% COMMENT: BASIS+ VECTORS
-% Activation vectors of \HardLogicNetworks{} are on the other side basis+, so they might be more efficiently representable
-
-%\subsect{Case of tree computation networks} % NEED TO DEFINE FIRST!
-%In this case, the mean polytope can be embedded into a markov network and characterized by local consistency of the mean parameters of the markov network.
-
-
-\subsect{Examples}
-
-We can relate our two standard examples of the atomic and the minterm formula sets to well-studied polytopes, namely the $\catorder$-dimensional hypercube and the standard simplex (see Lecture~0 in \cite{ziegler_lectures_2013}).
-
-\begin{example}[Atomic formulas]
-    The assumption of \theref{the:sufficientHLNExpressivity} is satisfied in the case for atomic formulas, where the formulas  $\formulaof{\formulaset,\canparam}$ are the minterms, which are always satisfiable in exactly one situation.
-    The mean polytope in this case is the $\catorder$-dimensional hypercube
-    \begin{align*}
-        \meansetof{\atomformulaset,\ones} = \fullparcube
-    \end{align*}
-    which is called a simple polytope, since each vertex is contained in the minimal number of $\catorder$ facets.
-    Since the cube $\fullparcube$ is a face of itself, \theref{the:sufficientHLNExpressivity} implies $\hlnmeanset|_{\hlnsetof{\atomformulaset}}=\hlnmeanset$.
-\end{example}
-
-\begin{example}[Minterm formulas]
-    The mean polytope is in the case of the minterm exponential family is the $2^\catorder-1$-dimensional standard simplex.
-    In this case, $\hlnsetof{\mintermformulaset}$ contains any distribution and therefore trivially realizes any mean parameter in $\meansetof{\mintermformulaset,\ones}$.
-\end{example}
 
 
 \sect{Discussion}
 
-We understand \HybridLogicNetworks{} can be understood as neuro-symbolic models:
+We understand \HybridLogicNetworks{} as neuro-symbolic models:
 \begin{itemize}
     \item \textbf{Neural Paradigm} is the representation of models as compositions of smaller models.
     For \HybridLogicNetworks{}, the decompositions of logical formulas into their connectives implements this neural paradigm.
