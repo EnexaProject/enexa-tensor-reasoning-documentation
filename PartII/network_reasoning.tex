@@ -12,8 +12,10 @@ We then motivate structure learning based on sparsity constraints on the paramet
 Forward and backward mappings have been introduced for exponential families in \charef{cha:probRepresentation}.
 We now generalize them to \HybridLogicNetworks{}.
 
+\subsect{Representation as Computation Activation Networks}
+
 We parametrize each elementary activation tensors $\extnetat{\headvariables}=\bigotimes_{\selindexin}\hypercoreofat{\selindex}{\headvariableof{\selindex}}$ by a tuple
-$(\variableset,\headindexof{\variableset},\canparam)$ as follows
+$\hybridparam$ as follows
 \begin{itemize}
     \item The axis set of hard leg vectors
     \begin{align*}
@@ -23,8 +25,8 @@ $(\variableset,\headindexof{\variableset},\canparam)$ as follows
     \begin{align*}
         \headindexof{\selindex} =
         \begin{cases}
-            0 & \text{if } \hypercoreofat{\selindex}{\headvariableof{\selindex}=1}=0 \\
-            1 & \text{if } \hypercoreofat{\selindex}{\headvariableof{\selindex}=0}=0
+            0 & \ifspace \hypercoreofat{\selindex}{\headvariableof{\selindex}=1}=0 \\
+            1 & \ifspace \hypercoreofat{\selindex}{\headvariableof{\selindex}=0}=0
         \end{cases}
     \end{align*}
     Note, that exactly one of the cases is true, since both would imply a vanishing activation tensor.
@@ -35,7 +37,7 @@ $(\variableset,\headindexof{\variableset},\canparam)$ as follows
         }
     \end{align*}
 \end{itemize}
-Conversely, for a tuple $(\variableset,\headindexof{\variableset},\canparam)$ we define leg vectors
+Conversely, for a tuple $\hybridparam$ we define leg vectors
 \begin{align*}
     \hypercoreofat{\selindex}{\headvariableof{\selindex}} =
     \begin{cases}
@@ -45,29 +47,29 @@ Conversely, for a tuple $(\variableset,\headindexof{\variableset},\canparam)$ we
 \end{align*}
 and an activation tensor
 \begin{align*}
-    \tnetofat{(\variableset,\headindexof{\variableset},\canparam)}{\headvariables}
+    \tnetofat{\hybridparam}{\headvariables}
     =\bigotimes_{\selindexin}\hypercoreofat{\selindex}{\headvariableof{\selindex}} \, .
 \end{align*}
 
-Note that the tuple $(\variableset,\headindexof{\variableset},\canparam)$ to a elementary activation tensor determines the corresponding \HybridLogicNetwork{}, since it determines the activation tensor up to an irrelevant scalar multiplication.
+Note that the tuple $\hybridparam$ to a elementary activation tensor determines the corresponding \HybridLogicNetwork{}, since it determines the activation tensor up to an irrelevant scalar multiplication.
 
 
-
+\subsect{Definition}
 
 \begin{definition}
     The extended canonical parameter set to a boolean statistic is the set
     \begin{align*}
-       \mathcal{N}_{\seldim}\coloneqq
-       \{(\variableset,\headindexof{\variableset})\wcols \variableset\subset[\seldim]\ncond \headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]\} \times \parspace \, .
+        \mathcal{N}_{\seldim}\coloneqq
+        \{(\variableset,\headindexof{\variableset})\wcols \variableset\subset[\seldim]\ncond \headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]\} \times \parspace \, .
     \end{align*}
     The forward map for a \HybridLogicNetwork{} is
     \begin{align*}
         \forwardmapwrt{\mlnstat} :  \mathcal{N}_{\seldim}
         \rightarrow \hlnmeanset \subset \parspace
         \quad \text{where} \quad
-        \forwardmapwrtof{\mlnstat}{(\variableset,\headindexof{\variableset},\canparam)}
+        \forwardmapwrtof{\mlnstat}{\hybridparam}
         = \contractionof{
-            \normalizationof{\tnetofat{(\variableset,\headindexof{\variableset},\canparam)}{\headvariables},\bencodingofat{\mlnstat}{\headvariables,\shortcatvariables}}{\shortcatvariables}
+            \normalizationof{\tnetofat{\hybridparam}{\headvariables},\bencodingofat{\mlnstat}{\headvariables,\shortcatvariables}}{\shortcatvariables}
             ,\sencodingofat{\mlnstat}{\shortcatvariables,\selvariable}}{\selvariable} \, .
     \end{align*}
 
@@ -75,19 +77,19 @@ Note that the tuple $(\variableset,\headindexof{\variableset},\canparam)$ to a e
     %\begin{align*}
     %    \backwardmapwrt{\mlnstat} :  \imageof{\forwardmapwrt{\mlnstat}} \rightarrow \eltnset
     %\end{align*}
-    such that for any $(\variableset,\headindexof{\variableset},\canparam)\in\mathcal{N}_{\seldim}$ we have $\backwardmapwrtof{\mlnstat}{\forwardmapwrtof{\mlnstat}{\tnetof{\elgraph}}}$.
+    such that for any $\hybridparam\in\mathcal{N}_{\seldim}$ we have $\backwardmapwrtof{\mlnstat}{\forwardmapwrtof{\mlnstat}{\tnetof{\elgraph}}}$.
 
 \end{definition}
 
 From the expressivity study of \charef{cha:networkRepresentation} we have the following.
 
 % Backward map
-\begin{theorem}
-    For any $\meanparamwith$ there is a $\tnetofat{\elgraph}{\headvariables}$ with $\forwardmapwrtof{\mlnstat}{\tnetofat{\elgraph}{\headvariables}}=\meanparamwith$, if and only if $\meanparamwith\in\elhlnmeanset$.
-\end{theorem}
-\begin{proof}
-    From the expressivity of Hybrid Logic Networks.
-\end{proof}
+%\begin{theorem}
+For any $\meanparamwith$ there is a $\hybridparam\in\mathcal{N}_{\seldim}$ with $\forwardmapwrtof{\mlnstat}{\tnetofat{\elgraph}{\headvariables}}=\meanparamwith$, if and only if $\meanparamwith\in\elhlnmeanset$.
+%\end{theorem}
+%\begin{proof}
+%    From the expressivity of Hybrid Logic Networks.
+%\end{proof}
 
 % Image characterization
 In particular, the theorem implies that the image of $\forwardmapwrt{\mlnstat}$ is the subset $\elhlnmeanset\subset\hlnmeanset$, which is the union of cube face interiors.
@@ -170,9 +172,9 @@ To solve the moment matching condition at a formula $\enumformula$ we refine \le
 
 We now investigate, for which mean parameters the moment matching equations are satisfiable.
 
-\begin{lemma}
-    The moment matching conditions of \lemref{ref:lemMMinMLN} are satisfied for some $\canparamwith$, if and only if $\meanparamwith\in\sbinteriorof{\hlnmeanset}$.
-\end{lemma}
+%\begin{lemma}
+The moment matching conditions of \lemref{ref:lemMMinMLN} are satisfied for some $\canparamwith$, if and only if $\meanparamwith\in\sbinteriorof{\hlnmeanset}$.
+%\end{lemma}
 
 
 Let us now introduce an implementation of the Alternating Moment Matching Algorithm~\ref{alg:AMM} in case of \MarkovLogicNetworks{}.
@@ -226,9 +228,9 @@ This can be a bottleneck and circumvented by approximative inference, see e.g. C
 
 We now extend the alternating parameter estimation algorithm to \HybridLogicNetworks{}, by allowing for mean parameters on the interior of cube faces.
 
-\begin{lemma}
-    The moment matching conditions of \lemref{ref:lemMMinMLN} are satisfied for some $\canparamwith$, if and only if $\meanparamwith$ is on the interior of a cube face of $\hlnmeanset$.
-\end{lemma}
+%\begin{lemma}
+The moment matching conditions of \lemref{ref:lemMMinMLN} are satisfied for some $\canparamwith$, if and only if $\meanparamwith$ is on the interior of a cube face of $\hlnmeanset$.
+%\end{lemma}
 
 \begin{algorithm}[hbt!]
     \caption{Alternating Moment Matching for Hybrid Logic Networks}
@@ -380,15 +382,15 @@ With respect to this enumeration the canonical parameters and mean parameters ar
     \end{align*}
     we have the forward maps
     \begin{align*}
-        \forwardmapwrtof{\mlnmintermsymbol}{(\variableset,\headindexof{\variableset},\canparam)}
+        \forwardmapwrtof{\mlnmintermsymbol}{\hybridparam}
         = \normalizationof{\bencodingofat{\mintermformulaset}{\headvariableof{\mlnmintermsymbol},\shortcatvariables},
-            \tnetofat{(\variableset,\headindexof{\variableset},\canparam)}{\headvariableof{\mlnmintermsymbol}},\identityat{\shortcatvariables,\selvariableof{[\atomorder]}}}{\selvariableof{[\atomorder]}}
+            \tnetofat{\hybridparam}{\headvariableof{\mlnmintermsymbol}},\identityat{\shortcatvariables,\selvariableof{[\atomorder]}}}{\selvariableof{[\atomorder]}}
     \end{align*}
     and
     \begin{align*}
-        \forwardmapwrtof{\mlnmaxtermsymbol}{(\variableset,\headindexof{\variableset},\canparam)}
+        \forwardmapwrtof{\mlnmaxtermsymbol}{\hybridparam}
         = \onesat{\selvariableof{[\atomorder]}} - \normalizationof{\bencodingofat{\maxtermformulaset}{\headvariableof{\mlnmaxtermsymbol},\shortcatvariables},
-            \tnetofat{(\variableset,\headindexof{\variableset},\canparam)}{\headvariableof{\mlnmaxtermsymbol}},\identityat{\shortcatvariables,\selvariableof{[\atomorder]}}}{\selvariableof{[\atomorder]}} \, .
+            \tnetofat{\hybridparam}{\headvariableof{\mlnmaxtermsymbol}},\identityat{\shortcatvariables,\selvariableof{[\atomorder]}}}{\selvariableof{[\atomorder]}} \, .
     \end{align*}
 
     Further, the map
@@ -401,7 +403,7 @@ With respect to this enumeration the canonical parameters and mean parameters ar
     The map
     \begin{align*}
         \backwardmapwrtof{\mlnmaxtermsymbol}{\meanparamat{\selvariableof{[\atomorder]}}}
-        = \Big(\Big\{ \selindex \wcols \selindexin \ncond \meanparamat{\indexedselvariable}=0 \Big\},1_{\variableset},-\lnof{\meanparamat{\selvariableof{[\atomorder]}}}\Big)
+        = \Big(\Big\{ \selindex \wcols \selindexin \ncond \meanparamat{\indexedselvariable}=1 \Big\},1_{\variableset},-\lnof{\meanparamat{\selvariableof{[\atomorder]}}}\Big)
     \end{align*}
     (we set here $\lnof{0}=0$) is a backward map for the minterm statistic.
 
@@ -432,7 +434,7 @@ With respect to this enumeration the canonical parameters and mean parameters ar
     The claim on the forward maps follows for
     \begin{align*}
         \probwith=\normalizationof{\bencodingofat{\maxtermformulaset}{\headvariableof{\mlnmaxtermsymbol},\shortcatvariables},
-        \tnetofat{\elgraph}{\headvariableof{\mlnmaxtermsymbol}}}{\shortcatvariables} \, .
+            \tnetofat{\elgraph}{\headvariableof{\mlnmaxtermsymbol}}}{\shortcatvariables} \, .
     \end{align*}
 
 
@@ -524,66 +526,129 @@ Any probability distribution can thus be represented by a minterm, respectively 
 
 % Repeat atomic formulas
 Let us now derive a closed form backward mapping for the statistic
-\[ \atomformulaset := \{\atomicformulaof{\atomenumerator}: \atomenumeratorin\} \, . \]
-
-The mean parameters coincide with the queries on the atomic formulas, that is the marginal
-\[ \meanparamat{\selvariable=\atomenumerator} = \probat{\catvariableof{\atomenumerator}=1}  \, . \]
+\begin{align*}
+    \atomformulaset \coloneqq \{\atomicformulaof{\atomenumerator} \wcols \atomenumeratorin\}
+\end{align*}
+of atomic formulas, which coincides with a variable selection map.
+The selection encoding of this statistic is the tensor
+\begin{align*}
+    \sencodingof{\atomformulaset}{\shortcatvariables,\selvariable}
+    = \sum_{\atomenumeratorin} \onehotmapofat{1}{\catvariableof{\atomenumerator}} \otimes \onesat{\catvariableof{[\atomorder]/\{\atomenumerator\}}} \otimes \onehotmapofat{\atomenumerator}{\selvariable} \, .
+\end{align*}
+For each probability distribution $\probwith$ we the corresponding mean parameter has coordinates at $\atomenumeratorin$ by
+\begin{align*}
+    \meanparamat{\selvariable=\atomenumerator} = \probat{\catvariableof{\atomenumerator}=1}  \, .
+\end{align*}
 
 \begin{theorem}
-    Given a \MarkovLogicNetwork{} with the statistic $\atomformulaset$ of atomic formulas, the forward mapping from canonical parameters to mean parameters is the coordinatewise sigmoid, that is
-    \[ \forwardmapwrtof{\mlnatomsymbol}{\canparamat{\selvariable}} = \frac{\expof{\canparamat{\selvariable}}}{\onesat{\selvariable}+\expof{\canparamat{\selvariable}}}   \]
-    where the quotient is performed coordinatewise.
-
-    A backward mapping is the coordinatewise logit, that is
-    \[ \backwardmapwrt{\mlnatomsymbol}(\meanparamwith)
-    = \lnof{\frac{
-        \meanparamwith
-    }{
-        \onesat{\selvariable}-\meanparamwith
-    }}  \, . \]
+    For the \HybridLogicNetworks{} to the statistic of atomic formulas $\atomformulaset$ we have the forward map
+    \begin{align*}
+        \forwardmapwrtof{\mlnatomsymbol}{\hybridparam}[\selvariable=\atomenumerator]
+        = \begin{cases}
+              \headindexof{\atomenumerator} & \text{if} \quad \atomenumerator\in\variableset \\
+              \frac{\expof{\canparamat{\selvariable=\atomenumerator}}}{1+\expof{\canparamat{\selvariable=\atomenumerator}}} & \text{if} \quad \atomenumerator\notin\variableset % sigmoid
+        \end{cases}
+    \end{align*}
 \end{theorem}
 \begin{proof}
-    We have for any $\canparamat{\selvariable}\in\rr^{\atomorder}$
-    \[ \probofat{(\atomformulaset,\canparam)}{\shortcatvariables}
-    = \bigotimes_{\atomenumeratorin} \normalizationof{\expof{\canparamat{\selvariable=\atomenumerator}\cdot \atomicformulaof{\atomenumerator}}}{\catvariableof{\atomenumerator}}  \, . \]
-
-
-    For any $\atomenumeratorin$ it therefore holds, that
+    Let $\hybridparam\in\hybridparamsetofdim{\atomorder}$ and denote the
     \begin{align*}
-        \forwardmapwrtof{\mlnatomsymbol}{\canparamat{\selvariable}}[\selvariable=\atomenumerator]
-        &=\contraction{\atomicformulaof{\atomenumerator},  \probofat{(\atomformulaset,\canparam)}{\shortcatvariables}} \\
-        &=\contraction{\atomicformulaof{\atomenumerator},  \normalizationof{\expof{\canparamat{\selvariable=\atomenumerator}\cdot \atomicformulaof{\atomenumerator}}}{\catvariableof{\atomenumerator}}} \\
-        & = \frac{\expof{\canparamat{\selvariable=\atomenumerator}}}{1+\expof{\canparamat{\selvariable=\atomenumerator}}} \, .
+        \meanparamat{\selvariable} = \forwardmapwrtof{\mlnatomsymbol}{\hybridparam} \, .
     \end{align*}
-
-    Since the coordinatewise logit is the inverse function of the coordinatewise sigmoid the map
+    By definition we have for any $\atomenumeratorin$
     \begin{align*}
-        \backwardmapwrtof{\mlnatomsymbol}{\meanparamwith}[\selvariable=\atomenumerator]
-        & = \lnof{\frac{\meanparamat{\selvariable=\atomenumerator}}{1- \meanparamat{\selvariable=\atomenumerator}}}
+        \meanparamat{\selvariable=\atomenumerator}
+        &= \contractionof{\sencodingof{\atomformulaset}{\shortcatvariables,\selvariable},
+            \normalizationof{\bencodingofat{\atomformulaset}{\headvariableof{[\atomorder]},\shortcatvariables},\hypercoreofat{\hybridparam}{\headvariableof{[\atomorder]}}}{\shortcatvariables}
+        }{\selvariable=\atomenumerator} \\
+        &= \contraction{\onehotmapofat{1}{\catvariableof{\atomenumerator}},
+            \normalizationof{
+                \bencodingofat{\atomicformulaof{\atomenumerator}}{\headindexof{\atomenumerator},\catvariableof{\atomenumerator}},
+                \hypercoreof{\selindex}{\headvariableof{\atomenumerator}}}{\catvariableof{\atomenumerator}}
+        }
     \end{align*}
-    satisfies for any $\meanparam$ in the image of the forward map
+    Now, if $\atomenumerator\in\variableset$ we have $\hypercoreof{\selindex}{\headvariableof{\atomenumerator}}=\onehotmapofat{\headindexof{\atomenumerator}}{\headvariableof{\atomenumerator}}$ and $\meanparamat{\selvariable=\atomenumerator}=\headindexof{\atomenumerator}$.
+    If $\atomenumerator\notin\variableset$ then $\hypercoreof{\selindex}{\headvariableof{\atomenumerator}}=\actcoreofat{\atomenumerator,\canparamat{\selvariable=\atomenumerator}}{\headvariableof{\atomenumerator}}$ and
     \begin{align*}
-        \forwardmapwrt{\mlnatomsymbol}(\backwardmapwrt{\mlnatomsymbol}(\meanparam)) = \meanparam
+        \meanparamat{\selvariable=\atomenumerator} = \frac{\expof{\canparamat{\selvariable=\atomenumerator}}}{1+\expof{\canparamat{\selvariable=\atomenumerator}}} \, .
     \end{align*}
-    and is therefore a backward map.
 \end{proof}
 
+A backward map to the atomic statistic is given by
+\begin{align*}
+    \backwardmapwrtof{\mlnatomsymbol}{\meanparamat{\selvariable}}
+    =\hybridparam
+    = \Big(\{\atomenumerator\wcols\atomenumeratorin\meanparamat{\selvariable=\atomenumerator}\in\{0,1\}\}, [\meanparamat{\selvariable=\atomenumerator}\wcols ] \Big)
+\end{align*}
+where
+\begin{itemize}
+    \item $\variableset = \{\atomenumerator\wcols\atomenumeratorin\meanparamat{\selvariable=\atomenumerator}\in\{0,1\}\}$
+    \item For $\atomenumerator\in\variableset$ $\headindexof{\atomenumerator}=\meanparamat{\selvariable=\atomenumerator}$
+    \item For $\atomenumerator\in\variableset$ we have $\canparamat{\selvariable=\atomenumerator}=0$ and for $\atomenumerator\notin\variableset$
+    \begin{align*} % logit
+        \canparamat{\selvariable=\atomenumerator}
+        = \lnof{\frac{\meanparamat{\selvariable=\atomenumerator}}{1-\meanparamat{\selvariable=\atomenumerator}}}
+    \end{align*}
+\end{itemize}
 
-% Representation by selection tensor networks
-In a selection tensor networks they are represented by a single neuron with identity connective and variable selection to all atoms.
-We will investigate such examples in more detail in \charef{cha:sparseRepresentation}, where atomic formulas \MarkovLogicNetworks{} are specific cases of monomial decomposition of order 1.
+The forward and backward map on the soft atomic formulas are the coordinatewise sigmoid and logit, respectively.
+
+%\begin{theorem}
+%    Given a \MarkovLogicNetwork{} with the statistic $\atomformulaset$ of atomic formulas, the forward mapping from canonical parameters to mean parameters is the coordinatewise sigmoid, that is
+%    \[ \forwardmapwrtof{\mlnatomsymbol}{\canparamat{\selvariable}} = \frac{\expof{\canparamat{\selvariable}}}{\onesat{\selvariable}+\expof{\canparamat{\selvariable}}}   \]
+%    where the quotient is performed coordinatewise.
+%
+%    A backward mapping is the coordinatewise logit, that is
+%    \[ \backwardmapwrt{\mlnatomsymbol}(\meanparamwith)
+%    = \lnof{\frac{
+%        \meanparamwith
+%    }{
+%        \onesat{\selvariable}-\meanparamwith
+%    }}  \, . \]
+%\end{theorem}
+%\begin{proof}
+%    We have for any $\canparamat{\selvariable}\in\rr^{\atomorder}$
+%    \[ \probofat{(\atomformulaset,\canparam)}{\shortcatvariables}
+%    = \bigotimes_{\atomenumeratorin} \normalizationof{\expof{\canparamat{\selvariable=\atomenumerator}\cdot \atomicformulaof{\atomenumerator}}}{\catvariableof{\atomenumerator}}  \, . \]
+%
+%
+%    For any $\atomenumeratorin$ it therefore holds, that
+%    \begin{align*}
+%        \forwardmapwrtof{\mlnatomsymbol}{\canparamat{\selvariable}}[\selvariable=\atomenumerator]
+%        &=\contraction{\atomicformulaof{\atomenumerator},  \probofat{(\atomformulaset,\canparam)}{\shortcatvariables}} \\
+%        &=\contraction{\atomicformulaof{\atomenumerator},  \normalizationof{\expof{\canparamat{\selvariable=\atomenumerator}\cdot \atomicformulaof{\atomenumerator}}}{\catvariableof{\atomenumerator}}} \\
+%        & = \frac{\expof{\canparamat{\selvariable=\atomenumerator}}}{1+\expof{\canparamat{\selvariable=\atomenumerator}}} \, .
+%    \end{align*}
+%
+%    Since the coordinatewise logit is the inverse function of the coordinatewise sigmoid the map
+%    \begin{align*}
+%        \backwardmapwrtof{\mlnatomsymbol}{\meanparamwith}[\selvariable=\atomenumerator]
+%        & = \lnof{\frac{\meanparamat{\selvariable=\atomenumerator}}{1- \meanparamat{\selvariable=\atomenumerator}}}
+%    \end{align*}
+%    satisfies for any $\meanparam$ in the image of the forward map
+%    \begin{align*}
+%        \forwardmapwrt{\mlnatomsymbol}(\backwardmapwrt{\mlnatomsymbol}(\meanparam)) = \meanparam
+%    \end{align*}
+%    and is therefore a backward map.
+%\end{proof}
+%
+%
+%% Representation by selection tensor networks
+%In a selection tensor networks they are represented by a single neuron with identity connective and variable selection to all atoms.
+%We will investigate such examples in more detail in \charef{cha:sparseRepresentation}, where atomic formulas \MarkovLogicNetworks{} are specific cases of monomial decomposition of order 1.
 
 % Interpretation of the result as independence approximation
-The maximum likelihood estimator of a positive probability distribution by the MLN of atomic formulas is therefore the tensor product of the marginal distributions.
-The Kullback-Leibler divergence between the distribution and its projection is the mutual information of the atoms, see for example Chapter~8 in \cite{mackay_information_2003}.
+%The maximum likelihood estimator of a positive probability distribution by the MLN of atomic formulas is therefore the tensor product of the marginal distributions.
 
-\begin{remark}[Decomposition into systems of atomic networks]
-    \red{By Independence Decomposition we reduce to a system of atomic MLN.
-    The minterms of such MLNs are the literals.
-    By redundancy (literals sum up to $\ones$), it suffices to take only the positive or the negative literal.
-    }
-%	We set the weights of $\weightof{\lnot\atomicformulaof{\atomenumerator}}=0$ (corresponding with a gauge normalization of the energy offset symmetry). % Not needed!
-\end{remark}
+%The Kullback-Leibler divergence between the distribution and its projection is the mutual information of the atoms, see for example Chapter~8 in \cite{mackay_information_2003}.
+
+%\begin{remark}[Decomposition into systems of atomic networks]
+%    \red{By Independence Decomposition we reduce to a system of atomic MLN.
+%    The minterms of such MLNs are the literals.
+%    By redundancy (literals sum up to $\ones$), it suffices to take only the positive or the negative literal.
+%    }
+%%	We set the weights of $\weightof{\lnot\atomicformulaof{\atomenumerator}}=0$ (corresponding with a gauge normalization of the energy offset symmetry). % Not needed!
+%\end{remark}
 
 
 
@@ -768,7 +833,7 @@ We can instead state a Maximum Likelihood Problem over $\maxrealizabledistsof{\m
 
 
 
-\sect{Constrained parameter estimation in the minterm family}
+\sect{Constrained parameter estimation in the minterm family} % DROP COMPLETELY
 
 % Naive exponential family
 We approach structure learning as constrained parameter estimation in the naive exponential family (see \secref{sec:mintermExpFamily}), which coincides with the minterm family $\formulasetof{\mlnmintermsymbol}$.
