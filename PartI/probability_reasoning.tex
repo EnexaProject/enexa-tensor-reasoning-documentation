@@ -674,7 +674,7 @@ We first formalize these inference problems by the forward and backward mapping 
     The map
     \begin{align*}
         \forwardmap : \parspace\rightarrow\genmeanset\subset\parspace
-        \defspace \forwardmapof{\canparam} = \contractionof{\expdistwith,\sencsstatwith}{\selvariable}+
+        \defspace \forwardmapof{\canparam} = \contractionof{\expdistwith,\sencsstatwith}{\selvariable}
     \end{align*}
     is called the forward map of the exponential family and inverse, that is a map
     \begin{align*}
@@ -692,11 +692,15 @@ We now state that the elements of the corresponding exponential family $\expfami
 
 \begin{theorem}
     \label{the:meanPolytopeInterior}
-    For any exponential family $\genexpfamily$ the image of the forward mapping is the mean polytope except its proper faces, that is
+    For any exponential family $\genexpfamily$ the image of the forward mapping is the effective interior of $\genmeanset$, that is
     \begin{align*}
-        \imageof{\forwardmap} = \genmeanset / \bigcup_{\genfaceset\neq\genmeanset} \genfaceset \, .
+        \imageof{\forwardmap} = \sbinteriorof{\genmeanset} \, .
     \end{align*}
-    If $\sstat$ is minimal with respect to $\basemeasure$, then $\imageof{\forwardmap}=\sbinteriorof{\genmeanset}$, the forward mapping is a bijection and the unique backward mapping its inverse.
+%    the mean polytope except its proper faces, that is
+%    \begin{align*}
+%        \imageof{\forwardmap} = \genmeanset / \bigcup_{\genfaceset\neq\genmeanset} \genfaceset \, .
+%    \end{align*}
+%    If $\sstat$ is minimal with respect to $\basemeasure$, then $\imageof{\forwardmap}=\sbinteriorof{\genmeanset}$, the forward mapping is a bijection and the unique backward mapping its inverse.
 \end{theorem}
 \begin{proof}
     In case of minimal statistics, we refer for the proof of this statement to Theorem~3.3 in \cite{wainwright_graphical_2008}.
@@ -897,7 +901,7 @@ As we will show, the distributions with maximal entropy are in exponential famil
 The entropy maximization problem with respect to matching expected statistics $\genmean\in\genmeanset$ is the optimization problem
 \begin{align}
     \label{prob:maxEntropy}\tag{$\probtagtypeinst{\entropysymbol}{\sstat,\basemeasure,\genmean}$}% Notation clash with cross-entropy!
-    \argmax_{\probtensor\in\bmrealprobof{\basemeasure}} \sentropyof{\probtensor} \quad \text{subject to} \quad
+    \argmax_{\probtensor\in\bmrealprobof{\basemeasure}} \sentropyof{\probtensor} \stspace
     \contractionof{\probtensor,\sencsstat}{\selvariable} = \genmeanat{\selvariable}
 \end{align}
 where by $\bmrealprobof{\basemeasure}$ we denote all distributions, which are representable with respect to a base measure $\basemeasure$.
@@ -910,6 +914,27 @@ For any $\selindexin$ we have for the mean parameter $\meanparamwith$ reproduced
     = \expectationof{\sstatcoordinateof{\selindex}}
     = \contraction{\sencsstatat{\shortcatvariables,\indexedselvariable},\probwith} \, .
 \end{align*}
+
+Any solution has a sufficient statistic $\sstat$ and is therefore in $\realizabledistsof{\sstat,\maxgraph,\basemeasure}$.
+
+\begin{theorem}\label{the:maxEntWithSufficientStatistic}
+    Any maximum entropy distribution with respect to a moment constraint on $\sstat$ and a base measure $\basemeasure$ has the sufficient statistic $\sstat$.
+\end{theorem}
+\begin{proof}
+    Let $\probwith$ be a feasible distribution for Problem~\eqref{prob:maxEntropy}, which does not have a sufficient statistic $\sstat$.
+    Then we find $\shortcatindices,\tildeshortcatindices\in\facstates$ with $\shortcatindices\neq\tildeshortcatindices$, $\sstatat{\shortcatindices}=\sstatat{\tildeshortcatindices}$, $\basemeasureat{\indexedshortcatvariables}\neq0$, $\basemeasureat{\shortcatvariables=\tildeshortcatindices}$ and $\probat{\indexedshortcatvariables}\neq\probat{\shortcatvariables=\tildeshortcatindices}$.
+    We then define a distribution $\secprobat{\shortcatvariables}$ coinciding with $\probwith$ except for the coordinates $\shortcatindices,\tildeshortcatindices$, where we set
+    \begin{align*}
+        \secprobat{\indexedshortcatvariables} = \secprobat{\shortcatvariables=\tildeshortcatindices} = \frac{\probat{\indexedshortcatvariables}+\secprobat{\shortcatvariables=\tildeshortcatindices}}{2}
+    \end{align*}
+    We notice, that $\secprobat{\shortcatvariables}$ is also a feasible distribution with an larger entropy than $\probwith$.
+    Therefore, a distribution which does not have the sufficient statistic $\sstat$ cannot be a maximum entropy distribution.
+    %$\genmeanat{\selvariable}$
+\end{proof}
+
+We in the following provide a more detailed characterization.
+
+\subsect{Characterization based on the mean polytope}
 
 % Feasibility
 By definition of the mean polytope, \probref{prob:maxEntropy} has a feasible distribution if and only if $\genmeanat{\selvariable}\in\genmeanset$.
@@ -1040,13 +1065,19 @@ Let us now state a criterion based on face measures for maximum entropy distribu
     \begin{align*}
         \meanparamat{\selvariable} \in \genfaceset \, .
     \end{align*}
-    Then the corresponding maximum entropy distribution is in $\realizabledistsof{\sstat,\graph,\basemeasure}$ if the sum of vertices
+    Then the corresponding maximum entropy distribution is in $\realizabledistsof{\sstat,\graph,\basemeasure}$ if and only if the face measure (see \defref{def:faceMeasure})
     \begin{align*}
         \kcoreofat{\facecondset}{\headvariables}
-        = \sum_{\shortcatindices\wcols\basemeasureat{\indexedshortcatvariables}=1\ncond\sencsstatat{\indexedshortcatvariables,\selvariable}\in\genfaceset}
-        \sencsstatat{\indexedshortcatvariables,\selvariable}
+        = \sum_{\meanparam\in\genfacesetof{\facecondset}\cap\imageof{\sstatencoding}} \onehotmapofat{\meanparam}{\headvariables}
     \end{align*}
-    has a tensor network decomposition with respect to the hypergraph $\graph$.
+    is in $\tnsetof{\graph}$.
+%    sum of vertices
+%    \begin{align*}
+%        \kcoreofat{\facecondset}{\headvariables}
+%        = \sum_{\shortcatindices\wcols\basemeasureat{\indexedshortcatvariables}=1\ncond\sencsstatat{\indexedshortcatvariables,\selvariable}\in\genfaceset}
+%        \sencsstatat{\indexedshortcatvariables,\selvariable}
+%    \end{align*}
+%    has a tensor network decomposition with respect to the hypergraph $\graph$.
 \end{theorem}
 \begin{proof}
     By \theref{the:maxEntropyFace} the maximum entropy distribution is an element of the exponential family with by the face measure refined base measure $\secbasemeasure$.
@@ -1103,11 +1134,10 @@ In general, we find a $\cpformat$ decomposition to the face measure as sketched 
 \begin{example}[Representation by the maximal graph]
     Let us consider the maximal graph $\maxgraph=([\seldim],\{[\seldim]\})$, which has a single hyperedge containing all head variables.
     Since any tensor admits a tensor network decomposition with respect to $\maxgraph$, by \theref{the:tnRepresentationMaxEntropy} all maximum entropy distributions are in $\realizabledistsof{\sstat,\maxgraph}$.
-    Maximum entropy distributions with respect to constraints $\meanparamat{\selvariable}=\contractionof{\probtensor,\sencsstat}{\selvariable}$ therefore always have the sufficient statistic $\sstat$.
-    We in particular have
-    \begin{align*}
-        \genmeanset = \left\{ \contractionof{\probat{\shortcatvariables},\sencodingofat{\sstat}{\shortcatvariables,\selvariable}}{\shortcatvariables} \, , \, \probtensor \in\realizabledistsof{\sstat,\maxgraph} \right\} \, .
-    \end{align*}
+    This reproduces the claim of \theref{the:maxEntWithSufficientStatistic}, that maximum entropy distributions with respect to constraints $\meanparamat{\selvariable}=\contractionof{\probtensor,\sencsstat}{\selvariable}$ therefore always have the sufficient statistic $\sstat$.
+    %\begin{align*}
+    %    \genmeanset = \left\{ \contractionof{\probat{\shortcatvariables},\sencodingofat{\sstat}{\shortcatvariables,\selvariable}}{\shortcatvariables} \, , \, \probtensor \in\realizabledistsof{\sstat,\maxgraph,\basemeasure} \right\} \, .
+    %\end{align*}
 \end{example}
 
 \begin{figure}
