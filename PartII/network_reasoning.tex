@@ -7,66 +7,285 @@ We then motivate structure learning based on sparsity constraints on the paramet
 
 
 
+\sect{Entropy Optimization} \label{sec:parameterEstimation} % on \HybridLogicNetworks{} Check for redundancy with the mln introduction chapter!
+
+We now motivate \HybridLogicNetworks{} as distributions with maximum entropy under a moment constraint.
+
+
+%We will investigate two entropic approaches towards unconstrained parameter estimation.
+%First of all, we characterize Maximum Entropy distributions with a moment constraint.
+%Maximum Likelihood Estimation restricts the distributions optimized over to a specific set, here the \HybridLogicNetworks{}.
+
+\subsect{Entropy Maximization}
+
+The Maximum Entropy Problem $\probtagtypeinst{\entropysymbol}{\mlnstat,\basemeasure,\genmean}$ for a boolean statistic $\mlnstat$ %and a base measure $\basemeasure$ is %\MarkovLogicNetworks{} is
+\begin{align}
+    \label{prob:maxEntropyHLN}\tag{$\probtagtypeinst{\entropysymbol}{\mlnstat,\genmean}$}
+    \argmax_{\probtensor\in\alldists} \quad \sentropyof{\probtensor}
+    \stspace
+    \contractionof{\probtensor,\sencmlnstat}{\selvariable}
+    =  \genmeanwith
+\end{align}
+where by $\alldists$ we denote all probability distributions.
+
+\begin{theorem}
+    \label{the:maxEntropyCharacterizationHLN}
+    Let $\genmeanwith\in\genmeanset$ and the minimal face of $\genmeanset$, which includes $\genmeanwith$, be $\genfaceset$, and let
+    \begin{align*}
+        \gencanparam = \backwardmapwrtof{\mlnstat,\hlnfacemeasure}{\genmeanwith} \, ,
+    \end{align*}
+    where $\backwardmapwrt{\mlnstat,\hlnfacemeasure}$ is a backward map in the exponential family $\expfamilyof{\mlnstat,\hlnfacemeasure}$ and $\hlnfacemeasure$ is the face measure to $\genfaceset$ (see \theref{the:faceMeasureCharacterizationHLN}).
+    The solution of the Maximum Entropy \probref{prob:maxEntropyHLN} is then
+    \begin{align*}
+        \probwith = \expdistofat{(\mlnstat,\gencanparam,\hlnfacemeasure)}{\shortcatvariables} \, .
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    Any feasible distribution has to be representable by $\hlnfacemeasure$, since $\genmeanwith\in\hlnfaceset$.
+    The solution therefore coincides with the solution of the maximum entropy problem with respect to $\mlnstat$ and $\hlnfacemeasure$ as a base measure.
+    Since $\genfaceset$ is minimal, $\meanparamwith$ is on the effective interior of the face and the claim follows with \theref{the:maxEntropyFace}.
+\end{proof}
+
+\theref{the:maxEntropyCharacterizationHLN} characterizes the solution of the Maximum Entropy Problem for arbitrary positions of the mean parameter.
+Note, that if $\genmeanwith\notin\genmeanset$ then no distribution is feasible for \probref{prob:maxEntropyHLN} and there is no solution.
+We are especially interested in situations, where the solution is a Hybrid Logic Network.
+As we state next, this is exactly the case if the mean parameter is reproducable by a Hybrid Logic Network (see \secref{sec:HLNrepMean}).
+
+\begin{theorem}
+    %Let $\mlnstat$ be a boolean statistic and $\genmeanwith\in\hlnmeanset$.
+    The solution of the Maximum Entropy \probref{prob:maxEntropyHLN} is a Hybrid Logic Network, if and only if $\genmeanwith$ is reproducable by a Hybrid Logic Network.
+\end{theorem}
+%\begin{proof}
+%
+%\end{proof}
+%
+%
+%\begin{theorem}
+%    Let $\genmeanwith$ be a mean parameter reproducable by a Hybrid Logic Network. % (see \defref{def:HLNrepMean}).
+%    Then the Hybrid Logic Network reproducing $\genmeanwith$ is the solution of the Maximum Entropy Problem \eqref{prob:maxEntropyHLN}.
+%\end{theorem}
+\begin{proof}
+    We notice, that if and only if the solution of the Maximum Entropy Distribution is a \HybridLogicNetwork{}, then the normalization of the corresponding face measure $\hlnfacemeasure$ of the minimal face containing $\genmeanwith$ is in $\elrealizabledistsof{\mlnstat}$.
+    This is equivalent to $\genmeanwith$ being reproducable by a Hybrid Logic Network.
+    %The solution of \probref{prob:maxEntropyHLN} characterized in \theref{the:maxEntropyCharacterizationHLN} is then also in $\elrealizabledistsof{\mlnstat}$.
+\end{proof}
+
+
+\subsect{Cross Entropy Minimization}
+
+Different to Maximum Entropy Problems, we formulate the Maximum Likelihood Problem as cross entropy minimization with respect to \HybridLogicNetworks{}, that is
+\begin{align}
+    \label{prob:minCrossEntropyHLN}\tag{$\probtagtypeinst{\mathrm{M}}{\Gamma,\gendistribution}$}
+    \argmin_{\probtensor\in\elrealizabledistsof{\mlnstat}} \centropyof{\gendistribution}{\probtensor}
+\end{align}
+When choosing $\gendistribution$ by an empirical distribution, this minimization problem is the Maximum Likelihood Problem (see \secref{cha:probReasoning}).
+% LEMMA TO CHA:PROBREASONING?
+In order to characterize the solution of the cross entropy minimization problem on \HybridLogicNetworks{}, we first characterize the solution of the cross entropy minimization on exponential families.
+
+
+To solve the maximum likelihood problems on \HybridLogicNetworks{} we choose the parametrization by tuples $\hybridparamin$ and
+\begin{align*}
+    \min_{\hybridparamin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\hybridparam}}
+\end{align*}
+
+
+
+\begin{lemma}
+    \label{lem:minCrossEntropyHardparam}
+    For any $\canparam$ we have
+    \begin{align*}
+        \min_{\hardparam} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\hybridparam}}
+        = \centropyof{\gendistribution}{\probtensorof{\mlnstat,(\hardlegsetto{\genmean},\hardlegindicesto{\genmean},\canparam)}}
+    \end{align*}
+    where $(\hardlegsetto{\genmean},\hardlegindicesto{\genmean})$ parametrize the smallest cube face containing $\genmeanwith=\contractionof{\gendistributionwith,\sencmlnstatwith}{\selvariable}$.
+\end{lemma}
+\begin{proof}
+    We decompose the cross entropy in three terms
+    \begin{align*}
+        \centropyof{\gendistribution}{\probtensorof{\mlnstat,\hybridparam}}
+        =& \contraction{\gendistributionwith,-\lnof{\hlnformulawith}} \\
+        &+ \contraction{\gendistributionwith,\sencmlnstatwith,-\lnof{\actcorewith}} \\
+        &+ \lnof{\contraction{\mlnstatccwith,\kcoreofat{\hardparam}{\shortcatvariables},\actcoreofat{\canparam}{\shortcatvariables}}} \, .
+    \end{align*}
+    The first term can be characterized by
+    \begin{align*}
+        \contraction{\gendistributionwith,-\lnof{\hlnformulawith}}
+        =\begin{cases}
+             0 & \ifspace \gendistribution\models\hlnformula \\
+             \infty & \ifspace \gendistribution\not\models\hlnformula
+        \end{cases} \, .
+    \end{align*}
+
+    The cross entropy is therefore finite, if and only if $\hardlegset\subset\hardlegsetto{\genmean}$ and $\headindexof{\hardlegset}=\restrictionofto{\hardlegindicesto{\genmean}}{\hardlegset}$.
+    Among those tuples, only the third term of the cross-entropy varies, where we have
+    \begin{align*}
+        \lnof{\contraction{\mlnstatccwith,\kcoreof{\hardparam},\actcoreof{\canparam}}} \leq \lnof{\contraction{\mlnstatccwith,\kcoreof{(\hardlegsetto{\genmean},\hardlegindicesto{\genmean})},\actcoreof{\canparam}}}
+    \end{align*}
+    The minimum of the cross entropy is therefore taken at $\hardlegset=\hardlegsetto{\genmean}$ and $\headindexof{\hardlegset}=\hardlegindicesto{\genmean}$.
+\end{proof}
+
+We therefore know
+\begin{align*}
+    \min_{\canparam\in\parspace} \centropyof{\gendistribution}{\probtensorof{\mlnstat,(\hardlegsetto{\genmean},\hardlegindicesto{\genmean},\canparam)}}
+\end{align*}
+
+We can therefore characterize the minimum using \lemref{lem:minCrossEntropyExponential}.
+
+\begin{theorem}
+    \label{the:minCrossEntropyHLN}
+    Let $\gendistributionwith$ be a distribution, $\mlnstat$ a boolean statistic.%, and choose a subset $\variableset\subset[\seldim]$ and a boolean tuple $\headindexof{\variableset}$.
+    We build the mean parameter $\genmeanwith=\contractionof{\gendistributionwith,\sencmlnstatwith}{\selvariable}$ and have the following:
+%    For any $\variableset\subset[\seldim]$ and boolean tuple $\headindexof{\variableset}$ we have
+    \begin{itemize}
+        \item[(1)] If $\genmeanwith \in \sbinteriorof{\meansetof{\mlnstat,\trivbm}}$ then
+        \begin{align*}
+            \min_{\hybridparamin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\hybridparam}}
+            = \sentropyof{\probtensorof{\mlnstat,(\hardlegsetto{\genmean},\hardlegindicesto{\genmean},\estcanparam)}}
+        \end{align*}
+        where $\estcanparam=\backwardmapwrtof{\mlnstat,\hlnformulato{\genmeanwith}}{\genmean}$.
+        \item[(2)] If $\genmeanwith \notin \sbinteriorof{\meansetof{\mlnstat,\trivbm}}$ and $\genmeanwith\in\closureof{\meansetof{\mlnstat,\trivbm}}$ then there is a sequence $\left(\meanparamofat{n}{\selvariable}\right)_{n\in\nn}\subset\hlnmeanset$ converging coordinatewise to $\genmeanwith$ and
+        \begin{align*}
+            \min_{\hybridparamin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\hybridparam}}
+            = \lim_{\meanparamofat{n}{\selvariable}\rightarrow\genmeanwith}
+            \sentropyof{\probtensorof{\mlnstat,(\hardlegsetto{\meanparamof{n}},\hardlegindicesto{\meanparamof{n}},\canparamof{n})}}\,
+        \end{align*}
+        where $\canparamof{n}=\backwardmapwrtof{\mlnstat,\hlnformulato{\meanparamof{n}}}{\meanparamof{n}}$.
+        \item[(3)] If $\genmeanwith\notin\closureof{\meansetof{\mlnstat,\trivbm}}$ then
+        \begin{align*}
+            \min_{\hybridparamin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\hybridparam}}
+            = \infty \, .
+        \end{align*}
+    \end{itemize}
+\end{theorem}
+\begin{proof}
+    This follows from \lemref{lem:minCrossEntropyExponential}.
+\end{proof}
+
+%Based on \lemref{lem:minCrossEntropyExponential} we can characterize the solution of the Maximum Likelihood Problem \probref{prob:minCrossEntropyHLN} with respect to \HybridLogicNetworks{}.
+%
+%\begin{theorem}
+%    Let $\gendistribution$ be any distribution, such that $\genmeanwith$ is reproducable by a Hybrid Logic Network.
+%    Then the solution of the Maximum Likelihood Problem \probref{prob:minCrossEntropyHLN} is the Hybrid Logic Network $\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnformula}{\genmeanwith},\hlnformula}$.
+%\end{theorem}
+%\begin{proof}
+%    We exploit the parameterization of \HybridLogicNetworks{} by tuples $\hlnformulaparams$ (parametrizing the corresponding \HardLogicNetwork{}) and canonical parameters $\canparamwith$ (parametrizing the corresponding \MarkovLogicNetwork{}).
+%    The cross entropy minimization is then
+%    \begin{align*}
+%        \min_{\variableset\subset[\seldim]}\min_{\headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]} \left(\min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}\right) \, .
+%    \end{align*}
+%    For any pair $\variableset,\headindexof{\variableset}$ we apply the lemma above and get a characterization of the inner minimum
+%    \begin{align*}
+%        \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}
+%    \end{align*}
+%    dependent on the stated three cases.
+%    There is exactly one face $\genfaceset$, for which $\genmeanwith\in\sbinteriorof{\genfaceset}$ and by assumption of reproducability there is a parameter tuple $\hlnformulaparams$ such that $\hlnformula$ is the face measure of $\genfaceset$.
+%    For this parameter tuple we have
+%    \begin{align*}
+%        \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}
+%        = -\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnformula}{\genmean},\hlnformula}} \, .
+%    \end{align*}
+%    The following two arguments show that this is the minimum among all other faces.
+%    If for another tuple $\sechlnformulaparams$ we have $\genmeanwith\notin\bmrealprobof{\hlnformulaof{\sechlnformulaparams}}$ (i.e. the third case in \lemref{lem:minCrossEntropyExponential}) then the respective inner minimum is $\infty$ and the outer minimum is not taken.
+%    If for another tuple $\sechlnformulaparams$ we have $\genmeanwith\in\bmrealprobof{\hlnformulaof{\sechlnformulaparams}}$ but $\genmeanwith\notin\sbinteriorof{\genmeanset\cup\cubeface^{\sechlnformulaparams}}$ (i.e. the second case in \lemref{lem:minCrossEntropyExponential}), then the face $\genmeanset\cap\cubeface^{\hlnformulaparams}$ is contained in $\genmeanset\cap\cubeface^{\sechlnformulaparams}$ and the minimum is taken on that face.
+%\end{proof}
+
+
+When $\genmeanwith$ is not reproduceable by a \HybridLogicNetwork{}, we are in the case where the smallest face, such that $\genmeanwith$ is contained is not an intersection of $\genmeanset$ with a cube face.
+In this case, there is no solution of the Maximum Likelihood \probref{prob:minCrossEntropyHLN} in the set of \HybridLogicNetworks{}, since the minimum is not taken.
+The reason for this lies in the expressivity problem of \HybridLogicNetworks{}, which do not reproduce the interior of such faces, but tend in a limit of large canonical parameters to any mean parameter on such faces.
+
+%%% GENERALIZATION: TO BE SHOWN
+%\begin{theorem}
+%    Let $\gendistribution$ be any distribution, $\genmeanwith=\contractionof{\gendistribution,\sencmlnstatwith}{\selvariable}$ and $\hlnfaceset$ be the smallest face of $\hlnmeanset$, which contains $\genmeanwith$.
+%    Then the cross entropy minimizer over
+%    \begin{align*}
+%        \probtensorset = \bigcup_{\facecondset} \expfamilyof{\mlnstat,\hlnfacemeasure}
+%    \end{align*}
+%    is the distribution $\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnfacemeasure}{\genmeanwith},\hlnformula}$, where $\hlnfacemeasure$ is the face measure of $\hlnfaceset$.
+%\end{theorem}
+%\begin{proof}
+%
+%\end{proof}
+
+
+%We can instead state a Maximum Likelihood Problem over $\maxrealizabledistsof{\mlnstat}$, which provides enough expressivity to represent all faces.
+%\begin{theorem}
+%    Let $\gendistribution$ be any distribution, $\genmeanwith=\contractionof{\gendistribution,\sencmlnstatwith}{\selvariable}$ and $\genfaceset$ be the smallest face of $\genmeanset$, which contains $\genmeanwith$.
+%    Then the solution of the Maximum Likelihood Problem \probref{prob:minCrossEntropyHLN} over $\realizabledistsof{\mlnstat,\maxgraph}$ is $\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnfacemeasure}{\genmeanwith},\hlnfacemeasure}$, where $\hlnfacemeasure$ is the face measure of $\genfaceset$.
+%\end{theorem}
+%\begin{proof}
+%    Again by application of \lemref{lem:minCrossEntropyExponential} on each face of $\genmeanset$.
+%    %The outer minimum is taken at the smallest face
+%\end{proof}
+
+
+
+
+
+
+
 \sect{Forward and backward mappings}
 
 Forward and backward mappings have been introduced for exponential families in \charef{cha:probRepresentation}.
-We now generalize them to \HybridLogicNetworks{}.
+We now generalize them to \HybridLogicNetworks{}, which are parametrized by tuples $\hybridparamin$.
 
-\subsect{Representation as Computation Activation Networks}
+%\subsect{Representation as Computation Activation Networks} %% Now in Represeentation Chapter
+%
+%We parametrize each elementary activation tensors $\extnetat{\headvariables}=\bigotimes_{\selindexin}\hypercoreofat{\selindex}{\headvariableof{\selindex}}$ by a tuple
+%$\hybridparam$ as follows
+%\begin{itemize}
+%    \item The axis set of hard leg vectors
+%    \begin{align*}
+%        \variableset = \Big\{ \selindex \wcols \selindexin \ncond \hypercoreofat{\selindex}{\indexedheadvariableof{\selindex}=0}=0 \,\,\text{or}\,\,  \hypercoreofat{\selindex}{\indexedheadvariableof{\selindex}=1}=0  \Big\}
+%    \end{align*}
+%    \item The indices of the hard leg vector $\headindexof{\variableset}$ where for $\selindex\in\variableset$
+%    \begin{align*}
+%        \headindexof{\selindex} =
+%        \begin{cases}
+%            0 & \ifspace \hypercoreofat{\selindex}{\headvariableof{\selindex}=1}=0 \\
+%            1 & \ifspace \hypercoreofat{\selindex}{\headvariableof{\selindex}=0}=0
+%        \end{cases}
+%    \end{align*}
+%    Note, that exactly one of the cases is true, since both would imply a vanishing activation tensor.
+%    \item A canonical parameter $\canparamat{\selvariable}$ where $\canparamat{\indexedselvariable}=0$ for $\selindex\in\variableset$ and for $\selindex\notin\variableset$
+%    \begin{align*}
+%        \canparamat{\indexedselvariable} = \lnof{
+%            \frac{\hypercoreofat{\selindex}{\headvariableof{\selindex}=1}}{\hypercoreofat{\selindex}{\headvariableof{\selindex}=0}}
+%        }
+%    \end{align*}
+%\end{itemize}
+%Conversely, for a tuple $\hybridparam$ we define leg vectors
+%\begin{align*}
+%    \hypercoreofat{\selindex}{\headvariableof{\selindex}} =
+%    \begin{cases}
+%        \onehotmapofat{\headindexof{\selindex}}{\headvariableof{\selindex}} & \text{if} \quad \selindex\in\variableset \\
+%        \expof{\canparamat{\indexedselvariable}\cdot \indexinterpretationof{\headvariableof{\selindex}}} & \text{else}
+%    \end{cases}
+%\end{align*}
+%and an activation tensor
+%\begin{align*}
+%    \tnetofat{\hybridparam}{\headvariables}
+%    =\bigotimes_{\selindexin}\hypercoreofat{\selindex}{\headvariableof{\selindex}} \, .
+%\end{align*}
+%
+%Note that the tuple $\hybridparam$ to a elementary activation tensor determines the corresponding \HybridLogicNetwork{}, since it determines the activation tensor up to an irrelevant scalar multiplication.
 
-We parametrize each elementary activation tensors $\extnetat{\headvariables}=\bigotimes_{\selindexin}\hypercoreofat{\selindex}{\headvariableof{\selindex}}$ by a tuple
-$\hybridparam$ as follows
-\begin{itemize}
-    \item The axis set of hard leg vectors
-    \begin{align*}
-        \variableset = \Big\{ \selindex \wcols \selindexin \ncond \hypercoreofat{\selindex}{\indexedheadvariableof{\selindex}=0}=0 \,\,\text{or}\,\,  \hypercoreofat{\selindex}{\indexedheadvariableof{\selindex}=1}=0  \Big\}
-    \end{align*}
-    \item The indices of the hard leg vector $\headindexof{\variableset}$ where for $\selindex\in\variableset$
-    \begin{align*}
-        \headindexof{\selindex} =
-        \begin{cases}
-            0 & \ifspace \hypercoreofat{\selindex}{\headvariableof{\selindex}=1}=0 \\
-            1 & \ifspace \hypercoreofat{\selindex}{\headvariableof{\selindex}=0}=0
-        \end{cases}
-    \end{align*}
-    Note, that exactly one of the cases is true, since both would imply a vanishing activation tensor.
-    \item A canonical parameter $\canparamat{\selvariable}$ where $\canparamat{\indexedselvariable}=0$ for $\selindex\in\variableset$ and for $\selindex\notin\variableset$
-    \begin{align*}
-        \canparamat{\indexedselvariable} = \lnof{
-            \frac{\hypercoreofat{\selindex}{\headvariableof{\selindex}=1}}{\hypercoreofat{\selindex}{\headvariableof{\selindex}=0}}
-        }
-    \end{align*}
-\end{itemize}
-Conversely, for a tuple $\hybridparam$ we define leg vectors
-\begin{align*}
-    \hypercoreofat{\selindex}{\headvariableof{\selindex}} =
-    \begin{cases}
-        \onehotmapofat{\headindexof{\selindex}}{\headvariableof{\selindex}} & \text{if} \quad \selindex\in\variableset \\
-        \expof{\canparamat{\indexedselvariable}\cdot \indexinterpretationof{\headvariableof{\selindex}}} & \text{else}
-    \end{cases}
-\end{align*}
-and an activation tensor
-\begin{align*}
-    \tnetofat{\hybridparam}{\headvariables}
-    =\bigotimes_{\selindexin}\hypercoreofat{\selindex}{\headvariableof{\selindex}} \, .
-\end{align*}
 
-Note that the tuple $\hybridparam$ to a elementary activation tensor determines the corresponding \HybridLogicNetwork{}, since it determines the activation tensor up to an irrelevant scalar multiplication.
-
-
-\subsect{Definition}
+%\subsect{Definition}
 
 \begin{definition}
     The extended canonical parameter set to a boolean statistic is the set
     \begin{align*}
-        \mathcal{N}_{\seldim}\coloneqq
-        \{(\variableset,\headindexof{\variableset})\wcols \variableset\subset[\seldim]\ncond \headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]\} \times \parspace \, .
+        \hybridparamset\coloneqq
+        \{\hardparam)\wcols \variableset\subset[\seldim]\ncond \headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]\} \times \parspace \, .
     \end{align*}
     The forward map for a \HybridLogicNetwork{} is
     \begin{align*}
-        \forwardmapwrt{\mlnstat} :  \mathcal{N}_{\seldim}
+        \forwardmapwrt{\mlnstat} :  \hybridparamset
         \rightarrow \hlnmeanset \subset \parspace
-        \quad \text{where} \quad
+    \end{align*}
+    where for $\hybridparamin$
+    \begin{align*}
         \forwardmapwrtof{\mlnstat}{\hybridparam}
         = \contractionof{
             \normalizationof{\tnetofat{\hybridparam}{\headvariables},\bencodingofat{\mlnstat}{\headvariables,\shortcatvariables}}{\shortcatvariables}
@@ -77,22 +296,13 @@ Note that the tuple $\hybridparam$ to a elementary activation tensor determines 
     %\begin{align*}
     %    \backwardmapwrt{\mlnstat} :  \imageof{\forwardmapwrt{\mlnstat}} \rightarrow \eltnset
     %\end{align*}
-    such that for any $\hybridparam\in\mathcal{N}_{\seldim}$ we have $\backwardmapwrtof{\mlnstat}{\forwardmapwrtof{\mlnstat}{\tnetof{\elgraph}}}$.
+    such that for any $\hybridparam\in\hybridparamset$ we have $\backwardmapwrtof{\mlnstat}{\forwardmapwrtof{\mlnstat}{\tnetof{\elgraph}}}$.
 
 \end{definition}
 
-From the expressivity study of \charef{cha:networkRepresentation} we have the following.
-
-% Backward map
-%\begin{theorem}
-For any $\meanparamwith$ there is a $\hybridparam\in\mathcal{N}_{\seldim}$ with $\forwardmapwrtof{\mlnstat}{\tnetofat{\elgraph}{\headvariables}}=\meanparamwith$, if and only if $\meanparamwith\in\elhlnmeanset$.
-%\end{theorem}
-%\begin{proof}
-%    From the expressivity of Hybrid Logic Networks.
-%\end{proof}
-
-% Image characterization
-In particular, the theorem implies that the image of $\forwardmapwrt{\mlnstat}$ is the subset $\elhlnmeanset\subset\hlnmeanset$, which is the union of cube face interiors.
+% Expressivity implying image
+From the expressivity study in \charef{cha:networkRepresentation} we know that for any $\meanparamwith$ there is a $\hybridparam\in\hybridparamset$ with $\forwardmapwrtof{\mlnstat}{\hybridparam}=\meanparamwith$, if and only if $\meanparamwith\in\elhlnmeanset$.
+In particular, the this implies that the image of $\forwardmapwrt{\mlnstat}$ is the subset $\elhlnmeanset\subset\hlnmeanset$, which is the union of cube face interiors.
 
 A backward map can be constructed as follows:
 \begin{itemize}
@@ -110,244 +320,6 @@ A backward map can be constructed as follows:
     %    \hypercoreofat{\selindex}{\headvariableof{\selindex}} = \contractionof{\actcorewith,\kcoreofat{\selindex}{\headvariableof{\selindex}}}{\headvariableof{\selindex}}
     %\end{align*}
 \end{itemize}
-
-
-
-
-
-\subsect{Alternating Algorithms for Backward Maps}\label{sec:alternatingParEstMLN}
-
-Parameter estimation is the Maximum Likelihood Problem for exponential families.
-It is solved by the backward map, when the mean parameter is in the interior of the mean parameter polytope.
-
-\subsubsect{\MarkovLogicNetworks{}}
-
-In case of boolean statistics, we can provide a particular simple implementation of the Alternating Moment Matching Algorithm~\ref{alg:AMM}.
-%The moment matching condition of \lemref{lem:mmContractionEquation} simplifies as follows.
-To solve the moment matching condition at a formula $\enumformula$ we refine \lemref{lem:mmContractionEquation} in the following.
-
-\begin{lemma}
-    \label{ref:lemMMinMLN}
-    Let there be a base measure $\basemeasure$, a formula selecting map $\formulaset=\{\enumformula \wcols \selindexin\}$ and a canonical parameter $\canparam$, and choose $\selindexin$ such that $\enumformula  \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
-    The moment matching condition relative to $\canparamwith$, and $\datameanat{\indexedselvariable}\in(0,1)$ is then satisfied, if for all $\selindexin$
-    \begin{align}
-        \label{sol:momentMatchingExformula}
-        \indexedcanparam = \lnof{
-            \frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})}
-            \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
-        }
-    \end{align}
-    where by $\hypercoreat{\headvariableof{\selindex}}$ we denote the contraction
-    \begin{align*}
-        \hypercoreat{\headvariableof{\selindex}}
-        = \contractionof{\{\bencodingof{\enumformula} \wcols \selindexin\}
-        \cup\{\actcoreof{\tilde{\selindex},\canparamat{\selvariable=\tilde{\selindex}}} \wcols \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
-        \cup\{\basemeasure\}}{\headvariableof{\selindex}} \, .
-    \end{align*}
-\end{lemma}
-\begin{proof}
-    Since $\imageof{\enumformula}\subset[2]$ we have
-    \begin{align*}
-        \idrestrictedto{\imageof{\enumformula}} = \onehotmapofat{1}{\headvariableof{\selindex}}
-    \end{align*}
-    and the moment matching condition is by \lemref{lem:mmContractionEquation} satisfied if
-    \begin{align*}
-        \contraction{\actcorewith, \onehotmapofat{1}{\headvariableof{\selindex}}, \hypercoreat{\headvariableof{\selindex}}}
-        = \contraction{\actcorewith,\hypercoreat{\headvariableof{\selindex}}} \cdot \datameanat{\indexedselvariable} \, .
-    \end{align*}
-    This is equal to
-    \begin{align*}
-        \expof{\canparamat{\indexedselvariable}} \cdot \hypercoreat{\headvariableof{\selindex}=1}
-        = \left( \expof{\canparamat{\indexedselvariable}} \cdot \hypercoreat{\headvariableof{\selindex}=1} + \hypercoreat{\headvariableof{\selindex}=0} \right) \cdot \datameanat{\indexedselvariable} \, .
-    \end{align*}
-    Rearranging the equations this is equal to
-    \begin{align*}
-        \hypercoreat{\headvariableof{\selindex}}
-        = \contractionof{\{\bencodingof{\enumformula}\}
-        \cup\{\actcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
-        \cup\{\basemeasure\}}{\selvariable} \, .
-    \end{align*}
-    We notice that the right side is well defined, since we have by assumption $\datameanat{\indexedselvariable}, (1- \datameanat{\indexedselvariable}) \neq 0$ and $\hypercoreat{\headvariableof{\selindex}=0}, \hypercoreat{\headvariableof{\selindex}=1} \neq 0$ since \MarkovLogicNetworks{} are positive distributions and $\enumformula \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
-\end{proof}
-
-We now investigate, for which mean parameters the moment matching equations are satisfiable.
-
-%\begin{lemma}
-The moment matching conditions of \lemref{ref:lemMMinMLN} are satisfied for some $\canparamwith$, if and only if $\meanparamwith\in\sbinteriorof{\hlnmeanset}$.
-%\end{lemma}
-
-
-Let us now introduce an implementation of the Alternating Moment Matching Algorithm~\ref{alg:AMM} in case of \MarkovLogicNetworks{}.
-Note that while $\uniquantwrtof{\selindexin}{\meanparamat{\indexedselvariable}\notin\{0,1\}}$ ensures the well-definedness of the algorithm (otherwise the update could not be computed), it is only a necessary but not always sufficient criterion for the existence of a solution.
-
-
-\begin{algorithm}[hbt!]
-    \caption{Alternating Moment Matching for Markov Logic Networks}\label{alg:AMM_MLN}
-    \begin{algorithmic}
-        \Require Mean parameter $\meanparamwith$ with $\uniquantwrtof{\selindexin}{\meanparamat{\indexedselvariable}\notin\{0,1\}}$
-        \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\expfamily$
-        \hrule
-        \While{Convergence criterion is not met}
-            \For{$\selindex\in\secnodes$}
-                \State Compute
-                \begin{align*}
-                    \hypercoreat{\headvariableof{\selindex}}
-                    = \contractionof{\{\bencodingof{\enumformula} \, : \, \selindexin\}
-                    \cup\{\actcoreof{\tilde{\selindex}} \wcols \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
-                    \cup\{\basemeasure\}}{\headvariableof{\selindex}}
-                \end{align*}
-                \State Set
-                \begin{align*}
-                    \canparamat{\indexedselvariable} = \lnof{
-                        \frac{\meanparamat{\indexedselvariable}}{(1-\meanparamat{\indexedselvariable})}
-                        \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
-                    }
-                \end{align*}
-            \EndFor
-        \EndWhile
-        \State \Return $\canparamwith$
-    \end{algorithmic}
-\end{algorithm}
-
-% Independent formulas
-In the initialization phase of \algoref{alg:AMM_MLN}, each parameters is initialized relative to a uniform distribution.
-The algorithm would be finished, if the variables $\catvariableof{\exformula}$ are independent.
-This would be the case, if the \MarkovLogicNetwork{} consists of atomic formulas only.
-When they fail to be independent, the adjustment of the weights influence the marginal distribution of other formulas and we need an alternating optimization.
-%
-This situation corresponds with couplings of the weights by a partition contraction, which does not factorize into terms to each formula.
-
-% Concave likelihood
-Since the likelihood is concave (see \cite{koller_probabilistic_2009}), there are not local maxima the coordinate descent could run into and coordinate descent will give a monotonic improvement of the likelihood.
-
-% Inference in inner loop
-Solving Equation~\ref{sol:momentMatchingExformula} requires inference of a current model by answering a query.
-This can be a bottleneck and circumvented by approximative inference, see e.g. CAMEL \cite{ganapathi_constrained_2008}.
-
-\subsubsect{\HybridLogicNetworks{}}
-
-We now extend the alternating parameter estimation algorithm to \HybridLogicNetworks{}, by allowing for mean parameters on the interior of cube faces.
-
-%\begin{lemma}
-The moment matching conditions of \lemref{ref:lemMMinMLN} are satisfied for some $\canparamwith$, if and only if $\meanparamwith$ is on the interior of a cube face of $\hlnmeanset$.
-%\end{lemma}
-
-\begin{algorithm}[hbt!]
-    \caption{Alternating Moment Matching for Hybrid Logic Networks}
-    \begin{algorithmic}
-        \Require Mean parameter $\meanparamwith$ % with $\uniquantwrtof{\selindexin}{\meanparamat{\indexedselvariable}\notin\{0,1\}}$
-        \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\hlnsetof{\formulaset}$
-        \hrule
-        \State Set
-        \[ \variableset = \Big\{ \selindex \wcols \selindexin \ncond \meanparamat{\indexedselvariable}\in\{0,1\} \Big\}\]
-        and a tuple $\headindexof{\variableset}$ with $\headindexof{\selindex}=\meanparamat{\indexedselvariable}$ for $\selindex\in\variableset$ .
-%            \[ \variableset = \Big\{ \selindex \wcols \selindexin \ncond \meanparamat{\indexedselvariable}\in\{0,1\} \Big\}\]
-        \State Run AMM in case of Markov Logic Networks with base measure by $\exformulaof{\variableset,\headindexof{\variableset}}$ to get $\canparamwith$
-        \State \Return $(\variableset,\headindexof{\variableset},\canparamwith)$
-    \end{algorithmic}
-\end{algorithm}
-
-
-\subsect{Iterative Proportional Fitting}
-
-\begin{remark}[Grouping of partition statistics]
-    When having a set of coordinates, such that the coordinate functions are boolean and sum to the trivial tensor, one can find simultaneous updates to the canonical parameters, such that the partition function is staying invariant.
-    Given a parameter $\canparam^t$ we compute
-    \[ \meanparam^t = \contractionof{\expdistof{(\sstat,\canparam^t)}, \sstat}{\selvariable} \]
-    and build the update
-    \[ \canparam^{t+1} = \canparam^t + \lnof{\meanparam^{\datamap}}{\meanparam^t} \, . \]
-    Then, $\canparam^{t+1}$ satisfies the moment matching equations for all coordinates in the set.
-
-
-    The assumptions are met when taking all features to any hyperedge in a Markov Network seen as an exponential family.
-    In that case, the update algorithm is refered to as Iterative Proportional Fitting \cite{wainwright_graphical_2008}.
-    Further, when activating both $\exformula$ and $\lnot\exformula$.
-
-    \red{We will investigate these statistics as partition statistics in \secref{sec:partitionStatistics}.}
-\end{remark}
-
-
-%\sect{Alternating Algorithms to Approximate the Backward Map}
-
-%%% Hard network reference!
-%In the case $\datameanat{\indexedselvariable}\in\{0,1\}$ the moment matching conditions are not satisfiable for $\canparamat{\indexedselvariable}\in\rr$.
-%But, we notice, that in the limit $\canparamat{\indexedselvariable}\rightarrow \infty $ (respectively $-\infty$) we have
-%\[ \meanparamat{\indexedselvariable} \rightarrow  1 \quad \text{(respectively $0$)}\, ,  \]
-%and the moment matching can be satisfied up to arbitrary precision.
-%In \secref{sec:hardNetworks} we will allow infinite weights and interpret the corresponding factors by logical formulas.
-%As a consequence, we will able to fit graphical models, which we will call hybrid networks on arbitrary satisfiable mean parameters.
-
-%%
-%The cases $\hypercoreat{\headvariableof{\selindex}=1}=0$, respectively $\hypercoreat{\headvariableof{\selindex}=1}=0$ only appear for nontrivial formulas when the distribution is not positive.
-%This is not the case for \MarkovLogicNetworks{}, but will happen when formulas are added as cores of a Markov Network.
-%This situation will has been investigated in \secref{sec:hardNetworks}.
-
-%
-%We suggest an alternating optimization by Algorithm~\ref{alg:AWO}, solving the moment matching equation iteratively for all formulas $\exformulain$ and repeat the optimization until a convergence criterion is met.
-%This is an coordinate ascent algorithm, when interpreted the loss $\lossof{\expdist}$ as an objective depending on the vector $\canparam$.
-%
-%\begin{algorithm}[hbt!]
-%    \caption{Alternating Weight Optimization (AWO)}\label{alg:AWO} % Call it parameter instead?
-%    \begin{algorithmic}
-%%% INPUT: Numerated formula set, mean parameter $\datameanat{\selvariable}$
-%%\For{$\exformula\in\formulaset$}
-%        \Require Empirical distribution $\empdistribution$, boolean features $\mlnstat$ %and base measure $\basemeasure$
-%        \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\expfamily$
-%        \hrule
-%        \State Compute $\datameanat{\selvariable}= \contractionof{\empdistribution,\sencsstat}{\selvariable}$
-%        \State $\kb = \ones$, $\secnodes=\varnothing$
-%        \For{$\selindexin$}
-%            \If{$\meanparamat{\indexedselvariable}=1$}
-%                \[ \hardformulaset \algdefsymbol \hardformulaset \cup \{\enumformula\}\]
-%            \ElsIf
-%                    {$\meanparamat{\indexedselvariable}=0$}
-%                \[ \hardformulaset \algdefsymbol \hardformulaset \cup \{\lnot\enumformula\}\]
-%            \Else
-%                \State $\secnodes\algdefsymbol \secnodes \cup \{\selindex\}$
-%            \EndIf
-%        \EndFor
-%        \For{$\selindex\in\secnodes$}
-%            \State Compute
-%            \[ \hypercoreat{\headvariableof{\selindex}}
-%            \algdefsymbol \contractionof{\bencodingof{\enumformula}}{\headvariableof{\selindex}} \]
-%            \State Set
-%            \begin{align*}
-%                \canparamat{\indexedselvariable}
-%                \algdefsymbol \lnof{
-%                    \frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})}
-%                    \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
-%                }
-%            \end{align*}
-%        \EndFor
-%        \If {$\contraction{\kb}=0$}
-%            \State \textbf{raise} "Inconsistent Knowledge Base"
-%        \EndIf
-%        \While{Convergence criterion is not met}
-%            \For{$\selindex\in\secnodes$}
-%                \State Compute
-%                \begin{align*}
-%                    \hypercoreat{\headvariableof{\selindex}}
-%                    = \contractionof{\{\bencodingof{\enumformula} \, : \, \selindexin\}
-%                    \cup\{\actcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
-%                    \cup\{\basemeasure\}}{\headvariableof{\selindex}}
-%                \end{align*}
-%                \State Set
-%                \begin{align*}
-%                    \canparamat{\indexedselvariable} = \lnof{
-%                        \frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})}
-%                        \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
-%                    }
-%                \end{align*}
-%            \EndFor
-%        \EndWhile
-%        \State \Return $\canparamwith$
-%    \end{algorithmic}
-%\end{algorithm}
-
-%
-%\red{The canonical parameters in \algoref{alg:AWO} converge, if and only if the mean parameter $\genmeanwith$ is reproducable by a Hybrid Logic Network.}
-
-
 
 \subsect{Backward Maps in Closed Form}
 
@@ -371,13 +343,12 @@ Here we extend to the representation of distributions with arbitrary supports an
 
 We use the tuple enumeration of the maxterms and minterms by $\atomstates$ introduced in \secref{sec:termClauseDecomposition}.
 With respect to this enumeration the canonical parameters and mean parameters are tensors in $\bigotimes_{\atomenumeratorin}\rr^2$.
-%% Interpretation of the mean parameters
 
 \begin{theorem}
     For the \HybridLogicNetworks{} to the minterm and maxterm statistics
     \begin{align*}
         \mintermformulaset \coloneqq \{ \mintermof{\shortcatindices} \wcols \shortcatindices\in\atomstates\}
-        \quad \text{and} \quad
+        \andspace
         \maxtermformulaset \coloneqq \{ \maxtermof{\shortcatindices} \wcols \shortcatindices\in\atomstates\}
     \end{align*}
     we have the forward maps
@@ -406,8 +377,6 @@ With respect to this enumeration the canonical parameters and mean parameters ar
         = \Big(\Big\{ \selindex \wcols \selindexin \ncond \meanparamat{\indexedselvariable}=1 \Big\},1_{\variableset},-\lnof{\meanparamat{\selvariableof{[\atomorder]}}}\Big)
     \end{align*}
     (we set here $\lnof{0}=0$) is a backward map for the minterm statistic.
-
-
 \end{theorem}
 \begin{proof}
     The minterm statistic $\mintermformulaset$ has a selection encoding
@@ -434,93 +403,13 @@ With respect to this enumeration the canonical parameters and mean parameters ar
     The claim on the forward maps follows for
     \begin{align*}
         \probwith=\normalizationof{\bencodingofat{\maxtermformulaset}{\headvariableof{\mlnmaxtermsymbol},\shortcatvariables},
-            \tnetofat{\elgraph}{\headvariableof{\mlnmaxtermsymbol}}}{\shortcatvariables} \, .
+            \tnetofat{\elgraph}{\headvariableof{\mlnmaxtermsymbol}}}{\shortcatvariables} \, . & \qedhere
     \end{align*}
-
-
 \end{proof}
 
 % Fitting arbitrary distributions
-Any probability distribution can thus be represented by a minterm, respectively maxterm, \HybridLogicNetwork{}. %when we choose $\canparam=\lnof{\probtensor}$, respectively by maxterms when we choose $\canparam=\ones-\lnof{\probtensor}$.
-%Thus, we have identified a subset of $2^{\atomorder}$ formulas, which is rich enough to fit any distribution.
-
-
-%Since the statistic of the minterm family is the identity, the mean parameters for the minterm family are
-%\[ \meanparamat{\selvariableof{[\atomorder]}=\catindexof{[\atomorder]}}
-%= \probat{\catindexof{[\atomorder]}}
-%\]
-%and therefore after a relabeling of categorical variables to selection variables $\meanparam=\probtensor$.
-%For maxterms we have analogously
-%\[ \meanparamat{\selvariableof{[\atomorder]}=\catindexof{[\atomorder]}}
-%= 1-\probat{\catindexof{[\atomorder]}}
-%\]
-%and $\meanparam = \onesat{}-\probtensor$.
-%We can use these insights to provide a characterization of the forward and backward maps of the minterm and maxterm family.
-%
-%\begin{theorem} % TO BE DROPPED! Generalized to HLN
-%    Given the \MarkovLogicNetworks{} to the formula sets
-%    \[   \]
-%    of all minterms, respectively of all mapterms, the forward mapping are
-%    %\[ \forwardmapwrt{\mintermformulaset}: \bigotimes_{\atomenumeratorin}\rr^{2} \rightarrow \bigotimes_{\atomenumeratorin}\rr^{2} \]
-%    \[ \forwardmapwrt{\mlnmintermsymbol}(\canparam) = \normalizationofwrt{\expof{\canparam}}{\shortcatvariables}{\varnothing}
-%    \quad \text{and} \quad
-%    \forwardmapwrt{\mlnmaxtermsymbol}(\canparam) = \normalizationofwrt{\expof{-\canparam}}{\shortcatvariables}{\varnothing} \, , \]
-%    where in a slight abuse of notation we assigned the variables $\shortcatvariables$ to the canonical parameters $\canparam$.
-%
-%    Possible choices of the backward mappings are
-%    %\[ \backwardmapwrt{\mlnmintermsymbol}: \bigotimes_{\atomenumeratorin}\rr^{2} \rightarrow \bigotimes_{\atomenumeratorin}\rr^{2} \]
-%    \[ \backwardmapwrt{\mlnmintermsymbol}(\meanparam) = \lnof{\meanparam}
-%    \quad \text{and} \quad
-%    \backwardmapwrt{\mlnmaxtermsymbol}(\meanparam) = -\lnof{\meanparam} \, .
-%    \]
-%\end{theorem}
-%\begin{proof}
-%    For the minterms we use that
-%    \[ \mintermformulaset[\shortcatvariables,\catvariableof{\mintermformulaset}]  = \identityat{\shortcatvariables,\catvariableof{\maxtermformulaset}}\]
-%    and get
-%    \[ \forwardmapwrt{\mlnmintermsymbol}(\canparam)
-%    = \normalizationof{
-%        \expof{\contractionof{\{\mintermformulaset, \canparam\}}{\shortcatvariables}}
-%    }{\shortcatvariables}
-%    =
-%    \normalizationof{\expof{\canparam}}{\shortcatvariables} \, .
-%    \]
-%
-%    We notice that for any $\meanparam$ in the image of the forward map we have
-%    \[ \forwardmapwrt{\mlnmintermsymbol}(\backwardmapwrt{\mlnmintermsymbol}(\meanparam)) = \meanparam \]
-%    Therefore, $\backwardmapwrt{\mintermformulaset}$ is indeed a backward mapping to the exponential family of minterms.
-%
-%    For the maxterms we use that
-%    \[ \maxtermformulaset[\shortcatvariables,\catvariableof{\maxtermformulaset}] = \onesat{\shortcatvariables,\catvariableof{\maxtermformulaset}}-\identityat{\shortcatvariables,\catvariableof{\maxtermformulaset}} \]
-%    and get
-%    \begin{align*}
-%        \forwardmapwrt{\mlnmaxtermsymbol}(\canparam)
-%        & = \normalizationof{
-%            \expof{\contractionof{\{\mintermformulaset, \canparam\}}{\shortcatvariables}}
-%        }{\shortcatvariables} \\
-%        & = \normalizationof{\{
-%        \expof{\contractionof{\{\ones, \canparam\}}{\shortcatvariables}},
-%            \expof{-\contractionof{\canparam}{\shortcatvariables}} \}
-%        }{\shortcatvariables} \\
-%        & = \normalizationof{
-%            \expof{-\canparam}
-%        }{\shortcatvariables}
-%    \end{align*}
-%    where we used, that $\expof{\contractionof{\{\ones, \canparam\}}{\shortcatvariables}}$ is a multiple of $\onesat{\shortcatvariables}$ and is thus eliminated in the normalization.
-%    For any $\meanparam\in\imageof{\forwardmapwrt{\mlnmaxtermsymbol}}$ we have
-%    \[ \forwardmapwrt{\mlnmaxtermsymbol}(\backwardmapwrt{\mlnmaxtermsymbol}(\meanparam) )
-%    = \meanparam
-%        %-\lnof{\expof{-\canparam}} + \contractionof{\expof{-\canparam}}{\varnothing} \cdot \onesat{\shortcatvariables}
-%        %= \canparam + \contractionof{\expof{-\canparam}}{\varnothing} \cdot \onesat{\shortcatvariables}
-%    \]
-%    and $\backwardmapwrt{\mlnmintermsymbol}$ is thus a backward map for the exponential family of maxterms.
-%\end{proof}
-
-
-
-
-
-
+Any probability distribution can thus be represented by a \HybridLogicNetwork{} in the minterm statistic, as well as in the maxterm statistic.
+Thus, we have identified sets of $2^{\atomorder}$ formulas, which is rich enough to fit any distribution.
 
 \subsubsect{Atomic formulas}
 
@@ -570,7 +459,7 @@ For each probability distribution $\probwith$ we the corresponding mean paramete
     Now, if $\atomenumerator\in\variableset$ we have $\hypercoreof{\selindex}{\headvariableof{\atomenumerator}}=\onehotmapofat{\headindexof{\atomenumerator}}{\headvariableof{\atomenumerator}}$ and $\meanparamat{\selvariable=\atomenumerator}=\headindexof{\atomenumerator}$.
     If $\atomenumerator\notin\variableset$ then $\hypercoreof{\selindex}{\headvariableof{\atomenumerator}}=\actcoreofat{\atomenumerator,\canparamat{\selvariable=\atomenumerator}}{\headvariableof{\atomenumerator}}$ and
     \begin{align*}
-        \meanparamat{\selvariable=\atomenumerator} = \frac{\expof{\canparamat{\selvariable=\atomenumerator}}}{1+\expof{\canparamat{\selvariable=\atomenumerator}}} \, .
+        \meanparamat{\selvariable=\atomenumerator} = \frac{\expof{\canparamat{\selvariable=\atomenumerator}}}{1+\expof{\canparamat{\selvariable=\atomenumerator}}} \, . & \qedhere
     \end{align*}
 \end{proof}
 
@@ -654,473 +543,457 @@ The forward and backward map on the soft atomic formulas are the coordinatewise 
 
 
 
-\sect{Entropy Optimization on \HybridLogicNetworks{}} \label{sec:parameterEstimation} % Check for redundancy with the mln introduction chapter!
+\sect{Alternating Moment Matching}\label{sec:alternatingParEstMLN}
 
-We will investigate two entropic approaches towards unconstrained parameter estimation.
-First of all, we characterize Maximum Entropy distributions with a moment constraint.
-Maximum Likelihood Estimation restricts the distributions optimized over to a specific set, here the \HybridLogicNetworks{}.
+We now derive an algorithm for the Maximum Likelihood Estimation in case of \HybridLogicNetworks{}.
+To this end, we first solve local cross-entropy minimization problems, which are then alternated to find global solutions.
 
-\subsect{Entropy Maximization}
+%Parameter estimation is the Maximum Likelihood Problem for exponential families.
+%It is solved by the backward map, when the mean parameter is in the interior of the mean parameter polytope.
 
+\subsect{Local updates}
 
-The Maximum Entropy Problem $\probtagtypeinst{\entropysymbol}{\mlnstat,\basemeasure,\genmean}$ for a statistic $\mlnstat$ and a base measure $\basemeasure$ is %\MarkovLogicNetworks{} is
-\begin{align}
-    \label{prob:maxEntropyHLN}\tag{$\probtagtypeinst{\entropysymbol}{\mlnstat,\basemeasure,\genmean}$}
-    \argmax_{\probtensor\in\bmrealprobof{\basemeasure}} \quad \sentropyof{\probtensor}
-    \quad \text{subject to} \quad
-    \contractionof{\probtensor,\sencmlnstat}{\selvariable}
-    =  \genmeanwith
-\end{align}
+Let us now varying a distribution $\secprobwith$ by adding an additional feature $\formula$
+\begin{align*}
+    \probofat{\hypercore}{\shortcatvariables}
+    \coloneqq \normalizationof{\secprobwith,\formulaccwith,\hypercoreat{\formulavar}}{\shortcatvariables} \, .
+\end{align*}
+Note, that the normalization exists for positive $\hypercoreat{\formulavar}$ and if $\contraction{\secprobtensor,\exformula}\notin\{0,1\}$ then also for any non-vanishing $\hypercoreat{\formulavar}$.
+If $\contraction{\secprobtensor,\exformula}\in\{0,1\}$, then the $\probof{\hypercore}$ is constant among $\hypercoreat{\formulavar}$, when it exists.
 
-\begin{theorem}
-    \label{the:maxEntropyCharacterizationHLN}
-    Let $\genmeanwith\in\genmeanset$ and the minimal face of $\genmeanset$, which includes $\genmeanwith$, be $\genfaceset$, and let
-    \begin{align*}
-        \gencanparam = \backwardmapwrtof{\mlnstat,\hlnfacemeasure}{\genmeanwith} \, ,
-    \end{align*}
-    where $\backwardmapwrt{\mlnstat,\hlnfacemeasure}$ is a backward map in the exponential family $\expfamilyof{\mlnstat,\hlnfacemeasure}$.
-    The solution of the Maximum Entropy Problem \probref{prob:maxEntropyHLN} is then
-    \begin{align*}
-        \probwith = \expdistof{(\mlnstat,\gencanparam,\hlnfacemeasure)} \, .
-    \end{align*}
-\end{theorem}
-\begin{proof}
-    Any feasible distribution has to be representable by $\hlnfacemeasure$, since $\genmeanwith\in\hlnfaceset$.
-    The solution therefore coincides with the solution of the maximum entropy problem with respect to $\mlnstat$ and $\hlnfacemeasure$ as a base measure.
-    Since $\genfaceset$ is minimal, $\meanparamwith$ is on the effective interior of the face and the claim follows with \theref{the:maxEntropyFace}.
-\end{proof}
-
-\theref{the:maxEntropyCharacterizationHLN} characterizes the solution of the Maximum Entropy Problem for arbitrary positions of the mean parameter.
-Note, that if $\genmeanwith\notin\genmeanset$ then no distribution is feasible for \probref{prob:maxEntropyHLN} and there is no solution.
-We are especially interested in situations, where the solution is a Hybrid Logic Network.
-As we show next, this is exactly the case if the mean parameter is reproducable by a Hybrid Logic Network (see \secref{sec:HLNrepMean}).
-
-\begin{theorem}
-    Let $\genmeanwith$ be a mean parameter reproducable by a Hybrid Logic Network. % (see \defref{def:HLNrepMean}).
-    Then the unique Hybrid Logic Network reproducing $\genmeanwith$ is the solution of the Maximum Entropy Problem \eqref{prob:maxEntropyHLN}.
-\end{theorem}
-\begin{proof}
-    We notice, that if $\genmeanwith$ is reproducable by a Hybrid Logic Network, then the normalization of the corresponding face measure $\hlnfacemeasure$ of the minimal face containing $\genmeanwith$ is a Hybrid Logic Network in $\elrealizabledistsof{\mlnstat}$.
-    The solution of \probref{prob:maxEntropyHLN} characterized in \theref{the:maxEntropyCharacterizationHLN} is then also in $\elrealizabledistsof{\mlnstat}$.
-\end{proof}
-
-
-\subsect{Cross Entropy Minimization}
-
-Different to Maximum Entropy Problems, we formulate the Maximum Likelihood Problem $\probtagtypeinst{\mathrm{M}}{\Gamma,\gendistribution}$ as cross entropy minimization with respect to \HybridLogicNetworks{}, that is
-\begin{align}
-    \label{prob:minCrossEntropyHLN}\tag{$\probtagtypeinst{\mathrm{M}}{\Gamma,\gendistribution}$}
-    \argmin_{\probtensor\in\elrealizabledistsof{\mlnstat}} \centropyof{\gendistribution}{\probtensor}
-\end{align}
-When choosing $\gendistribution$ by an empirical distribution, this minimization problem is the Maximum Likelihood Problem (see \secref{cha:probReasoning}).
-% LEMMA TO CHA:PROBREASONING?
-In order to characterize the solution of the cross entropy minimization problem on \HybridLogicNetworks{}, we first characterize the solution of the cross entropy minimization on exponential families.
+We want to solve the local cross-entropy minimization problem
+\begin{align*}
+    \min_{\hypercore} \centropyof{\empdistribution}{\probof{\hypercore}} \,.
+\end{align*}
+If $\contraction{\secprobtensor,\exformula}\in\{0,1\}$ then the minimum is taken at any $\hypercoreat{\formulavar}$ such that $\probof{\hypercore}$ exists.
 
 \begin{lemma}
-    \label{lem:minCrossEntropyExponential}
-    Let $\gendistributionwith$ be a distribution, $\mlnstat$ a boolean statistic, and choose a subset $\variableset\subset[\seldim]$ and a boolean tuple $\headindexof{\variableset}$.
-    We build the mean parameter $\genmeanwith=\contractionof{\gendistributionwith,\sencmlnstatwith}{\selvariable}$ and have the following:
-%    For any $\variableset\subset[\seldim]$ and boolean tuple $\headindexof{\variableset}$ we have
-    \begin{itemize}
-        \item[(1)] If $\genmeanwith \in \sbinteriorof{\meansetof{\mlnstat,\hlnformula}}$ then
-        \begin{align*}
-            \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}
-            = -\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnformula}{\genmeanwith},\hlnformula}} \, .
-        \end{align*}
-        \item[(2)] If $\genmeanwith \notin \sbinteriorof{\meansetof{\mlnstat,\hlnformula}}$ and $\genmeanwith\in\closureof{\meansetof{\mlnstat,\hlnformula}}$ then there is a sequence $\left(\meanparamofat{n}{\selvariable}\right)_{n\in\nn}\subset\hlnmeanset$ converging coordinatewise to $\genmeanwith$ and
-        \begin{align*}
-            \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}
-            = \lim_{\meanparamofat{n}{\selvariable}\rightarrow\genmeanwith}-\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnformula}{\meanparamofat{n}{\selvariable}},\hlnformula}} \, .
-        \end{align*}
-        \item[(3)] If $\genmeanwith\notin\closureof{\meansetof{\mlnstat,\hlnformula}}$ then
-        \begin{align*}
-            \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}
-            = \infty \, .
-        \end{align*}
-    \end{itemize}
+    \label{lem:localHybridParamUpdate}
+    Let $\empdistribution$, $\secprobtensor$ be distributions and $\exformula$ a formula such that $\contraction{\secprobtensor,\exformula}\notin\{0,1\}$.
+    If $\contraction{\empdistribution,\exformula}\in\{0,1\}$ the solution of the local cross-entropy minimization is
+    \begin{align*}
+        \hypercoreat{\formulavar} = \onehotmapofat{\contraction{\empdistribution,\exformula}}{\formulavar}
+    \end{align*}
+    If $\contraction{\empdistribution,\exformula}\notin\{0,1\}$ the solution is
+    \begin{align*}
+        \hypercoreat{\formulavar} = \actcoreofat{\canparam}{\formulavar}
+    \end{align*}
+    where
+    \begin{align*}
+        \canparam = \lnof{
+            \frac{\contraction{\empdistribution,\exformula}}{(1-\contraction{\empdistribution,\exformula})}
+            \cdot \frac{1-\contraction{\secprobtensor,\exformula}}{\contraction{\secprobtensor,\exformula}}
+        } \, .
+    \end{align*}
 \end{lemma}
 \begin{proof}
-    See Theorem~3.4 in \cite{wainwright_graphical_2008}.
+    The cross entropy is decomposed into
+    \begin{align*}
+        \centropyof{\empdistribution}{\probof{\hypercore}}
+        &= \centropyof{\empdistribution}{\secprobtensor} \\
+        &\quad + \contraction{\empdistributionwith,\formulaccwith,-\lnof{\hypercoreat{\formulavar}}} \\
+        &\quad + \lnof{\contraction{\secprobwith,\formulaccwith,\hypercoreat{\formulavar}}}\, .
+    \end{align*}
+    Since the first term is constant among $\hypercore$, we focus on the minimization of the second and third term.
+    For each $\hypercoreat{\formulavar}$ and its boolean support $\kcoreat{\formulavar}\coloneqq\greaterzeroof{\hypercoreat{\formulavar}}$ we find $\lambda>0$ and $\canparam\in\rr$ such that
+    \begin{align*}
+        \hypercoreat{\formulavar}
+        = \lambda\cdot\contractionof{\kcoreat{\formulavar},\actcoreof{\canparam}}{\formulavar} \, .
+    \end{align*}
+    Given this parametrization we have
+    \begin{align*}
+        & \contraction{\empdistributionwith,\formulaccwith,-\lnof{\hypercoreat{\formulavar}}}
+        + \lnof{\contraction{\secprobwith,\formulaccwith,\hypercoreat{\formulavar}}} \\
+        & \quad  = \contraction{\empdistributionwith,\formulaccwith,-\lnof{\kcoreat{\formulavar}}} - \canparam\cdot\contraction{\empdistributionwith,\formulawith} \\
+        & \quad \quad  + \lnof{\contraction{\secprobwith,\formulaccwith,\kcoreat{\formulavar},\actcoreofat{\canparam}{\formulavar}}} \, .
+    \end{align*}
+    The minimum over $\kcore$ is taken at
+    \begin{align*}
+        \kcoreat{\formulavar} =
+        \begin{cases}
+            \tbasisat{\formulavar} & \ifspace \contraction{\empdistribution,\exformula}=1 \\
+            \fbasisat{\formulavar} & \ifspace \contraction{\empdistribution,\exformula}=0 \\
+            \onesat{\formulavar} & \text{else}
+        \end{cases} \, .
+    \end{align*}
+    If the optimal $\kcore$ is not the trivial vector $\onesat{\formulavar}$, the parameter $\canparam\in\rr$ does not influence the distribution and we can arrive at the claim when choosing $\canparam=0$.
+    If the optimal $\kcore$ is trivial, we optimize further over $\actcoreof{\canparam}$
+    \begin{align*}
+        \min_{\canparam\in\rr} \contraction{\empdistributionwith,\formulaccwith,-\lnof{\hypercoreat{\formulavar}}}
+        + \lnof{\contraction{\secprobwith,\formulaccwith,\actcoreofat{\canparam}{\formulavar}}} \, .
+        \, .
+    \end{align*}
+    The derivation of the objective is
+    \begin{align*}
+        & \difofwrt{\contraction{\empdistributionwith,\formulaccwith,-\lnof{\hypercoreat{\formulavar}}}
+        + \lnof{\contraction{\secprobwith,\formulaccwith,\actcoreofat{\canparam}{\formulavar}}}}{\canparam} \\
+        & \quad = \contraction{\empdistributionwith,\formulawith}
+        - \contraction{\probofat{\actcoreof{\canparam}}{\shortcatvariables},\formulawith} \\
+        & \quad = \contraction{\empdistribution,\exformula}
+        - \frac{\expof{\canparam} \cdot \contraction{\secprobwith,\formulawith}}{
+            \expof{\canparam} \cdot \contraction{\secprobwith,\formulawith} + (1-\contraction{\secprobwith,\formulawith})
+        } \, .
+    \end{align*}
+    The derivative vanished thus at the unique minimum of the cross entropy at
+    \begin{align*}
+        \canparam = \lnof{
+            \frac{\contraction{\empdistribution,\exformula}}{(1-\contraction{\empdistribution,\exformula})}
+            \cdot \frac{(1-\contraction{\secprobtensor,\exformula})}{\contraction{\secprobtensor,\exformula}}
+        } \, . & \qedhere
+    \end{align*}
 \end{proof}
 
-Based on this lemma we can characterize the solution of the Maximum Likelihood Problem \probref{prob:minCrossEntropyHLN} with respect to \HybridLogicNetworks{}.
 
-\begin{theorem}
-    Let $\gendistribution$ be any distribution, such that $\genmeanwith$ is reproducable by a Hybrid Logic Network.
-    Then the solution of the Maximum Likelihood Problem \probref{prob:minCrossEntropyHLN} is the Hybrid Logic Network $\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnformula}{\genmeanwith},\hlnformula}$.
-\end{theorem}
-\begin{proof}
-    We exploit the parameterization of \HybridLogicNetworks{} by tuples $\hlnformulaparams$ (parametrizing the corresponding \HardLogicNetwork{}) and canonical parameters $\canparamwith$ (parametrizing the corresponding \MarkovLogicNetwork{}).
-    The cross entropy minimization is then
-    \begin{align*}
-        \min_{\variableset\subset[\seldim]}\min_{\headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]} \left(\min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}\right) \, .
-    \end{align*}
-    For any pair $\variableset,\headindexof{\variableset}$ we apply the lemma above and get a characterization of the inner minimum
-    \begin{align*}
-        \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}
-    \end{align*}
-    dependent on the stated tree cases.
-    There is exactly one face $\genfaceset$, for which $\genmeanwith\in\sbinteriorof{\genfaceset}$ and by assumption of reproducability there is a parameter tuple $\hlnformulaparams$ such that $\hlnformula$ is the face measure of $\genfaceset$.
-    For this parameter tuple we have
-    \begin{align*}
-        \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\mlnstat,\canparamwith,\hlnformula}}
-        = -\sentropyof{\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnformula}{\genmean},\hlnformula}} \, .
-    \end{align*}
-    The following two arguments show that this is the minimum among all other faces.
-    If for another tuple $\sechlnformulaparams$ we have $\genmeanwith\notin\bmrealprobof{\hlnformulaof{\sechlnformulaparams}}$ (i.e. the third case in \lemref{lem:minCrossEntropyExponential}) then the respective inner minimum is $\infty$ and the outer minimum is not taken.
-    If for another tuple $\sechlnformulaparams$ we have $\genmeanwith\in\bmrealprobof{\hlnformulaof{\sechlnformulaparams}}$ but $\genmeanwith\notin\sbinteriorof{\genmeanset\cup\cubeface^{\sechlnformulaparams}}$ (i.e. the second case in \lemref{lem:minCrossEntropyExponential}), then the face $\genmeanset\cap\cubeface^{\hlnformulaparams}$ is contained in $\genmeanset\cap\cubeface^{\sechlnformulaparams}$ and the minimum is taken on that face.
-\end{proof}
+\subsubsect{\MarkovLogicNetworks{}}
 
+In case of boolean statistics, we can provide a particular simple implementation of the Alternating Moment Matching Algorithm~\ref{alg:AMM}.
+In the following section we will then generalize to \HybridLogicNetworks{} by allowing hard cores.
+%The moment matching condition of \lemref{lem:mmContractionEquation} simplifies as follows.
 
-When $\genmeanwith$ is not reproduceable by a Hybrid Logic Network, we are in the case where the smallest face, such that $\genmeanwith$ is contained is not an intersection of $\genmeanset$ with a cube face.
-In this case, there is no solution of the Maximum Likelihood Problem \probref{prob:minCrossEntropyHLN} in the set of \HybridLogicNetworks{}, since the minimum is not taken.
-The reason for this lies in the expressivity problem of \HybridLogicNetworks{}, which do not reproduce the interior of such faces, but tend in a limit of large canonical parameters to any mean parameter on such faces.
-We can instead state a Maximum Likelihood Problem over $\maxrealizabledistsof{\mlnstat}$, which provides enough expressivity to represent all faces.
-
-\begin{theorem}
-    Let $\gendistribution$ be any distribution, $\genmeanwith=\contractionof{\gendistribution,\sencmlnstatwith}{\selvariable}$ and $\genfaceset$ be the smallest face of $\genmeanset$, which contains $\genmeanwith$.
-    Then the solution of the Maximum Likelihood Problem \probref{prob:minCrossEntropyHLN} over $\realizabledistsof{\mlnstat,\maxgraph}$ is $\probtensorof{\mlnstat,\backwardmapwrtof{\mlnstat,\hlnfacemeasure}{\genmeanwith},\hlnfacemeasure}$, where $\hlnfacemeasure$ is the face measure of $\genfaceset$.
-\end{theorem}
-\begin{proof}
-    Again by application of \lemref{lem:minCrossEntropyExponential} on each face of $\genmeanset$.
-    %The outer minimum is taken at the smallest face
-\end{proof}
-
-
-%%% OLD FROM HERE
-%
-%% Special example: MLE
-%The Maximum Likelihood Problem on an exponential family with boolean statistics is the moment projection
-%\begin{align*}
-%    \argmin_{\canparamat{\selvariable}\in\rr^{\seldim}} \quad
-%    \centropyof{\probtensor}{\expdistof{(\sstat,\canparam,\basemeasure)}}
-%\end{align*}
-%in the case $\probtensor=\empdistribution$ for a sample selector map $\datamap$.
-%
-%% Backward map
-%The moment projection coincides with the backward map
-%\begin{align*}
-%    \argmax_{\canparamat{\selvariable}\in\rr^{\seldim}} \quad
-%    \contraction{\canparamat{\selvariable},\meanparamwith} - \cumfunctionof{\canparamat{\selvariable}}
-%\end{align*}
-%where
-%\begin{align*}
-%    \meanparamwith
-%    = \contractionof{\sencmlnstat,\probtensor}{\selvariable}
-%    \quad \text{and} \quad
-%    \cumfunctionof{\canparamat{\selvariable}}
-%    = \contraction{\expof{ \contractionof{\sencodingofat{\formulaset}{\shortcatvariables,\selvariable},\canparamat{\selvariable}}{\shortcatvariables} }, \basemeasure} \, .
-%\end{align*}
-%
-%% Extension to HLN
-%We now extend the optimization to \HybridLogicNetworks{}, which are the union of exponential families with same statistics but different base measures.
-%\begin{align*}
-%    \argmin_{\secprobtensor\in\hlnsetof{\formulaset}} \quad
-%    \centropyof{\probtensor}{\secprobtensor}
-%\end{align*}
-%
-%\begin{corollary}
-%    Let $\meanparamwith = \contractionof{\probtensor,\sencfset}{\selvariable}$ and
-%    \[ \secformulaset = \{\enumformula \, : \, \meanparamat{\indexedselvariable} \in \{0,1\}\} \quad , \quad
-%    \basemeasureofat{\secformulaset,\meanparam}{\shortcatvariables}
-%    = \bigwedge_{\enumformula\in\secformulaset} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables}
-%    \, . \]
-%    If $\meanparamwith$ is reproduceable by a positive distribution with respect to $\basemeasureofat{\secformulaset,\meanparam}{\shortcatvariables} $, then the solution of the M-projection of $\probtensor$ onto the set of \HybridLogicNetworks{} is representable by $\formulaset$ then coincides with the projection of $\probtensor$ onto $\expfamilyof{\formulaset/\secformulaset,\basemeasureof{\secformulaset,\meanparam}}$.
-%\end{corollary}
-%%\begin{proof}
-%%	Work by weight cutoff, in the limit of hard logics?
-%%\end{proof}
-
-
-
-\sect{Constrained parameter estimation in the minterm family} % DROP COMPLETELY
-
-% Naive exponential family
-We approach structure learning as constrained parameter estimation in the naive exponential family (see \secref{sec:mintermExpFamily}), which coincides with the minterm family $\formulasetof{\mlnmintermsymbol}$.
-The minterm family is defined by the statistic $\sstat = \identityat{\shortcatvariables, \selvariableof{[\catorder]}}$ and has energy tensors coinciding with the canonical parameters.
-
-% Convex polytope characterization
-\red{For the minterm family, we have as mean parameter set the convex hull of one-hot encodings.
-Each basis vector is an extreme point is an extreme point.
-}
-
-
-By \theref{the:mintermExpressivityMLN} all positive distributions are member of the minterm \MarkovLogicNetwork{} family.
-This expressivity result was generalized to arbitrary distributions, when allowing for formulas as basemeasures by \theref{the:mintermExpressivityHLN}.
-
-Finding the distribution maximizing the likelihood of data would then be the empirical distribution.
-In this case we would have $\datameanat{\selvariableof{[\catorder]}=\shortcatindices} = \empdistributionat{\shortcatvariables=\shortcatindices}$ and the maximum likelihood distribution is found by the problem
+Iteratively we update leg vectors of the activation tensor.
+This is the above local variation with
 \begin{align*}
-    \argmax_{\canparam\in\facspace}  \contraction{\canparam,\empdistribution} - \cumfunctionof{\canparam} \,
+    \secprobwith = \normalizationof{\{\bencodingof{\enumformula} \wcols \selindexin\}
+    \cup\{\actcoreof{\tilde{\selindex},\canparamat{\selvariable=\tilde{\selindex}}} \wcols \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
+    \cup\{\basemeasure\}}{\headvariableof{\selindex}}
 \end{align*}
-which is solved at $\canparam=\lnof{\empdistribution}$ with $\probtensorof{(\identity,\lnof{\empdistribution})}= \empdistribution$.
-This follows from $\lossof{\probtensorof{(\identity,\canparam)}}=\kldivof{\empdistribution}{\probtensorof{(\identity,\canparam)}}$, which is by Gibbs inequality minimized at $\probtensorof{(\identity,\canparam)}=\empdistribution$, which is the case for $\canparam = \lnof{\empdistribution}$.
 
-We here allow for $\lnof{0}=-\infty$, with the convention of $\expof{-\infty}=0$, to handle datasets where specific worlds are not represented.
-\red{Better: Use \theref{the:mintermExpressivityHLN} with basemeasure dropping non appearing data.}
-
-
-% Regularization
-To avoid this overfitting situation, we regularize by restricting the parameter to be a set $\energyhypothesis\subset\facspace$ and state
+To solve the moment matching condition at a formula $\enumformula$ we do not have to compute the normalization constant, since we only require the quotient
+\begin{align*}
+    \frac{1-\contraction{\secprobtensor,\exformula}}{\contraction{\secprobtensor,\exformula}} \, .
+\end{align*}
+The updated canonical coordinate is thus computed as
+%$\secprobtensor$
 \begin{align}
-    \label{prob:restrictedNaiveMLE}\tag{$\mathrm{P}_{\energyhypothesis, \empdistribution}$}
-    \argmax_{\canparam\in\energyhypothesis}  \contraction{\canparam,\empdistribution} - \cumfunctionof{\canparam} \, .
+    \label{sol:momentMatchingExformula}
+    \indexedcanparam = \lnof{
+        \frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})}
+        \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
+    }
 \end{align}
+where by $\hypercoreat{\headvariableof{\selindex}}$ we denote the contraction
+\begin{align*}
+    \hypercoreat{\headvariableof{\selindex}}
+    = \contractionof{\{\bencodingof{\enumformula} \wcols \selindexin\}
+    \cup\{\actcoreof{\tilde{\selindex},\canparamat{\selvariable=\tilde{\selindex}}} \wcols \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
+    \cup\{\basemeasure\}}{\headvariableof{\selindex}} \, .
+\end{align*}
 
-Problem~\ref{prob:restrictedNaiveMLE} has two important types of instantiation, which we discuss in the next sections.
+%%refine \lemref{lem:mmContractionEquation} in the following.
+%\begin{lemma}
+%    \label{ref:lemMMinMLN}
+%    Let there be a base measure $\basemeasure$, a formula selecting map $\formulaset=\{\enumformula \wcols \selindexin\}$ and a canonical parameter $\canparam$, and choose $\selindexin$ such that $\enumformula  \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
+%    The moment matching condition relative to $\canparamwith$, and $\datameanat{\indexedselvariable}\in(0,1)$ is then satisfied, if for all $\selindexin$
+%    \begin{align}
+%        \label{sol:momentMatchingExformula}
+%        \indexedcanparam = \lnof{
+%            \frac{\datameanat{\indexedselvariable}}{(1-\datameanat{\indexedselvariable})}
+%            \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
+%        }
+%    \end{align}
+%    where by $\hypercoreat{\headvariableof{\selindex}}$ we denote the contraction
+%    \begin{align*}
+%        \hypercoreat{\headvariableof{\selindex}}
+%        = \contractionof{\{\bencodingof{\enumformula} \wcols \selindexin\}
+%        \cup\{\actcoreof{\tilde{\selindex},\canparamat{\selvariable=\tilde{\selindex}}} \wcols \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
+%        \cup\{\basemeasure\}}{\headvariableof{\selindex}} \, .
+%    \end{align*}
+%\end{lemma}
+%\begin{proof}
+%    Since $\imageof{\enumformula}\subset[2]$ we have
+%    \begin{align*}
+%        \idrestrictedto{\imageof{\enumformula}} = \onehotmapofat{1}{\headvariableof{\selindex}}
+%    \end{align*}
+%    and the moment matching condition is by \lemref{lem:mmContractionEquation} satisfied if
+%    \begin{align*}
+%        \contraction{\actcorewith, \onehotmapofat{1}{\headvariableof{\selindex}}, \hypercoreat{\headvariableof{\selindex}}}
+%        = \contraction{\actcorewith,\hypercoreat{\headvariableof{\selindex}}} \cdot \datameanat{\indexedselvariable} \, .
+%    \end{align*}
+%    This is equal to
+%    \begin{align*}
+%        \expof{\canparamat{\indexedselvariable}} \cdot \hypercoreat{\headvariableof{\selindex}=1}
+%        = \left( \expof{\canparamat{\indexedselvariable}} \cdot \hypercoreat{\headvariableof{\selindex}=1} + \hypercoreat{\headvariableof{\selindex}=0} \right) \cdot \datameanat{\indexedselvariable} \, .
+%    \end{align*}
+%    Rearranging the equations this is equal to
+%    \begin{align*}
+%        \hypercoreat{\headvariableof{\selindex}}
+%        = \contractionof{\{\bencodingof{\enumformula}\}
+%        \cup\{\actcoreof{\tilde{\selindex}} : \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
+%        \cup\{\basemeasure\}}{\selvariable} \, .
+%    \end{align*}
+%    We notice that the right side is well defined, since we have by assumption $\datameanat{\indexedselvariable}, (1- \datameanat{\indexedselvariable}) \neq 0$ and $\hypercoreat{\headvariableof{\selindex}=0}, \hypercoreat{\headvariableof{\selindex}=1} \neq 0$ since \MarkovLogicNetworks{} are positive distributions and $\enumformula \notin \{\onesat{\shortcatvariables},\zerosat{\shortcatvariables}\}$.
+%\end{proof}
 
-\subsect{Parameter Estimation}
+\begin{algorithm}[hbt!]
+    \caption{Alternating Moment Matching for Markov Logic Networks}\label{alg:AMM_MLN}
+    \begin{algorithmic}
+        \Require Mean parameter $\meanparamwith$ with $\uniquantwrtof{\selindexin}{\meanparamat{\indexedselvariable}\notin\{0,1\}}$, boolean statistic $\sstat$, base measure $\basemeasure$
+        \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\expfamily$
+        \hrule
+        \State Set $\canparamwith=\zerosat{\selvariable}$
+        \While{Convergence criterion is not met}
+            \For{$\selindex\in\secnodes$}
+                \State Compute
+                \begin{align*}
+                    \hypercoreat{\headvariableof{\selindex}}
+                    = \contractionof{\{\bencodingof{\enumformula} \wcols \selindexin\}
+                    \cup\{\actcoreof{\tilde{\selindex},\canparamat{\selvariable=\tilde{\selindex}}} \wcols \tilde{\selindex}\in[\seldim]\ncond\tilde{\selindex}\neq\selindex\}
+                    \cup\{\basemeasure\}}{\headvariableof{\selindex}}
+                \end{align*}
+                \State Set
+                \begin{align*}
+                    \canparamat{\indexedselvariable} = \lnof{
+                        \frac{\meanparamat{\indexedselvariable}}{(1-\meanparamat{\indexedselvariable})}
+                        \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
+                    }
+                \end{align*}
+            \EndFor
+        \EndWhile
+        \State \Return $\canparamwith$
+    \end{algorithmic}
+\end{algorithm}
 
-% Parameter Estimation
-\red{Projecting onto the markov logic family to the statistic $\formulaset$ is the instance of Problem~\ref{prob:restricedNaiveMLE} with the hypothesis choice}
-%When the $\formulaset$ is known we take $\energyhypothesis$ as the linear hull 
-\[ \energyhypothesisof{\formulaset} = \spanof{\{\formula : \formula\in\formulaset \}} \, . \]
-Then, the problem is the parameter estimation problem studied in \secref{sec:parameterEstimation}.
-To see this, we reparametrize by the coefficient vectors of the elements in the span, which are then understood as the canonical parameter of the respective distribution in the markov logic family to $\formulaset$.
+Note that while $\uniquantwrtof{\selindexin}{\meanparamat{\indexedselvariable}\notin\{0,1\}}$ ensures the well-definedness of the update equations in \algoref{alg:AMM_MLN} (otherwise the update could not be computed), it is only a necessary but not always sufficient criterion for the existence of a solution.
+The moment matching conditions are simultaneously satisfiable, if and only if $\meanparamwith\in\sbinteriorof{\meansetof{\mlnstat,\basemeasure}}$.
 
 
-\begin{remark}[Overparametrization]
-    Taking $\formulaset$ to consist of all propositional formulas, we get a massive overparametrization:
-    The essential statistics maps to a $2^{\left(2^\atomorder \right)}$ dimensional real vector space.
-    All possible distributions of the $\atomorder$ atomic variables are mapped to an $2^\atomorder-1$ dimensional submanifold, where also the essential statistics maps to.
+The algorithm would be finished after a single pass through the loop, if the variables $\catvariableof{\exformula}$ are independent.
+This would be the case, if the \MarkovLogicNetwork{} consists of atomic formulas only.
+When they fail to be independent, the adjustment of the weights influence the marginal distribution of other formulas and we need an alternating optimization.
+%
+This situation corresponds with couplings of the weights by a partition contraction, which does not factorize into terms to each formula.
 
-    Thus, to identify probabilistic knowledge bases, we need to drastically restrict the shape of formulas allowed.
-    It is in principle impossible to decide which formulas to be activated, based only on statistics and not on prior assumptions.
+% Concave likelihood
+Since the likelihood is concave (see \cite{koller_probabilistic_2009}), there are not local maxima the coordinate descent could run into and coordinate descent will give a monotonic improvement of the likelihood.
 
-    %The nodes of a Markov Propositional Network are all formulas in a propositional theory and the hyperedges all possible decompositons.
-    When having $\atomorder$ atoms, there are $2^{\atomorder}$ states in the factored system.
-    Since each state can either be a model of a formula or not, there are
-    \[ \cardof{\formulaset} = 2^{\big(2^\atomorder \big)} \]
-    formulas.
-    Having, for example, $\atomorder=10$, then $\cardof{\formulaset}>10^{308}$.
+% Inference in inner loop
+Solving Equation~\ref{sol:momentMatchingExformula} requires inference of a current model by answering a query.
+This can be a bottleneck and circumvented by approximative inference, see e.g. CAMEL \cite{ganapathi_constrained_2008}.
+
+\subsubsect{\HybridLogicNetworks{}}
+
+We now extend the alternating parameter estimation algorithm to \HybridLogicNetworks{}, by allowing for mean parameters on the interior of cube faces.
+To this end, we first find the smallest cube face containing the mean parameter $\meanparamwith$ (see \lemref{lem:minimalContainingFace}) and then run the algorithm on the exponential family on that face.
+In an alternative perspective, we first optimize the leg vectors to features with $\meanparamat{\indexedselvariable}\in\{0,1\}$, which are then constant and left out in the further update sweeps.
+The local moment matching conditions of are satisfied simultanously for some $\canparamwith$, if and only if $\meanparamwith$ is elementarily realizable (see \defref{def:elementaryRealizableMeanParams}), that is $\meanparamwith$ is on the interior of a cube face of $\hlnmeanset$.
+
+\begin{algorithm}[hbt!]
+    \caption{Alternating Moment Matching for Hybrid Logic Networks}\label{alg:AMM_HLN}
+    \begin{algorithmic}
+        \Require Mean parameter $\meanparamwith$
+        \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\hlnsetof{\formulaset}$
+        \hrule
+        \State Set
+        \begin{align*}
+            \variableset = \Big\{ \selindex \wcols \selindexin \ncond \meanparamat{\indexedselvariable}\in\{0,1\} \Big\}
+        \end{align*}
+        and a tuple $\headindexof{\variableset}$ with $\headindexof{\selindex}=\meanparamat{\indexedselvariable}$ for $\selindex\in\variableset$ .
+        \State Run \algoref{alg:AMM_MLN} (Alternating Moment Matching for Markov Logic Networks) with base measure $\exformulaof{\variableset,\headindexof{\variableset}}$ and statistic $\mlnstat=\{\enumformula\wcols\selindex\in\hardlegset\}$ to get $\canparamwith$
+        \State \Return $(\variableset,\headindexof{\variableset},\canparamwith)$
+    \end{algorithmic}
+\end{algorithm}
 
 
-    % Regularization by sparsity
-    One regularization is by allowing only a small number of formulas to be active.
-    This corresponds with regularization with $\sparsityof{\canparam}$.
-    The problem is then non-convex.
+\subsect{Iterative Proportional Fitting} % TO BE FORMULATED
+
+\begin{remark}[Grouping of partition statistics]
+    When having a set of coordinates, such that the coordinate functions are boolean and sum to the trivial tensor, one can find simultaneous updates to the canonical parameters, such that the partition function is staying invariant.
+    Given a parameter $\canparam^t$ we compute
+    \[ \meanparam^t = \contractionof{\expdistof{(\sstat,\canparam^t)}, \sstat}{\selvariable} \]
+    and build the update
+    \[ \canparam^{t+1} = \canparam^t + \lnof{\meanparam^{\datamap}}{\meanparam^t} \, . \]
+    Then, $\canparam^{t+1}$ satisfies the moment matching equations for all coordinates in the set.
 
 
-    % Regularization by formula size
-    A further regularization strategy is the restriction of the size of the possible formulas to maintain interpretability.
-    Thus, we choose small formula selection networks.
+    The assumptions are met when taking all features to any hyperedge in a Markov Network seen as an exponential family.
+    In that case, the update algorithm is refered to as Iterative Proportional Fitting \cite{wainwright_graphical_2008}.
+    Further, when activating both $\exformula$ and $\lnot\exformula$.
+
+    \red{We will investigate these statistics as partition statistics in \secref{sec:partitionStatistics}.}
 \end{remark}
 
 
+\sect{Structure Learning}
 
-
-\subsect{Structure Learning}
-
-% Structure Learning
-The problem of structure learning arises, when the set of parameters in Problem~\ref{prob:restricedNaiveMLE} is choosen as
-\[ \energyhypothesisof{\formulasuperset}= \bigcup_{\formulaset\in\formulasuperset} \spanof{\formulaset} \, .  \] %\energyhypothesisof{\formulaset}\, .
-In this case, the problem in general fails to be convex.
-
-% Subspace instuition
-Each formula set $\formulaset$ represents a subspace in the parameters of the minterm family, which is spanned by the propositional formulas $\exformula\in\formulaset$.
-
-%\red{Intuition by subspaces in the minterm parameters, which are selected by a nonlinear objective, to distinguish from compressed sensing.}
-
-
-
-
-
-
-
-\sect{Greedy Structure Learning}
-
-
-%Motivation 
+Structure learning refers to the learning of the statistic $\mlnstat$ itself.
+Let there be a set $\formulasuperset$ of statistics we build the set of parametrized distributions
+\begin{align*}
+    \probtensor = \bigcup_{\mlnstat} \elrealizabledistsof{\mlnstat}
+\end{align*}
+and pose the structure learning problem as the minimization of the cross entropy
+\begin{align*}
+    \min_{\mlnstat\in\formulasuperset} \min_{\hybridparamin} \centropyof{\empdistribution}{\probof{\mlnstat,\hybridparam}} \, .
+\end{align*}
 It can be impracticle to learn all formulas at once, since the set $\formulasuperset$ often grows combinatorically, for example when choosing as a powerset of formulas.
-\red{Further, we need to avoid overfitting and carefully choose a hypothesis.}
-To avoid intractabilities and overfitting, one can choose a greedy approach and learn in addition formulas $\exformula$ when already having learned a set $\formulaset$ of formulas.
-We in this section assume a current model $\currentdistribution$, which is a generic positive distribution not necessarily a \MarkovLogicNetwork{}. % or Hybrid Logic Network.
-
-% 
-We will use the effective selection tensor network representation of exponentially many formulas described in \charef{cha:formulaSelection} and select from them a small subset.
-
-%\red{Alternative discussion: Can use current distribution as base measure and apply moment matching as first order condition.}
-
+To avoid intractabilities, one can choose a greedy approach and learn in addition formulas $\exformula$ when already having learned a set $\formulaset$ of formulas.
+%We in this section assume a current model $\currentdistribution$, which is a generic positive distribution not necessarily a \MarkovLogicNetwork{}. % or Hybrid Logic Network.
 
 \subsect{Greedy formula inclusions}
 
-Having a current set of formulas $\formulaset$ we want to choose the best $\formula\in\fselectionmap$ to extend the set of formulas to $\formulaset\cup\{\formula\}$ in a way minimizing the cross entropy.
+Having a current set of formulas $\formulaset$ we want to choose the best $\formula\in\greedyhypothesis$ to extend the set of formulas to $\formulaset\cup\{\formula\}$ in a way minimizing the cross entropy.
 Given this, add each step we solve the greedy cross entropy minimization
 \begin{align}
-    \label{prob:perfectGreedy}\tag{$\mathrm{P}_{\datamap,\formulaset,\fselectionmap}$}
-    \argmin_{\formula\in\fselectionmap} \argmin_{\canparam\in\rr^{\cardof{\formulaset}+1}}
-    \centropyof{\empdistribution}{\expdistof{(\formulaset\cup\{\formula\},\canparam,\basemeasure)}} \, .
+    \label{prob:perfectGreedy}\tag{$\probtagtypeinst{\mathrm{greedy}}{\datamap,\mlnstat,\greedyhypothesis}$}
+    \min_{\formula\in\greedyhypothesis} \min_{\hybridparam\in\hybridparamsetofdim{\cardof{\mlnstat}+1}}
+    \centropyof{\empdistribution}{\probof{\mlnstat\cup\{\formula\},\hybridparam}} \, .
 \end{align}
-A brute force solution of Problem~\eqref{prob:perfectGreedy} would require parameter estimation for each candidate in $\fselectionmap$.
-We provide two more efficient approximative heuristics in the following (see Chapter~20 in \cite{koller_probabilistic_2009}).
-
+A brute force solution of Problem~\eqref{prob:perfectGreedy} would require parameter estimation for each candidate in $\greedyhypothesis$.
+We provide two more efficient approximative heuristics in the following (see Chapter~20 in \cite{koller_probabilistic_2009}), which are faster to compute estimates of the cross entropy improvement from adding a formula to an existing statistic.
 
 \subsect{Gain Heuristic}
 
 In the gain heuristic, only the parameters of the new formula are optimized and the others left unchanged.
-This amounts to
+Let $\sechybridparam$ be the canonical parameter of the reference distribution on the statistic $\mlnstat$.
+When adding a feature $\formula\in\greedyhypothesis$ we extend $\mlnstat$ by $\formula$ and restrict the parameters to coincide with $\sechybridparam$ on the first $\cardof{\mlnstat}$ coordinates.
+We denote this constraint by
+\begin{align*}
+    \restrictionofto{\hybridparam}{[\mlnstat]} = \sechybridparam \, .
+\end{align*}
+The greedy gain heuristic is then the problem
 \begin{align}
-    \label{prob:greedyGain}\tag{$\mathrm{P}^{\mathrm{gain}}_{\datamap,\formulaset,\fselectionmap}$}
-    \argmin_{\formula\in\fselectionmap} \left ( \min_{\canparamat{\cardof{\formulaset}}\in\rr}
-    \centropyof{\empdistribution}{\expdistof{(\formulaset\cup\{\formula\},\canparam,\basemeasure)}} \right) \, .
+    \label{prob:greedyGain}\tag{$\probtagtypeinst{\gainsymbol}{\datamap,\formulaset,\sechybridparam,\greedyhypothesis}$}
+    \min_{\formula\in\greedyhypothesis} \min_{\hybridparamsetofdim{\cardof{\mlnstat}+1} \wcols \restrictionofto{\hybridparam}{[\mlnstat]} = \sechybridparam }
+    \centropyof{\empdistribution}{\probof{\hybridparam}} \, .
 \end{align}
-Here we denote by $\canparam$ the first $\cardof{\formulaset}$ coordinates of the M-projection $\currentdistribution$  of $\empdistribution$ onto $\formulaset$ and the variable new coordinate at position $\canparamat{\cardof{\formulaset}}$.
+%Here we denote by $\canparam$ the first $\cardof{\formulaset}$ coordinates of the M-projection $\currentdistribution$  of $\empdistribution$ onto $\formulaset$ and the variable new coordinate at position $\canparamat{\cardof{\formulaset}}$.
+To provide further insight into the solution of the gain heuristic, let us quantify the improvement of the cross entropy when addign a feature $\exformula$.
 
+%% FOR GAIN HEURISTIC
 \begin{lemma}
-    The gain heuristic objective is an upper bound on the true greedy objective.
+    Let $\empdistribution$, $\secprobtensor$ be distributions and $\exformula$ a formula such that $\contraction{\secprobtensor,\exformula}\notin\{0,1\}$.
+    Then we have
+    \begin{align*}
+        \centropyof{\empdistribution}{\probof{\mlnstat,\sechybridparam}}
+        - \min_{\hypercore} \centropyof{\empdistribution}{\probof{\hypercore}}
+        = \kldivof{\bernoulliof{\contraction{\empdistribution,\exformula}}}{\bernoulliof{\contraction{\secprobtensor,\exformula}}}
+    \end{align*}
+    where by $\bernoulliof{p}$ we denote the Bernoulli distribution with parameter $p\in[0,1]$.
 \end{lemma}
 \begin{proof}
-    Since
+    We use the characterization of the local update by \lemref{lem:localHybridParamUpdate} for $\secprobtensor=\probof{\mlnstat,\sechybridparam}$.
+    The update on the added feature is then parametrized by the two-dimensional vector $\hypercoreat{\formulavar}$ and we have
     \begin{align*}
-        &\argmin_{\formula\in\fselectionmap} \left( \argmin_{\canparam\in\rr^{\cardof{\formulaset}+1}}
-        \centropyof{\empdistribution}{\expdistof{(\formulaset\cup\{\formula\},\canparam,\basemeasure)}} \right) \\
-        &\quad \leq    \argmin_{\formula\in\fselectionmap} \left ( \argmin_{\canparamat{\cardof{\formulaset}}\in\rr}
-        \centropyof{\empdistribution}{\expdistof{(\formulaset\cup\{\formula\},\canparam,\basemeasure)}} \right) \, . \qedhere
+        \probof{\mlnstat,\sechybridparam} = \probof{\ones} \, .
     \end{align*}
-\end{proof}
+    Let us abbreviate $\datamean\coloneqq\datamean$ and $\currentmean\coloneqq\contraction{\probof{\mlnstat,\sechybridparam},\exformula}$.
+    We distinguish the cases $\datamean\in(0,1)$ and $\datamean\in\{0,1\}$.
 
-
-% Minterm family interpretation
-Further, this is \probref{prob:restrictedNaiveMLE} in the case
-\begin{align*}
-    \energyhypothesis = \lnof{\currentdistribution} + \cup_{\formula\in\formulaset} \spanof{\formula} \, .
-\end{align*}
-
-
-% For single formula
-Let us choose a formula $\formula\in\formulaset$ and consider Problem~\ref{prob:restrictedNaiveMLE}  in the case
-\begin{align*}
-    \energyhypothesisof{\formula} = \lnof{\currentdistribution} + \spanof{\formula} \, .
-\end{align*}
-This is parameter estimation on the exponential family with the single feature $\formula$ and the base measure $\currentdistribution$.
-Therefore we can apply the theory of \charef{cha:probReasoning} and characterize the solution by the $\weight$ satisfying the moment matching condition
-\begin{align*}
-    \contraction{\currentdistribution, \normalizationof{\expof{\weight}}{\shortcatvariables} } = \contraction{\empdistribution, \formula} \, .
-\end{align*}
-We state the solution of this condition in the next theorem.
-
-\begin{theorem}
-    Problem~\eqref{prob:greedyGain} is solved at any
+    In the case $\datamean\in(0,1)$, we have $\hardlegset=\sechardlegset$, $\headindexof{\hardlegset}=\secheadindexof{\hardlegset}$ and $\canparamat{\indexedselvariable}=\seccanparamat{\indexedselvariable}$ for $\selindex\in[\cardof{\mlnstat}]$.
+    The additional coordinate of the canonical parameter is then
     \begin{align*}
-        \hat{\canparam} = \weightof{\hat{\formula}} \cdot \hat{\formula}
+        \canparamat{\selvariable=\cardof{\mlnstat}} = \lnof{
+            \frac{\datamean}{(1-\datamean)}
+            \cdot \frac{1-\currentmean}{\currentmean}
+        } \, .
     \end{align*}
-    where the formula $\hat{\formula}$ is in
+    Based on this characterization, the cross entropy difference is
     \begin{align*}
-        \hat{\formula} \in \argmax_{\formula\in\formulaset} \kldivof{\contraction{\empdistribution,\formula}}{\contraction{\currentdistribution,\formula}}
+        \centropyof{\empdistribution}{\probof{\ones}} - \min_{\hypercore} \centropyof{\empdistribution}{\probof{\hypercore}} \\
+        &= \datamean \cdot \canparamat{\selvariable=\cardof{\mlnstat}}
+        - \lnof{\contraction{\secprobtensor,\formulaccwith,\actcoreof{\canparamat{\selvariable=\cardof{\mlnstat}}}}} \, .
     \end{align*}
-    and $\weightof{\hat{\formula}}$ is the weight of $\hat{\formula}$ in the solution of Problem~\ref{prob:restrictedNaiveMLE} with $\Gamma = \currentdistribution + \mathrm{span}(\exformula)$.
-    Here we denote by $\kldivof{p_1}{p_2}$ the Kullback-Leibler divergence between Bernoulli distributions with parameters $p_1,p_2\in[0,1]$, that is
-    \[ \kldivof{p_1}{p_2} = p_1 \cdot \lnof{\frac{p_1}{p_2}} + (1-p_1) \cdot \lnof{\frac{(1-p_1)}{(1-p_2)}}  \]
-\end{theorem}
-\begin{proof}
-    % Solution of the problem restricted to
-    For any formula $\formula$, the inner minimum of Problem~\eqref{prob:greedyGain} is by \lemref{ref:lemMMinMLN} taken at
-    \[ \weightof{\formula} = \lnof{\frac{\datamean}{(1-\datamean)}\cdot \frac{(1-\currentmean)}{\currentmean}}  \]
-    where
-    \[ \currentmean = \contraction{\currentdistribution,\formula} \]
-    and
-    \[ \datamean = \contraction{\empdistribution,\formula} \, . \]
-
-    The difference of the likelihood at the current distribution and the optimum is
+    We simplify
     \begin{align*}
-        \centropyof{\empdistribution}{\currentdistribution}
-        - \centropyof{\empdistribution}{\expdistof{(\extendedformulaset,\extendedcanparam,\basemeasure)}}
-        = \datamean \cdot \weightof{\formula} - \cumfunctionwrtof{\extendedformulaset,\basemeasure}{\extendedcanparam} \, .
+        \contraction{\secprobwith,\formulaccwith,\actcoreofat{\canparamat{\selvariable=\cardof{\mlnstat}}}{\headvariableof{\formulavar}}}
+        = (1-\currentmean) + \currentmean \cdot \expof{\canparamat{\selvariable=\cardof{\mlnstat}}}
+        = \frac{(1-\currentmean)}{(1-\datamean)} \, .
     \end{align*}
-
-    % Loss gain at optimum
-    We use the representation scheme of Theorem~\ref{the:hybridNetworkRepresentation} and get % References has been overworked!
-    \begin{align*}
-        \contraction{\currentdistribution, \expof{\weightof{\formula} \cdot \formula}}
-        & = \contraction{\currentdistribution, \bencodingofat{\formula}{\catvariableof{\formula}}, \actcoreofat{\formula}{\catvariableof{\formula}}} \\
-        & = (1-\currentmean) + \currentmean\cdot \expof{\weightof{\formula}} \\
-        & = (1 - \currentmean) + \frac{\datamean \cdot (1-\currentmean)}{(1-\datamean)} \\
-        & = (1-\currentmean) \cdot \frac{1}{(1-\datamean)} \, .
-    \end{align*}
-    % Refining the cumulant term
-    It follows, that
-    \begin{align*}
-        \cumfunctionwrtof{\extendedformulaset,\basemeasure}{\extendedcanparam}
-        & = \lnof{\contraction{\currentdistribution, \expof{\weightof{\formula} \cdot \formula}}} \\
-        & = \lnof{1-\currentmean} - \lnof{1-\datamean} \, .
-    \end{align*}
-    % Refining the mean product term
     We further have
     \begin{align*}
-        \datamean \cdot \weightof{\formula}
+        \datamean \cdot \canparamat{\selvariable=\cardof{\mlnstat}}
         = \datamean \cdot \left[ \lnof{\frac{\datamean}{(1-\datamean)}\cdot \frac{(1-\currentmean)}{\currentmean}}  \right]
         = \datamean \lnof{\datamean} - \datamean \lnof{1-\datamean} + \datamean \lnof{1-\currentmean} - \datamean \lnof{\currentmean}
     \end{align*}
     and arrive at
     \begin{align*}
-        & \centropyof{\empdistribution}{\currentdistribution}
-        - \centropyof{\empdistribution}{\expdistof{(\exformula,\weightof{\formula},\currentdistribution)}} \\
+        &  \centropyof{\empdistribution}{\probof{\ones}} - \min_{\hypercore} \centropyof{\empdistribution}{\probof{\hypercore}} \\
         & \quad =  \datamean \lnof{\datamean} - \datamean \lnof{1-\datamean} + \datamean \lnof{1-\currentmean} - \datamean \lnof{\currentmean}
         -  \lnof{1-\currentmean} - \lnof{1-\datamean} \\
-        & \quad = \left( -\datamean \lnof{\currentmean} - (1-\datamean) \lnof{1-\currentmean} \right)  - \left( -\datamean \lnof{\datamean} - (1-\datamean) \lnof{1-\datamean} \right) \, .
+        & \quad = \left( -\datamean \lnof{\currentmean} - (1-\datamean) \lnof{1-\currentmean} \right)  - \left( -\datamean \lnof{\datamean} - (1-\datamean) \lnof{1-\datamean} \right) \\
+        & \quad = \kldivof{\bernoulliof{\datamean}}{\bernoulliof{\currentmean}} \, .
     \end{align*}
-    By definition, this is the Kullback-Leibler divergence between Bernoulli distributions with parameters $\datamean$ and $\currentmean$.
-    %
-    Since the gain in the likelihood loss when restricting to $\energyhypothesis = \spanof{\formula}$ is thus given by $\kldivof{\contraction{\empdistribution,\formula}}{\contraction{\currentdistribution,\formula}}$, we have that Problem~\ref{prob:restrictedNaiveCE}  in the case $\energyhypothesis = \bigcup_{\formula\in\formulaset}\spanof{\formula}$ is solved at $\estcanparam = \weightof{\hat{\formula}}\cdot \hat{\formula}$ where
+
+    In the case $\datamean\in\{0,1\}$, the optimal $\hypercore$ is boolean and only the partition function term is changed by the update.
+    We then have
     \begin{align*}
-        \hat{\formula} = \kldivof{\contraction{\empdistribution,\formula}}{\contraction{\currentdistribution,\formula}} \, . & \qedhere
+        \centropyof{\empdistribution}{\probof{\ones}} - \min_{\hypercore} \centropyof{\empdistribution}{\probof{\hypercore}}
+        %&= \lnof{\contraction{\secprobwith}} - \lnof{\contraction{\secprobwith,\formulaccwith,\hypercoreat{\formulavar}}} \\
+        &= - \lnof{\contraction{\secprobwith,\formulaccwith,\hypercoreat{\formulavar}}} \\
+        &= \begin{cases}
+               \lnof{\currentmean} & \ifspace \datamean=0 \\
+               \lnof{1-\currentmean} & \ifspace \datamean=1 \\
+        \end{cases} \\
+        &= \kldivof{\bernoulliof{\datamean}}{\bernoulliof{\currentmean}} \, . \qedhere
     \end{align*}
 \end{proof}
 
-\red{Thus, we solve the grain heuristic with a coordinatewise transform of the mean parameter tensors to $\empdistribution$ and $\currentdistribution$, using the Bernoulli Kullback-Leibler divergence as transform function.}
+Problem \eqref{prob:greedyGain} is thus solved for
+\begin{align*}
+    \hat{\formula} \in \argmax_{\formula\in\formulaset} \kldivof{\bernoulliof{\contraction{\empdistribution,\formula}}}{\bernoulliof{\contraction{\currentdistribution,\formula}}}
+\end{align*}
+and $\hybridparam$ characterized in \lemref{lem:localHybridParamUpdate}.
+The minimum is taken at
+\begin{align*}
+    \centropyof{\empdistribution}{\probof{\mlnstat,\sechybridparam}}
+    - \kldivof{\bernoulliof{\contraction{\empdistribution,\hat{\formula}}}}{\bernoulliof{\contraction{\currentdistribution,\hat{\formula}}}} \, .
+\end{align*}
 
+% Algorithmic
+The gain heuristic thus searches for the mode of a coordinatewise transform of the mean parameter tensors to $\empdistribution$ and $\currentdistribution$, using the Bernoulli Kullback-Leibler divergence as transform function.
 
 % Interpretation
 One therefore takes the formula, which marginal distribution in the current model and the targeted distribution are differing at most, measured in the KL divergence.
 
 % Optimization method
-One optimization method would thus be the computation of the mean parameters to both distribution, building the coordinatewise KL divergence and choosing the maximum.
-Since we need to evaluate each coordinate, this can be intractable for large sets of formulas.
+%One optimization method would thus be the computation of the mean parameters to both distribution, building the coordinatewise KL divergence and choosing the maximum.
+%Since we need to evaluate each coordinate, this can be intractable for large sets of formulas.
 
 
 % Further weight optimization
 Further improvement of the model can be achieved by iteratively optimizing the other weights as well, since their corresponding moment matching conditions might be violated after the integration of a new formula.
-This would require the computation of backward mappings for each candidate formula, for which we only have an alternating approach in general.
+Unfortunately, backward maps cannot be expressed in closed form in general.
+%This would require the computation of backward mappings for each candidate formula, for which we only have an alternating approach in general.
 
 
 
-\subsect{Gradient heuristic and the proposal distribution}
+\subsect{Gradient heuristic}
 
-\red{Advantage: Might avoid formulawise calculus, when sampling from proposal distribution.
-Brute force solution of gain heuristic require formulawise approach.}
+Gradient heuristic is another approach to select a feature.
+We show here how the effective selection tensor network representation of exponentially many formulas described in \charef{cha:formulaSelection} can be utilized. % Or later in proposal
 
-We now derive a heuristic of choosing features based on the maximal coordinate of the gradient when differentiating the canonical parameter in the minterm family.
-To prepare for this, we build the gradient of the loss
-%For the naive exponential family 
+In the gradient heuristic, we estimate the cross entropy improvement by the gradient of the cross entropy with respect to varying with another feature.
+Given a distribution $\secprobwith$, we vary % more general than
 \begin{align*}
-    \lossof{\expdistof{(\naivestat, \naivecanparam)}}
-    %= \frac{1}{\datanum} \sum_{\datindexin}\lnof{\expdistofat{(\naivestat, \naivecanparam)}{\shortcatvariables=\datamapat{\datindex}}}
-    = \contraction{\empdistribution, \sencodingof{\naivestat}, \naivecanparam} - \lnof{\contraction{\expof{\contractionof{\sencodingof{\naivestat}, \naivecanparam}{\shortcatvariables}}}}
+    \probofat{\actcoreof{\canparam}}{\shortcatvariables} \coloneqq \normalizationof{\secprobwith,\formulaccwith,\actcoreofat{\canparam}{\headvariableof{\formulavar}}}{\shortcatvariables} \, .
 \end{align*}
-as
-\begin{align*}
-    \gradwrt{\naivecanparamat{\selvariable}} \lossof{\expdistof{(\naivestat, \naivecanparam)}}
-    &= \contractionof{\sencodingof{\naivestat},\empdistribution}{\selvariable} - \contractionof{\sencodingof{\naivestat},\expdistof{(\naivestat, \naivecanparam)}}{\selvariable} \\
-    &= \empdistribution - \expdistof{(\naivestat, \naivecanparam)} \, .
-\end{align*}
+In the gradient heuristic we choose the steepest gradient direction
+\begin{align}
+    \label{prob:greedyGrad}\tag{$\probtagtypeinst{\gradientsymbol}{\datamap,\secprobtensor,\greedyhypothesis}$}
+    \min_{\formula\in\greedyhypothesis} \difofwrt{\centropyof{\empdistribution}{\probofat{\actcoreof{\canparam}}{\shortcatvariables}}}{\canparam}   \, .
+\end{align}
 
-%% Single feature
-%Given a feature $\exfunction[\shortcatvariables]$ we vary the naive parameters by a function on $\canparam\in\rr$ by
-%\begin{align*}
-%	 \naivestat(\canparam) %=  \mlntensor + \weight_{\selindices} \bencodingof{\exformula_{\selindices}}
-%	= \naivestat(0) + \canparam\cdot\exfunction
-%\end{align*}
-%and get a likelihood gradient of
-%\begin{align*}
-%	 \frac{\partial \lossof{\expdistof{(\naivestat(\canparam), \naivecanparam)}}}{\partial\canparam} 
-%	 &= \contraction{
-%	 	\frac{\partial\lossof{\expdistof{(\naivestat, \naivecanparam)}}}{\partial\naivecanparam}|_{\naivecanparam(0)},
-%		\frac{\partial\naivecanparam(\canparam)}{\partial\canparam} 
-%	 }  \\
-%	 &= \contraction{\empdistribution,\exfunction} -   \contraction{\expdistof{(\naivestat, \naivecanparam)},\exfunction} \, .
-%\end{align*}
+%% FOR GRADIENT HEURISTIC
+\begin{lemma}
+    \begin{align*}
+        \difofwrt{\centropyof{\empdistribution}{\probof{\actcoreof{\canparam}}}}{\canparam} =
+        -\contraction{\empdistribution,\formula} + \contraction{\probof{\actcoreof{\canparam}},\formula} \, .
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    We have
+    \begin{align*}
+        \centropyof{\empdistribution}{\probof{\actcoreof{\canparam}}}
+        & = \contraction{\empdistribution,\formulaccwith,-\lnof{\actcoreofat{\canparam}{\headvariableof{\formulavar}}}}
+        + \lnof{\contraction{\secprobwith,\formulaccwith,\actcoreofat{\canparam}{\headvariableof{\formulavar}}}}
+    \end{align*}
+    The derivation of the first term at $\canparam=0$ is $-\contraction{\empdistribution,\formula}$ and of the second $\contraction{\probof{\actcoreof{\canparam}},\formula}$.
+\end{proof}
 
-
+Problem~\eqref{prob:greedyGrad} is thus
+\begin{align}
+    %\label{prob:greedyGrad}\tag{$\probtagtypeinst{\gradsymbol}{\datamap,\secprobtensor,\greedyhypothesis}$}
+    \min_{\formula\in\greedyhypothesis} \contraction{\secprobtensor,\formula} - \contraction{\empdistribution,\formula}   \, .
+\end{align}
 %% Positive and Negative Search
 The gradient shows the typical decomposition into a positive and a negative phase.
 While the positive phase comes from the data term and prefers directions of large data support, the negative phase originates in the partition function and draws the gradient away from directions already supported by the current model $\expdistof{(\naivestat, \naivecanparam)}$.
@@ -1129,56 +1002,60 @@ The negative phase is a regularization, by comparing with what has already been 
 When nothing has been learned so far, we can take the current model to be the uniform distribution, which is the naive exponential family with vanishing canonical parameters.
 
 
-%% Collection of features by selection
-Given a set $\fselectionmap$ of features we vary $\naivecanparam$ by the function
-\begin{align*}
-    \exfunction(\canparam) = \naivecanparam + \contractionof{\canparam,\sencodingof{\fselectionmap}}{\shortcatvariables} \, .
-\end{align*}
-At $\canparam=0$ we have the gradient of the loss of the parametrized formula by
-\begin{align*}
-    \gradwrtat{\canparam}{0}
-    \lossof{\expdistof{(\naivestat,\exfunction(\canparam),\basemeasure)}}
-    &= \contraction{
-        \gradwrtat{\exfunction(\canparam)}{\naivecanparam}  \lossof{\expdistof{(\naivestat,\exfunction(\canparam),\basemeasure)}},
-        \gradwrtat{\canparam}{0}  \exfunction(\canparam)
-    }  \\
-    &= \contractionof{\empdistribution,\sencodingof{\sstat}}{\selvariable} -   \contractionof{\expdistof{(\naivestat, \naivecanparam, \basemeasure)},\sencodingof{\sstat}}{\selvariable} \, .
-\end{align*}
 
 
-%% Grafting
-We want to choose the formula, which is best aligned with the gradient of the log-likelihood, that is using a formula selecting map $\fselectionmap$
-\begin{align}
-    \label{prob:greedyGrad}\tag{$\mathrm{P}^{\mathrm{grad}}_{\datamap,\formulaset,\fselectionmap}$}
-    \argmax_{\selindex\in[\seldim]} \contractionof{\empdistribution,\fselectionmap}{\indexedselvariable}
-    - \contractionof{\expdistof{(\naivestat, \naivecanparam, \basemeasure)},\fselectionmap}{\indexedselvariable} \, .
-\end{align}
-This method is known as the gradient heuristic or grafting.
-% Mean parameter interpretation
-The objective of Problem~\eqref{prob:greedyGrad} has another interpretation by the difference of the mean parameter $\datamean$ and $\currentmean$ of the projections of the empirical and current distributions on the family to $\fselectionmap$. % ! NOT the proposal family, those have transposed statistic
 
-%% Formula alignment perspective
-Problem~\eqref{prob:greedyGrad} is further equivalent to the formula alignment
-\begin{align*}
-    \argmax_{\formula\in\fselectionmap} \contraction{\formula,\empdistribution-\currentdistribution} \, .
-\end{align*}
-The objective can be interpreted as the difference of the satisfaction probability of the formula with respect to the empirical distribution and the current distribution.
-%We can choose selection architectures to efficiently parametrize the formulas in the hypothesis $\fselectionmap$ and rewrite the problem as
+
+\subsect{Proposal distributions}
+
+We now frame the selection of a formula as a sampling problem of proposal distributions.
+%All the costs and the exact greedy objective
+Each of the scores to candidate formulas are understood as coordinates of an energy tensor.
+Among the heuristics, the gradient heuristic has the most accessible form, since the energy tensor is available as a tensor network of the selection encoding of the formulas.
+
+%We can choose selection architectures to efficiently parametrize the formulas in the hypothesis $\greedyhypothesis$ and rewrite the problem as
 %\begin{align*}
 %	\argmax_{\selindexin} \contractionof{ \gradwrtat{\canparam}{\canparam=0} \lossof{\expdist}}{\indexedselvariable}
 %\end{align*}
 %This is thus equivalent to the problem \ref{prob:greedyGrad}, when taking all formulas selectable by $\formulaset$ as the hypothesis $\Gamma$.
 
+% Proposal distribution
+%Let us now understand the likelihood gradient as the energy tensor of a probability distribution, which we call the proposal distribution.
+
+\begin{definition}[Gradient Heuristic Proposal Distribution]
+    Let there be a base distribution $\currentdistribution$, a targeted distribution $\empdistribution$ and a formula selecting map $\greedyhypothesis$.
+    The proposal distribution at inverse temperature $\invtemp>0$ is the distribution of $\selvariable$ defined by
+    \begin{align*}
+        \normalizationof{\expof{\contractionof{\invtemp\cdot(\empdistribution[\shortcatvariables]-\currentdistribution[\shortcatvariables]),\greedyhypothesis\left[\shortcatvariables,\selvariable\right]}{\selvariable}} }{\selvariable} \, .
+    \end{align*}
+    The proposal distribution is the member of the exponential family with statistics $\greedyhypothesis$ and canonical parameter $\invtemp\cdot(\empdistribution-\currentdistribution)$.
+\end{definition}
 
 
+%. Exponential family
+The proposal distribution is in the exponential family with sufficient statistic by the formula selecting map $\greedyhypothesis$, namely the member with the canonical parameters $\canparam=\empdistribution-\currentdistribution$.
+Of further interest are tempered proposal distributions, which are in the same exponential family with canonical parameters $\invtemp\cdot(\empdistribution-\currentdistribution)$ where $\invtemp>0$ is the inverse temperature parameter.
+
+% MLN
+As \MarkovLogicNetworks{}, the proposal distributions are in exponential families with the sufficient statistic defined in terms of formula selecting maps.
+While \MarkovLogicNetworks{} contract the maps on the selection variables $\selvariable$, the proposal distributions contract them along the categorical variables $\catvariable$ to define energy tensors.
+
+% Methods to solve mode search
+The gradient heuristic optimization Problem~\eqref{prob:greedyGrad} is the search for the mode of the proposal distribution.
+To solve the gradient heuristic, we thus need to answer a mode query, for which we can apply the methods introduced in \charef{cha:probReasoning}, such as Gibbs Sampling or Mean Field Approximations in combination with annealing.
 
 
-
-
-
-
-
-
+%\subsect{Mean parameter polytope}
+The mean parameter polytope of any proposal distribution to statistic $\proposalstat$ is the convex hull of the formulas in $\formulaset$, that is
+\begin{align*}
+    \meansetof{\proposalstat}
+    = \convhullof{\sencodingof{\proposalstat}{\indexedselvariable,\shortcatvariables} \wcols \selindexin}
+    = \convhullof{\formulaat{\shortcatvariables} \wcols \formula\in\greedyhypothesis}
+\end{align*}
+% 0/1
+As it was the case for \MarkovLogicNetworks{}, the mean parameter polytopes are instances of a $0/1$-polytopes \cite{ziegler_lectures_2000,gillmann_01-polytopes_2007}.
+% Interpretation as formulas
+The vertices are the formulas selectable by the formula selecting map $\greedyhypothesis$.
 
 \subsect{Iterations}
 
@@ -1188,7 +1065,7 @@ The result is Algorithm~\ref{alg:greedyStructureLearning}, which is a greedy alg
 \begin{algorithm}[hbt!]
     \caption{Greedy Structure Learning}\label{alg:greedyStructureLearning}
     \begin{algorithmic}
-        \Require Empirical distribution $\empdistribution$, hypothesis $\fselectionmap$ of formulas
+        \Require Empirical distribution $\empdistribution$, hypothesis $\greedyhypothesis$ of formulas
         \Ensure Distribution $\expdist$ approximating $\empdistribution$
         \hrule
         \State Initialize
@@ -1197,21 +1074,21 @@ The result is Algorithm~\ref{alg:greedyStructureLearning}, which is a greedy alg
         % REFINE! Work in data
             \State
             \begin{itemize}
-                \item \textbf{Structure Learning:} Compute a (approximative) solution $\hat{\formula}$ to Problem~\ref{prob:restrictedNaiveMLE} and add the formula to $\formulaset$, i.e.
+                \item \textbf{Structure Learning:} Compute a (approximative) solution $\hat{\formula}$ to Problem~\eqref{prob:perfectGreedy} and add the formula to $\formulaset$, i.e.
                 \[ \formulaset \algdefsymbol \formulaset \cup\{\hat{\formula}\} \]
-                Extend dimension of $\selvariable$ by one, by $\formulaof{\seldim}=\hat{\formula}$ and $\canparamat{\seldim}=0$
-                \item \textbf{Weight Estimation:} Estimate the best weights for the added formula and recalibrate the weights of the previous formulas, by calling Algorithm~\ref{alg:AWO}.
-                \[ \currentdistribution \algdefsymbol \expdistof{\formulaset, \canparam} \]
+                Extend dimension of $\selvariable$ by one, by $\formulaof{\seldim}=\hat{\formula}$ and $\canparamat{\selindex=\seldim}=0$
+                \item \textbf{Weight Estimation:} Estimate the best weights for the added formula and recalibrate the weights of the previous formulas, by calling Algorithm~\ref{alg:AMM_HLN}.
+                \[ \currentdistribution \algdefsymbol \probof{\formulaset,\hybridparam} \]
             \end{itemize}
         \EndWhile
-        \State \Return $\formulaset$, $\canparam$ %, $\kb$
+        \State \Return $\formulaset$, $\hybridparam$ %, $\kb$
     \end{algorithmic}
 \end{algorithm}
 
 
 %% Energy Storage -> Useful after learning for energy-based inference
 When having used the same learning architecture multiple times, the energy of the corresponding formulas are all representable by a formula selecting architecture.
-Their energy term is therefore a contraction of the selecting tensor with a parameter tensor $\canparam$ in a basis CP decomposition with rank by the number of learned formulas.
+Their energy term is therefore a contraction of the selecting tensor with a parameter tensor $\canparam$ in a basis $\cpformat$ decomposition with rank by the number of learned formulas.
 When mutiple selection architectures have been used, the energy is a sum of such contractions.
 % 
 Let us note, that this representation is useful after learning, when performing energy-based inference algorithms on the result.
@@ -1227,50 +1104,9 @@ During learning, one needs to instantiate the proposal distribution, which requi
 
 
 
-\subsect{Proposal distribution}
 
 
-% Proposal distribution
-Let us now understand the likelihood gradient as the energy tensor of a probability distribution, which we call the proposal distribution.
 
-\begin{definition}[Proposal Distribution]
-    Let there be a base distribution $\currentdistribution$, a targeted distribution $\empdistribution$ and a formula selecting map $\fselectionmap$.
-    The proposal distribution at inverse temperature $\invtemp>0$ is the distribution of $\selvariable$ defined by
-    \begin{align*}
-        \normalizationof{\expof{\contractionof{\invtemp\cdot(\empdistribution[\shortcatvariables]-\currentdistribution[\shortcatvariables]),\fselectionmapat{\shortcatvariables,\selvariable}}{\selvariable}} }{\selvariable} \, .
-    \end{align*}
-    The proposal distribution is the member of the exponential family with statistics $\fselectionmap$ and canonical parameter $\invtemp\cdot(\empdistribution-\currentdistribution)$.
-\end{definition}
-
-
-%. Exponential family
-The proposal distribution is in the exponential family with sufficient statistic by the formula selecting map $\fselectionmap$, namely the member with the canonical parameters $\canparam=\empdistribution-\currentdistribution$.
-Of further interest are tempered proposal distributions, which are in the same exponential family with canonical parameters $\invtemp\cdot(\empdistribution-\currentdistribution)$ where $\invtemp>0$ is the inverse temperature parameter.
-
-% MLN
-As \MarkovLogicNetworks{}, the proposal distributions are in exponential families with the sufficient statistic defined in terms of formula selecting maps.
-While \MarkovLogicNetworks{} contract the maps on the selection variables $\selvariable$, the proposal distributions contract them along the categorical variables $\catvariable$ to define energy tensors.
-
-% Methods to solve mode search
-The grafting Problem~\eqref{prob:greedyGrad} is the search for the mode of the proposal distribution.
-To solve grafting, we thus need to answer a mode query, for which we can apply the methods introduced in \charef{cha:probReasoning}, such as Gibbs Sampling or Mean Field Approximations in combination with annealing.
-
-
-%\subsect{Mean parameter polytope}
-
-The mean parameter polytope of the proposal distribution with statistic $\proposalstat$ is the convex hull of the formulas in $\formulaset$, that is
-\begin{align*}
-    \meansetof{\proposalstat}
-    = \convhullof{\sencodingof{\proposalstat}{\indexedselvariable,\shortcatvariables} \, : \, \selindexin}
-    = \convhullof{\formulaat{\shortcatvariables} \, : \, \formula\in\fselectionmap}
-\end{align*}
-
-
-% 0/1
-As it was the case for \MarkovLogicNetworks{}, the mean parameter polytopes are instances of a $0/1$-polytopes \cite{ziegler_lectures_2000,gillmann_01-polytopes_2007}.
-
-% Interpretation as formulas
-The extreme points are the formulas selectable by the formula selecting map $\fselectionmap$.
 
 
 \sect{Discussion}
@@ -1285,13 +1121,13 @@ The extreme points are the formulas selectable by the formula selecting map $\fs
     \end{align}
 \end{remark}
 
-To summarize some insights on the mean polytopes $\hlnmeanset$:
-\begin{itemize}
-    \item If and only íf all coordinates are in $\{0,1\}$ then an extreme points, then $\meanparam$ is reproduced by a \HardLogicNetwork{}.
-    \item If some mean params in $\{0,1\}$, then not in the interior, and not reproduced by a \MarkovLogicNetwork{}.
-    Back direction not correct: There are interior points where no coordinate in $\{0,1\}$.
-    \item If not in the interior, we can identify with base measure refinement a base measure, such that reproducable by a distribution representable by the base measure.
-\end{itemize}
+%To summarize some insights on the mean polytopes $\hlnmeanset$:
+%\begin{itemize}
+%    \item If and only íf all coordinates are in $\{0,1\}$ then an extreme points, then $\meanparam$ is reproduced by a \HardLogicNetwork{}.
+%    \item If some mean params in $\{0,1\}$, then not in the interior, and not reproduced by a \MarkovLogicNetwork{}.
+%    Back direction not correct: There are interior points where no coordinate in $\{0,1\}$.
+%    \item If not in the interior, we can identify with base measure refinement a base measure, such that reproducable by a distribution representable by the base measure.
+%\end{itemize}
 
 
 % Polytopes - MLN 
