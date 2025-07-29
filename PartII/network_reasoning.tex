@@ -796,21 +796,92 @@ The local moment matching conditions of are satisfied simultanously for some $\c
 
 \subsect{Iterative Proportional Fitting} % TO BE FORMULATED
 
-\begin{remark}[Grouping of partition statistics]
-    When having a set of coordinates, such that the coordinate functions are boolean and sum to the trivial tensor, one can find simultaneous updates to the canonical parameters, such that the partition function is staying invariant.
-    Given a parameter $\canparam^t$ we compute
-    \[ \meanparam^t = \contractionof{\expdistof{(\sstat,\canparam^t)}, \sstat}{\selvariable} \]
-    and build the update
-    \[ \canparam^{t+1} = \canparam^t + \lnof{\meanparam^{\datamap}}{\meanparam^t} \, . \]
-    Then, $\canparam^{t+1}$ satisfies the moment matching equations for all coordinates in the set.
+In a special case of partition statistics we can find simultaneous updates to the canonical parameters.
+Partition statistics are boolean statistics $\mlnstat$ such that
+\begin{align*}
+    \contractionof{\sencodingofat{\mlnstat}{\shortcatvariables,\selvariable}}{\shortcatvariables} \, .
+\end{align*}
+We can thus understand them as a disjoint partition of the state set $\facstates$ into sets
+\begin{align*}
+    \arbsetof{\selindex} \coloneqq \{\shortcatindices\wcols\shortcatindicesin\ncond\enumformulaat{\indexedshortcatvariables}=1\} \, .
+\end{align*}
+These statistics will be investigated in more detail in \secref{sec:partitionStatistics}.
 
+\begin{lemma}
+    Given distributions $\empdistributionwith,\secprobwith$ we build
+    \begin{align*}
+        \datameanat{\selvariable} = \contractionof{\empdistributionwith,\sencmlnstatwith}{\selvariable}
+        \andspace
+        \currentmeanat{\selvariable} = \contractionof{\secprobwith,\sencmlnstatwith}{\selvariable}
+    \end{align*}
+    and assume that $\greaterzeroof{\datamean}\models\greaterzeroof{\currentmean}$. % and $\equaloneof{\currentmean}\models\equaloneof{\datamean}$.
+    Let us vary the distribution $\secprobwith$ by elementary tensors $\hypercoreat{\headvariables}$ as
+    \begin{align*} % NEED TO RESTRICT TO ELEMENTARY HYPERCORE?
+        \probofat{\hypercore}{\shortcatvariables}
+        \coloneqq \normalizationof{\secprobwith,\mlnstatccwith,\hypercoreat{\headvariables}}{\shortcatvariables} \, .
+    \end{align*}
 
-    The assumptions are met when taking all features to any hyperedge in a Markov Network seen as an exponential family.
-    In that case, the update algorithm is refered to as Iterative Proportional Fitting \cite{wainwright_graphical_2008}.
-    Further, when activating both $\exformula$ and $\lnot\exformula$.
+    Then
+    \begin{align*}
+        \argmin_{\hypercore} \centropyof{\empdistribution}{\probof{\hypercore}}
+    \end{align*}
+    is solved at
+    \begin{align*}
+        \hypercoreat{\headvariables}
+        = \contractionof{\kcoreofat{(\hardlegset,0_{\hardlegset})}{\headvariables},\actcoreofat{\canparam}{\headvariables}}{\headvariables}
+    \end{align*}
+    where $\hardlegset=\{\selindex\wcols\datameanat{\indexedselvariable}=0\}$ and for $\selindex\in[\seldim]/\hardlegset$
+    \begin{align*}
+        \canparamat{\indexedselvariable} = \lnof{\frac{\datameanat{\indexedselvariable}}{\currentmeanat{\indexedselvariable}}} \, .
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    We use \theref{the:selectionRepresentationPartitionStatistics} to compute
+    \begin{align*}
+        \contractionof{\secprobwith,\mlnstatccwith,\hypercoreat{\headvariables}}{\selvariable}
+        = \contractionof{\secprobwith,\sencmlnstatwith,\expof{\canparamwith},\onehotmapofat{[\seldim]/\hardlegset}{\selvariable}}{\selvariable} \\
+        = \contractionof{\currentmeanat{\selvariable},\expof{\canparamwith},\onehotmapofat{[\seldim]/\hardlegset}{\selvariable}}{\selvariable}
+        = \datameanat{\selvariable}
+    \end{align*}
+    Here $\onehotmapofat{[\seldim]/\hardlegset}{\selvariable}$ is the indicator vector, whether $\selindex\notin\hardlegset$ (see for more details \defref{def:subsetEncoding}).
 
-    \red{We will investigate these statistics as partition statistics in \secref{sec:partitionStatistics}.}
-\end{remark}
+    Using that $\mlnstat$ is a partition statistic we get
+    \begin{align*}
+        \contraction{\datameanat{\selvariable}}
+        &= \contraction{\empdistribution,\sencmlnstatwith} \\
+        &= \contraction{\empdistribution} \\
+        &= 1 \, .
+    \end{align*}
+    It follows that
+    \begin{align*}
+        \contraction{\secprobwith,\mlnstatccwith,\hypercoreat{\headvariables}} = 1
+    \end{align*}
+    and due to trivial partition function term that
+    \begin{align*}
+        \probofat{\hypercore}{\shortcatvariables} = \contractionof{\secprobwith,\mlnstatccwith,\hypercoreat{\headvariables}}{\shortcatvariables} \, .
+    \end{align*}
+    We conclude
+    \begin{align*}
+        \contractionof{\probofat{\hypercore}{\shortcatvariables},\sencmlnstatwith}{\selvariable}
+        = \datameanat{\selvariable} \, .
+    \end{align*}
+    Thus, the moment matching condition is satisfied for each $\selindexin$ and the cross-entropy is minimized.
+\end{proof}
+
+If the $\greaterzeroof{\datamean}\models\greaterzeroof{\currentmean}$ is violated, then there is no solution to the moment matching condition, since the support of the mean parameter cannot be increased by an activation tensor.
+
+The assumptions of a partition statistic are met when taking all features to any hyperedge in a Markov Network seen as an exponential family.
+In that case, the update algorithm is refered to as Iterative Proportional Fitting \cite{wainwright_graphical_2008}.
+
+%Further, when activating both $\exformula$ and $\lnot\exformula$.
+%\begin{remark}[Grouping of partition statistics]
+%    When having a set of coordinates, such that the coordinate functions are boolean and sum to the trivial tensor, one can find simultaneous updates to the canonical parameters, such that the partition function is staying invariant.
+%    Given a parameter $\canparam^t$ we compute
+%    \[ \meanparam^t = \contractionof{\expdistof{(\sstat,\canparam^t)}, \sstat}{\selvariable} \]
+%    and build the update
+%    \[ \canparam^{t+1} = \canparam^t + \lnof{\meanparam^{\datamap}}{\meanparam^t} \, . \]
+%    Then, $\canparam^{t+1}$ satisfies the moment matching equations for all coordinates in the set.
+%\end{remark}
 
 
 \sect{Structure Learning}
