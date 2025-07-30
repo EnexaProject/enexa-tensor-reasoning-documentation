@@ -81,7 +81,7 @@ Therefore, entailment and contradiction can be decided simultaneously by a singl
     \end{align*}
     and
     \begin{align*}
-        \contraction{\kb,\exformula} = \hypercoreat{\exformulavar=1} \, .
+        \contraction{\kb,\exformula} = \hypercoreat{\exformulavar=1} \, . & \qedhere
     \end{align*}
 \end{proof}
 
@@ -149,7 +149,7 @@ This is especially interesting for the sparse representation of Knowledge Bases.
     Now, by \theref{the:contCriterionLogEntailment} we have $\kb\models\exformula$, if and only if $\contractionof{\kbat{\shortcatvariables},\lnot\exformulaat{\shortcatvariables}}{\shortcatvariables}=0$, which is thus equal to
     \begin{align*}
         \kbat{\shortcatvariables}
-        = \contractionof{\kbat{\shortcatvariables},\exformulaat{\shortcatvariables}}{\shortcatvariables} \, .
+        = \contractionof{\kbat{\shortcatvariables},\exformulaat{\shortcatvariables}}{\shortcatvariables} \, . & \qedhere
     \end{align*}
 \end{proof}
 
@@ -408,7 +408,8 @@ We can further omit the normalization by $\contraction{\kb}$ when deciding entai
 \begin{proof}
     This follows from \theref{the:contCriterionLogEntailment} using that
     \begin{align*}
-        \bencodingofat{\exformula}{\exformulavar=0,\shortcatvariables} = \lnot\exformulaat{\shortcatvariables} \quad \text{and} \quad \bencodingofat{\exformula}{\exformulavar=1,\shortcatvariables} = \exformulaat{\shortcatvariables} \, .
+        \bencodingofat{\exformula}{\exformulavar=0,\shortcatvariables} = \lnot\exformulaat{\shortcatvariables} \andspace
+        \bencodingofat{\exformula}{\exformulavar=1,\shortcatvariables} = \exformulaat{\shortcatvariables} \, . & \qedhere
     \end{align*}
 \end{proof}
 
@@ -507,6 +508,96 @@ Let us use this to connect the entailment formalism with the representability (s
     \end{align*}
     and thus $\basemeasure\models\nonzerocirc\probtensor$.
 \end{proof}
+
+
+
+\begin{remark}[Propositional Formulas as Computation Activation Networks]
+    Uniform distributions of the models of a propositional formula $\exformula$ have $\exformula$ as a sufficient statistic.
+    The computation tensor network is any representation of $\formulaccwith$.
+    The activation tensor $\tbasisat{\headvariable}$ represent $\exformula$, $\fbasisat{\headvariable}$ represent $\lnot\exformula$ and $\onesat{\headvariable}$ represents the tautology $\onesat{\shortcatvariables}$.
+\end{remark}
+
+\sect{Entropy Optimization in Logics}
+
+Since normalizations of propositional formulas are probability distributions, we can apply the concepts of probabilistic reasoning.
+To develop results on entropy optimization, let us characterize the relative entropy between formulas using the entailment formalism.
+
+\begin{lemma}\label{lem:relEntropyFormulas}
+    Given two satisfiable formulas $\exformula,\secexformula$ we have
+    \begin{align*}
+        \kldivof{\normalizationof{\exformula}{\shortcatvariables}}{\normalizationof{\secexformula}{\shortcatvariables}}
+        = \begin{cases}
+              \lnof{\contraction{\secexformula}} - \lnof{\contraction{\exformula}} & \ifspace \exformula\models\secexformula \\
+              \infty & \ifspace \exformula\not\models\secexformula
+        \end{cases} \, .
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    The relative entropy (see \defref{def:crossEntropy}) decomposed as
+    \begin{align*}
+        \kldivof{\normalizationof{\exformula}{\shortcatvariables}}{\normalizationof{\secexformula}{\shortcatvariables}}
+        = \centropyof{\normalizationof{\exformula}{\shortcatvariables}}{\normalizationof{\secexformula}{\shortcatvariables}}
+        - \sentropyof{\normalizationof{\exformula}{\shortcatvariables}}
+    \end{align*}
+
+    The entropy term is
+    \begin{align*}
+        \sentropyof{\normalizationof{\exformula}{\shortcatvariables}}
+        &= \contraction{\frac{\exformulaat{\shortcatvariables}}{\contraction{\exformula}},-\lnof{\frac{\exformulaat{\shortcatvariables}}{\contraction{\exformula}}}} \\
+        &= \contraction{\frac{\exformulaat{\shortcatvariables}}{\contraction{\exformula}},-\lnof{\exformulaat{\shortcatvariables}}}
+        + \lnof{\contraction{\exformula}} \cdot \contraction{\frac{\exformulaat{\shortcatvariables}}{\contraction{\exformula}}}  \\
+        &= \lnof{\contraction{\exformula}} \, .
+    \end{align*}
+    In the last equation we use the convention $0\cdot\lnof{0}=0$.
+
+    The cross entropy term is
+    \begin{align*}
+        \centropyof{\normalizationof{\exformula}{\shortcatvariables}}{\normalizationof{\secexformula}{\shortcatvariables}}
+        =\contraction{\frac{\exformulaat{\shortcatvariables}}{\contraction{\exformula}},-\lnof{\frac{\secexformulaat{\shortcatvariables}}{\contraction{\secexformula}}}}
+    \end{align*}
+    If and only if $\exformula\not\models\secexformula$ there is a state $\shortcatindicesin$ such that $\secexformulaat{\indexedshortcatvariables}=0$ and $\exformulaat{\indexedshortcatvariables}$, which contributes to the contraction the summand
+    \begin{align*}
+        (-1) \cdot \exformulaat{\indexedshortcatvariables} \cdot \lnof{\secexformulaat{\indexedshortcatvariables}} = \infty \, .
+    \end{align*}
+    If and only if $\exformula\not\models\secexformula$ we therefore have
+    \begin{align*}
+        \kldivof{\normalizationof{\exformula}{\shortcatvariables}}{\normalizationof{\secexformula}{\shortcatvariables}} = \infty \, .
+    \end{align*}
+
+    In the case $\exformula\models\secexformula$ we get 
+    \begin{align*}
+        \contraction{\frac{\exformulaat{\shortcatvariables}}{\contraction{\exformula}},-\lnof{\frac{\secexformulaat{\shortcatvariables}}{\contraction{\secexformula}}}}
+        &= \contraction{\frac{\exformulaat{\shortcatvariables}}{\contraction{\exformula}},-\lnof{\secexformulaat{\shortcatvariables}}}
+        +\lnof{\contraction{\secexformula}} \cdot \contraction{\frac{\exformulaat{\shortcatvariables}}{\contraction{\exformula}}}  \\
+        &= \lnof{\contraction{\secexformula}} 
+    \end{align*}
+    and with the above 
+    \begin{align*}
+        \kldivof{\normalizationof{\exformula}{\shortcatvariables}}{\normalizationof{\secexformula}{\shortcatvariables}}
+        = \lnof{\contraction{\secexformula}} - \lnof{\contraction{\exformula}} \, . & \qedhere
+    \end{align*}
+\end{proof}
+
+We use \lemref{lem:relEntropyFormulas} to characterize the logical analogue of the M-projection and the I-projection.
+
+\begin{theorem}
+    Given a set of formulas $\greedyhypothesis$ we get for the logical M-projection
+    \begin{align*}
+        \min_{\exformula\in\greedyhypothesis} \kldivof{\normalizationof{\secexformula}{\shortcatvariables}}{\normalizationof{\exformula}{\shortcatvariables}}
+        = \min_{\exformula\in\greedyhypothesis\wcols\secexformula\models\exformula} \lnof{\contraction{\exformula}} - \lnof{\contraction{\secexformula}} 
+    \end{align*}
+    and for the logical I-projection
+    \begin{align*}
+        \min_{\exformula\in\greedyhypothesis} \kldivof{\normalizationof{\exformula}{\shortcatvariables}}{\normalizationof{\secexformula}{\shortcatvariables}}
+        = \min_{\exformula\in\greedyhypothesis\wcols\exformula\models\secexformula} \lnof{\contraction{\secexformula}} - \lnof{\contraction{\exformula}} \, .
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    We use the characterization of the relative entropy from \lemref{lem:relEntropyFormulas} and restrict the feasible set of the minimizations to the respective cases, where the cost is finite.
+    Note that if $\secexformula\models\exformula$ (respectively $\exformula\models\secexformula$) is not satisfied for $\exformula\in\greedyhypothesis$, then the feasible sets of the right sight are empty and we use the convention that the minimum is $\infty$.
+\end{proof}
+
+%% TO DO: DRAW THE VENN DIAGRAM INTERPRETING THE M- and I-projection
 
 
 \sect{Constraint Satisfaction Problems}
@@ -675,7 +766,9 @@ In the next theorem we show how a categorical constraint can be enforced in a te
     If $\catindexof{\variableset} = \onehotmapof{\catindex}$ we have $\categoricalmap[\indexedcatvariableof{\variableset},\indexedcatvariable] = 1$ and thus
     \[ \contractionof{\hypercoreat{\shortcatvariables},\categoricalmap}{\indexedcatvariables}  =  \hypercoreat{\shortcatindices}  \, . \]
     If $\catindexof{\variableset} \neq \onehotmapof{\catindex}$ then $\categoricalmap[\indexedcatvariableof{\variableset},\indexedcatvariable] = 0$ and
-    \[ \contractionof{\hypercoreat{\shortcatvariables},\categoricalmap}{\indexedcatvariables}  = 0 \, . \]
+    \begin{align*}
+        \contractionof{\hypercoreat{\shortcatvariables},\categoricalmap}{\indexedcatvariables}  = 0 \, . & \qedhere
+    \end{align*}
 \end{proof}
 
 \begin{figure}[h]
@@ -961,7 +1054,7 @@ The AC-3 algorithm (see \cite{mackworth_consistency_1977}) is a specific instanc
     \end{align*}
     And thus in combination with the monotonocity of boolean contraction (see \theref{the:monotonicityBinaryContractions}) that
     \begin{align*}
-        \nonzeroof{\contractionof{\extnet}{\catvariableof{\secedge}}} \prec \kcoreofat{\secedge}{\catvariableof{\secedge}}  \, .
+        \nonzeroof{\contractionof{\extnet}{\catvariableof{\secedge}}} \prec \kcoreofat{\secedge}{\catvariableof{\secedge}}  \, . & \qedhere
     \end{align*}
 %	We deduce the theorem from generic properties of the support of contractions, see \secref{sec:supportContractionEquations}.
 %	Monotonic decreasing follows from montonocity of boolean tensor contractions, see \theref{the:monotonicityBinaryContractions}.
@@ -1030,7 +1123,7 @@ Whenever a knowledge core vanishes, we can conclude that the Constraint Satisfac
     \end{align*}
     and therefore
     \begin{align*}
-        \contraction{\extnet} = 0 \, .
+        \contraction{\extnet} = 0 \, . & \qedhere
     \end{align*}
 \end{proof}
 

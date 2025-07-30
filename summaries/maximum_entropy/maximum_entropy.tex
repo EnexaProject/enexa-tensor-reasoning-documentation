@@ -1,0 +1,223 @@
+\documentclass[aps,onecolumn,nofootinbib,pra]{article}
+
+\usepackage{../../article_compilation/spec_files/arxiv}
+\usepackage{amsmath,amsfonts,amssymb,amsthm,bbm,graphicx,enumerate,times}
+\usepackage{mathtools}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{hyperref}
+\hypersetup{
+    breaklinks,
+    colorlinks,
+    linkcolor=gray,
+    citecolor=gray,
+    urlcolor=gray,
+    pdftitle={},
+    pdfauthor={Alex Goessmann}
+}
+
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{comment}
+\usepackage{csquotes}
+
+\usepackage{braket}
+
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{etoolbox}
+\usepackage{braket}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{bbm}
+\usepackage{bm}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{lipsum}
+
+\newtheorem{remark}{Remark}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+
+\input{../../macros/organization_macros.tex}
+\input{../../macros/general_macros.tex}
+\input{../../macros/tc_macros.tex}
+\input{../../macros/tikz_macros.tex}
+
+\pretolerance=500
+\tolerance=100
+\emergencystretch=10pt
+
+% Bibliography
+\DeclareUnicodeCharacter{FB01}{fi}
+\usepackage[round]{natbib}
+\usepackage{wasysym}
+
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+\begin{document}
+    \title{Maximum Entropy Distributions as Computation Activation Networks}
+
+    \maketitle
+    \date{\today}
+
+    \begin{abstract}
+        We here summarize results of the main report on maximum entropy distributions.
+    \end{abstract}
+%    \abstract{}
+
+
+    \section{Computation Activation Networks}
+
+    Given a statistic $\sstat:\facstates\rightarrow\selstates$ we build its basis encoding tensor
+    \begin{align*}
+        \sstatccwith = \sum_{\shortcatindicesin} \onehotmapofat{\sstat(\shortcatindices)}{\headvariables} \otimes \onehotmapofat{\shortcatindices}{\shortcatvariables} \, .
+    \end{align*}
+    A computation network is any representation of $\sstatccwith$ as a tensor network.
+    These can be constructed in the case statistics being a composition of connective functions.
+
+    An activation tensor is $\hypercoreat{\headvariables}$ and the Computation Activation Network of $\sstat$ and $\hypercore$ the tensor
+    \begin{align*}
+        \probwith = \normalizationof{\sstatccwith,\hypercoreat{\headvariables}}{\shortcatvariables} \, .
+    \end{align*}
+
+    We are interested in decomposition formats of $\hypercoreat{\headvariables}$, where we use sets of tensor networks $\tnsetof{\graph}$ on a hypergraph $\graph$.
+    The family of by $\sstat$ and a $\graph$ computable distributions are
+    \begin{align*}
+        \realizabledistsof{\sstat,\graph}
+        = \left\{ \normalizationof{\bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables},\hypercoreat{\headvariableof{\nodes}}
+        }{\shortcatvariables}
+        \wcols \hypercoreat{\headvariableof{\nodes}} \in \tnsetof{\graph} \right\} \, .
+    \end{align*}
+
+
+    \section{The Maximum Entropy Problem}
+
+    The mean parameter of a distribution $\probwith$ to a statistic $\sstat:\facstates\rightarrow\selstates$ is the vector $\meanparamwith\in\rr^\seldim$ with the coordinates
+    \begin{align*}
+        \meanparamat{\indexedselvariable} = \expectationof{\enumformula} = \contraction{\probwith,\enumformulaat{\shortcatvariables}} \, .
+    \end{align*}
+
+    We express the computation of the mean parameter in the contraction of the selection encoding $\sencsstatwith$ of $\sstat$
+    \begin{align*}
+        \meanparamwith = \contractionof{\probwith,\sencsstatwith}{\selvariable} \, .
+    \end{align*}
+
+    The maximum entropy problem given a mean parameter $\genmeanwith$ is
+    \begin{align*}
+        \max_{\probwith} \sentropyof{\probwith} \stspace \contractionof{\probwith,\sencsstatwith}{\selvariable} = \genmeanwith
+    \end{align*}
+
+    A quick argument shows, that maximum entropy distributions always have $\sstat$ as a sufficient statistics.
+
+    \begin{theorem}
+        \label{the:maxEntWithSufficientStatistic}
+        Any maximum entropy distribution with respect to a moment constraint on $\sstat$ and a base measure $\basemeasure$ has the sufficient statistic $\sstat$.
+    \end{theorem}
+    \begin{proof}
+        Let $\probwith$ be a feasible distribution for Problem~\eqref{prob:maxEntropy}, which does not have a sufficient statistic $\sstat$.
+        Then we find $\shortcatindices,\tildeshortcatindices\in\facstates$ with $\shortcatindices\neq\tildeshortcatindices$, $\sstatat{\shortcatindices}=\sstatat{\tildeshortcatindices}$, $\basemeasureat{\indexedshortcatvariables}\neq0$, $\basemeasureat{\shortcatvariables=\tildeshortcatindices}$ and $\probat{\indexedshortcatvariables}\neq\probat{\shortcatvariables=\tildeshortcatindices}$.
+        We then define a distribution $\secprobat{\shortcatvariables}$ coinciding with $\probwith$ except for the coordinates $\shortcatindices,\tildeshortcatindices$, where we set
+        \begin{align*}
+            \secprobat{\indexedshortcatvariables} = \secprobat{\shortcatvariables=\tildeshortcatindices} = \frac{\probat{\indexedshortcatvariables}+\secprobat{\shortcatvariables=\tildeshortcatindices}}{2}
+        \end{align*}
+        We notice, that $\secprobat{\shortcatvariables}$ is also a feasible distribution with an larger entropy than $\probwith$.
+        Therefore, a distribution which does not have the sufficient statistic $\sstat$ cannot be a maximum entropy distribution.
+        %$\genmeanat{\selvariable}$
+    \end{proof}
+
+    This shows that any maximum entropy distribution is in $\realizabledistsof{\sstat,\maxgraph}$, where $\maxgraph$ is the maximal hypergraph $\maxgraph=([\seldim],\{[\seldim]\})$.
+    We search for sparse representations of the corresponding activation tensors and investigate in which cases the maximum entropy distribution is also in $\realizabledistsof{\sstat,\graph}$ for sparser hypergraphs $\graph$.
+
+
+    \section{The mean polytope}
+
+    The mean polytope is the set of mean parameters to any distribution.
+    We define it
+    \begin{align*}
+        \genmeanset
+        = \left\{\contractionof{\probtensor,\sencsstat,\basemeasure}{\selvariable}\wcols\probwith\in\bmrealprobof{\basemeasure} \right\} \, ,
+    \end{align*}
+    where we denote by $\bmrealprobof{\basemeasure}$ the set of all probability distributions representable with respect to $\basemeasure$.
+
+%    \begin{center}
+%        \input{../PartI/tikz_pics/probability_reasoning/meanset_sketch_generic.tex}
+%    \end{center}
+
+    \subsection{Convex hull and faces}
+
+    The mean polytope is the convex hull
+    \begin{align*}
+        \genmeanset
+        = \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable}\wcols\shortcatindices\in\facstates\ncond\basemeasureat{\indexedshortcatvariables}=1} \, .
+    \end{align*}
+    It is thus a convex polytope, inherited by the convex polytope of distributions (the standard simplex).
+    We can characterize the maximum entropy distribution based on the position of the mean parameter in the mean polytope.
+    To be more precise, any polytope decomposes into effective interiors of its faces and we characterize the maximum entropy distribution depending on the face to the mean parameter.
+
+    Faces of the mean polytope are itself mean polytopes with respect to refined base measures.
+
+
+    \subsection{Maximum entropy on the interior}
+
+    A classical result states, that the maximum entropy distribution is in the exponential family $\expfamilyof{\sstat,\basemeasure}$.
+
+    \begin{theorem} % TODO: Use the effective interior partition of the mean polytope
+        \label{the:maxEntropyInterior}
+        %If the only face $\genfacesetof{\facecondset}$ of $\genmeanset$ with $\meanparam\in\genfacesetof{\facecondset}$ is $\genmeanset$ itself
+        If and only if $\genmean$ is in the effective interior of $\genmeanset$, then the unique solution of the maximum entropy problem is the distribution
+        \begin{align*}
+            \expdistofat{\sstat,\genmean,\basemeasure}{\shortcatvariables}\in\expfamilyof{\sstat,\basemeasure}
+        \end{align*}
+        with $\contractionof{\expdistofat{\sstat,\genmean,\basemeasure}{\shortcatvariables},\sencsstatwith}{\selvariable}=\genmeanat{\selvariable}$.
+    \end{theorem}
+    \begin{proof}
+        By The~3.3 in [Wainright and Jordan, 2008], since by assumption
+        \begin{align*}
+            \meanparamwith \in \sbinteriorof{\genmeanset}  \, ,
+        \end{align*}
+        there is a canonical parameter $\canparam$ with
+        \begin{align*}
+            \contractionof{\expdistofat{\sstat,\canparam,\basemeasure}{\shortcatvariables},\sencsstatwith}{\selvariable}=\meanparamat{\selvariable} \, .
+        \end{align*}
+
+        For any other feasible distribution $\secprobat{\shortcatvariables}$ we also have $\contractionof{\secprobat{\shortcatvariables},\sencsstatwith}{\selvariable}=\meanparamat{\selvariable}$ and thus
+        \begin{align*}
+            \centropyof{\secprobtensor}{\expdistof{(\sstat,\canparam,\basemeasure)}}
+            &= -\contraction{\secprobtensor,\lnof{\expdistofat{(\sstat,\canparam,\basemeasure)}{\shortcatvariables}}} \\
+            &= -\contraction{\secprobtensor,\contractionof{\sencsstatwith,\canparamwith}{\shortcatvariables}} + \cumfunctionof{\canparam} \\
+            &= - \contraction{\canparam,\meanparam} + \cumfunctionof{\canparam} \\
+            &= \sentropyof{\expdistof{(\sstat,\canparam,\basemeasure)}} \, .
+        \end{align*}
+        With the Gibbs inequality we have if $\secprobtensor\neq\expdistof{(\sstat,\canparam,\basemeasure)}$
+        \begin{align*}
+            \sentropyof{\expdistof{(\sstat,\estcanparam,\basemeasure)}} - \sentropyof{\secprobtensor}
+            = \centropyof{\secprobtensor}{\expdistof{(\sstat,\estcanparam,\basemeasure)}} - \sentropyof{\secprobtensor} > 0 \, .
+        \end{align*}
+        Therefore, if $\secprobtensor$ does not coincide with$\expdistof{(\sstat,\estcanparam,\basemeasure)}$, it is not a maximum entropy distribution.
+    \end{proof}
+
+    Exponential families are in $\elrealizabledistsof{\sstat}$, if and only if $\normalizationof{\basemeasure}{\shortcatvariables}\in\elrealizabledistsof{\sstat}$.
+    If $\normalizationof{\basemeasure}{\shortcatvariables}\in\elrealizabledistsof{\sstat}$ and $\meanparamwith \in \sbinteriorof{\genmeanset} $ we therefore have a sparse representation of the maximum entropy distribution with elementary activation tensors.
+
+
+
+    \section{Characterization for boolean statistics}
+
+    For boolean statistics $\mlnstat:\facstates\rightarrow\bigtimes_{\selindexin}[2]$ the mean polytope is a subset of the cube $[0,1]^\seldim$.
+    In this case, any boolean vector in $\meansetof{\mlnstat,\basemeasure}$ is a vertex.
+    It follows, that any distribution reproducing a mean parameter $\meanparamwith$ on the effective interior of $\meansetof{\mlnstat,\basemeasure}$ is positive with respect to $\basemeasure$.
+
+    We apply the exponential distribution characterization of the maximum entropy distribution and get that the maximum entropy distribution is in $\elrealizabledistsof{\sstat}$, if and only if the face measure is in $\elrealizabledistsof{\sstat}$.
+    This is exactly the case, when the face is an intersection of the mean polytope with a face of the cupe $[0,1]^\seldim$.
+
+    The mean parameters, which can be realized by a distribution in $\elrealizabledistsof{\mlnstat}$ are those, which are on the effective interior of the intersection of the mean polytope with a face of the cube.
+
+\end{document}
