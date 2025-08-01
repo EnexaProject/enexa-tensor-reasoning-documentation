@@ -664,9 +664,9 @@ where by $\zerosat{\headvariables}\prec\hypercoreof{\headvariables}$ we restrict
 
 %% NEEDED FOR MAX ENTROPY DISCUSSION, since define max entropy with respect to base measures.
 We further extend the definition of sufficient statistics to generic boolean base measures $\basemeasure$, where we say that a probability distribution has a sufficient statistic $\sstat$ with respect to a base measure $\basemeasure$, if
-    \begin{align*}
-        \condindependent{\shortcatvariables}{\probat{\shortcatvariables}}{\sstatat{\shortcatvariables,\selvariable},\basemeasureat{\shortcatvariables}} \, .
-    \end{align*}
+\begin{align*}
+    \condindependent{\shortcatvariables}{\probat{\shortcatvariables}}{\sstatat{\shortcatvariables,\selvariable},\basemeasureat{\shortcatvariables}} \, .
+\end{align*}
 Analogously, the set of distributions with sufficient statistic $\sstat$ with respect to a base measure $\basemeasure$ is the set
 \begin{align*} % ! First occurance of realizabledists ?
     \realizabledistsof{\sstat,\maxgraph,\basemeasure}
@@ -1710,7 +1710,7 @@ For reference in later chapters, we define these refined base measures next as f
 
 \begin{definition}
     \label{def:faceMeasure}
-    The base measure to the face $\genfacesetof{\facecondset}$ of $\genmeanset$ is the boolean tensor $\basemeasureofat{\sstat,\facecondset}{\shortcatvariables}$ with coordinates to $\shortcatindicesin$ by
+    The face measure to the face $\genfacesetof{\facecondset}$ of $\genmeanset$ is the boolean tensor $\basemeasureofat{\sstat,\facecondset}{\shortcatvariables}$ with coordinates to $\shortcatindicesin$ by
     \begin{align*}
         \basemeasureofat{\sstat,\facecondset}{\indexedshortcatvariables}
         = \begin{cases}
@@ -1759,7 +1759,10 @@ Positivity of a distribution with respect to face measures is an equivalent cond
     \begin{align*}
         \contractionof{\probwith,\sencsstatwith}{\selvariable}\in\genfacesetof{\facecondset}\, ,
     \end{align*}
-    then $\probwith$ is representable with respect to the face measure $\genfacemeasure$.
+    then $\probwith$ is representable with respect to the base measure
+    \begin{align*}
+        \contractionof{\basemeasurewith,\genfacemeasurewith}{\shortcatvariables} \, .
+    \end{align*}
 \end{theorem}
 \begin{proof}
     We have
@@ -1771,16 +1774,25 @@ Positivity of a distribution with respect to face measures is an equivalent cond
     Thus, if and only if $\probwith$ is representable with respect to $\genfacemeasureat{\shortcatvariables}$, we have $\meanparamat{\selvariable}\in\genfacesetof{\facecondset}$.
 \end{proof}
 
+% Stronger for exponential distributions: But need to use smallest face for that! -> Maybe later?
+For members of exponential families, we can make a stronger statement than \theref{the:facePolytopeCharacterization}.
+If for any $\probwith\in\expfamilyof{\sstat,\basemeasure}$ and a face $\facecondset$ we have $\contractionof{\probwith,\sencsstatwith}{\selvariable}\in\sbinteriorof{\genfacesetof{\facecondset}}$ then $\probwith$ is positive with respect to the base measure
+\begin{align*}
+    \contractionof{\basemeasurewith,\genfacemeasurewith}{\shortcatvariables} \, .
+\end{align*}
 
 Let us now investigate tensor network representations of face measures, based on the basis encoding $\bencodingof{\sstat}$ of a statistic.
 % Vertices
 Vertices of $\genmeanset$ are faces with single elements, that is $\{\meanparamwith\}$.
 By \lemref{lem:faceConvHullPreimage} there must be $\meanparam$ must lie in the image of $\sstatencoding$, since otherwise $\genmeanset$ would be empty.
-We denote $\headindex^{\facecondset}_{[\seldim]}$ as the index such that $\indexinterpretationofat{\sstat}{\headindex^{\meanparam}_{[\seldim]}}=\meanparam$.
 The vertex measure is then
 \begin{align*}
     \basemeasureofat{\sstat,\facecondset}{\shortcatvariables}
-    = \contractionof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\onehotmapofat{\headindex^{\meanparam}_{[\seldim]}}{\headvariables}}{\shortcatvariables}
+    = \contractionof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\onehotmapofat{\meanparam}{\headvariables}}{\shortcatvariables}
+\end{align*}
+Here we use that each $\meanparam\in\genfacesetof{\facecondset}\cap\imageof{\sstatencoding}$ has integer-valued coordinates and denote
+\begin{align*}
+    \onehotmapofat{\meanparam}{\headvariables} = \bigotimes_{\selindexin} \onehotmapofat{\meanparamat{\indexedselvariable}}{\headvariableof{\selindex}} \, .
 \end{align*}
 
 \begin{theorem}[Face measure representation]
@@ -1795,11 +1807,6 @@ The vertex measure is then
         \kcoreofat{\facecondset}{\headvariables}
         = \sum_{\meanparam\in\genfacesetof{\facecondset}\cap\imageof{\sstatencoding}} \onehotmapofat{\meanparam}{\headvariables} \, .
     \end{align*}
-    Here we use that each $\meanparam\in\genfacesetof{\facecondset}\cap\imageof{\sstatencoding}$ has integer-valued coordinates and denote
-    \begin{align*}
-        \onehotmapofat{\meanparam}{\headvariables} = \bigotimes_{\selindexin} \onehotmapofat{\meanparamat{\indexedselvariable}}{\headvariableof{\selindex}} \, .
-    \end{align*}
-%    Here we denote by $\headindex^{\meanparam}_{[\seldim]}$ the index, which is assigned to $\meanparam$ by the interpretation functions to the variables $\sstatheadvariables$.
 \end{theorem}
 \begin{proof}
     For any $\meanparam\in\genfacesetof{\facecondset}\cap\imageof{\sstatencoding}$ the tensor
@@ -1869,7 +1876,8 @@ By \exaref{ex:maximalFaceMeasure} we provide with the maximal face an example, w
 
 Let us now introduce effective interiors, which enables us to find disjoint partitions of the mean polytope.
 
-\begin{definition}[Effective Interior]\label{def:effectiveInterior}
+\begin{definition}[Effective Interior]
+    \label{def:effectiveInterior}
     Let $\arbset\subset\parspace$ be an arbitrary set and $\mathcal{L}$ the minimal affine subspace of $\parspace$ containing $\arbset$.
     Then the effective interior, denoted $\sbinteriorof{\arbset}$ is the the interior of $\arbset$ in the space $\mathcal{L}$.
 \end{definition}
