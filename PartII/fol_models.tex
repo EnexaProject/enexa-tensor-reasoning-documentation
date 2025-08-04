@@ -1,6 +1,7 @@
 \chapter{\chatextfolModels}\label{cha:folModels}
 
-We now extend the tensor representation from factored to structured representations, whereas we previously focused on factored representation of systems.
+We now extend the tensor representation from factored to structured representations.
+
 %The models/events in this situation are precise relations between objects.
 
 
@@ -14,12 +15,45 @@ The representation of each world is a boolean tensor.
 %Given a model and an assignment of objects to the arguments of a formula, the truth of the formula can be interpreted.
 %This truth interpretation defines thus for any model a tensor, which we call the grounding tensor.
 
+\sect{Syntax and Semantics of First Order Logic}
+
+A first order logic theory consists in a set of constants $\worlddomain$, a set of predicates $\{\folpredicateof{\atomenumerator}\wcols\atomenumeratorin\}$ which have arity $\indorderof{\atomenumerator}$.
+
+
+\subsect{Two levels of tensor representation}
+
+In comparison with propositional logics, first-order logic bears two natural tensor structures.
+\begin{itemize}
+    \item \textbf{\SemanticStructure{}:} As in propositional logics, we enumerate possible worlds using variables $\catvariable$.
+    \item \textbf{\SubstitutionStructure{}:}
+    Different to propositional logics, a formula can have variables and the evaluation of a formula on a world is a substitution tensor.
+    Given a world which contains objects in the domain $\worlddomain$, we can substitute variables by objects in the domain. In this way, each predicate with $n$ variables is represented in that world as a tensor of order $n$.
+\end{itemize}
+
+%In the first level, which we call the structured level, each world (see \defref{def:folWorld}) has a natural structure by a tensor, since it encodes relations between objects chosen by assignments to term variables.
+%This is different to the worlds of a propositional logic theory, which are represented by a boolean vector instead of a tensor.
+%The second level arises as in propositional logics, by understanding each world as a uncertain state and studying distributions over states, which are understood themself as a tensor (see \defref{def:probabilityDistribution}).
+%We call this the factored level, since it arises in general in the discussion of factored representations.
+
+% Database Semantics
+We exploit database semantics and assume that the domain $\worlddomain$ of each world has a one-to-one mapping to the constants of the theory.
+Database semantics is central to combine the \semanticStructure{} with the \substitutionStructure{}. % exploit the tensor structure of the substitution level.
+Under this assumption, the dimension of the \substitionStructure{} does not depend on the specific world, and we can combine both structures in the tensor space
+%Under this assumption, representation of an uncertain state, or a collection of possible states, is done in
+%the tensor space
+\begin{align*}
+    \bigotimes_{\atomenumeratorin,\shortindindices\in[\inddim]^{\indorder}} \rr^2 \, .
+\end{align*}
+
+
+
+
 %
-\sect{World Tensors}
+\sect{\SemanticStructure{}} %\sect{World Tensors}
 
 % Index interpretation of world domain
 Since first-order logic follows structured representations of a system, a first-order logic world consists in objects and relations between them.
-To each world there is a world domain $\worlddomain$ of objects, which we assume to be finite (this is a restrictive assumption).
+To each world there is a world domain $\worlddomain$ of objects, which we assume to be finite. % (this is a restrictive assumption).
 We exploit the set-encoding formalism discussed in more detail in \charef{cha:basisCalculus} and use bijective index interpretation maps
 \begin{align*}
     \indexinterpretation : [\inddim] \rightarrow \worlddomain \, .
@@ -39,7 +73,7 @@ Given a tuple $\indindexlist\in\symindstates$ the boolean
 \begin{align*}
     \groundingofat{\folpredicate}{\indexedindvariableof{0},\ldots,\indexedindvariableof{\indorder-1}} \in\ozset
 \end{align*}
-is called a grounding and encodes, whether the relation $\folpredicate$ is satisfied in the world $\dataworld$ for the objects $\invindexinterpretationat{\indindexof{0}},\ldots,\invindexinterpretationat{\indindexof{\indorder-1}}$.
+is called a grounding and encodes, whether the relation $\folpredicate$ is satisfied in the world $\dataworld$ for the objects $\indexinterpretationat{\indindexof{0}},\ldots,\indexinterpretationat{\indindexof{\indorder-1}}$.
 
 % Assumptions
 Let us assume, that we have a function-free theory with $\folpredicateorder$ predicates, where are predicates all of the same arity $\variableorder$.
@@ -51,7 +85,7 @@ We then formalize a world in the following based on a selection variable $\selva
     \begin{align}
         \dataworldwith : [\catorder] \times \left( \symindstates\right) \rightarrow [2] \, . % ! Selvariable gets catorder !
     \end{align}
-    We interpret the world tensor as encoding in the coordinate $\dataworldat{\selvariable=\catenumerator,\indexedshortindvariables}$, whether the $\catenumerator$-th predicate is satisfied on the object tuple $\invindexinterpretationat{\indindexof{0}},\ldots,\invindexinterpretationat{\indindexof{\indorder-1}}$.
+    We interpret the world tensor as encoding in the coordinate $\dataworldat{\selvariable=\catenumerator,\indexedshortindvariables}$, whether the $\catenumerator$-th predicate is satisfied on the object tuple $\indexinterpretationat{\indindexof{0}},\ldots,\indexinterpretationat{\indindexof{\indorder-1}}$.
 \end{definition}
 
 
@@ -154,25 +188,17 @@ Since the semantic of a logical formula is the set of its models, we again have 
 This correspondence between the semantics and boolean tensor is through a subset encoding (see \defref{def:subsetEncoding}) of the respective formulas.
 However, due to the large state dimensions, we will in the following sections choose a syntactical approach to the construction of formulas, which will naturally provide efficient tensor network decompositions.
 
-\subsect{Two levels of tensor representation}
-
-In comparison with propositional logics, first-order logic bears two levels of natural tensor representations.
-In the first level, which we call the structured level, each world (see \defref{def:folWorld}) has a natural structure by a tensor, since it encodes relations between objects chosen by assignments to term variables.
-This is different to the worlds of a propositional logic theory, which are represented by a boolean vector instead of a tensor.
-The second level arises as in propositional logics, by understanding each world as a uncertain state and studying distributions over states, which are understood themself as a tensor (see \defref{def:probabilityDistribution}).
-We call this the factored level, since it arises in general in the discussion of factored representations.
-As argued above, the assumption of database semantics is central to exploit the tensor structure of the substitution level.
-Under this assumption, representation of an uncertain state, or a collection of possible states, is done in the tensor space
-\begin{align*}
-    \bigotimes_{\atomenumeratorin,\shortindindices\in[\inddim]^{\indorder}} \rr^2 \,
-\end{align*}
-where the enumeration of the $2$-dimensional axes contains the tensor structure of the substitution level.
 
 
 
-\sect{Formulas in a fixed first-order logic world}
 
-Following the argumentation above, we in this section restrict to the exploitation of tensors in the structured level, namely a fixed world represented as a tensor $\dataworldwith$, see \defref{def:folWorld}.
+%\sect{Formulas in a fixed first-order logic world}
+
+\sect{\SubstitutionStructure{}}
+
+We here investigate the structure of formulas in a specific first-order logic world, which is indexed by $\dataworld$.
+
+Following the argumentation above, we in this section investigate the \substitionStructure{}, namely a fixed world represented as a tensor $\dataworldwith$, see \defref{def:folWorld}.
 We are specifically interested in the tensor network decomposition of first order formulas, which contain in full generality variables and therefore also have a tensor.
 The evaluation of a first-order formula on a specific world is therefore different to the case in propositional logics, where the evaluation was a boolean in $\ozset$ indicating whether the world is a model.
 %\red{Here we investigate grounding tensors to formulas with variables, and calculate them in a fixed world.}
