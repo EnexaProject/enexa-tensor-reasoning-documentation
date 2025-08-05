@@ -38,7 +38,8 @@
 \newcommand{\algdefsymbol}{\leftarrow}
 \newcommand{\proofrightsymbol}{"$\Rightarrow$"}
 \newcommand{\proofleftsymbol}{"$\Leftarrow$"}
-\newcommand{\wcols}{\,:\,} %where colons
+\newcommand{\defcols}{\,:\,} % in definitions of functions
+\newcommand{\wcols}{\,:\,} % in definitions of sets
 \newcommand{\ncond}{,\,} %next cond
 \newcommand{\defspace}{\quad,\quad}
 \newcommand{\andspace}{\quad\text{and}\quad}
@@ -288,14 +289,21 @@
 
 % First order Logics
 \newcommand{\folexformula}{q}
+\newcommand{\folexformulaat}[1]{\folexformula\left[#1\right]}
+\newcommand{\folexformulawith}{\folexformulaat{\worldvariables,\indvariableof{\folexformula}}}
+
  % When representing \folexformula as \importancequery \rightarrow \headfolexformula
 \newcommand{\folformulaset}{\mathcal{Q}}
 \newcommand{\folexformulain}{\folexformula\in\folformulaset}
 \newcommand{\folexformulaof}[1]{\folexformula_{#1}}
+
+\newcommand{\folformulastat}{\countquantifier\folformulaset}
 \newcommand{\restfolformulaset}{\restrictionofto{\folformulaset}{\worlddomain}}
 
 \newcommand{\enumfolformula}{\folexformulaof{\selindex}}
 \newcommand{\enumfolformulaat}[1]{\enumfolformula\left[#1\right]}
+
+\newcommand{\countquantifier}{\#}
 
 \newcommand{\headfolformula}{h}
 \newcommand{\headfolexformula}{\headfolformula}
@@ -345,8 +353,8 @@
 \newcommand{\dataworldat}[1]{\dataworld[#1]}
 \newcommand{\dataworldwith}{\dataworldat{\selvariable,\shortindvariables}}
 
-\newcommand{\randworld}{\catvariableof{\folworldsymbol}}
-\newcommand{\indexedrandworld}{\indexedcatvariableof{\folworldsymbol}}
+\newcommand{\worldvariables}{\catvariableof{\folworldsymbol}}
+\newcommand{\indexedworldvariables}{\indexedcatvariableof{\folworldsymbol}}
 
 
 \newcommand{\groundingofatwrt}[3]{{#1}|_{#3} \left[#2\right]}
@@ -372,15 +380,16 @@
 % Data Extraction Spec
 \newcommand{\impformula}{p}
 \newcommand{\fixedimpformula}{\underline{\impformula}}
-\newcommand{\fixedimpformulawith}{\underline{\impformula}\left[\indvariableof{\impformula}\right]}
-\newcommand{\fixedimpbm}{\basemeasureofat{\fixedimpformula}{\randworld}}
-\newcommand{\supportedworlds}{\dataworld \, : \, \groundingofat{\impformula}{\shortindvariables} = \fixedimpformulawith}
+\newcommand{\fixedimpformulaat}[1]{\fixedimpformula\left[#1\right]}
+\newcommand{\fixedimpformulawith}{\fixedimpformulaat{\indvariableof{\impformula}}}
+\newcommand{\fixedimpbm}{\basemeasureofat{\fixedimpformula}{\worldvariables}}
+\newcommand{\supportedworlds}{\dataworld \wcols \groundingofat{\impformula}{\shortindvariables} = \fixedimpformulawith}
 \newcommand{\impformulaat}[1]{\impformula\left[#1\right]}
 
 %\newcommand{\decgroundedimpformula}{\groundingof{\impformula}^{\mathrm{enum}}}
 
 
-\newcommand{\extformula}{q}
+\newcommand{\extformula}{g}
 \newcommand{\extformulaof}[1]{\extformula_{#1}}
 \newcommand{\extformulaofat}[2]{\extformulaof{#1}\left[#2\right]}
 \newcommand{\extformulas}{\extformulaof{0},\ldots,\extformulaof{\atomorder-1}}
@@ -567,7 +576,7 @@
 \newcommand{\mlnprobat}[1]{\expdistofat{\mlnparameters}{#1}}
 \newcommand{\mlnenergy}{\energytensorof{\mlnparameters}}
 
-\newcommand{\folmlnparameters}{\restfolformulaset,\canparam,\basemeasureof{\fixedimpformula}}
+\newcommand{\folmlnparameters}{\folformulastat,\canparam,\basemeasureof{\fixedimpformula}}
 
 % For Probabilistic Analysis
 
