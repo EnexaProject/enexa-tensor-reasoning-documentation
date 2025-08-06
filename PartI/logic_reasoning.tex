@@ -70,7 +70,7 @@ Therefore, entailment and contradiction can be decided simultaneously by a singl
     Given propositional formulas $\kb$ and $\exformula$ we build
     \begin{align*}
         \hypercoreat{\exformulavar}
-        = \contractionof{\kbat{\shortcatvariables},\formulaat{\shortcatvariables,\exformulavar}}{\exformulavar} \, .
+        = \contractionof{\kbat{\shortcatvariables},\formulaccwith}{\exformulavar} \, .
     \end{align*}
     Then $\kb\models\exformula$ is equivalent to $\hypercoreat{\exformulavar=0}=0$, and $\kb\models\lnot\exformula$ is equivalent to $\hypercoreat{\exformulavar=1}=0$ \, .
 \end{theorem}
@@ -711,12 +711,12 @@ Following this construction we have the constraint that exactly one of the atoms
 
 %% Categorical selection map
 \begin{definition}[Categorical Constraint and Atomization Variables]\label{def:catConAtomVar}
-    Given a list $\catvariableof{0},\ldots,\catvariableof{\catdim-1}$ of boolean variables and a categorical variable $\catvariable$ with dimension $\catdim$ a categorical constraint is a tensor $\categoricalmap[\catvariableof{[\catdim]},\catvariable]$ defined as
+    Given a list $\catvariableof{0},\ldots,\catvariableof{\catdim-1}$ of boolean variables and a categorical variable $\catvariable$ with dimension $\catdim$ a categorical constraint is a tensor $\categoricalcoreat{\catvariableof{[\catdim]},\catvariable}$ with coordinates
     \begin{align*}
-        \categoricalmapat{\indexedcatvariableof{[\catdim]},\indexedcatvariable}
+        \categoricalcoreat{\indexedcatvariableof{[\catdim]},\indexedcatvariable}
 %		 \categoricalmap(\catindex,\catindexof{\variableset})
         = \begin{cases}
-              1 & \ifspace \shortcatvariables = \onehotmapof{\catindex} \quad \Big(\text{i.e. }\forall \catenumerator\in[\catdim]: \big(\catindex=\catenumerator\big) \Leftrightarrow \big(\catindexof{\catenumerator}=1\big) \Big)\\
+              1 & \ifspace \shortcatindices = \onehotmapof{\catindex} \quad \Big(\text{i.e. }\forall \catenumerator\in[\catdim]: \big(\catindex=\catenumerator\big) \Leftrightarrow \big(\catindexof{\catenumerator}=1\big) \Big)\\
               0 & \text{else} \, .
         \end{cases}
     \end{align*}
@@ -724,25 +724,38 @@ Following this construction we have the constraint that exactly one of the atoms
 \end{definition}
 
 %% Decomposition
+%We notice, that the categorical constraint tensor is the basis encoding of the map $\categoricalmap \defcols [\atomorder] \rightarrow \bigtimes_{\atomenumeratorin} [2]$ defined as
+%\begin{align*}
+%    \categoricalmapat{\atomenumerator} = \onehotmapof{\atomenumerator} \, .
+%\end{align*}
+We notice, that the categorical constraint tensor is the basis encoding of the one-hot map on $[\catdim]$.
 With \theref{the:functionDecompositionBasisCP} the basis encoding $\categoricalcore$ decomposes in a basis $\cpformat$ format (see \figref{fig:CategoricalDecomposition}b) of if its coordinate maps $\categoricalmapof{\catenumerator}$, where $\catenumerator\in[\catdim]$, defined as
 \begin{align*}
-    \categoricalmapofat{\catenumerator}{\indexedcatvariableof{\catenumerator},\indexedcatvariable}
+    \categoricalmapofat{\atomenumerator}{\secatomenumerator}
     = \begin{cases}
-          1 & \text{if} \quad \catindex=\catenumerator \quad \text{and} \quad \catindexof{\catenumerator} = 1 \\
-          1 & \text{if} \quad \catindex\neq\catenumerator \quad \text{and} \quad \catindexof{\catenumerator} = 0 \\
+          1 & \ifspace \seccatenumerator=\atomenumerator \\
           0 & \text{else} \, .
-    \end{cases}
+      \end{cases}
 \end{align*}
+%
+%\begin{align*}
+%    \categoricalmapofat{\catenumerator}{\indexedcatvariableof{\catenumerator},\indexedcatvariable}
+%    = \begin{cases}
+%          1 & \text{if} \quad \catindex=\catenumerator \quad \text{and} \quad \catindexof{\catenumerator} = 1 \\
+%          1 & \text{if} \quad \catindex\neq\catenumerator \quad \text{and} \quad \catindexof{\catenumerator} = 0 \\
+%          0 & \text{else} \, .
+%    \end{cases}
+%\end{align*}
 Their basis encoding are decomposed as
 \begin{align}
     \categoricalcoreofat{\catenumerator}{\catvariableof{\catenumerator},\catvariable}
     = \onehotmapofat{1}{\catvariableof{\catenumerator}} \otimes \onehotmapofat{\catenumerator}{\catvariable}
     + \onehotmapofat{0}{\catvariableof{\catenumerator}} \otimes \big(\onesat{\catvariable}- \onehotmapofat{\catenumerator}{\catvariable}\big) \, .
 \end{align}
-We further have by \theref{the:functionDecompositionBasisCP}
+We thus have by \theref{the:functionDecompositionBasisCP}
 \begin{align*}
     \bencodingofat{\categoricalmap}{\catvariableof{[\catdim]},\catvariable}
-    = \contractionof{\{\categoricalcoreofat{\catenumerator}{\catvariableof{\catenumerator},\catvariable} \, : \, \catindex\in[\catdim]\}}{\catvariable, \catvariableof{0}, \ldots, \catvariableof{\catdim-1}} \, .
+    = \contractionof{\left\{\categoricalcoreofat{\catenumerator}{\catvariableof{\catenumerator},\catvariable} \wcols \catindex\in[\catdim]\right\}}{\catvariable, \catvariableof{0}, \ldots, \catvariableof{\catdim-1}} \, .
 \end{align*}
 
 
@@ -751,7 +764,7 @@ In the next theorem we show how a categorical constraint can be enforced in a te
 \begin{theorem}
     For any tensor $\hypercoreat{\shortcatvariables}$ and a categorical constraint defined by an ordered subset $\catvariableof{\variableset}\subset\shortcatvariables$, a variable $\catvariable\in\shortcatvariables$ we have
     \begin{align*}
-        \contractionof{\hypercoreat{\shortcatvariables},\categoricalmapat{\catvariableof{\variableset},\catvariable}}{\indexedcatvariables}
+        \contractionof{\hypercoreat{\shortcatvariables},\categoricalcoreat{\catvariableof{\variableset},\catvariable}}{\indexedcatvariables}
         = \begin{cases}
               \hypercoreat{\indexedcatvariables} & \text{if} \quad \exists \catindex : \catindexof{\variableset} = \onehotmapof{\catindex} \\
               0 & \text{else} \, .
@@ -761,14 +774,14 @@ In the next theorem we show how a categorical constraint can be enforced in a te
 \end{theorem}
 \begin{proof}
     For any $\catindexof{[\atomorder]}$ we have
-    \[ \contractionof{\{\hypercoreat{\shortcatvariables}, \categoricalmap\}}{\indexedcatvariables}  =
-    \hypercoreat{\shortcatindices} \cdot \categoricalmap[\indexedcatvariableof{\variableset},\indexedcatvariable] \, .
+    \[ \contractionof{\{\hypercoreat{\shortcatvariables},\categoricalcoreat{\catvariableof{\variableset},\catvariable}\}}{\indexedcatvariables}  =
+    \hypercoreat{\shortcatindices} \cdot \categoricalcoreat{\indexedcatvariableof{\variableset},\indexedcatvariable} \, .
     \]
-    If $\catindexof{\variableset} = \onehotmapof{\catindex}$ for some $\catindex\in[\cardof{\variableset}]$ we have $\categoricalmap[\indexedcatvariableof{\variableset},\indexedcatvariable] = 1$ and thus
-    \[ \contractionof{\hypercoreat{\shortcatvariables},\categoricalmap}{\indexedcatvariables}  =  \hypercoreat{\shortcatindices}  \, . \]
-    If there is no such $\catindex$ then $\categoricalmap[\indexedcatvariableof{\variableset},\indexedcatvariable] = 0$ and
+    If $\catindexof{\variableset} = \onehotmapof{\catindex}$ we have $\categoricalmap[\indexedcatvariableof{\variableset},\indexedcatvariable] = 1$ and thus
+    \[ \contractionof{\hypercoreat{\shortcatvariables},\categoricalcoreat{\catvariableof{\variableset},\catvariable}}{\indexedcatvariables}  =  \hypercoreat{\shortcatindices}  \, . \]
+    If this is not the case then $\categoricalcoreat{\indexedcatvariableof{\variableset},\indexedcatvariable} = 0$ and
     \begin{align*}
-        \contractionof{\hypercoreat{\shortcatvariables},\categoricalmap}{\indexedcatvariables}  = 0 \, . & \qedhere
+        \contractionof{\hypercoreat{\shortcatvariables},\categoricalcoreat{\catvariableof{\variableset},\catvariable}}{\indexedcatvariables}  = 0 \, . & \qedhere
     \end{align*}
 \end{proof}
 
