@@ -1,22 +1,32 @@
 \chapter{\chatextfolModels}\label{cha:folModels}
 
-Worlds in \firstOrderLogic{} contain objects, which have relations between each others.
+We in this chapter extend the tensor network based treatment of \propositionalLogic{} towards \firstOrderLogic{}.
+In contrast to \propositionalLogic{}, worlds in \firstOrderLogic{} contain objects, which have relations between each others.
 We show in this chapter, how these relations are captured by the \substitutionStructure{} of each world and derive tensor representations of each world.
 The \substitutionStructure{} is then combined with the \semanticStructure{}, which enumerates possible worlds in a theory.
 We then generalize \HybridLogicNetworks{} to the situation of \firstOrderLogic{}s and show in particular, that the likelihood of \HybridLogicNetworks{} on a single \firstOrderLogic{} world is in some cases equivalent to the likelihood of a dataset in propositoinal logics.
 
-
-
-
 \sect{Syntax and Semantics of \firstOrderLogic{}}
 
-A \firstOrderLogic{} theory consists in a set of constants $\worlddomain$, a set of predicates $\{\folpredicateof{\atomenumerator}\wcols\atomenumeratorin\}$ which have arity $\indorderof{\atomenumerator}$.
+%Since \firstOrderLogic{} follows structured representations of a system, a \firstOrderLogic{} world consists in objects and relations between them.
+The framework of \firstOrderLogic{} generalizes \propositionalLogic{} analogously to the generalization of factored system representations towards structured system representations \cite{russell_artificial_2021}.
+This more expressive framework is designed to reason about relations and functions between objects.
+To capture this framework by tensors we here first define the syntax and then investigate tensor representations of the semantics.
 
-\subsect{Objects and relations}
+\subsect{Syntax}
+
+A \firstOrderLogic{} theory consists in a finite set of constant symbols $\worlddomain$, a set of function symbols $\{\folfunctionof{\secatomenumerator}\wcols\secatomenumeratorin\}$, a set of predicate symbols $\{\folpredicateof{\atomenumerator}\wcols\atomenumeratorin\}$ and an arity map assigning the arity $\indorderof{\secatomenumerator}$ to the function $\folfunctionof{\secatomenumerator}$ and the arity $\indorderof{\atomenumerator}$ to the predicate $\folpredicateof{\atomenumerator}$.
+
+\subsect{Tensor representation of semantics}
+
+We here follow the model-theoretic semantics of \firstOrderLogic{}, where sets of possible worlds are considered.
+% Database
+We only treat in this work database semantics, where we assume that the domain $\worlddomain$ of each world has a one-to-one mapping to the constants of the theory and is therefore constant among the worlds.
+Database semantics is central to combine the \semanticStructure{} with the \substitutionStructure{}.
+Under this assumption, the dimension of the \substitutionStructure{} does not depend on the specific world, and we can combine both structures in a single tensor space to be defined in the next sections.
 
 % Index interpretation of world domain
-Since \firstOrderLogic{} follows structured representations of a system, a \firstOrderLogic{} world consists in objects and relations between them.
-To each world there is a world domain $\worlddomain$ of objects, which we assume to be finite. % (this is a restrictive assumption).
+To each world there is a world domain $\worlddomain$ of objects, which we assume to be finite.
 We exploit the set-encoding formalism discussed in more detail in \charef{cha:basisCalculus} and use bijective index interpretation maps
 \begin{align*}
     \indexinterpretation \defcols [\inddim] \rightarrow \worlddomain \, .
@@ -26,9 +36,9 @@ A so-called term variable $\indvariable$ takes states $\indindexin$, which repre
     \indexinterpretationat{\indindex} \in \worlddomain \, .
 \end{align*}
 
-%
+% Relations
 The relations between objects are described by $\indorder$-ary predicates $\folpredicate$.
-Given a specific world $\dataworld$ the truth of relations is represented by boolean tensors
+Given a specific world $\worldindices$ the truth of relations is represented by boolean tensors
 \begin{align*}
     \groundingof{\folpredicate} \defcols \symindstates\rightarrow\ozset \, .
 \end{align*}
@@ -36,89 +46,70 @@ Given a tuple $\indindexlist\in\symindstates$ the boolean
 \begin{align*}
     \groundingofat{\folpredicate}{\indexedindvariableof{0},\ldots,\indexedindvariableof{\indorder-1}} \in\ozset
 \end{align*}
-is called a grounding and encodes, whether the relation $\folpredicate$ is satisfied in the world $\dataworld$ for the objects $\indexinterpretationat{\indindexof{0}},\ldots,\indexinterpretationat{\indindexof{\indorder-1}}$.
+is called a grounding and encodes, whether the relation $\folpredicate$ is satisfied in the world $\worldindices$ for the objects $\indexinterpretationat{\indindexof{0}},\ldots,\indexinterpretationat{\indindexof{\indorder-1}}$.
 
-\subsect{Database semantics}
+% Functions
+Functions in \firstOrderLogic{} are object-valued maps
+\begin{align*}
+    \groundingof{\folfunction}\defcols \worlddomain^{\inddim} \rightarrow \worlddomain \, .
+\end{align*}
+While relations are represented by their coordinate encodings, functions are represented by directed basis encodings
+\begin{align*}
+    \bencodingofat{\groundingof{\folfunction}}{\indvariableof{\folfunction},\shortindvariables}
+\end{align*}
+where to each object tuple $\indexinterpretationat{\indindexof{0}},\ldots,\indexinterpretationat{\indindexof{\indorder-1}}$ the vector $\bencodingofat{\groundingof{\folfunction}}{\indvariableof{\folfunction},\indexedshortindvariables}$ is the one-hot encoding of the object, that is
+\begin{align*}
+   \bencodingofat{\groundingof{\folfunction}}{\indvariableof{\folfunction},\indexedshortindvariables}
+   = \onehotmapofat{\groundingofat{\folfunction}{\indexinterpretationat{\indindexof{0}},\ldots,\indexinterpretationat{\indindexof{\indorder-1}}}}{\indvariableof{\folfunction}} \, .
+\end{align*}
+
+
+%\subsect{Database semantics}
 
 % Database Semantics
-We exploit database semantics and assume that the domain $\worlddomain$ of each world has a one-to-one mapping to the constants of the theory.
-Database semantics is central to combine the \semanticStructure{} with the \substitutionStructure{}.
-Under this assumption, the dimension of the \substitutionStructure{} does not depend on the specific world, and we can combine both structures in the tensor space
-\begin{align*}
-    \bigotimes_{\atomenumeratorin,\shortindindices\in[\inddim]^{\indorder}} \rr^2 \, .
-\end{align*}
+%\begin{align*}
+%    \bigotimes_{\atomenumeratorin,\shortindindices\in[\inddim]^{\indorder}} \rr^2 \, .
+%\end{align*}
 
 \subsect{Two levels of tensor representation}
 
-In comparison with propositional logics, \firstOrderLogic{} bears two natural tensor structures.
+In comparison with \propositionalLogic{}, \firstOrderLogic{} bears two natural tensor structures.
 \begin{itemize}
-    \item \textbf{\SemanticStructure{}:} As in propositional logics, we enumerate possible worlds using variables $\catvariable$.
+    \item \textbf{\SemanticStructure{}:} As in \propositionalLogic{}, we enumerate possible worlds by a collection of variables $\catvariable$.
+    This is a representation of the model-theoretic semantics, where subsets of worlds are represented by boolean tensors.
     \item \textbf{\SubstitutionStructure{}:}
-    Different to propositional logics, a formula can have variables and the evaluation of a formula on a world is a substitution tensor.
-    Given a world which contains objects in the domain $\worlddomain$, we can substitute variables by objects in the domain. In this way, each predicate with $n$ variables is represented in that world as a tensor of order $n$.
+    Different to \propositionalLogic{}, a formula can have variables and the evaluation of a formula on a world is represented by its grounding tensor.
+    Given a world which contains objects in the domain $\worlddomain$, we can substitute variables by objects in the domain.
+    In this way, each predicate with $\inddim$ variables is represented in that world as a boolean tensor of order $\inddim$.
 \end{itemize}
-
 % Russel reference
-While the \semanticStructure{} appears already in factored representations of systems, the \substitutionStructure{} arises in addition when treating structured representations of systems.
+While the \semanticStructure{} appears already in factored representations of systems, the \substitutionStructure{} arises in more generality when treating structured representations of systems \cite{russell_artificial_2021}.
 
 
-%In the first level, which we call the structured level, each world (see \defref{def:folWorld}) has a natural structure by a tensor, since it encodes relations between objects chosen by assignments to term variables.
-%This is different to the worlds of a propositional logic theory, which are represented by a boolean vector instead of a tensor.
-%The second level arises as in propositional logics, by understanding each world as a uncertain state and studying distributions over states, which are understood themself as a tensor (see \defref{def:probabilityDistribution}).
-%We call this the factored level, since it arises in general in the discussion of factored representations.
-
-
-
-
-
-
-
-%\sect{Formulas in a fixed \firstOrderLogic{} world}
 
 \sect{\SubstitutionStructure{}}
 
-% Formulas in FOL
-%Formulas in \firstOrderLogic{} can contain variables, which are placeholder for specific individuals.
-%Given a model and an assignment of objects to the arguments of a formula, the truth of the formula can be interpreted.
-%This truth interpretation defines thus for any model a tensor, which we call the grounding tensor.
-
-We here investigate the structure of formulas in a specific \firstOrderLogic{} world, which is indexed by $\dataworld$.
-
-Following the argumentation above, we in this section investigate the \substitutionStructure{}, namely a fixed world represented as a tensor $\dataworldwith$, see \defref{def:folWorld}.
-We are specifically interested in the tensor network decomposition of first order formulas, which contain in full generality variables and therefore also have a tensor.
-The evaluation of a first-order formula on a specific world is therefore different to the case in propositional logics, where the evaluation was a boolean in $\ozset$ indicating whether the world is a model.
-%\red{Here we investigate grounding tensors to formulas with variables, and calculate them in a fixed world.}
-% Arbitrary formulas
+We in this section investigate the structure of terms and formulas in a single \firstOrderLogic{} world, which we for now index by $\worldindices$.
+As we have derived in \charef{cha:logicalRepresentation} for \propositionalLogic{}, we develop efficient tensor network representations of the representing tensors based on the corresponding syntax.
 
 \subsect{Grounding tensors}
 
-Given a \firstOrderLogic{} world $\dataworldwith$, arbitrary formulas are interpreted in terms of the satisfactions of their groundings.
-We define their semantic first, and then relate their syntactical decomposition to tensor networks, similar to our approach to propositional logics in \charef{cha:logicalRepresentation}.
+Given a \firstOrderLogic{} world $\worldindices$, arbitrary formulas are interpreted in terms of the satisfactions of their groundings.
+We define their semantic first, and then relate their syntactical decomposition to tensor networks, similar to our approach to \propositionalLogic{} in \charef{cha:logicalRepresentation}.
 
 \begin{definition}[Grounding of a first-order formula given a world]
-    Given a specific world $\dataworld$, with an domain $\worlddomain$ enumerated by $[\inddim]$, the grounding of a formula $\folexformula$ with variables $\indvariableof{\folexformula}$  is the tensor
+    Given a specific world $\worldindices$, with a domain $\worlddomain$ enumerated by $[\inddim]$, the grounding of a formula $\folexformula$ with variables $\indvariableof{\folexformula}$  is the tensor
     \begin{align*}
         \groundingofat{\folexformula}{\indvariableof{\folexformula}} :
         \bigtimes_{\indenumerator\in[\indvariableof{\folexformula}]} [\inddim] \rightarrow \ozset \, .
     \end{align*}
-    Each coordinate represents thereby the boolean, whether the substitution of the variables in the formula is satisfied given a world $\dataworld$, that is
+    Each coordinate represents thereby the boolean, whether the substitution of the variables in the formula is satisfied given a world $\worldindices$, that is
     \begin{align*}
         \groundingofat{\folexformula}{\indexedindvariableof{\folexformula}} = 1
     \end{align*}
-    if and only if the substitution of $\folexformula$ with the variables $\indvariableof{\folexformula}$ replaced by the objects $\indexinterpretationat{\indindexof{\indenumerator}}$ is satisfied on the world $\dataworld$.
+    if and only if the substitution of $\folexformula$ with the variables $\indvariableof{\folexformula}$ replaced by the objects $\indexinterpretationat{\indindexof{\indenumerator}}$ is satisfied on the world $\worldindices$.
 \end{definition}
 
-% Comment: Formulas as maps to
-The grounding tensor formalism can be used to define formulas as a map
-\begin{align*}
-    \folexformula : \left(\bigotimes_{\atomenumeratorin,\shortindindices\in[\inddim]^{\indorder}}\rr^{2}\right)
-    \rightarrow \left(\bigotimes_{\atomenumeratorin,\indindexof{\folexformula}\in[\inddim]^{\cardof{\indvariableof{\folexformula}}}}\rr^{2}\right)
-\end{align*}
-where each world $\dataworld$ is mapped to a grounding tensor
-\begin{align*}
-    \folexformula(\dataworld) = \groundingof{\folexformula} \, .
-\end{align*}
-This would involve the factored level of tensor interpretation, namely representation of all possible worlds.
 
 %% Basis encoding
 %When interpreting this map as a basis encoding, formulas are tensors in the tensor space
@@ -127,13 +118,18 @@ This would involve the factored level of tensor interpretation, namely represent
 %	\left(  \bigotimes_{\atomenumeratorin, \indindexof{0},\ldots,\indindexof{\indorder_{\folexformula}}\in[\inddim]} \rr^{2} \right) \, .
 %\end{align*}
 
-\subsect{Atomic formulas}
+\subsect{Terms}
 
-Atomic formulas in \firstOrderLogic{}s are predicates, which are applied on terms.
+Terms are object valued maps on $\worlddomain^{n}$.
+The basis encoding of each term corresponds is a boolean and directed tensor.
+% Constants: Functions with $n=0$
+Constants are the functions with $n=0$, and are represented by basis vectors in $\rr^{\cardof{\worlddomain}}$.
+Given database semantics, this basis vector does not vary among different worlds.
+% General terms
+Most general terms are combinations of functions and constants and their basis encodings are acyclic contractions of basis encodings to functions.
 
 
 %\subsect{Substitution by slicing}
-
 % Slicing interpretation
 %Slicing the grounding tensor of a formula a first-order formula amounts to substitution of the respective variable by the constant at the enumeration index.
 
@@ -141,14 +137,12 @@ Atomic formulas in \firstOrderLogic{}s are predicates, which are applied on term
 
 \subsect{Formula synthesis by connectives}\label{sec:folConnectiveRepresentation}
 
-In order to have a sound semantic, the grounding of FOL formulas is determined by the syntax of the formula, i.e. a decomposition of the formula into connectives and quantifiers acting on atomic formulas.
+In order to have a sound semantic, the grounding of \firstOrderLogic{} formulas is determined by the syntax of the formula, i.e. a decomposition of the formula into connectives and quantifiers acting on atomic formulas.
 
 % Formulas as maps from worlds to groundings
 Quantifier-free formulas are connectives acting on atomic formulas.
-We can describe them as in the case of propositional logics in the $\bencodingof{}$-formalism.
+We can describe them as in the case of \propositionalLogic{} in the $\bencodingof{}$-formalism.
 While the atomic formulas where delta tensors copying states, they are more involved here.
-
-
 
 \begin{theorem}
     For any connective $\exconnective$ and formulas $\folexformula_1$ and $\folexformula_2$ we have
@@ -180,7 +174,7 @@ When interpreting the head variables of relational encoded atomic formulas as th
 
 \begin{definition}
     \label{def:propositionalEquivalent}
-    Given a formula $\folexformula$ in \firstOrderLogic{}, we say that a propositional formula $\formulaat{\shortcatvariables}$ is the propositional equivalent to $\folexformula$ given atomic formulas $\extformulaof{\atomenumerator}$ in \firstOrderLogic{}, when for any world $\dataworld$ we have
+    Given a formula $\folexformula$ in \firstOrderLogic{}, we say that a propositional formula $\formulaat{\shortcatvariables}$ is the propositional equivalent to $\folexformula$ given atomic formulas $\extformulaof{\atomenumerator}$ in \firstOrderLogic{}, when for any world $\worldindices$ we have
     \begin{align*}
         \groundingofat{\folexformula}{\indvariableof{\folexformula}}
         = \contractionof{
@@ -322,7 +316,7 @@ Most logical syntaxes exploit $\ell_0$-sparsity, explicitly storing only known a
 The interpretation of unspecified assertions depends on the underlying assumptions.
 Under the Closed World Assumption, for example, all unspecified assertions are assumed to be false.
 
-\begin{figure}[h]
+\begin{figure}[t]
     \begin{center}
         \input{./PartII/tikz_pics/fol_models/grounding_decomposition.tex}
     \end{center}
@@ -331,10 +325,32 @@ Under the Closed World Assumption, for example, all unspecified assertions are a
     \label{fig:groundingCP}
 \end{figure}
 
-\subsect{Queries}
+\subsect{Summary}
 
-A database is understood as a specific fist order logic world, and are operations on such a single world.
-Queries are described by a formula $\impformula$, which are asked against a specific world $\dataworld$ to retrieve the grounding $\groundingof{\impformula}$.
+Let us summarize the tensor encodings of the representations of the different concepts, given a single \firstOrderLogic{} world:
+\begin{center}
+    \begin{tabular}{|p{\threecolumnwidth}|p{\threecolumnwidth}|p{\threecolumnwidth}|}
+        \hline
+        \textbf{Concept} & \textbf{Representation} & \textbf{Decomposition} \\
+        \hline
+        Constant Symbol & Basis vector & \\
+        \hline
+        Function Symbol & \BasisEncoding{}: Boolean and directed tensor & \\
+        Term & "" & Acyclic tensor network of represented functions \\
+        \hline
+        Predicate Symbol & \CoordinateEncoding{}: Boolean tensor & \\
+%        Relation & Boolean tensor \\
+        Quantifier-free Formula & "" & Contraction of represented terms with relations \\
+        Formula & "" & Transform of corresponding quantifier-free formula  \\
+        \hline
+    \end{tabular}
+\end{center}
+
+
+\subsect{Example: Relational Databases}
+
+A database is understood as a specific \firstOrderLogic{} world, and are operations on such a single world.
+Queries are described by a formula $\impformula$, which are asked against a specific world $\worldindices$ to retrieve the grounding $\groundingof{\impformula}$.
 The variables of such formulas are called projection variables.
 The answer $\groundingof{\impformula}$ of a query is most conveniently represented as a list of solution mappings from the projection variables to objects in the world, such that the query formula is satisfied.
 Answering a query by solution mappings corresponds with finding the basis CP Decomposition (see \secref{sec:basisCP}) of $\groundingof{\impformula}$.
@@ -343,7 +359,7 @@ We can understand these solution mappings as stored in the leg-matrices $\legcor
 Let us give with the outer join an example of a popular operation to define queries, which efficient execution and storage can be improved based on considerations in the tensor network formalism.
 
 \begin{definition}[Outer join]
-    Let there be a world $\dataworld$ and formulas $\extformulaof{\selindex}$ depending on variables $\indvariableof{\nodesof{\selindex}}$, which have grounding tensors by
+    Let there be a world $\worldindices$ and formulas $\extformulaof{\selindex}$ depending on variables $\indvariableof{\nodesof{\selindex}}$, which have grounding tensors by
     \begin{align*}
         \groundingofat{\extformulaof{\selindex}}{\indvariableof{\node}} \, : \,  \bigtimes_{\node\in\nodesof{\selindex}}[\inddimof{\node}] \rightarrow \ozset \, .
     \end{align*}
@@ -392,95 +408,89 @@ Here the groundings $\groundingof{\extformulaof{\selindex}}$ would be used to in
 
 
 
-%
-\sect{\SemanticStructure{}} %\sect{World Tensors}
+\sect{\SemanticStructure{}}
 
-Let us now investigate how collections of worlds can be represented in a tensor space.
-We call this the \semanticStructure{} of a \firstOrderLogic{} theory, in the sense that all models of the theory are simultaneously represented in a tensor.
+We now investigate the \semanticStructure{} of a \firstOrderLogic{} theory, when restricting to database semantics.
+This involves the representation of collections of worlds, where each has a \substitutionStructure{} as discussed above.
 
-% Assumptions
-Let us assume, that we have a function-free theory with $\folpredicateorder$ predicates, where are predicates all of the same arity $\variableorder$.
-We then formalize a world in the following based on a selection variable $\selvariable$ selecting a specific predicate and term variables $\shortindvariablelist=\indvariablelist$ representing choices of objects from a given set $\worlddomain$.
+\subsect{World enumerating variables}
 
-\begin{definition}[FOL World]
-    \label{def:folWorld}
-    Given a set of objects $\worlddomain$ enumerated by an index interpretation function $\indexinterpretation:[\inddim]\rightarrow \worlddomain$ and a finite set $\{\folpredicates\}$ of $\variableorder$-ary predicates a world is a boolean tensor
-    \begin{align}
-        \dataworldwith : [\catorder] \times \left( \symindstates\right) \rightarrow [2] \, . % ! Selvariable gets catorder !
-    \end{align}
-    We interpret the world tensor as encoding in the coordinate $\dataworldat{\selvariable=\catenumerator,\indexedshortindvariables}$, whether the $\catenumerator$-th predicate is satisfied on the object tuple $\indexinterpretationat{\indindexof{0}},\ldots,\indexinterpretationat{\indindexof{\indorder-1}}$.
-\end{definition}
+Given database semantics, we have a finite set of worlds, which we enumerate by tuples of variables $\catvariable$.
 
-
-% Inclusion of functions, predicates of differing order
-When the assumptions of function-free and constant variable order are not met, we can do the following tricks.
-Functions are turned to predicates by their relation interpretation.
-If there are predicates of different arity in the theory, we can trivially extend them to $\variableorder$ary predicates by tensor products with the trivial tensor $\ones$.
-This can be done by a tensor product with $\onehotmapofat{\inddim}{\indvariable}$, where we add an auxiliary object $\indexinterpretationof{\inddim}$ as a placeholder for predicates with smaller arity.
-
-% Finite worlds -> By database semantics?
-While in \firstOrderLogic{}s, depending on the chosen semantics, worlds can have infinite sets of objects, we here only treat worlds with finite objects.
-
-
-\subsect{Atomic formulas}
-
-Atomic formulas in \firstOrderLogic{} are predicates, which are applied on terms.
-We restrict in this chapter to function-free logic, therefore terms are either constants or variables.
-%The predicates itself are the simplest cases of first-order formulas with term variables.
-% Atomic
-If all arguments of a predicate are assigned by free variables, the corresponding grounding tensor is stored in the slices to the first axis of $\dataworld$ and we have
-\begin{align}
-    \groundingof{\folpredicateof{\folpredicateenumerator}} =
-    \contractionof{\dataworldat{\selvariable,\shortindvariablelist},\onehotmapofat{\folpredicateenumerator}{\selvariable}}{\shortindvariablelist} \, .
-\end{align}
-In contrast, when a constant object $\indexinterpretationof{\indindex}$ is assigned to an argument of a predicate, the grounding tensor reduced to a slice of the grounding with exclusively free variables.
-We capture such slicings by contractions with one-hot encodings of the corresponding constant.
-
-We formalize this approach by atom creating tensors, which contraction with the world tensor results in the grounding of the corresponding atomic formula.
-
-\begin{definition}\label{def:atomCreatingTensor}
-    Let there be an atomic formula $\folexformula$, which is constructed using the $\selindex$-th predicate and has constants assigned on the arguments $\arbsetof{C}\subset[\indorder]$ and free variables to the arguments $\arbsetof{V}=[\indorder]/\arbsetof{C}$.
-    Let the constant map $C: \arbsetof{C}\subset[\indorder] \rightarrow [\inddim]$ map to the specific objects represented by the constant and $V: \arbsetof{V}\subset[\indorder] \rightarrow \nodes$ to free variables labeled by a set $\nodes$.
-    Then the atom creating tensor to $\folexformula$ is
+\begin{definition}[World enumerating variables]\label{def:worldEnumeratingVariables}
+    Given a \firstOrderLogic{} theory with constant symbols $\worlddomain$, function symbols $\{\folfunctionof{\secatomenumerator}\wcols\secatomenumeratorin\}$ and predicate symbols $\{\folpredicateof{\atomenumerator}\wcols\atomenumeratorin\}$, we enumerate the world under database semantics by a tuple
     \begin{align*}
-        \atomcreatorofat{\folexformula}{\indvariableof{V(\arbsetof{V})}}
-        = \onehotmapofat{\selindex}{\selvariable} \otimes
-        \left( \bigotimes_{\indenumerator\in\arbsetof{C}} \onehotmapofat{C(\indenumerator)}{\indvariableof{\indenumerator}} \right) \otimes
-        \left( \bigotimes_{\indenumerator\in\arbsetof{V}} \identityat{\indvariableof{V(\indenumerator)},\indvariableof{\indenumerator}} \right) \, .
+        \worldvariables
+        = \left(\bigtimes_{\seccatenumeratorin}\bigtimes_{\indindexof{\seccatenumerator}\in[\inddim]^{\indorderof{\seccatenumerator}+1}} \catvariableof{\seccatenumerator,\indindexof{\seccatenumerator}} \right)
+        \times \left(\bigtimes_{\catenumeratorin}\bigtimes_{\indindexof{\catenumerator}\in\in[\inddim]^{\indorderof{\catenumerator}}} \catvariableof{\catenumerator,\indindexof{\catenumerator}} \right)
+    \end{align*}
+    of boolean variables.
+    In the world indexed by $\worldindices$, the grounding tensor of the function $\folfunctionof{\secatomenumerator}$ is
+    \begin{align*}
+        \bencodingofat{\groundingof{\folfunctionof{\secatomenumerator}}}{\indvariableof{\secatomenumerator},\indvariableof{[\inddimof{\secatomenumerator}]}}
+        = \sum_{\indindexof{\seccatenumerator}\in[\inddim]^{\indorderof{\seccatenumerator}+1}\wcols\indindexof{\seccatenumerator}=1} \onehotmapofat{\indindexof{\seccatenumerator}}{\indvariableof{\seccatenumerator}}
+    \end{align*}
+    and of the predicate $\folpredicateof{\atomenumerator}$
+    \begin{align*}
+        \groundingofat{\folpredicateof{\atomenumerator}}{\indvariableof{[\inddimof{\atomenumerator}]}}
+        = \sum_{\indindexof{\seccatenumerator}\in[\inddim]^{\indorderof{\atomenumerator}}\wcols\indindexof{\atomenumerator}=1}
+        \onehotmapofat{\indindexof{\atomenumerator}}{\indvariableof{\atomenumerator}} \, .
     \end{align*}
 \end{definition}
 
-The ground of the atom is then the contraction of the atom creating tensor with the world tensor, that is
+We further have the restriction that each basis encoded function is a directed tensor.
+To restrict to those worlds, where this is true, we further introduce the validation base measure $\basemeasureat{\worldvariables}$ with coordinates
 \begin{align*}
-    \groundingofat{\folexformula}{\indvariableof{V(\arbsetof{V})}}
-    = \contractionof{\dataworldwith, \atomcreatorofat{\folexformula}{\indvariableof{\nodes}}}{\indvariableof{V(\arbsetof{V})}} \, .
+    \basemeasureat{\indexedworldvariables} =
+    \begin{cases}
+        1 & \ifspace \uniquantwrtof{\secatomenumeratorin}{\sum_{\indindexof{\secatomenumerator}\in[\inddim]^{\indorderof{\seccatenumerator}+1}}=1} \\
+        0 & \text{else}
+    \end{cases} \, .
 \end{align*}
 
+\subsect{Representation of terms and formulas}
 
-% Predicates as objects
-What is more abstract, we can understand the predicate itself as an object, then take the first-order world as a grounding tensor of a more abstract formula.
-We will follow this thought in the ternary representation of Knowledge Graphs in \secref{subsec:knowledgeGraphTernaryRep}.
-
-
-\subsect{\firstOrderLogic{} formulas}
-
-Combining its \substitutionStructure{} and \semanticStructure{} we represent a \firstOrderLogic{} formula as the tensor
+Combining its \substitutionStructure{} and \semanticStructure{} we represent a \firstOrderLogic{} term $\folterm$ with arity $\inddimof{\folterm}$ as a tensor
 \begin{align*}
-    \folexformulawith \defcols
-    \sum_{\dataworld} \onehotmapofat{\dataworld}{\worldvariables} \otimes \groundingofat{\folexformula}{\indvariableof{\folexformula}} \, .
+    \bencodingofat{\folterm}{\indvariableof{\folterm},\indvariableof{[\inddimof{\folterm}]},\worldvariables} =
+    \sum_{\worldindices\wcols\basemeasureat{\indexedworldvariables}=1}
+    \bencodingofat{\groundingof{\folterm}}{\indvariableof{\folterm},\indvariableof{[\inddimof{\folterm}]}}
+    \otimes \onehotmapofat{\worldindices}{\worldvariables} \, .
+\end{align*}
+and a formula as the tensor
+\begin{align*}
+    \folexformulawith =
+    \sum_{\worldindices\wcols\basemeasureat{\indexedworldvariables}=1} \groundingofat{\folexformula}{\indvariableof{\folexformula}}
+    \otimes \onehotmapofat{\worldindices}{\worldvariables} \, .
 \end{align*}
 
-
-
-\subsect{Case of Propositional Logics}
-
-%
-Before continuing with the one-hot encoding of \firstOrderLogic{} worlds, let us show that the previously discussed formalism of propositional logics (see \charef{cha:logicalRepresentation}) is a special case of \firstOrderLogic{}, namely when demanding $\indorder=0$.
-Consistent with \defref{def:folWorld} we have a propositional logic world by
+From \defref{def:worldEnumeratingVariables} the representation of predicate and function symbols are directly derived from the $\worldvariables$, that is
 \begin{align*}
-    \dataworld: [\catorder] \rightarrow [2] \, ,
+    \folpredicateofat{\atomenumerator}{\indvariableof{[\inddimof{\atomenumerator}]},\indexedworldvariables}
+    = \sum_{\indindexof{\seccatenumerator}\in[\inddim]^{\indorderof{\seccatenumerator}+1}\wcols\indindexof{\seccatenumerator}=1}
+    \onehotmapofat{\indindexof{\seccatenumerator}}{\indvariableof{\seccatenumerator}}
 \end{align*}
-which we have in \charef{cha:logicalRepresentation} represented by the assignments $\catindexof{\atomenumerator} = \dataworldat{\selvariable=\atomenumerator}$ to the categorical variables $\catvariableof{\atomenumerator}$.
+and
+\begin{align*}
+        \bencodingofat{\folfunctionof{\secatomenumerator}}{\indvariableof{\secatomenumerator},\indvariableof{[\inddimof{\secatomenumerator}]},\indexedworldvariables}
+        = \sum_{\indindexof{\seccatenumerator}\in[\inddim]^{\indorderof{\seccatenumerator}+1}\wcols\indindexof{\seccatenumerator}=1} \onehotmapofat{\indindexof{\seccatenumerator}}{\indvariableof{\seccatenumerator}}
+\end{align*}
+
+\subsect{Case of \propositionalLogic{}}
+
+\PropositionalLogic{} as discussed in (see \charef{cha:logicalRepresentation}) is the special case of \firstOrderLogic{} with empty sets of constant and function symbols, and $\indorderof{\atomenumerator}=0$ for the predicate symbols.
+With the convention $[]^{0}=[2]$ the worlds are enumerated by the tuple
+\begin{align*}
+    \worldvariables = \bigtimes_{\atomenumeratorin} \catvariableof{\atomenumerator}
+\end{align*}
+which we have in previous chapters abbreviated by $\shortcatindices$.
+
+%Before continuing with the one-hot encoding of \firstOrderLogic{} worlds, let us show that the previously discussed formalism of \propositionalLogic{} (see \charef{cha:logicalRepresentation}) is a special case of \firstOrderLogic{}, namely when demanding $\indorder=0$.
+%Consistent with \defref{def:folWorld} we have a propositional logic world by an index
+%\begin{align*}
+%    \worldindices: [\catorder] \rightarrow [2] \, ,
+%\end{align*}
+%which we have in \charef{cha:logicalRepresentation} represented by the assignments $\catindexof{\atomenumerator} = \dataworldat{\selvariable=\atomenumerator}$ to the categorical variables $\catvariableof{\atomenumerator}$.
 
 % Comparison with PL
 %Compared with propositional formulas, the grounding tensor does not take as input a specific world, but is defined on a given world.
@@ -488,23 +498,24 @@ which we have in \charef{cha:logicalRepresentation} represented by the assignmen
 
 % One-hot maps
 To represent logical formulas as sets of possible worlds, and distributions of worlds, we applied in \parref{par:one} one-hot encodings of possible worlds.
-For the case of propositional logics, this is
+For the case of \propositionalLogic{}, this is
 \begin{align*}
-    \onehotmapofat{\dataworld}{\shortcatvariables} = \bigotimes_{\catenumeratorin} \onehotmapofat{\dataworldat{\selvariable=\atomenumerator}}{\catvariableof{\catenumerator}} \, .
+    \onehotmapofat{\worldindices}{\shortcatvariables}
+    = \bigotimes_{\catenumeratorin} \onehotmapofat{\dataworldat{\selvariable=\atomenumerator}}{\catvariableof{\catenumerator}} \, .
 \end{align*}
 
 \subsect{One-hot encoding of worlds}
 
 Let us now generalize the one-hot encodings of propositional logic worlds to worlds of \firstOrderLogic{}.
-To encode the boolean tensors $\dataworld$ describing \firstOrderLogic{}s as basis elements of a tensor space, we take the one-hot encoding
+To encode the boolean tensors $\worldindices$ describing \firstOrderLogic{}s as basis elements of a tensor space, we take the one-hot encoding
 \begin{align*}
-    \onehotmap :
-    \bigtimes_{\atomenumeratorin}\bigtimes_{\indindexofin{0}}\cdots\bigtimes_{\indindexofin{\indorder-1}} [2]
-    \rightarrow \bigotimes_{\catenumeratorin}\bigotimes_{\indindexofin{0}}\cdots\bigotimes_{\indindexofin{\indorder-1}} \rr^2
+    \onehotmap \defcols \worldindexset \rightarrow \worldtensorspace
+    %\bigtimes_{\atomenumeratorin}\bigtimes_{\indindexofin{0}}\cdots\bigtimes_{\indindexofin{\indorder-1}} [2]
+    %\rightarrow \bigotimes_{\catenumeratorin}\bigotimes_{\indindexofin{0}}\cdots\bigotimes_{\indindexofin{\indorder-1}} \rr^2
 \end{align*}
 defined by
 \begin{align*}
-    \onehotmapofat{\dataworld}{\catvariableof{[\catorder]\times[\inddim]^{\indorder}}}
+    \onehotmapofat{\worldindices}{\catvariableof{[\catorder]\times[\inddim]^{\indorder}}}
     = \bigotimes_{\catenumeratorin}\bigotimes_{\indindexofin{0}}\cdots\bigotimes_{\indindexofin{\indorder-1}}
     \onehotmapofat{\dataworldat{\selvariable=\atomenumerator,\indexedshortindvariables}}{\catvariableof{\catenumerator,\shortindindices}} \, .
 \end{align*}
@@ -538,11 +549,11 @@ These techniques to restrict to comparable factored representations are often re
 \subsect{Probability distributions}
 
 Having established the formalism of one-hot encodings also in the case of \firstOrderLogic{} worlds, we can now proceed with the definition of distributions and formulas, analogously to the development in \parref{par:one}.
-Probability distributions over worlds coinciding on their domain are then non-negative and normed tensors
-\begin{align*}
-    \probat{\catvariableof{[\catorder]\times[\inddim]^{\indorder}}} \in \bigotimes_{\atomenumeratorin,\shortindindices\in[\inddim]^{\indorder}} \rr^2 \, .
-\end{align*}
-where each coordinate of a world $\dataworld$ is captured by a boolean random variable $\catvariableof{\atomenumerator,\shortindindices}$, indicating whether the $\atomenumerator$-th predicate holds on the object tuple indexed by $\shortindindices$.
+Probability distributions over worlds coinciding on their domain are then non-negative and normed tensors $\probat{\worldvariables}$
+%\begin{align*}
+%    \probat{\catvariableof{[\catorder]\times[\inddim]^{\indorder}}} \in \bigotimes_{\atomenumeratorin,\shortindindices\in[\inddim]^{\indorder}} \rr^2 \, .
+%\end{align*}
+where each coordinate of a world $\worldindices$ is captured by a boolean random variable $\catvariableof{\atomenumerator,\shortindindices}$, indicating whether the $\atomenumerator$-th predicate holds on the object tuple indexed by $\shortindindices$.
 
 % High-dimensional - watch out for repetitions!
 We notice, that by definition these probability distributions are distributions of $\atomorder\cdot\inddim^{\indorder}$ Booleans with $2^{\left(\atomorder\cdot\inddim^{\indorder}\right)}$ many states.
@@ -646,7 +657,7 @@ Given a specific knowledge graph $\kggroundingof{\rdf}$, the execution of query 
 \subsubsect{Triple Patterns}
 
 \red{Central to $\sparql$ queries are triple patterns, which we understand as slicings of the tensor $\kggroundingof{\rdf}$.}
-To each so-called triple pattern we build a corresponding atom creating tensor (see \defref{def:atomCreatingTensor}).
+To each so-called triple pattern we build a corresponding creation tensor. %(see \defref{def:atomCreatingTensor}).
 The triple pattern is then evaluated by contraction of the atom creating tensor with $\kggroundingof{\rdf}$.
 
 Let us now provide examples of such pattern tensors.
@@ -702,7 +713,7 @@ The composition $\psi (\psi^T)$ of the matrification of the tensor $\psi$ is an 
 That means that applying $\psi (\psi^T)$ is the same map as applying once.
 
 
-\begin{figure}[h]
+\begin{figure}[t]
     \begin{center}
         \input{./PartII/tikz_pics/fol_models/kg_triple_patterns.tex}
     \end{center}
@@ -722,11 +733,11 @@ That means that applying $\psi (\psi^T)$ is the same map as applying once.
 
 Generic $\sparql$ queries are compositions of triple patterns by logical connectives. % Except for some stuff like regex
 These triple patterns possibly share projection variables.
-Statements in $\sparql$ can be translated into Propositional Logics combining the triple patterns:
+Statements in $\sparql$ can be translated into \propositionalLogic{} combining the triple patterns:
 \begin{center}
     \begin{tabular}{|c|c|c|}
         \hline
-        \textbf{$\sparql$}                & \textbf{Propositional Logics} & \textbf{Tensor Representation}                                                                   \\
+        \textbf{$\sparql$}                & \textbf{\PropositionalLogic{}} & \textbf{Tensor Representation}                                                                   \\
         \hline
         $\{f_1, f_2\}$                    & $f_1\land f_2$                & $\bencodingofat{\land}{\headvariableof{f_1\land f_2},\headvariableof{f_1},\headvariableof{f_2}}$ \\
         \hline
@@ -774,7 +785,7 @@ To find the expression, one can transform a given formula into its conjunctive o
 \sect{Probabilistic Relational Models}
 
 % MLN in FOL and PL
-So far we have studied \MarkovLogicNetworks{} in Propositional Logics as probability distributions over worlds.
+So far we have studied \MarkovLogicNetworks{} in \propositionalLogic{} as probability distributions over worlds.
 In FOL they define probability distributions over relations in worlds with a fixed set of objects.
 More generally, such models are probabilistic relational models (see for an overview \cite{getoor_introduction_2019}.
 
@@ -782,7 +793,7 @@ More generally, such models are probabilistic relational models (see for an over
 We in this section treat random worlds in \firstOrderLogic{} with fixed domains $\worlddomain$.
 
 %
-We in this section show, when and how we can interpret likelihoods of \MarkovLogicNetworks{} in \firstOrderLogic{} in terms of samples of a \MarkovLogicNetwork{} in Propositional Logics.
+We in this section show, when and how we can interpret likelihoods of \MarkovLogicNetworks{} in \firstOrderLogic{} in terms of samples of a \MarkovLogicNetwork{} in \propositionalLogic{}.
 
 \subsect{\HybridFOLNetworks{}}
 
@@ -793,7 +804,7 @@ This applies database semantics, where only those worlds are considered, where t
 
 We count the number of true groundings to a formula by
 \begin{align*}
-    \countquantifier\enumfolformula|_{\dataworld}
+    \countquantifier\enumfolformula|_{\worldindices}
     = \contraction{\groundingofat{\enumfolformula}{\indvariableof{\enumfolformula}}} \, .
 \end{align*}
 Using these counts as statistics, we now define \HybridFOLNetworks{} as a Computation Activation Network.
@@ -826,7 +837,7 @@ The mean parameter polytope is the convex hull of the vectors
 \begin{align*}
     \sencodingofat{\folformulaset}{\indexedworldvariables,\selvariable}
 \end{align*}
-to the worlds $\dataworld$ with $\basemeasureat{\indexedworldvariables}=1$.
+to the worlds $\worldindices$ with $\basemeasureat{\indexedworldvariables}=1$.
 These vectors store are the counts of satisfied groundings to each formula, that is
 \begin{align*}
     \sencodingofat{\folformulaset}{\indexedworldvariables,\selvariable} = \cardof{
@@ -839,18 +850,18 @@ These vectors store are the counts of satisfied groundings to each formula, that
 % Propositionalization
 Let us notice, that different to the case of propositional \HybridLogicNetworks{} treated in \charef{cha:networkRepresentation}, the statistic does not consist of boolean features, when formulas contain variables and we have multiple objects.
 One could, however, replace each $\enumfolformula$ by the set of the possible groundings, i.e. substitutions of the formulas variables by any tuple of objects in $\worlddomain$.
-The resulting distribution would be an \HybridLogicNetwork{} with boolean statistic, which coincides with the HFLN when posing certain weight sharing conditions on $\canparam$.
+The resulting distribution would be an \HybridLogicNetwork{} with boolean statistic, which coincides with the \HybridFOLNetwork{} when posing certain weight sharing conditions on $\canparam$.
 The downside of this construction is the increase in the number of features from $\seldim$ to $\sum_{\selindexin} \cardof{\worlddomain}^{\cardof{\indvariableof{\enumfolformula}}}$.
 This polynomial in the cardinality of the domain set increase poses significant computational challenges, see \cite{richardson_markov_2006}.
 
-We now show that the \HybridFOLNetwork{} can be propositionalized to a \HybridLogicNetwork{} in propositional logics.
+We now show that the \HybridFOLNetwork{} can be propositionalized to a \HybridLogicNetwork{} in \propositionalLogic{}.
 
 \begin{lemma}
     We have
     \begin{align*}
         &\contractionof{\bencodingofat{\countquantifier\enumfolformula}{\headvariableof{\selindex},\worldvariables},\actcorewith}{\worldvariables} \\
         &\quad = \contractionof{
-            \{\bencodingofat{\groundingofat{\enumfolformula}{\dataworld,\indindexof{\enumfolformula}}}{\headvariableof{\indindexof{\enumfolformula}}} \wcols \indindexofin{\enumfolformula}\}
+            \{\bencodingofat{\groundingofat{\enumfolformula}{\worldindices,\indindexof{\enumfolformula}}}{\headvariableof{\indindexof{\enumfolformula}}} \wcols \indindexofin{\enumfolformula}\}
             \cup
             \{\actcoreofat{\selindex,\indexedcanparam}{\headvariableof{\indindexof{\enumfolformula}}} \wcols \indindexofin{\enumfolformula}\}
         }{\worldvariables}
@@ -859,19 +870,19 @@ We now show that the \HybridFOLNetwork{} can be propositionalized to a \HybridLo
     \begin{align*}
         &\contractionof{\bencodingofat{\countquantifier\enumfolformula}{\headvariableof{\selindex},\worldvariables},\kcoreofat{\selindex,\hardparam}{\headvariableof{\selindex}}}{\worldvariables} \\
         &\quad = \contractionof{
-            \{\bencodingofat{\groundingofat{\enumfolformula}{\dataworld,\indindexof{\enumfolformula}}}{\headvariableof{\indindexof{\enumfolformula}}} \wcols \indindexofin{\enumfolformula}\}
+            \{\bencodingofat{\groundingofat{\enumfolformula}{\worldindices,\indindexof{\enumfolformula}}}{\headvariableof{\indindexof{\enumfolformula}}} \wcols \indindexofin{\enumfolformula}\}
             \cup
             \{\kcoreofat{\selindex,\hardparam}{\headvariableof{\indindexof{\enumfolformula}}} \wcols \indindexofin{\enumfolformula}\}
         }{\worldvariables} \, .
     \end{align*}
 \end{lemma}
 \begin{proof}
-    The first claim holds, since for any world $\dataworld$ we have
+    The first claim holds, since for any world $\worldindices$ we have
     \begin{align*}
         &\contractionof{\bencodingofat{\countquantifier\enumfolformula}{\headvariableof{\selindex},\worldvariables},\actcorewith}{\indexedworldvariables} \\
-        &\quad = \prod_{\indindexof{\enumfolformula}\wcols\groundingofat{\enumfolformula}{\dataworld,\indindexof{\enumfolformula}}=1} \expof{\indexedcanparam} \\
+        &\quad = \prod_{\indindexof{\enumfolformula}\wcols\groundingofat{\enumfolformula}{\worldindices,\indindexof{\enumfolformula}}=1} \expof{\indexedcanparam} \\
         &\quad = \contractionof{
-            \{\bencodingofat{\groundingofat{\enumfolformula}{\dataworld,\indindexof{\enumfolformula}}}{\headvariableof{\indindexof{\enumfolformula}}} \wcols \indindexofin{\enumfolformula}\}
+            \{\bencodingofat{\groundingofat{\enumfolformula}{\worldindices,\indindexof{\enumfolformula}}}{\headvariableof{\indindexof{\enumfolformula}}} \wcols \indindexofin{\enumfolformula}\}
             \cup
             \{\actcoreofat{\selindex,\indexedcanparam}{\headvariableof{\indindexof{\enumfolformula}}} \wcols \indindexofin{\enumfolformula}\}
         }{\indexedworldvariables} \, .
@@ -882,11 +893,11 @@ We now show that the \HybridFOLNetwork{} can be propositionalized to a \HybridLo
         &\contractionof{\bencodingofat{\countquantifier\enumfolformula}{\headvariableof{\selindex},\worldvariables},\kcoreofat{\selindex,\hardparam}{\headvariableof{\selindex}}}{\indexedworldvariables} \\
         &\quad=
         \begin{cases}
-            1 & \ifspace \forall \indindexof{\enumfolformula} \defcols  \groundingofat{\enumfolformula}{\dataworld,\indindexof{\enumfolformula}} = 0\\
+            1 & \ifspace \forall \indindexof{\enumfolformula} \defcols  \groundingofat{\enumfolformula}{\worldindices,\indindexof{\enumfolformula}} = 0\\
             0 & \text{else}
         \end{cases} \\
         &\quad= \contractionof{
-            \{\bencodingofat{\groundingofat{\enumfolformula}{\dataworld,\indindexof{\enumfolformula}}}{\headvariableof{\indindexof{\enumfolformula}}} \wcols \indindexofin{\enumfolformula}\}
+            \{\bencodingofat{\groundingofat{\enumfolformula}{\worldindices,\indindexof{\enumfolformula}}}{\headvariableof{\indindexof{\enumfolformula}}} \wcols \indindexofin{\enumfolformula}\}
             \cup
             \{\kcoreofat{\selindex,\hardparam}{\headvariableof{\indindexof{\enumfolformula}}} \wcols \indindexofin{\enumfolformula}\}
         }{\indexedworldvariables} \, .
@@ -894,7 +905,7 @@ We now show that the \HybridFOLNetwork{} can be propositionalized to a \HybridLo
     For $\headindexof{\selindex}=1$ this holds analogously.
 \end{proof}
 
-Each substitution of the variables in $\enumfolformula$ by objects in $\worlddomain$, which satisfies the formula in the world $\dataworld$, therefore provides a factor of $\expof{\canparamat{\indexedselvariable}}$ to the probability of $\dataworld$.
+Each substitution of the variables in $\enumfolformula$ by objects in $\worlddomain$, which satisfies the formula in the world $\worldindices$, therefore provides a factor of $\expof{\canparamat{\indexedselvariable}}$ to the probability of $\worldindices$.
 
 
 %\red{Here we directly define them as exponential families distributing $\worldvariables$ for a given set of objects $\worlddomain$.}
@@ -912,7 +923,7 @@ Each substitution of the variables in $\enumfolformula$ by objects in $\worlddom
 %%    The \MarkovLogicNetwork{} instantiated for a given set of objects $\worlddomain$ and a base measure $\basemeasure$ is the random world, which is a member of the exponential family with sufficient statistics
 %%    \begin{align*}
 %%        \sstatcoordinateofat{\selindex}{\indexedworldvariables} = \contraction{\groundingof{\enumfolformula}}
-%%        %\sstat_{\selindex}(\dataworld)  = \contraction{\groundingof{\folexformula_\selindex}} % Formulas can have different
+%%        %\sstat_{\selindex}(\worldindices)  = \contraction{\groundingof{\folexformula_\selindex}} % Formulas can have different
 %%    \end{align*}
 %%    and canonical parameters $\weight$.
 %\end{definition}
@@ -970,17 +981,17 @@ Given a set $\{\indindexof{[\indorder]}^{\datindex} \wcols \datindexin \}$ of in
 We interpret the tensor $\fixedimpformula$ as the grounding of a formula, which we call the importance formula.
 
 % Restricting to worlds with identical grounding
-To have a constant importance formula we define a syntactic representation and restrict the support of the HFLN to those world coinciding with groundings of the importance formula coinciding with $\fixedimpformula$ by designing a base measure
+To have a constant importance formula we define a syntactic representation and restrict the support of the \HybridFOLNetwork{} to those world coinciding with groundings of the importance formula coinciding with $\fixedimpformula$ by designing a base measure
 \begin{align*}
     \fixedimpbm
     = \begin{cases}
-          1 & \text{if} \quad \groundingofat{\impformula}{\indvariableof{\impformula}} = \fixedimpformula \\
+          1 & \ifspace \groundingofat{\impformula}{\indvariableof{\impformula}} = \fixedimpformula \\
           0 & \text{else}
     \end{cases} \, .
 \end{align*}
 
 % Conditioning on exquery
-The base measure restricts the HFLN to be those worlds, where $\groundingof{\impformula}$ is coincides with the fixed tensor $\fixedimpformula$.
+The base measure restricts the \HybridFOLNetwork{} to be those worlds, where $\groundingof{\impformula}$ is coincides with the fixed tensor $\fixedimpformula$.
 Intuitively, $\groundingof{\impformula}$ represents certain evidence about a \firstOrderLogic{} world, whereas other formulas are uncertain.
 
 
@@ -1001,7 +1012,7 @@ Intuitively, $\groundingof{\impformula}$ represents certain evidence about a \fi
 
 
 % Extraction query
-To reduce the likelihood of a world to we make the assumption that all formulas in a HFLN are of the form
+To reduce the likelihood of a world to we make the assumption that all formulas in a \HybridFOLNetwork{} are of the form
 \begin{align}
     \label{eq:folImplicationForm}
 %    \folexformula_{\selindex}(\individuals) =
@@ -1013,7 +1024,7 @@ In particular, we assume, that they depend on all term variables $\shortindvaria
 If this is not the case, we extend the formula trivially on the missing term variables.
 When this assumption holds, we can think of the importance formula as a conditions on individuals to satisfy a statistical relation given by $\headfolexformula$.
 
-Towards connecting with propositional logics, we further make the assumption, that we can decompose the formula $\headfolformulaof{\selindex}$ in what we will call extraction formulas.
+Towards connecting with \propositionalLogic{}, we further make the assumption, that we can decompose the formula $\headfolformulaof{\selindex}$ in what we will call extraction formulas.
 
 \begin{assumption}
     \label{ass:propositionalHeads}
@@ -1046,9 +1057,9 @@ where the second summand depends only on the query $\impformula$ and therefore d
 %\end{example}
 
 
-\subsect{Reduction to propositional logics}
+\subsect{Reduction to \propositionalLogic{}}
 
-We now make additional assumptions to decompose the partition function of an HFLN as a product of HLN partition functions.
+We now make additional assumptions to decompose the partition function of an \HybridFOLNetwork{} as a product of \HybridLogicNetwork{} partition functions.
 
 \begin{assumption}
     \label{ass:independentTuples}
@@ -1110,7 +1121,7 @@ To show the theorem, we show first in the following lemma the factorization of t
         \groundingof{\countquantifier\enumfolformula}
         = \groundingof{\countquantifier\lnot\impformula} + \groundingof{\countquantifier(\impformula\land\headfolformulaof{\selindex})}
     \end{align*}
-    and for any $\dataworld$
+    and for any $\worldindices$
     \begin{align*}
         &\contractionof{\bencodingofat{\countquantifier\enumfolformula}{\headvariableof{\selindex}},\hypercoreofat{\selindex,\hybridparam}{\headvariable},\fixedimpbm}{\indexedworldvariables} \\
         &\quad = \left(\prod_{\shortindindices\wcols\fixedimpformulaat{\indexedshortindvariables}=0} \hypercoreofat{\selindex,\hybridparam}{\headvariable=1}\right) \cdot
@@ -1246,25 +1257,24 @@ There are situations, where \assref{ass:independentTuples} is violated.
 
 
 
-\sect{Sample extraction from \firstOrderLogic{} worlds}
+\subsect{Sample extraction from \firstOrderLogic{} worlds}
 
-The decomposition of the likelihood suggests the following approach to generate samples from groundings:
-%We propose the following approach to generate datacores from groundings:
-\begin{itemize}
-    \item Define an importance formula $\impformula$, which we decompose in the basis CP decomposition and interpret each slice as the one-hot encoding of the datapoint.
-    \item Define for $\atomenumeratorin$ extraction formulas $\extformulaof{\atomenumerator}$ generating the atoms $\catvariableof{\atomenumerator}$.
-    %Predicates along with assignment of variables / constants to its positions.
-    \item Contract the groundings of each formula $\extformulaof{\atomenumerator}$ with the grounding of $\impformula$ to build a data core.
-\end{itemize}
-
-
-\subsect{Representation by Tensor Networks}
-
+We have observed that in certain situations the log-likelihood of a \firstOrderLogic{} world with respect to a \HybridFOLNetwork{} coincides with the likelihood of a data set in a propositional \HybridLogicNetwork{}.
+Let us now investigate the extraction process of these data set.
+%The decomposition of the likelihood suggests the following approach to generate samples from groundings:
+%%We propose the following approach to generate datacores from groundings:
+%\begin{itemize}
+%    \item Define an importance formula $\impformula$, which we decompose in the basis CP decomposition and interpret each slice as the one-hot encoding of the datapoint.
+%    \item Define for $\atomenumeratorin$ extraction formulas $\extformulaof{\atomenumerator}$ generating the atoms $\catvariableof{\atomenumerator}$.
+%    %Predicates along with assignment of variables / constants to its positions.
+%    \item Contract the groundings of each formula $\extformulaof{\atomenumerator}$ with the grounding of $\impformula$ to build a data core.
+%\end{itemize}
+%\subsubsect{Representation by Tensor Networks}
 We model the extraction process as a relation between a tuple of individuals and the extracted world in the factored system of atoms $\catvariableof{\atomenumerator}$.
 
 \begin{definition}
     \label{def:extractionRelation}
-    Given a \firstOrderLogic{} world $\dataworld$, an importance formula $\impformula$ and extraction formulas $\extformulaof{\catenumerator}$ for $\catenumeratorin$, we define the extraction relation
+    Given a \firstOrderLogic{} world $\worldindices$, an importance formula $\impformula$ and extraction formulas $\extformulaof{\catenumerator}$ for $\catenumeratorin$, we define the extraction relation
     \begin{align*}
         \extractionrelation \subset \left(\symindstates\right) \otimes \left(\atomstates\right)
     \end{align*}
@@ -1272,11 +1282,11 @@ We model the extraction process as a relation between a tuple of individuals and
     \begin{align*}
         \extractionrelation
         = \{ (\shortindindices, \shortcatindices)
-        \, : \,  \groundingofat{\impformula}{\indexedshortindvariables} = 1 \, , \, \forall {\catenumeratorin} : \,  \catindexof{\atomenumerator} = \extformulaofat{\atomenumerator}{\indexedshortindvariables} \} \, .
+        \wcols  \groundingofat{\impformula}{\indexedshortindvariables} = 1 \ncond \uniquantwrtof{\catenumeratorin}{\catindexof{\atomenumerator} = \extformulaofat{\atomenumerator}{\indexedshortindvariables}} \} \, .
     \end{align*}
 \end{definition}
 
-The encoding of an extraction relation is
+The encoding of an extraction relation is the tensor
 \begin{align*}
     \bencodingofat{\extractionrelation}{\shortindvariables,\shortcatvariables} \subset \left(\indspace\right) \otimes \left(\atomspace\right) \,
 \end{align*}
@@ -1286,9 +1296,8 @@ and drawn in a contraction diagram by
 \end{center}
 Here the contraction of $\bencodingof{\impformula}$ with the truth vector $\tbasis$ represents the matching condition posed by $\impformula$ when extracting pairs of individuals.
 
-
 %% Empirical Distribution
-The empirical distribution is then the normalized contraction leaving only the legs to the extracted atomic formulas open, that is
+The empirical distribution of the extracted data is then the normalized contraction leaving only the legs to the extracted atomic formulas open, that is
 \begin{align*}
     \empdistribution
     = \frac{
@@ -1309,14 +1318,11 @@ We depict this by
     \input{./PartII/tikz_pics/fol_models/empirical_generation.tex}
 \end{center}
 
+%\subsubsect{Decomposition of extracted data}
 
+To connect with the empirical distribution introduced in \secref{sec:empDistribution} we now show how the empirical distribution extracted from the interpretations of the formulas $\impformula,\extformulas$ on a \firstOrderLogic{} world $\worldindices$ can be represented by tensor networks.
 
-
-\subsect{Basis CP Decomposition of extracted data}
-
-To connect with the empirical distribution introduced in \secref{sec:empDistribution} we now show how the empirical distribution extracted from the interpretations of the formulas $\impformula,\extformulas$ on a \firstOrderLogic{} world $\dataworld$ can be represented by tensor networks.
-
-First of all, we decompose the importance formula into a basis CP format (see \charef{cha:sparseRepresentation}), that is a decomposition
+First of all, we decompose the importance formula into a basis $\cpformat$ format (see \charef{cha:sparseRepresentation}), that is a decomposition
 \begin{align*}
     \groundingofat{\impformula}{\shortindvariables}
     = \contractionof{
@@ -1338,7 +1344,8 @@ We depict this decomposition by:
 Based on these construction, we now provide a tensor network decomposition of the extracted empirical distribution.
 
 \begin{theorem}
-    Given a \firstOrderLogic{} world $\dataworld$, an importance formula $\impformula$ and extraction formulas $\extformulaof{\catenumerator}$ for $\catenumeratorin$, we have
+    \label{the:extractionrelationDecomposition}
+    Given a \firstOrderLogic{} world $\worldindices$, an importance formula $\impformula$ and extraction formulas $\extformulaof{\catenumerator}$ for $\catenumeratorin$, we have
     \begin{align*}
         \bencodingofat{\extractionrelation}{\shortindvariables,\shortcatvariables} =
         \contractionof{
@@ -1446,7 +1453,7 @@ The empirical distribution is then a tensor network of these tensors, as we show
 %Understanding $\impformula$ as a query on the world being the database, such decomposition is given by the set of solution mappings.
 
 
-\begin{figure}[h]
+\begin{figure}[t]
     \begin{center}
         \input{./PartII/tikz_pics/fol_models/datacore_generation.tex}
     \end{center}
@@ -1488,7 +1495,7 @@ This also enables a batchwise computation of multiple $\sparql$ queries, which d
 \sect{Generation of \firstOrderLogic{} worlds}
 
 \red{
-    So far we have discussed, how MLNs for \firstOrderLogic{} Knowledge Bases such as Knowledge Graphs can be built by extracting data.
+    So far we have discussed, how Probabilistic Relational Models for \firstOrderLogic{} Knowledge Bases such as Knowledge Graphs can be built by extracting data.
     Conversely, any binary tensor can be interpreted as a Knowledge Graph.
     To be more precise, we follow the intuition that the ones coordinates mark possible worlds compatible with the knowledge about a factored system.
     Each possible world can then be encoded in a subgraph of the Knowledge Graph representing the world.
@@ -1496,14 +1503,16 @@ This also enables a batchwise computation of multiple $\sparql$ queries, which d
     This amounts to an "inversion" of the data generation process described in the subsection above.
 }
 
-In the previous section we have described a way to extract an effective empirical distribution for the likelihood of a \firstOrderLogic{} world given a HFLN.
+In the previous section we have described a way to extract an effective empirical distribution for the likelihood of a \firstOrderLogic{} world given a \HybridFOLNetwork{}.
 We now want to investigate methods to reproduce an empirical distribution based on a constructed \firstOrderLogic{} world.
 
 \begin{definition}[Reproduction of Empirical Distributions]
-    Given an empirical distribution $\empdistribution\in\atomspace$, we say that a triple $(\dataworld,\impformula,\shortextformulas)$ of a \firstOrderLogic{} world $\dataworld$ an importance formula $\impformula$ and extraction formulas $\shortextformulas=\{\extformulaof{\atomenumerator}\,:\,\atomenumeratorin\}$ reproduces $\empdistribution$, when
+    Given an empirical distribution $\empdistribution\in\atomspace$, we say that a triple $(\worldindices,\impformula,\shortextformulas)$ of a \firstOrderLogic{} world $\worldindices$ an importance formula $\impformula$ and extraction formulas $\shortextformulas=\{\extformulaof{\atomenumerator}\,:\,\atomenumeratorin\}$ reproduces $\empdistribution$, when
     \begin{align*}
         \empdistribution
-        = \normalizationof{\{\groundingof{\impformula}\}\cup\{\bencodingof{\kggroundingof{\extformulaof{\atomenumerator}}\, : \, \atomenumeratorin}\}}{\shortcatvariables} \, .
+        = \normalizationof{\{\groundingofat{\impformula}{\shortindvariables}\}\cup
+        \{\bencodingofat{\kggroundingof{\extformulaof{\atomenumerator}}}{\catvariableof{\catenumerator},\shortindvariables} \wcols \atomenumeratorin\}
+        }{\shortcatvariables} \, .
     \end{align*}
 \end{definition}
 
@@ -1540,7 +1549,7 @@ In the first reproduction scheme we construct datapoints by dedicated objects, w
 
 \begin{theorem}
     \label{the:reproducingSingleObjects}
-    Let there be an empirical distribution $\empdistribution$ to a sample selector map $\datamap$ (see \defref{def:dataMap}), we construct a world $\dataworld[\selvariable,\indvariable]$ with $\atomorder$ unary predicates by
+    Let there be an empirical distribution $\empdistribution$ to a sample selector map $\datamap$ (see \defref{def:dataMap}), we construct a world $\worldindices[\selvariable,\indvariable]$ with $\atomorder$ unary predicates by
     \begin{align*}
         \dataworldat{\selvariable,\indvariable}
         = \sum_{\atomenumeratorin} \sum_{\datindexin \, : \datamap_{\atomenumerator}(\datindex)=1} \onehotmapofat{\atomenumerator}{\selvariable} \otimes \onehotmapofat{\datindex}{\indvariable} \, .
@@ -1553,7 +1562,7 @@ In the first reproduction scheme we construct datapoints by dedicated objects, w
     \begin{align*}
         \extformulaof{\atomenumerator} = \folpredicateof{\atomenumerator} \, .
     \end{align*}
-    Then, the triple $(\dataworld,\impformula,\shortextformulas)$ reproduces $\empdistribution$.
+    Then, the triple $(\worldindices,\impformula,\shortextformulas)$ reproduces $\empdistribution$.
 %    reproduces with the trivial importance query and extraction queries coinciding with the predicates the dataset $\datamap$.
 \end{theorem}
 \begin{proof}
@@ -1580,7 +1589,7 @@ In the first reproduction scheme we construct datapoints by dedicated objects, w
         &= \onehotmapofat{\datamap_\atomenumerator(\datindex)}{\catvariableof{\catenumerator}} \, .
     \end{align*}
     This coincides with the slice of the data core of the CP representation of empirical distributions used in \theref{the:empCPRep}.
-    Since the slice and the core was arbitrary, the tensor network representations in \theref{the:empCPRep} and \theref{the:extractionDataCores} are equal and thus the triple $(\dataworld,\impformula,\shortextformulas)$ reproduces $\empdistribution$.
+    Since the slice and the core was arbitrary, the tensor network representations in \theref{the:empCPRep} and \theref{the:extractionDataCores} are equal and thus the triple $(\worldindices,\impformula,\shortextformulas)$ reproduces $\empdistribution$.
 \end{proof}
 
 
