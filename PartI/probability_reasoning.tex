@@ -224,13 +224,14 @@ The generic chain decomposition thereby ensures that probability of getting a st
     \begin{algorithmic}
         \Require Probability distribution $\probtensor$
         \Ensure Exact sample $\catindices$ of $\probtensor$
-        \hrule
-        \For{$\catenumeratorin$}
+    \iosepline
+        \ForAll{$\catenumeratorin$}
             \State Draw $\catindexof{\catenumerator}\in[\catdimof{\catenumerator}]$ from the conditional distribution
             \begin{align*}
                 \condprobof{\catvariableof{\catenumerator}}{\indexedcatvariableof{[\catenumerator]}}
             \end{align*}
         \EndFor
+        \State \Return $\catindices$
     \end{algorithmic}
 \end{algorithm}
 
@@ -265,19 +266,19 @@ It can be shown, that these approximate distribution tend to one desired in the 
     \begin{algorithmic}
         \Require Probability distribution $\probtensor$
         \Ensure Approximative sample $\catindices$ of $\probtensor$
-        \hrule
-        \For{$\catenumeratorin$}
+        \iosepline
+        \ForAll{$\catenumeratorin$}
             \State Draw $\catindexof{\catenumerator}$ from an initialization distribution. % In implementation: Initialize with ones and draw -> Avoids zero probability state
         \EndFor
         \While{Stopping criterion is not met}
-            \For{$\catenumeratorin$}
+            \ForAll{$\catenumeratorin$}
                 \State Draw $\catindexof{\catenumerator}$ from the conditional distribution
                 \begin{align*}
                     \condprobof{\catvariableof{\catenumerator}}{\indexedcatvariableof{[\catorder]/\{\catenumerator\}}}
                 \end{align*}
             \EndFor
         \EndWhile
-        \Return $\catindices$
+        \State \Return $\catindices$
     \end{algorithmic}
 \end{algorithm}
 
@@ -697,7 +698,6 @@ We will relate this property to logical entailment in \charef{cha:logicalReprese
 %\end{lemma}
 
 
-
 %\begin{lemma}
 %    \label{lem:minCrossEntropyExponential}
 %    Let $\gendistributionwith$ be a distribution, $\mlnstat$ a boolean statistic, and choose a subset $\variableset\subset[\seldim]$ and a boolean tuple $\headindexof{\variableset}$.
@@ -853,7 +853,7 @@ The conjugate dual of the cumulative function is
         & = \gradwrtat{\canparam}{\seccanparam} \lnof{\contraction{\expof{\contractionof{\sencsstatwith,\canparamwith}{\shortcatvariables}},\basemeasure}} \\
         & = \frac{
             \contractionof{\sencsstatwith,\expof{\contractionof{\sencsstatwith,\canparamwith}{\shortcatvariables}},\basemeasure}{\selvariable}
-            }{\contraction{\expof{\contractionof{\sencsstatwith,\canparamwith}{\shortcatvariables}}}}  \\
+        }{\contraction{\expof{\contractionof{\sencsstatwith,\canparamwith}{\shortcatvariables}}}}  \\
         & = \contractionof{\expdistwith,\sencsstatwith}{\selvariable} \, .
     \end{align*}
     For the proof of the second claim we refer to Appendix B.2 in \cite{wainwright_graphical_2008}.
@@ -987,7 +987,8 @@ For any $\selindexin$ we have for the mean parameter $\meanparamwith$ reproduced
 
 Any solution has a sufficient statistic $\sstat$ and is therefore in $\realizabledistsof{\sstat,\maxgraph,\basemeasure}$.
 
-\begin{theorem}\label{the:maxEntWithSufficientStatistic}
+\begin{theorem}
+    \label{the:maxEntWithSufficientStatistic}
     Any maximum entropy distribution with respect to a moment constraint on $\sstat$ and a base measure $\basemeasure$ has the sufficient statistic $\sstat$.
 \end{theorem}
 \begin{proof}
@@ -1000,8 +1001,9 @@ Any solution has a sufficient statistic $\sstat$ and is therefore in $\realizabl
     We have by strict convexity of $u\cdot\lnof{u}$ and Jensens inequality
     \begin{align*}
         \sentropyof{\secprobtensor} -  \sentropyof{\probwith}
-        &= \probat{\indexedshortcatvariables} \cdot \lnof{\probat{\indexedshortcatvariables}} + \probat{\shortcatvariables=\tildeshortcatindices} \cdot \lnof{\probat{\shortcatvariables=\tildeshortcatindices}}
-        - \left(\probat{\indexedshortcatvariables}+\probat{\shortcatvariables=\tildeshortcatindices}\right) \cdot \lnof{\frac{\probat{\indexedshortcatvariables}+\probat{\shortcatvariables=\tildeshortcatindices}}{2}} \\
+        &= \probat{\indexedshortcatvariables} \cdot \lnof{\probat{\indexedshortcatvariables}}
+        + \probat{\shortcatvariables=\tildeshortcatindices} \cdot \lnof{\probat{\shortcatvariables=\tildeshortcatindices}} \\
+        & \quad  - \left(\probat{\indexedshortcatvariables}+\probat{\shortcatvariables=\tildeshortcatindices}\right) \cdot \lnof{\frac{\probat{\indexedshortcatvariables}+\probat{\shortcatvariables=\tildeshortcatindices}}{2}} \\
         & > 0 \, .
     \end{align*}
     Since $\secprobat{\shortcatvariables}$ is also a feasible distribution with larger entropy than $\probwith$, $\probwith$ is not a maximum entropy distribution.
@@ -1088,8 +1090,7 @@ When choosing the trivial base measure, this does not pose a restriction on the 
 
 % Generalization
 When $\genmean\notin\sbinteriorof{\genmeanset}$, the mean paramater is by \theref{the:meanPolytopeInteriorCharacterization} not reproducable by a member of the exponential family $\expfamilyof{\sstat,\basemeasure}$.
-Instead, in combination with the base measure refinement \algoref{alg:baseMeasureRefinement}, we show that the solution is in a refined exponential family.
-% dropping the assumption that the mean parameters are in the interior of the mean parameter polytope.
+We show that the solution is in this case in a refined exponential family.
 
 \begin{theorem}
     \label{the:maxEntropyFace}
@@ -1704,8 +1705,8 @@ The optimal update equations are derived as the next theorem.
     \begin{algorithmic}
         \Require Energy tensor $\energytensorat{\energytensor}$
         \Ensure Tensor Network $\{\legcoreofat{\catenumerator} \, : \, \catenumeratorin\}$ approximating $\normalizationof{\energytensorat{\shortcatvariables}}{\shortcatvariables}$
-        \hrule
-        \For{$\catenumeratorin$}
+        \iosepline
+        \ForAll{$\catenumeratorin$}
             \State
             \begin{align*}
                 \legcoreofat{\catenumerator}{\catvariableof{\catenumerator}}
@@ -1713,7 +1714,7 @@ The optimal update equations are derived as the next theorem.
             \end{align*}
         \EndFor
         \While{Stopping criterion is not met}
-            \For{$\catenumeratorin$}
+            \ForAll{$\catenumeratorin$}
                 \State
                 \[ \legcoreofat{\catenumerator}{\catvariableof{\catenumerator}}
                 \algdefsymbol \normalizationof{ \expof{ \contractionof{ \{\energytensor[\shortcatvariables] \}\cup
@@ -1981,7 +1982,6 @@ This holds, since by \lemref{lem:centropyMLE} maximum likelihood estimation is a
 In that case, we choose $\meanparamwith=\contractionof{\sencsstatwith,\empdistribution}{\selvariable}$.
 
 
-
 %\begin{lemma}
 %	Let $\sstat\in\facspace\otimes\rr^{\seldim}$ be a sufficient statistic and $\gendistribution\in\facspace$ a probability distribution.
 %	For any member $\expdist\in\expfamily$ we have
@@ -2105,7 +2105,7 @@ This condition is equal to the collection of moment matching equations % (see \t
     and redundancies of copies of basis encodings.
     It follows that
     \begin{align*}
-        \contraction{\expdist,\sstatcoordinateof{\selindex}} 
+        \contraction{\expdist,\sstatcoordinateof{\selindex}}
         = \contraction{\empdistribution,\sstatcoordinateof{\selindex}}
     \end{align*}
     is equal to
@@ -2127,11 +2127,11 @@ Since the log likelihood is concave, the algorithm converges to a global minimum
     \begin{algorithmic}
         \Require Empirical distribution $\empdistribution$, statistic $\sstat$ and base measure $\basemeasure$
         \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\expfamily$
-        \hrule
+        \iosepline
         \State Set $\canparamat{\selvariable}=\zerosat{\selvariable}$
         \State Compute $\datameanat{\selvariable}= \contractionof{\empdistribution,\sencsstat}{\selvariable}$
         \While{Convergence criterion not met}
-            \For{$\selindexin$}
+            \ForAll{$\selindexin$}
                 \State Compute
                 \begin{align*}
                     \hypercoreofat{\selindex}{\headvariableof{\selindex}}
@@ -2191,7 +2191,7 @@ With this characterization, we can perform second order optimization algorithms 
     \begin{algorithmic}
         \Require Empirical distribution $\empdistribution$, statistic $\sstat$ and base measure $\basemeasure$
         \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\expfamily$
-        \hrule
+        \iosepline
         \State Set $\canparamat{\selvariable}=\zerosat{\selvariable}$
         \State Compute $\datameanat{\selvariable}= \contractionof{\empdistribution,\sencsstat}{\selvariable}$
         \While{Convergence criterion not met}

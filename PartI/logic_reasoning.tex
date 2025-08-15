@@ -187,10 +187,10 @@ The function further refuses to add a formula, which would make the Knowledge Ba
     \caption{Contraction Knowledge Base with operations ASK and TELL}\label{alg:contractionKB}
     \vspace{0.3cm} \textbf{ASK}($\kb$, $\exformula$)
     \begin{algorithmic}
-    \hrule
+    \iosepline
     \Require Knowledge base $\kb$, query formula $\exformula$
     \Ensure Decision which relation between $\kb$ and $\exformula$ holds (see \figref{fig:askDecisionTable})
-    \hrule
+    \iosepline
         \State{$\hypercoreat{\formulavar} \algdefsymbol \contractionof{\{\secexformulaat{\shortcatvariables} \, : \, \secexformula\in\kb\},\bencodingofat{\exformula}{\formulavar,\shortcatvariables}}{\formulavar}$}
         \If{$\hypercoreat{\formulavar=0}=0$ and $\hypercoreat{\formulavar=1}=0$ }
             \State \Return \stringof{Inconsistent}
@@ -205,10 +205,10 @@ The function further refuses to add a formula, which would make the Knowledge Ba
     \end{algorithmic}
     \vspace{0.3cm} \textbf{TELL}($\kb$, $\exformula$)
     \begin{algorithmic}
-        \hrule
+        \iosepline
     \Require Knowledge base $\kb$, query formula $\exformula$
     \Ensure Decision whether a formula is added to the knowledge base (\stringof{Added}), or an exception in (\stringof{Inconsistent}, \stringof{Redundant} or \stringof{Refused}) is raised.
-    \hrule
+    \iosepline
         \State{answer $\algdefsymbol$ ASK($\exformula$)}
         \If{answer is \stringof{Inconsistent}:}
             \State \Return \stringof{Inconsistent}
@@ -951,7 +951,7 @@ This local entailment scheme is called Knowledge Propagation and described in a 
     \begin{algorithmic}
         \Require Boolean Tensor Network $\extnet$ on $\graph=(\nodes,\edges)$, domain edges $\domainedges$ and a set $\arbset$ of subsets of $\edges$ for local propagation
         \Ensure Knowledge cores $\kcoreofat{\edge}{\catvariableof{\edge}}$ for $\edge\in\domainedges$ with $\contractionof{\extnet}{\catvariableof{\edge}}\prec\kcoreofat{\edge}{\catvariableof{\edge}}$
-        \hrule
+        \iosepline
         \State
         \State Initialize for all $\edge\in\domainedges$:
         \begin{align*}
@@ -966,7 +966,7 @@ This local entailment scheme is called Knowledge Propagation and described in a 
             \begin{align*}
                 \secedges \algdefsymbol \graphqueue\mathrm{.pop()}
             \end{align*}
-            \For{$\edge\in\domainedges$ with $\edge\cap\bigcup_{\secedge\in\secedges}\secedge\neq\varnothing$}
+            \ForAll{$\edge\in\domainedges$ with $\edge\cap\bigcup_{\secedge\in\secedges}\secedge\neq\varnothing$}
                 \State Contract
                 \begin{align*}
                     \hypercoreat{\catvariableof{\edge}}
@@ -979,7 +979,7 @@ This local entailment scheme is called Knowledge Propagation and described in a 
                     \begin{align*}
                         \kcoreofat{\edge}{\catvariableof{\edge}} \algdefsymbol \hypercoreat{\catvariableof{\edge}}
                     \end{align*}
-                    \For{$\secedges\in\arbset$ with $\edge\cap\bigcup_{\secedge\in\secedges}\secedge\neq\varnothing$}
+                    \ForAll{$\secedges\in\arbset$ with $\edge\cap\bigcup_{\secedge\in\secedges}\secedge\neq\varnothing$}
                         \begin{align*}
                             \graphqueue\mathrm{.push(}\secedges\mathrm{)}
                         \end{align*}
