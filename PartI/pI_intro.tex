@@ -1,60 +1,95 @@
 \chapter{Introduction into \parref{par:one}}
 
-Within the introduced factored representation of systems we will in \parref{par:one} present the probabilistic and logical approaches to artificial intelligence.
+The tensor formalism naturally captures the factored representation of a system, where the state of a system is determined by assignments to a fixed and finite set of variables.
+Given these modelling assumptions, we review in \parref{par:one} based on the tensor formalism the two main paradigms of artificial intelligence to encode knowledge about a system:
+\begin{itemize}
+    \item \textbf{\ProbabilityTheory{}:} To each state we encode by a real number in $[0,1]$ its probability given our knowledge about a system.
+    A probability distribution is therefore a tensor, which coordinates are in $[0,1]$ and sum to $1$.
+    \item \textbf{\PropositionalLogic{}:} To each state we encode by a boolean its possibility given our knowledge about a system.
+    A propositional knowledge base is therefore a tensor with boolean coordinates.
+\end{itemize}
+
+\sect{Sparse Representation and Interpretability}
+
+The interpretability of machine learning models describing probabilistic and logical knowledge about a system is a central aspect of artificial intelligence.
+We in this work describe synergies between the interpretability and the sparse representation of a model by tensor networks.
 %Both paradigms have developed human interpretable tools into the representation of and reasoning on knowledge.
-Both the probabilitic and the logic paradigm provide a human-understandable interface to machine learning.
-\begin{itemize}
-    \item \textbf{Probabilistic paradigm:} Models encode the uncertainty of states.
-        They describe dependencies between variables, which receive a graphical representation.
-    \item \textbf{Logical paradigm:} Models encode the sets of possible states.
-        They are formulated in human interpretable logical syntax.
+Both the probabilistic and the logic approaches provide a human-understandable interface to machine learning:
+\begin{itemize} % Graphical vs syntacical representation
+    \item \textbf{Graphical representations in \probabilityTheory{}:} Probability distributions are interpreted based on the encoded conditional independencies between their categorical variables.
+    In graphical models, the variables dependence structure is commonly represented by graphs, where variables are assigned to nodes and the edges represent dependencies.
+    While generic probability distributions correspond with dense graphs, the central sparsity mechanism of \probabilityTheory{} relies on sparse graphs.
+    Graphical models on sparse graphs are both representable by least resource demand and more accessible for human interpretation.
+    Although variable dependencies provide coarse interpretations of a probability distributions, they do not offer a precise description of the distribution, since multiple distributions coincide in their variable dependencies.
+    \item \textbf{Syntactical representations in \propositionalLogic{}:} Compared with \probabilityTheory{}, logical theories are more ambitious in providing human accessible interpretations.
+    To this end, knowledge bases are verbalizable by logical syntax which is interpretable by humans.
+    Categorical variables have leg dimension $2$ and are understood as atomic formulas, where the first index is interpreted as indicating a $\falsesymbol$ atomic formula and the second as a $\truesymbol$ atomic statement.
+    More complex formulas, or propositional knowledge bases, are constructed by recursive combinations of the atomic formulas by logical connectives.
+    This construction is reflected in the syntactical representation of knowledge bases.
+    Compared with graphical descriptions of probability distributions, syntactical descriptions provide a precise description of the knowledge base with no representation freedom left.
 \end{itemize}
-As we will describe in \parref{par:two}, they can be combined in one formalism providing efficient reasoning.
-We will utilize that tensor network decompositions are in both useful tools of efficient calculus.
-
-
-\sect{Representation of Factored Systems}
-
-%\subsect{Comparing with probabilistic approaches }
-\textbf{Probability} represents the uncertainty of states.
-The categorical variables are called random variables and their joint distribution is represented by a probability tensor.
-Humans interpret probabilities by Bayesian and frequentist approaches.
-Reasoning based on Bayes Theorem has an intuitive interpretation in terms of evidence based update of prior distributions to posterior distributions.
-However it is based on interpreting (large amounts) of numbers, which makes it hard for humans to assess the probabilistic reasoning process.
-
-\textbf{Propositional Logics} explains relations between sets of worlds in a human understandable way.
-Categorical variables have dimension $2$, where the first is interpreted as indicating a $\falsesymbol$ state and the second as a $\truesymbol$ state.
-We mainly restrict to propositional logics, where there are finite sets of such variables called atomic formulas.
-Using model-theoretic semantics it defines entailment of sets by other sets, which is understandable as a consequence relation.
-
-\textbf{Tensors} unify both approaches since they are natural numerical structures to represent properties of states in factored systems.
-The potential is then based in employing scalable multilinear algorithms to solve reasoning problems.
-Further, algorithms formulated in tensor networks have a high parallelization potential, which is why they are of central interest in the development of AI-dedicated software and hardware.
-
-The different areas have developed separated languages to describe similar objects.
-Here we want to provide a rough comparison of those in a dictionary:
-
-\begin{tabular}{|p{\threecolumnwidth}|p{\fourcolumnwidth}|p{\fourcolumnwidth}|p{\fourcolumnwidth}|} % KEEP?
-    \hline
-    & \textbf{Probability} & \textbf{Logic} & \textbf{Tensors}   \\
-    \hline
-    \textit{Atomic Representation}        & Random Variable             & Atomic Formula               & Vector             \\
-    \textit{Factored Representation}      & Joint Distribution          & Knowledge Base               & Tensor             \\
-    %\textit{Categorical Variable} & Random Variable             & Atomic Formula               & Axis of the Tensor \\
-    \hline
-\end{tabular}
-
-While probability theory lacks to provide an intuition about sets of events, propositional syntax has limited functionality to represent uncertainties.
-Tensors on the other side can build a bridge by representing both functionalities and relying on probability theory and logics for respective interpretations.
-
-\sect{Mechanisms of tensor network decompositions}
-
-We investigate two mechanisms to identify tensor network decompositions of probability distributions:
+Both the graphical and syntactical representation schemes show a synergy between the sparse representation of the knowledge about a system and the interpretability of that knowledge.
+In \parref{par:one} we investigate two mechanisms to identify tensor network decompositions of probability distributions:
 \begin{itemize}
-    \item \textbf{\IndependenceMechanism{}:} Conditional independence of random variables is a a concept of probability theory.
-       The most prominent application of this approach is the motivation of graphical models, which we introduce in \charef{cha:probRepresentation} as tensor networks.
+    \item \textbf{\IndependenceMechanism{}:} Conditional independence of random variables is a concept of probability theory.
+    The most prominent application of this approach is the motivation of graphical models, which we introduce in \charef{cha:probRepresentation} as tensor networks.
     \item \textbf{\ComputationMechanism{}:} When there are sufficient statistics providing probabilities, we construct tensor networks decompositions by computation of the statistics.
-        Whenever the functions to be computed are compositions of functions of lower numbers of arguments, we utilize these representations to construct tensor network decompositions.
-        Such decomposition schemes are provided by logical syntax as we will exploit in \charef{cha:logicalRepresentation}.
-        In probability theory, we will make use of this approach in the efficient representation of sufficient statistics.
+    Whenever the functions to be computed are compositions of functions of lower numbers of arguments, we utilize these representations to construct tensor network decompositions.
+    Such decomposition schemes are provided by logical syntax as we will exploit in \charef{cha:logicalRepresentation}.
+    In probability theory, we will make use of this approach in the efficient representation of sufficient statistics.
 \end{itemize}
+% Limitations to be mitigated
+The representation schemes of \probabilityTheory{} and \propositionalLogic{} have limitiations, which can be mitigated in a unifying tensor network framework.
+While probability theory does not provide a human-understandable intuition about generic events, propositional syntax describes such events and is acessible for human interpretation.
+\PropositionalLogic{} on the other hand has a limited expressivity, since it cannot express generic uncertainties about states.
+This limitation is addressed by \probabilityTheory{}, which allows for the representation of distributions over the models of a knowledge base, thereby enhancing its expressivity.
+Further expressivity limitations are overcome by more expressive logical frameworks such as \firstOrderLogic{} to be treated in \charef{cha:folModels}.
+To leverage the strengths of both approaches, we adopt the tensor formalism as a unified framework towards hybrid representation and reasoning schemes investigated in \parref{par:two}.
+
+\sect{Reasoning by Contractions}
+
+We in \parref{par:one} frame tensor network contractions as fundamental operation for reasoning in artificial intelligence.
+In the probabilistic and logical approaches tensor network contractions appear as basic retrieval operations of knowledge about a system:
+\begin{itemize}
+    \item \textbf{\ProbabilityTheory{}:}
+    % Marginal distributions
+    The contraction of probability distributions is the central operation to compute marginal distributions.
+    Here the contraction provides a sum over atomic events to calculate the probability of a combination of random variables being in a specific state.
+    % Conditioning by normalization
+    Conditioned probability distributions can be instantiated from normalized contractions of probability distributions with event indicator tensors.
+    When contracting such conditioned probability distributions, the contraction calculates the conditional probability.
+    \item \textbf{\PropositionalLogic{}:}
+    % Satisfiability
+    The contraction of knowledge bases is the central operation to count the number of possible states, or models, of the knowledge base.
+    In such way, the satisfiability of a knowledge base can be decided on the positivity of the contraction.
+    % Conjunctions
+    Conjunctions of propositional formulas are on the other side represented by contractions leaving all atomic variables open.
+    We can thus decide entailment by contracting such conjunctions with no open variables.
+\end{itemize}
+Based on these motivations, we formulate in this work all algorithms as orchestrations of contractions.
+
+\sect{Dictionary}
+
+The logical and probabilistic approaches towards artificial intelligence, and the tensor formalism, refer to similar concepts with different expressions. %have developed separated languages to describe similar objects.
+A rough dictionary is provided by:
+\begin{center}
+    \begin{tabular}{|p{\threecolumnwidth}|p{\fourcolumnwidth}|p{\fourcolumnwidth}|p{\fourcolumnwidth}|} % KEEP?
+        \hline
+        \textit{Concept}                 & \textbf{Tensors} & \textbf{\ProbabilityTheory{}} & \textbf{\PropositionalLogic{}} \\
+        \hline
+        \textit{Atomic Representation}   & Vector           & Random Variable               & Atomic Variable                \\
+        \textit{Factored Representation} & Tensor           & Joint Distribution            & Propositional Formula          \\
+        \textit{State}                   & Index            & Atomic Event                  & World                          \\
+        \textit{Knowledge about a state} & Coordinate       & Probability (in $[0,1]$)      & Possibilities (in $\{0,1\}$)   \\
+        \textit{Retrieval of knowledge}  & Contractions     & Marginalization, Conditioning & Model counts                   \\
+        \hline
+    \end{tabular}
+\end{center}
+
+
+\sect{Outline}
+
+We structure \parref{par:one} in four chapters dedicated to the foundations of probabilistic and logical methods of artificial intelligence.
+In \charef{cha:probRepresentation} we investigate tensor network representations of probability distributions and review in \charef{cha:probReasoning} reasoning schemes based on contractions of these representations.
+We then turn to syntactical representations of propositional knowledge bases in \charef{cha:logicRepresentation} and show corresponding tensor network representations.
+Based on proabilistic interpretations of these knowledge bases we then investigate logical reasoning schemes in \charef{cha:logicReasoning}.
