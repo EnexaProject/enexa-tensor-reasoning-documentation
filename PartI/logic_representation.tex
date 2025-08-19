@@ -126,7 +126,7 @@ This amounts to posing a global directionality constraint on the boolean tensor,
 
 % Structure
 We now choose a semantic centric approach to propositional logic, by defining formulas as boolean tensors.
-Then we investigate the corresponding syntax of formulas as specification of a tensor network decomposition of the basis encoding of formulas.
+Then we investigate the corresponding syntax of formulas as specification of a tensor network decomposition of the \basisEncoding{} of formulas.
 
 \subsect{Formulas}
 
@@ -138,7 +138,7 @@ To make this more precise, we associate each such tensor is associated with a fo
     \label{def:formulas}
     A propositional formula $\formulaat{\shortcatvariables}$ depending on $\atomorder$ atoms $\catvariableof{\atomenumerator}$ is a boolean-valued tensor
     \begin{align*}
-        \formulaat{\shortcatvariables} : \atomstates \rightarrow \ozset \subset \rr \, .
+        \formulaat{\shortcatvariables} \defcols \atomstates \rightarrow \ozset \subset \rr \, .
     \end{align*}
     We call a state $\shortcatindices \in \atomstates$ a model of a propositional formula $\formula$, if
     \begin{align*}
@@ -195,90 +195,100 @@ The syntactical side will then be introduced later by studying decompositions of
 % Here truth tables?
 %We call each combination of atomic formulas with connectives a formula.
 
-\subsect{Basis encoding of formulas}
+%\subsect{\BasisEncoding{} of formulas}
+
+\subsect{Representation by \ComputationActivationNetworks{}}
 
 % Coordinate and basis encoding
-We apply the coordinate and the basis encoding schemes to represent propositional formulas as tensors.
+We apply the coordinate and the \basisEncoding{} schemes to represent propositional formulas as tensors.
 In the coordinate encoding scheme, which we use by default, we understand $[2]$ as subset of $\rr$ and interpreting the formula directly as a tensor (as in \defref{def:formulas}).
-To apply the basis encoding scheme, we understand $[2]$ as the states of a system with factored representation by a single categorical variable.
-% Maps between factored systems
-%Following this second perspective, formulas are maps between factored systems, where the image system is the factored systems of atoms and the target system the atomic system defined by a variable $\formulavar$ representing the formula satisfaction.
-%Following this perspective, formulas are maps between the factored systems of atoms and the atomic system of the formula.
-%We can then build the basis encoding (\defref{def:functionRepresentation}) of that map to represent the formula (see \figref{fig:formulabencoding}).
-%\begin{definition}[Relation Encoding of Formulas] % Own definition, since a reinterpretation of the formula
-Given a factored system with $\atomorder$ atoms $\shortcatvariables$ and a propositional formula $\formula$, the basis encoding of $\formula$ (see \defref{def:functionRepresentation}) is the tensor
-%\begin{align*}
-%    \bencodingofat{\formula}{\formulavar,\shortcatvariables} \in  \left(\atomspace \right) \otimes \rr^2
-%\end{align*}
-%decomposable as
-\begin{align}
-    \bencodingofat{\formula}{\formulavar,\shortcatvariables}
-    = & \sum_{\shortcatindices\in\atomstates}  \onehotmapofat{\shortcatindices}{\shortcatvariables} \otimes \onehotmapofat{\formulaat{\indexedshortcatvariables}}{\formulavar} \, .
-\end{align}
-%\end{definition}
+To apply the \basisEncoding{} scheme, we understand $[2]$ as the states of a system with factored representation by a single categorical variable.
+Although it comes with an additional boolean variable compared with \coordinateEncoding{} scheme, we in this work use the \basisEncoding{} scheme to find sparse tensor network decompositions based on syntactical formula decompositions.
+Furthermore, the \basisEncoding{} connects with the formalism of \ComputationActivationNetworks{} developed in \charef{cha:probRepresentation}, as we show next.
 
-%% More general basis encodings
-We can build basis encodings more generally of any tensors, where we identify the image of the tensor with the states of a categorical variable.
-Exactly for propositional formulas, this construction will lead to Boolean image variables.
-
-
-\begin{lemma}
-    \label{lem:formulaEncodingDecomposition}
-    For any formula $\formula$ we have
+\begin{theorem}[Propositional formulas as \ComputationActivationNetwork{}]
+    \label{the:formulaAsCANetwork}
+    For each formula $\formula$ we have
+    \begin{align*}
+        \formulaat{\shortcatvariables}
+        = \contractionof{\bencodingofat{\formula}{\formulavar,\shortcatvariables},\tbasisat{\formulavar}}{\shortcatvariables}
+    \end{align*}
+    and
+    \begin{align*}
+        \lnot\formulaat{\shortcatvariables}
+        = \contractionof{\bencodingofat{\formula}{\formulavar,\shortcatvariables},\fbasisat{\formulavar}}{\shortcatvariables} \, ,
+    \end{align*}
+    which are \ComputationActivationNetworks{} to the statistic $\{\formula\}$ and the hard activation tensor $\tbasisat{\formulavar}$, respectively $\fbasisat{\formulavar}$.
+\end{theorem}
+\begin{proof}
+    Given a factored system with $\atomorder$ atoms $\shortcatvariables$ and a propositional formula $\formula$, the \basisEncoding{} of $\formula$ (see \defref{def:functionRepresentation} and \figref{fig:formulabencoding}) is the tensor
     \begin{align*}
         \bencodingofat{\formula}{\formulavar,\shortcatvariables}
-        = \formulaat{\shortcatvariables} \otimes \tbasisat{\formulavar}
-        + \lnot\formulaat{\shortcatvariables} \otimes  \fbasisat{\formulavar} \, .
+        = & \sum_{\shortcatindices\in\atomstates}  \onehotmapofat{\shortcatindices}{\shortcatvariables} \otimes \onehotmapofat{\formulaat{\indexedshortcatvariables}}{\formulavar} \, .
     \end{align*}
-    In particular
+    %% Decomposition
+    We reorder the summation into
     \begin{align*}
-        \formulaat{\shortcatvariables} = \contractionof{
-            \bencodingofat{\formula}{\formulavar,\shortcatvariables},\tbasisat{\formulavar}
-        }{\shortcatvariables} \, .
-    \end{align*}
-\end{lemma}
-\begin{proof}
-%% Decomposition
-    We can decompose basis encodings of formulas into the sum (see \figref{fig:formulabencoding}) % ! Not a tensor network decomposition !
-    \begin{align}
         \bencodingofat{\formula}{\formulavar,\shortcatvariables}
         = & \fbasisat{\formulavar} \otimes \left( \sum_{\formulazerocoordinates}  \onehotmapofat{\shortcatindices}{\shortcatvariables} \right) \\
         + & \tbasisat{\formulavar} \otimes \left( \sum_{\formulaonecoordinates}  \onehotmapofat{\shortcatindices}{\shortcatvariables} \right)
-    \end{align}
+    \end{align*}
     where the second term sums up the models of $\formula$ and the first one the models of $\lnot\formula$.
+    Using linearity of contractions we get
+    \begin{align*}
+        \contractionof{\bencodingofat{\formula}{\formulavar,\shortcatvariables},\tbasisat{\formulavar}}{\shortcatvariables}
+        = & \contraction{\fbasisat{\formulavar},\tbasisat{\formulavar}} \cdot \left( \sum_{\formulazerocoordinates}  \onehotmapofat{\shortcatindices}{\shortcatvariables} \right) \\
+        + & \contraction{\tbasisat{\formulavar},\tbasisat{\formulavar}} \cdot \left( \sum_{\formulaonecoordinates}  \onehotmapofat{\shortcatindices}{\shortcatvariables} \right) \\
+        = \sum_{\formulaonecoordinates}  \onehotmapofat{\shortcatindices}{\shortcatvariables} = \formulaat{\shortcatvariables} \, .
+    \end{align*}
+    Analogously we have
+    \begin{align*}
+        \contractionof{\bencodingofat{\formula}{\formulavar,\shortcatvariables},\fbasisat{\formulavar}}{\shortcatvariables}
+        = \sum_{\formulazerocoordinates}  \onehotmapofat{\shortcatindices}{\shortcatvariables} = \lnot\formulaat{\shortcatvariables} \, . \qedhere
+    \end{align*}
 \end{proof}
-
-%% Coordinatewise
-The basis encoding $\bencodingof{\exformula}$ has slices
-\begin{align*}
-    %\contractionof{\bencodingof{\exformula},\onehotmapof{\shortcatindices}}{\formulavar}=
-    \bencodingofat{\exformula}{\formulavar,\indexedshortcatvariables}
-    = \begin{cases}
-          \tbasis[\formulavar] & \text{if the world $\shortcatindices$ is a model of $\exformula$}  \\
-          \fbasis[\formulavar] & \text{else}\, .
-    \end{cases}
-\end{align*}
-The contractions of the basis encoding therefore calculate whether an assignment of atoms is a model of the formula, using basis calculus (see \theref{the:basisCalculus}).
-% Comparison with direct interpretation
-Compared with the direct interpretation of a formula as a tensor and the decomposition into models in \eqref{eq:formulaModelDecomposition}, we notice that the basis encoding also represents encoding of worlds where the formula is not satisfied.
-This representation is however useful for the decomposition of propositional formulas, as will be investigated in the following sections.
-
 
 \begin{figure}[t]
     \begin{center}
         \input{./PartI/tikz_pics/logic_representation/formula_bencoding.tex}
     \end{center}
-    \caption{Basis encoding of a propositional formula.
+    \caption{\BasisEncoding{} of a propositional formula.
     The encoding is a sum of the one hot encodings of all states of the factored system in a tensor product with basis vectors, which encode whether the state is a model of the formula.
     The tensor is directed, since any contraction with an encoded state results in the basis vector evaluating the formula, which we called basis calculus.
     }
     \label{fig:formulabencoding}
 \end{figure}
 
+% Maps between factored systems -> Comment maybe on extra head variable?
+%Following this second perspective, formulas are maps between factored systems, where the image system is the factored systems of atoms and the target system the atomic system defined by a variable $\formulavar$ representing the formula satisfaction.
+
+%% More general basis encodings
+%We can build basis encodings more generally of any tensors, where we identify the image of the tensor with the states of a categorical variable.
+%Exactly for propositional formulas, this construction will lead to Boolean image variables.
+
+
+% Expressivity of CA Networks
+\theref{the:formulaAsCANetwork} shows that besides the formula itself, we can represent the negation of the formula as a \ComputationActivationNetwork{} with the same statistic $\{\exformula\}$.
+In general, any boolean tensor which has a representation as a \ComputationActivationNetwork{} needs to have a boolean activation tensor.
+In the case of the single-dimensional statistic $\{\exformula\}$ we have three boolean activation vectors $\{\onesat{\formulavar},\tbasisat{\formulavar},\fbasisat{\formulavar},\zerosat{\formulavar}\}$.
+While the \ComputationActivationNetworks{} with the activation cores $\tbasisat{\formulavar},\fbasisat{\formulavar}$ are by \theref{the:formulaAsCANetwork} the formula and its negation, the activation core $\onesat{\formulavar}$ and $\zerosat{\formulavar}$ represent the trivial $\onesat{\shortcatvariables}$ and the vanishing tensor $\zerosat{\shortcatvariables}$.
+
+% Basis Calculus Preview
+The contraction of the \basisEncoding{} with one-hot encodings to worlds $\shortcatindices\in\atomstates$ is
+\begin{align*}
+    \contractionof{\bencodingofat{\exformula}{\formulavar,\shortcatvariables},\onehotmapofat{\shortcatindices}{\shortcatvariables}}{\formulavar}
+    = \begin{cases}
+          \tbasisat{\formulavar} & \text{if the world $\shortcatindices$ is a model of $\exformula$}  \\
+          \fbasis{\formulavar} & \text{else} \, .
+    \end{cases}
+\end{align*}
+We thus interpret the contractions as calculating in basis vectors, whether the world $\shortcatindices$ is a model of the formula $\exformula$.
+This is the basis calculus scheme and will be investigated it in more detail in \charef{cha:basisCalculus} (see \theref{the:basisCalculus}).
+
 
 \sect{Syntax of Propositional Formulas}
 
-basis encodings of propositional formulas are especially useful when representing function compositions by the representation of their components (see \theref{the:compositionByContraction}).
+Basis encodings of propositional formulas are especially useful when representing function compositions by the representation of their components (see \theref{the:compositionByContraction}).
 In propositional logics, the syntax of defining propositional formulas is oriented on compositions of formulas by connectives. % Quantifications will be studied in the FOL Chapter.
 We in this section investigate the decomposition schemes of basis encodings into tensor networks of component encodings for binary tensors following propositional logic syntax.
 
@@ -306,8 +316,8 @@ Atomic formulas and their basis encodings have an especially compelling represen
         = \contractionof{\tbasisat{\catvariableof{\atomenumerator}}}{\shortcatvariables}
         = \tbasisat{\catvariableof{\atomenumerator}} \otimes \onesat{\catvariableof{[\catorder]/\{\atomenumerator\}}}  \, .
     \end{align*}
-    and has a basis encoding
-%	The basis encoding of any atomic formula $\atomicformulaofat{\atomenumerator}{\shortcatvariables}$ has a tensor decomposition by
+    and has a \basisEncoding{}
+%	The \basisEncoding{} of any atomic formula $\atomicformulaofat{\atomenumerator}{\shortcatvariables}$ has a tensor decomposition by
     \begin{align*}
         \bencodingofat{\atomicformulaof{\atomenumerator}}{\headvariableof{\atomorder},\shortcatvariables}
         = \contractionof{\identityat{\headvariableof{\atomenumerator},\catvariableof{\atomenumerator}}}{\shortcatvariables}
@@ -361,7 +371,7 @@ We now exploit such syntactical decompositions of formulas to derive tensor netw
 %We now show how formulas consisting of connectives acting on other formulas can be represented by basis calculus.
 Let there be formulas $\exformula$ and $\secexformula$ depending on categorical variables $\shortcatvariables$ and a binary connective
 \begin{align*}
-    \exconnective: [2]\times[2] \rightarrow[2] \, .
+    \exconnective \defcols [2]\times[2] \rightarrow[2] \, .
 \end{align*}
 Then we have (see \figref{fig:unaryBinaryComposition}b)
 \begin{align*}
@@ -389,7 +399,7 @@ For any unary connective $\exconnective: [2] \rightarrow[2]$ we analogously have
     \label{lem:basisEncodingConnectiveComposition}
     Let there be a $\secatomorder$-ary connective
     \begin{align*}
-        \exconnective: \bigtimes_{\secatomenumeratorin}[2] \rightarrow [2]
+        \exconnective \defcols \bigtimes_{\secatomenumeratorin}[2] \rightarrow [2]
     \end{align*}
     and for each $\secatomenumeratorin$ a formula $\formulaofat{\secatomenumerator}{\shortcatvariables}$.
     For the composition formula $\formulaat{\shortcatvariables}$ defined by
@@ -445,7 +455,7 @@ These properties motivate a hypergraph-based definition of syntactical compositi
 %	We further call any syntactical hypergraph, which composition is a formula $\exformula$, a syntactical decomposition of $\exformula$.
 \end{definition}
 
-We are now prepared to show the main result of this chapter, the representation of formulas as contracted basis encoding of their decomposition.
+We are now prepared to show the main result of this chapter, the representation of formulas as contracted \basisEncoding{} of their decomposition.
 
 \begin{theorem}
     \label{the:formulaDecompositionRep}
@@ -496,7 +506,7 @@ We are now prepared to show the main result of this chapter, the representation 
     \end{align*}
     Thus \eqref{eq:nodeFormulaRepresentation} also holds for $\node$.
     Since the hypergraph is acyclic the induction reached all nodes and \eqref{eq:nodeFormulaRepresentation} holds in particular for the root node $\secnode$.
-    The claim then follows with \lemref{lem:formulaEncodingDecomposition} applied on $\exformula=\formulaof{\secnode}$.
+    The claim then follows with \theref{the:formulaAsCANetwork} applied on $\exformula=\formulaof{\secnode}$.
 \end{proof}
 
 An example of a syntactical decomposition is provided in \figref{fig:decompositionExample}a, and the corresponding tensor network representation in \figref{fig:decompositionExample}b.
