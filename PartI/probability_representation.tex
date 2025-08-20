@@ -31,7 +31,7 @@ These tensors have additional properties as we state in the next definition.
     Let there be for each $\catenumeratorin$ a categorical variable $\catvariableof{\catenumerator}$ taking values in $[\catdimof{\atomenumerator}]$.
     A joint probability distribution of these categorical variables is a function
     \begin{align*}
-        \probwith : \facstates \rightarrow \rr
+        \probwith \defcols \facstates \rightarrow \rr
         %\in\bigotimes_{\catenumeratorin}\rr^{\catdimof{\atomenumerator}} \, ,
     \end{align*}
     which is non-negative, that is for any $\shortcatindicesin$
@@ -328,10 +328,10 @@ Following the insight of the Bayes \theref{the:bayes}, probability distributions
     \begin{align*}
         \probwith
         &= \contractionof{\{\margprobat{\catvariableof{0}}\} \cup
-        \{\normalizationofwrt{\probwith}{\catvariableof{\catenumerator}}{\catvariableof{0},\ldots,\catvariableof{\catenumerator-1}}  \, : \catenumeratorin, \, \catenumerator\geq 1\}
+        \{\normalizationofwrt{\probwith}{\catvariableof{\catenumerator}}{\catvariableof{0},\ldots,\catvariableof{\catenumerator-1}}  \wcols \catenumeratorin \ncond \catenumerator\geq 1\}
         }{\shortcatvariables} \\
         &  = \contractionof{\{\margprobat{\catvariableof{0}}\} \cup
-        \left\{\condprobof{\catvariableof{\catenumerator}}{\catvariableof{0},\ldots,\catvariableof{\catenumerator-1}}\,:\,\catenumeratorin, \, \catenumerator\geq 1\right\}
+        \left\{\condprobof{\catvariableof{\catenumerator}}{\catvariableof{0},\ldots,\catvariableof{\catenumerator-1}} \wcols \catenumeratorin \ncond \catenumerator\geq 1\right\}
         }{\shortcatvariables} \, . \qedhere
     \end{align*}
 \end{proof}
@@ -351,7 +351,7 @@ and therefore scales exponentially in the number of coordinates.
 To find efficient representation schemes of probability distributions by tensor networks, we need to exploit additional properties of the distribution.
 In this section, we introduce the independence and the computation mechanisms towards tensor network decompositions of probability distributions.
 
-\subsect{\IndependenceMechanism{}}
+\subsect{\IndependenceMechanism{}}\label{sec:independenceMechanism}
 
 Independence leads to severe sparsifications of conditional probabilities and is therefore the key assumption to gain sparse decompositions of probability distributions.
 Before showing such decomposition schemes, we first provide a coordinatewise definition of independent variables.
@@ -596,7 +596,7 @@ The computation of marginal distribution by consecutive transition matrix multip
 %\subsect{Sufficient Statistics and Exponential Families}
 
 
-\subsect{\ComputationMechanism{}}
+\subsect{\ComputationMechanism{}}\label{sec:computationMechanism}
 
 \red{
     We have seen, that conditional independence of variables corresponds with decomposition properties of probability tensors.
@@ -623,10 +623,10 @@ When a probability distribution has a sufficient statistic, we can represent the
 
 \begin{theorem}
     \label{the:sufficientStatisticActCoreExistence}
-    If and only if $\sstatat{\shortcatvariables,\selvariable}$ is a sufficient statistic, i.e. $\shortcatvariables$ is independent of $\probat{\shortcatvariables}$ conditioned on $\sstatat{\shortcatvariables,\selvariable}$, there is a tensor $\actcoreat{\headvariables}$ with
+    If and only if $\sstatat{\shortcatvariables,\selvariable}$ is a sufficient statistic, i.e. $\shortcatvariables$ is independent of $\probat{\shortcatvariables}$ conditioned on $\sstatat{\shortcatvariables,\selvariable}$, there is a tensor $\acttensorwith$ with
     \begin{align*}
         \probat{\shortcatvariables}
-        = \contractionof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\hypercoreof{\headvariables}}{\shortcatvariables} \, .
+        = \contractionof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\acttensorwith}{\shortcatvariables} \, .
     \end{align*}
 \end{theorem}
 \begin{proof}
@@ -637,7 +637,7 @@ When a probability distribution has a sufficient statistic, we can represent the
     \end{align*}
     and thus $\sentropyof{\probtensor|\sstat}=0$.
     Moreover, $\sentropyof{\probtensor|\sstat}=0$ is equivalent to a straight satisfaction of the data processing inequality, and $\sstat$ being a sufficient statistic for $\probtensor$.
-    $\sentropyof{\probtensor|\sstat}=0$ is further equivalent to the existence of a function $\exfunction:\rr^{\seldim}\rightarrow[0,1]$, such that for each $\shortcatindices$
+    $\sentropyof{\probtensor|\sstat}=0$ is further equivalent to the existence of a function $\exfunction:\parspace\rightarrow[0,1]$, such that for each $\shortcatindices$
     \begin{align*}
         \exfunctionof{\sstatat{\indexedshortcatvariables,\selvariable}} = \probat{\indexedshortcatvariables} \, .
     \end{align*}
@@ -647,7 +647,7 @@ When a probability distribution has a sufficient statistic, we can represent the
     \end{align*}
     Using basis calculus (see \charef{cha:basisCalculus}) and in particular \theref{the:tensorFunctionComposition} we have
     \begin{align*}
-        \probat{\shortcatvariables} = \contractionof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\hypercoreof{\headvariables}}{\shortcatvariables} \, . & \qedhere
+        \probat{\shortcatvariables} = \contractionof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\acttensorwith}{\shortcatvariables} \, . & \qedhere
     \end{align*}
 \end{proof}
 
@@ -656,10 +656,10 @@ When a probability distribution has a sufficient statistic, we can represent the
 Given a statistic $\sstat$  we can thus characterize the set of probability distributions, for which $\sstat$ is sufficient, as
 \begin{align*} % ! First occurance of realizabledists ?
     \realizabledistsof{\sstat,\maxgraph}
-    \coloneqq \left\{\normalizationof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\hypercoreof{\headvariables}}{\shortcatvariables}
-    \wcols \zerosat{\headvariables}\prec\hypercoreof{\headvariables} \right\} \, ,
+    \coloneqq \left\{\normalizationof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\acttensorwith}{\shortcatvariables}
+    \wcols \zerosat{\headvariables}\prec\acttensorwith \right\} \, ,
 \end{align*}
-where by $\zerosat{\headvariables}\prec\hypercoreof{\headvariables}$ we restrict to the activation tensors with non-negative coordinates.
+where by $\zerosat{\headvariables}\prec\acttensorwith$ we restrict to the activation tensors with non-negative coordinates.
 %where by $\maxgraph$ we refer to the maximal graph to be explained later
 
 %% NEEDED FOR MAX ENTROPY DISCUSSION, since define max entropy with respect to base measures.
@@ -670,8 +670,8 @@ We further extend the definition of sufficient statistics to generic boolean bas
 Analogously, the set of distributions with sufficient statistic $\sstat$ with respect to a base measure $\basemeasure$ is the set
 \begin{align*} % ! First occurance of realizabledists ?
     \realizabledistsof{\sstat,\maxgraph,\basemeasure}
-    \coloneqq \left\{\normalizationof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\hypercoreof{\headvariables},\basemeasureat{\shortcatvariables}}{\shortcatvariables}
-    \wcols \zerosat{\headvariables}\prec\hypercoreof{\headvariables} \right\} \, .
+    \coloneqq \left\{\normalizationof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\acttensorwith,\basemeasureat{\shortcatvariables}}{\shortcatvariables}
+    \wcols \zerosat{\headvariables}\prec\acttensorwith \right\} \, .
 \end{align*}
 
 %A straightforward generalization of probability distributions representable by exponential families then allows for arbitrary decomposition formats for activation tensors, as we define next.
@@ -684,7 +684,7 @@ To describe classes of probability distributions with efficient representations 
 % Define sets of realizable distributions
 \begin{definition}
     \label{def:realizableStatDistributions}
-    Given a statistic $\sstat : \facstates \rightarrow \rr^{\seldim}$, and a hypergraph $\graph=(\nodes,\edges)$ with nodes $[\seldim]\subset\nodes$ containing the image coordinates of $\sstat$, we define the by $\sstat$ computable and by $\graph$ activated family of distributions by
+    Given a statistic $\sstat : \facstates \rightarrow \parspace$, and a hypergraph $\graph=(\nodes,\edges)$ with nodes $[\seldim]\subset\nodes$ containing the image coordinates of $\sstat$, we define the by $\sstat$ computable and by $\graph$ activated family of distributions by
     \begin{align*}
         \realizabledistsof{\sstat,\graph}
         = \left\{ \normalizationof{\bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables},\hypercoreat{\headvariableof{\nodes}} %\} \cup \{\hypercoreofat{\edge}{\sstatcatof{\edge}} \wcols \edgein \}
@@ -740,11 +740,11 @@ We now restrict the activation cores to specific elementary tensors, which corre
     \label{def:expFamily}
     Given a statistic function
     \begin{align*}
-        \sstat : \facstates \rightarrow \parspace
+        \sstat \defcols \facstates \rightarrow \parspace
     \end{align*}
     and a boolean base measure
     \begin{align*}
-        \basemeasure : \facstates \rightarrow \ozset
+        \basemeasure \defcols \facstates \rightarrow \ozset
     \end{align*}
     with $\contraction{\basemeasure}\neq0$, the set $\expfamily=\{\expdist \wcols\canparamwithin\}$ of probability distributions
     \begin{align*}
@@ -843,7 +843,7 @@ We now overcome this problem with usage of the basis encoding formalism to repre
 
 \begin{theorem}[Generic Representation of Exponential Families]
     \label{the:expFamilyTensorRep}
-    Given any base measure $\basemeasure$ and a sufficient statistic $\sstat$ we enumerate for each coordinate $\selindexin$ the image $\imageof{\sstatcoordinateof{\selindex}}$ by a variable $\sstatcatof{\selindex}$ taking values in $[\cardof{\imageof{\sstatcoordinateof{\selindex}}}]$ (see for more details on this scheme \charef{cha:basisCalculus}), given an interpretation map
+    Given any base measure $\basemeasure$ and a sufficient statistic $\sstat$ we enumerate for each coordinate $\selindexin$ the image $\imageof{\sstatcoordinateof{\selindex}}$ by a variable $\headvariableof{\selindex}$ taking values in $[\cardof{\imageof{\sstatcoordinateof{\selindex}}}]$ (see for more details on this scheme \charef{cha:basisCalculus}), given an interpretation map
     \begin{align*}
         \indexinterpretationof{\selindex} :
         [\cardof{\imageof{\sstatcoordinateof{\selindex}}}] \rightarrow \imageof{\sstatcoordinateof{\selindex}} \, .
@@ -856,7 +856,7 @@ We now overcome this problem with usage of the basis encoding formalism to repre
     and have
     \begin{align*}
         \expdistwith =
-        \normalizationof{\{\basemeasurewith\} \cup \{\bencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables} \wcols \selindexin\}\cup\{\sstatac \wcols \selindexin\}}{\shortcatvariables} \, .
+        \normalizationof{\{\basemeasurewith\} \cup \{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables} \wcols \selindexin\}\cup\{\softactlegwith \wcols \selindexin\}}{\shortcatvariables} \, .
     \end{align*}
 \end{theorem}
 \begin{proof}
@@ -876,19 +876,19 @@ We now overcome this problem with usage of the basis encoding formalism to repre
     Its restriction onto the vectors in $\bigtimes_{\selindexin}\imageof{\sstatcoordinateof{\selindex}}$ is the tensor satisfying
     \begin{align*}
         \restrictionoftoat{\expof{\braket{\cdot,\canparam}}}{\imageof{\sstat}}{\sstatcatof{[\seldim]}}
-        = \bigotimes_{\selindexin} \restrictionoftoat{\expof{\cdot \canparamat{\indexedselvariable}}}{\imageof{\sstatcoordinateof{\selindex}}}{\sstatcatof{\selindex}}
-        = \bigotimes_{\selindexin} \actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\sstatcatof{\selindex}} \, .
+        = \bigotimes_{\selindexin} \restrictionoftoat{\expof{\cdot \canparamat{\indexedselvariable}}}{\imageof{\sstatcoordinateof{\selindex}}}{\headvariableof{\selindex}}
+        = \bigotimes_{\selindexin} \softactlegwith \, .
     \end{align*}
     We further have (see \theref{the:functionImageDecompositionContraction} in \charef{cha:basisCalculus})
     \begin{align*}
         \bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}
-        = \contractionof{\{\bencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables} \wcols\selindexin\}}{\sstatcatof{[\seldim]},\shortcatvariables} \, .
+        = \contractionof{\{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables} \wcols\selindexin\}}{\sstatcatof{[\seldim]},\shortcatvariables} \, .
     \end{align*}
     Refining the above decomposition of $\expof{\contractionof{\sencsstat,\canparam}{\shortcatvariables}}$ by these further decompositions we arrive at the claim.
 \end{proof}
 
 
-In the proof of \theref{the:expFamilyTensorRep} we have observed, that the basis encoding $\bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}$ of the statistics decomposed into a tensor network of basis encodings $\bencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables}$ to the coordinate of the statistic.
+In the proof of \theref{the:expFamilyTensorRep} we have observed, that the basis encoding $\bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}$ of the statistics decomposed into a tensor network of basis encodings $\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables}$ to the coordinate of the statistic.
 We can exploit further decomposition mechanisms, which will be discussed in full detail in \charef{cha:basisCalculus}, to find even sparser decompositions.
 This is for example the case, when the coordinates of the statistic are compositions of functions depending on small numbers of variables.
 When the coordindates of the statistic furthermore share similar parts in their compositions, these parts can be shared in the decomposition.
@@ -899,27 +899,27 @@ We will investigate such sparsification mechanisms in more detail in \charef{cha
 The tensor network representation of an exponential family by \theref{the:expFamilyTensorRep} is splitted into computation and activation cores (see \secref{sec:computationActivationNetworks}):
 \begin{itemize}
     \item \textbf{Computation Cores:} The basis encodings $\bencodingof{\sstatcoordinateof{\selindex}}$ of the coordinates of a statistic form the computation cores.
-    Our intuition is that they compute the hidden variable $\sstatcatof{\selindex}$, based on Basis Calculus (see \charef{cha:basisCalculus}), which encode the value of the coordinate with respect to the image interpretation map $\indexinterpretationof{\selindex}$.
-    We notice, that since they are directed with $\sstatcatof{\selindex}$ being the only outgoing variable, they do not influence any contraction with open variables $\shortcatvariables$, unless further tensors sharing the variable $\sstatcatof{\selindex}$ are present in the contraction.
-    \item \textbf{Activation Cores:} The influence of the contraction is performed by the activation cores $\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\sstatcatof{\selindex}}$, which exploit the computed statistic variables $\headvariables$ and provide in combination with the basis encoding a factor
+    Our intuition is that they compute the hidden variable $\headvariableof{\selindex}$, based on Basis Calculus (see \charef{cha:basisCalculus}), which encode the value of the coordinate with respect to the image interpretation map $\indexinterpretationof{\selindex}$.
+    We notice, that since they are directed with $\headvariableof{\selindex}$ being the only outgoing variable, they do not influence any contraction with open variables $\shortcatvariables$, unless further tensors sharing the variable $\headvariableof{\selindex}$ are present in the contraction.
+    \item \textbf{Activation Cores:} The influence of the contraction is performed by the activation cores $\softactlegwith$, which exploit the computed statistic variables $\headvariables$ and provide in combination with the basis encoding a factor
     \begin{align*}
-        \contractionof{\bencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables},\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\sstatcatof{\selindex}}}{\shortcatvariables}
+        \contractionof{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables},\softactlegwith}{\shortcatvariables}
     \end{align*}
     to the tensor network representing the distribution of the observed variables $\shortcatvariables$.
 \end{itemize}
 For the implementation of an exponential family as a \ComputationActivationNetwork{}, see \exaref{exa:expFamilyCARep}. % in \charef{cha:implementation}.
 
 %Note that the activation core is contrained to be positive and
-When the canonical parameter is vanishing at a coordinate, that is $\canparamat{\indexedselvariable}=0$, then the corresponding factor is trivial, since $\actcoreofat{\selindex,0}{\sstatcatof{\selindex}}=\onesat{\sstatcatof{\selindex}}$ and as a consequence of the directionality of basis encodings we have
+When the canonical parameter is vanishing at a coordinate, that is $\canparamat{\indexedselvariable}=0$, then the corresponding factor is trivial, since $\actcoreofat{\selindex,0}{\headvariableof{\selindex}}=\onesat{\headvariableof{\selindex}}$ and as a consequence of the directionality of basis encodings we have
 \begin{align*}
-    \contractionof{\bencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables},\actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\sstatcatof{\selindex}}}{\shortcatvariables}
-    = \contractionof{\bencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables},\onesat{\sstatcatof{\selindex}}}{\shortcatvariables}
+    \contractionof{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables},\softactlegwith}{\shortcatvariables}
+    = \contractionof{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables},\onesat{\headvariableof{\selindex}}}{\shortcatvariables}
     = \onesat{\shortcatvariables} \, .
 \end{align*}
 In that case both the activation core and the corresponding computation core can be dropped from the network without changing its distribution.
 
 % Interpretation as elementary
-By \theref{the:expFamilyTensorRep} any member of an exponential family is represented by the normed contraction of a collection of unary activation cores contracted with the computation cores $\bencodingofat{\sstatcoordinateof{\selindex}}{\sstatcatof{\selindex},\shortcatvariables}$.
+By \theref{the:expFamilyTensorRep} any member of an exponential family is represented by the normed contraction of a collection of unary activation cores contracted with the computation cores $\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables}$.
 %We understand these activation cores as a tensor network distributing the head variables $\headvariables$.
 The unary activation cores form a tensor network on the elementary hypergraph
 \begin{align*}
@@ -952,7 +952,7 @@ We will investigate such schemes later in \charef{cha:networkRepresentation}, wh
 % Compare with selection encoding
 In comparison with the selection encoding representation of energy tensors, we have prepared a contraction without non-linear transforms, which represents the probability distributions being members of an exponential family.
 However, relation encoding come with the expense of introducing more auxiliary variables compared with selection encodings.
-To be more precise, while selection encodings bundle the coordinates of the statistic in single selection variables, relation encodings create for each state $\selindexin$ of these selection variable an own auxiliary variable $\sstatcatof{\selindex}$, which enumerated the image of the coordinate and can therefore be of high dimension.
+To be more precise, while selection encodings bundle the coordinates of the statistic in single selection variables, relation encodings create for each state $\selindexin$ of these selection variable an own auxiliary variable $\headvariableof{\selindex}$, which enumerated the image of the coordinate and can therefore be of high dimension.
 Thus, selection encodings offer in general a more efficient storage format coming at the expense of nonlinear operations in the computation of probabilities.
 We later will encounter situations, where selection encodings are feasible while relation encodings are not, when applying the formalism of formula selecting networks (see \charef{cha:formulaSelection}) in neuro-symbolic reasoning (see \charef{cha:networkReasoning}).
 
@@ -1343,11 +1343,11 @@ We here show this claim by a construction of exponential families representing M
     \label{the:markovNetworkExponentialFamilies}
     Let there be a hypergraph $\graph=(\nodes,\edges)$ with a coloring of the nodes by dimensions $\catdimof{\node}$, we define a sufficient statistics
     \begin{align*}
-        \sstatof{\graph} \, : \bigtimes_{\node\in\nodes} [\catdimof{\node}] \rightarrow \bigtimes_{\edgein}\left(\bigtimes_{\node\in\edge}[\catdimof{\node}]\right)
+        \sstatof{\graph} \defcols \bigtimes_{\node\in\nodes} [\catdimof{\node}] \rightarrow \bigtimes_{\edgein}\left(\bigtimes_{\node\in\edge}[\catdimof{\node}]\right)
     \end{align*}
     by a cartesian product $\sstatof{\graph} = \bigtimes_{\edgein} \sstatcoordinateof{\edge}$ of statistics
     \begin{align*}
-        \sstatcoordinateof{\edge} : \bigtimes_{\node\in\nodes} [\catdimof{\node}] \rightarrow \bigtimes_{\node\in\edge} [\catdimof{\node}]
+        \sstatcoordinateof{\edge} \defcols \bigtimes_{\node\in\nodes} [\catdimof{\node}] \rightarrow \bigtimes_{\node\in\edge} [\catdimof{\node}]
     \end{align*}
     defined by the restriction of indices to the respective edge, that is for $\catindexof{\nodes}\in\nodestatesof{\nodes}$
     \begin{align*}
@@ -1398,7 +1398,7 @@ For Markov Networks on tree hypergraphs, and their embedding into junction tree 
 More precisely, it can be shown, that for the statistic constructed in \theref{the:markovNetworkExponentialFamilies}, in case of tree hypergraphs, the
 \begin{align*}
     \meansetof{\sstatof{\graph}}
-    = \Big\{ \meanparamwith=\big(\meanparamofat{\edge}{\catvariableof{\edge}}\big)_{\edgein} \, : \,
+    = \Big\{ \meanparamwith=\big(\meanparamofat{\edge}{\catvariableof{\edge}}\big)_{\edgein} \wcols
     & \uniquantwrtof{\edge,\secedge\in\edges}{
         \contractionof{\meanparamofat{\edge}{\catvariableof{\edge}}}{\catvariableof{\edge\cap\secedge}} = \contractionof{\meanparamofat{\edge}{\catvariableof{\edge}}}{\catvariableof{\edge\cap\secedge}}}, \\
     & \uniquantwrtof{\edge}{\zerosat{\catvariableof{\edge}} \prec \meanparamofat{\edge}{\catvariableof{\edge}} \land \contraction{\meanparamofat{\edge}{\catvariableof{\edge}}}=1} \Big\} \, .
@@ -1535,7 +1535,7 @@ Convex hulls of finite vectors are called $\mathcal{V}$-polytopes (see Lecture~1
 % Statistic encoding, universal statistic example,
 We thus understand the map
 \begin{align*}
-    \sstatencoding : \facstates\rightarrow\genmeanset \defspace \catindex \rightarrow \sencsstatat{\indexedshortcatvariables,\selvariable}
+    \sstatencoding \defcols \facstates\rightarrow\genmeanset \defspace \catindex \rightarrow \sencsstatat{\indexedshortcatvariables,\selvariable}
 \end{align*}
 as an encoding of states with respect to a statistic $\sstat$.
 When the statistic is the universal statistic $\sstat=\universalstat$, this statistic encoding coincides with the one-hot encoding and the mean polytope is the simplex of dimension $\contraction{\basemeasure}-1$ %$(\prod_{\catenumeratorin}\catdimof{\catenumerator})-1$
@@ -1548,9 +1548,9 @@ A generic mean polytope $\genmeanset$ is then the linear transform of the simple
 
 \subsect{Representation as intersecting half-spaces}
 
-For any vector $\normalvec[\selvariable]\in\rr^{\seldim}$ and a scalar $\normalbound\in\rr$, we call the set
+For any vector $\normalvec[\selvariable]\in\parspace$ and a scalar $\normalbound\in\rr$, we call the set
 \begin{align*}
-    \left\{\meanparamwith \wcols\contraction{\meanparamwith,\normalvec[\selvariable]} \leq \normalbound \right\} \subset \rr^{\seldim}
+    \left\{\meanparamwith \wcols\contraction{\meanparamwith,\normalvec[\selvariable]} \leq \normalbound \right\} \subset \parspace
 \end{align*}
 a half-space of $\rr^\seldim$.
 Bounded intersections of finitely many half-spaces are called $\mathcal{H}$-polytopes \cite{ziegler_lectures_2013}.

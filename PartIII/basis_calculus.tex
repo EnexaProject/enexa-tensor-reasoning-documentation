@@ -3,7 +3,6 @@
 Basis Calculus stores informations in the selection of basis elements, while coordinate calculus uses the coordinates to each index for storage.
 While coordinate calculus is more expressive, basis calculus can be exploited in sparse representations of composed functions.
 
-%\sect{Classification of tensors}
 
 \sect{Basis Encoding of Subsets}
 
@@ -20,7 +19,7 @@ We start with the definition of subset encodings, which represent set membership
     \begin{align*}
         \onehotmapofat{\arbsubset}{\indexedindvariable}
         = \begin{cases}
-              1 & \text{if} \quad \indexinterpretationat{\indindex} \in \arbsubset \\
+              1 & \ifspace \indexinterpretationat{\indindex} \in \arbsubset \\
               0 & \text{else}
         \end{cases} \, .
     \end{align*}
@@ -146,7 +145,7 @@ We can extend this contraction to relations of higher order, and arrive at encod
     \begin{align*}
         \onehotmapofat{\exrelation}{\indexedindvariableof{[\catorder]}}
         = \begin{cases}
-              1 & \text{if} \quad (\indexinterpretationofat{0}{\indindexof{0}},\ldots,\indexinterpretationofat{\atomorder-1}{\indindexof{\atomorder-1}}) \in \exrelation \\
+              1 & \ifspace (\indexinterpretationofat{0}{\indindexof{0}},\ldots,\indexinterpretationofat{\atomorder-1}{\indindexof{\atomorder-1}}) \in \exrelation \\
               0 & \text{else}
         \end{cases} \, .
     \end{align*}
@@ -372,11 +371,11 @@ We now show in a more general perspective, that in basis calculus, any compositi
     \label{the:compositionByContraction}
     Let there be two maps between factored systems
     \begin{align*}
-        \exfunction : \nodestatesof{\nodesone} \rightarrow \nodestatesof{\nodestwo}
+        \exfunction \defcols \nodestatesof{\nodesone} \rightarrow \nodestatesof{\nodestwo}
     \end{align*}
     and
     \begin{align*}
-        \secexfunction : \nodestatesof{\nodestwo} \rightarrow \nodestatesof{\nodesthree}
+        \secexfunction \defcols \nodestatesof{\nodestwo} \rightarrow \nodestatesof{\nodesthree}
     \end{align*}
     with the image system of $\exfunction$ is the domain system of $\secexfunction$.
     Then the basis encoding of the composition
@@ -433,11 +432,11 @@ This has been applied in syntactical compositions (see \defref{def:formulaDecomp
 
 We here investigate how the composition of a tensor
 \begin{align*}
-    \hypercore : \facstates \rightarrow \rr
+    \hypercore \defcols \facstates \rightarrow \rr
 \end{align*}
 with arbitrary functions
 \begin{align*}
-    \chainingfunction: \rr \rightarrow \rr
+    \chainingfunction \defcols \rr \rightarrow \rr
 \end{align*}
 can be represented.
 This is for example relevant, when representing coordinatewise tensor transforms (see \secref{sec:coordinatewiseTransforms}) based on tensor network contractions.
@@ -825,14 +824,14 @@ We here provide a subspace perspective for the sparse representation of decompos
     \begin{align*}
         \subspaceof{\exfunction}
         = \left\{ \contractionof{
-            \bencodingofat{\exfunction}{\indvariableof{\outsymbol},\indvariableof{\insymbol}},\actcoreat{\indvariableof{\outsymbol}}
-        }{\indvariableof{\outsymbol},\indvariableof{\insymbol}} \, : \, \actcoreat{\indvariableof{\outsymbol}} \in \rr^{\inddimof{\outsymbol}}
+            \bencodingofat{\exfunction}{\indvariableof{\outsymbol},\indvariableof{\insymbol}},\acttensorat{\indvariableof{\outsymbol}}
+        }{\indvariableof{\outsymbol},\indvariableof{\insymbol}} \wcols \acttensorat{\indvariableof{\outsymbol}} \in \rr^{\inddimof{\outsymbol}}
         \right\} \, .
     \end{align*}
 \end{definition}
 
 % Trivial tensor included
-For any function $\exfunction$ we have $\onesat{\shortcatvariables}\in\subspaceof{\exfunction}$, when choosing $\actcoreat{\indvariableof{\outsymbol}}=\onesat{\indvariableof{\outsymbol}}$.
+For any function $\exfunction$ we have $\onesat{\shortcatvariables}\in\subspaceof{\exfunction}$, when choosing $\acttensorat{\indvariableof{\outsymbol}}=\onesat{\indvariableof{\outsymbol}}$.
 
 % Indicator features to functions
 We now characterize the indicator subspace as a span of boolean indicator features, indicating whether the function value coincides with an element $\exfunctionimageelement\in\imageof{\exfunction}$.
@@ -840,7 +839,7 @@ Each indicator feature is a tensor $\indicatorofat{\exfunction=\exfunctionimagee
 \begin{align*}
     \indicatorofat{\exfunction=\exfunctionimageelement}{\indexedindvariableof{\insymbol}}
     = \begin{cases}
-          1 & \text{if} \quad \exfunction(\indexinterpretationof{\insymbol}(\indindexof{\insymbol}))=\exfunctionimageelement \\
+          1 & \ifspace \exfunction(\indexinterpretationof{\insymbol}(\indindexof{\insymbol}))=\exfunctionimageelement \\
           0 & \text{else}
     \end{cases} \, .
 \end{align*}
@@ -885,7 +884,7 @@ We now apply indicator spaces to provide further intuition into computable famil
     \end{align*}
 \end{lemma}
 \begin{proof}
-    For any non-negative $\probwith$ we have $\probwith\in\realizabledistsof{\sstat,\maxgraph}$ if and only if $\contraction{\probwith}=1$ and there is an activation core $\actcoreat{\headvariables}$ with
+    For any non-negative $\probwith$ we have $\probwith\in\realizabledistsof{\sstat,\maxgraph}$ if and only if $\contraction{\probwith}=1$ and there is an activation core $\acttensorat{\headvariables}$ with
     \begin{align*}
         \probwith = \contractionof{\bencodingofat{\sstat}{\headvariables}}{\shortcatvariables} \, .
     \end{align*}
@@ -943,15 +942,15 @@ We generalize this in the next lemma to cartesian products of multiple features 
     \begin{align*}
         \contraction{\probwith}=1
     \end{align*}
-    and there exist activation cores $\actcoreofat{\selindex}{\headvariableof{\selindex}}$ such that
+    and there exist activation cores $\acttensorofat{\selindex}{\headvariableof{\selindex}}$ such that
     \begin{align*}
         \probwith
-        = \contractionof{\bigcup_{\selindexin}\{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables},\actcoreofat{\selindex}{\headvariableof{\selindex}}\}}{\shortcatvariables} \, .
+        = \contractionof{\bigcup_{\selindexin}\{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables},\acttensorofat{\selindex}{\headvariableof{\selindex}}\}}{\shortcatvariables} \, .
     \end{align*}
     Since for any $\selindexin$ we have
     \begin{align*}
-        \left\{\contractionof{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables},\actcoreofat{\selindex}{\headvariableof{\selindex}}}{\shortcatvariables} \wcols
-        \actcoreofat{\selindex}{\headvariableof{\selindex}} \in \rr^{\headdimof{\selindex}}
+        \left\{\contractionof{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables},\acttensorofat{\selindex}{\headvariableof{\selindex}}}{\shortcatvariables} \wcols
+        \acttensorofat{\selindex}{\headvariableof{\selindex}} \in \rr^{\headdimof{\selindex}}
         \right\} = \subspaceof{\sstatcoordinateof{\selindex}}
     \end{align*}
     $\probwith\in\realizabledistsof{\sstat,\elgraph}$ is equal to
@@ -984,54 +983,54 @@ We now relate the by a function $\exfunction$ computable distributions with thos
 \end{lemma}
 \begin{proof}
     "$\subset$"
-    For any $\probwith\in\realizabledistsof{\exfunction,\maxgraph}$ we find an activation core $\actcoreat{\headvariable}$ such that
+    For any $\probwith\in\realizabledistsof{\exfunction,\maxgraph}$ we find an activation core $\acttensorat{\headvariable}$ such that
     \begin{align*}
-        \probwith = \contractionof{\bencodingofat{\exfunction}{\headvariable,\shortcatvariables},\actcoreat{\headvariable}}{\shortcatvariables} \, .
+        \probwith = \contractionof{\bencodingofat{\exfunction}{\headvariable,\shortcatvariables},\acttensorat{\headvariable}}{\shortcatvariables} \, .
     \end{align*}
-    Given this activation tensor $\actcoreat{\headvariable}$ we construct an elementary activation tensor
+    Given this activation tensor $\acttensorat{\headvariable}$ we construct an elementary activation tensor
     \begin{align*}
-        \bigotimes_{\selindexin}\actcoreofat{\selindex}{\headvariableof{\selindex}}
+        \bigotimes_{\selindexin}\acttensorofat{\selindex}{\headvariableof{\selindex}}
     \end{align*}
     which reproduces $\probwith$ by contraction with the basis encoding of the indicator features to $\exfunction$. %$\contractionof{}$
     To this end, we define for $\selindexin$ two-dimensional leg vectors
     \begin{align*}
-        \actcoreofat{\selindex}{\headvariableof{\selindex}}
+        \acttensorofat{\selindex}{\headvariableof{\selindex}}
         = \begin{bmatrix}
-              \actcoreat{\headvariable=\selindex} \\
+              \acttensorat{\headvariable=\selindex} \\
               1
         \end{bmatrix}[\headvariableof{\selindex}] \, .
     \end{align*}
     For these head variables we have for any index tuple $\shortcatindices$
     \begin{align*}
-        \contractionof{\bigcup_{\selindexin}\{\bencodingofat{\indicatorof{\exfunction=\indexinterpretationof{\selindex}}}{\headvariableof{\selindex}},\actcoreat{\headvariable=\selindex}\}}{\indexedshortcatvariables}
-        & = \actcoreofat{\exfunctionat{\shortcatindices}}{\headvariableof{\selindex}=1} \cdot \prod_{\selindexin \wcols \exfunctionat{\shortcatindices} \neq \selindex} \actcoreofat{\exfunctionat{\shortcatindices}}{\headvariableof{\selindex}=0} \\
-        & = \actcoreofat{\exfunctionat{\shortcatindices}}{\headvariableof{\selindex}=1} \\
-        & = \contractionof{\bencodingofat{\exfunction}{\headvariable,\shortcatvariables},\actcoreat{\headvariable}}{\indexedshortcatvariables} \\
+        \contractionof{\bigcup_{\selindexin}\{\bencodingofat{\indicatorof{\exfunction=\indexinterpretationof{\selindex}}}{\headvariableof{\selindex}},\acttensorat{\headvariable=\selindex}\}}{\indexedshortcatvariables}
+        & = \acttensorofat{\exfunctionat{\shortcatindices}}{\headvariableof{\selindex}=1} \cdot \prod_{\selindexin \wcols \exfunctionat{\shortcatindices} \neq \selindex} \acttensorofat{\exfunctionat{\shortcatindices}}{\headvariableof{\selindex}=0} \\
+        & = \acttensorofat{\exfunctionat{\shortcatindices}}{\headvariableof{\selindex}=1} \\
+        & = \contractionof{\bencodingofat{\exfunction}{\headvariable,\shortcatvariables},\acttensorat{\headvariable}}{\indexedshortcatvariables} \\
         & = \probat{\indexedshortcatvariables} \, .
     \end{align*}
 
     "$\supset$"
     Conversely, given $\probwith\in\realizabledistsof{\{\indicatorof{\exfunction=\exfunctionimageelement}\wcols\exfunctionimageelement\in\imageof{\exfunction}\},\elgraph}$ we find an elementary activation tensor
     \begin{align*}
-        \bigotimes_{\selindexin}\actcoreofat{\selindex}{\headvariableof{\selindex}}
+        \bigotimes_{\selindexin}\acttensorofat{\selindex}{\headvariableof{\selindex}}
     \end{align*}
     such that
     \begin{align*}
-        \probwith = \contractionof{\bigcup_{\selindexin}\{\bencodingofat{\indicatorof{\exfunction=\indexinterpretationof{\selindex}}}{\headvariableof{\selindex}},\actcoreat{\headvariable=\selindex}\}}{\shortcatvariables}
+        \probwith = \contractionof{\bigcup_{\selindexin}\{\bencodingofat{\indicatorof{\exfunction=\indexinterpretationof{\selindex}}}{\headvariableof{\selindex}},\acttensorat{\headvariable=\selindex}\}}{\shortcatvariables}
     \end{align*}
-    If $\actcoreofat{\selindex}{\headvariableof{\selindex}=0}=0$ for an $\selindex$, then we have $\probwith=\normalizationof{\indicatorofat{\exfunction=\indexinterpretationof{\selindex}}{\shortcatvariables}}{\shortcatvariables}$, which is an element of $\realizabledistsof{\exfunction,\maxgraph}$ since then
+    If $\acttensorofat{\selindex}{\headvariableof{\selindex}=0}=0$ for an $\selindex$, then we have $\probwith=\normalizationof{\indicatorofat{\exfunction=\indexinterpretationof{\selindex}}{\shortcatvariables}}{\shortcatvariables}$, which is an element of $\realizabledistsof{\exfunction,\maxgraph}$ since then
     \begin{align*}
         \probwith = \normalizationof{\bencodingof{\exfunction}{\headvariable,\shortcatvariables},\onehotmapofat{\selindex}{\headvariable}}{\shortcatvariables} \, .
     \end{align*}
-    In all other cases we multiply scalars to the leg tensors such that $\actcoreofat{\selindex}{\headvariableof{\selindex}=0}=1$.
+    In all other cases we multiply scalars to the leg tensors such that $\acttensorofat{\selindex}{\headvariableof{\selindex}=0}=1$.
     Notice, that the product of all such scalars needs to be $1$ since $\contraction{\probwith}=1$.
-    We then construct an activation core $\actcoreat{\headvariable}$
+    We then construct an activation core $\acttensorat{\headvariable}$
     \begin{align*}
-        \actcoreat{\headvariable=\selindex} = \actcoreofat{\selindex}{\headvariableof{\selindex}=1}
+        \acttensorat{\headvariable=\selindex} = \acttensorofat{\selindex}{\headvariableof{\selindex}=1}
     \end{align*}
     and have with a similar argument as in the converse proof direction
     \begin{align*}
-        \probwith = \contractionof{\bencodingof{\exfunction}{\headvariable,\shortcatvariables},\actcoreat{\headvariable}}{\shortcatvariables} \, .
+        \probwith = \contractionof{\bencodingof{\exfunction}{\headvariable,\shortcatvariables},\acttensorat{\headvariable}}{\shortcatvariables} \, .
     \end{align*}
 \end{proof}
 
@@ -1131,7 +1130,7 @@ We now show, that partition statistics are exactly those statistics, which are c
     \begin{align*}
         \sstatcoordinateofat{\edge,\selindexof{\edge}}{\catindexof{\nodes}}
         = \begin{cases}
-              1 & \text{if} \quad \catindexof{\edge} = \selindexof{\edge} \\
+              1 & \ifspace \catindexof{\edge} = \selindexof{\edge} \\
               0 & \text{else}
         \end{cases} \, .
     \end{align*}
@@ -1142,23 +1141,23 @@ This efficiency gain compared with featurewise releational encodings is in the f
 
 \begin{theorem}
     \label{the:selectionRepresentationPartitionStatistics}
-    For any partition statistic and any elementary activation tensor $\bigotimes_{\selindexin}\actcoreofat{\selindex}{\headvariableof{\selindex}}$ we have
+    For any partition statistic and any elementary activation tensor $\bigotimes_{\selindexin}\acttensorofat{\selindex}{\headvariableof{\selindex}}$ we have
     \begin{align*}
-        \contractionof{\bigcup_{\selindexin}\{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables},\actcoreofat{\selindex}{\headvariableof{\selindex}}\}}{\shortcatvariables}
-        = \contractionof{\sencsstatwith,\actcoreat{\headvariable}}{\shortcatvariables}
+        \contractionof{\bigcup_{\selindexin}\{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables},\acttensorofat{\selindex}{\headvariableof{\selindex}}\}}{\shortcatvariables}
+        = \contractionof{\sencsstatwith,\acttensorat{\headvariable}}{\shortcatvariables}
     \end{align*}
     where
     \begin{align*}
-        \actcoreat{\headvariable}
+        \acttensorat{\headvariable}
         =
         \begin{cases}
-            \left(\prod_{\selindexin} \actcoreofat{\selindex}{\headvariableof{\selindex}=0} \right) \sum_{\selindexin}\actcoreofat{\selindex}{\headvariableof{\selindex}=1} \cdot \onehotmapofat{\selindex}{\headvariable}
-            & \text{if} \quad \forall_{\selindexin} : \actcoreofat{\selindex}{\headvariableof{\selindex}=0}\neq 0 \\
-            \actcoreofat{\secselindex}{\headvariableof{\secselindex}=1} \cdot \prod_{\selindex\neq\secselindex}\actcoreofat{\secselindex}{\headvariableof{\secselindex}=0}
-            & \text{if} \quad \actcoreofat{\secselindex}{\headvariableof{\secselindex}=0}=0 %\ncond \forall_{\selindex\neq\secselindex} \actcoreofat{\selindex}{\headvariableof{\selindex}=0}=0
+            \left(\prod_{\selindexin} \acttensorofat{\selindex}{\headvariableof{\selindex}=0} \right) \sum_{\selindexin}\acttensorofat{\selindex}{\headvariableof{\selindex}=1} \cdot \onehotmapofat{\selindex}{\headvariable}
+            & \ifspace \uniquantwrtof{\selindexin}{\acttensorofat{\selindex}{\headvariableof{\selindex}=0}\neq 0} \\ %\forall_{\selindexin} :  \\
+            \acttensorofat{\secselindex}{\headvariableof{\secselindex}=1} \cdot \prod_{\selindex\neq\secselindex}\acttensorofat{\secselindex}{\headvariableof{\secselindex}=0}
+            & \ifspace \existquantwrtof{\secselindex\in[\seldim]}{\acttensorofat{\secselindex}{\headvariableof{\secselindex}=0}=0} %\ncond \forall_{\selindex\neq\secselindex} \acttensorofat{\selindex}{\headvariableof{\selindex}=0}=0
         \end{cases} \, .
     \end{align*}
-    We notice, that by definition $\actcoreat{\headvariable}=\zerosat{\headvariable}$ if there is more than one $\selindexin$ with $\actcoreofat{\selindex}{\headvariableof{\selindex}=0}=0$.
+    We notice, that by definition $\acttensorat{\headvariable}=\zerosat{\headvariable}$ if there is more than one $\selindexin$ with $\acttensorofat{\selindex}{\headvariableof{\selindex}=0}=0$.
 \end{theorem}
 \begin{proof}
     \lemref{lem:partitionStatisticFunctionIndicator} implies, that there is a function $\exfunction$ such that the features of the partition statistics are the indicator features to $\exfunction$.
