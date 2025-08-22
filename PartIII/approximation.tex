@@ -1,7 +1,257 @@
 \chapter{\chatextapproximation}\label{cha:approximation}
 
-Often reasoning requires the execution of demanding contractions of tensors networks, or combinatorical search of maximum coordinates.
-We in this chapter investigate methods, to replace hard to be sampled tensor networks by approximating tensor networks, which then serve as a proxy in inference tasks.
+We in this chapter study the search for the maximal coordinate in a tensor, which has a sparse \basplusDecomposition{}.
+We then investigate methods to approximate tensors by sparse \basplusDecomposition{}.
+%Often reasoning requires the execution of demanding contractions of tensors networks, or combinatorical search of maximum coordinates.
+%We in this chapter investigate methods, to replace hard to be sampled tensor networks by approximating tensor networks, which then serve as a proxy in inference tasks.
+
+
+\sect{Optimization of sparse tensors}
+
+Let us now study the problem of searching for the maximal coordinate in a tensor represented by a monomial decomposition.
+Given a tensor $\hypercorewith$ we state this as the problem:
+\begin{align}
+    \label{prob:maxCoordinate}\tag{$\probtagtypeinst{\mathrm{max}}{\hypercore}$}
+    \argmax_{\shortcatindices\in\facstates} \hypercoreat{\indexedshortcatvariables}
+\end{align}
+
+\probref{prob:maxCoordinate} can be reformulated as optimization over the standard simplex
+\begin{align*}
+    \meansetof{\mlnmintermsymbol} = \convhullof{\onehotmapofat{\shortcatindices}{\shortcatvariables} \wcols \shortcatindices\in\facstates}
+\end{align*}
+as
+\begin{align*}
+    \argmax_{\meanparamat{\selvariableof{[\catorder]}}\in\meansetof{\mlnmintermsymbol}} \contraction{\meanparam,\hypercore} \, .
+\end{align*}
+
+\begin{example}[Mode search in exponential families]
+    % \red{This transforms the mean parameter polytope by contracting with some core, here the selection encoding of the statistic!}
+    Given a statistic $\sstat$, a canonical parameter $\canparam$ and a boolean base measure $\basemeasure$, the mode search problem for the member $\expdistof{\sstat,\canparam,\basemeasure}$ of the exponential family $\expfamilyof{\sstat,\basemeasure}$ is
+    \begin{align*}
+        \max_{\shortcatindices\in\atomstates \wcols \basemeasureat{\indexedshortcatvariables}=1} \contraction{\sencsstatat{\indexedshortcatvariables,\selvariable},\canparamat{\selvariable}}
+        = \max_{\meanparam\in\meansetof{\sstat,\basemeasure}} \contraction{\meanparamat{\selvariable},\canparamat{\selvariable}} \, .
+    \end{align*}
+    Such mode search problems have appeared as generic MAP queries (see \charef{cha:probReasoning}).
+    In \charef{cha:networkReasoning} we have discussed them for the specific cases of \HybridLogicNetworks{} and grafting proposal distributions.
+% Appearance of mode search
+%    The search for maximal coordinates appears in various reasoning tasks:
+%    \begin{itemize}
+%        \item MAP query as mode search of MLN: $\hypercore$ is the contraction of evidence with the distribution, leaving the query variables open.
+%        \item Grafting as mode search of proposal distribution: $\hypercore$ is the contraction of the gradient of the likelihood with the basis encoding of the hypothesis.
+%    \end{itemize}
+%Both tasks have been formulated as mode search problems in exponential families.
+\end{example}
+
+
+
+\subsect{Unconstrained Binary Optimization}
+
+For leg dimensions $\catdimof{\atomenumerator}=2$, \probref{prob:maxCoordinate} is known as the unconstrained binary optimization.
+\probref{prob:maxCoordinate} is a Higher-Order Unconstrained Binary Optimization (HUBO), when $\hypercorewith$ has a when $\hypercore$ has a monomial decomposition (see \defref{def:polynomialSparsity}) with $\cardof{\variablesetof{\decindex}}\leq\sliceorder$ for all $\decindexin$, that is when $\slicerankwrtof{\sliceorder}{\hypercore}<\infty$.
+
+\begin{definition}
+    Let $\hypercorewith$ be a tensor with a monomial decomposition $\enumeratedslices$, where $\max_{\decindexin}\cardof{\variablesetof{\decindex}}=\sliceorder$.
+    Se then call \probref{prob:maxCoordinate} a $\sliceorder$-Order Unconstrained Binary Optimization (HUBO), which we denote as
+    \begin{align}
+        \label{prob:HUBO}\tag{$\probtagtypeinst{\mathrm{HUBO}}{\hypercore}$}
+        \argmax_{\shortcatindices\in\atomstates} \quad
+        \sum_{\decindexin} \slicescalar^{\decindex} \contractionof{\onehotmapofat{\catindexof{\variablesetof{\decindex}}^{\decindex}}{\catvariableof{\variablesetof{\decindex}}}}{\indexedshortcatvariables} \, .
+    \end{align}
+%    The binary optimization of a tensor $\hypercorewith\in\atomstates$ is the problem
+%    \begin{align}\tag{$\probtagtypeinst{\mathrm{HUBO}}{\hypercore}$}\label{prob:HUBO}
+%        \argmax_{\shortcatindices\in\atomstates} \quad \hypercoreat{\indexedshortcatvariables}
+%    \end{align}
+%    We call Problem~\ref{prob:HUBO} a Higher-Order Unconstrained Binary Optimization (HUBO) problem of order $\sliceorder$ and sparsity $\slicerankwrtof{\sliceorder}{\hypercore}$, when $\hypercore$ has a monomial decomposition (see \defref{def:polynomialSparsity}) with $\cardof{\variablesetof{\decindex}}\leq\sliceorder$ for all $\decindexin$, that is when $\slicerankwrtof{\sliceorder}{\hypercore}<\infty$.
+\end{definition}
+
+\begin{remark}[Leg dimensions larger than 2]
+    We demanded leg dimensions $\catdimof{\atomenumerator}=2$ to have boolean valued variables $\catvariableof{\catenumerator}$, which is required to connect with the formalism of binary optimization.
+    Categorical variables with larger dimensions can be represented by atomization variables, which are created by contractions with categorical constraint tensors (see \secref{sec:categoricalTN}).
+\end{remark}
+
+% Interpretation of sparsity
+The sparsity $\slicerankwrtof{\sliceorder}{\hypercore}$ is the minimal number of monomials, for which a weighted sum is equal to $\hypercore$.
+Thus we interpret \probref{prob:HUBO} as searching for the maximum in a polynomial consistent of $\slicerankwrtof{\sliceorder}{\hypercore}$ monomial terms.
+%\red{Each monomial is also refered to as potential.}
+
+\probref{prob:HUBO} is called Quadratic Unconstrained Binary Optimization problems, if $\sliceorder=2$.
+We can transform certain Higher-Order Unconstrained Binary Optimization (HUBO) problems into Quadratic Unconstrained Binary Optimization (QUBO) problems by introducing auxiliary variables.
+An example of such an transform is provided by the next lemma.
+
+%% Slack variables
+\begin{lemma}
+    \label{lem:monomialToQUBO}
+    For any $\atomindices\in[2]$ and $\variableset\subset[\atomorder]$ we have
+    \begin{align*}
+        \left( \prod_{\atomenumerator\in\variableset} \atomlegindexof{\atomenumerator } \right)  \left(  \prod_{\atomenumerator\notin\variableset} (1- \atomlegindexof{\atomenumerator }) \right) =
+        \max_{\slackvariable\in[2]} \slackvariable \cdot 2 \cdot \left( \sum_{\atomenumerator\in\variableset}\atomlegindexof{\atomenumerator}  - \cardof{\variableset} - \sum_{\atomenumerator\notin\variableset}\atomlegindexof{\atomenumerator} + \frac{1}{2} \right) \, . % Alternative: no factor 2, but + 1 instead of +1/2 (->pyqubo)
+    \end{align*}
+\end{lemma}
+\begin{proof} %Proof by case distinction
+    Only if $\atomlegindexof{\atomenumerator}=1$ for $\atomenumerator\in\variableset$ and $\atomlegindexof{\atomenumerator}=0$ else we have
+    \[ \left( \sum_{\atomenumerator\in\variableset}\atomlegindexof{\atomenumerator}  - \cardof{\variableset} - \sum_{\atomenumerator\notin\variableset}\atomlegindexof{\atomenumerator} + \frac{1}{2} \right) \geq 0 \, . \]
+    In this case the maximum is taken for $\slackvariable=1$ and we have
+    \[ \max_{\slackvariable\in[2]} \slackvariable \cdot 2 \cdot \left( \sum_{\atomenumerator\in\variableset}\atomlegindexof{\atomenumerator}  - \cardof{\variableset} - \sum_{\atomenumerator\notin\variableset}\atomlegindexof{\atomenumerator} + \frac{1}{2} \right)
+    = 1 = \left( \prod_{\atomenumerator\in\variableset} \atomlegindexof{\atomenumerator } \right)  \left(  \prod_{\atomenumerator\notin\variableset} (1- \atomlegindexof{\atomenumerator }) \right) \, . \]
+    In all other cases, the maximum is taken for $\slackvariable=0$ and thus vanishes, that is
+    \[ \max_{\slackvariable\in[2]} \slackvariable \cdot 2 \cdot \left( \sum_{\atomenumerator\in\variableset}\atomlegindexof{\atomenumerator}  - \cardof{\variableset} - \sum_{\atomenumerator\notin\variableset}\atomlegindexof{\atomenumerator} + \frac{1}{2} \right)
+    = 0 = \left( \prod_{\atomenumerator\in\variableset} \atomlegindexof{\atomenumerator } \right)  \left(  \prod_{\atomenumerator\notin\variableset} (1- \atomlegindexof{\atomenumerator }) \right) \, . \]
+    Thus, the claim holds in all cases.
+\end{proof}
+
+\subsect{Integer Linear Programming}
+
+Let us now show how optimization problems can be represented as linear programming problems.
+% State vector
+To this end, we understand each index tuple $\shortcatindices\in\facstates$ as a vector $\statevectorofat{\shortcatindices}{\selvariable}\in\rr^{\catorder}$ with coordinates
+\begin{align*}
+    \statevectorofat{\shortcatindices}{\selvariable=\catenumerator} = \catindexof{\catenumerator} \, .
+\end{align*}
+
+\begin{definition}
+    The integer linear program (ILP) of $\matrixat{\datvariable,\selvariable}\in\rr^{n \times d}$, $\rhssymbol[\datvariable]\in\rr^{n}$ and $c\in\rr^{\catorder}$ is the problem
+    \begin{align}
+        \tag{$\probtagtypeinst{\mathrm{ILP}}{\objectivesymbol,\exmatrix,\rhssymbol}$}
+        \argmax_{\shortcatindices\in\facstates} \contraction{\objectivesymbol[\selvariable], \statevectorofat{\shortcatindices}{\selvariable}}
+        \quad \text{subject to } \quad \contraction{\matrixat{\datvariable,\selvariable},\statevectorofat{\shortcatindices}{\selvariable}} \prec \rhssymbol[\datvariable] \, ,
+    \end{align}
+    where by $\prec$ we denote partial ordering of tensors (see \defref{def:partialOrder}).
+\end{definition}
+
+
+We now show that any binary optimization problem of a tensor can be transformed into a integer linear program, given a monomial decomposition of the tensor $\hypercorewith$ by $\sliceset=\enumeratedslices$.
+For this we choose state indices by vectors
+\begin{align*}
+    \seccatindex_{[\catorder+\decdim]} = \catindexof{0},\ldots,\catindexof{\catorder-1},\slackindexof{0},\ldots\slackindexof{\decdim-1} \in \left(\bigtimes_{\catenumeratorin}[2]\right) \times  \left(\bigtimes_{\decindexin}[2]\right) \, ,
+\end{align*}
+that is we added for each monomial an index $\slackindexof{\decindex}$, which will represent the evaluations of the respective monomial.
+
+
+We furthermore define a vector $\objofat{\sliceset}{\selvariable}$, where $\selvariable$ takes values in $[\catorder+\decdim]$, as
+\begin{align}
+    \label{eq:ilpPotential}
+    \objofat{\sliceset}{\indexedselvariable} =
+    \begin{cases}
+        \slicescalarof{\selindex-\catorder} & \text{if} \quad \selindex>\catorder \\% \decindexin \text{ we have } \selindex = \catorder + \decindex \\
+        0 & \text{else}
+    \end{cases} \, .
+\end{align}
+
+To construct a matrix $\matrixat{\datvariable,\selvariable}$ and a vector $b[\datvariable]$ to the monomial decomposition $\sliceset$, we now introduce a variable $\datvariable$ enumerating linear inequalities, which takes values in $[\datanum]$, where
+\[ \datanum =  \sum_{\decindexin} \left(\cardof{\variablesetof{\decindex}} +1\right) \, . \]
+We define for each $\decindexin$ an auxiliary number
+\[ \datanum_{\decindex} = \sum_{\tilde{\decindex}=0}^{\decindex} \left(\cardof{\variablesetof{\tilde{\decindex}}} +1\right) \]
+and further enumerate the set $\variablesetof{\decindex}$ by a function $\indexinterpretation: [\cardof{\variablesetof{\decindex}}] \rightarrow \variablesetof{\decindex}$.
+
+We then construct a matrix $\matrixofat{\sliceset}{\datvariable,\selvariable}$, were for $\selindex\in[\catorder+\decdim]$, $\decindexin$ and $\datindex\in[\cardof{\variablesetof{\decindex}}]$ we have
+\begin{align}
+    \label{eq:ilpMatrix}
+    \matrixofat{\sliceset}{\datvariable=\datanum_{\decindex}+\datindex,\indexedselvariable} =
+    \begin{cases}
+        1 - 2 \cdot \catindexof{\indexinterpretationat{\datindex}}^{\decindex} & \text{if} \quad \datindex < \cardof{\variablesetof{\decindex}}, \,\, \datindex=\selindex \text{  and  } \selindex = \indexinterpretationat{\datindex} \\ % Upper bounds on z, x position
+        1  & \text{if} \quad \datindex < \cardof{\variablesetof{\decindex}} \text{  and  } \selindex = \catorder + \decindex \\ % Upper bound on z, z position
+        -\catindexof{\indexinterpretationat{\datindex}}^{\decindex} & \text{if }  \datindex = \cardof{\variablesetof{\decindex}}    \text{ and }  \selindex=\indexinterpretationat{\datindex}  \\ % Last condition on $x$
+        -1 & \text{if }  \datindex = \cardof{\variablesetof{\decindex}}  \text{ and }  \selindex = \catorder + \decindex \\ % Last condition on $x$
+        0 & \text{else} \\
+    \end{cases} \, .
+\end{align}
+%All further coordinates of $\matrixofat{\sliceset}{\datvariable,\selvariable}$ not reached by this construction are set to $0$.
+Similarly, we define $\rhsofat{\sliceset}{\datvariable}$ as the vector which nonvanishing coordinates are for $\decindexin$ at
+\begin{align}
+    \label{eq:ilpRhs}
+    \rhsofat{\sliceset}{\datvariable=\datanum_{\decindex}+\datindex} =
+    \begin{cases}
+        1 - \catindexof{\indexinterpretationat{\datindex}}^{\decindex} & \text{if }  \datindex < \cardof{\variablesetof{\decindex}} \\ % Upper bounds on z
+        %\datindex = \catenumerator \text{ and } \catindexof{\catenumerator}^{\decindex} = 0 \\ % First $\catorder$ conditions, on x
+        -1 + \cardof{\{\catenumerator\in\variablesetof{\decindex} \wcols  \catindexof{\catenumerator}^{\decindex} = 1\}}  & \text{if }  \datindex = \cardof{\variablesetof{\decindex}} \\ % \text{ and }  \selindex = \catorder + \decindex \\ % Last condition on $x$
+    \end{cases} \, .
+\end{align}
+
+
+% Intuition
+Informally, we pose for each tuple $\slicetupleof{}$ $\cardof{\variableset}+1$ linear equations.
+The first $\cardof{\variableset}$ enforce, that the slice representing variable $\slackvariable$ is zero once a leg is $0$.
+The last enforces that the slice representing variable is $1$.
+We prove this claim more formally in the next theorem.
+
+\begin{theorem}
+    Given a monomial decomposition $\sliceset=\enumeratedslices$ of a tensor $\hypercore$, let  $\seccatindex^{ILP,\sliceset}$ be a solution of the integer linear program defined by the matrix and vectors in equations \eqref{eq:ilpPotential}, \eqref{eq:ilpMatrix} and \eqref{eq:ilpRhs}.
+    Then we have
+    \begin{align*}
+        \restrictionofto{\seccatindex^{ILP,\sliceset}}{[\catorder]} \in \argmax_{\shortcatindices\in\atomstates} \quad \hypercoreat{\indexedshortcatvariables} \, .
+    \end{align*}
+    where by  $\restrictionofto{\seccatindex^{ILP,\sliceset}}{[\catorder]}$ we denote the restriction of the index tuple $\seccatindex^{ILP,\sliceset}$ to the first $\catorder$.
+\end{theorem}
+\begin{proof}
+    We show that the linear constraints by
+    \begin{align*}
+        \contraction{\matrixofat{\sliceset}{\datvariable,\selvariable},\statevectorofat{\seccatindexof{[\atomorder+\decdim]}}{\selvariable}} \prec \rhsofat{\sliceset}{\datvariable}
+    \end{align*}
+    are satisfied for a vector $\seccatindexof{[\atomorder+\decdim]}=(\catindexof{[\atomorder]},\slackindexof{[\decdim]})$, if and only if for all $\decindexin$ the product constraints
+    \begin{align}
+        \label{eq:slackindexInequalityILPProof}
+        \slackindexof{\decindex}
+        = \left( \prod_{\catenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\catenumerator}^{\decindex} = 0} (1 - \catindexof{\catenumerator} \right)
+        \cdot \left( \prod_{\catenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\catenumerator}^{\decindex} = 1}  \catindexof{\catenumerator} \right) \,
+    \end{align}
+    hold.
+    We will see, that the linear constraints where $\datvariable$ takes indices in $\datanum_{\decindex}+[\cardof{\variablesetof{\decindex}}]$ are equivalent to the upper bound on $\slackindexof{\decindex}$ and the constraint to $\datvariable=\datanum_{\decindex}+\cardof{\variablesetof{\decindex}}$ is equivalent to an lower bound on $\slackindexof{\decindex}$.
+    To show the upper bound, we notice that for any $\datindex\in[\cardof{\variablesetof{\decindex}}]$ the constraint $\datvariable = \datanum_{\decindex}+\datindex$ is
+    \begin{align*}
+        \slackindexof{\decindex} \leq
+        \begin{cases}
+            \catindexof{\indexinterpretationat{\datindex}}  & \text{if} \quad \catindexof{\indexinterpretationat{\datindex}}^\decindex = 1 \\
+            (1- \catindexof{\indexinterpretationat{\datindex}}) & \text{if} \quad \catindexof{\indexinterpretationat{\datindex}}^\decindex = 0 \\
+        \end{cases} \, .
+    \end{align*}
+    Thus, whenever a factor on the right side of \eqref{eq:slackindexInequalityILPProof} is $0$, we have $\slackindexof{\decindex}=0$ if the respective constraint is satisfied.
+    We conclude, that
+    \begin{align*}
+        \slackindexof{\decindex}
+        \leq \left( \prod_{\catenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\catenumerator}^\decindex = 0} (1 - \catindexof{\catenumerator}) \right)
+        \cdot \left( \prod_{\catenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\catenumerator}^\decindex = 1}  \catindexof{\catenumerator} \right) \, .
+    \end{align*}
+    To show the lower bound, we have the constraint to $\datvariable=\datanum_{\decindex}+\cardof{\variablesetof{\decindex}}$ by
+    \begin{align*}
+        \slackindexof{\decindex} \geq 1 -
+        \left( \sum_{\catenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\catenumerator}^\decindex = 0} \catindexof{\catenumerator} \right)
+        + \left( \sum_{\catenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\catenumerator}^\decindex = 1}  (\catindexof{\catenumerator} - 1 )\right) \, .
+    \end{align*}
+    The right side of this inequality is $1$, if and only if all factors on the right side of \eqref{eq:slackindexInequalityILPProof} are $1$, and less or equal to $0$ else.
+    Thus, whenever this constraint is satisfied, we have
+    \begin{align*}
+        \slackindexof{\decindex}
+        \geq \left( \prod_{\catenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\catenumerator}^\decindex = 0} (1 - \catindexof{\catenumerator}) \right)
+        \cdot \left( \prod_{\catenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\catenumerator}^\decindex = 1}  \catindexof{\catenumerator} \right)  \, .
+    \end{align*}
+
+    In summary, the equation \eqref{eq:slackindexInequalityILPProof} holds, if and only if the constraints where $\datvariable$ takes indices in $\datanum_{\decindex}+[\cardof{\variablesetof{\decindex}}+1]$ are satisfied.
+%    In summary we arrive at
+%    \[ \slackindexof{\decindex}
+%    = \left( \prod_{\catenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\catenumerator}^\decindex = 0} (1 - \catindexof{\catenumerator}^\decindex) \right)
+%    \cdot \left( \prod_{\catenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\catenumerator}^\decindex = 1}  \catindexof{\catenumerator}^\decindex \right)
+%    \]
+%    if and only if the indices $\seccatindex_{[\catorder+\decdim]}$ are feasible.
+
+    This characterization of the constraints implies, that for any $\shortcatindices\in\facstates$ there is exactly one feasible index $\seccatindex_{[\catorder+\decdim]}$ with $\restrictionofto{(\seccatindex_{[\catorder+\decdim]})}{[\catorder]}=\shortcatindices$, and the objective takes for this index the value
+    \begin{align*}
+        \contraction{\objectivesymbol[\selvariable], \statevectorofat{\seccatindex_{[\catorder+\decdim]}}{\selvariable}}
+        &= \sum_{\decindexin} \slicescalarof{\decindex} \cdot \slackindexof{\decindex} \\
+        &= \sum_{\decindexin} \slicescalarof{\decindex} \cdot \left( \prod_{\catenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\catenumerator}^\decindex = 0} (1 - \catindexof{\catenumerator}^\decindex) \right)
+        \cdot \left( \prod_{\catenumerator\in\variablesetof{\decindex} \, , \,  \catindexof{\catenumerator}^\decindex = 1}  \catindexof{\catenumerator}^\decindex \right)  \\
+        & = \hypercoreat{\indexedshortcatvariables} \, .
+    \end{align*}
+    Therefore, any solution of the ILP reduced to the first $\catorder$ indices corresponding with the axis of $\hypercore$, is a solution of the binary optimization problem to $\hypercore$.
+\end{proof}
+
+
+% Sparsity
+In order to achieve a sparse linear program it is benefitial to use a monomial decomposition with small order and rank.
+Beside this sparsity, the matrix $\matrixofat{\sliceset}{\datvariable,\selvariable}$ is often $\ell_0$-sparse, and has thus an efficient representation in a basis CP format.
+More precisely we have by the above construction
+\begin{align*}
+    \sparsityof{\matrixofat{\sliceset}{\datvariable,\selvariable}} \leq \sum_{\decindexin} 3 \cdot \cardof{\variablesetof{\decindex}} +1 \, .
+\end{align*}
 
 
 \sect{Selection tensor networks for $\cpformat$ decompositions}
@@ -178,40 +428,37 @@ When choosing $\sliceorder=2$, the approximating tensor contains only quadratic 
 
 
 
-\sect{Approximation of Energy tensors}
+\sect{Approximation in the Hilbert-Schmidt norm}
 
 The Hilbert-Schmidt norm of a tensor is the contraction of the coordinatewise transform with the square function
 \begin{align*}
-	\|\hypercorewith\|_2= \sqrt{\contraction{\left(\hypercorewith\right)2}} \, .
+	\|\hypercorewith\|_2= \sqrt{\contraction{\left(\hypercorewith\right)^2}} \, .
 \end{align*}
-
 Approximation involving a selection architecture $\fselectionmap$ is the problem
 	\[ \argmin_{\canparam\in\Gamma^{\graph}} \|\energytensor - \contractionof{\sencodingof{\fselectionmap},\canparam}{\shortcatvariables}\|^2 \, . \]
-
-Direct approximation is then the choice of the minterm statistic
+As an example, using the universal selection architecture (corresponding with minterm formulas), the approximation problem is
 	\[ \argmin_{\canparam\in\Gamma^{\graph}} \|\energytensorat{\shortcatvariables} - \canparamat{\shortcatvariables}\|^2 \, . \]
-
 In a tensor network diagram we depict this as
 \begin{center}
     \input{PartIII/tikz_pics/approximation/least_squares.tex}
 \end{center}
 
 
-\begin{example}[Approximate based on a slice sparsity selecting architecture]
-	Use a term selecting neural network (conjunction neuron on $\atomorder$ unary neurons selecting a variable and $\mathrm{Id},\lnot,\mathrm{True}$ as connective selector.
-	Demand the parameter tensor $\canparam$ to be in a basis CP format, then each slice of the parameter tensor corresponds with the slice of the energy.
-	The use the approximation for MAP search.
-	Same construction possible for probability tensors, but often more involved to instantiate them as tensor network.
-\end{example}
+%\begin{example}[Approximate based on a slice sparsity selecting architecture]
+%	Use a term selecting neural network (conjunction neuron on $\atomorder$ unary neurons selecting a variable and $\mathrm{Id},\lnot,\mathrm{True}$ as connective selector.
+%	Demand the parameter tensor $\canparam$ to be in a basis CP format, then each slice of the parameter tensor corresponds with the slice of the energy.
+%	The use the approximation for MAP search.
+%	Same construction possible for probability tensors, but often more involved to instantiate them as tensor network.
+%\end{example}
 
 
 
-\sect{Transformation of Maximum Search to Risk Minimization}
+\subsect{Approximation for Mode queries}
 
 By the squares risk trick, maximum coordinate searches involving contractions with boolean tensors can be turned into squares risk minimization problems.
-This trick can be applied in MAP inference of MLN and the proposal distribution.
+This trick can be applied in MAP inference of \HybridLogicNetworks{} and the proposal distribution of grafting.
 
-\subsect{Weighted Squares Loss Trick}
+\subsubsect{Weighted Squares Loss Trick}
 
 \begin{lemma}
 	Let $\hypercore$ be a boolean tensor, that is $\imageof{\hypercore}\subset\{0,1\}$.
@@ -309,7 +556,7 @@ As a result, we do not solve the previously posed one-hot encoding problem, when
 
 
 
-\sect{Alternating Solution of Least Squares Problems}
+\subsect{Alternating Solution of Least Squares Problems}
 
 When the parameter tensor $\canparam$ is only restricted to have a decomposition as a tensor network on $\graph$, we can iteratively update each core.
 The resulting algorithm is called Alternating Least Squares (ALS) (see Algorithm \ref{alg:ALS}).
@@ -323,9 +570,6 @@ The resulting algorithm is called Alternating Least Squares (ALS) (see Algorithm
 \ForAll{$\edgein$}
 	\State Set $\hypercoreofat{\edge}{\catvariableof{\edge}}$ to a random element in $\bigotimes_{\atomenumerator\in\edge}\rr^{\catdimof{\atomenumerator}}$
 \EndFor
-%\ForAll{$\atomenumeratorin$}
-%	\State Set $\varcore{\atomenumerator}$ to a random element in $\rr^{\atomlegdimof{\atomenumerator}}$ 
-%\EndFor
 \While{Stopping criterion is not met}
 \ForAll{$\edgein$}
 	\State Set $\hypercoreofat{\edge}{\catvariableof{\edge}}$ to a solution of the local problem, that is
@@ -341,8 +585,7 @@ The resulting algorithm is called Alternating Least Squares (ALS) (see Algorithm
 \end{algorithmic}
 \end{algorithm}
 
-
-\subsect{Choice of Representation Format}
+%\subsect{Choice of Representation Format}
 
 \red{The choice of the hypergraph $\graph$ used for approximation bears a tradeoff between expressivity and complexity in sampling.
 Hidden variables, that is variables only present in $\graph$, but not in the sensing matrix, increase the expressivity, especially when assigning large dimensions to them.
@@ -369,13 +612,13 @@ When there are no hidden variables, the maximum of $\canparam$ can be found by m
 %We project onto basis tensors to achieve single formulas.
 
 
-\sect{Regularization and Compressed Sensing}
+\subsect{Regularization and Compressed Sensing}
 
 
 When regularizing the least squares problem by enforcing the sparsity of $\canparam$, we arrive at the compressed sensing problem
 \begin{align}
 	\argmin_{\canparamat{\selvariable}} \sparsityof{\canparam} 
-	\quad \text{subject to } \quad 
+	\stspace
 	\left\| \contractionof{\sencsstat,\canparam}{\shortcatvariables} - \energytensorat{\shortcatvariables} \right\|_2 \leq \eta
 \end{align}
 Here, the sensing matrix is the selection tensor.
@@ -400,10 +643,6 @@ The algorithmic solution of these problems can be done by greedy algorithms, thr
 % Guarantees
 Guarantees for the success of the algorithms depend on the properties of the sensing matrices.
 Here the sensing matrices are deterministic, since constructed as selection tensors, and concentration based approaches towards probabilistic bounds on these properties (see \cite{goesmann_uniform_2021}) are not applicable.
-
-
-
-
 
 \begin{example}[Sensing matrix for propositional Formulas]
 	Let there be a set $\formulaset$ of formulas, then we have
@@ -438,11 +677,10 @@ Here the sensing matrices are deterministic, since constructed as selection tens
 \end{example}
 
 
-\sect{Discussion and Outlook}
+\sect{Discussion}
 
-The slice selection network described here have been taylored to the $\cpformat$ format.
-
-We can extend the slice selection network to parametrize more general tensor network formats than the $\cpformat$ format.
+The selection network described here have been taylored to the $\cpformat$ format.
+We can extend the selection network to parametrize more general tensor network formats than the $\cpformat$ format.
 Here the graph structure of the format itself can be optimized, by the usage of variable selectors.
 The activation selectors, generalizing the connective selection, are then choices of specific cores in the format.
 Thus, each neuron represents an hypercore $\hypercoreofat{\edge}{\catvariableof{\edge}}$, where $\edge\subset\nodes$ is selected by variable selectors and the values of the tensor $\hypercoreof{\edge}$ by activation selectors.
