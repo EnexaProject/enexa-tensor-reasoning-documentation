@@ -651,7 +651,12 @@ Motivated by this decomposition, we now define and parametrize \HybridLogicNetwo
 \begin{definition}[\HybridLogicNetwork{}]
     \label{def:hybridLogicNetwork}
     Given a boolean statistic $\hlnstat$ we call any element of $\elrealizabledistsof{\hlnstat}$ a \HybridLogicNetwork{} (HLN).
-    To each \HybridLogicNetwork{} $\hlnwith$ we find a subset $\hardlegset\subset[\seldim]$, a tuple $\headindexof{\hardlegset}\in\bigtimes_{\selindex\in\hardlegset}[2]$ and $\canparamwithin$ such that
+    The extended canonical parameter set to $\hlnstat$ is the set
+    \begin{align*}
+        \hybridparamset\coloneqq
+        \{\hardparam)\wcols \variableset\subset[\seldim]\ncond \headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]\} \times \parspace \, .
+    \end{align*}
+    To each \HybridLogicNetwork{} $\hlnwith$ we find a tuple $\hybridparam$ consistent of a subset $\hardlegset\subset[\seldim]$, a tuple $\headindexof{\hardlegset}\in\bigtimes_{\selindex\in\hardlegset}[2]$ and $\canparamwithin$ such that
     \begin{align*}
         \hlnwith
         = \normalizationof{\hlnstatccwith,\paracttensorwith}{\shortcatvariables}
@@ -804,7 +809,7 @@ In \exaref{exa:boltzmannEnergySelection} we now demonstrate this representation 
     \begin{align*}
         \canparamat{\selvariableof{\cselectionsymbol},\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}}
         = \onehotmapofat{0}{\selvariableof{\cselectionsymbol}} \otimes W[\selvariableof{\vselectionsymbol,0},\selvariableof{\vselectionsymbol,1}]
-        + \onehotmapofat{1}{\selvariableof{\cselectionsymbol}} \otimes b[\selvariableof{\vselectionsymbol,0}] \otimes  \onehotmapofat{0}{\selvariableof{\vselectionsymbol,1}} \, .
+        + \tbasisat{\selvariableof{\cselectionsymbol}} \otimes b[\selvariableof{\vselectionsymbol,0}] \otimes  \onehotmapofat{0}{\selvariableof{\vselectionsymbol,1}} \, .
     \end{align*}
     We then have (see \figref{fig:boltzmannEnergy})
     \begin{align*}
@@ -995,36 +1000,11 @@ We can further provide an equivalent criterion for a vertex by the satisfaction 
 
     (ii)$\Rightarrow$(iii):
     This follows from \theref{the:hlnFormulaCharacterization}.
-%    We choose for $\selindexin$
-%    \begin{align*}
-%        \kcorewith = \begin{cases}
-%                         \fbasisat{\headvariableof{\selindex}} & \ifspace \meanparamat{\indexedselvariable}=0 \\
-%                         \tbasisat{\headvariableof{\selindex}} & \ifspace \meanparamat{\indexedselvariable}=1 \\
-%        \end{cases}
-%    \end{align*}
-%    and notice that
-%    \begin{align*}
-%        \normalizationof{\{\bencodingofat{\hlnstat}{\sstatheadvariables,\shortcatvariables}\}
-%        \cup \{\hardactlegwith \wcols \selindexin\}
-%        }{\shortcatvariables} = \normalizationof{\vertexformula}{\shortcatvariables} \, .
-%    \end{align*}
-%    Thus, the normalized formula $\vertexformula$ is a \HardLogicNetwork{}.
-%    We then have for any $\selindexin$ that
-%    \begin{align*}
-%        \meanparamat{\indexedselvariable} = \contraction{\normalizationof{\vertexformula}{\shortcatvariables},\enumformulawith}\, .
-%    \end{align*}
 
     (iii)$\Rightarrow$(i):
     The mean parameter is reproduced by $\probofat{\hlnstat,([\seldim],\meanparam)}{\shortcatvariables}$ and therefore $\meanparamwith\in\hlnmeanset$.
     Since $\meanparamwith$ is further boolean, \theref{the:vertexByHardLogicNetworks} implies that $\{\meanparamwith\}$ is a vertex.
 \end{proof}
-
-% \HardLogicNetwork{} representation -> Another theorem?
-%Let us notice, that the normalization of $\vertexformula$ is a \HardLogicNetwork{} using the statistic $\formulaset$ and the base measure $\basemeasure$.
-%Any model of this formula is furthermore mapped by the statistics encoding onto the corresponding vertex $\{\meanparamwith\}$ and the mean parameter of the \HardLogicNetwork{} is the unique vertex element $\meanparamwith$.
-%We will in \charef{cha:networkReasoning} show, that among the distributions having the vertex as mean parameter, the corresponding \HardLogicNetwork{} is the one with maximal entropy.
-
-
 
 
 \subsect{Faces represented by \HardLogicNetworks{}}
@@ -1113,15 +1093,10 @@ The corresponding mean parameters are the face centers.
 
 \subsect{Generic faces}
 
-\red{When the normalized face measure to a face is not reproduceable by a \HardLogicNetwork{}, it does not lie in $\realizabledistsof{\sstat,\elgraph,\basemeasure}$.
+When the normalized face measure to a face is not reproduceable by a \HardLogicNetwork{}, it does not lie in $\realizabledistsof{\sstat,\elgraph,\basemeasure}$.
 On the other side, \theref{the:faceMeasureCharacterization} implies, that in general $\sstat$ is a sufficient statistic and it thus lies in $\realizabledistsof{\sstat,\maxgraph,\basemeasure}$.
-The core $\kcoreofat{\facecondset}{\headvariables}$ has then $\cpformat$ rank of at least two.}
-
-%
-%Since the by inclusion partially ordered set of faces is a graded lattice (see Theorem~2.7 in \cite{ziegler_lectures_2013}), the faces are ranked by the affine dimension of the convex hull. % ! This is not the number of included vertices.
-%However, the number of vertices in each face is not determined by the rank.
-
-In general, we can express any face measure by a propositional formula.
+The core $\kcoreofat{\facecondset}{\headvariables}$ has then $\cpformat$ rank of at least two.
+In general, we can express any face measure to faces of $\hlnmeanset$ by a propositional formula.
 
 \begin{theorem}
     \label{the:faceMeasureCharacterizationHLN}
@@ -1158,17 +1133,10 @@ In general, we can express any face measure by a propositional formula.
         &=\bigvee_{\meanparam\in\hlnfaceset\cap\boundaryparcube}
         \bigwedge_{\selindexin} \lnot^{(1-\meanparamat{\indexedselvariable})} \enumformulaat{\shortcatvariables} \, . \qedhere
     \end{align*}
-%    By representing the contraction with $\kcoreofat{\facecondset}{\sstatheadvariables}$.
-    %   Any basis tensors is a disjoint propositional formulas, the vertex formula $\hlnformula$ and their sum is thus represented by the disjunction.
 \end{proof}
 
 
 \subsect{Mean parameters reproducable by \HybridLogicNetworks{}}\label{sec:HLNrepMean} % Generalize to any mean parameter reproduction by \HybridLogicNetworks{}
-
-%\begin{definition}
-%    \label{def:HLNrepMean}
-%    We say that a mean parameter $\meanparamwith\in\hlnfaceset$ is reproducable by a \HybridLogicNetwork{} in $\elrealizabledistsof{\hlnstat}$, if the minimal face of $\hlnfaceset$, which includes $\meanparamwith$ is an intersection of $\genmeanset$ and a face $\cubeface$ of the cube $\fullparcube$.
-%\end{definition}
 
 Based on the representation results for face measures, we now study the mean parameters of \HybridLogicNetworks{}.
 Let us find conditions on a mean parameter $\meanparamwith$ for the existence of a \HybridLogicNetwork{} reproducing it. %$\meanparamwith$.
@@ -1321,6 +1289,7 @@ We can relate our two standard examples of the atomic and the minterm formula se
 
     Trivially, each face of the hypercube is a cube face and $\elmeansetof{\atomformulaset}=\meansetof{\atomformulaset}$.
 \end{example}
+
 %\subsect{Elementary realizable mean parameters}
 
 With the findings of the above sections and the enumeration of cube faces, we can not characterize the set of mean parameters realizable by \HybridLogicNetworks{}.
