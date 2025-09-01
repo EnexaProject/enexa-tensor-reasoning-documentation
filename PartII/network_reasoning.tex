@@ -83,8 +83,8 @@ To solve the Maximum Likelihood Problem on \HybridLogicNetworks{} we choose the 
     \begin{align*}
         \centropyof{\gendistribution}{\probtensorof{\hlnparameters}}
         =& \contraction{\gendistributionwith,-\lnof{\hlnformulawith}} \\
-        &+ \contraction{\gendistributionwith,\sencmlnstatwith,-\lnof{\actcorewith}} \\
-        &+ \lnof{\contraction{\hlnstatccwith,\kcoreofat{\hardparam}{\shortcatvariables},\actcoreofat{\canparam}{\shortcatvariables}}} \, .
+        &+ \contraction{\gendistributionwith,\sencmlnstatwith,-\lnof{\softacttensorwith}} \\
+        &+ \lnof{\contraction{\hlnstatccwith,\hardacttensorwith,\softacttensorwith}{\shortcatvariables}} \, .
     \end{align*}
     The first term can be characterized by
     \begin{align*}
@@ -97,7 +97,8 @@ To solve the Maximum Likelihood Problem on \HybridLogicNetworks{} we choose the 
     The cross entropy is therefore finite, if and only if $\hardlegset\subset\hardlegsetto{\genmean}$ and $\headindexof{\hardlegset}=\restrictionofto{\hardlegindicesto{\genmean}}{\hardlegset}$.
     Among those tuples, only the third term of the cross-entropy varies, where we have
     \begin{align*}
-        \lnof{\contraction{\hlnstatccwith,\kcoreof{\hardparam},\actcoreof{\canparam}}} \leq \lnof{\contraction{\hlnstatccwith,\kcoreof{(\hardlegsetto{\genmean},\hardlegindicesto{\genmean})},\actcoreof{\canparam}}}
+        \lnof{\contraction{\hlnstatccwith,\hardacttensorwith,\softacttensorwith}}
+\leq \lnof{\contraction{\hlnstatccwith,\hardactsymbolofat{(\hardlegsetto{\genmean},\hardlegindicesto{\genmean})}{\headvariables},\softacttensorwith}}
     \end{align*}
     The minimum of the cross entropy is therefore taken at $\hardlegset=\hardlegsetto{\genmean}$ and $\headindexof{\hardlegset}=\hardlegindicesto{\genmean}$.
 \end{proof}
@@ -311,16 +312,16 @@ For each probability distribution $\probwith$ we the corresponding mean paramete
     \begin{align*}
         \meanparamat{\selvariable=\atomenumerator}
         &= \contractionof{\sencodingof{\atomformulaset}{\shortcatvariables,\selvariable},
-            \normalizationof{\bencodingofat{\atomformulaset}{\headvariableof{[\atomorder]},\shortcatvariables},\hypercoreofat{\hybridparam}{\headvariableof{[\atomorder]}}}{\shortcatvariables}
+            \normalizationof{\bencodingofat{\atomformulaset}{\headvariableof{[\atomorder]},\shortcatvariables},\acttensorofat{\hybridparam}{\headvariableof{[\atomorder]}}}{\shortcatvariables}
         }{\selvariable=\atomenumerator} \\
         &= \contraction{\tbasisat{\catvariableof{\atomenumerator}},
             \normalizationof{
                 \bencodingofat{\atomicformulaof{\atomenumerator}}{\headindexof{\atomenumerator},\catvariableof{\atomenumerator}},
-                \hypercoreof{\selindex}{\headvariableof{\atomenumerator}}}{\catvariableof{\atomenumerator}}
+                \acttensorof{\selindex}{\headvariableof{\atomenumerator}}}{\catvariableof{\atomenumerator}}
         }
     \end{align*}
-    Now, if $\atomenumerator\in\variableset$ we have $\hypercoreof{\selindex}{\headvariableof{\atomenumerator}}=\onehotmapofat{\headindexof{\atomenumerator}}{\headvariableof{\atomenumerator}}$ and $\meanparamat{\selvariable=\atomenumerator}=\headindexof{\atomenumerator}$.
-    If $\atomenumerator\notin\variableset$ then $\hypercoreof{\selindex}{\headvariableof{\atomenumerator}}=\actcoreofat{\atomenumerator,\canparamat{\selvariable=\atomenumerator}}{\headvariableof{\atomenumerator}}$ and
+    Now, if $\atomenumerator\in\variableset$ we have $\acttensorof{\selindex}{\headvariableof{\atomenumerator}}=\onehotmapofat{\headindexof{\atomenumerator}}{\headvariableof{\atomenumerator}}$ and $\meanparamat{\selvariable=\atomenumerator}=\headindexof{\atomenumerator}$.
+    If $\atomenumerator\notin\variableset$ then $\acttensorof{\selindex}{\headvariableof{\atomenumerator}}=\softactsymbolofat{\atomenumerator,\canparam}{\headvariableof{\atomenumerator}}$ and
     \begin{align*}
         \meanparamat{\selvariable=\atomenumerator} = \frac{\expof{\canparamat{\selvariable=\atomenumerator}}}{1+\expof{\canparamat{\selvariable=\atomenumerator}}} \, . & \qedhere
     \end{align*}
@@ -364,28 +365,28 @@ To derive the algorithm, we first solve local cross-entropy minimization problem
 
 Let us now varying a distribution $\secprobwith$ by adding an additional feature $\formula$
 \begin{align*}
-    \probofat{\hypercore}{\shortcatvariables}
-    \coloneqq \normalizationof{\secprobwith,\formulaccwith,\hypercoreat{\formulavar}}{\shortcatvariables} \, .
+    \probofat{\acttensor}{\shortcatvariables}
+    \coloneqq \normalizationof{\secprobwith,\formulaccwith,\acttensorat{\formulavar}}{\shortcatvariables} \, .
 \end{align*}
-Note, that the normalization exists for positive $\hypercoreat{\formulavar}$ and if $\contraction{\secprobtensor,\exformula}\notin\{0,1\}$ then also for any non-vanishing $\hypercoreat{\formulavar}$.
-If $\contraction{\secprobtensor,\exformula}\in\{0,1\}$, then the $\probof{\hypercore}$ is constant among $\hypercoreat{\formulavar}$, when it exists.
+Note, that the normalization exists for positive $\acttensorat{\formulavar}$ and if $\contraction{\secprobtensor,\exformula}\notin\{0,1\}$ then also for any non-vanishing $\acttensorat{\formulavar}$.
+If $\contraction{\secprobtensor,\exformula}\in\{0,1\}$, then the $\probof{\acttensor}$ is constant among $\acttensorat{\formulavar}$, when it exists.
 
 We want to solve the local cross-entropy minimization problem
 \begin{align*}
-    \min_{\hypercore} \centropyof{\empdistribution}{\probof{\hypercore}} \,.
+    \min_{\acttensor} \centropyof{\empdistribution}{\probof{\acttensor}} \,.
 \end{align*}
-If $\contraction{\secprobtensor,\exformula}\in\{0,1\}$ then the minimum is taken at any $\hypercoreat{\formulavar}$ such that $\probof{\hypercore}$ exists.
+If $\contraction{\secprobtensor,\exformula}\in\{0,1\}$ then the minimum is taken at any $\acttensorat{\formulavar}$ such that $\probof{\acttensor}$ exists.
 
 \begin{lemma}
     \label{lem:localHybridParamUpdate}
     Let $\empdistribution$, $\secprobtensor$ be distributions and $\exformula$ a formula such that $\contraction{\secprobtensor,\exformula}\notin\{0,1\}$.
     If $\contraction{\empdistribution,\exformula}\in\{0,1\}$ the solution of the local cross-entropy minimization is
     \begin{align*}
-        \hypercoreat{\formulavar} = \onehotmapofat{\contraction{\empdistribution,\exformula}}{\formulavar}
+        \acttensorat{\formulavar} = \onehotmapofat{\contraction{\empdistribution,\exformula}}{\formulavar}
     \end{align*}
     If $\contraction{\empdistribution,\exformula}\notin\{0,1\}$ the solution is
     \begin{align*}
-        \hypercoreat{\formulavar} = \actcoreofat{\canparam}{\formulavar}
+        \acttensorat{\formulavar} = \softacttensorat{\formulavar}
     \end{align*}
     where
     \begin{align*}
@@ -398,23 +399,23 @@ If $\contraction{\secprobtensor,\exformula}\in\{0,1\}$ then the minimum is taken
 \begin{proof}
     The cross entropy is decomposed into
     \begin{align*}
-        \centropyof{\empdistribution}{\probof{\hypercore}}
+        \centropyof{\empdistribution}{\probof{\acttensor}}
         &= \centropyof{\empdistribution}{\secprobtensor} \\
-        &\quad + \contraction{\empdistributionwith,\formulaccwith,-\lnof{\hypercoreat{\formulavar}}} \\
-        &\quad + \lnof{\contraction{\secprobwith,\formulaccwith,\hypercoreat{\formulavar}}}\, .
+        &\quad + \contraction{\empdistributionwith,\formulaccwith,-\lnof{\acttensorat{\formulavar}}} \\
+        &\quad + \lnof{\contraction{\secprobwith,\formulaccwith,\acttensorat{\formulavar}}}\, .
     \end{align*}
-    Since the first term is constant among $\hypercore$, we focus on the minimization of the second and third term.
-    For each $\hypercoreat{\formulavar}$ and its boolean support $\kcoreat{\formulavar}\coloneqq\greaterzeroof{\hypercoreat{\formulavar}}$ we find $\lambda>0$ and $\canparam\in\rr$ such that
+    Since the first term is constant among $\acttensor$, we focus on the minimization of the second and third term.
+    For each $\acttensorat{\formulavar}$ and its boolean support $\kcoreat{\formulavar}\coloneqq\greaterzeroof{\acttensorat{\formulavar}}$ we find $\lambda>0$ and $\canparam\in\rr$ such that
     \begin{align*}
-        \hypercoreat{\formulavar}
-        = \lambda\cdot\contractionof{\kcoreat{\formulavar},\actcoreof{\canparam}}{\formulavar} \, .
+        \acttensorat{\formulavar}
+        = \lambda\cdot\contractionof{\kcoreat{\formulavar},\softacttensor}{\formulavar} \, .
     \end{align*}
     Given this parametrization we have
     \begin{align*}
-        & \contraction{\empdistributionwith,\formulaccwith,-\lnof{\hypercoreat{\formulavar}}}
-        + \lnof{\contraction{\secprobwith,\formulaccwith,\hypercoreat{\formulavar}}} \\
+        & \contraction{\empdistributionwith,\formulaccwith,-\lnof{\acttensorat{\formulavar}}}
+        + \lnof{\contraction{\secprobwith,\formulaccwith,\acttensorat{\formulavar}}} \\
         & \quad  = \contraction{\empdistributionwith,\formulaccwith,-\lnof{\kcoreat{\formulavar}}} - \canparam\cdot\contraction{\empdistributionwith,\formulawith} \\
-        & \quad \quad  + \lnof{\contraction{\secprobwith,\formulaccwith,\kcoreat{\formulavar},\actcoreofat{\canparam}{\formulavar}}} \, .
+        & \quad \quad  + \lnof{\contraction{\secprobwith,\formulaccwith,\kcoreat{\formulavar},\softacttensorat{\formulavar}}} \, .
     \end{align*}
     The minimum over $\kcore$ is taken at
     \begin{align*}
@@ -426,18 +427,18 @@ If $\contraction{\secprobtensor,\exformula}\in\{0,1\}$ then the minimum is taken
         \end{cases} \, .
     \end{align*}
     If the optimal $\kcore$ is not the trivial vector $\onesat{\formulavar}$, the parameter $\canparam\in\rr$ does not influence the distribution and we can arrive at the claim when choosing $\canparam=0$.
-    If the optimal $\kcore$ is trivial, we optimize further over $\actcoreof{\canparam}$
+    If the optimal $\kcore$ is trivial, we optimize further over $\softacttensor$
     \begin{align*}
-        \min_{\canparam\in\rr} \contraction{\empdistributionwith,\formulaccwith,-\lnof{\hypercoreat{\formulavar}}}
-        + \lnof{\contraction{\secprobwith,\formulaccwith,\actcoreofat{\canparam}{\formulavar}}} \, .
+        \min_{\canparam\in\rr} \contraction{\empdistributionwith,\formulaccwith,-\lnof{\acttensorat{\formulavar}}}
+        + \lnof{\contraction{\secprobwith,\formulaccwith,\softacttensorat{\formulavar}}} \, .
         \, .
     \end{align*}
     The derivation of the objective is
     \begin{align*}
-        & \difofwrt{\contraction{\empdistributionwith,\formulaccwith,-\lnof{\hypercoreat{\formulavar}}}
-        + \lnof{\contraction{\secprobwith,\formulaccwith,\actcoreofat{\canparam}{\formulavar}}}}{\canparam} \\
+        & \difofwrt{\contraction{\empdistributionwith,\formulaccwith,-\lnof{\acttensorat{\formulavar}}}
+        + \lnof{\contraction{\secprobwith,\formulaccwith,\softacttensorat{\formulavar}}}}{\canparam} \\
         & \quad = \contraction{\empdistributionwith,\formulawith}
-        - \contraction{\probofat{\actcoreof{\canparam}}{\shortcatvariables},\formulawith} \\
+        - \contraction{\probofat{\softacttensor}{\shortcatvariables},\formulawith} \\
         & \quad = \contraction{\empdistribution,\exformula}
         - \frac{\expof{\canparam} \cdot \contraction{\secprobwith,\formulawith}}{
             \expof{\canparam} \cdot \contraction{\secprobwith,\formulawith} + (1-\contraction{\secprobwith,\formulawith})
@@ -463,7 +464,7 @@ Iteratively we update leg vectors of the activation tensor.
 This is the above local variation with
 \begin{align*}
     \secprobwith = \normalizationof{\{\bencodingof{\enumformula} \wcols \selindexin\}
-    \cup\{\actcoreof{\tilde{\selindex},\canparamat{\selvariable=\tilde{\selindex}}} \wcols \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
+    \cup\{\softactsymbolof{\tilde{\selindex},\canparam} \wcols \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
     \cup\{\basemeasure\}}{\headvariableof{\selindex}}
 \end{align*}
 
@@ -483,7 +484,7 @@ where by $\hypercoreat{\headvariableof{\selindex}}$ we denote the contraction
 \begin{align*}
     \hypercoreat{\headvariableof{\selindex}}
     = \contractionof{\{\bencodingof{\enumformula} \wcols \selindexin\}
-    \cup\{\actcoreof{\tilde{\selindex},\canparamat{\selvariable=\tilde{\selindex}}} \wcols \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
+    \cup\{\softactsymbolof{\tilde{\selindex},\canparam} \wcols \tilde{\selindex} \in [\seldim], \tilde{\selindex}\neq\selindex\}
     \cup\{\basemeasure\}}{\headvariableof{\selindex}} \, .
 \end{align*}
 
@@ -501,7 +502,7 @@ where by $\hypercoreat{\headvariableof{\selindex}}$ we denote the contraction
                 \begin{align*}
                     \hypercoreat{\headvariableof{\selindex}}
                     = \contractionof{\{\bencodingof{\enumformula} \wcols \selindexin\}
-                    \cup\{\actcoreof{\tilde{\selindex},\canparamat{\selvariable=\tilde{\selindex}}} \wcols \tilde{\selindex}\in[\seldim]\ncond\tilde{\selindex}\neq\selindex\}
+                    \cup\{\softactsymbolof{\tilde{\selindex},\canparam} \wcols \tilde{\selindex}\in[\seldim]\ncond\tilde{\selindex}\neq\selindex\}
                     \cup\{\basemeasure\}}{\headvariableof{\selindex}}
                 \end{align*}
                 \State Set
@@ -579,20 +580,20 @@ These statistics will be investigated in more detail in \secref{sec:partitionSta
         \currentmeanat{\selvariable} = \contractionof{\secprobwith,\sencmlnstatwith}{\selvariable}
     \end{align*}
     and assume that $\greaterzeroof{\datamean}\models\greaterzeroof{\currentmean}$. % and $\equaloneof{\currentmean}\models\equaloneof{\datamean}$.
-    Let us vary the distribution $\secprobwith$ by elementary tensors $\hypercoreat{\headvariables}$ as
+    Let us vary the distribution $\secprobwith$ by elementary tensors $\acttensorat{\headvariables}$ as
     \begin{align*} % CHECK: NEED TO RESTRICT TO ELEMENTARY HYPERCORE?
-        \probofat{\hypercore}{\shortcatvariables}
-        \coloneqq \normalizationof{\secprobwith,\hlnstatccwith,\hypercoreat{\headvariables}}{\shortcatvariables} \, .
+        \probofat{\acttensor}{\shortcatvariables}
+        \coloneqq \normalizationof{\secprobwith,\hlnstatccwith,\acttensorat{\headvariables}}{\shortcatvariables} \, .
     \end{align*}
 
     Then
     \begin{align*}
-        \argmin_{\hypercore} \centropyof{\empdistribution}{\probof{\hypercore}}
+        \argmin_{\acttensor} \centropyof{\empdistribution}{\probof{\acttensor}}
     \end{align*}
     is solved at
     \begin{align*}
-        \hypercoreat{\headvariables}
-        = \contractionof{\kcoreofat{(\hardlegset,0_{\hardlegset})}{\headvariables},\actcoreofat{\canparam}{\headvariables}}{\headvariables}
+        \acttensorat{\headvariables}
+        = \contractionof{\hardactsymbolofat{(\hardlegset,0_{\hardlegset})}{\headvariables},\softacttensorwith}{\headvariables}
     \end{align*}
     where $\hardlegset=\{\selindex\wcols\datameanat{\indexedselvariable}=0\}$ and for $\selindex\in[\seldim]/\hardlegset$
     \begin{align*}
@@ -602,7 +603,7 @@ These statistics will be investigated in more detail in \secref{sec:partitionSta
 \begin{proof}
     We use \theref{the:selectionRepresentationPartitionStatistics} to compute
     \begin{align*}
-        \contractionof{\secprobwith,\hlnstatccwith,\hypercoreat{\headvariables}}{\selvariable}
+        \contractionof{\secprobwith,\hlnstatccwith,\acttensorat{\headvariables}}{\selvariable}
         = \contractionof{\secprobwith,\sencmlnstatwith,\expof{\canparamwith},\onehotmapofat{[\seldim]/\hardlegset}{\selvariable}}{\selvariable} \\
         = \contractionof{\currentmeanat{\selvariable},\expof{\canparamwith},\onehotmapofat{[\seldim]/\hardlegset}{\selvariable}}{\selvariable}
         = \datameanat{\selvariable}
@@ -618,15 +619,15 @@ These statistics will be investigated in more detail in \secref{sec:partitionSta
     \end{align*}
     It follows that
     \begin{align*}
-        \contraction{\secprobwith,\hlnstatccwith,\hypercoreat{\headvariables}} = 1
+        \contraction{\secprobwith,\hlnstatccwith,\acttensorat{\headvariables}} = 1
     \end{align*}
     and due to trivial partition function term that
     \begin{align*}
-        \probofat{\hypercore}{\shortcatvariables} = \contractionof{\secprobwith,\hlnstatccwith,\hypercoreat{\headvariables}}{\shortcatvariables} \, .
+        \probofat{\acttensor}{\shortcatvariables} = \contractionof{\secprobwith,\hlnstatccwith,\acttensorat{\headvariables}}{\shortcatvariables} \, .
     \end{align*}
     We conclude
     \begin{align*}
-        \contractionof{\probofat{\hypercore}{\shortcatvariables},\sencmlnstatwith}{\selvariable}
+        \contractionof{\probofat{\acttensor}{\shortcatvariables},\sencmlnstatwith}{\selvariable}
         = \datameanat{\selvariable} \, .
     \end{align*}
     Thus, the moment matching condition is satisfied for each $\selindexin$ and the cross-entropy is minimized.
@@ -688,14 +689,14 @@ To provide further insight into the solution of the gain heuristic, let us quant
     Then we have
     \begin{align*}
         \centropyof{\empdistribution}{\probof{\hlnstat,\sechybridparam}}
-        - \min_{\hypercore} \centropyof{\empdistribution}{\probof{\hypercore}}
+        - \min_{\acttensor} \centropyof{\empdistribution}{\probof{\acttensor}}
         = \kldivof{\bernoulliof{\contraction{\empdistribution,\exformula}}}{\bernoulliof{\contraction{\secprobtensor,\exformula}}}
     \end{align*}
     where by $\bernoulliof{p}$ we denote the Bernoulli distribution with parameter $p\in[0,1]$.
 \end{lemma}
 \begin{proof}
     We use the characterization of the local update by \lemref{lem:localHybridParamUpdate} for $\secprobtensor=\probof{\hlnstat,\sechybridparam}$.
-    The update on the added feature is then parametrized by the two-dimensional vector $\hypercoreat{\formulavar}$ and we have
+    The update on the added feature is then parametrized by the two-dimensional vector $\acttensorat{\formulavar}$ and we have
     \begin{align*}
         \probof{\hlnstat,\sechybridparam} = \probof{\ones} \, .
     \end{align*}
@@ -712,13 +713,13 @@ To provide further insight into the solution of the gain heuristic, let us quant
     \end{align*}
     Based on this characterization, the cross entropy difference is
     \begin{align*}
-        \centropyof{\empdistribution}{\probof{\ones}} - \min_{\hypercore} \centropyof{\empdistribution}{\probof{\hypercore}} \\
+        \centropyof{\empdistribution}{\probof{\ones}} - \min_{\acttensor} \centropyof{\empdistribution}{\probof{\acttensor}} \\
         &= \datamean \cdot \canparamat{\selvariable=\cardof{\hlnstat}}
-        - \lnof{\contraction{\secprobtensor,\formulaccwith,\actcoreof{\canparamat{\selvariable=\cardof{\hlnstat}}}}} \, .
+        - \lnof{\contraction{\secprobtensor,\formulaccwith,\softactsymbolofat{\cardof{\hlnstat},\canparam}{\formulavar}}} \, .
     \end{align*}
     We simplify
     \begin{align*}
-        \contraction{\secprobwith,\formulaccwith,\actcoreofat{\canparamat{\selvariable=\cardof{\hlnstat}}}{\headvariableof{\formulavar}}}
+        \contraction{\secprobwith,\formulaccwith,\softactsymbolofat{\cardof{\hlnstat},\canparam}{\formulavar}}
         = (1-\currentmean) + \currentmean \cdot \expof{\canparamat{\selvariable=\cardof{\hlnstat}}}
         = \frac{(1-\currentmean)}{(1-\datamean)} \, .
     \end{align*}
@@ -730,19 +731,19 @@ To provide further insight into the solution of the gain heuristic, let us quant
     \end{align*}
     and arrive at
     \begin{align*}
-        &  \centropyof{\empdistribution}{\probof{\ones}} - \min_{\hypercore} \centropyof{\empdistribution}{\probof{\hypercore}} \\
+        &  \centropyof{\empdistribution}{\probof{\ones}} - \min_{\acttensor} \centropyof{\empdistribution}{\probof{\acttensor}} \\
         & \quad =  \datamean \lnof{\datamean} - \datamean \lnof{1-\datamean} + \datamean \lnof{1-\currentmean} - \datamean \lnof{\currentmean}
         -  \lnof{1-\currentmean} - \lnof{1-\datamean} \\
         & \quad = \left( -\datamean \lnof{\currentmean} - (1-\datamean) \lnof{1-\currentmean} \right)  - \left( -\datamean \lnof{\datamean} - (1-\datamean) \lnof{1-\datamean} \right) \\
         & \quad = \kldivof{\bernoulliof{\datamean}}{\bernoulliof{\currentmean}} \, .
     \end{align*}
 
-    In the case $\datamean\in\{0,1\}$, the optimal $\hypercore$ is boolean and only the partition function term is changed by the update.
+    In the case $\datamean\in\{0,1\}$, the optimal $\acttensor$ is boolean and only the partition function term is changed by the update.
     We then have
     \begin{align*}
-        \centropyof{\empdistribution}{\probof{\ones}} - \min_{\hypercore} \centropyof{\empdistribution}{\probof{\hypercore}}
-        %&= \lnof{\contraction{\secprobwith}} - \lnof{\contraction{\secprobwith,\formulaccwith,\hypercoreat{\formulavar}}} \\
-        &= - \lnof{\contraction{\secprobwith,\formulaccwith,\hypercoreat{\formulavar}}} \\
+        \centropyof{\empdistribution}{\probof{\ones}} - \min_{\acttensor} \centropyof{\empdistribution}{\probof{\acttensor}}
+        %&= \lnof{\contraction{\secprobwith}} - \lnof{\contraction{\secprobwith,\formulaccwith,\acttensorat{\formulavar}}} \\
+        &= - \lnof{\contraction{\secprobwith,\formulaccwith,\acttensorat{\formulavar}}} \\
         &= \begin{cases}
                \lnof{\currentmean} & \ifspace \datamean=0 \\
                \lnof{1-\currentmean} & \ifspace \datamean=1 \\
@@ -788,29 +789,30 @@ We show here how the effective selection tensor network representation of expone
 In the gradient heuristic, we estimate the cross entropy improvement by the gradient of the cross entropy with respect to varying with another feature.
 Given a distribution $\secprobwith$, we vary % more general than
 \begin{align*}
-    \probofat{\actcoreof{\canparam}}{\shortcatvariables} \coloneqq \normalizationof{\secprobwith,\formulaccwith,\actcoreofat{\canparam}{\headvariableof{\formulavar}}}{\shortcatvariables} \, .
+    \probofat{\softacttensor}{\shortcatvariables}
+    \coloneqq \normalizationof{\secprobwith,\formulaccwith,\softacttensorat{\headvariableof{\formulavar}}}{\shortcatvariables} \, .
 \end{align*}
 In the gradient heuristic we choose the steepest gradient direction
 \begin{align}
     \label{prob:greedyGrad}\tag{$\probtagtypeinst{\gradientsymbol}{\datamap,\secprobtensor,\greedyhypothesis}$}
-    \min_{\formula\in\greedyhypothesis} \difofwrt{\centropyof{\empdistribution}{\probofat{\actcoreof{\canparam}}{\shortcatvariables}}}{\canparam}   \, .
+    \min_{\formula\in\greedyhypothesis} \difofwrt{\centropyof{\empdistribution}{\probofat{\softacttensor}{\shortcatvariables}}}{\canparam}   \, .
 \end{align}
 
 %% FOR GRADIENT HEURISTIC
 \begin{lemma}
     \begin{align*}
-        \difofwrt{\centropyof{\empdistribution}{\probof{\actcoreof{\canparam}}}}{\canparam} =
-        -\contraction{\empdistribution,\formula} + \contraction{\probof{\actcoreof{\canparam}},\formula} \, .
+        \difofwrt{\centropyof{\empdistribution}{\probof{\softacttensor}}}{\canparam} =
+        -\contraction{\empdistribution,\formula} + \contraction{\probof{\softacttensor},\formula} \, .
     \end{align*}
 \end{lemma}
 \begin{proof}
     We have
     \begin{align*}
-        \centropyof{\empdistribution}{\probof{\actcoreof{\canparam}}}
-        & = \contraction{\empdistribution,\formulaccwith,-\lnof{\actcoreofat{\canparam}{\headvariableof{\formulavar}}}}
-        + \lnof{\contraction{\secprobwith,\formulaccwith,\actcoreofat{\canparam}{\headvariableof{\formulavar}}}}
+        \centropyof{\empdistribution}{\probof{\softacttensor}}
+        & = \contraction{\empdistribution,\formulaccwith,-\lnof{\softacttensorat{\headvariableof{\formulavar}}}}
+        + \lnof{\contraction{\secprobwith,\formulaccwith,\softacttensorat{\headvariableof{\formulavar}}}}
     \end{align*}
-    The derivation of the first term at $\canparam=0$ is $-\contraction{\empdistribution,\formula}$ and of the second $\contraction{\probof{\actcoreof{\canparam}},\formula}$.
+    The derivation of the first term at $\canparam=0$ is $-\contraction{\empdistribution,\formula}$ and of the second $\contraction{\probof{\softacttensor},\formula}$.
 \end{proof}
 
 \probref{prob:greedyGrad} is thus
@@ -913,7 +915,7 @@ The result is Algorithm~\ref{alg:greedyStructureLearning}, which is a greedy alg
 %% Energy Storage -> Useful after learning for energy-based inference
 When having used the same learning architecture multiple times, the energy of the corresponding formulas are all representable by a formula selecting architecture.
 Their energy term is therefore a contraction of the selecting tensor with a parameter tensor $\canparam$ in a basis $\cpformat$ decomposition with rank by the number of learned formulas.
-When mutiple selection architectures have been used, the energy is a sum of such contractions.
+When multiple selection architectures have been used, the energy is a sum of such contractions.
 % 
 Let us note, that this representation is useful after learning, when performing energy-based inference algorithms on the result.
 During learning, one needs to instantiate the proposal distribution, which requires instantiation of the probability tensor.

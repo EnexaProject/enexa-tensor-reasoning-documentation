@@ -10,34 +10,32 @@ Intuitively this describes, whether a specific world can be the state of a facto
 Propositional logic amounts to reason about boolean variables, which are categorical variables with $2$ possible values.
 Such boolean tensors have already appeared as base measures in the representation of probability distributions in \charef{cha:probRepresentation}.
 
-Before discussing the semantics and syntax of propositional formulas, we first investigate how Boolean can be represented by vectors in order to mechanize their processing based on contractions.
+Before discussing the semantics and syntax of propositional formulas, we first investigate how boolean variables can be represented by vectors in order to mechanize their processing based on contractions.
 
 
 
 \sect{Encoding of Booleans}\label{sec:booleanEncoding}
 
-Booleans variables are a basic data structure, valued in $\truthset$.
+Boolean variables are a basic data structure, valued in $\truthset$.
 
 \subsect{Representation by coordinates}
 
-To represent Booleans by categorical variables $\catvariable$ with two states we use the index interpretation function (see \defref{def:indexinterpretationNotation} and for more details \defref{def:subsetEncoding} in \parref{par:three})
+To represent booleans by categorical variables $\catvariable$ with two states we use the index interpretation function (see \defref{def:indexinterpretationNotation} and for more details \defref{def:subsetEncoding} in \parref{par:three})
 \begin{align*}
-    \indexinterpretation:[2]\rightarrow\truthset%\rightarrow\ozset
+    \indexinterpretation \defcols [2]\rightarrow\truthset
 \end{align*}
 defined as
 \begin{align*}
-    \indexinterpretationat{1} = \truesymbol%} = 1
-    \quad \text{and} \quad \indexinterpretationat{0} = \falsesymbol \, .
+    \indexinterpretationat{1} = \truesymbol
+    \andspace \indexinterpretationat{0} = \falsesymbol \, .
 \end{align*}
-% Outlook: General interpretation maps
-%In  will define encodings of arbitrary sets based on index interpretation maps.
 % Group homomorphism
 One motivation for this particular choice of the interpretation function $\indexinterpretation$ is the effective execution of the conjunction as we show in the next Lemma.
 
 \begin{lemma}
     $\indexinterpretation$ is a homomorphism between the groups
     \begin{align*}
-        \big(\ozset,\cdot\big)  \quad \text{and} \quad \big(\truthset,\land\big) \, .
+        \big(\ozset,\cdot\big)  \andspace \big(\truthset,\land\big) \, .
     \end{align*}
 \end{lemma}
 \begin{proof}
@@ -66,11 +64,17 @@ This is why we call the negation representation as in \eqref{eq:affineLinearNega
 % Disjunction central interpretation
 While in this work, we will always encode boolean states by $\indexinterpretation$, other index interpretation functions could be chosen.
 For example, the interpretation
-\[ \indexinterpretationof{\lor}:\ozset\rightarrow\truthset \]
+\begin{align*}
+    \indexinterpretationof{\lor} \defcols \ozset\rightarrow\truthset
+\end{align*}
 defined as
-\[ \indexinterpretationofat{\lor}{0} = \truesymbol \quad \text{and} \quad \indexinterpretationofat{\lor}{1} = \falsesymbol \, , \]
+\begin{align*}
+    \indexinterpretationofat{\lor}{0} = \truesymbol \andspace \indexinterpretationofat{\lor}{1} = \falsesymbol
+\end{align*}
 results is a homomorphism between the groups
-\[ \big(\ozset,\cdot\big) \quad \text{and} \quad \big(\truthset,\lor\big)  \, . \]
+\begin{align*}
+    \big(\ozset,\cdot\big) \andspace \big(\truthset,\lor\big)  \, .
+\end{align*}
 While placing the disjunction $\lor$ as the logical connective effectively executed by contractions, the negation will for arbitrary interpretations mapping onto $\ozset$ remain the function %\eqref{eq:affineLinearNegation}
 \begin{align*}
     \invindexinterpretationofat{\lor}{\lnot\truthstate} = 1 - \invindexinterpretationofat{\lor}{\truthstate}  \, .
@@ -166,36 +170,12 @@ We depict this decomposition in the diagrammatic notation by
     \input{./PartI/tikz_pics/logic_representation/formula_direct.tex}
 \end{center}
 
-
-% Maps to multiple formulas -> Later?
-%We can extend the map to factored systems of multiple formulas, by using \defref{def:formulas} as coordinate maps.
-%This is exactly what we will study by Bayesian Propositional Networks.
-%We will make use of redundancies in the maps to get an efficient representation based on decompositions.
-
-
 %% Semantic approach
 We here chose a semantic approach to propositional logic in contrary to the standard syntactical approach.
 Instead of defining formulas by connectives acting on atomic formulas, we define them here as binary valued functions of the states of a factored system.
 They are interpreted by marking possible states as models, given the knowledge of $\exformula$.
 The syntactical side will then be introduced later by studying decompositions of formulas.
 
-
-%\begin{figure}[h]
-%\begin{center}
-%	\input{./PartI/tikz_pics/logic_representation/formula_direct.tex}
-%\end{center}
-%\caption{Direct interpretation of a propositional formula $\exformula$ as a tensor.
-%	The tensor is the sum of the one hot encodings of its models.
-%	While the one hot encodings are directed, their sum is not.}
-%\label{fig:formulaDirect} 
-%\end{figure}
-
-%% Intro of connectives
-%Logical connectives are basic building blocks of such formulas and can be understood by simple computations represented in truth tables.
-% Here truth tables?
-%We call each combination of atomic formulas with connectives a formula.
-
-%\subsect{\BasisEncoding{} of formulas}
 
 \subsect{Representation by \ComputationActivationNetworks{}}
 
@@ -206,7 +186,7 @@ To apply the \basisEncoding{} scheme, we understand $[2]$ as the states of a sys
 Although it comes with an additional boolean variable compared with \coordinateEncoding{} scheme, we in this work use the \basisEncoding{} scheme to find sparse tensor network decompositions based on syntactical formula decompositions.
 Furthermore, the \basisEncoding{} connects with the formalism of \ComputationActivationNetworks{} developed in \charef{cha:probRepresentation}, as we show next.
 
-\begin{theorem}[Propositional formulas as \ComputationActivationNetwork{}]
+\begin{theorem}[Formula representation as \ComputationActivationNetwork{}]
     \label{the:formulaAsCANetwork}
     For each formula $\formula$ we have
     \begin{align*}
@@ -259,14 +239,6 @@ Furthermore, the \basisEncoding{} connects with the formalism of \ComputationAct
     \label{fig:formulabencoding}
 \end{figure}
 
-% Maps between factored systems -> Comment maybe on extra head variable?
-%Following this second perspective, formulas are maps between factored systems, where the image system is the factored systems of atoms and the target system the atomic system defined by a variable $\formulavar$ representing the formula satisfaction.
-
-%% More general basis encodings
-%We can build basis encodings more generally of any tensors, where we identify the image of the tensor with the states of a categorical variable.
-%Exactly for propositional formulas, this construction will lead to Boolean image variables.
-
-
 % Expressivity of CA Networks
 \theref{the:formulaAsCANetwork} shows that besides the formula itself, we can represent the negation of the formula as a \ComputationActivationNetwork{} with the same statistic $\{\exformula\}$.
 In general, any boolean tensor which has a representation as a \ComputationActivationNetwork{} needs to have a boolean activation tensor.
@@ -317,7 +289,6 @@ Atomic formulas and their basis encodings have an especially compelling represen
         = \tbasisat{\catvariableof{\atomenumerator}} \otimes \onesat{\catvariableof{[\catorder]/\{\atomenumerator\}}}  \, .
     \end{align*}
     and has a \basisEncoding{}
-%	The \basisEncoding{} of any atomic formula $\atomicformulaofat{\atomenumerator}{\shortcatvariables}$ has a tensor decomposition by
     \begin{align*}
         \bencodingofat{\atomicformulaof{\atomenumerator}}{\headvariableof{\atomorder},\shortcatvariables}
         = \contractionof{\identityat{\headvariableof{\atomenumerator},\catvariableof{\atomenumerator}}}{\shortcatvariables}
@@ -334,7 +305,7 @@ Atomic formulas and their basis encodings have an especially compelling represen
         \bencodingofat{\atomicformulaof{\atomenumerator}}{\headvariableof{\atomenumerator},\shortcatvariables}
         =& \sum_{\catindices\in\atomstates} \onehotmapofat{\catindices}{\shortcatvariables} \otimes \onehotmapofat{\formulaofat{\atomenumerator}{\indexedcatvariables}}{\headvariableof{\atomenumerator}} \\
         =& \left( \onehotmapofat{0,0}{\catvariableof{\atomenumerator},\headvariableof{\atomenumerator}} +
-        \onehotmapofat{1,1}{\catvariableof{\atomenumerator},\headvariableof{\atomenumerator}} \right) \otimes \onesat{\catvariableof{\secatomenumerator}\, : \, \secatomenumerator \neq \atomenumerator} \\
+        \onehotmapofat{1,1}{\catvariableof{\atomenumerator},\headvariableof{\atomenumerator}} \right) \otimes \onesat{\catvariableof{\secatomenumerator} \wcols \secatomenumerator \neq \atomenumerator} \\
         =& \contractionof{\identityat{\catvariableof{\atomenumerator},\headvariableof{\atomenumerator}}}{\shortcatvariables,\headvariableof{\atomenumerator}} \, . \qedhere
     \end{align*}
 \end{proof}
@@ -355,7 +326,7 @@ In logical syntax formulas are described by atomic formulas recursively combined
 We now exploit such syntactical decompositions of formulas to derive tensor network decompositions.
 %We show, that representations of logical connectives can be represented by feasible tensor cores $\bencodingof{\exconnective}$ contracted along a tensor network.
 
-\begin{figure}[h]
+\begin{figure}[t]
     \begin{center}
         \input{PartI/tikz_pics/logic_representation/unary_binary_composition.tex}
     \end{center}
@@ -487,8 +458,6 @@ We are now prepared to show the main result of this chapter, the representation 
     \end{align}
     By $\prec$ we denote the partial ordering of nodes by directed paths in $\graph$, i.e. $\thirdnode \prec \node$ holds if there is a directed path from $\thirdnode$ to $\node$ in the hypergraph $\graph$.
     We start the induction at the nodes $[\atomorder]$ not appearing as outgoing nodes, where \eqref{eq:nodeFormulaRepresentation} holds by \lemref{lem:atomicFormulaRepresentation}.
-
-%	The nodes $[\atomorder]$ carry atomic formulas and represent them by identity tensors using the representation scheme of \lemref{lem:atomicFormulaRepresentation}.
 
     If for a node $\nodein$ \eqref{eq:nodeFormulaRepresentation} holds at all $\thirdnode\in\incomingnodes$, we apply \lemref{lem:basisEncodingConnectiveComposition} to the connective $\connectiveof{\node}$ and the formulas $\formulaofat{\thirdnode}{\shortcatvariables}$ of the parents $\thirdnode\in\incomingnodes$ and get
     \begin{align*}
@@ -656,7 +625,7 @@ The reference of the formulas in the case $\nodesof{0}\dot{\cup}\nodesof{1} = [\
 We use this insight and enumerate maxterms and minterms by the index $\catindex\in\atomstates$ of the unique world where the minterm is satisfied, respectively the maxterm is not satisfied.
 For any $\nodesof{0}\dot{\cup}\nodesof{1} = [\atomorder]$ we take the index tuple $\catindices$ where $\catindexof{\atomenumerator}=0$ if $\atomenumerator\in\nodesof{0}$ and $\catindexof{\atomenumerator}=1$ if $\atomenumerator\in\nodesof{1}$ and define
 \begin{align*}
-    \maxtermof{\catindices} = \clauseof{\nodesof{0}}{\nodesof{1}} \quad \text{and} \quad \mintermof{\catindices} = \termof{\nodesof{0}}{\nodesof{1}} \, .
+    \maxtermof{\catindices} = \clauseof{\nodesof{0}}{\nodesof{1}} \andspace \mintermof{\catindices} = \termof{\nodesof{0}}{\nodesof{1}} \, .
 \end{align*}
 
 
@@ -729,4 +698,3 @@ The decompositions found in \theref{the:tensorToMaxMinTerms} are also called can
 While we in this chapter investigated representation schemes for single propositional formulas, we will further study the representation of knowledge bases consisting in multiple formulas in \secref{sec:hardNetworks}.
 Further, we will build hybrid models bridging the concepts of probability distributions and propositional logics in \secref{sec:hybridNetworks}.
 Propositional formulas will therein serve as features and base measures for exponential families.
-%Further study of representing Knowledge Bases based on Tensor Networks of its formulas in \secref{sec:hardNetworks} (see \theref{the:conDecKB}).

@@ -1,6 +1,6 @@
 \chapter{\chatextprobRepresentation}\label{cha:probRepresentation}
 
-In this chapter we will establish relations between the formalism of tensor networks and basic concepts of probability theory.
+In this chapter, we will establish relations between the formalism of tensor networks and basic concepts of probability theory.
 We will first introduce joint distributions by tensors and connect their marginalizations and conditionings to basic tensor operations.
 Sparse representations of these tensors by tensor networks will be motivated based on independence properties and sufficient statistics.
 These mechanisms lead towards exponential families and graphical models, for which we provide tensor network representations.
@@ -32,7 +32,6 @@ These tensors have additional properties as we state in the next definition.
     A joint probability distribution of these categorical variables is a function
     \begin{align*}
         \probwith \defcols \facstates \rightarrow \rr
-        %\in\bigotimes_{\catenumeratorin}\rr^{\catdimof{\atomenumerator}} \, ,
     \end{align*}
     which is non-negative, that is for any $\shortcatindicesin$
     \begin{align*}
@@ -47,7 +46,6 @@ These tensors have additional properties as we state in the next definition.
 
 In a slight abuse of notation, we directly applied the coordinate encoding scheme (see \defref{def:notationCoordinateEncoding} and for more details \charef{cha:coordinateCalculus}) to represent a probability distribution as a tensor.
 Along this scheme, any probability distribution is a weighted sum of one-hot encodings (see \lemref{lem:tensorBasisDecomposition}) by
-%The probability tensor can be decomposed as the sum (see \lemref{lem:tensorBasisDecomposition} in \parref{par:three} for more details)
 \begin{align*} % To be more precise: This is the coordinate encoding of a map \atomstates \rightarrow \rr
     \probwith = \sum_{\shortcatindices\in\facstates} \probat{\indexedshortcatvariables} \cdot \onehotmapofat{\shortcatindices}{\shortcatvariables} \, ,
 \end{align*}
@@ -62,7 +60,7 @@ and thus ensures that all probabilities sum to $1$, which is necessary for the p
 While the assumptions of non-negative coordinates in \defref{def:probabilityDistribution} reflects the first probability axiom of Kolmogorov, the assumption of normalization, that is a contraction $1$, implements the second axiom (see for example \cite{degroot_probability_2016}).
 Since probability distributions contract to $1$, they are directed (see \defref{def:directedTensor}) with all distributed variables outgoing and empty incoming variables (see \figref{fig:probabilityTensor}).
 
-\begin{figure}[hbt!]
+\begin{figure}[t]
     \begin{center}
         \input{PartI/tikz_pics/probability_representation/probability_tensor.tex}
     \end{center}
@@ -99,13 +97,14 @@ and can therefore safely ignore the base measures.
 This enables the characterization of by $\basemeasure$ representable distributions by
 \begin{align*}
     \bmrealprobof{\basemeasure}
-    = \left\{ \probat{\shortcatvariables} \wcols\uniquantwrtof{\shortcatindicesin}{\probat{\indexedshortcatvariables}\geq0}, \, \contractionof{\probwith,\basemeasurewith}{\shortcatvariables}
-    = \probwith \right\} \, .
+    = \Big\{ \probat{\shortcatvariables} \wcols
+    & \Big(\uniquantwrtof{\shortcatindicesin}{\probat{\indexedshortcatvariables}\geq0}\Big) \ncond \\
+    & \contractionof{\probwith,\basemeasurewith}{\shortcatvariables} = \probwith \Big\} \, .
 \end{align*}
 
 Starting with \charef{cha:logicalRepresentation} we will further investigate boolean tensors and relate them with propositional formulas.
 In \charef{cha:logicalReasoning} we will connect the representation and positivity with respect to boolean base measures with the formalism of entailment.
-The notation $\bmrealprobof{\basemeasure}$ of by $\basemeasure$ representable distributions will later in this chapter relate with by a statistic computable distributions. %in \charef{cha:networkRepresentation} relate to minterm exponential families introduced therein.
+The notation $\bmrealprobof{\basemeasure}$ of by $\basemeasure$ representable distributions will later in this chapter relate with distributions computable given a statistic. %Here: Universal statistic used
 
 % Positive distribution
 We now investigate, which base measures $\basemeasure$ can be chosen for a probability distribution $\probtensor$, such that $\probtensor$ is representable by $\basemeasure$.
@@ -117,9 +116,6 @@ Here, we just introduce the minimality criterion as positivity of a distribution
     \label{def:positivityBaseMeasure}
     We say that a probability distribution $\probwith$ is positive with respect to a boolean base measure $\basemeasurewith$, if the distribution is representable by $\basemeasure$ (i.e. $\contraction{\probtensor,\basemeasure}=1$) and for all $\shortcatindices$ with $\basemeasureat{\indexedcatvariables}=1$ we have $\probat{\indexedcatvariables}>0$.
 \end{definition}
-
-%This is a slight abuse of the measure theoretic approach to probability theory, since typically the base measure needs to be defined before considering probability distributions.
-
 
 \subsect{Marginal Distribution}
 
@@ -180,7 +176,7 @@ Normalizations of probability distributions result in conditional distributions 
 
 \begin{definition}[Conditional Probability]
     \label{def:conditionalProbability}
-    Let $\probat{\exrandom,\secexrandom}$ be a distribution of the categorical variables $\exrandom$ and $\secexrandom$, such that $\probat{\exrandom,\secexrandom}$ is normable on $\{\secexrandom\}$.
+    Let $\probat{\exrandom,\secexrandom}$ be a distribution of the categorical variables $\exrandom$ and $\secexrandom$, such that $\probat{\exrandom,\secexrandom}$ is normalizable on $\{\secexrandom\}$.
     Then the distribution of $\exrandom$ conditioned on $\secexrandom$ is defined by
     \begin{align*}
         \condprobof{\exrandom}{\secexrandom}
@@ -188,7 +184,7 @@ Normalizations of probability distributions result in conditional distributions 
     \end{align*}
 \end{definition}
 
-\begin{figure}[hbt!]
+\begin{figure}[t]
     \begin{center}
         \input{PartI/tikz_pics/probability_representation/ones_property_cond.tex}
     \end{center}
@@ -294,7 +290,7 @@ We will now proceed to show that basic theorems of probability theory translate 
 \end{theorem}
 \begin{proof}
     This theorem follows from the more generic contraction equation \theref{the:normalizationContractionEQ} to be shown in \charef{cha:coordinateCalculus}.
-    We note that by positivity of $\probat{\secexrandom}$, the tensor network $\probtensor$ is normable with respect to $\secexrandom$.
+    We note that by positivity of $\probat{\secexrandom}$, the tensor network $\probtensor$ is normalizable with respect to $\secexrandom$.
     \theref{the:normalizationContractionEQ} therefore implies choosing $\nodes=\{0,1\}$, $\innodes=\{1\}$ and $\outnodes=\{0\}$, that
     For our tensor
     \begin{align*}
@@ -315,11 +311,10 @@ Following the insight of the Bayes \theref{the:bayes}, probability distributions
     \begin{align*}
         \probat{\shortcatvariables}
         = \contractionof{\{\margprobat{\catvariableof{0}}\} \cup
-        \left\{\condprobof{\catvariableof{\catenumerator}}{\catvariableof{0},\ldots,\catvariableof{\catenumerator-1}}\,:\,\catenumeratorin, \, \catenumerator\geq 1\right\}
+        \left\{\condprobof{\catvariableof{\catenumerator}}{\catvariableof{0},\ldots,\catvariableof{\catenumerator-1}} \wcols \catenumeratorin \ncond \catenumerator\geq 1\right\}
         }{\shortcatvariables} \, ,
     \end{align*}
     provided that all conditional probability distributions exist.
-%    where for $\catenumerator=0$ we denote by $ \condprobof{\catvariableof{0}}{\catvariableof{0},\ldots,\catvariableof{-1}}$ the marginal distribution $\probat{\catvariableof{0}}$.
 \end{theorem}
 \begin{proof}
     The claim can be derived by an iterative application of the Bayes \theref{the:bayes} theorem.
@@ -358,7 +353,7 @@ Before showing such decomposition schemes, we first provide a coordinatewise def
 
 \begin{definition}[Independence]
     \label{def:independence}
-    We say that $\exrandom$ is independent of $\secexrandom$ with respect to a distribution $\probat{\exrandom,\secexrandom}$, if for any values $\exrandindin$ and $\secexrandind$ the distribution satisfies
+    We say that $\exrandom$ is independent of $\secexrandom$ with respect to a distribution $\probat{\exrandom,\secexrandom}$, if for any values $\exrandindin$ and $\secexrandindin$ the distribution satisfies
     \begin{align*}
         \probat{\indexedexrandom,\indexedsecexrandom}
         = \margprobat{\indexedexrandom}\cdot\margprobat{\indexedexrandom} \, .
@@ -367,8 +362,6 @@ Before showing such decomposition schemes, we first provide a coordinatewise def
 \end{definition}
 
 We state next an equivalent independence criterion based on a contraction equation of probability distributions.
-%Let us state the most direct equivalent in the next theorem and derive further criteria as corrolaries.
-%We give a criterion on independence based on a contraction equation of the probability distribution in the next theorem.
 
 \begin{theorem}[Independence Criterion as a Contraction Equation]
     \label{the:independenceProductCriterion}
@@ -382,30 +375,30 @@ We state next an equivalent independence criterion based on a contraction equati
     By \theref{the:marginalContraction} we know that marginal probabilities are equivalent to contracted probability distributions, i.e. $\probat{\exrandom} = \contractionof{\{\probtensor\}}{\exrandom} $.
     By orthogonality of one-hot encodings we have that
     \begin{align*}
-        \forall \exrandind, \secexrandind : \quad  \probat{\indexedexrandom,\indexedsecexrandom}
-        = \margprobat{\indexedexrandom}
-        \cdot
-        \margprobat{\indexedexrandom}
+        \uniquantwrtof{\exrandindin,\secexrandindin}{
+            \probat{\indexedexrandom,\indexedsecexrandom} = \margprobat{\indexedexrandom}\cdot\margprobat{\indexedsecexrandom}
+        }
     \end{align*}
     is equivalent to
     \begin{align*}
-        \sum_{\exrandind}\sum_{\secexrandind} \probat{\indexedexrandom,\indexedsecexrandom} \cdot \onehotmapofat{\exrandind}{\exrandom}\onehotmapofat{\secexrandind}{\secexrandom}
-        = \sum_{\exrandind}\sum_{\secexrandind}
+        &\sum_{\exrandindin}\sum_{\secexrandindin} \probat{\indexedexrandom,\indexedsecexrandom} \cdot \onehotmapofat{\exrandind}{\exrandom}\onehotmapofat{\secexrandind}{\secexrandom} \\
+        &\quad = \sum_{\exrandindin}\sum_{\secexrandindin}
         \margprobat{\indexedexrandom}
         \cdot
-        \margprobat{\indexedexrandom} \cdot \onehotmapofat{\exrandind}{\exrandom}\onehotmapofat{\secexrandind}{\secexrandom} \, .
+        \margprobat{\indexedsecexrandom} \cdot \onehotmapofat{\exrandind}{\exrandom}\onehotmapofat{\secexrandind}{\secexrandom} \, .
     \end{align*}
     We reorder the summations and arrive at
     \begin{align*}
-        \sum_{\exrandind,\secexrandind}
-        \probat{\indexedexrandom,\indexedsecexrandom} \cdot \onehotmapofat{\exrandind,\secexrandind}{\exrandom, \secexrandom}
-        = \left(\sum_{\exrandind}\margprobat{\indexedexrandom} \onehotmapofat{\exrandind}{\exrandom} \right)
+        & \sum_{\exrandindin}\sum_{\secexrandindin}
+        \probat{\indexedexrandom,\indexedsecexrandom} \cdot \onehotmapofat{\exrandind,\secexrandind}{\exrandom, \secexrandom} \\
+        &\quad = \left(\sum_{\exrandindin}\margprobat{\indexedexrandom} \onehotmapofat{\exrandind}{\exrandom} \right)
         \cdot
-        \left( \sum_{\secexrandind}  \margprobat{\indexedexrandom} \cdot \onehotmapofat{\secexrandind}{\secexrandom}  \right)
+        \left( \sum_{\secexrandindin}  \margprobat{\indexedsecexrandom} \cdot \onehotmapofat{\secexrandind}{\secexrandom}  \right)
     \end{align*}
     which is by \lemref{lem:tensorBasisDecomposition} equal to the claim
     \begin{align*}
-        \probat{\exrandom,\secexrandom} = \contractionof{\contractionof{\probtensor}{\exrandom},\contractionof{\probtensor}{\secexrandom}}{\exrandom,\secexrandom} \, . & \qedhere
+        \probat{\exrandom,\secexrandom}
+        = \contractionof{\contractionof{\probat{\exrandom,\secexrandom}}{\exrandom},\contractionof{\probat{\exrandom,\secexrandom}}{\secexrandom}}{\exrandom,\secexrandom} \, . & \qedhere
     \end{align*}
 \end{proof}
 
@@ -464,7 +457,8 @@ Since conditional independence can be regarded as a property of conditional prob
 \end{proof}
 
 We can further exploit conditional independence to find tensor network decompositions of probabilities, as we show as the next corollary.
-\begin{figure}[hbt!]
+
+\begin{figure}[t]
     \begin{center}
         \input{PartI/tikz_pics/probability_representation/cond_independence_decomposition.tex}
     \end{center}
@@ -528,7 +522,8 @@ As we state as the next theorem, such sparsifications follow from conditional in
 \end{proof}
 
 Following our motivation of sparse decompositions, we now combine this result with the generic chain rule, to show Markov Chain decompositions.
-\begin{figure}[h]
+
+\begin{figure}[t]
     \begin{center}
         \input{PartI/tikz_pics/probability_representation/markov_chain.tex}
     \end{center}
@@ -598,11 +593,9 @@ The computation of marginal distribution by consecutive transition matrix multip
 
 \subsect{\ComputationMechanism{}}\label{sec:computationMechanism}
 
-\red{
-    We have seen, that conditional independence of variables corresponds with decomposition properties of probability tensors.
-    We now explore a further approach towards tensor network decomposition based on sufficient statistics, which leads to exponential families.
-    When restricting exponential families to graphical models in \secref{sec:graphicalModels}, we will see that both the indepence and the computation mechanisms are related through the Hammersley-Clifford theorem.
-}
+We have seen, that conditional independence of variables corresponds with decomposition properties of probability tensors.
+We now explore a further approach towards tensor network decomposition based on sufficient statistics, which leads to exponential families.
+When restricting exponential families to graphical models in \secref{sec:graphicalModels}, we will see that both the indepence and the computation mechanisms are related through the Hammersley-Clifford theorem.
 
 Let us consider a tuple of random variables $\shortcatvariables$, which take values in $\facstates$.
 We now understand the probability $\probat{\shortcatvariables}$ as another random variable taking values in $[0,1]$, which has a deterministic dependence on $\shortcatvariables$.
@@ -651,8 +644,7 @@ When a probability distribution has a sufficient statistic, we can represent the
     \end{align*}
 \end{proof}
 
-
-
+% Set of distributions with sufficient statistics
 Given a statistic $\sstat$  we can thus characterize the set of probability distributions, for which $\sstat$ is sufficient, as
 \begin{align*} % ! First occurance of realizabledists ?
     \realizabledistsof{\sstat,\maxgraph}
@@ -660,7 +652,6 @@ Given a statistic $\sstat$  we can thus characterize the set of probability dist
     \wcols \zerosat{\headvariables}\prec\acttensorwith \right\} \, ,
 \end{align*}
 where by $\zerosat{\headvariables}\prec\acttensorwith$ we restrict to the activation tensors with non-negative coordinates.
-%where by $\maxgraph$ we refer to the maximal graph to be explained later
 
 %% NEEDED FOR MAX ENTROPY DISCUSSION, since define max entropy with respect to base measures.
 We further extend the definition of sufficient statistics to generic boolean base measures $\basemeasure$, where we say that a probability distribution has a sufficient statistic $\sstat$ with respect to a base measure $\basemeasure$, if
@@ -682,23 +673,16 @@ The curse of dimensionality appears again in cases of large cardinality of the i
 To describe classes of probability distributions with efficient representations in these cases, we now define classes of distributions with tensor network decompositions of their activation cores.
 
 % Define sets of realizable distributions
-\begin{definition}
+\begin{definition}[\ComputationActivationNetwork{}]
     \label{def:realizableStatDistributions}
     Given a statistic $\sstat : \facstates \rightarrow \parspace$, and a hypergraph $\graph=(\nodes,\edges)$ with nodes $[\seldim]\subset\nodes$ containing the image coordinates of $\sstat$, we define the by $\sstat$ computable and by $\graph$ activated family of distributions by
     \begin{align*}
         \realizabledistsof{\sstat,\graph}
-        = \left\{ \normalizationof{\bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables},\hypercoreat{\headvariableof{\nodes}} %\} \cup \{\hypercoreofat{\edge}{\sstatcatof{\edge}} \wcols \edgein \}
+        = \left\{ \normalizationof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\contractionof{\acttensor}{\headvariables} %\} \cup \{\hypercoreofat{\edge}{\sstatcatof{\edge}} \wcols \edgein \}
         }{\shortcatvariables}
-        \wcols \hypercoreat{\headvariableof{\nodes}} \in \tnsetof{\graph} \right\} \, .
-%        \wcols \hypercoreofat{\edge}{\sstatcatof{\edge}}\in\bigotimes_{\selindex\in\edge}\rr^{\headdimof{\selindex}}\ncond\zerosat{\sstatcatof{\edge}}\prec\hypercoreofat{\edge}{\sstatcatof{\edge}} \right\} \, .
+        \wcols \acttensorat{\headvariableof{\nodes}} \in \tnsetof{\graph} \right\} \, .
     \end{align*}
-%    Note that we restrict to non-negative activation cores by demanding $\zerosat{\sstatcatof{\edge}}\prec\hypercoreofat{\edge}{\sstatcatof{\edge}}$, a notation which will be introduced in more detail in \charef{cha:logicalReasoning} as partial order of tensors.
     We refer to any member $\probat{\shortcatvariables}\in\realizabledistsof{\sstat,\graph}$ as a \ComputationActivationNetwork{}.
-    %\red{Given a base measure $\basemeasurewith$, by $\realizabledistsof{\sstat,\graph, \basemeasure}$ we refer to the set }
-    %\begin{align*}
-    %    \realizabledistsof{\sstat,\graph}
-    %    = \left\{ \normalizationof{\{\bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}\} \cup \{\hypercoreofat{\edge}{\sstatcatof{\edge}} \wcols \edgein \} \cup \{\basemeasurewith\}}{\shortcatvariables}  \, : \,\hypercoreofat{\edge}{\sstatcatof{\edge}}\in\bigotimes_{\selindex\in\edge}\rr^{\headdimof{\selindex}}, \, \zerosat{\sstatcatof{\edge}}\prec\hypercoreofat{\edge}{\sstatcatof{\edge}} \right\} \, .
-    %\end{align*}
 \end{definition}
 
 % Special case of maxgraph
@@ -712,29 +696,27 @@ For any hypergraph $\graph$ we further have
     \realizabledistsof{\sstat,\graph} \subseteq \realizabledistsof{\sstat,\maxgraph} \, .
 \end{align*}
 
-% Computation - Activation
+% Explaining Computation - Activation
 To represent a distribution $\probwith$ in $\realizabledistsof{\sstat,\graph}$ we need two tensor networks:
 \begin{itemize}
-    \item \textbf{Computation Cores:} These are a tensor network $\extnet$, which contraction is the basis encoding of the statistic
+    \item \textbf{Computation network:} This a tensor network, which contraction is the basis encoding of the statistic
     \begin{align*}
         \bencodingofat{\sstat}{\headvariables,\shortcatvariables} = \contractionof{\extnet}{\headvariables,\shortcatvariables} \, .
     \end{align*}
     Further decompositions of the basis encoding of the statistic is often necessary to avoid the curse of dimensions and possible in case of sparse statistics.
     We refer to these as computation cores, since they are computing the variables $\headvariables$ using the basis calculus scheme (see \charef{cha:basisCalculus}).
-    \item \textbf{Activation Cores:} These are the activation tensors $\hypercoreofat{\edge}{\sstatcatof{\edge}}$ for each hyperedge $\edgein$.
+    \item \textbf{Activation network:} The activation tensor $\contractionof{\acttensor}{\headvariables}$ activates the computed statistics, in the sense that the contraction with the computation network provides a non-trivial factor, if and only if the activation tensor itself is not trivial.
+    When demanding $\acttensorat{\headvariableof{\nodes}} \in \tnsetof{\graph}$, the activation tensor decomposes into a tensor network of tensors $\acttensorofat{\edge}{\headvariableof{\edge}}$ for each hyperedge $\edgein$.
 \end{itemize}
 
 % Usage of the selection encoding -> Can also make a theorem out of this
 
 \sect{Exponential families}\label{sec:exponentialFamilies}
 
-\theref{the:sufficientStatisticActCoreExistence} states the existence of an activation core, once a sufficient vector statistic has been identified.
-However, since the dimension of the activation core space is increasing exponential with the number of features (it is the product of the image cardinalities of the features), representation of generic $\actcore$ is not feasible.
+% Motivation: Elementary activation tensors
+\theref{the:sufficientStatisticActCoreExistence} states the existence of an activation core, once a sufficient statistic has been identified.
+However, since the dimension of the activation tensor space is increasing exponentially with the number of features, the representation of generic activation tensors is not feasible when having many features.
 We now restrict the activation cores to specific elementary tensors, which correspond with further assumptions on the dependence of $\probtensor$ and $\sstat$ made by exponential families.
-
-%The probability distributions, which are members of an exponential family, share the computation of the probability tensor based on a boolean base measure, marking the support of the distribution, and a statistic function containing features.
-%They differ only by canonical parameters which weight the features at a given state to calculate the respective probability.
-%Exponential families consist the most generic distributions investigated in this work and will also serve as a generic framework in the discussion of probabilistic reasoning in \charef{cha:probReasoning}, as well as for neuro-symbolic models in \parref{par:two}.
 
 \begin{definition}
     \label{def:expFamily}
@@ -746,9 +728,10 @@ We now restrict the activation cores to specific elementary tensors, which corre
     \begin{align*}
         \basemeasure \defcols \facstates \rightarrow \ozset
     \end{align*}
-    with $\contraction{\basemeasure}\neq0$, the set $\expfamily=\{\expdist \wcols\canparamwithin\}$ of probability distributions
+    with $\contraction{\basemeasure}\neq0$, the set $\expfamily=\{\expdist\wcols\canparamwithin\}$ of probability distributions
     \begin{align*}
-        \expdistat{\shortcatvariables} = \normalizationof{\expof{\contractionof{\sencsstatat{\shortcatvariables,\selvariable},\canparamwith}{\shortcatvariables},\basemeasurewith}}{\shortcatvariables}
+        \expdistat{\shortcatvariables}
+        = \normalizationof{\expof{\contractionof{\sencsstatat{\shortcatvariables,\selvariable},\canparamwith}{\shortcatvariables},\basemeasurewith}}{\shortcatvariables}
     \end{align*}
     is called the exponential family to $\sstat$.
     We further define for each member with parameters $\canparam$ the associated energy tensor
@@ -762,7 +745,7 @@ We now restrict the activation cores to specific elementary tensors, which corre
 
 We used the selection encoding to represent the weighted summation over the statistics, that is the tensor (see \defref{def:selectionEncoding})
 \begin{align*}
-    \sencsstatat{\shortcatvariables,\selvariable}: \facstates \times [\seldim] \rightarrow \rr
+    \sencsstatat{\shortcatvariables,\selvariable} \defcols \facstates \times [\seldim] \rightarrow \rr
 \end{align*}
 defined for $\shortcatindices\in\facstates$ and $\selindexin$ as
 \begin{align*}
@@ -845,12 +828,13 @@ We now overcome this problem with usage of the basis encoding formalism to repre
     \label{the:expFamilyTensorRep}
     Given any base measure $\basemeasure$ and a sufficient statistic $\sstat$ we enumerate for each coordinate $\selindexin$ the image $\imageof{\sstatcoordinateof{\selindex}}$ by a variable $\headvariableof{\selindex}$ taking values in $[\cardof{\imageof{\sstatcoordinateof{\selindex}}}]$ (see for more details on this scheme \charef{cha:basisCalculus}), given an interpretation map
     \begin{align*}
-        \indexinterpretationof{\selindex} :
+        \indexinterpretationof{\selindex} \defcols
         [\cardof{\imageof{\sstatcoordinateof{\selindex}}}] \rightarrow \imageof{\sstatcoordinateof{\selindex}} \, .
     \end{align*}
-    For any canonical parameter vector $\canparamwithin$ we build the activation cores
+%    Since $\imageof{\sstatcoordinateof{\selindex}}$
+    For any canonical parameter vector $\canparamwithin$ we build the activation cores $\softactlegwith$ for each coordinate $\headindexof{\selindex}\in[\cardof{\imageof{\sstatcoordinateof{\selindex}}}]$ by
     \begin{align*}
-        \actcoreofat{\selindex,\canparamat{\indexedselvariable}}{\indexedheadvariableof{\selindex}}
+        \softactleg\left[\indexedheadvariableof{\selindex}\right]
         = \expof{\canparamat{\indexedselvariable} \cdot \indexinterpretationofat{\selindex}{\headindexof{\selindex}} } \,
     \end{align*}
     and have
@@ -864,31 +848,31 @@ We now overcome this problem with usage of the basis encoding formalism to repre
     \begin{align*}
         \imageof{\sstat} \subset \bigtimes_{\selindexin} \imageof{\sstatcoordinateof{\selindex}} \,
     \end{align*}
-    and design enumerate the embedded image of $\sstat$ by the variables $\sstatcatof{[\seldim]}$.
+    and design enumerate the embedded image of $\sstat$ by the variables $\headvariables$.
     \theref{the:tensorFunctionComposition}, to be shown in \charef{cha:basisCalculus}, implies
     \begin{align*}
         \expof{\contractionof{\sencsstat,\canparam}{\shortcatvariables}}
         = \contractionof{
-            \bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables},\restrictionofto{\expof{\braket{\cdot,\canparamwith}}
+            \bencodingofat{\sstat}{\headvariables,\shortcatvariables},\restrictionofto{\expof{\braket{\cdot,\canparamwith}}
             }{\bigtimes_{\selindexin}\imageof{\sstatcoordinateof{\selindex}}}}{\shortcatvariables} \, .
     \end{align*}
     Here we denote by $\braket{\cdot,\canparamwith}$ the dual function to $\canparamwith$, which assigns to vectors their contraction with $\canparamwith$.
     Its restriction onto the vectors in $\bigtimes_{\selindexin}\imageof{\sstatcoordinateof{\selindex}}$ is the tensor satisfying
     \begin{align*}
-        \restrictionoftoat{\expof{\braket{\cdot,\canparam}}}{\imageof{\sstat}}{\sstatcatof{[\seldim]}}
+        \restrictionoftoat{\expof{\braket{\cdot,\canparam}}}{\imageof{\sstat}}{\headvariables}
         = \bigotimes_{\selindexin} \restrictionoftoat{\expof{\cdot \canparamat{\indexedselvariable}}}{\imageof{\sstatcoordinateof{\selindex}}}{\headvariableof{\selindex}}
         = \bigotimes_{\selindexin} \softactlegwith \, .
     \end{align*}
     We further have (see \theref{the:functionImageDecompositionContraction} in \charef{cha:basisCalculus})
     \begin{align*}
-        \bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}
-        = \contractionof{\{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables} \wcols\selindexin\}}{\sstatcatof{[\seldim]},\shortcatvariables} \, .
+        \bencodingofat{\sstat}{\headvariables,\shortcatvariables}
+        = \contractionof{\{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables} \wcols\selindexin\}}{\headvariables,\shortcatvariables} \, .
     \end{align*}
     Refining the above decomposition of $\expof{\contractionof{\sencsstat,\canparam}{\shortcatvariables}}$ by these further decompositions we arrive at the claim.
 \end{proof}
 
 
-In the proof of \theref{the:expFamilyTensorRep} we have observed, that the basis encoding $\bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables}$ of the statistics decomposed into a tensor network of basis encodings $\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables}$ to the coordinate of the statistic.
+In the proof of \theref{the:expFamilyTensorRep} we have observed, that the basis encoding $\bencodingofat{\sstat}{\headvariables,\shortcatvariables}$ of the statistics decomposed into a tensor network of basis encodings $\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables}$ to the coordinate of the statistic.
 We can exploit further decomposition mechanisms, which will be discussed in full detail in \charef{cha:basisCalculus}, to find even sparser decompositions.
 This is for example the case, when the coordinates of the statistic are compositions of functions depending on small numbers of variables.
 When the coordindates of the statistic furthermore share similar parts in their compositions, these parts can be shared in the decomposition.
@@ -903,6 +887,7 @@ The tensor network representation of an exponential family by \theref{the:expFam
     We notice, that since they are directed with $\headvariableof{\selindex}$ being the only outgoing variable, they do not influence any contraction with open variables $\shortcatvariables$, unless further tensors sharing the variable $\headvariableof{\selindex}$ are present in the contraction.
     \item \textbf{Activation Cores:} The influence of the contraction is performed by the activation cores $\softactlegwith$, which exploit the computed statistic variables $\headvariables$ and provide in combination with the basis encoding a factor
     \begin{align*}
+        %\expof{}
         \contractionof{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables},\softactlegwith}{\shortcatvariables}
     \end{align*}
     to the tensor network representing the distribution of the observed variables $\shortcatvariables$.
@@ -910,7 +895,7 @@ The tensor network representation of an exponential family by \theref{the:expFam
 For the implementation of an exponential family as a \ComputationActivationNetwork{}, see \exaref{exa:expFamilyCARep}. % in \charef{cha:implementation}.
 
 %Note that the activation core is contrained to be positive and
-When the canonical parameter is vanishing at a coordinate, that is $\canparamat{\indexedselvariable}=0$, then the corresponding factor is trivial, since $\actcoreofat{\selindex,0}{\headvariableof{\selindex}}=\onesat{\headvariableof{\selindex}}$ and as a consequence of the directionality of basis encodings we have
+When the canonical parameter is vanishing at a coordinate, that is $\canparamat{\indexedselvariable}=0$, then the corresponding factor is trivial, since $\softactsymbolofat{\selindex,0}{\headvariableof{\selindex}}=\onesat{\headvariableof{\selindex}}$ and as a consequence of the directionality of basis encodings we have
 \begin{align*}
     \contractionof{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables},\softactlegwith}{\shortcatvariables}
     = \contractionof{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables},\onesat{\headvariableof{\selindex}}}{\shortcatvariables}
@@ -920,7 +905,6 @@ In that case both the activation core and the corresponding computation core can
 
 % Interpretation as elementary
 By \theref{the:expFamilyTensorRep} any member of an exponential family is represented by the normed contraction of a collection of unary activation cores contracted with the computation cores $\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables}$.
-%We understand these activation cores as a tensor network distributing the head variables $\headvariables$.
 The unary activation cores form a tensor network on the elementary hypergraph
 \begin{align*}
     \elgraph=([\seldim],\{\{\selindex\}\wcols\selindexin\}) \, ,
@@ -1112,9 +1096,9 @@ This allows us to verify with \theref{the:conditionalContractionPreservation} th
 %\end{align*}
 
 % Dual
-%The dual tensor network consists of conditional probability distributions to each node $\node\in\nodes$ (see Figure~\ref{fig:BayesianFactor}b).
+%The dual tensor network consists of conditional probability distributions to each node $\node\in\nodes$ (see \figref{fig:BayesianFactor}b).
 
-\begin{figure}[h]
+\begin{figure}[t]
     \begin{center}
         \input{PartI/tikz_pics/probability_representation/bayesian_factor.tex}
     \end{center}
@@ -1265,57 +1249,58 @@ As a consequence, tasks such as the determination of the partition functions or 
 %Bayesian Networks conditioned on evidence are no longer Bayesian Networks on the same graph, but Markov Networks on a hypergraph enriched by the evidence conditioned about.
 
 
-\subsect{Hidden Markov Models}
-
-Hidden Markov Models are examples of Bayesian Networks, constructed as follows.
-Let us recall Markov Chains as investigated in \theref{the:MarkovChain} and extend them by observation variables $\randomeof{\catenumerator}$ for $\catenumeratorin$, representing limited observations of the state variables $\catvariableof{\catenumerator}$.
+%\subsect{Hidden Markov Models}
+\begin{example}[Hidden Markov Models]
+    Hidden Markov Models are examples of Bayesian Networks, constructed as follows.
+    Let us recall Markov Chains as investigated in \theref{the:MarkovChain} and extend them by observation variables $\randomeof{\catenumerator}$ for $\catenumeratorin$, representing limited observations of the state variables $\catvariableof{\catenumerator}$.
 %Let there be the variables $\catvariableof{\catenumerator}$ (states) and $\randomeof{\catenumerator}$ (observations) with a discrete and finite time $\catenumeratorin$.
-To be more precise, we assume the following conditional independencies:
-\begin{itemize}
-    \item As for Markov Chains, we assume that for $\catenumeratorin$ with $\catenumerator\geq1$ the variable $\catvariableof{\catenumerator}$ is independent of $\catvariableof{[\catenumerator-1}$ and $\randomeof{[\catenumerator-1]}$ conditioned on $\catvariableof{\catenumerator-1}$
-    \item In addition, for we assume that for $\catenumeratorin$ the observation variable $\randomeof{\catenumerator}$ is independent of $\catvariableof{[\catenumerator}$ and $\randomeof{[\catenumerator]}$ conditioned on $\catvariableof{\catenumerator}$
-\end{itemize}
-From this conditional independence assumption, we apply the Chain Rule \theref{the:chainRule} given the order of variables
-\begin{align*}
-    \catvariableof{0},\randomeof{0},\catvariableof{1},\randomeof{1},\ldots,\catvariableof{\catorder-1},\randomeof{\catorder-1}
-\end{align*}
-and get
-\begin{align*}
-    \probat{\catvariableof{[\catorder]},\randomeof{[\catorder]}}
-    & = \breakablecontractionof{
-        \{\margprobat{\catvariableof{0}},\condprobat{\randomeof{0}}{\catvariableof{0}}\} \\
-        & \quad\quad  \cup \{\condprobat{\catvariableof{\catenumerator}}{\catvariableof{[\catenumerator]},\randomeof{[\catorder]}} \,:\, \catenumeratorin\} \\
-        & \quad\quad \cup \{\condprobat{\randomeof{\catenumerator}}{\catvariableof{[\catenumerator+1]},\randomeof{[\catorder]}} \,:\, \catenumeratorin\}
-    }{
-        \catvariableof{[\catorder]},\randomeof{[\catorder]}
-    } \, .
-\end{align*}
-We now apply the conditional independence assumptions to sparsify the appearing conditional distributions by application of \theref{the:conditionDropping}.
-This results in the decomposition (see \figref{fig:HMM}b)
-\begin{align*}
-    \probat{\catvariableof{[\catorder]},\randomeof{[\catorder]}}
-    & = \breakablecontractionof{
-        \{\margprobat{\catvariableof{0}},\condprobat{\randomeof{0}}{\catvariableof{0}}\} \\
-        & \quad\quad  \cup \{\condprobat{\catvariableof{\catenumerator}}{\catvariableof{\catenumerator-1}} \,:\, \catenumeratorin\} \\
-        & \quad\quad \cup \{\condprobat{\randomeof{\catenumerator}}{\catvariableof{\catenumerator}} \,:\, \catenumeratorin\}
-    }{
-        \catvariableof{[\catorder]},\randomeof{[\catorder]}
-    } \, .
-\end{align*}
-In addition to the stochastic transition matrices $\condprobat{\catvariableof{\catenumerator}}{\catvariableof{\catenumerator-1}}$ appearing in Markov Chains, we further have stochastic observation matrices $\condprobat{\randomeof{\catenumerator}}{\catvariableof{\catenumerator}}$ for $\catenumeratorin$.
-Their contraction with marginal distribution of the respective state varibles delivers the marginal distribution of the observation matrix by
-\begin{align*}
-    \margprobat{\randomeof{\catenumerator}}
-    = \contractionof{\condprobat{\randomeof{\catenumerator}}{\catvariableof{\catenumerator}},\margprobat{\catvariableof{\catenumerator}}}{\randomeof{\catenumerator}}
-\end{align*}
-We notice, that this is a Bayesian Network on a directed acyclic hypergraph $\graph$ (see \figref{fig:HMM}a) consistent in nodes $\{\catvariableof{[\catorder]}\}\cup\{\randomeof{[\catorder]}\}$ to each state and observation variables, and the directed hyperedges by
+    To be more precise, we assume the following conditional independencies:
+    \begin{itemize}
+        \item As for Markov Chains, we assume that for $\catenumeratorin$ with $\catenumerator\geq1$ the variable $\catvariableof{\catenumerator}$ is independent of $\catvariableof{[\catenumerator-1}$ and $\randomeof{[\catenumerator-1]}$ conditioned on $\catvariableof{\catenumerator-1}$
+        \item In addition, for we assume that for $\catenumeratorin$ the observation variable $\randomeof{\catenumerator}$ is independent of $\catvariableof{[\catenumerator}$ and $\randomeof{[\catenumerator]}$ conditioned on $\catvariableof{\catenumerator}$
+    \end{itemize}
+    From this conditional independence assumption, we apply the Chain Rule \theref{the:chainRule} given the order of variables
+    \begin{align*}
+        \catvariableof{0},\randomeof{0},\catvariableof{1},\randomeof{1},\ldots,\catvariableof{\catorder-1},\randomeof{\catorder-1}
+    \end{align*}
+    and get
+    \begin{align*}
+        \probat{\catvariableof{[\catorder]},\randomeof{[\catorder]}}
+        & = \breakablecontractionof{
+            \{\margprobat{\catvariableof{0}},\condprobat{\randomeof{0}}{\catvariableof{0}}\} \\
+            & \quad\quad  \cup \{\condprobat{\catvariableof{\catenumerator}}{\catvariableof{[\catenumerator]},\randomeof{[\catorder]}} \,:\, \catenumeratorin\} \\
+            & \quad\quad \cup \{\condprobat{\randomeof{\catenumerator}}{\catvariableof{[\catenumerator+1]},\randomeof{[\catorder]}} \,:\, \catenumeratorin\}
+        }{
+            \catvariableof{[\catorder]},\randomeof{[\catorder]}
+        } \, .
+    \end{align*}
+    We now apply the conditional independence assumptions to sparsify the appearing conditional distributions by application of \theref{the:conditionDropping}.
+    This results in the decomposition (see \figref{fig:HMM}b)
+    \begin{align*}
+        \probat{\catvariableof{[\catorder]},\randomeof{[\catorder]}}
+        & = \breakablecontractionof{
+            \{\margprobat{\catvariableof{0}},\condprobat{\randomeof{0}}{\catvariableof{0}}\} \\
+            & \quad\quad  \cup \{\condprobat{\catvariableof{\catenumerator}}{\catvariableof{\catenumerator-1}} \,:\, \catenumeratorin\} \\
+            & \quad\quad \cup \{\condprobat{\randomeof{\catenumerator}}{\catvariableof{\catenumerator}} \,:\, \catenumeratorin\}
+        }{
+            \catvariableof{[\catorder]},\randomeof{[\catorder]}
+        } \, .
+    \end{align*}
+    In addition to the stochastic transition matrices $\condprobat{\catvariableof{\catenumerator}}{\catvariableof{\catenumerator-1}}$ appearing in Markov Chains, we further have stochastic observation matrices $\condprobat{\randomeof{\catenumerator}}{\catvariableof{\catenumerator}}$ for $\catenumeratorin$.
+    Their contraction with marginal distribution of the respective state varibles delivers the marginal distribution of the observation matrix by
+    \begin{align*}
+        \margprobat{\randomeof{\catenumerator}}
+        = \contractionof{\condprobat{\randomeof{\catenumerator}}{\catvariableof{\catenumerator}},\margprobat{\catvariableof{\catenumerator}}}{\randomeof{\catenumerator}}
+    \end{align*}
+    We notice, that this is a Bayesian Network on a directed acyclic hypergraph $\graph$ (see \figref{fig:HMM}a) consistent in nodes $\{\catvariableof{[\catorder]}\}\cup\{\randomeof{[\catorder]}\}$ to each state and observation variables, and the directed hyperedges by
 %and directed hyperedges
-\begin{itemize}
-    \item $(\varnothing,\{\catvariableof{0}\})$, decorated by the intial marginal distribution of $\catvariableof{0}$
-    \item $(\{\catvariableof{\catenumerator-1}\}, \{\catvariableof{\catenumerator}\})$ for $\catenumerator\in[\catorder]$ with $\catenumerator\geq1$, decorated by stochastic transition matrices
-    \item $(\{\catvariableof{\catenumerator}\}, \{\randomeof{\catenumerator}\})$ for $\catenumeratorin$, decorated stochastic observation matrices
-\end{itemize}
-While we have derived this directed graph structure directly based on the chain rule decomposition with sparsified conditional distributions, it also follows from the more generic hypergraph characterization of Bayesian Networks through separability by \theref{the:condIndBN}.
+    \begin{itemize}
+        \item $(\varnothing,\{\catvariableof{0}\})$, decorated by the intial marginal distribution of $\catvariableof{0}$
+        \item $(\{\catvariableof{\catenumerator-1}\}, \{\catvariableof{\catenumerator}\})$ for $\catenumerator\in[\catorder]$ with $\catenumerator\geq1$, decorated by stochastic transition matrices
+        \item $(\{\catvariableof{\catenumerator}\}, \{\randomeof{\catenumerator}\})$ for $\catenumeratorin$, decorated stochastic observation matrices
+    \end{itemize}
+    While we have derived this directed graph structure directly based on the chain rule decomposition with sparsified conditional distributions, it also follows from the more generic hypergraph characterization of Bayesian Networks through separability by \theref{the:condIndBN}.
+\end{example}
 
 \begin{figure}[t!]
     \begin{center}
@@ -1681,7 +1666,7 @@ Any $\meanparamwith\in\genmeanset$ then satisfies
 Thus, the polytope $\genmeanset$ is contained in an affine linear subspace and has vanishing interior.
 We can further understand this equation as two half-space inequalities
 \begin{align*}
-    \contraction{\meanparamwith,\vectorat{\selvariable}} \leq \lambda \quad \text{and} \quad \contraction{\meanparamwith,\vectorat{\selvariable}} \geq \lambda \, ,
+    \contraction{\meanparamwith,\vectorat{\selvariable}} \leq \lambda \andspace \contraction{\meanparamwith,\vectorat{\selvariable}} \geq \lambda \, ,
 \end{align*}
 which can be integrated into any half-space representation.
 We conclude, that in the case of non-minimal statistics, the whole polytope $\genmeanset$ is a face itself, since it satisfies these half-space inequalities sharply.
@@ -1970,7 +1955,7 @@ We observed that the notion of maximality is an important assumption, for exampl
 % Arbitrary measurable spaces
 While we here restricted our discussion to finite state spaces to each variable, probability distributions can in general be defined for arbitrary measurable spaces.
 Joint distributions of these more generic variables still have a tensor structure.
-The discussion of them, however, needs to be more careful, since integrals might diverge and tensors therefore not be normable.
+The discussion of them, however, needs to be more careful, since integrals might diverge and tensors therefore not be normalizable.
 By restriction in this work to finite state spaces of factored systems, we where able to exclude such situations.
 
 %\begin{remark}[Alternative definitions of graphical models]

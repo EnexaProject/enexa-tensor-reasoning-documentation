@@ -191,7 +191,7 @@ The function further refuses to add a formula, which would make the Knowledge Ba
     \Require Knowledge base $\kb$, query formula $\exformula$
     \Ensure Decision which relation between $\kb$ and $\exformula$ holds (see \figref{fig:askDecisionTable})
     \iosepline
-        \State{$\hypercoreat{\formulavar} \algdefsymbol \contractionof{\{\secexformulaat{\shortcatvariables} \, : \, \secexformula\in\kb\},\bencodingofat{\exformula}{\formulavar,\shortcatvariables}}{\formulavar}$}
+        \State{$\hypercoreat{\formulavar} \algdefsymbol \contractionof{\{\secexformulaat{\shortcatvariables} \wcols \secexformula\in\kb\},\bencodingofat{\exformula}{\formulavar,\shortcatvariables}}{\formulavar}$}
         \If{$\hypercoreat{\formulavar=0}=0$ and $\hypercoreat{\formulavar=1}=0$ }
             \State \Return \stringof{Inconsistent}
         \ElsIf{$\hypercoreat{\formulavar=0}=0$}
@@ -227,9 +227,6 @@ The function further refuses to add a formula, which would make the Knowledge Ba
 
 
 \sect{Formulas as Random Variables}
-
-%\red{Aim here: Relate with the probabilistic reasoning concepts of marginal and conditional distributions.}
-%\red{Given a probability distribution $\probtensor$ of atoms we add a variable by building the Markov Network of $\probtensor$ and $\bencodingof{\exformula}$ to get a joint distribution of the atoms and a query formula $\exformula$}
 
 In order to present logical entailment as extreme cases of more generic probabilistic reasoning, we now provide probabilistic interpretations of propositional formulas.
 % Interpretation of basis encoding as conditional probabilities
@@ -323,7 +320,7 @@ To this end, let us condition on the event of $\exformula=1$, for which we have 
 \begin{align}
     \label{eq:eventFormulaProb}
     \condprobof{\shortcatvariables}{\formulavar=1} = \frac{1}{\contraction{\exformula}}
-    \sum_{\shortatomindicesin \, : \, \formulaat{\indexedshortcatvariables}=1} \onehotmapofat{\shortcatindices}{\shortcatvariables} \, .
+    \sum_{\shortatomindicesin \wcols \formulaat{\indexedshortcatvariables}=1} \onehotmapofat{\shortcatindices}{\shortcatvariables} \, .
 \end{align}
 With $\contraction{\exformula}$ being the number of models of $\exformula$, this is the uniform distribution among the models of $\exformula$.
 Conversely, when conditioning on the event $\formulavar=0$ we get a uniform distribution of the models of $\lnot\exformula$.
@@ -607,7 +604,7 @@ Following Chapter~5 in \cite{russell_artificial_2021}, we now define Constraint 
 \begin{definition}\label{def:csp}
     Let there be a hypergraph $\graph=(\nodes,\edges)$ and $\extnet$ be a tensor network of boolean constraint tensors $\hypercoreofat{\edge}{\catvariableof{\edge}}$ to each $\edgein$, that is
     \begin{align*}
-        \extnet = \{ \hypercoreofat{\edge}{\catvariableof{\edge}} \, : \, \edge\in\edges \} \, .
+        \extnet = \{ \hypercoreofat{\edge}{\catvariableof{\edge}} \wcols \edge\in\edges \} \, .
     \end{align*}
     The Constraint Satisfaction Problem (CSP) to $\extnet$ is the decision whether there is a state $\catindexof{\nodes}$ such that
     \begin{align*}
@@ -625,7 +622,7 @@ Here, any factor tensor in the Markov Networks produces a constraint tensor in t
     \label{the:factorReduction}
     Let $\probof{\graph}$ be a Markov Network to the Tensor Network $\extnet=\extnetasset$ on a hypergraph $\graph=(\nodes,\edges)$. % $\secnodes\subset\nodes$ be a subset and
 %	\begin{align*}
-%		\probat{\catvariableof{\secnodes}} = \normalizationof{\{\hypercoreat{\edge} \, : \, \edge\in\edges \}}{\catvariableof{\secnodes}}
+%		\probat{\catvariableof{\secnodes}} = \normalizationof{\{\hypercoreat{\edge} \wcols \edge\in\edges \}}{\catvariableof{\secnodes}}
 %	\end{align*}
     For each $\edge\in\edges$ we build the factor constraint cores
     \begin{align*}
@@ -634,29 +631,29 @@ Here, any factor tensor in the Markov Networks produces a constraint tensor in t
     Let further $\exformulaat{\catvariableof{\secnodes}}$ be a formula depending on the variables $\secnodes$, and build $\secgraph=(\nodes,\edges\cup\{\secnodes\})$.
     Then we have that $\probof{\graph}\models\exformula$ if and only if the constraint satisfaction problem of $\secgraph$ to the constraint tensors
     \begin{align*}
-        \{\sechypercoreof{\edge} \, : \, \edge\in\edges \} \cup \{\lnot\exformula \}
+        \{\sechypercoreof{\edge} \wcols \edge\in\edges \} \cup \{\lnot\exformula \}
     \end{align*}
     is unsatisfiable.
     %and
-    %	\[ \tilde{\probtensor}[\catvariableof{\secnodes}] = \normalizationof{\{\nonzerofunction \circ \hypercoreat{\edge} \, : \, \edge\in\edges \}}{\catvariableof{\secnodes}} \]
+    %	\[ \tilde{\probtensor}[\catvariableof{\secnodes}] = \normalizationof{\{\nonzerofunction \circ \hypercoreat{\edge} \wcols \edge\in\edges \}}{\catvariableof{\secnodes}} \]
     %Then we have for any $\exformula$ that $\probtensor\models\exformula$ if and only if $\tilde{\probtensor}\models\exformula$.
 \end{theorem}
 \begin{proof}
     We first show, that
     \begin{align*}
         \nonzerocirc\probofat{\graph}{\nodevariables} =
-        \contractionof{\{\sechypercoreof{\edge} \, : \, \edge\in\edges \}}{\nodevariables} \, . %\nonzerocirc\tilde{\probtensor} \, .
+        \contractionof{\{\sechypercoreof{\edge} \wcols \edge\in\edges \}}{\nodevariables} \, . %\nonzerocirc\tilde{\probtensor} \, .
     \end{align*}
     To this end, let $\catindexof{\nodes}\in\nodestatesof{\nodes}$ be arbitrary.
     We have $\probofat{\graph}{\indexednodevariables}=0$ if and only if at there is an edge $\edge\in\edges$ with $\hypercoreofat{\edge}{\indexedcatvariableof{\edge}}$.
     But this is equivalent to
     \begin{align*}
-        \contractionof{\{\sechypercoreof{\edge} \, : \, \edge\in\edges \}}{\nodevariables} \, .
+        \contractionof{\{\sechypercoreof{\edge} \wcols \edge\in\edges \}}{\nodevariables} \, .
     \end{align*}
     We thus have for any $\catindexof{\nodes}\in\nodestatesof{\nodes}$
     \begin{align*}
         \nonzerocirc\probofat{\graph}{\indexednodevariables} =
-        \contractionof{\{\sechypercoreof{\edge} \, : \, \edge\in\edges \}}{\indexednodevariables} \, . %\nonzerocirc\tilde{\probtensor} \, .
+        \contractionof{\{\sechypercoreof{\edge} \wcols \edge\in\edges \}}{\indexednodevariables} \, . %\nonzerocirc\tilde{\probtensor} \, .
     \end{align*}
 
     To continue, we have $\probof{\graph}\models\exformula$ if and only if
@@ -675,7 +672,7 @@ Here, any factor tensor in the Markov Networks produces a constraint tensor in t
 %	\end{align}
 %	The claim follows then from \theref{the:entailmentProbToLogical}.
 %	To show \eqref{eq:proofFacReduction} let there be $\indexedcatvariableof{\secnodes}$ such that $\probtensor[\indexedcatvariableof{\secnodes}]=0$.
-%	Then for any $\indexedcatvariableof{\nodes}$ extending  $\indexedcatvariableof{\secnodes}$ we have $\contractionof{\{\hypercoreat{\edge} \, : \, \edge\in\edges \}}{\indexedcatvariableof{\nodes}} = 0$ and thus also $\contractionof{\{\nonzerocirc\hypercoreat{\edge} \, : \, \edge\in\edges \}}{\indexedcatvariableof{\nodes}} = 0$ and $\tilde{\probtensor}[\indexedcatvariableof{\secnodes}]=0$.
+%	Then for any $\indexedcatvariableof{\nodes}$ extending  $\indexedcatvariableof{\secnodes}$ we have $\contractionof{\{\hypercoreat{\edge} \wcols \edge\in\edges \}}{\indexedcatvariableof{\nodes}} = 0$ and thus also $\contractionof{\{\nonzerocirc\hypercoreat{\edge} \wcols \edge\in\edges \}}{\indexedcatvariableof{\nodes}} = 0$ and $\tilde{\probtensor}[\indexedcatvariableof{\secnodes}]=0$.
 %	One can similarly show, that when $\tilde{\probtensor}[\indexedcatvariableof{\secnodes}]=0$ then also ${\probtensor}[\indexedcatvariableof{\secnodes}]=0$.
 %	The support of the distributions $\probtensor$ and $\tilde{\probtensor}$ is thus identical and \eqref{eq:proofFacReduction} holds.
 \end{proof}
@@ -739,8 +736,8 @@ With \theref{the:functionDecompositionBasisCP} the basis encoding $\categoricalc
 %\begin{align*}
 %    \categoricalmapofat{\catenumerator}{\indexedcatvariableof{\catenumerator},\indexedcatvariable}
 %    = \begin{cases}
-%          1 & \ifspace \catindex=\catenumerator \quad \text{and} \quad \catindexof{\catenumerator} = 1 \\
-%          1 & \ifspace \catindex\neq\catenumerator \quad \text{and} \quad \catindexof{\catenumerator} = 0 \\
+%          1 & \ifspace \catindex=\catenumerator \andspace \catindexof{\catenumerator} = 1 \\
+%          1 & \ifspace \catindex\neq\catenumerator \andspace \catindexof{\catenumerator} = 0 \\
 %          0 & \text{else} \, .
 %    \end{cases}
 %\end{align*}
@@ -783,7 +780,7 @@ In the next theorem we show how a categorical constraint can be enforced in a te
     \end{align*}
 \end{proof}
 
-\begin{figure}[h]
+\begin{figure}[t]
     \begin{center}
         \input{PartII/tikz_pics/network_representation/categorical_decomposition.tex}
     \end{center}
@@ -813,16 +810,16 @@ In the next theorem we show how a categorical constraint can be enforced in a te
     For a $n\in\nn$ we further define the atomization variables $\catvariableof{i,j,k}$ where $i,j,k\in[n^2]$ and $\catdimof{i,j,k}=2$.
     These $n^6$ variables are the booleans indicating whether a specific position has a specific number assigned.
     The consistency of the atomization variables to the basic variables is then for each $i,j\in[n^2]$ ensured by the constraints
-    \[ \{\catvariableof{i,j,k} \, : \, k\in [n^2] \} \, . \]
+    \[ \{\catvariableof{i,j,k} \wcols k\in [n^2] \} \, . \]
 
     We further have $3\cdot n^2$ constraints by the
     \begin{itemize}
         \item Row constraints: Each number $k$ appears exactly once in each row $i\in[n^2]$, captured by the constraints
-        \[ \{\catvariableof{i,j,k}  \, : \, j \in [n^2] \} \, . \]
+        \[ \{\catvariableof{i,j,k}  \wcols j \in [n^2] \} \, . \]
         \item Column constraints: Each number $k$ appears exactly once in each column $j\in[n^2]$, captured by the constraints
-        \[ \{\catvariableof{i,j,k}  \, : \, i \in [n^2] \} \, . \]
+        \[ \{\catvariableof{i,j,k}  \wcols i \in [n^2] \} \, . \]
         \item Square constraints: Each number appears exactly once in each square $s,r\in[n]$, captured by the constraints
-        \[ \{\catvariableof{i+n\cdot s,j+n\cdot r,k}  \, : \, i,j \in [n] \} \, . \]
+        \[ \{\catvariableof{i+n\cdot s,j+n\cdot r,k}  \wcols i,j \in [n] \} \, . \]
     \end{itemize}
 
     In total we have $3\cdot n^2 + n^4$ constraints for $n^6$ variables.
@@ -854,12 +851,11 @@ Here we interpret a part of the network (for example a single core) as an own kn
 
 \subsect{Monotonicity of entailment}
 
-%\red{When defining entailment based on Markov Networks, would have clearer statement!}
 Vanishing local contractions provide sufficient but not necessary criterion to decide entailment, as we show in the next theorem.
 
 \begin{theorem}[Monotonicity of Entailment]
     \label{the:monotonEntailment}
-    For any Markov Network on the decorated hypergraph $\graph$ and any subgraph $\secgraph$, we have for any formula that $\probtensor^{\graph}\models\exformula$ if $\probtensor^{\secgraph}\models\exformula$.
+    For any Markov Network $\probtensor^{\graph}$ on the decorated hypergraph $\graph$ and any subgraph $\secgraph$, we have for any formula that $\probtensor^{\graph}\models\exformula$ if $\probtensor^{\secgraph}\models\exformula$.
 \end{theorem}
 
 %To show this theorem, we show the following lemma, that whether a contraction of non-negative tensors vanishes, a vanishing contraction of a subset of these tensors is a sufficient criterion.
@@ -883,11 +879,11 @@ To prove the theorem, we first establish the following lemma that states if a co
     \begin{align*}
         \contractionof{\extnet}{\catvariableof{\nodes}}
         &= \contractionof{
-            \{\hypercoreof{\edge} \, : \, \edge\in\edges/\secedges\}
+            \{\hypercoreof{\edge} \wcols \edge\in\edges/\secedges\}
             \cup \{\contractionof{\tnetof{\secgraph}}{\catvariableof{\secnodes}}\}
         }{\catvariableof{\nodes}} \\
         &=    \contractionof{
-            \{\hypercoreof{\edge} \, : \, \edge\in\edges/\secedges\}
+            \{\hypercoreof{\edge} \wcols \edge\in\edges/\secedges\}
             \cup \{\zerosat{\catvariableof{\secnodes}}\}
         }{\catvariableof{\nodes}} \\
         &= 0
@@ -921,7 +917,7 @@ To store preliminary conclusions, we define auxiliary knowledge cores storing co
 They are understood as logical formulas to the atomization variables $\left(\catvariableof{\edge}=\catindexof{\edge}\right)$ of the respective formulas
 \begin{align*}
     \kcoreofat{\edge}{\catvariableof{\edge}}
-    = \bigvee_{\catindexof{\edge} \, : \, \kcoreofat{\edge}{\indexedcatvariableof{\edge}}} \bigwedge_{\node\in\edge} \left(\catvariableof{\edge}=\catindexof{\edge}\right) \, .
+    = \bigvee_{\catindexof{\edge} \wcols \kcoreofat{\edge}{\indexedcatvariableof{\edge}}} \bigwedge_{\node\in\edge} \left(\catvariableof{\edge}=\catindexof{\edge}\right) \, .
 \end{align*}
 
 \begin{definition}\label{def:knowledgeCoreSoundComplete}
@@ -1016,7 +1012,7 @@ The AC-3 algorithm (see \cite{mackworth_consistency_1977}) is a specific instanc
     At any state of the Knowledge Propagation \algoref{alg:knowledgePropagation}, we have that each knowledge core $\kcoreof{\secedge}$ is sound for $\extnet$.
     %\begin{align*}
     %    \contractionof{\extnet}{\nodevariables}
-    %    = \contractionof{\extnet \cup \{\kcoreof{\edge} \, : \, \edge\in\domainedges\}}{\nodevariables} \, .
+    %    = \contractionof{\extnet \cup \{\kcoreof{\edge} \wcols \edge\in\domainedges\}}{\nodevariables} \, .
     %\end{align*}
     After each update in \algoref{alg:knowledgePropagation}, $\kcoreof{\secedge}$ is further monotonically decreasing with respect to the partial ordering.
     %\begin{align*}
@@ -1027,33 +1023,33 @@ The AC-3 algorithm (see \cite{mackworth_consistency_1977}) is a specific instanc
     We show the first claim by induction over the update steps in \algoref{alg:knowledgePropagation}.
     At the start, where $\kcoreofat{\edge}{\edgevariables} = \onesat{\edgevariables}$, we trivially have
     \begin{align*}
-        \contractionof{\extnet \cup \{\kcoreofat{\edge}{\edgevariables} \, : \, \edge\in\domainedges\}}{\nodevariables}
-        = \contractionof{\extnet \cup \{\onesat{\edgevariables} \, : \, \edge\in\domainedges\}}{\nodevariables}
+        \contractionof{\extnet \cup \{\kcoreofat{\edge}{\edgevariables} \wcols \edge\in\domainedges\}}{\nodevariables}
+        = \contractionof{\extnet \cup \{\onesat{\edgevariables} \wcols \edge\in\domainedges\}}{\nodevariables}
         = \contractionof{\extnet}{\nodevariables} \, .
     \end{align*}
-    Let us now assume, that for a state of cores $\{\kcoreof{\edge} \, : \, \edge\in\domainedges\}$ the first claim holds and let $\secedges\subset\edges$ be chosen for the update of $\kcoreof{\secedge}$.
+    Let us now assume, that for a state of cores $\{\kcoreof{\edge} \wcols \edge\in\domainedges\}$ the first claim holds and let $\secedges\subset\edges$ be chosen for the update of $\kcoreof{\secedge}$.
     By the invariance under adding the support of subcontractions, which we will proof in more detail as \theref{the:monotonicityBinaryContractions} in \charef{cha:messagePassing}, we have for the update
     \begin{align*}
         \tilde{\kcore}^{\secedge}[\catvariableof{\secedge}]
         = \nonzerocirc\contractionof{
-            \{\hypercoreof{\edge} \, : \, \edge\in\secedges\} \cup \{\kcoreof{\edge} \, : \, \edge\in\domainedges, \, \edge\cap\bigcup_{\secedge\in\secedges}\secedge\neq\varnothing  \}
+            \{\hypercoreof{\edge} \wcols \edge\in\secedges\} \cup \{\kcoreof{\edge} \wcols \edge\in\domainedges, \, \edge\cap\bigcup_{\secedge\in\secedges}\secedge\neq\varnothing  \}
         }{\catvariableof{\secedge}}
     \end{align*}
     that
     \begin{align*}
-        \contractionof{\extnet \cup \{\kcoreofat{\edge}{\edgevariables} \, : \, \edge\in\domainedges\}}{\nodevariables}
-        = \contractionof{\extnet \cup \{\kcoreofat{\edge}{\edgevariables} \, : \, \edge\in\domainedges\} \cup \{\tilde{\kcore}^{\secedge}[\catvariableof{\secedge}]\}
+        \contractionof{\extnet \cup \{\kcoreofat{\edge}{\edgevariables} \wcols \edge\in\domainedges\}}{\nodevariables}
+        = \contractionof{\extnet \cup \{\kcoreofat{\edge}{\edgevariables} \wcols \edge\in\domainedges\} \cup \{\tilde{\kcore}^{\secedge}[\catvariableof{\secedge}]\}
         }{\nodevariables}  \, .
     \end{align*}
     Thus, the first claim holds also after the update of the core to $\secedge$.
 
     % Since the kcore is in the contraction
-    We further have with the monotonocity of boolean contraction (see \theref{the:monotonicityBinaryContractions}) that for any update of $\kcoreof{\secedge}$ by $\tilde{\kcore}^{\secedge}$
+    We further have with the monotonicity of boolean contraction (see \theref{the:monotonicityBinaryContractions}) that for any update of $\kcoreof{\secedge}$ by $\tilde{\kcore}^{\secedge}$
     \begin{align*}
         \tilde{\kcore}^{\secedge}[\catvariableof{\secedge}]
         = \nonzerocirc\contractionof{
-            \{\hypercoreof{\edge} \, : \, \edge\in\secedges\}
-            \cup \{\kcoreof{\edge} \, : \, \edge\in\domainedges, \, \edge\cap\bigcup_{\edge\in\secedges}\edge\neq\varnothing\}
+            \{\hypercoreof{\edge} \wcols \edge\in\secedges\}
+            \cup \{\kcoreof{\edge} \wcols \edge\in\domainedges, \, \edge\cap\bigcup_{\edge\in\secedges}\edge\neq\varnothing\}
         }{\catvariableof{\secedge}}
         \prec \kcoreofat{\secedge}{\catvariableof{\secedge}} \, .
     \end{align*}
@@ -1061,10 +1057,10 @@ The AC-3 algorithm (see \cite{mackworth_consistency_1977}) is a specific instanc
 
     From the first claim we further have for any $\secedge\in\secedges$
     \begin{align*}
-        \contractionof{\{\kcoreofat{\secedge}{\catvariableof{\secedge}}\}\cup\extnet \cup \left\{\kcoreof{\edge} \, : \, \edge\in\domainedges/\{\secedge\}\right\}}{\catvariableof{\secedge}}
+        \contractionof{\{\kcoreofat{\secedge}{\catvariableof{\secedge}}\}\cup\extnet \cup \left\{\kcoreof{\edge} \wcols \edge\in\domainedges/\{\secedge\}\right\}}{\catvariableof{\secedge}}
         = \contractionof{\extnet}{\catvariableof{\secedge}}
     \end{align*}
-    And thus in combination with the monotonocity of boolean contraction (see \theref{the:monotonicityBinaryContractions}) that
+    And thus in combination with the monotonicity of boolean contraction (see \theref{the:monotonicityBinaryContractions}) that
     \begin{align*}
         \nonzeroof{\contractionof{\extnet}{\catvariableof{\secedge}}} \prec \kcoreofat{\secedge}{\catvariableof{\secedge}}  \, . & \qedhere
     \end{align*}
@@ -1084,19 +1080,19 @@ Let us now show that Knowledge Propagation always terminates.
 We can further characterize the knowledge cores at termination.
 
 \begin{definition}
-    We say that a set of knowledge cores $\{\kcoreof{\edge} \, : \, \edge\in\domainedges\}$ is consistent with a set $\{\hypercoreof{\edge} \, : \, \edge\in\secedges\}$, if for any $\edge\in\domainedges$
+    We say that a set of knowledge cores $\{\kcoreof{\edge} \wcols \edge\in\domainedges\}$ is consistent with a set $\{\hypercoreof{\edge} \wcols \edge\in\secedges\}$, if for any $\edge\in\domainedges$
     \begin{align*}
         \kcoreofat{\edge}{\catvariableof{\edge}}
-        = \nzcontractionof{\{\hypercoreof{\edge} \, : \, \edge\in\secedges\} \cup \{\kcoreof{\edge} \, : \, \edge\in\domainedges\}}{\catvariableof{\edge}} \, .
+        = \nzcontractionof{\{\hypercoreof{\edge} \wcols \edge\in\secedges\} \cup \{\kcoreof{\edge} \wcols \edge\in\domainedges\}}{\catvariableof{\edge}} \, .
     \end{align*}
 \end{definition}
 
-This property is similar to the completeness of a knowledge core, when interpreting the other knowledge cores and the constraints $\{\hypercoreof{\edge} \, : \, \edge\in\secedges\}$ as posing a Constraint Satisfaction Problem.
+This property is similar to the completeness of a knowledge core, when interpreting the other knowledge cores and the constraints $\{\hypercoreof{\edge} \wcols \edge\in\secedges\}$ as posing a Constraint Satisfaction Problem.
 
 \begin{theorem}
     Knowledge Propagation \algoref{alg:knowledgePropagation} always terminates.
 %    At termination, each knowledge core $\kcoreof{}$
-    At termination we further for each $\secedges\in\arbset$ and $\edge\in\domainedges$ with $\edge\cap\bigcup_{\edge\in\secedges}\edge\neq\varnothing$, that the knowledge cores $\{\kcoreof{\edge} \, : \, \edge\in\domainedges, \, \edge\cap\bigcup_{\edge\in\secedges}\edge\neq\varnothing\}$ are consistent with $\{\hypercoreof{\edge} \, : \, \edge\in\secedges\}$.
+    At termination we further for each $\secedges\in\arbset$ and $\edge\in\domainedges$ with $\edge\cap\bigcup_{\edge\in\secedges}\edge\neq\varnothing$, that the knowledge cores $\{\kcoreof{\edge} \wcols \edge\in\domainedges, \, \edge\cap\bigcup_{\edge\in\secedges}\edge\neq\varnothing\}$ are consistent with $\{\hypercoreof{\edge} \wcols \edge\in\secedges\}$.
 \end{theorem}
 \begin{proof}
     For each knowledge core, there are finitely many boolean tensor precessing it with respect to the partial order.
@@ -1108,7 +1104,7 @@ This property is similar to the completeness of a knowledge core, when interpret
 %    At termination, we have for any $\secedges\in\arbset$
     \begin{align*}
         \kcoreofat{\edge}{\catvariableof{\edge}}
-        = \nzcontractionof{\{\hypercoreof{\edge} \, : \, \edge\in\secedges\} \cup \{\kcoreof{\edge} \, : \, \edge\in\domainedges, \, \edge\cap\bigcup_{\edge\in\secedges}\edge\neq\varnothing\}}{\catvariableof{\edge}} \, .
+        = \nzcontractionof{\{\hypercoreof{\edge} \wcols \edge\in\secedges\} \cup \{\kcoreof{\edge} \wcols \edge\in\domainedges, \, \edge\cap\bigcup_{\edge\in\secedges}\edge\neq\varnothing\}}{\catvariableof{\edge}} \, .
     \end{align*}
     Whenever the contraction on the right hand side changes during the algorithm, the set $\secedges$ is pushed into $\graphqueue$.
     At termination of the algorithm, $\graphqueue$ is empty, and the claimed consistency therefore has to hold.
@@ -1184,7 +1180,7 @@ Let us exemplify the usage of Knowledge Propagation on Constraint Satisfaction P
 
 \begin{example}[Batch decision of entailment]
     Let $\formulaset$ be a set of formulas and $\probofat{\graph}{\shortcatvariables}$ a Markov Network, for which it shall be decided, which formulas in $\formulaset$ are entailed, contradicted or contingent.
-    We can in addition to the cores of the Markov Network create the cores $\{\bencodingofat{\exformula}{\formulavar,\shortcatvariables} \, : \, \exformula\in\formulaset\}$ and prepare the knowledge cores
+    We can in addition to the cores of the Markov Network create the cores $\{\bencodingofat{\exformula}{\formulavar,\shortcatvariables} \wcols \exformula\in\formulaset\}$ and prepare the knowledge cores
     \begin{align*}
         \kcoreofat{\{\formula\}}{\formulavar} \, .
     \end{align*}
@@ -1216,7 +1212,7 @@ Whenever
 then
 \begin{align*}
     \tbasisat{\secexformulavar} =
-    \contractionof{\{\formulaat{\shortcatvariables} \, : \, \formula\in\formulaset\} \cup \{\bencodingofat{\secexformula}{\secexformulavar,\shortcatvariables}\}}{\secexformulavar} \, ,
+    \contractionof{\{\formulaat{\shortcatvariables} \wcols \formula\in\formulaset\} \cup \{\bencodingofat{\secexformula}{\secexformulavar,\shortcatvariables}\}}{\secexformulavar} \, ,
 \end{align*}
 that is the inference rule can be performed in when $\formulaset$ are in $\arbset$.
 
