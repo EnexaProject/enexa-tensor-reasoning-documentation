@@ -141,8 +141,8 @@ We therefore investigate here schemes to answer queries based on the energy tens
 
 \begin{theorem}
     \label{the:energyContractionQueries} % This is a statement about "full" queries.
-    Let $\energytensorat{\shortcatvariables}$ be an energy tensor and $\probwith=\normalizationof{\expof{\energytensorat{\shortcatvariables}}}{\shortcatvariables}$ the corresponding distribution.
-%	For any probability distribution $\probtensor$ with $\probtensor= \normalizationof{\expof{\energytensorat{\shortcatvariables}}}{\shortcatvariables}$,
+    Let $\energytensorwith$ be an energy tensor and $\probwith=\normalizationof{\expof{\energytensorwith}}{\shortcatvariables}$ the corresponding distribution.
+%	For any probability distribution $\probtensor$ with $\probtensor= \normalizationof{\expof{\energytensorwith}}{\shortcatvariables}$,
     For disjoint subsets $\nodesa,\nodesb \subset [\catorder]$ with $\nodesa\cup\nodesb=[\catorder]$ and any $\catindexof{\nodesb}$ we have
     \begin{align*}
         \condprobof{\catvariableof{\nodesa}}{\indexedcatvariableof{\nodesb}}
@@ -190,7 +190,7 @@ Mode queries on probability distributions in an energy representation can always
 This is due to the monotonicity of the exponential function, which implies
 \begin{align*}
     \argmax_{\shortcatindicesin} \probat{\indexedshortcatvariables}
-    &=\argmax_{\shortcatindicesin} \normalizationof{\expof{\energytensorat{\shortcatvariables}}}{\indexedshortcatvariables} \\
+    &=\argmax_{\shortcatindicesin} \normalizationof{\expof{\energytensorwith}}{\indexedshortcatvariables} \\
     &=\argmax_{\shortcatindicesin} \expof{\energytensorat{\indexedshortcatvariables}} \\
     &=\argmax_{\shortcatindicesin} \energytensorat{\indexedshortcatvariables} \, .
 \end{align*}
@@ -302,7 +302,7 @@ To find further locally answerable conditional queries, we need to condition onl
 This follows from the characterization of the conditional independences in Markov Networks, which has been shown in \theref{the:condIndMN}, and can be used to design further tractable sampling schemes for Markov Networks.
 
 % Energy
-We can further answer these conditional queries efficiently, when we perform Gibbs sampling on a probability distribution in an energy representation, that is $\probwith=\normalizationof{\expof{\energytensorat{\shortcatvariables}}}{\shortcatvariables}$.
+We can further answer these conditional queries efficiently, when we perform Gibbs sampling on a probability distribution in an energy representation, that is $\probwith=\normalizationof{\expof{\energytensorwith}}{\shortcatvariables}$.
 Using \theref{the:energyContractionQueries}, we have
 \begin{align*}
     \condprobof{\catvariableof{\catenumerator}}{\indexedcatvariableof{[\catorder]/\{\catenumerator\}}}
@@ -317,14 +317,11 @@ In the scheme of forward sampling, where most of the variables are marginalized 
 
 Simulated annealing is an adapted sampling scheme targeting mode queries rather than generating representative samples from a distribution.
 It employs an annealing process that gradually transforms the probability distribution by increasingly favoring high-likelihood configurations, thereby improving the chances of sampling a solution to a mode query.
-To be more precise, let there be a distribution in energy representation, that is $\probwith=\normalizationof{\expof{\energytensorat{\shortcatvariables}}}{\shortcatvariables}$.
+To be more precise, let there be a distribution in energy representation, that is $\probwith=\normalizationof{\expof{\energytensorwith}}{\shortcatvariables}$.
 We introduce a parameter $\invtemp\in\rr$, which we understand as the inverse temperature, and anneal the distribution through scaling its energy by this parameter.
-%\begin{align*}
-%    \energytensorofat{\invtemp}{\shortcatvariables} = \invtemp \cdot \energytensorat{\shortcatvariables} \, .
-%\end{align*}
 In the limit of $\invtemp\rightarrow\infty$, for each state $\shortcatindicesin$ the annealed distribution behaves as
 \begin{align*}
-    \normalizationof{\expof{\invtemp\cdot\energytensorofat{\shortcatvariables}}}{\indexedshortcatvariables} \rightarrow
+    \normalizationof{\expof{\invtemp\cdot\energytensorwith}}{\indexedshortcatvariables} \rightarrow
     \normalizationof{\ones_{\argmax_{\shortcatindicesin}\energytensorat{\indexedshortcatvariables}}}{\indexedshortcatvariables} \, .
 \end{align*}
 In this limit, the annealed distribution tends to the uniform distribution of the maximal coordinates, that is the uniform distribution of the set
@@ -332,7 +329,7 @@ In this limit, the annealed distribution tends to the uniform distribution of th
     \argmax_{\shortcatindicesin}\energytensorat{\indexedshortcatvariables} = \argmax_{\shortcatindicesin}\probat{\indexedshortcatvariables} \, .
 \end{align*}
 i
-To integrate annealing into Gibbs sampling, one chooses a parameter $\invtemp$ for each repetition of a sampling step and sample from the conditioned annealed distribution $\normalizationof{\expof{\invtemp\cdot\energytensorat{\shortcatvariables}}}{\shortcatvariables}$.
+To integrate annealing into Gibbs sampling, one chooses a parameter $\invtemp$ for each repetition of a sampling step and sample from the conditioned annealed distribution $\normalizationof{\expof{\invtemp\cdot\energytensorwith}}{\shortcatvariables}$.
 Through increasing $\invtemp$ during the algorithm, the samples are drawn towards states with larger coordinates in $\probat{\shortcatvariables}$.
 However, when $\invtemp$ is large, the sampling procedure can get stuck in local maxima, whereas small $\invtemp$ are in favor of overcoming such.
 The inverse temperature is thus understood as a tradeoff parameter between the exploration of new regions of the state space and increasing the coordinate of the sample by local coordinate optimization.
@@ -340,7 +337,7 @@ It is therefore typically chosen low in the beginning of the sampling algorithm 
 Due to this typical increasement of the inverse temperature strategy, the algorithm is referred to as simulated annealing.
 
 
-\sect{Maximum Likelihood Estimation} % Stuff from Parameter Estimation - Problem that Part I is called inference?
+\sect{Maximum Likelihood Estimation}
 
 So far we have been concerned with deductive reasoning task, that is retrieve information from a given distribution or drawing a sample.
 We now turn to inductive reasoning tasks, where a probability distribution is estimated given data.
@@ -354,11 +351,11 @@ To prepare for reasoning on data, we now derive tensor network representation fo
     \label{def:dataMap}
     Given a dataset $\dataset$ of samples of the factored system we define the sample selector map
     \begin{align*}
-        \datamap : [\datanum] \rightarrow \facstates
+        \datamap \defcols [\datanum] \rightarrow \facstates
     \end{align*}
     elementwise by
     \begin{align*}
-        \datamapat{\datindex} = (\catindicesof{\datindex}) \, .
+        \datamapat{\datindex} = \left(\catindicesof{\datindex}\right) \, .
     \end{align*}
 %% Empirical Distribution
     The empirical distribution to the sample selector map $\datamap$ is the probability distribution
@@ -370,7 +367,7 @@ To prepare for reasoning on data, we now derive tensor network representation fo
 %    where by $\datacore$ we denote the basis encoding (see \defref{def:functionRepresentation}) of the sample selector map, and the distributed variables $\shortcatvariables$ are the head variables of the basis encoding.
 \end{definition}
 
-% Sample Selector map (former data tensor)
+% Sample Selector map representation
 The basis encoding of the sample selector map has a decomposition by
 \begin{align*}
     \datacoreat{\shortcatvariables,\datvariable}
@@ -392,7 +389,7 @@ Such sums of basis tensors will be further investigated in \secref{sec:basisCP} 
 We now exploit this structure to find efficient tensor network decompositions (see \figref{fig:DataDecomposition}) based on matrices encoding its variables.
 
 
-\begin{figure}[t!]
+\begin{figure}[t]
     \begin{center}
         \input{PartI/tikz_pics/probability_representation/data_decomposition.tex}
     \end{center}
@@ -400,7 +397,6 @@ We now exploit this structure to find efficient tensor network decompositions (s
         Decomposition of the basis encoding of a sample selector map to a dataset $\dataset$.
         a) Interpretation as a sample selection variable $\datvariable$ selecting states for the variables $\shortcatvariables$ according to the enumerated dataset.
         b) Corresponding decomposition of the basis encoding $\datacore$ into a tensor network in the basis $\cpformat$ Format (see \secref{sec:basisCP}), where $\hypercoreof{\edgeof{\atomenumerator}}=\datacoreof{\atomenumerator}$.
-%Without the contraction with the dashed $\frac{1}{\datanum}\onesat{\datvariable}$ core, the datacore encodes the distribution conditioned on a datapoint.
     }
     \label{fig:DataDecomposition}
 \end{figure}
@@ -410,7 +406,7 @@ We now exploit this structure to find efficient tensor network decompositions (s
     \label{the:empCPRep}
     Given a data map $\datamap: [\datanum] \rightarrow \facstates$ we define for $\catenumeratorin$ its coordinate maps
     \begin{align*}
-        \datamap_{\catenumerator} : [\datanum] \rightarrow [\catdimof{\catenumerator}]
+        \datamap_{\catenumerator} \defcols [\datanum] \rightarrow [\catdimof{\catenumerator}]
     \end{align*}
     by
     \begin{align*}
@@ -420,7 +416,7 @@ We now exploit this structure to find efficient tensor network decompositions (s
     \begin{align*}
         \bencodingofat{\datamap}{\shortcatvariables,\datvariable}
         = \contractionof{
-            \{\bencodingofat{\datamap^{\atomenumerator}}{\catvariableof{\atomenumerator},\datvariable} : \atomenumeratorin \}
+            \{\bencodingofat{\datamap^{\atomenumerator}}{\catvariableof{\atomenumerator},\datvariable} \wcols \atomenumeratorin \}
         }{\shortcatvariables,\datvariable}
     \end{align*}
     and
@@ -444,7 +440,7 @@ We now exploit this structure to find efficient tensor network decompositions (s
         &= \normalizationof{\datacore}{\shortcatvariables}
         = \frac{\contractionof{\datacore}{\shortcatvariables}}{\contraction{\datacore}} \\
         &=  \contractionof{
-            \left\{\bencodingofat{\datamap^{\atomenumerator}}{\catvariableof{\atomenumerator},\datvariable} : \atomenumeratorin \right\} \cup \left\{\frac{1}{\datanum}\onesat{\datvariable}\right\}
+            \left\{\bencodingofat{\datamap^{\atomenumerator}}{\catvariableof{\atomenumerator},\datvariable}\wcols\atomenumeratorin \right\} \cup \left\{\frac{1}{\datanum}\onesat{\datvariable}\right\}
         }{\shortcatvariables}  \, . \qedhere
     \end{align*}
 \end{proof}
@@ -498,7 +494,7 @@ Applying a scaled logarithm we get
     \frac{1}{\datanum} \cdot \lnof{\probat{\dataset}}
     &= \frac{1}{\datanum} \cdot \lnof{\prod_{\datindexin} \probat{\shortcatvariables = \datamapat{\datindex}}} \\
     &= \dataaverage \lnof{\probat{\shortcatvariables = \datamapat{\datindex}}} \\
-    &= \contractionof{\lnof{\probwith},\empdistributionwith} \, .
+    &= \contraction{\lnof{\probwith},\empdistributionwith} \, .
 \end{align*}
 Let us notice, that this transform of the likelihood is monotoneous and therefore does not influence the position of the maximum, when optimizing the likelihood.
 Motivated by this property, we use the transformed form to define the loss-likelihood loss and maximum likelihood estimation.
@@ -515,9 +511,9 @@ Motivated by this property, we use the transformed form to define the loss-likel
         \lossof{\probtensor}
         = -\contractionof{\lnof{\probwith},\empdistributionwith} \, .
     \end{align*}
-    Having a hypothesis $\Gamma\subset\bmrealprobof{\ones}$, that is a set of probability distributions, the maximum likelihood estimation is the problem
+    Having a hypothesis $\probtensorset\subset\bmrealprobof{\ones}$, that is a set of probability distributions, the maximum likelihood estimation is the problem
     \begin{align}
-        \label{prob:parameterMaxLikelihood}\tag{$\probtagtypeinst{\mprojectionsymbol}{\Gamma,\empdistribution}$}
+        \label{prob:parameterMaxLikelihood}\tag{$\probtagtypeinst{\mprojectionsymbol}{\probtensorset,\empdistribution}$}
         \argmin_{\probtensorin} \lossof{\probtensor} \, .
     \end{align}
 \end{definition}
@@ -573,7 +569,7 @@ We first introduce this quantity and then interpret the log-likelihood loss base
     The cross-entropy between two distributions $\probwith$ and $\secprobat{\shortcatvariables}$ defined with respect to the same factored system is the quantity
     \begin{align*}
         \centropyof{\probtensor}{\secprobtensor}
-        = \sum_{\catindices}  \probat{\indexedcatvariables} \cdot \left(-\lnof{\secprobtensor[\indexedshortcatvariables]}\right)
+        = \sum_{\catindices}  \probat{\indexedshortcatvariables} \cdot \left(-\lnof{\secprobat{\indexedshortcatvariables}}\right)
         = \contraction{\probtensor,-\lnof{\secprobtensor}} \, .
     \end{align*}
     The cross-entropy is captured by the tensor network diagram
@@ -622,20 +618,20 @@ We in the next lemma provide an entropic interpretation of maximum likehlihood e
 \end{proof}
 
 % M-projection
-More general than Maximum Likelihood Estimation, we define the moment projection of an arbitrary distribution $\gendistribution$ onto a set $\Gamma$ of probability distributions as the problem
+More general than Maximum Likelihood Estimation, we define the moment projection of an arbitrary distribution $\gendistribution$ onto a set $\probtensorset$ of probability distributions as the problem
 \begin{align}
-    \label{prob:mProjection}\tag{$\probtagtypeinst{\mprojectionsymbol}{\Gamma,\gendistribution}$}
-    \argmin_{\probtensorin} \centropyof{\gendistribution}{\probtensor} \, .
+    \label{prob:mProjection}\tag{$\probtagtypeinst{\mprojectionsymbol}{\probtensorset,\gendistribution}$}
+    \argmin_{\probtensorin} \centropyof{\gendistribution}{\probtensor} \, . % Also give the KL divergence version?
 \end{align}
-With \lemref{lem:centropyMLE} we have established, that maximum likelihood estimation is the moment projection of the empirical distribution onto a set $\Gamma$.
+With \lemref{lem:centropyMLE} we have established, that maximum likelihood estimation is the moment projection of the empirical distribution onto a set $\probtensorset$.
 
 % I-projection
-We further define the information projection an arbitrary distribution $\gendistribution$ onto a set $\Gamma$ of probability distributions as the problem
+We further define the information projection an arbitrary distribution $\gendistribution$ onto a set $\probtensorset$ of probability distributions as the problem
 \begin{align}
-    \label{prob:iProjection}\tag{$\probtagtypeinst{\iprojectionsymbol}{\Gamma,\gendistribution}$}
-    \argmin_{\probtensorin} \centropyof{\probtensor}{\gendistribution} \, .
+    \label{prob:iProjection}\tag{$\probtagtypeinst{\iprojectionsymbol}{\probtensorset,\gendistribution}$}
+    \argmin_{\probtensorin} \kldivof{\probtensor}{\gendistribution} \, .
 \end{align}
-The cross-entropy is not symmetric, thus the information projection \eqref{prob:iProjection} and the moment projections do not coincide in general.
+The relative entropy is not symmetric, thus the information projection \eqref{prob:iProjection} and the moment projections do not coincide in general.
 The differences of both are discussed in Chapter~8 in \cite{koller_probabilistic_2009}.
 
 \begin{example}[Cross entropy with respect to exponential families]
@@ -655,75 +651,6 @@ The differences of both are discussed in Chapter~8 in \cite{koller_probabilistic
     \end{align*}
 \end{example}
 
-
-\subsect{Solution on Exponential Families}
-
-We now characterize the solution of the Maximum entropy problem for exponential families as hypothesis classes.
-
-\begin{lemma}
-    \label{lem:minCrossEntropyExponential}
-    Let $\gendistributionwith$ be a distribution, $\sstat$ a statistic, and $\basemeasure$ a boolean base measure.
-    We build the mean parameter $\genmeanwith=\contractionof{\gendistributionwith,\sencsstatwith}{\selvariable}$ and have the following:
-%    For any $\variableset\subset[\seldim]$ and boolean tuple $\headindexof{\variableset}$ we have
-    \begin{itemize}
-        \item[(1)] If $\genmeanwith \in \sbinteriorof{\meansetof{\sstat,\basemeasure}}$ then
-        \begin{align*}
-            \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\sstat,\canparamwith,\basemeasure}}
-            = \sentropyof{\probtensorof{\sstat,\backwardmapwrtof{\sstat,\basemeasure}{\genmeanwith},\basemeasure}} \, .
-        \end{align*}
-        \item[(2)] If $\genmeanwith \notin \sbinteriorof{\meansetof{\sstat,\basemeasure}}$ and $\genmeanwith\in\closureof{\meansetof{\sstat,\basemeasure}}$ then there is a sequence $\left(\meanparamofat{n}{\selvariable}\right)_{n\in\nn}\subset\hlnmeanset$ converging coordinatewise to $\genmeanwith$ and
-        \begin{align*}
-            \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\sstat,\canparamwith,\basemeasure}}
-            = \lim_{\meanparamofat{n}{\selvariable}\rightarrow\genmeanwith}
-            \sentropyof{\probtensorof{\sstat,\backwardmapwrtof{\sstat,\basemeasure}{\meanparamofat{n}{\selvariable}},\basemeasure}} \, .
-        \end{align*}
-        \item[(3)] If $\genmeanwith\notin\closureof{\meansetof{\sstat,\basemeasure}}$ then
-        \begin{align*}
-            \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\sstat,\canparamwith,\basemeasure}}
-            = \infty \, .
-        \end{align*}
-    \end{itemize}
-\end{lemma}
-\begin{proof}
-    See Theorem~3.4 in \cite{wainwright_graphical_2008}.
-\end{proof}
-
-The case $\genmeanwith\notin\genmeanset$ corresponds with the case that $\gendistributionwith$ is not representable with $\basemeasure$.
-In more generality, the cross entropy between two distributions is finite, if and only if the support of first in contained in the support of the second.
-We will relate this property to logical entailment in \charef{cha:logicalRepresentation}. % ALSO IN logicReasoning?
-
-%
-%\begin{lemma}
-%    The cross-entropy between two distributions is finite, if and only if
-%\end{lemma}
-
-
-%\begin{lemma}
-%    \label{lem:minCrossEntropyExponential}
-%    Let $\gendistributionwith$ be a distribution, $\hlnstat$ a boolean statistic, and choose a subset $\variableset\subset[\seldim]$ and a boolean tuple $\headindexof{\variableset}$.
-%    We build the mean parameter $\genmeanwith=\contractionof{\gendistributionwith,\sencmlnstatwith}{\selvariable}$ and have the following:
-%%    For any $\variableset\subset[\seldim]$ and boolean tuple $\headindexof{\variableset}$ we have
-%    \begin{itemize}
-%        \item[(1)] If $\genmeanwith \in \sbinteriorof{\meansetof{\hlnstat,\hlnformula}}$ then
-%        \begin{align*}
-%            \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\hlnstat,\canparamwith,\hlnformula}}
-%            = -\sentropyof{\probtensorof{\hlnstat,\backwardmapwrtof{\hlnstat,\hlnformula}{\genmeanwith},\hlnformula}} \, .
-%        \end{align*}
-%        \item[(2)] If $\genmeanwith \notin \sbinteriorof{\meansetof{\hlnstat,\hlnformula}}$ and $\genmeanwith\in\closureof{\meansetof{\hlnstat,\hlnformula}}$ then there is a sequence $\left(\meanparamofat{n}{\selvariable}\right)_{n\in\nn}\subset\hlnmeanset$ converging coordinatewise to $\genmeanwith$ and
-%        \begin{align*}
-%            \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\hlnstat,\canparamwith,\hlnformula}}
-%            = \lim_{\meanparamofat{n}{\selvariable}\rightarrow\genmeanwith}-\sentropyof{\probtensorof{\hlnstat,\backwardmapwrtof{\hlnstat,\hlnformula}{\meanparamofat{n}{\selvariable}},\hlnformula}} \, .
-%        \end{align*}
-%        \item[(3)] If $\genmeanwith\notin\closureof{\meansetof{\hlnstat,\hlnformula}}$ then
-%        \begin{align*}
-%            \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\hlnstat,\canparamwith,\hlnformula}}
-%            = \infty \, .
-%        \end{align*}
-%    \end{itemize}
-%\end{lemma}
-%\begin{proof}
-%    See Theorem~3.4 in \cite{wainwright_graphical_2008}.
-%\end{proof}
 
 
 \sect{Variational Inference in Exponential Families}
@@ -762,15 +689,10 @@ We now state that the elements of the corresponding exponential family $\expfami
 
 \begin{theorem}
     \label{the:meanPolytopeInterior}
-    For any exponential family $\genexpfamily$ the image of the forward mapping is the effective interior of $\genmeanset$, that is
+    For any exponential family $\genexpfamily$ the image of the forward mapping is the effective interior (see \defref{def:effectiveInterior}) of $\genmeanset$, that is
     \begin{align*}
         \imageof{\forwardmap} = \sbinteriorof{\genmeanset} \, .
     \end{align*}
-%    the mean polytope except its proper faces, that is
-%    \begin{align*}
-%        \imageof{\forwardmap} = \genmeanset / \bigcup_{\genfaceset\neq\genmeanset} \genfaceset \, .
-%    \end{align*}
-%    If $\sstat$ is minimal with respect to $\basemeasure$, then $\imageof{\forwardmap}=\sbinteriorof{\genmeanset}$, the forward mapping is a bijection and the unique backward mapping its inverse.
 \end{theorem}
 \begin{proof}
     In case of minimal statistics, we refer for the proof of this statement to Theorem~3.3 in \cite{wainwright_graphical_2008}.
@@ -796,15 +718,7 @@ We now state that the elements of the corresponding exponential family $\expfami
     \begin{align*}
         \imageof{\forwardmap} = \genmeanset / \bigcup_{\genfaceset\neq\genmeanset} \genfaceset \, . & \qedhere
     \end{align*}
-%    For any $\canparam$
 \end{proof}
-
-%\begin{theorem}
-%    \label{the:meanPolytopeInterior}
-%    For any exponential family $\genexpfamily$, where $\sstat$ is minimal with respect to $\basemeasure$, the forward mapping is a bijection of $\parspace$ and $\sbinteriorof{\genmeanset}$.
-%    There is thus a unique backward mapping by the inverse of the forward mapping.
-%\end{theorem}
-
 
 Forward and backward maps in an exponential family $\expfamily$ are the central classes of inference, which transform the description of a member by a canonical parameter into mean parameters and vise versa.
 Forward maps calculate to a canonical parameter $\canparamwith$ the corresponding mean parameter $\meanparamwith$.
@@ -814,10 +728,6 @@ For any $\canparamwith$ we have a closed form representation of this expectation
 \end{align*}
 The forward map is thus a collection of expectation queries (see \defref{def:queries}) to compute the coordinates of the mean parameter.
 The query $\sstatcoordinateof{\selindex}$ asked against $\expdistwith$ computes the coordinate $\meanparamat{\indexedselvariable}$.
-%\begin{align*}
-%    \forwardmapof{\canparam}
-%    = \contractionof{\sencodingof{\sstat},\normalizationof{\basemeasure,\expof{\contraction{\sencodingof{\sstat},\canparam}}}{\shortcatvariables}}{\selvariable} \, .
-%\end{align*}
 % Infeasibility and turn to variational alternatives with selection encodings.
 The contraction by the moment matching condition can, however, be infeasible, since it requires the instantiation of the probability distribution, which can be done by basis encodings of the statistic.
 In this section, we provide alternative characterization of the forward map and approximations of it, which can be computed based on the selection encoding instead.
@@ -827,15 +737,16 @@ Following \cite{wainwright_graphical_2008}, we can characterize the forward mapp
 \subsect{Variational Formulation}
 
 We now formulate the forward and backward inference problems in exponential families as convex optimization problems.
-
-The conjugate dual of the cumulative function is
+To this end we use the cumulative function $\cumfunction$ and its conjugate dual
+%The conjugate dual of the cumulative function is
 \begin{align*}
     \dualcumfunction(\meanparam) = \max_{\canparam\in\parspace} \contraction{\meanparam,\canparam} - \cumfunctionof{\canparam} \, .
 \end{align*}
 
 \begin{lemma}
     \label{lem:gradientCumfunction}
-    Let $\canparam\in\parspace$ and $\meanparamwith$ the corresponding mean parameter.
+    Let $\sstat$ be a statistic, $\basemeasure$ a basemeasure.
+    Let us further choose $\canparamwith\in\parspace$ and let $\meanparamwith$ be the mean parameter to $\expdist$.
     For the gradient of $\cumfunction$ evaluated at $\canparam$ we have
     \begin{align*}
         \gradwrtat{\seccanparamat{\selvariable}}{\canparam} \cumfunctionof{\seccanparam} = \meanparamat{\selvariable}
@@ -929,14 +840,40 @@ We can use this insight to provide a variational characterization of the forward
     The statement then follows from the first order condition, where we use the gradient \lemref{lem:gradientCumfunction}, and the characterization of $\dualcumfunction$ by \lemref{lem:dualCumEntropy}. % Do we need to assume minimal statistics?
 \end{proof}
 
-%We have at any $\canparam\in\parspace$
-%\begin{align*}
-%    \gradwrtat{\canparam}{\seccanparam} \cumfunctionof{\seccanparam} = \meanparamat{\selvariable}
-%\end{align*}
-%and thus
-%\begin{align*}
-%    \meanparamat{\selvariable} = \argmax_{\meanparam\in\meanset}
-%\end{align*}
+\subsect{Maximum Likelihood Problem on Exponential Families}
+
+We now characterize the solution of the Maximum Likelihood Problem for exponential families as hypothesis classes using the backward map of the family.
+
+\begin{lemma}
+    \label{lem:minCrossEntropyExponential}
+    Let $\gendistributionwith$ be a distribution, $\sstat$ a statistic, and $\basemeasure$ a boolean base measure.
+    We build the mean parameter $\genmeanwith=\contractionof{\gendistributionwith,\sencsstatwith}{\selvariable}$ and have the following:
+    \begin{itemize}
+        \item[(1)] If $\genmeanwith \in \sbinteriorof{\meansetof{\sstat,\basemeasure}}$ then
+        \begin{align*}
+            \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\sstat,\canparamwith,\basemeasure}}
+            = \sentropyof{\probtensorof{\sstat,\backwardmapwrtof{\sstat,\basemeasure}{\genmeanwith},\basemeasure}} \, .
+        \end{align*}
+        \item[(2)] If $\genmeanwith \notin \sbinteriorof{\meansetof{\sstat,\basemeasure}}$ and $\genmeanwith\in\closureof{\meansetof{\sstat,\basemeasure}}$ then there is a sequence $\left(\meanparamofat{n}{\selvariable}\right)_{n\in\nn}\subset\hlnmeanset$ converging coordinatewise to $\genmeanwith$ and
+        \begin{align*}
+            \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\sstat,\canparamwith,\basemeasure}}
+            = \lim_{\meanparamofat{n}{\selvariable}\rightarrow\genmeanwith}
+            \sentropyof{\probtensorof{\sstat,\backwardmapwrtof{\sstat,\basemeasure}{\meanparamofat{n}{\selvariable}},\basemeasure}} \, .
+        \end{align*}
+        \item[(3)] If $\genmeanwith\notin\closureof{\meansetof{\sstat,\basemeasure}}$ then
+        \begin{align*}
+            \min_{\canparamwithin} \centropyof{\gendistribution}{\probtensorof{\sstat,\canparamwith,\basemeasure}}
+            = \infty \, .
+        \end{align*}
+    \end{itemize}
+\end{lemma}
+\begin{proof}
+    See Theorem~3.4 in \cite{wainwright_graphical_2008}.
+\end{proof}
+
+The case $\genmeanwith\notin\genmeanset$ corresponds with the case that $\gendistributionwith$ is not representable with $\basemeasure$.
+In more generality, the cross entropy between two distributions is finite, if and only if the support of first in contained in the support of the second.
+We will relate this property to logical entailment in \charef{cha:logicalRepresentation}. % ALSO IN logicReasoning?
 
 \subsect{Mode queries by annealing}
 
@@ -967,7 +904,6 @@ As we will show, the distributions with maximal entropy are in exponential famil
 
 \subsect{Entropy maximization problem}\label{sec:maxEntProblem}
 
-
 The entropy maximization problem with respect to matching expected statistics $\genmean\in\genmeanset$ is the optimization problem
 \begin{align}
     \label{prob:maxEntropy}\tag{$\probtagtypeinst{\entropysymbol}{\sstat,\basemeasure,\genmean}$}% Notation clash with cross-entropy!
@@ -985,7 +921,7 @@ For any $\selindexin$ we have for the mean parameter $\meanparamwith$ reproduced
     = \contraction{\sencsstatat{\shortcatvariables,\indexedselvariable},\probwith} \, .
 \end{align*}
 
-Any solution has a sufficient statistic $\sstat$ and is therefore in $\realizabledistsof{\sstat,\maxgraph,\basemeasure}$.
+We first show, that any solution has a sufficient statistic $\sstat$ (see \defref{def:sufficientStatistics}) and is therefore in $\realizabledistsof{\sstat,\maxgraph,\basemeasure}$.
 
 \begin{theorem}
     \label{the:maxEntWithSufficientStatistic}
@@ -1007,8 +943,6 @@ Any solution has a sufficient statistic $\sstat$ and is therefore in $\realizabl
         & > 0 \, .
     \end{align*}
     Since $\secprobat{\shortcatvariables}$ is also a feasible distribution with larger entropy than $\probwith$, $\probwith$ is not a maximum entropy distribution.
-    %Therefore, a distribution which does not have the sufficient statistic $\sstat$ cannot be a maximum entropy distribution.
-    %$\genmeanat{\selvariable}$
 \end{proof}
 
 We in the following provide a more detailed characterization.
@@ -1038,7 +972,6 @@ We then drop this assumption and generalize the statement to exponential familie
     \begin{align*}
         \contractionof{\expdistofat{\sstat,\canparam,\basemeasure}{\shortcatvariables},\sencsstatwith}{\selvariable}=\meanparamat{\selvariable} \, .
     \end{align*}
-
     For any other feasible distribution $\secprobat{\shortcatvariables}$ we also have $\contractionof{\secprobat{\shortcatvariables},\sencsstatwith}{\selvariable}=\meanparamat{\selvariable}$ and thus
     \begin{align*}
         \centropyof{\secprobtensor}{\expdistof{(\sstat,\canparam,\basemeasure)}}
@@ -1054,34 +987,6 @@ We then drop this assumption and generalize the statement to exponential familie
     \end{align*}
     Therefore, if $\secprobtensor$ does not coincide with$\expdistof{(\sstat,\estcanparam,\basemeasure)}$, it is not a solution of \probref{prob:maxEntropy}.
 \end{proof}
-
-
-%\begin{theorem}
-%    \label{the:maxEntInterior}
-%    Let $\sstat$ be a minimal statistic with respect to a base measure $\basemeasure$.
-%    For any $\genmean\in\sbinteriorof{\genmeanset}$ the solution of \probref{prob:maxEntropy} is the distribution $\expdistof{(\secsstat,\estcanparam,\secbasemeasure)}$, where $\estcanparam=\backwardmapwrtof{\secsstat,\secbasemeasure}{\secmeanparam}$.
-%\end{theorem}
-%\begin{proof}
-%    Since $\genmean\in\sbinteriorof{\genmeanset}$, \theref{the:meanPolytopeInteriorCharacterization} implies the existence of $\estcanparam$ such that
-%    \[ \genmeanat{\selvariable} = \contractionof{\expdistof{(\sstat,\estcanparam,\basemeasure)},\sencsstat}{\selvariable}   \, . \]
-%    We now follow the argumentation of the proof of Theorem~20.2 in \cite{koller_probabilistic_2009}.
-%    Let $\secprobtensor$ further be an arbitrary distribution, possibly different from $\expdistof{(\sstat,\estcanparam,\basemeasure)}$, such that
-%    \[ \genmeanat{\selvariable} = \contractionof{\secprobtensor,\sencsstat}{\selvariable}  \, . \]
-%    We then have
-%    \begin{align*}
-%        \sentropyof{\expdistof{(\sstat,\estcanparam,\basemeasure)}}
-%        = \centropyof{\secprobtensor}{\expdistof{(\sstat,\estcanparam,\basemeasure)}}
-%    \end{align*}
-%
-%    With the Gibbs inequality we have if $\secprobtensor\neq\expdistof{(\sstat,\estcanparam,\basemeasure)}$
-%    \begin{align*}
-%        \sentropyof{\expdistof{(\sstat,\estcanparam,\basemeasure)}} - \sentropyof{\secprobtensor}
-%        = \centropyof{\secprobtensor}{\expdistof{(\sstat,\estcanparam,\basemeasure)}} - \sentropyof{\secprobtensor} > 0 \, .
-%    \end{align*}
-%
-%    Therefore, if $\secprobtensor$ does not coincide with$\expdistof{(\sstat,\estcanparam,\basemeasure)}$, it is not a solution of Problem~\ref{prob:maxEntropy}.
-%    %Classical result based on duality of maximum entropy and maximum likelihood, shown e.g. in Koller Book.
-%\end{proof}
 
 % Interpretation
 Let us highlight the fact, that in \probref{prob:maxEntropy} we did not restrict to distributions in an exponential family and only demanded representability with respect to the base measure.
@@ -1111,23 +1016,6 @@ We show that the solution is in this case in a refined exponential family.
     We thus arrive at the claim by applying \theref{the:maxEntropyInterior} on the polytope $\meansetof{\sstat,\secbasemeasure}$.
 \end{proof}
 
-
-%\begin{theorem}
-%    \label{the:maxEntMaxLikeDuality}
-%    Let $\sstat$ be a statistic and $\basemeasure$ a base measure.
-%    For any $\genmean\in\genmeanset$, let $\secsstat,\secbasemeasure$ and $\secmeanparam$ be the outputs of \algoref{alg:baseMeasureRefinement} when passing $\sstat,\basemeasure$ and $\genmean$ as input.
-%    Then, the distribution $\expdistof{(\secsstat,\estcanparam,\secbasemeasure)}$, where $\estcanparam=\backwardmapwrtof{\secsstat,\secbasemeasure}{\secmeanparam}$, solves \probref{prob:maxEntropy}.
-%\end{theorem}
-%\begin{proof}
-%    By \theref{the:baseMeasureRefinement}, a distribution $\probtensor$ is feasible for the problem \probref{prob:maxEntropy} if and only if
-%    \begin{align*}
-%        \contractionof{\probwith,\sencodingofat{\secsstat}{\shortcatvariables,\secselvariable}} = \secmeanparam[\secselvariable] \, .
-%    \end{align*}
-%    Therefore, a distribution solves the maximum entropy problem for $\sstat$ and $\meanparam$, if and only if it solves the maximum entropy problem for $\secsstat$ and $\secmeanparam$.
-%    Since \theref{the:baseMeasureRefinement} further ensures, that $\secmeanparam\in\sbinteriorof{\meansetof{\secsstat,\secbasemeasure}}$, the claim follows from \theref{the:maxEntInterior}.
-%%    \theref{the:baseMeasureRefinement} and the above Lemma.
-%\end{proof}
-
 % Minimality of the refined base measure
 \theref{the:maxEntropyFace} implies, that the by the face measure refined base measure $\secbasemeasure$ is minimal for the maximum entropy problem, in the sense that the solving distribution is positive with respect to it and all feasible distributions have to be representable by it.
 This highlights the fact, that the maximum entropy distribution does not vanish beyond those states, which are necessary to vanish to lie on the respective face. %by \theref{the:baseMeasureRefinement}.
@@ -1149,13 +1037,6 @@ Let us now state a criterion based on face measures for maximum entropy distribu
         = \sum_{\meanparam\in\genfacesetof{\facecondset}\cap\imageof{\sstatencoding}} \onehotmapofat{\meanparam}{\headvariables}
     \end{align*}
     is in $\tnsetof{\graph}$.
-%    sum of vertices
-%    \begin{align*}
-%        \kcoreofat{\facecondset}{\headvariables}
-%        = \sum_{\shortcatindices\wcols\basemeasureat{\indexedshortcatvariables}=1\ncond\sencsstatat{\indexedshortcatvariables,\selvariable}\in\genfaceset}
-%        \sencsstatat{\indexedshortcatvariables,\selvariable}
-%    \end{align*}
-%    has a tensor network decomposition with respect to the hypergraph $\graph$.
 \end{theorem}
 \begin{proof}
     By \theref{the:maxEntropyFace} the maximum entropy distribution is an element of the exponential family with by the face measure refined base measure $\secbasemeasure$.
@@ -1201,24 +1082,13 @@ In the special case of a mean parameter in the interior, \theref{the:tnRepresent
 % Representation
 In general, we find a $\cpformat$ decomposition to the face measure as sketched in \figref{fig:maxEntropyActcore}.
 
-%They are represented in $\hlnsetof{\sstat}$, if and only if the face measure of any face $\facecondset$ such that
-%\begin{align*}
-%    \meanparamat{\selvariable} \in \genfaceset
-%\end{align*}
-%is in $\hlnsetof{\sstat}$.
-%This is for example the case when $\meanparamat{\selvariable}\in\sbinteriorof{\genmeanset}$.
-
-
 \begin{example}[Representation by the maximal graph]
     Let us consider the maximal graph $\maxgraph=([\seldim],\{[\seldim]\})$, which has a single hyperedge containing all head variables.
     Since any tensor admits a tensor network decomposition with respect to $\maxgraph$, by \theref{the:tnRepresentationMaxEntropy} all maximum entropy distributions are in $\realizabledistsof{\sstat,\maxgraph}$.
     This reproduces the claim of \theref{the:maxEntWithSufficientStatistic}, that maximum entropy distributions with respect to constraints $\meanparamat{\selvariable}=\contractionof{\probtensor,\sencsstat}{\selvariable}$ therefore always have the sufficient statistic $\sstat$.
-    %\begin{align*}
-    %    \genmeanset = \left\{ \contractionof{\probat{\shortcatvariables},\sencodingofat{\sstat}{\shortcatvariables,\selvariable}}{\shortcatvariables} \, , \, \probtensor \in\realizabledistsof{\sstat,\maxgraph,\basemeasure} \right\} \, .
-    %\end{align*}
 \end{example}
 
-\begin{figure}
+\begin{figure}[t]
     \begin{center}
         \input{PartI/tikz_pics/probability_reasoning/max_entropy_actcore}
     \end{center}
@@ -1233,7 +1103,7 @@ In general, we find a $\cpformat$ decomposition to the face measure as sketched 
 
 \sect{Modes of exponential distributions}
 
-\begin{figure}[t!]
+\begin{figure}[t]
     \begin{center}
         \input{PartI/tikz_pics/probability_reasoning/meanset_sketch_face.tex}
     \end{center}
@@ -1313,17 +1183,9 @@ As we show next, also a converse statement holds, namely that for any vector $\c
 Based on \lemref{lem:faceToCanparam} we can now characterize the solution of mode queries.
 To this end, we recall the statistic encoding from \secref{sec:meanPolytopeConvexHull}, which is defined as
 \begin{align*}
-    \sstatencoding : \stateset \rightarrow \parspace \quad,\quad
+    \sstatencoding \defcols \stateset \rightarrow \parspace \quad,\quad
     \sstatencodingat{\catindex} = \sencsstatat{\indexedshortcatvariables,\selvariable} \, .
 \end{align*}
-%This encoding generalizes the one-hot encoding, which corresponds with the special case $\sstat=\naivestat$.
-%
-%%
-%The mean polytope is then the subset of the polytope $\meansetof{\sstat,\trivbm}$,
-%\begin{align*}
-%    \meansetof{\sstat,\basemeasure}
-%    = \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable}\wcols\basemeasureat{\indexedshortcatvariables}=1}
-%\end{align*}
 
 \begin{theorem}
     \label{the:modeQueryFaceBM}
@@ -1415,20 +1277,15 @@ Let us now investigate in more detail the sets of maximum entropy distributions,
 
 Each $\maxcone$ is a convex cone, as we show now.
 
-% Maybe earlier to avoid minimal statistics discussion
-%\begin{definition}
-%    We say, that a set $\arbset\subset\parspace$ is effectively open, if $\arbset$ is contained in an affine subspace and open in that affine subspace.
-%\end{definition}
-
 \begin{lemma}
-    For each face $\facecondset$, $\maxcone$ is a convex cone. % Missing: effectively open
+    For each face $\facecondset$, $\maxcone$ is a convex cone.
 \end{lemma}
 \begin{proof}
+    % Cone
     $\maxcone$ is a cone, since for any $\canparam\in\maxcone$ and $\lambda>0$ we have
     \begin{align*}
         \genfaceset = \argmax_{\meanparam\in\genmeanset} \contraction{\canparam,\meanparam} = \argmax_{\meanparam\in\genmeanset} \contraction{\lambda\cdot\canparam,\meanparam} \, .
     \end{align*}
-
     % Convex
     $\maxcone$ is convex, since for $\canparam,\seccanparam\in\maxcone$ and $\lambda\in(0,1)$ we have
     \begin{align*}
@@ -1439,7 +1296,6 @@ Each $\maxcone$ is a convex cone, as we show now.
         \genfaceset = \argmax_{\meanparam\in\genmeanset} \contraction{\lambda\cdot\canparam+(1-\lambda)\cdot\seccanparam,\meanparam}
     \end{align*}
     and $\lambda\cdot\canparam+(1-\lambda)\cdot\seccanparam \in\maxcone$.
-    % Show that Effectively open - Missing!
 \end{proof}
 
 The faces $\genfaceset$ of the mean parameter polytope build a partially ordered set, which is called the face lattice (see \cite{ziegler_lectures_2013}).
@@ -1457,7 +1313,7 @@ We now investigate a corresponding partial order on the max cones to the faces.
     \end{align*}
 \end{lemma}
 \begin{proof}
-    \proofrightsymbol Let us assume $\genfacesetof{\facecondsetof{0}} \subset \genfacesetof{\facecondsetof{1}}$ and let us choose arbitrary $\canparamof{0}\in\genmaxconeof{\facecondsetof{0}},\,\canparamof{1}\in\genmaxconeof{\facecondsetof{1}}$.
+    \proofrightsymbol Let us assume $\genfacesetof{\facecondsetof{0}} \subset \genfacesetof{\facecondsetof{1}}$ and let us choose arbitrary $\canparamof{0}\in\genmaxconeof{\facecondsetof{0}}\ncond\canparamof{1}\in\genmaxconeof{\facecondsetof{1}}$.
     It suffices to show, that for all $\lambda\in(0,1)$ we have $\lambda\cdot\canparamof{0}+(1-\lambda)\cdot\canparamof{1}\in\genmaxconeof{\facecondsetof{0}}$, since this implies $\canparamof{1}\in\closureof{\genmaxconeof{\facecondsetof{0}}}$.
     By assumption we have
     \begin{align*}
@@ -1499,7 +1355,6 @@ We now consider the set of cones with this partial order, and show that this set
         \genmaxconeof{\facecondsetof{1}} \subset \closureof{\genmaxconeof{\facecondsetof{0}}}
     \end{align*}
     is homomorphic to the face lattice of $\genmeanset$ with the homomorphism
-%    The homomorphism is given by
     \begin{align*}
         \psi(\genfaceset) = \genmaxcone \, .
     \end{align*}
@@ -1535,42 +1390,6 @@ As a consequence of \theref{the:faceSetsToMaxCones}, the max cone lattice inheri
     }\label{fig:max_cone_sketch}
 \end{figure}
 
-%\sect{Forward Mapping in Exponential Families}
-
-%\subsect{Variational Formulation}
-%Besides the direct computation of the mean parameter we can give a variational characterization of the forward mapping.
-%%This is especially useful, when the contraction is intractable, for example because the tensor $\expdist$ is infeasible to create.
-%
-%
-%%% REMOVE!
-%\begin{theorem}
-%    We have
-%    \begin{align*}
-%        \forwardmapof{\canparam}
-%        = \genmeansetargmax  \contraction{\meanparam,\canparam} + \sentropyof{\meanrepprob}
-%    \end{align*}
-%    where by $\meanrepprob$ we denote a probability distribution with respect to a base measure $\basemeasure$, which reproduces the mean parameter $\meanparam$.
-%\end{theorem}
-%\begin{proof}
-%    For a proof see Theorem~3.4 in \cite{wainwright_graphical_2008}.
-%\end{proof}
-%
-%%Let us now characterize the image of the forward map, which turns out to be the interior of the mean polytope, if the statistic is minimal (see \defref{def:minimalStatistics}).
-%We already know by \theref{the:meanPolytopeInteriorCharacterization}, that distributions representable by $\basemeasure$ reproduce the mean parameters in the interior of $\genmeanset$.
-%We now state that the elements of the corresponding exponential family $\expfamily$, which are by construction representable by $\basemeasure$, are expressive enough to reproduce the whole interior of $\genmeanset$.
-%
-%\begin{theorem}
-%    \label{the:meanPolytopeInterior}
-%    For any statistics $\sstat$, which is minimal with respect to a base measure $\basemeasure$ (see \defref{def:minimalStatistics}), the the forward map is a bijection between $\parspace$ and the interior $\sbinteriorof{\genmeanset}$ of the mean parameter polytope.
-%    % If the statistic $\sstat$ is in addition minimal with respect to $\basemeasure$  the forward map is a bijection between $\parspace$ as the set of canonical mean parameters and $\genmeanset$.
-%\end{theorem}
-%\begin{proof}
-%    For a proof see Theorem~3.3 in \cite{wainwright_graphical_2008}.
-%\end{proof}
-
-
-
-
 
 \sect{Mean Field Methods}\label{sec:meanField}
 
@@ -1587,23 +1406,23 @@ where
 \end{align*}
 Mean field methods now provide lower bounds on this maximization by restricting the distribution optimized over to a tractable subset of distributions.
 
-Let $\Gamma$ be a subset of $\bmrealprobof{\ones}$, we state the mean field problem as
+Let $\probtensorset$ be a subset of $\bmrealprobof{\ones}$, we state the mean field problem as
 %Let $\graph$ be any hypergraph, we define the problem
 \begin{align}
-    \label{prob:meanField}\tag{$\probtagtypeinst{I}{\Gamma,\probof{\energytensor}}$}
-    \argmax_{\probtensor\in \mnexpfamily} \contraction{\energytensor,\probtensor} + \sentropyof{\probtensor}
+    \label{prob:meanField}\tag{$\probtagtypeinst{I}{\probtensorset,\probof{\energytensor}}$}
+    \argmax_{\probtensor\in\probtensorset} \contraction{\energytensor,\probtensor} + \sentropyof{\probtensor}
 \end{align}
 %% KL Divergence
 We show next, that the mean field problem is an instance of an information projection, as indicated by the notation.
 
 \begin{theorem}
     \label{the:meanFieldIProjection}
-    For any hypergraph $\graph$ and energy tensor $\energytensor$ we have for $\probofat{\energytensor}{\shortcatvariables}=\normalizationof{\energytensor}{\shortcatvariables}$
+    For any hypergraph $\graph$ and energy tensor $\energytensor$ we have for $\probofat{\energytensor}{\shortcatvariables}=\normalizationof{\expof{\energytensorwith}}{\shortcatvariables}$
     \begin{align*}
         \argmax_{\probtensorin} \contraction{\energytensor,\probtensor} + \sentropyof{\probtensor}
         = \argmin_{\probtensorin} \kldivof{\probtensor}{\probof{\energytensor}}
     \end{align*}
-    \probref{prob:meanField} is thus the information projection of a distribution $\probofat{\energytensor}{\shortcatvariables}=\normalizationof{\energytensor}{\shortcatvariables}$ onto the exponential family $\mnexpfamily$.
+    \probref{prob:meanField} is thus the information projection of a distribution $\probofat{\energytensor}{\shortcatvariables}=\normalizationof{\expof{\energytensorwith}}{\shortcatvariables}$ onto the exponential family $\mnexpfamily$.
 \end{theorem}
 \begin{proof}
 %	This follows from the fact, that the objective is the cross-entropy and the position of the maximum is invariant under substracting $\sentropyof{\probtensor}$.
@@ -1611,14 +1430,14 @@ We show next, that the mean field problem is an instance of an information proje
     \begin{align*}
         \centropyof{\probtensor}{\probof{\energytensor}}
         &= \contraction{\probat{\shortcatvariables},-\lnof{\probofat{\energytensor}{\shortcatvariables}}} \\
-        &= \contraction{\probat{\shortcatvariables},-\energytensorat{\shortcatvariables}}
-        + \contraction{\probat{\shortcatvariables}} \cdot \lnof{\contraction{\expof{\energytensorat{\shortcatvariables}}}}
+        &= \contraction{\probat{\shortcatvariables},-\energytensorwith}
+        + \contraction{\probat{\shortcatvariables}} \cdot \lnof{\contraction{\expof{\energytensorwith}}}
     \end{align*}
     Together we have, that
     \begin{align*}
         \kldivof{\probtensor}{\probof{\energytensor}}
         &= \centropyof{\probtensor}{\probof{\energytensor}} - \sentropyof{\probtensor} \\
-        &= - \contraction{\probat{\shortcatvariables},\energytensorat{\shortcatvariables}} - \sentropyof{\probtensor} + \lnof{\contraction{\expof{\energytensorat{\shortcatvariables}}}}
+        &= - \contraction{\probat{\shortcatvariables},\energytensorwith} - \sentropyof{\probtensor} + \lnof{\contraction{\expof{\energytensorwith}}}
     \end{align*}
     Since the last term is constant among $\probtensorin$, it holds that
     \begin{align*}
@@ -1644,7 +1463,7 @@ Markov Networks on this graph are represented by normalized leg cores
 \probref{prob:meanField} is for this instance of the form
 %The approximation is then  $\legcoreof{\catenumerator}$, that is
 \begin{align*}
-    \argmax_{\legcoreofat{\catenumerator}{\catvariableof{\catenumerator}} \wcols \contraction{\legcoreof{\catenumerator}}=1,\, \catenumeratorin}
+    \argmax_{\legcoreofat{\catenumerator}{\catvariableof{\catenumerator}} \wcols \contraction{\legcoreof{\catenumerator}}=1\ncond \catenumeratorin}
     \contraction{\{\energytensor\} \cup \{\legcoreof{\catenumerator} \wcols \catenumeratorin\}}
     + \sum_{\catenumeratorin} \sentropyof{\legcoreof{\catenumerator}} \, .
 \end{align*}
@@ -1653,16 +1472,16 @@ The optimal update equations are derived as the next theorem.
 
 \begin{theorem}[Update equations for the naive mean field approximation]
     %For the \probref{prob:meanField}
-    For any $\catenumeratorin$ and leg cores $\{\legcoreofat{\seccatenumerator}{\catvariableof{\seccatenumerator}} \wcols \seccatenumeratorin,\,\seccatenumerator\neq\catenumerator\}$ the local problem
+    For any $\catenumeratorin$ and leg cores $\{\legcoreofat{\seccatenumerator}{\catvariableof{\seccatenumerator}} \wcols \seccatenumeratorin\ncond\seccatenumerator\neq\catenumerator\}$ the local problem
     \begin{align*}
-        \argmax_{\legcoreofat{\catenumerator}{\catvariableof{\catenumerator}} \wcols \contraction{\legcoreof{\catenumerator}}=1} \contraction{\{\energytensor\} \cup \{\legcoreofat{\seccatenumerator}{\catvariableof{\seccatenumerator}} \, : \, \seccatenumeratorin\}}
+        \argmax_{\legcoreofat{\catenumerator}{\catvariableof{\catenumerator}} \wcols \contraction{\legcoreof{\catenumerator}}=1} \contraction{\{\energytensor\} \cup \{\legcoreofat{\seccatenumerator}{\catvariableof{\seccatenumerator}}\wcols \seccatenumeratorin\}}
         + \sum_{\catenumeratorin} \sentropyof{\legcoreof{\catenumerator}}
     \end{align*}
     is solved at
     \begin{align*}
         \legcoreofat{\catenumerator}{\catvariableof{\catenumerator}}
-        = \normalizationof{ \expof{ \contractionof{ \{\energytensor[\shortcatvariables] \}\cup
-        \{\legcoreofat{\seccatenumerator}{\catvariableof{\seccatenumerator}} \, : \, \seccatenumerator\neq\catenumerator\} }{\shortcatvariables} }
+        = \normalizationof{ \expof{ \contractionof{ \{\energytensorwith \}\cup
+        \{\legcoreofat{\seccatenumerator}{\catvariableof{\seccatenumerator}}\wcols \seccatenumerator\neq\catenumerator\} }{\shortcatvariables} }
         }{\catvariableof{\catenumerator}} \, .
     \end{align*}
 \end{theorem}
@@ -1675,25 +1494,25 @@ The optimal update equations are derived as the next theorem.
     \end{align*}
     and by multilinearity of tensor contractions
     \begin{align*}
-        \difofwrt{\contraction{\{\energytensor\}\cup\{\legcoreof{\seccatenumerator} \, : \, \seccatenumeratorin \}}}{\legcoreof{\catenumerator}}
-        =  \contractionof{\{\energytensor\}\cup\{\legcoreof{\seccatenumerator} \, : \, \seccatenumeratorin ,\, \seccatenumerator\neq\catenumerator \}}{\catvariableof{\catenumerator}} \, .
+        \difofwrt{\contraction{\{\energytensor\}\cup\{\legcoreof{\seccatenumerator}\wcols \seccatenumeratorin \}}}{\legcoreof{\catenumerator}}
+        =  \contractionof{\{\energytensor\}\cup\{\legcoreof{\seccatenumerator}\wcols \seccatenumeratorin \ncond \seccatenumerator\neq\catenumerator \}}{\catvariableof{\catenumerator}} \, .
     \end{align*}
     Combining both, the condition
     \begin{align*}
         0 = \difofwrt{
-            \left( \contraction{\{\energytensor\}\cup\{\legcoreof{\seccatenumerator} \, : \, \seccatenumeratorin \}} + \sum_{\catenumeratorin} \sentropyof{\legcoreof{\catenumerator}} \right)
+            \left( \contraction{\{\energytensor\}\cup\{\legcoreof{\seccatenumerator}\wcols \seccatenumeratorin \}} + \sum_{\catenumeratorin} \sentropyof{\legcoreof{\catenumerator}} \right)
         }{\legcoreof{\catenumerator}}
     \end{align*}
     is equal to
     \begin{align*}
         \lnof{\legcoreofat{\catenumerator}{\catvariableof{\catenumerator}}} =
-        \onesat{\catvariableof{\catenumerator}} + \contractionof{\{\energytensor\}\cup\{\legcoreof{\seccatenumerator} \, : \, \seccatenumeratorin ,\, \seccatenumerator\neq\catenumerator \}}{\catvariableof{\catenumerator}} \, .
+        \onesat{\catvariableof{\catenumerator}} + \contractionof{\{\energytensor\}\cup\{\legcoreof{\seccatenumerator}\wcols \seccatenumeratorin \ncond \seccatenumerator\neq\catenumerator \}}{\catvariableof{\catenumerator}} \, .
     \end{align*}
     Together with the condition $\contraction{\legcoreof{\catenumerator}}=1$ this is satisfied at
     \begin{align*}
         \legcoreofat{\catenumerator}{\catvariableof{\catenumerator}}
         = \normalizationof{ \expof{ \contractionof{ \{\energytensor\}\cup
-        \{\legcoreof{\seccatenumerator} \, : \, \seccatenumerator\neq\catenumerator\} }{\catvariableof{\catenumerator}} }
+        \{\legcoreof{\seccatenumerator}\wcols \seccatenumerator\neq\catenumerator\} }{\catvariableof{\catenumerator}} }
         }{\catvariableof{\catenumerator}} \, . & \qedhere
     \end{align*}
 \end{proof}
@@ -1703,8 +1522,8 @@ The optimal update equations are derived as the next theorem.
 \begin{algorithm}[h!]
     \caption{Naive Mean Field Approximation}\label{alg:NMF}
     \begin{algorithmic}
-        \Require Energy tensor $\energytensorat{\energytensor}$
-        \Ensure Tensor Network $\{\legcoreofat{\catenumerator} \, : \, \catenumeratorin\}$ approximating $\normalizationof{\energytensorat{\shortcatvariables}}{\shortcatvariables}$
+        \Require Energy tensor $\energytensorwith$
+        \Ensure Tensor Network $\{\legcoreofat{\catenumerator}{\catvariableof{\catenumerator}}\wcols\catenumeratorin\}$ approximating $\normalizationof{\expof{\energytensorwith}}{\shortcatvariables}$
         \iosepline
         \ForAll{$\catenumeratorin$}
             \State
@@ -1717,12 +1536,12 @@ The optimal update equations are derived as the next theorem.
             \ForAll{$\catenumeratorin$}
                 \State
                 \[ \legcoreofat{\catenumerator}{\catvariableof{\catenumerator}}
-                \algdefsymbol \normalizationof{ \expof{ \contractionof{ \{\energytensor[\shortcatvariables] \}\cup
-                \{\legcoreofat{\seccatenumerator}{\catvariableof{\seccatenumerator}} \, : \, \seccatenumerator\neq\catenumerator\} }{\catvariableof{\catenumerator}} }
+                \algdefsymbol \normalizationof{ \expof{ \contractionof{\{\energytensorwith\}\cup
+                \{\legcoreofat{\seccatenumerator}{\catvariableof{\seccatenumerator}} \wcols \seccatenumerator\neq\catenumerator\} }{\catvariableof{\catenumerator}} }
                 }{\catvariableof{\catenumerator}} \]
             \EndFor
         \EndWhile
-        \State \Return $\{\legcoreofat{\catenumerator}{\catvariableof{\catenumerator}} \, : \, \catenumeratorin\}$
+        \State \Return $\{\legcoreofat{\catenumerator}{\catvariableof{\catenumerator}}\wcols\catenumeratorin\}$
     \end{algorithmic}
 \end{algorithm}
 
@@ -1751,21 +1570,21 @@ We approximate the solution of this problem again by an alternating algorithm, w
         = \lambda\cdot \expof{
             \frac{
                 \contractionof{\{\energytensor\}\cup\{
-                \hypercoreof{\secedge} : \secedge\neq\edge
+                \hypercoreof{\secedge}\wcols\secedge\neq\edge
                 \}}{\edgevariables}
             }{
                 \contractionof{\{
-                \hypercoreof{\secedge} : \secedge\neq\edge
+                \hypercoreof{\secedge}\wcols\secedge\neq\edge
                 \}}{\edgevariables}
             }
             - \sum_{\thirdedge\neq\edge}
             \frac{
                 \contractionof{\{\lnof{\hypercoreof{\thirdedge}}\}\cup\{
-                \hypercoreof{\secedge} : \secedge\neq\thirdedge
+                \hypercoreof{\secedge}\wcols\secedge\neq\thirdedge
                 \}}{\edgevariables}
             }{
                 \contractionof{\{
-                \hypercoreof{\secedge} : \secedge\neq\thirdedge
+                \hypercoreof{\secedge}\wcols\secedge\neq\thirdedge
                 \}}{\edgevariables}
             }
         } \, .
@@ -1873,8 +1692,8 @@ We approximate the solution of this problem again by an alternating algorithm, w
         \contraction{\sechypercoreat{\catvariableof{\nodes/\edge},\catvariableof{\edge}=\seccatindexof{\edge}},
             \normalizationofwrt{\extnet}{\catvariableof{\nodes/\edge}}{\catvariableof{\edge}=\seccatindexof{\edge}}}
         =
-        \frac{\contractionof{\{\sechypercore\}\cup\{\hypercoreof{\secedge} \, : \, \secedge\neq \edge\}}{\catvariableof{\edge}=\seccatindexof{\edge}} }{
-            \contractionof{\{\hypercoreof{\secedge} \, : \, \secedge\neq \edge\}}{\catvariableof{\edge}=\seccatindexof{\edge}}
+        \frac{\contractionof{\{\sechypercore\}\cup\{\hypercoreof{\secedge}\wcols \secedge\neq \edge\}}{\catvariableof{\edge}=\seccatindexof{\edge}} }{
+            \contractionof{\{\hypercoreof{\secedge}\wcols \secedge\neq \edge\}}{\catvariableof{\edge}=\seccatindexof{\edge}}
         }
     \end{align*}
     and reparametrization of $\lambda_1$ to
@@ -1889,21 +1708,10 @@ We approximate the solution of this problem again by an alternating algorithm, w
 
 Let us now continue with the discussion of the backward map, which calculates to a mean parameter $\meanparamwith$ a canonical parameter $\canparamwith$, such that the corresponding member of the exponential family reproduced $\meanparamwith$.
 
-%% FROM NETWORK LEARNING
-%The parameters optimizing the likelihood will be shown to coincide with the backward mapping evaluated on the expectation of the sufficient statistics (see \theref{the:parEstToBackwardMap}).
-%This is in most generality true for the parameters of the M-projection of any distribution onto the exponential family.
-%We therefore investigate methods to compute the backward mapping, in most generality by alternating algorithms and in the special case of \MarkovLogicNetworks{} by closed form representations.
-
-%\begin{theorem}[Moment Matching Criteria]\label{the:MM}
-%\end{theorem}
-%We find one backward mapping as the dual problem to the forward mapping.
-
-
 \subsect{Variational Formulation}
 
 We now provide a variational characterization of the backward map.
 
-%% Remove here, moved to variational inference section^
 \begin{theorem}
     \label{the:varBackward}
     Let there be a statistic $\sstat$, which is minimal with respect to a boolean base measure $\basemeasure$.

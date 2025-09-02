@@ -98,7 +98,7 @@ To solve the Maximum Likelihood Problem on \HybridLogicNetworks{} we choose the 
     Among those tuples, only the third term of the cross-entropy varies, where we have
     \begin{align*}
         \lnof{\contraction{\hlnstatccwith,\hardacttensorwith,\softacttensorwith}}
-\leq \lnof{\contraction{\hlnstatccwith,\hardactsymbolofat{(\hardlegsetto{\genmean},\hardlegindicesto{\genmean})}{\headvariables},\softacttensorwith}}
+        \leq \lnof{\contraction{\hlnstatccwith,\hardactsymbolofat{(\hardlegsetto{\genmean},\hardlegindicesto{\genmean})}{\headvariables},\softacttensorwith}}
     \end{align*}
     The minimum of the cross entropy is therefore taken at $\hardlegset=\hardlegsetto{\genmean}$ and $\headindexof{\hardlegset}=\hardlegindicesto{\genmean}$.
 \end{proof}
@@ -548,12 +548,16 @@ The local moment matching conditions of are satisfied simultanously for some $\c
         \Require Mean parameter $\meanparamwith$
         \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\hlnsetof{\formulaset}$
         \iosepline
-        \State Set
-        \begin{align*}
-            \variableset = \Big\{ \selindex \wcols \selindexin \ncond \meanparamat{\indexedselvariable}\in\{0,1\} \Big\}
-        \end{align*}
-        and a tuple $\headindexof{\variableset}$ with $\headindexof{\selindex}=\meanparamat{\indexedselvariable}$ for $\selindex\in\variableset$ .
-        \State Run \algoref{alg:AMM_MLN} (Alternating Moment Matching for Markov Logic Networks) with base measure $\exformulaof{\variableset,\headindexof{\variableset}}$ and statistic $\hlnstat=\{\enumformula\wcols\selindex\in\hardlegset\}$ to get $\canparamwith$
+        \State
+        \begin{itemize}
+            \item
+            \begin{align*}
+                \variableset = \Big\{ \selindex \wcols \selindexin \ncond \meanparamat{\indexedselvariable}\in\{0,1\} \Big\}
+            \end{align*}
+            and a tuple $\headindexof{\variableset}$ with $\headindexof{\selindex}=\meanparamat{\indexedselvariable}$ for $\selindex\in\variableset$.
+            \item
+            Run \algoref{alg:AMM_MLN} (Alternating Moment Matching for Markov Logic Networks) with base measure $\exformulaof{\variableset,\headindexof{\variableset}}$ and statistic $\hlnstat=\{\enumformula\wcols\selindex\in\hardlegset\}$ to get $\canparamwith$.
+        \end{itemize}
         \State \Return $(\variableset,\headindexof{\variableset},\canparamwith)$
     \end{algorithmic}
 \end{algorithm}
@@ -672,12 +676,12 @@ Let $\sechybridparam$ be the canonical parameter of the reference distribution o
 When adding a feature $\formula\in\greedyhypothesis$ we extend $\hlnstat$ by $\formula$ and restrict the parameters to coincide with $\sechybridparam$ on the first $\cardof{\hlnstat}$ coordinates.
 We denote this constraint by
 \begin{align*}
-    \restrictionofto{\hybridparam}{[\hlnstat]} = \sechybridparam \, .
+    \restrictionofto{\hybridparam}{[\cardof{\hlnstat}]} = \sechybridparam \, .
 \end{align*}
 The greedy gain heuristic is then the problem
 \begin{align}
     \label{prob:greedyGain}\tag{$\probtagtypeinst{\gainsymbol}{\datamap,\formulaset,\sechybridparam,\greedyhypothesis}$}
-    \min_{\formula\in\greedyhypothesis} \min_{\hybridparamsetofdim{\cardof{\hlnstat}+1} \wcols \restrictionofto{\hybridparam}{[\hlnstat]} = \sechybridparam }
+    \min_{\formula\in\greedyhypothesis} \,\, \min_{\hybridparamsetofdim{\cardof{\hlnstat}+1} \wcols \restrictionofto{\hybridparam}{[\cardof{\hlnstat}]} = \sechybridparam }
     \centropyof{\empdistribution}{\probof{\hybridparam}} \, .
 \end{align}
 %Here we denote by $\canparam$ the first $\cardof{\formulaset}$ coordinates of the M-projection $\currentdistribution$  of $\empdistribution$ onto $\formulaset$ and the variable new coordinate at position $\canparamat{\cardof{\formulaset}}$.
@@ -800,6 +804,7 @@ In the gradient heuristic we choose the steepest gradient direction
 
 %% FOR GRADIENT HEURISTIC
 \begin{lemma}
+    For any formula $\formula$ we have
     \begin{align*}
         \difofwrt{\centropyof{\empdistribution}{\probof{\softacttensor}}}{\canparam} =
         -\contraction{\empdistribution,\formula} + \contraction{\probof{\softacttensor},\formula} \, .
@@ -852,7 +857,7 @@ Among the heuristics, the gradient heuristic has the most accessible form, since
     Let there be a base distribution $\currentdistribution$, a targeted distribution $\empdistribution$ and a formula selecting map $\greedyhypothesis$.
     The proposal distribution at inverse temperature $\invtemp>0$ is the distribution of $\selvariable$ defined by
     \begin{align*}
-        \normalizationof{\expof{\contractionof{\invtemp\cdot(\empdistribution[\shortcatvariables]-\currentdistribution[\shortcatvariables]),\greedyhypothesis\left[\shortcatvariables,\selvariable\right]}{\selvariable}} }{\selvariable} \, .
+        \normalizationof{\expof{\contractionof{\invtemp\cdot(\empdistributionwith-\currentdistributionwith),\greedyhypothesis\left[\shortcatvariables,\selvariable\right]}{\selvariable}} }{\selvariable} \, .
     \end{align*}
     The proposal distribution is the member of the exponential family with statistics $\greedyhypothesis$ and canonical parameter $\invtemp\cdot(\empdistribution-\currentdistribution)$.
 \end{definition}
