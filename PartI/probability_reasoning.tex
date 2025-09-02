@@ -20,7 +20,7 @@ More details on this scheme are provided in \charef{cha:basisCalculus}, see \def
     \label{def:queries}
     The marginal query of a probability distribution $\probat{\shortcatvariables}$ by a query statistic
     \begin{align*}
-        \exfunction : \facstates \rightarrow \arbsetof{\exfunction}
+        \exfunction \defcols \facstates \rightarrow \arbsetof{\exfunction}
     \end{align*}
     is the vector $\probat{\headvariableof{\exfunction}}$, where $\headvariableof{\exfunction}$ is an image enumerating variable (see \charef{cha:basisCalculus} for more details), defined as the contraction
     \begin{align*}
@@ -101,7 +101,7 @@ We can pose mode queries as convex optimization problems.
 To this end we recall, that the set of all probability distributions is a convex hull of the one-hot encoded states, that is
 \begin{align*}
     \bmrealprobof{\ones}
-    = \convhullof{\onehotmapofat{\shortcatindices}{\shortcatvariables} \, : \, \shortcatindicesin} \, .
+    = \convhullof{\onehotmapofat{\shortcatindices}{\shortcatvariables}\wcols\shortcatindicesin} \, .
 \end{align*}
 With this we have
 \begin{align*}
@@ -112,7 +112,7 @@ With this we have
 We note that the maximization over $\bmrealprobof{\ones}$ is a convex optimization problem and the maxima are taken at
 \begin{align*}
     \argmax_{\meanparamat{\shortcatvariables}\in\bmrealprobof{\ones}} \contraction{\hypercoreat{\shortcatvariables},\meanparamat{\shortcatvariables}}
-    = \convhullof{\onehotmapofat{\shortcatindices}{\shortcatvariables} \, : \, \shortcatindices\in\argmax_{\shortcatindices} \hypercoreat{\indexedshortcatvariables}} \, .
+    = \convhullof{\onehotmapofat{\shortcatindices}{\shortcatvariables}\wcols\shortcatindices\in\argmax_{\shortcatindices} \hypercoreat{\indexedshortcatvariables}} \, .
 \end{align*}
 We will further apply this generic trick to approach mode queries when studying inference problems for exponential families in the following sections.
 
@@ -128,7 +128,7 @@ We can choose the base measure by the subset encoding (see \charef{cha:basisCalc
 and conclude that
 \begin{align*}
     \argmax_{\meanparamat{\shortcatvariables}\in\bmrealprobof{\basemeasure}} \contraction{\hypercoreat{\shortcatvariables},\meanparamat{\shortcatvariables}}
-    = \convhullof{\onehotmapofat{\shortcatindices}{\shortcatvariables} \, : \, \shortcatindices\in\argmax_{\shortcatindices\in\arbset} \hypercoreat{\indexedshortcatvariables}} \, .
+    = \convhullof{\onehotmapofat{\shortcatindices}{\shortcatvariables} \wcols \shortcatindices\in\argmax_{\shortcatindices\in\arbset} \hypercoreat{\indexedshortcatvariables}} \, .
 \end{align*}
 
 
@@ -204,13 +204,13 @@ Naive methods, such as drawing a random number in $[0,1]$, adding iteratively th
 We recall, that the number of coordinates of $\probwith$ is $\prod_{\catenumeratorin}\catdimof{\catenumerator}$, which increases exponentially in the number $\catorder$ of the variables.
 Efficient methods instead have to exploit tensor network decompositions of the decompositions.
 
-\subsect{Exact Methods}
+\subsect{Forward Sampling}
 
 The first insight to derive efficient sampling algorithms is to sample a single variable in each step.
 Forward sampling (see \algoref{alg:ForwardSampling}) exploits to this end the generic chain decomposition (see \theref{the:chainRule}) of a probability distribution, namely
 \begin{align*}
     \probwith = \contractionof{\{\margprobat{\catvariableof{0}}\} \cup
-    \left\{\condprobof{\catvariableof{\catenumerator}}{\catvariableof{0},\ldots,\catvariableof{\catenumerator-1}}\,:\,\catenumeratorin, \, \catenumerator\geq 1\right\}
+    \left\{\condprobof{\catvariableof{\catenumerator}}{\catvariableof{0},\ldots,\catvariableof{\catenumerator-1}} \wcols \catenumeratorin \ncond \catenumerator\geq 1\right\}
     }{\shortcatvariables} \, ,
 \end{align*}
 It then samples iteratively a state $\catindexof{\catenumerator}$ for the variable $\catvariableof{\catenumerator}$ conditioned on the previously sampled states, that is from the conditonal distribution
@@ -288,14 +288,14 @@ When avoiding the marginalization of variables, and conditioning on them instead
 To be more precise, for any tensor network $\extnet$ on $\graph=([\catorder],\edges)$ and any $\catenumeratorin$ we have
 \begin{align*}
     \contractionof{\extnet}{\catvariableof{\catenumerator},\catvariableof{[\catorder]/\{\catenumerator\}}}
-    = \contractionof{\{\hypercoreat{\edge}{\catvariableof{\catenumerator},\indexedcatvariableof{\edge/\{\catenumerator\}}} \, : \, \edge\in\edges, \, \catenumerator\in\edge\}}{\catvariableof{\catenumerator}}
-    \cdot \prod_{\edge\in\edges, \, \catenumerator\notin\edge} \hypercoreat{\edge}{\indexedcatvariableof{\edge}} \, .
+    = \contractionof{\{\hypercoreofat{\edge}{\catvariableof{\catenumerator},\indexedcatvariableof{\edge/\{\catenumerator\}}} \wcols \edge\in\edges \ncond \catenumerator\in\edge\}}{\catvariableof{\catenumerator}}
+    \cdot \prod_{\edge\in\edges, \, \catenumerator\notin\edge} \hypercoreofat{\edge}{\indexedcatvariableof{\edge}} \, .
 \end{align*}
 As a consequence, we get for the Markov Network $\probtensor=\probof{\graph}$ to $\extnet$, that
 \begin{align*}
     \condprobof{\catvariableof{\catenumerator}}{\indexedcatvariableof{[\catorder]/\{\catenumerator\}}}
     &= \normalizationof{\extnet}{\catvariableof{\catenumerator},\catvariableof{[\catorder]/\{\catenumerator\}}} \\
-    &= \normalizationof{\{\hypercoreat{\edge}{\catvariableof{\catenumerator},\indexedcatvariableof{\edge/\{\catenumerator\}}} \, : \, \edge\in\edges, \, \catenumerator\in\edge\}}{\catvariableof{\catenumerator}} \, .
+    &= \normalizationof{\{\hypercoreofat{\edge}{\catvariableof{\catenumerator},\indexedcatvariableof{\edge/\{\catenumerator\}}} \wcols \edge\in\edges, \, \catenumerator\in\edge\}}{\catvariableof{\catenumerator}} \, .
 \end{align*}
 The conditional queries on a Markov Network asked in Gibbs Sampling can therefore be answered by contractions only of those tensors containing the variable $\catvariableof{\catenumerator}$.
 To find further locally answerable conditional queries, we need to condition only on the neighbored variables, referred to as Markov blanket, such that the other variables are conditionally independent.
@@ -381,7 +381,7 @@ Each coordinate $\shortcatindices$ of the empirical distribution can thus be cal
 \begin{align*}
     \empdistributionat{\indexedshortcatvariables}
     & = \frac{1}{\contraction{\datacore}} \left( \sum_{\datindexin} \onehotmapofat{\catindicesof{\datindex}}{\indexedshortcatvariables}  \right) \\
-    &= \frac{\cardof{\datindexin \, : \, (\catindicesof{\datindex}) = (\catindices)}}{\cardof{\datindexin}} \, .
+    &= \frac{\cardof{\left\{\datindexin \wcols (\catindicesof{\datindex}) = (\catindices)\right\}}}{\datanum} \, .
 \end{align*}
 We can therefore interpret each coordinate of the empirical distribution as the relative frequency of the corresponding state in the observed data.
 %and is thus interpreted as the frequency of the corresponding world in the data.
@@ -743,12 +743,12 @@ We first formalize these inference problems by the forward and backward mapping 
     Let $\sstat$ be a statistic and $\basemeasure$ a base measure and consider the exponential family $\genexpfamily$
     The map
     \begin{align*}
-        \forwardmap : \parspace\rightarrow\genmeanset\subset\parspace
+        \forwardmap \defcols \parspace\rightarrow\genmeanset\subset\parspace
         \defspace \forwardmapof{\canparam} = \contractionof{\expdistwith,\sencsstatwith}{\selvariable}
     \end{align*}
     is called the forward map of the exponential family and inverse, that is a map
     \begin{align*}
-        \backwardmap : \imageof{\forwardmap} \subset\parspace\rightarrow \parspace
+        \backwardmap \defcols \imageof{\forwardmap} \subset\parspace\rightarrow \parspace
     \end{align*}
     with $\expdistof{(\sstat,\backwardmapof{\forwardmapof{\canparam}},\basemeasure)} = \expdist$ for any $\canparamwithin$, a backward map of the exponential family.
 \end{definition}
@@ -944,7 +944,7 @@ We can use this insight to provide a variational characterization of the forward
 The mode of a distribution is related to the forward mapping of $\invtemp\cdot\canparam$ in the limit $\invtemp\rightarrow\infty$ of low temperatures.
 To sketch this relation, we recall the variational formulation of mode queries by
 \begin{align*}
-    \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\cansstatcatindicesargmax}
+    \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \wcols \shortcatindices\in\cansstatcatindicesargmax}
     = \genmeansetargmax \contraction{\meanparam,\canparam}  \, .
 \end{align*}
 Further, for any by the inverse temperature $\invtemp\neq0$ annealed canonical parameter $\canparamwith$ (see \secref{sec:simulatedAnnealing}) we have
@@ -954,7 +954,7 @@ Further, for any by the inverse temperature $\invtemp\neq0$ annealed canonical p
 \end{align*}
 In the annealing limit, that is for large $\invtemp$, the entropy term becomes negligible and the forward mapping tends to the convex hull
 \begin{align*}
-    \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\cansstatcatindicesargmax}
+    \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \wcols \shortcatindices\in\cansstatcatindicesargmax}
     = \genmeansetargmax \contraction{\meanparam,\canparam}  \, .
 \end{align*}
 For a more detailed discussion of this relation, see Theorem~8.1 in \cite{wainwright_graphical_2008}.
@@ -1298,7 +1298,7 @@ As we show next, also a converse statement holds, namely that for any vector $\c
     We first notice, that
     \begin{align*}
         & \cangenmeansetargmax \\
-        & \quad  = \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \, : \, \shortcatindices\in\argmax_{\shortcatindicesin} \contraction{\canparamwith,\sstatat{\shortcatindices}}} \, .
+        & \quad  = \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable} \wcols \shortcatindices\in\argmax_{\shortcatindicesin} \contraction{\canparamwith,\sstatat{\shortcatindices}}} \, .
     \end{align*}
     Further, since the contraction with $\canparamwith$ is linear, the set $\cangenmeansetargmax$ is contained in the boundary of the polytope $\genmeanset$.
     We can conclude, that the set is a face, that is we find a subset $\mathcal{I}\subset[n]$ with
@@ -1361,7 +1361,7 @@ Continuing our discussion in \secref{sec:modeQueries}, we have for any $\arbset\
 The maximum is attained exactly for the mean parameters
 \begin{align*}
     \meanparamat{\shortcatvariables}\in
-    \convhullof{\onehotmapofat{\shortcatindices}{\shortcatvariables} \, : \, \shortcatindices\in\argmax_{\shortcatindices\in\arbset} \hypercoreat{\indexedshortcatvariables}} \, .
+    \convhullof{\onehotmapofat{\shortcatindices}{\shortcatvariables} \wcols \shortcatindices\in\argmax_{\shortcatindices\in\arbset} \hypercoreat{\indexedshortcatvariables}} \, .
 \end{align*}
 Answering the mode query is thus the characterization of the face of the standard simplex with face normal $\hypercorewith$.
 
@@ -1385,18 +1385,18 @@ Answering the mode query is thus the characterization of the face of the standar
         & \max_{\shortcatindices\in\arbset} \hypercoreat{\indexedshortcatvariables} \\
         & = \max_{\shortcatindices\in\arbset}
         \contraction{
-            \contractionof{\{\onehotmapofat{\shortcatindices}{\shortcatvariables}\} \cup \left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\, : \, \edge\in\edges/\secedges\right\}}{\catvariableof{\secnodes}},
-            \contractionof{\left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\, : \, \edge\in\secedges\right\}}{\catvariableof{\secnodes}}
+            \contractionof{\{\onehotmapofat{\shortcatindices}{\shortcatvariables}\} \cup \left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\wcols \edge\in\edges/\secedges\right\}}{\catvariableof{\secnodes}},
+            \contractionof{\left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\wcols \edge\in\secedges\right\}}{\catvariableof{\secnodes}}
         } \, .
     \end{align*}
     This optimization problem is the characterization of vectors, which convex hull is the face in the polytope
     \begin{align*}
-        \meanset = \left\{\{\contractionof{\onehotmapofat{\shortcatindices}{\shortcatvariables}\} \cup \left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\, : \, \edge\in\edges/\secedges\right\}}{\catvariableof{\secnodes}} \, : \, \shortcatindices\in\arbset \right\}
+        \meanset = \left\{\{\contractionof{\onehotmapofat{\shortcatindices}{\shortcatvariables}\} \cup \left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\wcols \edge\in\edges/\secedges\right\}}{\catvariableof{\secnodes}} \wcols \shortcatindices\in\arbset \right\}
     \end{align*}
     with the face normal
     \begin{align*}
         \canparamat{\catvariableof{\secnodes}} =
-        \contractionof{\left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\, : \, \edge\in\secedges\right\}}{\catvariableof{\secnodes}} \, .
+        \contractionof{\left\{\hypercoreofat{\edge}{\catvariableof{\edge}}\wcols \edge\in\secedges\right\}}{\catvariableof{\secnodes}} \, .
     \end{align*}
 \end{example}
 
@@ -1634,9 +1634,9 @@ We show next, that the mean field problem is an instance of an information proje
 %Typically we use the family of independent distributions, also called naive mean field method.
 In the naive mean field method, we choose the approximating set $\probtensorset$ by the exponential family of Markov Networks $\mnexpfamilyof{\elgraph}$ on the elementary graph % confusing to do here exponential families: Cannot deal with non-trivial core support!
 \begin{align*}
-    \elgraph=\Big([\catorder],\{\big\{\catenumerator\}\, : \, \catenumeratorin\big\}\Big) \, .
+    \elgraph=\Big([\catorder],\{\big\{\catenumerator\}\wcols \catenumeratorin\big\}\Big) \, .
 \end{align*}
-Markov Networks on this graph are represented by normed leg cores
+Markov Networks on this graph are represented by normalized leg cores
 \begin{align*}
     \probwith
     = \bigotimes_{\catenumeratorin} \legcoreofat{\catenumerator}{\catvariableof{\catenumerator}}
@@ -1644,8 +1644,8 @@ Markov Networks on this graph are represented by normed leg cores
 \probref{prob:meanField} is for this instance of the form
 %The approximation is then  $\legcoreof{\catenumerator}$, that is
 \begin{align*}
-    \argmax_{\legcoreofat{\catenumerator}{\catvariableof{\catenumerator}} \, : \, \contraction{\legcoreof{\catenumerator}}=1,\, \catenumeratorin}
-    \contraction{\{\energytensor\} \cup \{\legcoreof{\catenumerator} \, : \, \catenumeratorin\}}
+    \argmax_{\legcoreofat{\catenumerator}{\catvariableof{\catenumerator}} \wcols \contraction{\legcoreof{\catenumerator}}=1,\, \catenumeratorin}
+    \contraction{\{\energytensor\} \cup \{\legcoreof{\catenumerator} \wcols \catenumeratorin\}}
     + \sum_{\catenumeratorin} \sentropyof{\legcoreof{\catenumerator}} \, .
 \end{align*}
 We approximately solve this problem in \algoref{alg:NMF} by alternation through the leg cores and performing a locally optimal leg core update.
@@ -1653,9 +1653,9 @@ The optimal update equations are derived as the next theorem.
 
 \begin{theorem}[Update equations for the naive mean field approximation]
     %For the \probref{prob:meanField}
-    For any $\catenumeratorin$ and leg cores $\{\legcoreofat{\seccatenumerator}{\catvariableof{\seccatenumerator}} \, : \, \seccatenumeratorin,\,\seccatenumerator\neq\catenumerator\}$ the local problem
+    For any $\catenumeratorin$ and leg cores $\{\legcoreofat{\seccatenumerator}{\catvariableof{\seccatenumerator}} \wcols \seccatenumeratorin,\,\seccatenumerator\neq\catenumerator\}$ the local problem
     \begin{align*}
-        \argmax_{\legcoreofat{\catenumerator}{\catvariableof{\catenumerator}} \, : \, \contraction{\legcoreof{\catenumerator}}=1} \contraction{\{\energytensor\} \cup \{\legcoreofat{\seccatenumerator}{\catvariableof{\seccatenumerator}} \, : \, \seccatenumeratorin\}}
+        \argmax_{\legcoreofat{\catenumerator}{\catvariableof{\catenumerator}} \wcols \contraction{\legcoreof{\catenumerator}}=1} \contraction{\{\energytensor\} \cup \{\legcoreofat{\seccatenumerator}{\catvariableof{\seccatenumerator}} \, : \, \seccatenumeratorin\}}
         + \sum_{\catenumeratorin} \sentropyof{\legcoreof{\catenumerator}}
     \end{align*}
     is solved at
@@ -1915,7 +1915,6 @@ We now provide a variational characterization of the backward map.
     is a backward mapping.
 \end{theorem}
 \begin{proof}
-    %\red{From duality, see Theorem~3.4 in \cite{wainwright_graphical_2008}.}
     We show the claim can be shown by the first order condition on the objective.
     It holds that
     \begin{align*}
