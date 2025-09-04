@@ -658,7 +658,7 @@ The differences of both are discussed in Chapter~8 in \cite{koller_probabilistic
 With the maximum likelihood method we have already formulated inference tasks by optimization problem with variations of the probability distribution.
 In a broader perspective, we now investigate variational inference problems using the canonical and mean parametrization of exponential families.
 
-\subsect{Forward and Backward Maps}
+\subsect{Forward and Backward Mappings}
 
 While defined for arbitrary distributions (see \defref{def:meanPolytope}), we now consider mean parameters to members of exponential families.
 First of all, they provide an alternative parameterization to the canonical parameter $\canparam$.
@@ -668,16 +668,17 @@ We first formalize these inference problems by the forward and backward mapping 
 \begin{definition}
     \label{def:meanForwardBackward}
     Let $\sstat$ be a statistic and $\basemeasure$ a base measure and consider the exponential family $\genexpfamily$
-    The map
+    The function
     \begin{align*}
         \forwardmap \defcols \parspace\rightarrow\genmeanset\subset\parspace
         \defspace \forwardmapof{\canparam} = \contractionof{\expdistwith,\sencsstatwith}{\selvariable}
     \end{align*}
-    is called the forward map of the exponential family and inverse, that is a map
+    is called the forward mapping of the exponential family.
+    Any inverse, that is a function
     \begin{align*}
         \backwardmap \defcols \imageof{\forwardmap} \subset\parspace\rightarrow \parspace
     \end{align*}
-    with $\expdistof{(\sstat,\backwardmapof{\forwardmapof{\canparam}},\basemeasure)} = \expdist$ for any $\canparamwithin$, a backward map of the exponential family.
+    with $\expdistof{(\sstat,\backwardmapof{\forwardmapof{\canparam}},\basemeasure)} = \expdist$ for any $\canparamwithin$, is called a backward mapping of the exponential family.
 \end{definition}
 
 % Domain of \forwardmap
@@ -720,8 +721,8 @@ We now state that the elements of the corresponding exponential family $\expfami
     \end{align*}
 \end{proof}
 
-Forward and backward maps in an exponential family $\expfamily$ are the central classes of inference, which transform the description of a member by a canonical parameter into mean parameters and vise versa.
-Forward maps calculate to a canonical parameter $\canparamwith$ the corresponding mean parameter $\meanparamwith$.
+Forward and backward mappings in an exponential family $\expfamily$ are the central classes of inference, which transform the description of a member by a canonical parameter into mean parameters and vise versa.
+Forward mappings calculate to a canonical parameter $\canparamwith$ the corresponding mean parameter $\meanparamwith$.
 For any $\canparamwith$ we have a closed form representation of this expectation query by the moment matching condition
 \begin{align*}
     \meanparamwith = \contractionof{\sencsstatwith,\expdistwith}{\selvariable} \, .
@@ -730,7 +731,7 @@ The forward map is thus a collection of expectation queries (see \defref{def:que
 The query $\sstatcoordinateof{\selindex}$ asked against $\expdistwith$ computes the coordinate $\meanparamat{\indexedselvariable}$.
 % Infeasibility and turn to variational alternatives with selection encodings.
 The contraction by the moment matching condition can, however, be infeasible, since it requires the instantiation of the probability distribution, which can be done by basis encodings of the statistic.
-In this section, we provide alternative characterization of the forward map and approximations of it, which can be computed based on the selection encoding instead.
+In this section, we provide alternative characterization of the forward mapping and approximations of it, which can be computed based on the selection encoding instead.
 Following \cite{wainwright_graphical_2008}, we can characterize the forward mapping to exponential families as a variational problem and provide an alternative characterization to this contraction.
 
 
@@ -770,7 +771,7 @@ To this end we use the cumulative function $\cumfunction$ and its conjugate dual
     For the proof of the second claim we refer to Appendix B.2 in \cite{wainwright_graphical_2008}.
 \end{proof}
 
-\begin{theorem}[Variational backward map]
+\begin{theorem}[Variational backward mapping]
     For any $\meanparam\in\interiorof{\meanset}$ choose
     \begin{align*}
         \canparamat{\selvariable} \in \argmax_{\canparam} \contraction{\meanparam,\canparam} - \cumfunctionof{\canparam} \, .
@@ -789,12 +790,12 @@ To this end we use the cumulative function $\cumfunction$ and its conjugate dual
     With \lemref{lem:gradientCumfunction}, the gradient vanishes if and only if $\meanparam$ is the mean parameter to $\expdist$.
 \end{proof}
 
-The backward map is closely connected with the conjugate dual of $\cumfunction$.
+The backward mapping is closely connected with the conjugate dual of $\cumfunction$.
 In particular, while the conjugate dual is defined by the maximization problem
 \begin{align*}
     \dualcumfunctionof{\meanparam} = \max_{\canparam\in\parspace} \contraction{\meanparam,\canparam} - \cumfunctionof{\canparam}
 \end{align*}
-the backward map returns the position of the maximum in $\parspace$.
+the backward mapping returns the position of the maximum in $\parspace$.
 
 \begin{lemma}
     \label{lem:dualCumEntropy}
@@ -842,7 +843,7 @@ We can use this insight to provide a variational characterization of the forward
 
 \subsect{Maximum Likelihood Problem on Exponential Families}
 
-We now characterize the solution of the Maximum Likelihood Problem for exponential families as hypothesis classes using the backward map of the family.
+We now characterize the solution of the Maximum Likelihood Problem for exponential families as hypothesis classes using the backward mapping of the family.
 
 \begin{lemma}
     \label{lem:minCrossEntropyExponential}
@@ -1708,13 +1709,13 @@ We approximate the solution of this problem again by an alternating algorithm, w
 
 %% MISSING: ALGORITHM?
 
-\sect{Backward Map in Exponential Families}\label{sec:backwardMap}
+\sect{Backward Mapping in Exponential Families}\label{sec:backwardMap}
 
-Let us now continue with the discussion of the backward map, which calculates to a mean parameter $\meanparamwith$ a canonical parameter $\canparamwith$, such that the corresponding member of the exponential family reproduced $\meanparamwith$.
+Let us now continue with the discussion of the backward mapping, which calculates to a mean parameter $\meanparamwith$ a canonical parameter $\canparamwith$, such that the corresponding member of the exponential family reproduced $\meanparamwith$.
 
 \subsect{Variational Formulation}
 
-We now provide a variational characterization of the backward map.
+We now provide a variational characterization of the backward mapping.
 
 \begin{theorem}
     \label{the:varBackward}
@@ -1743,7 +1744,7 @@ We now provide a variational characterization of the backward map.
 
     The first order condition is therefore
     \[ \meanparamwith =  \forwardmapof{\canparam}[\selvariable] \]
-    and any $\canparam$ satisfies this condition exactly when $\canparam=\backwardmapof{\meanparam}$ for a backward map.
+    and any $\canparam$ satisfies this condition exactly when $\canparam=\backwardmapof{\meanparam}$ for a backward mapping.
     We conclude the proof by noticing, that since $\meanparamwith$ is in the interior $\sbinteriorof{\genmeanset}$ we find by \theref{the:meanPolytopeInterior} a $\canparam$ such that the first order condition is met.
 \end{proof}
 
@@ -1754,14 +1755,14 @@ We now provide a variational characterization of the backward map.
 \subsect{Interpretation as a Moment Projection}
 
 % Backward mapping
-Backward maps coincide with the Maximum Likelihood Estimation Problem \eqref{prob:parameterMaxLikelihood}, when we take the hypothesis to be exponential family $\expfamily$. % for a sufficient statistic $\sstat$.
+Backward mappings coincide with the Maximum Likelihood Estimation Problem \eqref{prob:parameterMaxLikelihood}, when we take the hypothesis to be exponential family $\expfamily$. % for a sufficient statistic $\sstat$.
 We show this as a more general statement for moment projections onto exponential families.
 %We recall, that the Maximum likelihood estimation is the M-projection of the empirical distribution onto the exponential family.
 % Cross entropy
 %The loss is the cross entropy between a distribution with $\meanparam$ and the distribution $\expdistof{(\sstat,\canparam,\basemeasure)}$.
 
 \begin{theorem}
-    Let there be any exponential family, a mean parameter vector $\genmean\in\imageof{\forwardmap}$ and a backward map $\backwardmap$.
+    Let there be any exponential family, a mean parameter vector $\genmean\in\imageof{\forwardmap}$ and a backward mapping $\backwardmap$.
     Then $\estcanparam=\backwardmapof{\genmean}$ is the canonical parameter to the solution of the moment projection \probref{prob:mProjection} of any $\gendistribution$ with
     \begin{align*}
         \contractionof{\sencsstat,\gendistribution}{\selvariable}=\genmeanat{\selvariable}
@@ -1771,7 +1772,7 @@ We show this as a more general statement for moment projections onto exponential
 
 \end{theorem}
 \begin{proof}
-    We exploit the variational characterization of the backward map by \theref{the:varBackward}, and first show that the objective coincides with the cross entropy between the distribution $\gendistribution$ and the respective member of the exponential family.
+    We exploit the variational characterization of the backward mapping by \theref{the:varBackward}, and first show that the objective coincides with the cross entropy between the distribution $\gendistribution$ and the respective member of the exponential family.
     For any $\gendistribution$ and $\canparam$ we have with Example~\ref{exa:cEntropyExp}
     \begin{align*}
         \centropyof{\gendistribution}{\expdistof{(\sstat,\canparam,\basemeasure)}}
@@ -1782,13 +1783,11 @@ We show this as a more general statement for moment projections onto exponential
         \centropyof{\gendistribution}{\expdistof{(\sstat,\canparam,\basemeasure)}}
         =   \contraction{\genmean,\canparam} -\cumfunctionof{\canparam} \, .
     \end{align*}
-    This shows, that the backward map coincides with the moment projection onto $\probtensorset=\expfamily$.
-%    Further, if $\meanparam=\datamean$ for a data map $\datamap$, we have that the corresponding empirical distribution $\empdistribution$ satisfies $\contractionof{\sencsstat,\empdistribution}{\selvariable}=\meanparamwith$.
-%    The backward map of $\meanparam$ is therefore the M-projection of $\empdistribution$, which is with \lemref{lem:centropyMLE} the maximum likelihood estimator.
+    This shows, that the backward mapping coincides with the moment projection onto $\probtensorset=\expfamily$.
 \end{proof}
 
 % Maximum likelihood estimation
-In particular, if we choose $\meanparamwith=\contractionof{\sencsstatwith,\empdistribution}{\selvariable}$ for an empirical distribution $\empdistribution$, the backward map is a maximum likelihood estimator.
+In particular, if we choose $\meanparamwith=\contractionof{\sencsstatwith,\empdistribution}{\selvariable}$ for an empirical distribution $\empdistribution$, the backward mapping is a maximum likelihood estimator.
 This holds, since by \lemref{lem:centropyMLE} maximum likelihood estimation is a special instance of moment projection, when projecting $\empdistribution$.
 In that case, we choose $\meanparamwith=\contractionof{\sencsstatwith,\empdistribution}{\selvariable}$.
 
@@ -1862,8 +1861,8 @@ In that case, we choose $\meanparamwith=\contractionof{\sencsstatwith,\empdistri
 
 \subsect{Approximation by Alternating Algorithms}\label{sec:alternatingBackwardMap}
 
-While the forward map always has a representation in closed form by contraction of the probability tensor, the backward map in general fails to have a closed form representation.
-Computation of the Backward map can instead be performed by alternating algorithms, as we show here. % Are these fixpoint iterations?
+While the forward mapping always has a representation in closed form by contraction of the probability tensor, the backward mapping in general fails to have a closed form representation.
+Computation of the backward mapping can instead be performed by alternating algorithms, as we show here. % Are these fixpoint iterations?
 We alternate through the coordinates of the statistics and adjust $\canparamat{\indexedselvariable}$ to a minimum of the likelihood, i.e. where for any $\selindexin$
 \begin{align*}
     0 = \frac{\partial}{\partial \canparamat{\indexedselvariable}} \lossof{\expdist} \, .
@@ -1934,7 +1933,7 @@ An alternating optimization is the coordinate descent of the negative likelihood
 Since the log likelihood is concave, the algorithm converges to a global minimum.
 
 \begin{algorithm}[h!]
-    \caption{Alternating Moment Matching for the Backward Map}\label{alg:AMM}
+    \caption{Alternating Moment Matching for the Backward Mapping}\label{alg:AMM}
     \begin{algorithmic}
         \Require Empirical distribution $\empdistribution$, statistic $\sstat$ and base measure $\basemeasure$
         \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\expfamily$
@@ -1995,10 +1994,10 @@ The Hesse matrix of $\cumfunction$ at $\canparam$ is the covariance of the featu
     Combining both equations, we get the claim.
 \end{proof}
 
-With this characterization, we can perform second order optimization algorithms such as the Newton Method, see \algoref{alg:newtonBackward} to solve the backward map.
+With this characterization, we can perform second order optimization algorithms such as the Newton Method, see \algoref{alg:newtonBackward} to solve the backward mapping.
 
 \begin{algorithm}
-    \caption{Newton Method for the Backward Map}\label{alg:newtonBackward}
+    \caption{Newton Method for the Backward Mapping}\label{alg:newtonBackward}
     \begin{algorithmic}
         \Require Empirical distribution $\empdistribution$, statistic $\sstat$ and base measure $\basemeasure$
         \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\expfamily$
@@ -2033,11 +2032,11 @@ With this characterization, we can perform second order optimization algorithms 
 %The objective is the conjugate dual $\dualcumfunction$ of $\cumfunction$, and backward mapping has an expression by the gradient, i.e. $\canparam = \nabla \dualcumfunction(\meanparam)$.
 
 % Convex Duality
-The forward and backward map have a correspondence with each other in terms of convex duality \cite{rockafellar_convex_1997}.
-As such, the cumulant function $\cumfunction$ (see \defref{def:expFamily}) and its conjugate dual $\dualcumfunction$ represent the forward and backward map by their gradient.
+The forward and backward mapping have a correspondence with each other in terms of convex duality \cite{rockafellar_convex_1997}.
+As such, the cumulant function $\cumfunction$ (see \defref{def:expFamily}) and its conjugate dual $\dualcumfunction$ represent the forward and backward mapping by their gradient.
 
 % Message Passing
-Further approximation schemes arise for the forward and backward map in exponential families arise from loopy message passing algorithms.
+Further approximation schemes arise for the forward and backward mapping in exponential families arise from loopy message passing algorithms.
 For inference on Markov Network families, they are derived based on outer bounds on the mean polytope in terms of the local consistency polytope and approximations on the entropy term by local terms (see Chapter~3 in \cite{wainwright_graphical_2008}).
 In particular, different approximations of the polytope and the entropies are made in the Bethe and Kickuchi method.
 We will discuss message passing schemes in \charef{cha:messagePassing} with a focus on exact computation of generic contractions by local contractions.

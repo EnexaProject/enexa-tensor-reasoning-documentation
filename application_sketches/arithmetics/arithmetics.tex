@@ -1,0 +1,146 @@
+\documentclass[aps,onecolumn,nofootinbib,pra]{article}
+
+\usepackage{../../article_compilation/spec_files/arxiv}
+\usepackage{amsmath,amsfonts,amssymb,amsthm,bbm,graphicx,enumerate,times}
+\usepackage{mathtools}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{hyperref}
+\hypersetup{
+    breaklinks,
+    colorlinks,
+    linkcolor=gray,
+    citecolor=gray,
+    urlcolor=gray,
+    pdftitle={The Tensor Network Approach to Efficient and Explainable AI},
+    pdfauthor={Alex Goessmann}
+}
+
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{comment}
+\usepackage{csquotes}
+
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{etoolbox}
+\usepackage{braket}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{bbm}
+\usepackage{bm}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{lipsum}
+
+\newtheorem{remark}{Remark}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+
+\input{../../macros/organization_macros.tex}
+\input{../../macros/general_macros.tex}
+\input{../../macros/tc_macros.tex}
+\input{../../macros/tikz_macros.tex}
+
+\pretolerance=500
+\tolerance=100
+\emergencystretch=10pt
+
+% Bibliography
+\DeclareUnicodeCharacter{FB01}{fi}
+\usepackage[round]{natbib}
+\usepackage{wasysym}
+
+\newcommand{\doof}[1]{\mathrm{do}\left(#1\right)}
+\newcommand{\dovariable}{D}
+\newcommand{\dovariableof}[1]{\dovariable_{#1}}
+
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+\begin{document}
+    \title{Arithmetics in basis calculus}
+
+    \maketitle
+    \date{\today}
+
+    We parametrize numbers by bits in fixed point representations, which are understood as categorical variables in a factored system representation.
+
+    \section{Modular Calculus}
+
+    We have two basic functions calculating the mod
+    \begin{align*}
+        \exfunction : \facstates \rightarrow [2]
+        \andspace \exfunctionat{\shortcatindices} = \sum_{\atomenumeratorin} \catindexof{\atomenumerator} \,\, \mathrm{mod} \,\, 2
+    \end{align*}
+    and the integer division by two
+    \begin{align*}
+        \secexfunction : \facstates \rightarrow [2]
+        \andspace \secexfunctionat{\shortcatindices} = \left\lfloor \frac{\sum_{\atomenumeratorin} \catindexof{\atomenumerator}}{2}\right\rfloor
+    \end{align*}
+
+
+    \section{Sums}
+
+    Given the bit representations of summands, we want to calculate the bit representation of their sum.
+
+    \subsection{Binary Addition}
+
+    Basis calculus of binary additon is a TT architecture, where each core performs the addition of two bits and a carry bit, producing a sum bit and a carry bit.
+
+    Addition of two numbers with $d$ bits:
+    \begin{itemize}
+        \item Bit variables of the first number: $X_{[d]}$
+        \item Bit variables of the second number: $Z_{[d]}$
+        \item Output bit variables: $Y_{[d+1]}$
+        \item Carry bit variables: $C_{[d]}$, with $C_{1} = 0$
+    \end{itemize}
+
+    The sum of any two numbers is represented by the boolean tensor
+    \begin{align*}
+        &\hypercoreat{X_{[d]},Z_{[d]},Y_{[d+1]}}
+        \coloneqq \\
+        & \quad \contractionof{\{\onehotmapofat{0}{C_0},\identityat{C_{d-1},Y_{d}}\} \cup
+            \bigcup_{k\in[d]}\{
+            \bencodingofat{\exfunction}{Y_{k},X_{k},Z_{k},C_{k-1}},
+            \bencodingofat{\secexfunction}{C_{k},X_{k},Z_{k},C_{k-1}} \}
+        }{X_{[d]},Z_{[d]},Y_{[d+1]}} \, ,
+    \end{align*}
+    where $Y_k$ and $C_k$ are the head variables of the basis encodings to $\exfunction$ and $\secexfunction$.
+    If any only if for given indices $x_{[d]},z_{[d]},y_{[d+1]}$ we have $\hypercoreat{X_{[d]}=x_{[d]},Z_{[d]}=z_{[d]},Y_{[d+1]}=y_{[d+1]}}=1$, then the by the indices $y_{[d+1]}$ represented number is the sum of the by $x_{[d]},z_{[d]}$ represented numbers.
+
+    \subsection{Generic construction}
+
+    In general, when adding more than two variables, the carry bits need to be extended to a categorical variable with more than two states.
+    Let $X^i_{[d]}$ be the $d$ bits of the $i$th number, and let $X^{[n]}_{[d]}$ be all the bit variables (i.e. $n\cdot d$ many) of the $n$ numbers.
+    Then the same construction can be done as above, with cores
+    \begin{align*}
+        \bencodingofat{\exfunction}{Y_{k},X^{[n]}_{k},C_{k-1}},
+        \bencodingofat{\secexfunction}{C_{k},X^{[n]}_{k},Z_{k},C_{k-1}}
+    \end{align*}
+    Note that $C_k$ now takes values in $m_k$ where
+    \begin{align*}
+        m_k = \left\lfloor n \cdot \frac{m_{k-1}}{2}\right\rfloor \, .
+    \end{align*}
+    Further, the result might have more than $d+1$ bits, so we need further basis encoding cores to $\exfunction$ and $\secexfunction$.
+
+    \section{Products}
+
+    Products of numbers are decomposable into sums involving two bit variables of the factors, that is
+    \begin{align*}
+        \sum_{k,\tilde{k} \in [d]} 2^{k+\tilde{k}} \cdot (X_k \land Z_{\tilde{k}}) \, .
+    \end{align*}
+    Reordering the sum, we obtain
+    \begin{align*}
+       \sum_{r\in[2d-1]} 2^{r} \left(\sum_{k,\tilde{k} \in [d] \wcols k +\tilde{k}=r}  X_k \land Z_{\tilde{k}} \right) \, .
+    \end{align*}
+    From this, it is obvious that the calculation can be performed in basis calculus with basis encodings of $\land,\exfunction,\secexfunction$.
+    The head variables of the $\land$ encoding are used as the summand variabled in $\exfunction$ (output: bit of the product) and $\secexfunction$ (output: carry bit).
+
+\end{document}
