@@ -3,9 +3,9 @@
 When drawing data independently from a random distribution, we are limited by random effects.
 We in this chapter derive guarantees, that the learning methods introduced in \charef{cha:probReasoning} and \charef{cha:networkReasoning} are robust against such effects.
 
-\sect{Fluctuations of Random Data}
+\sect{Preparations}
 
-A random tensor is a random element of a tensor space $\facspace$, drawn from a probability distribution on $\facspace.$
+A random tensor is a random element of a tensor space $\facspace$, drawn from a probability distribution on $\facspace$.
 In contrast to the discrete distributions investigated previously in this work, the random tensors are in most generality continuous distributions. % However, when drawing data they are 
 
 \subsect{Fluctuation of the Empirical Distribution}
@@ -76,14 +76,44 @@ Since the mean parameter depends linearly on the corresponding distribution, we 
 
 
 % Convergence by Law of Large Numbers and issues
-For each $\selindexin$ the law of large numbers guarantees that $\genmeanat{\indexedselvariable}$ converges almost surely against $\genmeanat{\indexedselvariable}$ when $\datanum\rightarrow\infty$.
+For each $\selindexin$ the law of large numbers guarantees that $\datameanat{\indexedselvariable}$ converges almost surely against $\genmeanat{\indexedselvariable}$ when $\datanum\rightarrow\infty$.
 To utilize these we need to approach the following issues:
 \begin{itemize}
-    \item We need non-asymptotic convergence bounds, since one has access to finite data when learning
-    \item The convergence has to happen uniformly for all $\selindexin$.
-    \item Guarantees on the result of an estimated model are more accessible when provided for quantities like the canonical parameter and KL-divergences of the learning result.
+    \item \textbf{Non-asymptotic bounds:} We need non-asymptotic convergence bounds, since one has access to finite data when learning
+    \item \textbf{Uniform convergence:} The convergence has to happen uniformly for all $\selindexin$.
+    \item \textbf{Interpretability:} Guarantees on the result of an estimated model are more accessible when provided for quantities like the canonical parameter and KL-divergences of the learning result.
     Those, however, depend nonlinearly on $\datameanat{\selvariable}$ and therefore require further investigation.
 \end{itemize}
+
+
+\subsect{Face Recovery}
+
+\begin{lemma}
+    Let $\dataset$ be drawn from a distribution $\gendistribution$ with mean parameter $\genmeanat{\selvariable}$ and let us denote by $\genfaceset$ the unique face of $\genmeanset$, such that $\genmeanat{\selvariable}\in\sbinteriorof{\genfaceset}$.
+    We always have $\datameanat{\selvariable}\in\genfaceset$.
+    If and only if $\datameanat{\selvariable}\in\sbinteriorof{\genfaceset}$, then the support of $\stanexpdistof{\datacanparam}$ coincides with the face measure of $\genfaceset$.%support of the maximum entropy distribution reproducing $\genmeanat{\selvariable}$.
+\end{lemma}
+\begin{proof}
+    Since $\dataset$ is drawn from $\gendistribution$, the support of $\empdistribution$ is contained in the support of $\gendistribution$.
+    Thus, the support of $\empdistribution$ is contained in the support of the face measure to $\genfaceset$ and $\datameanat{\selvariable}\in\genfaceset$.
+    The second claim follows from the fact, that the maximum entropy distribution reproducing $\datacanparam$ is positive with respect to the face measure of the face containing $\datameanat{\selvariable}$ in its relative interior.
+\end{proof}
+
+% Interpretation
+To find probabilistic guarantees on the recovery of the support of the generating distribution, we thus need to show probabilistic bounds on the event $\datameanat{\selvariable}\in\sbinteriorof{\genfaceset}$.
+We call this event \emph{face recovery}.
+
+\subsect{Mode Recovery}
+
+Another interesting recovery scenario is whether the mode of the approximating distribution coincides with the mode of the generating distribution.
+This event is called \emph{mode recovery}.
+
+Let $\estcanparam$ be the estimator of the canonical parameter $\gencanparam$, then the mode set of both coincide, if and only if they are elements in the same max cone (see \secref{sec:modeCones}), i.e.
+\begin{align*}
+    \genmaxconeof{\estcanparam} = \genmaxconeof{\gencanparam} \, .
+\end{align*}
+Equivalently, this is the case if $\genmeanat{\selvariable}$ and $\datameanat{\selvariable}$ are elements of the image of the same normal cone under the forward mapping.
+
 
 \subsect{Noise Tensor and its Width}
 
@@ -101,7 +131,7 @@ Let us first define the fluctuations of the empirical mean parameter, when drawi
 \end{definition}
 
 % Minterm
-The fluctuation of the empirical distribution around the generating distribution corresponds in this notation with the minterm exponential family, taking the identity as statistics.
+The fluctuation of the empirical distribution around the generating distribution corresponds in this notation with the universal exponential family, taking the identity as statistics.
 % Appearances
 Besides this, fluctuation tensors appears in \MarkovLogicNetworks{} as fluctuations of random mean parameters and in proposal distributions as fluctuation of random energy tensor.
 We will discuss these examples in the following sections.
@@ -145,12 +175,12 @@ Atomic norms induce metrics, which are widths (see \cite{chandrasekaran_convex_2
 
 Examples of atomic norms are:
 \begin{itemize}
-    \item Euclidean distance $\ell_2$, when $\Gamma=\subsphere$
-    \item Supremum distance $\ell_{\infty}$, when $\Gamma=\{\lambda\cdot \onehotmapofat{\selindex}{\selvariable} \wcols \lambda\in\{-1,+1\}\ncond \selindexin\}$
+    \item Euclidean distance $\ell_2$, when $\Gamma=\subsphere$.
+    \item Supremum distance $\ell_{\infty}$, when $\Gamma=\{\lambda\cdot \onehotmapofat{\selindex}{\selvariable} \wcols \lambda\in\{-1,+1\}\ncond \selindexin\}$.
 \end{itemize}
 
 
-\sect{Error Bounds based on the Noise Width}
+\sect{Generic Guarantees based on Noise Widths}
 
 We now derive error bounds for parameter estimation and structure learning, as introduced in \charef{cha:networkReasoning}.
 When combined with probabilistic bounds on the noise width, they are probabilistic success guarantees.
@@ -358,13 +388,11 @@ When comparing the gap with the noise width, we get the following guarantee.
 
 \subsect{Mode Recovery}
 
-Let us now consider a more general problem than in the section above, namely the estimation of the modes of a distribution.
-Let $\estcanparam$ be the estimator of the canonical parameter $\gencanparam$, then the mode set of both coincide, if and only if they are elements in the same max cone, i.e.
-\begin{align*}
-    \genmaxconeof{\estcanparam} = \genmaxconeof{\gencanparam} \, .
-\end{align*}
+%Let us now consider a more general problem than in the section above, namely the estimation of the modes of a distribution.
 
-To ensure, that this is the case, we generalize the gap at $\gencanparam$ as the minimal distance to other cones and bound uniform concentration events implying that the distance between $\estcanparam$ and $\gencanparam$ is smaller than the gap.
+
+Let us now consider the more general mode recovery problem.
+To find a probabilistic bound on the mode recovery event, we generalize the gap at $\gencanparam$ as the minimal distance to other cones and bound uniform concentration events implying that the distance between $\estcanparam$ and $\gencanparam$ is smaller than the gap.
 
 \begin{definition}
     Let $\canmetricof{\cdot}{\cdot}$ be a metric on $\parspace$, then the generalized gap of $\canparam\in\parspace$ is defined as
@@ -373,7 +401,7 @@ To ensure, that this is the case, we generalize the gap at $\gencanparam$ as the
     \end{align*}
 \end{definition}
 
-
+Let us now show, that the mode recovery event holds, whenever the width of the atom set $\Gamma$ is smaller than the generalized gap.
 
 \begin{theorem}
     Let $\Gamma\subset\parspace$ induce an atomic norm.
@@ -398,15 +426,15 @@ The guarantee on structure learning is the special case, where $\Gamma=\{\lambda
     = \frac{1}{2} \max_{\selindex\notin\argmax_{\selindex}\canparamat{\indexedselvariable}} \left| \canparamat{\indexedselvariable} - \max_{\selindex}\canparamat{\indexedselvariable} \right| \, .
 \end{align*}
 
-%This is a slight abuse of the special gap definition above.
 
 
 
-\sect{Fluctuations in \HybridLogicNetworks{}}
+
+\sect{Probabilistic Guarantees for \HybridLogicNetworks{}}
 
 %\red{In case of logical formulas being statistics, the coordiantes of the mean parameter are satisfaction rates to the formulas.}
 
-For \HybridLogicNetworks{} we have statistics consistent of boolean statistics $\enumformula$, which are logical formulas.
+For \HybridLogicNetworks{} we have statistics consistent of boolean statistics $\enumformula$, which can be interpreted as formulas in propositional logics.
 In this case the marginal distributions of the coordinates of $\sstatnoise$ are scaled and centered binomials, which we show now.
 
 \begin{theorem}
@@ -466,10 +494,9 @@ The fluctuation of this random tensor is
 \end{align*}
 and coincides with $\mlnnoise$.
 
-\subsect{Minterm Exponential Family} % Interesting, since here is the connection with probability tensors: Forwarding of each random datapoint by the one hot encoding to get a multinomial random tensor.
+\subsect{Universal Exponential Family} % Interesting, since here is the connection with probability tensors: Forwarding of each random datapoint by the one hot encoding to get a multinomial random tensor.
 
-
-In case of the minterm exponential family, we have $\sstat=\identityat{\shortcatvariables,\selvariable}$ and the noise tensor is
+In case of the universal exponential family, we have $\sstat=\identityat{\shortcatvariables,\selvariable}$ and the noise tensor is
 \begin{align*}
     \mintermnoise = \empdistribution - \gendistribution \, .
 \end{align*}
@@ -502,7 +529,7 @@ When drawing $\data$ independently from $\gendistribution$ we denote
     \end{align*}
 \end{proof}
 
-The noise tensor characterization by multinomial distributions, which holds for minterm statistics, is a more detailed characterization compared to the characterization of its marginals by binomial distribution in \theref{the:noiseTensorBinomial}, which holds for generic statistics $\hlnstat$.
+The noise tensor characterization by multinomial distributions, which holds for universal statistics, is a more detailed characterization compared to the characterization of its marginals by binomial distribution in \theref{the:noiseTensorBinomial}, which holds for generic statistics $\hlnstat$.
 
 \subsect{Guarantees for the Mode of the Proposal Distribution}
 
@@ -546,11 +573,11 @@ Let us now derive probabilistic guarantees, that the mode of the proposal distri
 \subsect{Guarantees for Unconstrained Parameter Estimation}
 
 %
-We here state the sphere bounds and combine with \theref{the:detGuaranteeUnconstrained}.
+We here use the sphere bounds and combine with \theref{the:detGuaranteeUnconstrained} to derive a probabilistic guarantee for unconstrained parameter estimation.
 
 \begin{theorem}
     For any $\failprob\in(0,1)$ we have the following with probability at least $1-\failprob$.
-    Let $\hat{\canparam}$ and $\precision>0$, then
+    Let $\datacanparam$ be the estimated canonical parameter, then we have for any $\precision>0$
     \[ \absof{\centropyof{\gendistribution}{\mlnexpdistof{\datacanparam}} - \centropyof{\empdistribution}{\mlnexpdistof{\datacanparam}}} \leq \tau \cdot \normof{\datacanparam} \]
     provided that
     \[ \datanum \geq \frac{\contraction{\genmean}-\contraction{(\genmean)^2}}{\failprob \precision^2} \, . \]
@@ -559,12 +586,45 @@ We here state the sphere bounds and combine with \theref{the:detGuaranteeUnconst
     The claim follows from the deterministic guarantee \theref{the:detGuaranteeUnconstrained} with the probabilistic width bound \theref{the:sphereBoundVariance} to be shown in the next section.
 \end{proof}
 
+\subsect{Face Recovery in \HybridLogicNetworks{}}
 
+\begin{theorem}
+    Let $\hlnstat$ be a statistic such that $\meansetof{\hlnstat,\trivbm}$ is a cube-like polytope (see \defref{def:elementaryRealizableMeanParams}).
+    Let $\dataset$ be drawn from a distribution $\probof{\hlnstat,\genhybridparam}$ and let
+    \begin{align*}
+        \maxgap^* \coloneqq \min
+        \left\{\genmeanat{\indexedselvariable} \wcols \selindex\notin\hardlegset^* \right\} \cup   \left\{(1-\genmeanat{\indexedselvariable}) \wcols \selindex\notin\hardlegset^* \right\} \, .
+    \end{align*}
+    For any $\failprob\in(0,1)$ we have the following with probability at least $1-\failprob$ that
+    \begin{align*}
+        \hardlegset^{\datamean} = \hardlegset^* \, ,
+    \end{align*}
+    provided that
+    \begin{align*}
+        \datanum \geq C \frac{(1+\lnof{\seldim})^2 \cdot (1-\lnof{1-\failprob}^2}{(\maxgap^*)^2} \, ,
+    \end{align*}
+    where $C$ is a universal constant.
+\end{theorem}
+\begin{proof}
+    We notice that there is a $\ell_\infty$ ball of radius $\maxgap^*$ around $\genmean$ contained in the face, in which interior $\genmean$ lies.
+    It therefore suffices to show, that within the claimed probability the width of the noise tensor with respect to the basis vectors is smaller than $\maxgap^*$.
+    To this end, we apply the sub-Gaussian norm bound of \theref{the:basisTensorWidthBound}, which states that
+    \begin{align*}
+        \sgnormof{\widthwrtof{\selbasislong}{\mlnnoise}} \leq C_1 \frac{\sqrt{1+\lnof{\seldim}}}{\sqrt{\datanum}} \, .
+    \end{align*}
+    Thus, we have for any $t>0$ (see \lemref{lem:subGaussianTailBound})
+    \begin{align*}
+        \probat{\widthwrtof{\selbasislong}{\mlnnoise} \geq C_1 \frac{\sqrt{1+\lnof{\seldim}}}{\sqrt{\datanum}} \cdot t} \leq \expof{1-t} \, .
+    \end{align*}
+    We choose $t=1-\lnof{1-\failprob}$ and notice, that the claimed bound holds with the universal constant $C=(C_1)^2$, since in this case
+    \begin{align*}
+        C_1 \frac{\sqrt{1+\lnof{\seldim}}}{\sqrt{\datanum}} \cdot (1-\lnof{1-\failprob}) \leq \maxgap^* \, .
+    \end{align*}
+\end{proof}
 
+\sect{Width Bounds for \HybridLogicNetworks{}}\label{sec:widthBounds}
 
-\sect{Width Bounds for the Noise Tensor}\label{sec:widthBounds}
-
-We here provide width bounds on the noise tensors $\mlnnoise$ to logic networks, which coordinates have marginal distributions by Binomials, as shown in \theref{the:noiseTensorBinomial}.
+We here provide width bounds on the noise tensors $\mlnnoise$ to \HybridLogicNetworks{}, which coordinates have marginal distributions by Binomials, as shown in \theref{the:noiseTensorBinomial}.
 All bounds hold for arbitrary statistics $\hlnstat$ of propositional formulas and number $\datanum$ of data and the appearing constants are universal, that is independent of particular choices of $\hlnstat$ and $\datanum$.
 
 \subsect{Basis Vectors}
@@ -574,24 +634,43 @@ We first introduce the sub-Gaussian Norm and show how we can exploit it to state
 \begin{definition}[Sub-Gaussian Norm, see Def.~2.5.6 in \cite{vershynin_high-dimensional_2018}]
     The sub-Gaussian norm of a random variable $X$ is defined as
     \begin{align*}
-        \sgnormof{X} = \inf \left\{ C > 0 \, : \expectationof{\expof{\frac{X^2}{C^2}}} \leq 2 \right\} \, .
+        \sgnormof{X} = \inf \left\{ C > 0 \wcols \expectationof{\expof{\frac{X^2}{C^2}}} \leq 2 \right\} \, .
     \end{align*}
 \end{definition}
 
-The moment bound used to define the sub-Gaussian norm can then be combined with Markovs inequality to state concentration bounds.
-% Relate with the contraction formalism, but not needed?
-Before showing the utility of these norm, let us first connect with the contraction formalism of this work.
-When $X$ is a random coordinate of $\hypercoreat{\shortcatvariables}$, selected by a probability tensor $\probat{\shortcatvariables}$ we have
-\begin{align*}
-    \expectationof{\expof{\frac{X^2}{C^2}}}
-    = \contraction{\probat{\shortcatvariables},\expof{\frac{1}{C^2}\cdot\hypercoreat{\shortcatvariables}}}
-\end{align*}
-and thus
-\begin{align*}
-    \sgnormof{X} = \inf \left\{ C > 0 \, : \contraction{\probat{\shortcatvariables},\expof{\frac{1}{C^2}\cdot\hypercoreat{\shortcatvariables}}} \leq 2 \right\} \, .
-\end{align*}
+The moment bound used to define the sub-Gaussian norm can then be combined with the Markov inequality to state concentration bounds.
 
-We now show a sub-Gaussian norm bound on the coordinates of the noise tensor.
+\begin{lemma}
+    \label{lem:subGaussianTailBound}
+    For a random variable $X$ with finite sub-Gaussian norm $\sgnormof{X}$ we have for any $t>0$
+    \begin{align*}
+        \probat{\absof{X} > \sgnormof{X} \cdot t} \leq \expof{1-t^2} \, .
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    By the Markov inequality we have for any $t>0$ and $C>\sgnormof{X}$
+    \begin{align*}
+        \probat{\absof{X} > C \cdot t}
+        & = \probat{\expof{\frac{X^2}{C^2}} > \expof{t^2}} \\
+        & \leq \frac{\expectationof{\expof{\frac{X^2}{C^2}}}}{\expof{t^2}} \leq 2\cdot\expof{-t^2} = \expof{1-t^2} \, .
+    \end{align*}
+    The claim follows by taking the limit $C\searrow\sgnormof{X}$.
+\end{proof}
+
+% CONFUSING: \hypercore would be the vector of values, \prob the probabilities to a given variable X.
+%% Relate with the contraction formalism, but not needed?
+%Before showing the utility of these norm, let us first connect with the contraction formalism of this work.
+%When $X$ is a random coordinate of $\hypercoreat{\shortcatvariables}$, selected by a probability tensor $\probat{\shortcatvariables}$ we have
+%\begin{align*}
+%    \expectationof{\expof{\frac{X^2}{C^2}}}
+%    = \contraction{\probat{\shortcatvariables},\expof{\frac{1}{C^2}\cdot\hypercoreat{\shortcatvariables}}}
+%\end{align*}
+%and thus
+%\begin{align*}
+%    \sgnormof{X} = \inf \left\{ C > 0 \wcols \contraction{\probat{\shortcatvariables},\expof{\frac{1}{C^2}\cdot\hypercoreat{\shortcatvariables}}} \leq 2 \right\} \, .
+%\end{align*}
+
+We now show a sub-Gaussian norm bound on the coordinates of the noise tensor in case of \HybridLogicNetworks{}.
 
 \begin{lemma}
     \label{lem:mlnMeanSubGaussianCoordinates}
@@ -713,10 +792,11 @@ To show probabilistic width bounds with respect to the sphere, we therefore appl
 
 
 % Multinomial
-For the minterm family where $\hlnstat = \naivestat$ the noise tensor is a rescaled and centered multinomial.
+For the universal exponential family where $\hlnstat = \naivestat$ the noise tensor is a rescaled and centered multinomial.
 In that case, the bound of \theref{the:sphereBoundVariance} can be simplified by
 \begin{align*}
-    \contraction{\meanparamat{\selvariable},(\onesat{\selvariable}-\meanparamat{\selvariable})} = 1- \contraction{\meanparamat{\selvariable}^2} \,.
+    \contraction{\meanparamat{\selvariable},(\onesat{\selvariable}-\meanparamat{\selvariable})}
+    = 1- \contraction{\meanparamat{\selvariable}^2} \,.
 \end{align*}
 
 
