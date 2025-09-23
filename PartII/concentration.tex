@@ -12,7 +12,9 @@ In contrast to the discrete distributions investigated previously in this work, 
 
 % Random one hot encodings
 When drawing random states $\datapoint\in\facstates$ by a distribution $\gendistribution$, we use the one-hot encoding to forward each random state to the random tensor
-\[ \onehotmapofat{\datapoint}{\shortcatvariables} \, . \]
+\begin{align*}
+    \onehotmapofat{\datapoint}{\shortcatvariables} \, .
+\end{align*}
 The expectation of this random tensor is
 \begin{align*}
     \expectationof{\onehotmapof{\datapoint}}
@@ -21,7 +23,9 @@ The expectation of this random tensor is
 \end{align*}
 
 The empirical distribution is then the average of independent random one-hot encodings, namely the random tensor
-\[ \empdistribution = \frac{1}{\datanum} \sum_{\datindexin}  \onehotmapofat{\datapoint}{\shortcatvariables} \, . \]
+\begin{align*}
+    \empdistributionwith = \frac{1}{\datanum} \sum_{\datindexin}  \onehotmapofat{\datapoint}{\shortcatvariables} \, .
+\end{align*}
 To avoid confusion let us strengthen, that in this chapter we interpret $\empdistribution$ as a random tensor taking values in $\facspace$, whereas each supported value of $\empdistribution$ is an empirical distribution taking values in $\facstates$.
 The forwarding of $\facstates$ under the one-hot encoding is a multinomial random variable, see \theref{the:multinomialEmpdistFluctuation}.
 
@@ -116,20 +120,44 @@ Such quantities are called widths.
 \begin{definition}
     \label{def:width}
     Given a set $\canparamhypothesis\subset\facspace$ and $\sstatnoise$ a random tensor taking values in $\facspace$ we define the width as the random variable
-    \[ \widthwrtof{\canparamhypothesis}{\sstatnoise} = \sup_{\canparamin} \absof{\contraction{\canparam,\sstatnoise}} \, . \]
+    \begin{align*}
+        \widthwrtof{\canparamhypothesis}{\sstatnoise} = \sup_{\canparamin} \absof{\contraction{\canparam,\sstatnoise}} \, .
+    \end{align*}
 \end{definition}
 
 % Uniform concentration events
 Bounds on the widths are also called uniform concentration bounds \cite{goesmann_uniform_2021} and generic probabilistic bounds will be provided in \secref{sec:widthBounds}.
+
+Atomic norms induce metrics, which are widths (see \cite{chandrasekaran_convex_2012} and Chapter~5 in \cite{goesmann_uniform_2021}).
+
+\begin{definition}
+    Given a set $\Gamma\subset\parspace$ such that an open neighborhood of the origin is contained in $\convhullof{\Gamma}$.
+    Then
+    \begin{align*}
+        \|\canparam\|_{\Gamma} = \widthwrtof{\Gamma}{\canparam}
+    \end{align*}
+    is the dual atomic norm and
+    \begin{align*}
+        \canmetricwrtof{\Gamma}{\canparam}{\seccanparam} = \widthwrtof{\Gamma}{\canparam-\seccanparam}
+    \end{align*}
+    is the dual atomic distance to $\Gamma$.
+\end{definition}
+
+Examples of atomic norms are:
+\begin{itemize}
+    \item Euclidean distance $\ell_2$, when $\Gamma=\subsphere$
+    \item Supremum distance $\ell_{\infty}$, when $\Gamma=\{\lambda\cdot \onehotmapofat{\selindex}{\selvariable} \wcols \lambda\in\{-1,+1\}\ncond \selindexin\}$
+\end{itemize}
+
 
 \sect{Error Bounds based on the Noise Width}
 
 We now derive error bounds for parameter estimation and structure learning, as introduced in \charef{cha:networkReasoning}.
 When combined with probabilistic bounds on the noise width, they are probabilistic success guarantees.
 
-\subsect{Parameter Estimation}
+\subsect{Parameter Estimation in Exponential Families}
 
-\red{We in this section always assume, that $\empdistribution$ is representable by the base measure $\basemeasure$ of the respective exponential families.}
+%\red{We in this section always assume, that $\empdistribution$ is representable by the base measure $\basemeasure$ of the respective exponential families.}
 
 Parameter Estimation is the M-projection of the empirical distribution onto an exponential family.
 In \charef{cha:probReasoning} we have characterized those by the backward mapping acting on the mean parameter.
@@ -152,7 +180,7 @@ To build intuition on the concentration we recall the expression of the backward
 \end{align*}
 where $\meanrepprob$ is any distribution reproducing the mean parameter.
 We want to compare the solutions $\backwardmapof{\datamean}$ and $\backwardmapof{\genmean}$, in which case $\meanrepprob$ can be chosen as $\empdistribution$ and $\gendistribution$.
-It is common to call the objectives $\centropyof{\empdistribution}{\stanexpdistof{\canparam}}$ and $\centropyof{\gendistribution}{\stanexpdistof{\canparam}}$ empirical and expected risk \cite{shalev-schwartz_shai_understanding_2014}
+It is common to call the objectives $\centropyof{\empdistribution}{\stanexpdistof{\canparam}}$ and $\centropyof{\gendistribution}{\stanexpdistof{\canparam}}$ empirical and expected risk \cite{shalev-schwartz_shai_understanding_2014}.
 Since the empirical risk has a linear dependence on $\datamean$, we have at each $\canparam$
 \begin{align*}
     \expectationof{\centropyof{\empdistribution}{\stanexpdistof{\canparam}}}
@@ -205,7 +233,11 @@ When the generating distribution is in the hypothesis, we can further show the f
 
 \begin{theorem}
     Let us assume that for $\gencanparam\in\canparamhypothesis$ we have $\gendistribution=\stanexpdistof{\gencanparam}$. %and that $\partitionfunctionof{\canparam}$ is constant among $\canparamin$.
-    Then for any solution $\datacanparam$ of the empirical problem we have
+    Then for any solution $\datacanparam$ of the empirical problem
+    \begin{align*}
+        \argmin_{\canparamin} \centropyof{\empdistribution}{\stanexpdistof{\canparam}} \,
+    \end{align*}
+    we have
     \begin{align}
         \kldivof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\datacanparam}} \leq 2\widthwrtof{\canparamhypothesis}{\sstatnoise} \, .
     \end{align}
@@ -228,14 +260,13 @@ When the generating distribution is in the hypothesis, we can further show the f
     where we expanded the KL-divergence as a difference of cross entropies.
     We apply \lemref{lem:centropyWidthCharacterization} to estimate the terms in brackets and get
     \begin{align*}
-       & \left(\centropyof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\datacanparam}} - \centropyof{\empdistribution}{\stanexpdistof{\datacanparam}}\right)
+        & \left(\centropyof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\datacanparam}} - \centropyof{\empdistribution}{\stanexpdistof{\datacanparam}}\right)
         - \left(\centropyof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\gencanparam}} - \centropyof{\empdistribution}{\stanexpdistof{\gencanparam}}\right) \\
-       & \quad\quad \leq 2 \widthwrtof{\canparamhypothesis}{\sstatnoise} \, .
+        & \quad\quad \leq 2 \widthwrtof{\canparamhypothesis}{\sstatnoise} \, .
     \end{align*}
     Combined with the above inequality we arrive at
     \begin{align*}
-        \kldivof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\datacanparam}} \leq 2\widthwrtof{\canparamhypothesis}{\sstatnoise} \, .
-        \qedhere
+        \kldivof{\stanexpdistof{\gencanparam}}{\stanexpdistof{\datacanparam}} \leq 2\widthwrtof{\canparamhypothesis}{\sstatnoise} \, . &  \qedhere
     \end{align*}
 \end{proof}
 
@@ -249,7 +280,7 @@ When restricting to the sphere $\subsphere\subset\parspace$ we have
 We apply this insight to state the following guarantee for unconstrained parameter estimation.
 \begin{theorem}
     \label{the:detGuaranteeUnconstrained}
-    Let $\canparam$
+    For any $\datacanparam\in\parspace$ we have
     \begin{align*}
         \absof{\centropyof{\empdistribution}{\stanexpdistof{\datacanparam}}-\centropyof{\gendistribution}{\stanexpdistof{\datacanparam}}}
         \leq \widthwrtof{\subsphere}{\mlnnoise} \cdot \normof{\datacanparam} \, .
@@ -309,7 +340,7 @@ When comparing the gap with the noise width, we get the following guarantee.
     \begin{align*}
         \datameanat{\selvariable=\selindex^{\datamap}} \geq \datameanat{\selvariable=\selindex^{*}} \, .
     \end{align*}
-    Comparing both intequalities we get
+    Comparing both inequalities we get
     \begin{align*}
         \left(\datameanat{\selvariable=\selindex^{\datamap}} - \genmeanat{\selvariable=\selindex^{\datamap}}\right)
         + \left( - \datameanat{\selvariable=\selindex^{*}} + \genmeanat{\selvariable=\selindex^{*}} \right)
@@ -342,26 +373,6 @@ To ensure, that this is the case, we generalize the gap at $\gencanparam$ as the
     \end{align*}
 \end{definition}
 
-Atomic norms induce metrics, which are widths (see \cite{chandrasekaran_convex_2012} and Chapter~5 in \cite{goesmann_uniform_2021}).
-
-\begin{definition}
-    Given a set $\Gamma\subset\parspace$ such that an open neighborhood of the origin is contained in $\convhullof{\Gamma}$.
-    Then
-    \begin{align*}
-        \|\canparam\|_{\Gamma} = \widthwrtof{\Gamma}{\canparam}
-    \end{align*}
-    is the dual atomic norm and
-    \begin{align*}
-        \canmetricwrtof{\Gamma}{\canparam}{\seccanparam} = \widthwrtof{\Gamma}{\canparam-\seccanparam}
-    \end{align*}
-    is the dual atomic distance to $\Gamma$.
-\end{definition}
-
-Examples of atomic norms are:
-\begin{itemize}
-    \item Euclidean distance $\ell_2$, when $\Gamma=\subsphere$
-    \item Supremum distance $\ell_{\infty}$, when $\Gamma=\{\lambda\cdot \onehotmapofat{\selindex}{\selvariable} \wcols \lambda\in\{-1,+1\}\ncond \selindexin\}$
-\end{itemize}
 
 
 \begin{theorem}
@@ -383,8 +394,8 @@ Examples of atomic norms are:
 
 The guarantee on structure learning is the special case, where $\Gamma=\{\lambda\cdot \onehotmapofat{\selindex}{\selvariable} \wcols \lambda\in\{-1,+1\}\ncond \selindexin\}$ and
 \begin{align*}
-     \maxgapofat{\canmetricwrt{\Gamma}}{\canparam}
-     = \frac{1}{2} \max_{\selindex\notin\argmax_{\selindex}\canparamat{\indexedselvariable}} \left| \canparamat{\indexedselvariable} - \max_{\selindex}\canparamat{\indexedselvariable} \right| \, .
+    \maxgapofat{\canmetricwrt{\Gamma}}{\canparam}
+    = \frac{1}{2} \max_{\selindex\notin\argmax_{\selindex}\canparamat{\indexedselvariable}} \left| \canparamat{\indexedselvariable} - \max_{\selindex}\canparamat{\indexedselvariable} \right| \, .
 \end{align*}
 
 %This is a slight abuse of the special gap definition above.
@@ -393,7 +404,7 @@ The guarantee on structure learning is the special case, where $\Gamma=\{\lambda
 
 \sect{Fluctuations in \HybridLogicNetworks{}}
 
-\red{In case of logical formulas being statistics, the coordiantes of the mean parameter are satisfaction rates to the formulas.}
+%\red{In case of logical formulas being statistics, the coordiantes of the mean parameter are satisfaction rates to the formulas.}
 
 For \HybridLogicNetworks{} we have statistics consistent of boolean statistics $\enumformula$, which are logical formulas.
 In this case the marginal distributions of the coordinates of $\sstatnoise$ are scaled and centered binomials, which we show now.
@@ -413,9 +424,11 @@ In this case the marginal distributions of the coordinates of $\sstatnoise$ are 
     \[ \contraction{\sstatcoordinate, \onehotmapofat{\datapoint}{\shortcatvariables}} \]
     is a random variable taking values in $\{0,1\}$.
     The variable therefore follows a Bernoulli distribution with mean parameter
-    \[ \meanparamat{\indexedselvariable}
-    = \expectationof{\contraction{\sstatcoordinate, \onehotmapofat{\datapoint}{\shortcatvariables}}}
-    = \contraction{\sstatcoordinate, \gendistribution}  \, \qedhere\]
+    \begin{align*}
+        \meanparamat{\indexedselvariable}
+        = \expectationof{\contraction{\sstatcoordinate, \onehotmapofat{\datapoint}{\shortcatvariables}}}
+        = \contraction{\sstatcoordinate, \gendistribution}  \, & \qedhere
+    \end{align*}
 \end{proof}
 
 The mean parameter of the M-projection of the empirical distribution on the family of \MarkovLogicNetworks{} with statistic $\fselectionmap$ is the random tensor
@@ -491,7 +504,7 @@ When drawing $\data$ independently from $\gendistribution$ we denote
 
 The noise tensor characterization by multinomial distributions, which holds for minterm statistics, is a more detailed characterization compared to the characterization of its marginals by binomial distribution in \theref{the:noiseTensorBinomial}, which holds for generic statistics $\hlnstat$.
 
-\subsect{Guarantees for Mode of the Proposal Distribution}
+\subsect{Guarantees for the Mode of the Proposal Distribution}
 
 Let us now derive probabilistic guarantees, that the mode of the proposal distribution at the empirical and the generating distribution are equal.
 
@@ -517,7 +530,7 @@ Let us now derive probabilistic guarantees, that the mode of the proposal distri
 \begin{example}[Gap of a MLNs with single formulas]
     Let there be the MLN of a maxterm $\formula$ with $\atomorder$ variables, and let $\formulaset$ be the maxterm selecting tensor, then
     \[ \maxgapof{
-    \energytensorof{(\formulaset, \expdistof{(\{\formula\},\singlecanparam)} - \normalizationof{\ones}{\shortcatvariables} )}
+        \energytensorof{(\formulaset, \expdistof{(\{\formula\},\singlecanparam)} - \normalizationof{\ones}{\shortcatvariables} )}
     } = \frac{1}{2^{\atomorder}-1 + \expof{-\singlecanparam}}  \]
     If $\singlecanparam>0$ we have an exponentially small gap.
     Thus, for the above Lemma to apply, the width needs to be exponentially in $\atomorder$ small.
@@ -533,7 +546,7 @@ Let us now derive probabilistic guarantees, that the mode of the proposal distri
 \subsect{Guarantees for Unconstrained Parameter Estimation}
 
 %
-We here the sphere bounds and combine with \theref{the:detGuaranteeUnconstrained}.
+We here state the sphere bounds and combine with \theref{the:detGuaranteeUnconstrained}.
 
 \begin{theorem}
     For any $\failprob\in(0,1)$ we have the following with probability at least $1-\failprob$.
@@ -634,8 +647,8 @@ Based on this norm bound, we now show a bound on the sub-Gaussian norm of the wi
         \leq C \left(\max_{\selindexin}\sgnormof{\mlnnoiseat{\indexedselvariable}}\right) \sqrt{1 + \lnof{\seldim}} \, .
     \end{align*}
     We now apply \lemref{lem:mlnMeanSubGaussianCoordinates} and get with $C_1=C\cdot C_0$ that
-        \begin{align*}
-        \sgnormof{\widthatof{\selbasisshort}{\mlnnoise}} \leq C_1 \sqrt{\frac{1+\lnof{\seldim}}{\datanum}}  \, .
+    \begin{align*}
+        \sgnormof{\widthatof{\selbasisshort}{\mlnnoise}} \leq C_1 \sqrt{\frac{1+\lnof{\seldim}}{\datanum}}  \, . & \qedhere
     \end{align*}
 \end{proof}
 
@@ -694,7 +707,7 @@ To show probabilistic width bounds with respect to the sphere, we therefore appl
     Thus, we have
     \begin{align}
         \probat{\normof{\frac{\noisetensor-\expectationof{\noisetensor}}{\datanum}} \leq \precision}
-        = 1 - \probat{\normof{\frac{\noisetensor-\expectationof{\noisetensor}}{\datanum}} > \precision}  \geq 1-\failprob \, .
+        = 1 - \probat{\normof{\frac{\noisetensor-\expectationof{\noisetensor}}{\datanum}} > \precision}  \geq 1-\failprob \, . & \qedhere
     \end{align}
 \end{proof}
 
