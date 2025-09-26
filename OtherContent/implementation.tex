@@ -1,9 +1,9 @@
-\chapter{Implementation in the \tnreason package}\label{cha:implementation}
+\chapter{Implementation in the \tnreason{} package}\label{cha:implementation}
 
-We here document the implementation of the discussed concepts in the \python package \tnreason, in the version \curvertnreason
+We here document the implementation of the discussed concepts in the \python{} package \tnreason{}, in the version \curvertnreason
 
 % Name
-\tnreason is an abbreviation of \textbf{t}ensor \textbf{n}etwork \textbf{reason}ing, by which we emphasize the capabilities of this package to represent and answer reasoning tasks by tensor network contractions.
+\tnreason{} is an abbreviation of \textbf{t}ensor \textbf{n}etwork \textbf{reason}ing, by which we emphasize the capabilities of this package to represent and answer reasoning tasks by tensor network contractions.
 
 % Installation
 The package can be installed either by cloning the repository
@@ -17,11 +17,11 @@ or by
 
 \sect{Architecture}
 
-\tnreason is structured in four subpackages and three layers
+\tnreason{} is structured in four subpackages and three layers
 \begin{itemize}
-    \item Layer 1: Storage and numerical manipulations, by subpackage \spengine
-    \item Layer 2: Specification of workload, subpackage \sprepresentation specific for storage, subpackage \spreasoning specific for manipulations
-    \item Layer 3: Applications in reasoning, by subpackage \spapplication
+    \item Layer 1: Storage and numerical manipulations, by subpackage \spengine{}
+    \item Layer 2: Specification of workload, subpackage \sprepresentation{} specific for storage, subpackage \spreasoning{} specific for manipulations
+    \item Layer 3: Applications in reasoning, by subpackage \spapplication{}
 \end{itemize}
 
 We sketch this structure by
@@ -92,14 +92,14 @@ where \inlinecode{coreType} is a string further specifying a specific implementa
 The default tensor implementation \defaultCoreType is chosen, when \inlinecode{coreType} is not specified.
 
 
-One-hot encodings are specific tensors created in \sprepresentation.
+One-hot encodings are specific tensors created in \sprepresentation{}.
 
 \subsect{\bncontractions}
 
 \paragraph{Tensor networks} $\tnetof{\graph}=\{\hypercoreofat{\edge}{\catvariableof{\edge}}\wcols\edge\in\edges\}$ are stored as dictionaries of tensors, where the keys coincide with the names of the corresponding tensors.
 The edges of the hypergraph $\graph$ used in the definition of tensor networks in \defref{def:tensorNetwork} are here labeled by the names of the tensors and the affected variables by the list of colors, being an attribute of each tensor.
 
-\paragraph{Contractions} are implemented in the subpackage \spengine, orienting on \defref{def:contraction}.
+\paragraph{Contractions} are implemented in the subpackage \spengine{}, orienting on \defref{def:contraction}.
 Reflected in the notation
 \begin{align*}
     \contractionof{\tnetof{\graph}}{\secnodevariables}
@@ -136,14 +136,14 @@ where \inlinecode{coreDict} is a tensor network to be visualized.
 
 
 \subsect{\bnencoding}
-Encoding schemes are implemented in the subpackage \sprepresentation.
+Encoding schemes are implemented in the subpackage \sprepresentation{}.
 
 
 
-\sect{Subpackage \spengine}\label{sec:implementationEngine}
+\sect{Subpackage \spengine{}}\label{sec:implementationEngine}
 
-The \spengine subpackage is for the storage and numerical manipulation of tensors and tensor networks.
-We organize the subpackage as the lowest layer of \tnreason, specializing in storage of Tensor Networks and performing the contractions.
+The \spengine{} subpackage is for the storage and numerical manipulation of tensors and tensor networks.
+We organize the subpackage as the lowest layer of \tnreason{}, specializing in storage of Tensor Networks and performing the contractions.
 
 \subsect{Basis+ $\cpformat$ Decompositions storing \inlinecode{values}}
 
@@ -154,7 +154,7 @@ The basis+ elementary tensors have basis+ $\cpformat$ rank of $1$ and admit a de
     \hypercoreat{\nodevariables}
     = \slicescalar \cdot \contractionof{\onehotmapofat{\catindexof{\variableset}}{\catvariableof{\variableset}}}{\nodevariables} \, .
 \end{align*}
-Elementary basis+ tensors are in \tnreason stored by a tuple
+Elementary basis+ tensors are in \tnreason{} stored by a tuple
 \begin{lstlisting}
 (value, posDict)
 \end{lstlisting}
@@ -273,7 +273,7 @@ The supported contraction methods are listed in \figref{tab:contractionMethods}.
             \hline
         \end{tabular}
     \end{center}
-    \caption{Implemented contraction methods in \tnreason.}
+    \caption{Implemented contraction methods in \tnreason{}.}
     \label{tab:contractionMethods}
 \end{figure}
 
@@ -299,11 +299,11 @@ uses the \inlinecode{contract_with} method of tensor cores to contract in a give
 
 
 
-\sect{Subpackage \sprepresentation}\label{sec:implementationRepresentation}
+\sect{Subpackage \sprepresentation{}}\label{sec:implementationRepresentation}
 
-The \sprepresentation subpackage consists in a collection of core creation methods.
+The \sprepresentation{} subpackage consists in a collection of core creation methods.
 %Here the basis encodings $\bencodingof{\exfunction}$ of various maps $\exfunction$ are created.
-We arrange the \sprepresentation subpackage into the second layer of the \tnreason architecture, since it specifies tensor cores which formats are specified in \spengine.
+We arrange the \sprepresentation{} subpackage into the second layer of the \tnreason{} architecture, since it specifies tensor cores which formats are specified in \spengine{}.
 
 \paragraph{Coordinate Calculus}
 Coordinatewise transformations (see \defref{def:coordinatewiseTransform}) are supported by
@@ -417,7 +417,7 @@ To customize their purposes, individual feature classes are derived from \\
     \label{tab:featureTypes}
 \end{figure}
 
-\paragraph{Computation Activation Networks} are the most general models representable in \tnreason.
+\paragraph{Computation Activation Networks} are the most general models representable in \tnreason{}.
 They generalize distributions such as those computable by a statistic (see \defref{def:realizableStatDistributions}) as well as constraint satisfaction problems (see \defref{def:csp}).
 Computation Activation Networks are initialized by
 \begin{lstlisting}
@@ -451,12 +451,12 @@ Energy dictionaries are stored as dictionaries with values by tuples \inlinecode
 
 
 
-\sect{Subpackage \spreasoning}\label{sec:implementationReasoning}
+\sect{Subpackage \spreasoning{}}\label{sec:implementationReasoning}
 
 
-The \spreasoning subpackage implements contraction-based reasoning algorithm on representation.ComputationActivationNetworks.
-%basic tensor network algorithms with calls of specific execution in \spengine.
-As the \sprepresentation subpackage it is arranged in the second layer of the \tnreason architecture, since it specifies the manipulation of tensor networks in the \spengine subpackage.
+The \spreasoning{} subpackage implements contraction-based reasoning algorithm on representation.ComputationActivationNetworks.
+%basic tensor network algorithms with calls of specific execution in \spengine{}.
+As the \sprepresentation{} subpackage it is arranged in the second layer of the \tnreason{} architecture, since it specifies the manipulation of tensor networks in the \spengine{} subpackage.
 
 \subsect{Sampling}
 
@@ -501,7 +501,7 @@ where \inlinecode{edgeColorDict} specifies the graph of the approximating markov
             \hline
         \end{tabular}
     \end{center}
-    \caption{Implemented inference methods in \tnreason.}
+    \caption{Implemented inference methods in \tnreason{}.}
     \label{tab:inferenceMethods}
 \end{figure}
 
@@ -528,16 +528,16 @@ The supported methods are implemented in \inlinecode{reasoning.optimization_hand
             \hline
         \end{tabular}
     \end{center}
-    \caption{Implemented optimization methods in \tnreason.}
+    \caption{Implemented optimization methods in \tnreason{}.}
     \label{tab:optimizationMethods}
 \end{figure}
 
 
 
-\sect{Subpackage \spapplication}\label{sec:implementationApplication}
+\sect{Subpackage \spapplication{}}\label{sec:implementationApplication}
 
-With the \spapplication subpackage we provide an interface for reasoning workload.
-It builds a third layer, since it used \sprepresentation to represent knowledge by tensor networks and \spreasoning in the execution of reasoning tasks.
+With the \spapplication{} subpackage we provide an interface for reasoning workload.
+It builds a third layer, since it used \sprepresentation{} to represent knowledge by tensor networks and \spreasoning{} in the execution of reasoning tasks.
 %
 A user-friendly high-level syntax of script language (logical formulas or neuro-symbolic architectures) for the specification of tensor networks creation, such as propositional formulas or categorical constraints, is introduced.
 Given a specification of a formula $\exformula$ in script language $\synencodingof{\cdot}$, the task amounts to building a semantic representation based on the syntactic specification.
