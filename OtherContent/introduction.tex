@@ -1,162 +1,100 @@
 \chapter{Introduction}\label{cha:introduction}
 
 % Explaining the title
-Artificial intelligence is a long-standing dream, which has in recent years received enormous attention, especially driven by breakthroughs in large language models.
+Artificial intelligence is a long-standing vision, which has in recent years received enormous attention, especially driven by breakthroughs in large language models.
 Among the key priorities towards an economic and trustworthy usage is the improvement of efficiency and explainability of models.
 
 % Explainability
-Instead of post-hoc explainability of a models given inference on specific data, this work aims at the intrinsic human understandability of a model.
+Instead of post-hoc explainability of infered data, this work aims at the intrinsic human understandability of a model.
 We are motivated by the theory of logic, whose formalization of human thoughts serves as an interface between mechanized reasoning on a machine and human understandability.
-This advanced form of explainability enables novel forms of human interactions with a model based on verbalizations, manipulations and guarantees on the models inference output.
+This advanced form of explainability enables novel forms of human interactions with a model based on verbalizations, manipulations and guarantees on the model’s inference output.
 
 % Efficiency
 The need for efficiency stems more from economic concerns on the resource demand of training and inferring a model.
 Tensors naturally represent states of systems with multiple variables, both in logical and probabilistic approaches towards artificial intelligence. % avoid factored at this point!
-However, even for a moderate numbers of variables, the curse of dimensionality prevents a typical machine’s memory to store a generic representation.
-%The careful design of representation formats is therefore a necessary task to avoid the exponential increase of storage demands and balance the expressivity and the efficiency of representation formats.
+However, even for moderate numbers of variables, the curse of dimensionality prevents a typical machine’s memory to store a generic representation.
 Carefully designing representation formats is therefore crucial to prevent exponential storage growth while balancing expressivity and efficiency.
 
 % Tensor Networks
 In this work, we utilize the formalism of tensor networks in the creation of efficient representation schemes.
 The chosen tensor network formats are motivated as explainable model architectures and provide a synergy between the aims of efficiency and explainability.
 More precisely, tensor networks appear as the numerical structures behind probabilistic graphical models and logical knowledge bases.
-Understanding these foundations of tensor networks reveals their vast application potential in neuro-symbolic artificial intelligence.
-%After presenting the probabilistic and logical approaches based on the tensor network formalism we develop novel applications schemes towards neuro-symbolic artificial intelligence.
+Understanding these foundations of tensor networks reveals their vast application potential for neuro-symbolic artificial intelligence.
 
 \sect{Background}
 
-Before presenting an overview over the contents, we further motivate this work based on the broach approaches towards artificial intelligence and more recent developments.
+Before presenting an overview over the contents, we further motivate this work based on the broad approaches towards artificial intelligence and more recent developments.
 
 \subsect{Logic and Explainability in AI}
 
-The logical tradition of artificial intelligence is motivated by the resembling of human thought in logics \cite{mccarthy_programs_1959}.
-Historic approaches towards artificial intelligence have focused on models by vast knowledge bases and inference by logical reasoning.
-The main problems hindering the success of this approach is the inability of classical first-order logic to handle uncertainty of information, as present in realistic scenarios.
+% Logical Approach to AI
+The logical tradition of artificial intelligence is motivated by the resemblance of human thought in logics \cite{mccarthy_programs_1959}.
+Historic approaches to artificial intelligence have focused on models by vast knowledge bases and inference by logical reasoning.
+The main problem hindering the success of this approach is the inability of classical \firstOrderLogic{} to handle uncertainty of information, as present in realistic scenarios.
 
 % ILP
-Integrating observed data into a learning process has been framed Inductive Logic Programming \cite{muggleton_inductive_1994}.
+Integrating observed data into a learning process has been framed as Inductive Logic Programming \cite{muggleton_inductive_1994}.
 Along that line the Amie method \cite{galarraga_amie_2013} has been developed to learn Horn clauses using a refinement operator.
 Class Expression Learning \cite{lehmann_class_2011} is a more recent approach to assist in the design of reasoning capabilities in Knowledge Graphs.
 However, this approach is limited by the expressivity of description logics and the exponentially large hypothesis sets for the choice of formulas.
 Efficient search methods in these exponentially large hypothesis sets have been provided based on reinforcement learning \cite{demir_drill-_2021} and neural networks \cite{kouagou_neural_2022, pesquita_neural_2023}.
-%\textbf{Inductive Logic Programming:}
-%\begin{itemize}
-%    \item ILP is a classical task \cite{muggleton_inductive_1994}
-%    \item Amie \cite{galarraga_amie_2013} is a method of learning Horn clauses using a refinement operator.
-%    \item Class Expression Learning \cite{lehmann_class_2011} is a more recent approach to assist in the design of reasoning capabilities in Knowledge Graphs.
-%        However, problems arise from the expressivity of description logics and the efficient choice of formulas from exponentially large hypothesis sets.
-%    \item CEL has therefore recently received further popularity in combination with reinforcement learning \cite{demir_drill-_2021} and neural networks \cite{kouagou_neural_2022, pesquita_neural_2023}, which are methods searching efficiently in exponentially large spaces of formulas.
-%\end{itemize}
 
 % Knowledge Graphs
 Logical approaches are still dominant in the description of data.
 Here the semantic web initiative developed data storage formats based on Knowledge Graphs \cite{antoniou_semantic_2012,hogan_knowledge_2021}, which describe structured data based on description logic.
-%\textbf{Knowledge Graphs}
-%\begin{itemize}
-%    \item The advent of large Knowledge Graphs enables explainable reasoning methods on structured data. \cite{antoniou_semantic_2012,hogan_knowledge_2021}
-%    \item Knowledge Graphs are stored in a sparse format, i.e. only true atoms instead of all + truth label.
-%\end{itemize}
 
 % Statistical Relational AI and Neuro-Symbolic AI
 Towards extending the practical usage of logics, the field of Statistical Relational AI \cite{nickel_review_2016,getoor_introduction_2019} studies statistical models of logical relations.
 This directly treats uncertainty and therefore unifies logics with statistical approaches.
-This aims have more recently reframed as neuro-symbolic AI \cite{hochreiter_toward_2022, sarker_neuro-symbolic_2022}, with close relations to statistical relational AI \cite{marra_statistical_2024}.
+These aims have more recently reframed as neuro-symbolic AI \cite{hochreiter_toward_2022, sarker_neuro-symbolic_2022}, with close relations to statistical relational AI \cite{marra_statistical_2024}.
 Neuro-symbolic AI focuses on the unification of the neural and the symbolic paradigm \cite{garcez_neural-symbolic_2019}, where early approaches are \cite{towell_knowledge-based_1994,avila_garcez_connectionist_1999}.
-While the symbolic paradigm is roughly understood as human understandable reasoning in formal logics, the neural paradigm is the computational benefit of decomposing a model into layerwise computation.
-These decompositions provide both expressive and efficient to train and infer model architectures.
-While modern black-box AI focuses on large neural networks, which size prevents human understanding of the inference process, neuro-symbolic AI aims at a re-implementation of the symbolic paradigm into such architectures.
-%\textbf{Neurosymbolic AI}
-%\begin{itemize}
-%    \item Required for more advanced AI \cite{hochreiter_toward_2022}
-%    \item Add the paradigm of neural computing to logical reasoning
-%    \item Potential benefits from Statistical Relational AI
-%\end{itemize}
-%\textbf{Statistical Relational AI:}
-%\begin{itemize}
-%    \item Classical combination of logical and probabilistic approaches to reasoning \cite{getoor_introduction_2019}
-%\end{itemize}
-
+While the symbolic paradigm is roughly understood as human understandable reasoning in formal logics, the neural paradigm is the computational benefit of decomposing a model into layers.
+These decompositions provide both expressive and efficiently inferable model architectures.
+While modern black-box AI focuses on large neural networks, whose size prevents human understanding of the inference process, neuro-symbolic AI aims at a re-implementation of the symbolic paradigm into such architectures.
 
 \subsect{Tensor Networks in AI}
 
 % Numerical origin
 Decomposition schemes of tensors have been developed in numerics to efficiently operate in high-dimensional tensor spaces \cite{hackbusch_tensor_2012} and to avoid the curse of dimensionality \cite{bellman_adaptive_1961}.
 Each decomposition scheme has a graphical depiction, as we will introduce in \charef{cha:notation}, and decompositions are therefore referred to as networks.
-The first decomposition schemes by Tucker, originally introduced in \cite{hitchcock_expression_1927}, suffered from exponential increases of the degrees of freedom with the tensor order.
-The $\cpformat$ format (see \charef{cha:sparseRepresentation}) can in principle establish storage in linear with the order.
-Sets of tensors with fixed rank with respect to this format are however not closed \cite{beylkin_algorithms_2005} and approximation problems are often ill posed \cite{de_silva_tensor_2008}.
+The Tucker decomposition schemes, originally introduced in \cite{hitchcock_expression_1927}, suffered from exponential increases of the degrees of freedom with the tensor order.
+The $\cpformat$ format (see \charef{cha:sparseRepresentation}) can in principle establish storage with demand growing linear with the tensor order.
+Sets of tensors with fixed $\cpformat$ rank are however not closed \cite{beylkin_algorithms_2005} and approximation problems are often ill posed \cite{de_silva_tensor_2008}.
 The Tensor Train decomposition \cite{oseledets_breaking_2009}, which appears in quantum mechanics as matrix product states \cite{perez-garcia_matrix_2007}, overcomes these numerical problems \cite{holtz_manifolds_2012}.
 Hierarchical Tucker decompositions \cite{hackbusch_new_2009} are generalizations of tensor train decompositions, which have useful properties for tensor approximations \cite{grasedyck_hierarchical_2010,falco_minimal_2012}.
 
 % General
 Tensors are used in the processing of big data \cite{cichocki_era_2014} and in many-body physics \cite{orus_tensor_2019}.
-Besides that, there have been pioneering approaches to exploit them in the data-driven identification of governing equations \cite{gels_multidimensional_2019, goesmann_tensor_2020}, more general supervised learning \cite{stoudenmire_supervised_2016} and the simulation of noisy quantum mechanics \cite{sander_large-scale_2025}.
-%\textbf{Tensor Network formats}
-%\begin{itemize}
-%    \item TT Format \cite{holtz_manifolds_2012,hackbusch_new_2009}
-%    \item HT Format \cite{hackbusch_tensor_2012}
-%    \item CP Format
-%\end{itemize}
-%\textbf{Tensor Networks as Regressors}
-%\begin{itemize}
-%    \item Dynamical Systems learning \cite{gels_multidimensional_2019, goesmann_tensor_2020}
-%    \item Supervised learning \cite{stoudenmire_supervised_2016}
-%    \item Tensor Jump Method \cite{sander_large-scale_2025}
-%\end{itemize}
+In addition, pioneering approaches have been made to exploit them in the data-driven identification of governing equations \cite{gels_multidimensional_2019, goesmann_tensor_2020}, more general supervised learning \cite{stoudenmire_supervised_2016} and the simulation of noisy quantum mechanics \cite{sander_large-scale_2025}.
 The duality between tensor networks and graphical models has been first discussed in \cite{robeva_duality_2019} and motivated further expressivity studies such as \cite{glasser_expressive_2019}.
-%\textbf{Tensor Representation of Graphical Models}
-%\begin{itemize}
-%    \item Duality of Graphical Models and Tensor Networks: \cite{robeva_duality_2019}
-%    \item Expressivity studies \cite{glasser_expressive_2019}
-%\end{itemize}
-Tensor Networks have further been applied for batch logical inference \cite{li_linear_2017, sato_linear_2017, tsilionis_tensor-based_2024}.
-Whereas these are conceptual interesting approaches, they have so far been limited to matrix multiplication, whereas obvious expressivity benefits would come from more general contraction schemes.
-Similar ideas have been led to TensorLog \cite{cohen_tensorlog_2020}, Real Logic \cite{serafini_learning_2016} and based on that Logical Tensor Networks \cite{badreddine_logic_2022}.
-%\textbf{Tensor Representation of Logics}
-%\begin{itemize}
-%    \item Tensor Networks have been applied in the automatization of logic reasoning \cite{li_linear_2017, sato_linear_2017} apply Matrix multiplication in reasoning.
-    % To \item \cite{nickel_review_2016} review over relational machine learning and latent features via matrix embeddings.
-%\end{itemize}
-%\textbf{Tensor Approaches to Neuro-Symbolic AI}
-%\begin{itemize}
-%    \item TensorLog \cite{cohen_tensorlog_2020}
-%    \item \cite{badreddine_logic_2022} representation of logic using tensor networks and automated differentiation to optimize.
-%\end{itemize}
+Tensor networks have further been applied for batch logical inference \cite{li_linear_2017, sato_linear_2017, tsilionis_tensor-based_2024}.
+Whereas these are conceptually interesting approaches, they have so far been limited to matrix multiplication, whereas obvious expressivity benefits would come from more general contraction schemes.
+Similar ideas have led to TensorLog \cite{cohen_tensorlog_2020}, Real Logic \cite{serafini_learning_2016} and to Logical Tensor Networks \cite{badreddine_logic_2022}.
 
+% Tensor networks representing Knowledge Graphs
 Further, sparse representation of knowledge graphs by tensor networks has motivated several embedding schemes for objects in the knowledge graph.
-The sparse decomposition of the adjacency tensor capturing the ternary relations between objects provides embeddings schemes encoding relations between the objects in a latent space.
-The specific approaches distinguish between the format used, where \cite{nickel_three-way_2011} and \cite{balazevic_tucker_2019} used tucker decompositions, \cite{yang_embedding_2015} the $\cpformat$ decomposition and \cite{trouillon_complex_2017} complex extensions.
+The sparse decomposition of the adjacency tensor capturing the ternary relations between objects provides embedding schemes that encode relations between the objects in a latent space.
+The specific approaches distinguish between the format used, where \cite{nickel_three-way_2011} and \cite{balazevic_tucker_2019} used Tucker decompositions, \cite{yang_embedding_2015} the $\cpformat$ decomposition and \cite{trouillon_complex_2017} complex extensions.
 Beyond embeddings, tensor based storage of knowledge graphs has recently shown tremendous improvements in querying knowledge graphs \cite{pan_tentris_2020}.
 Here, queries on the knowledge graph are performed as contractions of the tensors efficiently representing knowledge graphs.
-
-%%has been exploited  \cite{yang_embedding_2015} and using complex extensions \cite{trouillon_complex_2017, trouillon_knowledge_2017}.
-%Usage of tensor networks in embeddings \cite{yang_embedding_2015} and using complex extensions \cite{trouillon_complex_2017, trouillon_knowledge_2017}
-%\textbf{Tensor Representation of Knowledge Graphs}
-%\begin{itemize}
-%    \item Effective representation of queries
-%    \item Usage of tensor networks in embeddings \cite{yang_embedding_2015} and using complex extensions \cite{trouillon_complex_2017, trouillon_knowledge_2017}
-%\end{itemize}
 
 % Infrastructure of AI
 Tensors further serve as a central object in large-scale machine learning libraries such as TensorFlow \cite{abadi_tensorflow_2016} and PyTorch \cite{paszke_pytorch_2019}.
 Layerwise execution of neural network inference amounts then to tensor network contractions of tensors storing the activation of previous layers and weights.
 Beyond providing a central framework for the software design, also the design of AI-dedicated hardware orients on tensor contractions, with a current focus on Tensor Processing Units (TPU) \cite{nikolic_survey_2022,jouppi_tpu_2023}.
-Both the dedicated software and hardware design exploits the parallelization potential rooted in the contraction formalism of tensor networks.
+Both the dedicated software and hardware design exploit the parallelization potential rooted in the contraction formalism of tensor networks.
 Besides these developments there exist several experimental libraries dedicated to the tensor-train tensor format \cite{suess_mpnum_2017,wolf_libxerusxerus_2024,gels_pgelssscikit_tt_2025,puljak_tn4ml_2025}.
-%\begin{itemize}
-%    \item Hardware: TPUs beyond GPUs
-%    \item Software: Tensors as basic data structure in TensorFlow, pyTorch etc., storing neural activations and model weights.
-%\end{itemize}
 
 \subsect{Representation Schemes of Systems}
 
+% Ontological commitments
 We start with ontological commitments in the description of a system and follow the book \cite{russell_artificial_2021} distinguishing atomic, factored and structured representations.
-While in atomic representation, the states of a systems are enumerated and represented in a single variable, factored representations describe a systems state based on a collection of variables.
+While in atomic representation, the states of a system are enumerated and represented in a single variable, factored representations describe a systems state based on a collection of variables.
 In the tensor formalism, each state of a system corresponds with a coordinate of a representing tensor.
 The order of the tensor coincides therefore with the number of variables in a system.
 In an atomic representation, where there is a single coordinate, each state corresponds with a coordinate of the representing vector being a tensor of order one.
 Having a factored representation with two variables requires order two tensors or matrices, where a coordinate is specified by a row and a column index.
-Given larger numbers of coordinates now extends this representation picture to tensors of larger orders, which have more abstract axes besides rows and columns.
+Given larger numbers of coordinates this representation scheme extends to tensors of larger orders, which have more abstract axes besides rows and columns.
 The generalization of the atomic representation to a factored system thus corresponds with the generalization of vectors towards matrices and tensors of larger orders.
 Along this line, we can always transform a factored representation of a system to an atomic one, just by enumerating the states of the factored system and interpreting them by a single variable.
 This amounts to the flattening of a representing tensor to a vector.
@@ -175,26 +113,26 @@ In this work we treat discrete systems, where the number of states is finite.
 One can understand them as a discretization of continuous variables and many results will generalize by the converse limit to the situation of continuous variables.
 
 % Epistemologic
-Besides ontological commitments in the choice of a representation scheme, modelling a system also requires epistemologic commitments, by defining what properties are to be reasoned about.
+Besides ontological commitments in the choice of a representation scheme, modelling a system also requires epistemological commitments, by defining what properties are to be reasoned about.
 In logical approaches the properties of states are boolean values representing whether a state is consistent with known constraints.
 Probabilistic approaches assign to the coordinates of the tensors numbers in $[0,1]$ encoding the probability of a state.
-Compared with logical approached to reasoning, probabilistic approaches thus bear a more expressive modelling.
+Compared with logical approaches to reasoning, probabilistic approaches thus bear a more expressive modelling.
 
 \sect{Structure of the work}
 
 \begin{figure}[hbt!]
     \input{./OtherContent/tikz_pics/introduction/chapter_overview.tikz}
     \caption{Sketch of the structure of this work.
-        We assign the chapters to three parts and two focuses.
+        We assign the chapters to three parts and two foci.
         The parts distinguish the coarse topics of this work into classical, neuro-symbolic approaches and the applied contraction calculus.
-        The assigned focuses indicate whether the chapter orients more onto a representation format of the respective concepts or onto its exploitation in reasoning.}
+        The assigned foci indicate whether the chapter orients more onto a representation format of the respective concepts or onto its exploitation in reasoning.}
     \label{fig:chapterOverview}
 \end{figure}
-The chapters are structured into three parts, and two focuses, see \figref{fig:chapterOverview}.
+The chapters are structured into three parts, and two foci, see \figref{fig:chapterOverview}.
 
 \subsect{\parref{par:one}: \partonetext}
 The probabilistic and logical approaches towards artificial intelligence are reviewed in the tensor network formalism.
-We in this part restrict the discussion to atomic and factored system representation.
+In this part, we restrict the discussion to atomic and factored representations of systems.
 In probability theory (see \charef{cha:probRepresentation} and \charef{cha:probReasoning}), tensors appear as generalized truth tables, storing the joint probability of each possible state of a system in factored representation.
 Tensors describing such distributions are of non-negative coordinates and are normalized, which we will formalize by directed edges of hypergraphs.
 Applying the formalism, we introduce marginalization and conditioning operations based on contractions, and show how assumptions such as conditional independence lead to network decompositions.
@@ -204,24 +142,6 @@ In logics (see \charef{cha:logicalRepresentation}), we motivate boolean tensors 
 Logical entailment is then in \charef{cha:logicalReasoning} decided based contractions of these tensors, which we will further relate with marginal distributions in probabilistic inference.
 The syntax of propositional logics thereby hints at efficient decompositions schemes of these semantic representing tensors.
 We exploit the syntax to find efficient tensor network decompositions of the tensors in \charef{cha:logicalRepresentation} and use them for efficient logical inference algorithms in and \charef{cha:logicalReasoning}.
-%Tensors appear naturally in
-%\begin{itemize}
-%    \item Logics: Boolean tensors indicating models (propositional case) and interpretation tensors in first order logics
-%    \item Probability theory: Truth tables, which are tensors of probabilities for joint distibutions of categorical variables.
-%\end{itemize}
-%% Classical usage of tensor network decompositions
-%Tensor network decompositions as representation schemes appear in
-%\begin{itemize}
-%    \item Logics: Conjunctions of formulas are Hadamard products of the tensor representation of formulas (Coordinate Calculus/ Effective Calculus)
-%    \item Probability theory: Graphical models are tensor networks of the factors. Further sparsity schemes apply, when placing restrictions on the structure of each factor.
-%    \item Data bases: Relations encoded by lists as storage of nonvanishing coordinates of a relation encoding
-%\end{itemize}
-%% Classical usage of tensor network contractions
-%Tensor network contractions as reasoning schemes appear in
-%\begin{itemize}
-%    \item Logics: Model counts, used for satisfiablility decisions and entailment
-%    \item Probability theory: Marginal probability distributions, extended to conditional probability distributions through normalizations
-%\end{itemize}
 
 \subsect{\parref{par:two}: \parttwotext}
 Motivated by the classical approaches we apply the tensor network formalism towards learning and inferring neuro-symbolic models, which we call \HybridLogicNetworks{}.
@@ -230,22 +150,14 @@ Further, the symbolic paradigm is eminent in the interpretation of tensor networ
 Motivated by this central thoughts, we present vast classes of interpretable models in \charef{cha:networkRepresentation}, which are unifying the logical and probabilistic approaches studied in \parref{par:one}.
 The central idea here is to leverage the formalism of exponential families by choosing base measures and statistics based on logical formulas.
 We then turn in \charef{cha:networkReasoning} towards inductive learning scenarios in this formalism, where new features are to be learned from data and parameters are calibrated.
-Here we apply the parametrization schemes developed in \charef{cha:formulaSelection} to represent hypothesis classed for new features.
-While these approaches rely on propositional logics, in \charef{cha:folModels} we extend towards more expressive first-order logics.
-With knowledge graphs serving as examples we therein provide a tensor-network formalism to capture queries and motivate our learning schemes in propositional logics based on queries on random first-order worlds.
+Here we apply the parametrization schemes developed in \charef{cha:formulaSelection} to represent hypothesis classes for new features.
+While these approaches rely on propositional logics, in \charef{cha:folModels} we extend towards more expressive \firstOrderLogic{}.
+With knowledge graphs serving as examples we provide a tensor-network formalism to capture queries and motivate our learning schemes in propositional logics based on queries on random first-order worlds.
 In \charef{cha:concentration} we further derive statistical guarantees for these learning methods given random data, based on probabilistic bounds on uniform concentration events.
-%% Decomposition of Neural Networks
-%In Deep Neural Networks, functions between the input layer and the output layer are decomposed into neurons.
-%Typical neurons are linear transforms with an activation function.
-%We instead have syntactical decompositions of logical formulas to cover the neural paradigm.
-%% Sparsity by fixed architecture
-%Sparsity means restriction to functions, which are decomposable into a small number of neurons.
-%Approximations of generic functions (see the universal approximation theorems) would require large amounts of neurons. % CITE!
-%When restricting to functions based on a fixed architecture, we restrict to a certain set of functions called the inductive bias of the architecture.
 
 \subsect{\parref{par:three}: \partthreetext}
 In \parref{par:three} the applied schemes of calculus using tensor network contractions are investigated in more detail.
-In particular, we distinguish between the schemes of coordinate, basis and sparse calculus.%, in \charef{cha:coordinateCalculus}, \charef{cha:basisCalculus} and \charef{cha:sparseRepresentation}.
+In particular, we distinguish between the schemes of coordinate, basis and sparse calculus.
 Coordinate calculus will be discussed in \charef{cha:coordinateCalculus} using one-hot encodings as orthogonal basis elements.
 We will further properties related to directed tensors and a generic version of the Hammersley-Clifford decomposition theorem, which have been applied in the probabilistic approached in \parref{par:one}.
 Basis calculus in \charef{cha:basisCalculus} introduces generic encodings of subsets, relations and functions by boolean tensors used in previous parts.
@@ -273,7 +185,7 @@ In \charef{cha:sparseRepresentation} we define restricted $\cpformat$ decomposit
 We develop schemes to efficiently perform inductive and deductive reasoning based on information stored in decomposed tensor.
 Contractions of tensor networks representing models in artificial intelligence are the central scheme to retrieve information.
 While in probability theory contractions compute marginal distribution (see \charef{cha:probReasoning}), contraction of logical formulas are model counts central to the formalism of logical entailment (see \charef{cha:logicalReasoning}).
-We will further exploit them to calculate queries in first-order logic such as on knowledge graphs (see \charef{cha:folModels}). % That chapter was assinged to representation not reasoning!
+We will further exploit them to calculate queries in \firstOrderLogic{} such as on knowledge graphs (see \charef{cha:folModels}). % That chapter was assinged to representation not reasoning!
 The statistical foundation on the success of contraction-based learning, which lies in the phenomenon of uniform concentration of contractions with empirical random tensors, will be investigated in \charef{cha:concentration}.
 In \parref{par:three} we further study generic tools for efficient execution of contraction-based reasoning.
 The tensor network approximation schemes in \charef{cha:approximation} bear the potential to approximate reasoning tasks by more efficient ones.
