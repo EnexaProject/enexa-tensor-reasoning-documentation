@@ -1,0 +1,120 @@
+\documentclass[aps,onecolumn,nofootinbib,pra]{article}
+
+\usepackage{../../article_compilation/spec_files/arxiv}
+\usepackage{amsmath,amsfonts,amssymb,amsthm,bbm,graphicx,enumerate,times}
+\usepackage{mathtools}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{hyperref}
+\hypersetup{
+    breaklinks,
+    colorlinks,
+    linkcolor=gray,
+    citecolor=gray,
+    urlcolor=gray,
+    pdftitle={The Tensor Network Approach to Efficient and Explainable AI},
+    pdfauthor={Alex Goessmann}
+}
+
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{comment}
+\usepackage{csquotes}
+
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{etoolbox}
+\usepackage{braket}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{bbm}
+\usepackage{bm}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{lipsum}
+
+\newtheorem{remark}{Remark}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+
+\input{../../macros/organization_macros.tex}
+\input{../../macros/general_macros.tex}
+\input{../../macros/tc_macros.tex}
+\input{../../macros/tikz_macros.tex}
+
+\pretolerance=500
+\tolerance=100
+\emergencystretch=10pt
+
+% Bibliography
+\DeclareUnicodeCharacter{FB01}{fi}
+\usepackage[round]{natbib}
+\usepackage{wasysym}
+
+\newcommand{\doof}[1]{\mathrm{do}\left(#1\right)}
+\newcommand{\dovariable}{D}
+\newcommand{\dovariableof}[1]{\dovariable_{#1}}
+
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+\begin{document}
+    \title{Message Passing in Logical Inference}
+
+    \maketitle
+    \date{\today}
+
+
+
+
+    \section{Unit Clause Propagation (UCP)}
+
+    Unit clauses are assignments to single variables.
+    They are propagated between clusters of formulas
+
+
+    \subsection{Forward Chaining for Horn-SAT}
+
+    Forward chaining is a linear time and complete satisfiability checker on Horn Logic (a subset of Propositional Logic where each clause has at most one positive literal).
+    \begin{itemize}
+        \item Messages passed are the one-hot encodings of assignment to single variables (unit clauses).
+        \item Clusters are the Horn clauses, which receive messages for their negative literals.
+        A Cluster sends a nontrivial message to a variable, if the variable is the only unassigned literal in the clause and the clause has not been satisfied yet.
+    \end{itemize}
+
+    \subsection{UCP for 2-SAT}
+
+    2-SAT is in P and can be solved by the message passing algorithm Unit Clause Propagation (UCP).
+    \begin{itemize}
+        \item Messages passed are the one-hot encodings of assignment to single variables (unit clauses).
+        \item Any clause that receives a message has only a single literal left and either gets directly trivial (if the message coincides with the literal) or assigns the remaining variable and passes further.
+    \end{itemize}
+
+
+    \subsection{DPLL for generic SAT}
+
+    DPLL combines backtracking search with unit clause propagation (UCP).
+    A form of message passing is applied to reduce the clauses given the current partial assignment:
+    When guessed an assignment to a variable, the variable is removed from all clauses, either making the clause trivial (coinciding assignment) or smaller.
+    If only one literal remains in a clause, the variable would be assigned accordingly (unit propagation).
+    This can be directly done in the intermediate message passing scheme, or understood as the next backtracking step ("Find-Unit-Clause" in Figure 7.17 in \cite{russell_artificial_2021}).
+
+    \section{WalkSAT}
+
+    WalkSAT is a stochastic local search algorithm for SAT.
+    It starts with a random assignment and iteratively flips variables to reduce the number of unsatisfied clauses.
+    This can be understood as a (modified) Gibbs sampling algorithm, where the number of unsatisfied clauses is the energy function to be minimized.
+    The modifications are:
+    \begin{itemize}
+        \item Selection of variable to be resampled: Typically chosen by looking at unsatisfied clauses and picking a variable that minimizes the number of newly unsatisfied clauses (whereas in Gibbs sampling one follows a fixed variable order).
+        \item Marginal probability: Typically fixed by a mixing parameter, whereas in Gibbs sampling would be sensitive to the energy differences.
+    \end{itemize}
+
+
+\end{document}
