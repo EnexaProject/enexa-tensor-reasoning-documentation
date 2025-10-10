@@ -63,7 +63,7 @@
 \newcommand{\red}[1]{\textcolor{red}{#1}}
 
 \begin{document}
-    \title{Maximum Entropy Distributions as Computation Activation Networks}
+    \title{Representation of Discrete Maximum Entropy Distributions as Tensor Networks}
 
     \maketitle
     \date{\today}
@@ -78,11 +78,36 @@
     \end{abstract}
 
 
+    \section{Contents}
+
+    We in this paper provide tensor network representations
+    \begin{itemize}
+        \item Representation of any distribution with a sufficient statistics: Generic activation tensors.
+        \item Representation of distributions with maximum entropy, in case of positive realizability: Elementary activation tensors
+        \item Representation of generic maximum entropy distributions: CP activation tensors.
+    \end{itemize}
+
+    Now, we want to characterize the CP rank of the activation tensors
+    \begin{itemize}
+        \item Depends on the face of the mean polytope, which contains the mean parameter
+        \item We have thus a well-defined "CP rank" of faces
+        \item Largest faces and vertices have always CP rank of 1, intermediate faces can have larger CP rank
+    \end{itemize}
+
+    For boolean statistics we further provide insights for boolean statistics (see Chapter~8.5):
+    \begin{itemize}
+        \item Example of independent statistics (see Exa.~8.28): Always elementary activation tensors (hypercubes)
+        \item Example of partition statistics (see Exa.~8.30):
+        \item Generic criterion for elementary activation: "Cube-like" polytopes (see Def.~8.29)
+    \end{itemize}
+
+
     \section{Motivation}
 
     Consider a learning problem where we want to estimate a model based on observed data.
     The maximum entropy problem principle approaches this problem by designing statistics of the data, which means shall be reproduced in the model, and choosing the model reproducing the means of the statistic with least structure.
     The entropy of a distribution quantifies the degree of structureless in a distribution and is therefore maximized to solve the learning task.
+
 
     \section{The Maximum Entropy Problem}
 
@@ -121,7 +146,17 @@
     This shows that any maximum entropy distribution is in $\realizabledistsof{\sstat,\maxgraph}$, where $\maxgraph$ is the maximal hypergraph $\maxgraph=([\seldim],\{[\seldim]\})$.
     We search for sparse representations of the corresponding activation tensors and investigate in which cases the maximum entropy distribution is also in $\realizabledistsof{\sstat,\graph}$ for sparser hypergraphs $\graph$.
 
-    \section{Computation Activation Networks}
+
+    \section{Preparation}
+
+    To prepare for the presentation of our main results we introduce
+    \begin{itemize}
+        \item \ComputationActivationNetworks{}: A tensor network architecture, which will be used to represent maximum entropy distributions
+        \item Mean polytopes: Polytopes, which contain all realizable mean parameter vectors.
+    \end{itemize}
+    We will then show, that dependent on the position of the mean parameter in the mean polytope, we can characterize the corresponding maximum entropy distribution by a \ComputationActivationNetwork{}.
+
+    \subsection{\ComputationActivationNetworks{}}
 
     Given a statistic $\sstat:\facstates\rightarrow\selstates$ we build its basis encoding tensor
     \begin{align*}
@@ -144,9 +179,7 @@
         \wcols \hypercoreat{\headvariableof{\nodes}} \in \tnsetof{\graph} \right\} \, .
     \end{align*}
 
-
-
-    \section{The mean polytope}
+    \subsection{The mean polytope}
 
     The mean polytope is the set of mean parameters to any distribution.
     We define it
@@ -160,7 +193,7 @@
 %        \input{../PartI/tikz_pics/probability_reasoning/meanset_sketch_generic.tex}
 %    \end{center}
 
-    \subsection{Convex hull and faces}
+    %\subsection{Convex hull and faces}
 
     The mean polytope is the convex hull
     \begin{align*}
@@ -173,6 +206,10 @@
 
     Faces of the mean polytope are itself mean polytopes with respect to refined base measures.
 
+
+    \section{Tensor network representation of maximum entropy distributions}
+
+    Given the mean polytope discussion we now characterize the tensor network representation of maximum entropy distributions.
 
     \subsection{Maximum entropy on the interior}
 
@@ -188,7 +225,7 @@
         with $\contractionof{\expdistofat{\sstat,\genmean,\basemeasure}{\shortcatvariables},\sencsstatwith}{\selvariable}=\genmeanat{\selvariable}$.
     \end{theorem}
     \begin{proof}
-        By The~3.3 in [Wainright and Jordan, 2008], since by assumption
+        By The~3.3 in [Wainwright and Jordan, 2008], since by assumption
         \begin{align*}
             \meanparamwith \in \sbinteriorof{\genmeanset}  \, ,
         \end{align*}
@@ -216,13 +253,65 @@
     Exponential families are in $\elrealizabledistsof{\sstat}$, if and only if $\normalizationof{\basemeasure}{\shortcatvariables}\in\elrealizabledistsof{\sstat}$.
     If $\normalizationof{\basemeasure}{\shortcatvariables}\in\elrealizabledistsof{\sstat}$ and $\meanparamwith \in \sbinteriorof{\genmeanset} $ we therefore have a sparse representation of the maximum entropy distribution with elementary activation tensors.
 
-
     \subsection{Mean parameter on faces}
 
     We always find a unique face of the polytope with the mean parameter being in the interior.
     Any distribution reproducing the mean parameter is realizable with respect to the face measure of that face.
     We conclude that the maximum entropy distribution of $\genmeanwith$ with respect to $\sstat,\basemeasure$ is also the maximum entropy distribution
 
+    \begin{theorem}
+        \label{the:tnRepresentationMaxEntropy}
+        Given $\sstat$ and $\meanparamwith\in\genmeanset$, let $\facecondset$ be the smallest face of $\genmeanset$ such that
+        \begin{align*}
+            \meanparamat{\selvariable} \in \genfaceset \, .
+        \end{align*}
+        Then the corresponding maximum entropy distribution is in $\realizabledistsof{\sstat,\graph,\basemeasure}$ if and only if the face measure (see \defref{def:faceMeasure})
+        \begin{align*}
+            \kcoreofat{\facecondset}{\headvariables}
+            = \sum_{\meanparam\in\genfacesetof{\facecondset}\cap\imageof{\sstatencoding}} \onehotmapofat{\meanparam}{\headvariables}
+        \end{align*}
+        is in $\tnsetof{\graph}$.
+    \end{theorem}
+    \begin{proof}
+        By \theref{the:maxEntropyFace} the maximum entropy distribution is an element of the exponential family with by the face measure refined base measure $\secbasemeasure$.
+        Let $\canparamwith$ be a canonical parameter such that
+        \begin{align*}
+            \contractionof{\sencsstatwith,\probofat{\sstat,\canparam,\secbasemeasure}{\shortcatvariables}}{\selvariable} = \meanparamwith \, ,
+        \end{align*}
+        that is $\probofat{\sstat,\canparam,\secbasemeasure}{\shortcatvariables}$ is the maximum entropy distribution.
+        We apply \theref{the:faceMeasureCharacterization} to represent the face measure by
+        \begin{align*}
+            \basemeasureofat{\sstat,\facecondset}{\shortcatvariables} =
+            \contractionof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\kcoreofat{\facecondset}{\headvariables}}{\shortcatvariables}
+        \end{align*}
+        Then for the tensor
+        \begin{align*}
+            \hypercoreat{\headvariables}
+            = \contractionof{
+                \{\softactlegwith\wcols\selindexin\}
+                \cup\{\kcoreofat{\facecondset}{\headvariables}\}}{\headvariables}
+        \end{align*}
+        we have
+        \begin{align*}
+            \probofat{\sstat,\canparam,\secbasemeasure}{\shortcatvariables}
+            = \normalizationof{
+                \bencodingofat{\sstat}{\headvariables,\shortcatvariables}, \hypercoreat{\headvariables}, \basemeasurewith
+            }{\shortcatvariables} \, .
+        \end{align*}
+        Thus, the maximum entropy distribution is in $\realizabledistsof{\sstat,\graph,\basemeasure}$, if $\hypercore$ admits a tensor network decomposition with respect to $\graph$.
+        Since the hard activation cores are elementary, this is the case when $\kcoreof{\facecondset}$ admits a tensor network decomposition with respect to $\graph$.
+    \end{proof}
+
+    \begin{figure}[t]
+        \begin{center}
+            \input{../../PartI/tikz_pics/probability_reasoning/max_entropy_actcore}
+        \end{center}
+        \caption{
+            Tensor network decomposition of maximum entropy distributions to the constraint $\meanparamat{\selvariable}=\contractionof{\probtensor,\sencsstat}{\selvariable}$.
+            Blue: Constraint activation cores $\hardactsymbolof{\selindex}$ in a $\cpformat$ decomposition, representing the face measure to the minimal face, such that $\meanparam\in\genfacesetof{\facecondset}$.
+            Red: Probabilistic activation cores $\softactlegwith$ in an elementary decomposition, where each leg core is a scaled exponentials evaluated on the enumerated image $\imageof{\sstatcoordinateof{\selindex}}$.
+        }\label{fig:maxEntropyActcore}
+    \end{figure}
 
 
     \section{Characterization for boolean statistics}
