@@ -123,15 +123,20 @@
 
     The unitary tensors can be aligned layerwise, if and only if the last two assumption hold, i.e. the directed graph is acyclic and each variable appears at most once as an incoming and at most once as an outgoing variable.
     
+    
+    %\subsection{Notation}
+    
+    %We use the contraction notation of \tnreason{} to denote quantum circuits.
+    
     \section{Encoding Schemes}
 
     We investigate here quantum pendants to the function encoding schemes used in \tnreason{}{}.
 
     \subsection{Coordinate encoding}
 
-    In [Low et al. - Quantum Inference on Bayesian Networks] the q-sample of a distribution is introduced:
+    In \cite{low_quantum_2014} the q-sample of a distribution is introduced:
 
-    \begin{definition}
+    \begin{definition}[Q-sample]
         Given a probability distribution $\probtensor:\atomstates\rightarrow\rr^+$ (i.e. $\contraction{\probtensor}=1$) its q-sample state is
         \begin{align*}
             \psi^\probtensor[\shortcatvariables] = \sum_{\shortcatindicesin} \sqrt{\probat{\indexedshortcatvariables}} \cdot \onehotmapofat{\shortcatindices}{\shortcatvariables} \, .
@@ -142,11 +147,36 @@
     It prepares a scheme to realize property 1 (purity) + 2 (q-sampling) of a qpdf, but fails to realize property 3 (q-stochasticity).
     The q-sample can be prepared for Bayesian Networks, where each child qubit is prepared densely by C-NOTs conditioning on parent qubits.
 
+
+
+    \begin{definition}[Ancilla Encoding]
+        Given a non-negative tensor $\hypercoreat{\headvariables}$ its ancilla encoding is the unitary tensor
+        $U^{\hypercore}[A_{\insymbol},A_{\outsymbol},\headvariableof{\insymbol,[\seldim]},\headvariableof{\outsymbol,[\seldim]}]$ which satisfies for each $\headindexof{[\seldim]}$
+        \begin{align*}
+            U^{\hypercore}[A_{\insymbol}=0,A_{\outsymbol},\headvariableof{\insymbol,[\seldim]}=\headindexof{[\seldim]},\headvariableof{\outsymbol,[\seldim]}=\headindexof{[\seldim]}]
+            = \frac{\hypercoreat{\headvariables=\headindexof{[\seldim]}}}{\max_{\secheadindexof{[\seldim]}} \hypercoreat{\headvariables=\secheadindexof{[\seldim]}}}
+        \end{align*}
+
+    \end{definition}
+
+    When the maximum of the tensor is not known, it can be replaced by an upper bound (reducing the acceptance rate of the rejection sampling).
+
+    Doing rejection sampling on the ancilla qubit corresponds with sampling from the normalized contraction with the activation tensor.
+
+    \begin{lemma}
+        Given a distribution $\probat{\shortcatvariables}$, we construct a circuit preparing its q-sample and add the ancilla encoding of a tensor $\hypercoreat{\shortcatvariables}$.
+        The rejection sampling scheme, measuring the ancilla qubit and the $\shortcatvariables$ qubits, rejecting the ancilla qubit measured as $0$, prepares samples from the distribution
+        \begin{align*}
+            \normalizationof{\probat{\shortcatvariables},\hypercoreat{\shortcatvariables}}{\shortcatvariables} \, .
+        \end{align*}
+    \end{lemma}
+
+
     \subsection{Basis encoding}
 
     We here suggest a quantum pendant to basis encodings (see Chapter Basis Calculus), which has the decomposition by contraction property.
 
-    \begin{definition}
+    \begin{definition}[Basis Encoding Circuit]
         Given a boolean function $\exfunction:\atomstates\rightarrow[2]$ the basis encoding circuit is the unitary tensor
         \begin{align*}
             &U^{\exfunction}[\indexedcatvariableof{\insymbol,[\atomorder]},\indexedcatvariableof{\outsymbol,[\atomorder]},\headvariableof{\insymbol,\exfunction},\headvariableof{\outsymbol,\exfunction}] \\
@@ -227,19 +257,30 @@
 
     \subsection{Encoding of directed tensors}
 
-    Following the schemes in [Low et al. - Quantum Inference on Bayesian Networks], we can prepare any non-negative tensors by a sequence of controlled rotations.
+    Following the schemes in \cite{low_quantum_2014}, we can prepare any non-negative tensors by a sequence of controlled rotations.
     To this end, one iterates over the states of the incoming variables, and performs a controlled rotation on the outgoing variable, where the angle is given by the value of the tensor at the incoming state.
     This generalizes the basis encoding scheme, which demands boolean tensors
 
 
-    \section{Representing \ComputationActivationNetworks{} as Quantum Circuits}
+
+    \section{Sampling from \ComputationActivationNetworks{} as Quantum Circuits}
 
     \tnreason{} provides tensor network representations of knowledge bases and exponential families following a Computation Activation architecture.
     Here are some ideas to utilize quantum circuits for sampling \ComputationActivationNetworks{}.
 
-    \subsection{Preparation of Value Qubits}
+    \begin{figure}
+        \begin{center}
+            \input{./tikz_pics/ca_circuit.tex}
+        \end{center}
+        \caption{
+            Quantum Circuit to reproduce a \ComputationActivationNetwork{} (with elementary activation) by rejection sampling.
+            We measure the distributed qubits $\shortcatvariables$ and the ancilla qubits $A_{[\seldim]}$ and reject all samples, where an ancilla qubit is measured as $0$.
+        }
+    \end{figure}
+    
+    \subsection{Preparation of Ancilla Qubits}
 
-    We introduce a value qubit, which stores in its coefficient to the first state the probability of the configuration.
+    We introduce a ancilla qubit, which stores in its coefficient to the first state the probability of the configuration (this is the ancilla encoding!).
     When we have a probability tensor, this can be prepared, since all values are in $[0,1]$.
     For the rejection sampling, only the quotients of the values are important, we can therefore scale the value by a scalar such that the mode is $1$.
     The value qubit is initialized by the zeroth one hot encoding ($\ket{0}$) and rotated by a controlled rotation gate, which is controlled by the variable qubits.
@@ -251,6 +292,7 @@
     It is unclear, how to exploit this factored representation in the preparation of the controlled value rotations.
 
     \textbf{Open Question:} How to exploit the factored representation of maximum entropy distributions in the preparation of the value qubit?
+    - By a collection of ancilla qubits on each statistic, and doing amplitude amplification on the state of all qubits 1.
 
     \subsection{Polynomial Sparsity}
 
