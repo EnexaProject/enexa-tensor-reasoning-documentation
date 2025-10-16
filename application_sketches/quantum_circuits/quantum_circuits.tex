@@ -128,18 +128,17 @@
     
     %We use the contraction notation of \tnreason{} to denote quantum circuits.
     
-    \section{Encoding Schemes}
 
-    We investigate here quantum pendants to the function encoding schemes used in \tnreason{}{}.
 
-    \subsection{Coordinate encoding}
+    \section{Sampling using Quantum Circuits}
 
     In \cite{low_quantum_2014} the q-sample of a distribution is introduced:
 
     \begin{definition}[Q-sample]
-        Given a probability distribution $\probtensor:\atomstates\rightarrow\rr^+$ (i.e. $\contraction{\probtensor}=1$) its q-sample state is
+        Given a probability distribution $\probtensor:\atomstates\rightarrow\rr$ (i.e. $\contraction{\probtensor}=1$ and $\zeros \prec \probtensor$) its q-sample state is
         \begin{align*}
-            \psi^\probtensor[\shortcatvariables] = \sum_{\shortcatindicesin} \sqrt{\probat{\indexedshortcatvariables}} \cdot \onehotmapofat{\shortcatindices}{\shortcatvariables} \, .
+            \qstateofat{\probtensor}{\catvariables}
+            = \sum_{\shortcatindicesin} \sqrt{\probat{\indexedshortcatvariables}} \cdot \onehotmapofat{\shortcatindices}{\catvariables} \, .
         \end{align*}
     \end{definition}
 
@@ -147,16 +146,38 @@
     It prepares a scheme to realize property 1 (purity) + 2 (q-sampling) of a qpdf, but fails to realize property 3 (q-stochasticity).
     The q-sample can be prepared for Bayesian Networks, where each child qubit is prepared densely by C-NOTs conditioning on parent qubits.
 
+    For more flexible sampling schemes of \ComputationActivationNetworks{} we need to introduce ancilla qubits.
 
+    \begin{definition}[Augmented Q-sample]\label{def:augmentedQsample}
+        Let there be a probability distribution $\probtensor:\atomstates\rightarrow\rr$ and qubit variables $\catvariables$ and ancilla qubit variables $\avariables$.
+        We call a quantum state $\qstateofat{\probtensor}{\catvariables,\avariables}$ an augmented Q-sample, if
+        \begin{align*}
+             |\qstateofat{\probtensor}{\catvariables,\avariables=\onesat{[\seldim]}}|^2 = \probat{\shortcatvariables}
+        \end{align*}
+    \end{definition}
+
+    %% Usage through rejection sampling
+    Given an augmented Q-sample of a distribution, we can prepare samples from the distribution by rejection sampling, measuring all variables $\catvariables$ and $\avariables$ and rejecting all samples where an ancilla qubit is measured as $0$.
+
+
+    %% Usage as forward inferer
+    When sampling from probability distributions, we can use these samples to estimate probabilistic queries.
+    Building on such particle-based inference schemes, we can perform various inference schemes for \ComputationActivationNetworks{}, such as backward inference and message passing schemes.
+
+
+    \section{Circuit Encoding Schemes}
+
+    We investigate here quantum pendants to the function encoding schemes used in \tnreason{}{}.
+
+    \subsection{Ancilla Encoding}
 
     \begin{definition}[Ancilla Encoding]
         Given a non-negative tensor $\hypercoreat{\headvariables}$ its ancilla encoding is the unitary tensor
-        $U^{\hypercore}[A_{\insymbol},A_{\outsymbol},\headvariableof{\insymbol,[\seldim]},\headvariableof{\outsymbol,[\seldim]}]$ which satisfies for each $\headindexof{[\seldim]}$
+        $\qcaencodingofat{\hypercore}{\avariableof{\insymbol},\avariableof{\outsymbol},\headvariableof{\insymbol,[\seldim]},\headvariableof{\outsymbol,[\seldim]}}$ which satisfies for each $\headindexof{[\seldim]}$
         \begin{align*}
-            U^{\hypercore}[A_{\insymbol}=0,A_{\outsymbol},\headvariableof{\insymbol,[\seldim]}=\headindexof{[\seldim]},\headvariableof{\outsymbol,[\seldim]}=\headindexof{[\seldim]}]
+            \qcaencodingofat{\hypercore}{\avariableof{\insymbol}=0,\avariableof{\outsymbol},\headvariableof{\insymbol,[\seldim]}=\headindexof{[\seldim]},\headvariableof{\outsymbol,[\seldim]}=\headindexof{[\seldim]}}
             = \frac{\hypercoreat{\headvariables=\headindexof{[\seldim]}}}{\max_{\secheadindexof{[\seldim]}} \hypercoreat{\headvariables=\secheadindexof{[\seldim]}}}
         \end{align*}
-
     \end{definition}
 
     When the maximum of the tensor is not known, it can be replaced by an upper bound (reducing the acceptance rate of the rejection sampling).
@@ -164,10 +185,10 @@
     Doing rejection sampling on the ancilla qubit corresponds with sampling from the normalized contraction with the activation tensor.
 
     \begin{lemma}
-        Given a distribution $\probat{\shortcatvariables}$, we construct a circuit preparing its q-sample and add the ancilla encoding of a tensor $\hypercoreat{\shortcatvariables}$.
-        The rejection sampling scheme, measuring the ancilla qubit and the $\shortcatvariables$ qubits, rejecting the ancilla qubit measured as $0$, prepares samples from the distribution
+        Given a distribution $\probat{\catvariables}$, we construct a circuit preparing its q-sample and add the ancilla encoding of a tensor $\hypercoreat{\catvariables}$.
+        The rejection sampling scheme, measuring the ancilla qubit and the $\catvariables$ qubits, rejecting the ancilla qubit measured as $0$, prepares samples from the distribution
         \begin{align*}
-            \normalizationof{\probat{\shortcatvariables},\hypercoreat{\shortcatvariables}}{\shortcatvariables} \, .
+            \normalizationof{\probat{\catvariables},\hypercoreat{\catvariables}}{\catvariables} \, .
         \end{align*}
     \end{lemma}
 
@@ -204,11 +225,11 @@
     \begin{lemma}
         We have for functions $\exfunction:\atomstates\rightarrow\bigtimes_{\selindexin}[2]$, $\secexfunction:\bigtimes_{\selindexin}[2]\rightarrow\bigtimes_{s\in[r]}[2]$
         \begin{align*}
-            U^{\secexfunction\circ\exfunction}[\catvariableof{\insymbol,[\atomorder]},\catvariableof{\outsymbol,[\atomorder]},\headvariableof{\insymbol,\secexfunction\circ\exfunction},\headvariableof{\outsymbol,\secexfunction\circ\exfunction}]
+            \qcbencodingofat{\secexfunction\circ\exfunction}{\catvariableof{\insymbol,[\atomorder]},\catvariableof{\outsymbol,[\atomorder]},\headvariableof{\insymbol,\secexfunction\circ\exfunction},\headvariableof{\outsymbol,\secexfunction\circ\exfunction}}
             = \breakablecontractionof{
             &\onehotmapofat{0}{\headvariableof{\insymbol,\exfunction}},\\
-            &U^{\exfunction}[\catvariableof{\insymbol,[\atomorder]},\catvariableof{\outsymbol,[\atomorder]},\headvariableof{\insymbol,\exfunction},\headvariableof{\outsymbol,\exfunction}],\\
-            &U^{\secexfunction}[\headvariableof{\outsymbol,\exfunction},\headvariableof{\outsymbol,\mathrm{aux}},\headvariableof{\insymbol,\secexfunction\circ\exfunction},\headvariableof{\outsymbol,\secexfunction\circ\exfunction}]
+            &\qcbencodingofat{\exfunction}{\catvariableof{\insymbol,[\atomorder]},\catvariableof{\outsymbol,[\atomorder]},\headvariableof{\insymbol,\exfunction},\headvariableof{\outsymbol,\exfunction}},\\
+            &\qcbencodingofat{\secexfunction}{\headvariableof{\outsymbol,\exfunction},\headvariableof{\outsymbol,\mathrm{aux}},\headvariableof{\insymbol,\secexfunction\circ\exfunction},\headvariableof{\outsymbol,\secexfunction\circ\exfunction}}
             }{
             \catvariableof{\insymbol,[\atomorder]},\catvariableof{\outsymbol,[\atomorder]},\headvariableof{\insymbol,\secexfunction\circ\exfunction},\headvariableof{\outsymbol,\secexfunction\circ\exfunction}
             } \, .
@@ -274,11 +295,15 @@
         \end{center}
         \caption{
             Quantum Circuit to reproduce a \ComputationActivationNetwork{} (with elementary activation) by rejection sampling.
-            We measure the distributed qubits $\shortcatvariables$ and the ancilla qubits $A_{[\seldim]}$ and reject all samples, where an ancilla qubit is measured as $0$.
+            We measure the distributed qubits $\catvariables$ and the ancilla qubits $\avariableof{[\seldim]}$ and reject all samples, where an ancilla qubit is measured as $0$.
         }
     \end{figure}
-    
+
+    We can produce augmented Q-samples for \ComputationActivationNetworks{} (see \defref{def:augmentedQsample}) using basis circuit encodings of the computation cores and ancilla encodings of the activation cores.
+
     \subsection{Preparation of Ancilla Qubits}
+
+    \red{Using the ancilla encoding of activation cores!}
 
     We introduce a ancilla qubit, which stores in its coefficient to the first state the probability of the configuration (this is the ancilla encoding!).
     When we have a probability tensor, this can be prepared, since all values are in $[0,1]$.
@@ -319,6 +344,11 @@
     This can provide a square root speedup in the complexity compared with classical rejection sampling.
 
     \textbf{Open Question:} Is there a way to avoid amplitude amplification and use a more direct circuit implementation of the activation network?
+    - Cannot be the case, when the encoding is determined by the activation tensor alone: Needs to use the computated statistic as well.
+
+
+
+
 
     \section{POVM measurements as contractions}
 
