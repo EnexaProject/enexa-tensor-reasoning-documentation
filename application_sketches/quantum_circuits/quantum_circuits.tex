@@ -347,7 +347,34 @@
     - Cannot be the case, when the encoding is determined by the activation tensor alone: Needs to use the computated statistic as well.
 
 
+    \section{Sampling from proposal distributions}
 
+    We can prepare basis circuit encodings to selection augmented formulas, in this way introducing formula selecting networks.
+
+    \textbf{Idea for an inductive reasoning scheme:} Prepare a q-sample from the empirical distribution and the current distribution.
+    Then prepare the basis circuit encodings, where the selection variables are shared and the distributed variables assigned to the prepared samples.
+    Now, the ancilla qubits can be designed to $\onehotmapof{1}$ and $\onehotmapof{0}$ accordingly.
+    The rejection sampling scheme on both ancillas being $1$ and the measurement of $\selvariable$ prepares then the distribution
+    \begin{align*}
+        \normalizationof{
+            \contractionof{\empdistributionwith, \sencmlnstatwith}{\selvariable}, \contractionof{\currentdistributionwith}{\selvariable}
+        }{\selvariable}
+    \end{align*}
+    That is, the probability of selecting $\selindex$ is proportional to
+    \begin{align*}
+        \datameanat{\indexedselvariable} \cdot (1-\currentmeanat{\indexedselvariable})
+    \end{align*}
+    and thus prefers formulas, which have a large empirical mean, but a small current mean.
+
+    \textbf{Open Question:} Since the distribution is "similar" to $\expof{\datameanat{\indexedselvariable}-\currentmeanat{\indexedselvariable})}$ (terms appear in Taylor of first order), can we tune the distribution with an inverse temperature parameter $\beta$?
+
+
+    \section{Implementation}
+
+    The introduced quantum circuit preparation schemes have been implemented in the python package \qcreason{}, which consists in three layers:
+    \begin{center}
+        \input{./tikz_pics/qcreason_architecture.tex}
+    \end{center}
 
 
     \section{POVM measurements as contractions}
