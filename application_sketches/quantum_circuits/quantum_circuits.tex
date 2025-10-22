@@ -90,9 +90,9 @@
         \item Pendant for Basis Encoding: \textbf{\ComputationCircuit{}}, with composition by contraction property.
     \end{itemize}
 
-    Both are defined using qubit rotations (see Section 4.2 in [Nielssen, Chuang]), where the incoming qubit variable is $A_{\insymbol}$ and the outgoing $A_{\outsymbol}$
+    Both are defined using controlled single qubit gates (see Sections 4.2-3 in [Nielsen, Chuang]), where the incoming qubit variable is $\avariableof{\insymbol}$ and the outgoing $\avariableof{\outsymbol}$
     \begin{align*}
-        \yrotationofat{\alpha}{A_{\insymbol},A_{\outsymbol}} \coloneqq
+        \yrotationofat{\alpha}{\avariableof{\insymbol},\avariableof{\outsymbol}} \coloneqq
         \begin{bmatrix}
             \cosof{\frac{\alpha}{2}} & -\sinof{\frac{\alpha}{2}} \\
             \sinof{\frac{\alpha}{2}} & \cosof{\frac{\alpha}{2}}
@@ -101,7 +101,7 @@
 
     Further we use the Pauli-X:
     \begin{align*}
-        \paulixat{A_{\insymbol},A_{\outsymbol}} \coloneqq
+        \paulixat{\avariableof{\insymbol},\avariableof{\outsymbol}} \coloneqq
         \begin{bmatrix}
             0 & 1 \\
             1 & 0
@@ -123,13 +123,40 @@
 
     \subsection{\ActivationCircuit{}}
 
+    \begin{figure}
+        \begin{center}
+            \input{./tikz_pics/ancilla_augmentation.tex}
+        \end{center}
+        \caption{
+            Ancilla augmentation.
+            a) Augmented distribution.
+            b) Corresponding encoding of the conditional probability distribution.
+        }\label{fig:ancillaAugmentation}
+    \end{figure}
+
+    Given a distribution $\probat{\shortcatvariables}$ we add an ancilla variable $\avariable$ and define the augmented distribution (see \figref{fig:ancillaAugmentation})
+    \begin{align*}
+        \secprobat{\avariable,\shortcatvariables} =
+        \frac{1}{\prod_{\catenumeratorin}\catdimof{\catenumerator}}
+        \sum_{\shortcatindicesin} \onehotmapofat{\shortcatindices}{\shortcatvariables}
+        \otimes \Big(
+        \probat{\shortcatindices} \cdot \tbasisat{\avariable} + (1- \probat{\shortcatindices}) \cdot \fbasisat{\avariable}
+        \Big) \, .
+    \end{align*}
+    Then we have
+    \begin{align*}
+        \secprobat{\shortcatvariables|\avariable=1} = \probat{\shortcatvariables} \, .
+    \end{align*}
+
+
+    %% Angle preparing
     We define the angle preparing function on $p\in[0,1]$ by
     \begin{align*}
         h(p) = 2 \cdot \mathrm{cos}^{-1}\left(\sqrt{1-p}\right) \, .
     \end{align*}
     For any $p\in[0,1]$ we then have
     \begin{align*}
-        \contractionof{\onehotmapofat{0}{A_{\insymbol}},\yrotationofat{h(p)}{A_{\insymbol},A_{\outsymbol}}}{A_{\outsymbol}}
+        \contractionof{\onehotmapofat{0}{\avariableof{\insymbol}},\yrotationofat{h(p)}{\avariableof{\insymbol},\avariableof{\outsymbol}}}{\avariableof{\outsymbol}}
         = \begin{bmatrix}
               \sqrt{1-p} \\
               \sqrt{p}
@@ -151,6 +178,15 @@
         \end{align*}
     \end{definition}
 
+    \begin{figure}
+        \begin{center}
+            \input{./tikz_pics/ancilla_augmentation.tex}
+        \end{center}
+        \caption{
+            Ancilla augmentation.
+        }
+    \end{figure}
+
 
 %    \begin{definition}[Ancilla \activationCircuit{}]
 %        Given a non-negative tensor $\hypercoreat{\headvariables}$ its ancilla \activationCircuit{} is the unitary tensor
@@ -161,14 +197,13 @@
 %        \end{align*}
 %    \end{definition}
 
-   % The ancilla \activationCircuit{} is the pendant of the coordinate encoding of $\sqrt{\probtensor}$ (see Chapter Coordinate Calculus).
+    % The ancilla \activationCircuit{} is the pendant of the coordinate encoding of $\sqrt{\probtensor}$ (see Chapter Coordinate Calculus).
 
     Tensors $\hypercoreat{\headvariables}$ with non-negative coordinates can be encoded after dividing them by their maximum, that is the \activationCircuit{} of the function
     \begin{align*}
         \exfunctionat{\headindexof{[\seldim]}} = \frac{\hypercoreat{\headvariables=\headindexof{[\seldim]}}}{\max_{\secheadindexof{[\seldim]}} \hypercoreat{\headvariables=\secheadindexof{[\seldim]}}}
     \end{align*}
     When the maximum of the tensor is not known, it can be replaced by an upper bound (reducing the acceptance rate of the rejection sampling).
-
 
     \subsubsection{Encoding of directed tensors}
 
@@ -177,9 +212,18 @@
     This generalizes the basis encoding scheme, which demands boolean tensors
 
 
+    \begin{figure}
+        \begin{center}
+            \input{./tikz_pics/directed_to_circuit.tex}
+        \end{center}
+        \caption{
+            Representation of directed and positive tensor by a controlled rotation.
+            a) Conditional probability tensor $\condprobat{\catvariableof{\catenumerator}}{\catvariableof{\parentsof{\catenumerator}}}$ being a tensor in a Bayesian Network.
+            b) Circuit Encoding as a controlled rotation, which is the \ActivationCircuit{} of the tensor $\condprobat{\catvariableof{\catenumerator}=1}{\catvariableof{\parentsof{\catenumerator}}}$.
+        }
+    \end{figure}
 
-
-    \subsection{Basis encoding}
+    \subsection{\ComputationCircuits{}}
 
     We here suggest a quantum pendant to basis encodings (see Chapter Basis Calculus), which has the decomposition by contraction property.
 
@@ -243,7 +287,7 @@
             \input{./tikz_pics/decomposition_sparsity.tex}
         \end{center}
         \caption{
-           Exploitaition of \DecompositionSparsity{} in \computationCircuit{}s.
+            Exploitaition of \DecompositionSparsity{} in \computationCircuit{}s.
         }\label{fig:qcbencodingDecomposition}
     \end{figure}
 
@@ -303,8 +347,8 @@
             \breakablecontractionof{
                 \{\identityat{\headvariableof{\hypercore,\insymbol},\headvariableof{0}},\identityat{\headvariableof{\hypercore,\outsymbol},\headvariableof{\cardof{\sliceset}-1}}\} \cup
                 \{\qcbencodingofat{\onehotmapof{\catindexof{\variableset}}}{
-                \headvariableof{\decindex}, \headvariableof{\decindex+1},
-                \catvariableof{\variableset,\insymbol},\catvariableof{\variableset,\outsymbol}} \wcols (\variableset,\catindexof{\variableset})\in\sliceset\}
+                    \headvariableof{\decindex}, \headvariableof{\decindex+1},
+                    \catvariableof{\variableset,\insymbol},\catvariableof{\variableset,\outsymbol}} \wcols (\variableset,\catindexof{\variableset})\in\sliceset\}
             }{\headvariableof{\hypercore,\insymbol},\headvariableof{\hypercore,\outsymbol},\catvariableof{[\atomorder],\insymbol},\catvariableof{[\atomorder],\outsymbol}}
         \end{align*}
         where $\decindex\in[\cardof{\sliceset}]$ enumerates the tuples in $\sliceset$.
@@ -317,10 +361,9 @@
             \input{./tikz_pics/polynomial_sparsity.tex}
         \end{center}
         \caption{
-           Exploitaition of \PolynomialSparsity{} in \computationCircuit{}s.
+            Exploitaition of \PolynomialSparsity{} in \computationCircuit{}s.
         }\label{fig:qcbencodingPolynomial}
     \end{figure}
-
 
     \subsubsection{Preparation by fine and coarse structure}
 
@@ -494,9 +537,6 @@
     \begin{center}
         \input{./tikz_pics/qcreason_architecture.tex}
     \end{center}
-
-
-
 
     \appendix
 
