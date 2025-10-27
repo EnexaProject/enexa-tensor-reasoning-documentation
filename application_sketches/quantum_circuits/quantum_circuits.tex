@@ -81,16 +81,22 @@
     \tableofcontents
 
 
-    \section{Circuit Encoding Schemes}
+    \section{Quantum Computation Basics}
 
-    We investigate here quantum pendants to the function encoding schemes used in \tnreason{}{}.
+    \subsection{State Encoding Schemes}
 
-    \begin{itemize}
-        \item Pendant for Coordinate Encoding: \textbf{\ActivationCircuit{}}, storing the function value in the amplitude of an ancilla qubit.
-        \item Pendant for Basis Encoding: \textbf{\ComputationCircuit{}}, with composition by contraction property.
-    \end{itemize}
+    Basis Encoding in Quantum Computation refers to the representation of classical $n$ bit strings by $n$ qubit basis states, and is called one-hot encoding in \tnreason{}.
+    The Basis Encoding scheme in \tnreason{} goes beyond this scheme and also encodes subsets by sums of one-hot encodings to the members of the set.
+    In this way, relations and functions are represented by boolean tensors and contraction of them is refered as \BasisCalculus{}.
 
-    Both are defined using controlled single qubit gates (see Sections 4.2-3 in [Nielsen, Chuang]), where the incoming qubit variable is $\avariableof{\insymbol}$ and the outgoing $\avariableof{\outsymbol}$
+    Amplitude Encoding in Quantum Computation refers to the storage of complex numbers in the amplitudes of quantum states.
+    The pendant in \tnreason{} is the Coordinate Encoding scheme, where real numbers are stored in the coordinates of real-valued tensors.
+    Compared to Amplitude Encoding, Coordinate Encoding does not have the normalization constraint of quantum states.
+    The Amplitude Encoding of the square root of a probability distribution is sometimes called q-sample.
+
+    \subsection{Controlled Single Qubit Gates}
+
+    We define the rotation gate around the Y-axis by an angle $\alpha$ as
     \begin{align*}
         \yrotationofat{\alpha}{\avariableof{\insymbol},\avariableof{\outsymbol}} \coloneqq
         \begin{bmatrix}
@@ -99,7 +105,7 @@
         \end{bmatrix}
     \end{align*}
 
-    Further we use the Pauli-X:
+    Further we define the Pauli-X:
     \begin{align*}
         \paulixat{\avariableof{\insymbol},\avariableof{\outsymbol}} \coloneqq
         \begin{bmatrix}
@@ -108,45 +114,36 @@
         \end{bmatrix}
     \end{align*}
 
+    Controlled single qubit gates are defined using control qubits, where the gate is applied to the target qubit if the control qubits are in a specific state and the identity is applied otherwise.
 
-%    \subsection{\ActivationCircuit{}}
-%
-%    \begin{definition}[\ActivationCircuit{}]
-%        Given a probability distribution $\probtensor:\atomstates\rightarrow\rr$ (i.e. $\contraction{\probtensor}=1$ and $\zeros \prec \probtensor$) its \ActivationCircuit{} is
-%        \begin{align*}
-%            V^{\probtensor}{\catvariableof{[\atomorder],\insymbol},\catvariableof{[\atomorder],\outsymbol}}
-%            = \sum_{\shortcatindicesin} \sqrt{\probat{\indexedshortcatvariables}} \cdot
-%            \onehotmapofat{\shortcatindices}{\catvariableof{[\atomorder],\insymbol}}
-%            \otimes \onehotmapofat{\shortcatindices}{\catvariableof{[\atomorder],\outsymbol}} \, .
-%        \end{align*}
-%    \end{definition}
+    \subsection{Measurement}
+
+    The computational basis measurement of the qubits $\catvariableof{\variableset}$ of a Quantum State $\psi[\shortcatvariables]$ is equal to drawing samples from a distribution
+    \begin{align*}
+        \probat{\catvariableof{\variableset}} = \contractionof{
+            \psi[\shortcatvariables], \psi^{*}[\shortcatvariables]
+        }{\catvariableof{\variableset}} \, .
+    \end{align*}
+    Here $\psi^{*}[\shortcatvariables]$ is the complex conjugate of $\psi[\shortcatvariables]$.
+    When $\psi$ is prepared by a quantum circuit acting on a initial state, the complex conjugate is the hermitean conjugate of the circuit acting on the complex conjgate of the initial state.
+
+    %% Add drawing!
+    We abbreviate these contractions by extending the contraction diagrams with measurement symbols (see \figref{fig:caCircuit}).
+
+
+    \section{Circuit Encoding Schemes}
+
+    We investigate here quantum pendants to the function encoding schemes used in \tnreason{}{}.
+
+    \begin{itemize}
+        \item Pendant for Coordinate Encoding in \tnreason{}: Amplitude Encoding, storing the function value in the amplitude of an ancilla qubit.
+        This is realized by an \textbf{\ActivationCircuit{}}.
+        \item Pendant for Basis Encoding in \tnreason{}: \textbf{\ComputationCircuit{}}, with composition by contraction property.
+    \end{itemize}
+
+    Both are defined using controlled single qubit gates (see Sections 4.2-3 in [Nielsen, Chuang]) with ancilla qubits being the target qubits. % where the incoming qubit variable is $\avariableof{\insymbol}$ and the outgoing $\avariableof{\outsymbol}$.
 
     \subsection{\ActivationCircuit{}}
-
-    \begin{figure}
-        \begin{center}
-            \input{./tikz_pics/ancilla_augmentation.tex}
-        \end{center}
-        \caption{
-            Ancilla augmentation.
-            a) Augmented distribution.
-            b) Corresponding encoding of the conditional probability distribution.
-        }\label{fig:ancillaAugmentation}
-    \end{figure}
-
-    Given a distribution $\probat{\shortcatvariables}$ we add an ancilla variable $\avariable$ and define the augmented distribution (see \figref{fig:ancillaAugmentation})
-    \begin{align*}
-        \secprobat{\avariable,\shortcatvariables} =
-        \frac{1}{\prod_{\catenumeratorin}\catdimof{\catenumerator}}
-        \sum_{\shortcatindicesin} \onehotmapofat{\shortcatindices}{\shortcatvariables}
-        \otimes \Big(
-        \probat{\shortcatindices} \cdot \tbasisat{\avariable} + (1- \probat{\shortcatindices}) \cdot \fbasisat{\avariable}
-        \Big) \, .
-    \end{align*}
-    Then we have
-    \begin{align*}
-        \secprobat{\shortcatvariables|\avariable=1} = \probat{\shortcatvariables} \, .
-    \end{align*}
 
 
     %% Angle preparing
@@ -169,7 +166,7 @@
             \exfunction : \bigtimes_{\selindexin} [2] \rightarrow [0,1]
         \end{align*}
         its \activationCircuit{} is the unitary tensor
-        $\qcaencodingofat{\hypercore}{\avariableof{\insymbol},\avariableof{\outsymbol},\headvariableof{\insymbol,[\seldim]},\headvariableof{\outsymbol,[\seldim]}}$ which satisfies for each $\headindexof{[\seldim]}$
+        $\qcaencodingofat{\hypercore}{\avariableof{\insymbol},\avariableof{\outsymbol},\headvariableof{\insymbol,[\seldim]},\headvariableof{\outsymbol,[\seldim]}}$ defined as
         \begin{align*}
             \qcaencodingofat{\hypercore}{\avariableof{\insymbol},\avariableof{\outsymbol},\headvariableof{\insymbol,[\seldim]},\headvariableof{\outsymbol,[\seldim]}}
             = \sum_{\headindexof{[\seldim]}} \onehotmapofat{\headindexof{[\seldim]}}{\headvariableof{\insymbol,[\seldim]}}
@@ -178,26 +175,14 @@
         \end{align*}
     \end{definition}
 
-    \begin{figure}
-        \begin{center}
-            \input{./tikz_pics/ancilla_augmentation.tex}
-        \end{center}
-        \caption{
-            Ancilla augmentation.
-        }
-    \end{figure}
+    %% Drop the in and out
+    We will ease our notation by dropping the $\insymbol$ and $\outsymbol$ labels to the control variables.
+    This amounts to understanding the Dirac delta tensors in \activationCircuits{} as hyperedges.
+    Along that picture the quantum circuit is a tensor network on hyperedges instead of edges.
 
 
-%    \begin{definition}[Ancilla \activationCircuit{}]
-%        Given a non-negative tensor $\hypercoreat{\headvariables}$ its ancilla \activationCircuit{} is the unitary tensor
-%        $\qcaencodingofat{\hypercore}{\avariableof{\insymbol},\avariableof{\outsymbol},\headvariableof{\insymbol,[\seldim]},\headvariableof{\outsymbol,[\seldim]}}$ which satisfies for each $\headindexof{[\seldim]}$
-%        \begin{align*}
-%            \qcaencodingofat{\hypercore}{\avariableof{\insymbol}=0,\avariableof{\outsymbol},\headvariableof{\insymbol,[\seldim]}=\headindexof{[\seldim]},\headvariableof{\outsymbol,[\seldim]}=\headindexof{[\seldim]}}
-%            = \frac{\hypercoreat{\headvariables=\headindexof{[\seldim]}}}{\max_{\secheadindexof{[\seldim]}} \hypercoreat{\headvariables=\secheadindexof{[\seldim]}}} \, .
-%        \end{align*}
-%    \end{definition}
-
-    % The ancilla \activationCircuit{} is the pendant of the coordinate encoding of $\sqrt{\probtensor}$ (see Chapter Coordinate Calculus).
+    When we have a probability tensor, its \activationCircuit{} be prepared, since all values are in $[0,1]$.
+    Note that for rejection sampling, only the quotients of the values are important, we can therefore scale the value by a scalar such that the mode is $1$.
 
     Tensors $\hypercoreat{\headvariables}$ with non-negative coordinates can be encoded after dividing them by their maximum, that is the \activationCircuit{} of the function
     \begin{align*}
@@ -207,10 +192,28 @@
 
     \subsubsection{Encoding of directed tensors}
 
-    Following the schemes in \cite{low_quantum_2014}, we can prepare any non-negative tensors by a sequence of controlled rotations.
-    To this end, one iterates over the states of the incoming variables, and performs a controlled rotation on the outgoing variable, where the angle is given by the value of the tensor at the incoming state.
-    This generalizes the basis encoding scheme, which demands boolean tensors
+    Following the schemes in \cite{low_quantum_2014}, we can prepare the acyclic networks of directed and non-negative tensors by a sequence of controlled rotations.
+    Directed and non-negative tensors correspond with conditional probability distributions and acyclic networks are Bayesian Networks.
+    We prepare them by \activationCircuit{}s of functions (see \figref{fig:cpdEncoding})
+    \begin{align*}
+        \catindexof{\parentsof{\catenumerator}} \rightarrow \condprobat{\catvariableof{\catenumerator}=1}{\indexedcatvariableof{\parentsof{\catenumerator}}} \, .
+    \end{align*}
 
+    In this way, Bayesian Networks can be prepared as quantum circuits, where each conditional probability distribution is prepared by an \activationCircuit{}.
+
+    \begin{theorem}[Low et al.]
+        Any Bayesian Network of variables $\catvariableof{[\atomorder]}$, where the enumeration by $[\atomorder]$ respects the partial order by child-parent relations, can be prepared as a quantum circuit by concatenating the \activationCircuit{}s
+        \begin{align*}
+            \qcaencodingofat{
+                \condprobat{\catvariableof{\catenumerator}=1}{\catvariableof{\parentsof{\catenumerator}}}
+            }{\catvariableof{\catenumerator,\insymbol},\catvariableof{\catenumerator},\catvariableof{\parentsof{\catenumerator}},\catvariableof{\parentsof{\catenumerator}}}
+        \end{align*}
+        for $\atomenumeratorin$ and acting on the initial state $\bigotimes_{\atomenumeratorin}\onehotmapofat{0}{\catvariableof{\catenumerator,\insymbol}}$ .
+    \end{theorem}
+
+
+    %To this end, one iterates over the states of the incoming variables, and performs a controlled rotation on the outgoing variable, where the angle is given by the value of the tensor at the incoming state.
+    %This generalizes the basis encoding scheme, which demands boolean tensors.
 
     \begin{figure}
         \begin{center}
@@ -220,7 +223,7 @@
             Representation of directed and positive tensor by a controlled rotation.
             a) Conditional probability tensor $\condprobat{\catvariableof{\catenumerator}}{\catvariableof{\parentsof{\catenumerator}}}$ being a tensor in a Bayesian Network.
             b) Circuit Encoding as a controlled rotation, which is the \ActivationCircuit{} of the tensor $\condprobat{\catvariableof{\catenumerator}=1}{\catvariableof{\parentsof{\catenumerator}}}$.
-        }
+        }\label{fig:cpdEncoding}
     \end{figure}
 
     \subsection{\ComputationCircuits{}}
@@ -281,6 +284,9 @@
         \end{align*}
     \end{lemma}
 
+    When having a syntactical decomposition of a propositional formula, we can iteratively apply the \computationCircuit{} decomposition theorem and prepare each connective by a circuit.
+    We can decompose any propositional formula into logical connectives and prepare to each a modulus 2 circuit implementation.
+    This works, when the target qubit of one connective is used as a value qubit of another.
 
     \begin{figure}
         \begin{center}
@@ -311,11 +317,12 @@
 
     \subsubsection{Construction for mod2-basis+ CP decompositions - Exploiting \PolynomialSparsity{}}
 
-    Concatenating two \computationCircuit{}s is the \computationCircuit{} of their mod2 sum.
+    Concatenating two \computationCircuit{}s, which have the same head qubit, is the \computationCircuit{} of their mod2 sum.
 
     A basis+ elementary function can be encoded by a single controlled NOT operation with auxiliary X qubits.
 
-    This motivates the mod2-basis+ CP decomposition of tensors.
+    This motivates the mod2-basis+ CP decomposition of tensors, which is exactly the decomposition of boolean polynomials into monomials.
+    Each monomial is called a terms (products of x or (1-x) factors), and minterms in case that all variables appear.
 
     \begin{definition}
         Given a boolean tensor $\hypercore$, a mod2-basis+ CP decomposition is a collection $\sliceset$ of tuples $(\variableset,\catindexof{\variableset})$ with such that for any $\shortcatindicesin$
@@ -354,7 +361,10 @@
         where $\decindex\in[\cardof{\sliceset}]$ enumerates the tuples in $\sliceset$.
     \end{lemma}
 
-    The \computationCircuit{} to each boolean monomial has a representation by a multiple controlled $\paulixsymbol$ gate and further pairs of $\paulixsymbol$ gates preparing the control state, see \figref{fig:qcbencodingPolynomial}.
+    Each \computationCircuit{} to each boolean monomial can be prepared by a multiple-controlled $\paulixsymbol$ gate and further pairs of $\paulixsymbol$ gates preparing the control state, see \figref{fig:qcbencodingPolynomial}. %where the control qubits are the affected variables and the target qubit is the value qubit.
+    When we sum monomials wrt modulus 2 calculus, then the preparation is a sequence of such circuits.
+    In such way, we can prepare the \computationCircuit{} to any propositional formula.
+    This encoding strategy exploits a modified (by mod2 calculus) \polynomialSparsity{}.
 
     \begin{figure}
         \begin{center}
@@ -375,23 +385,9 @@
     \end{itemize}
 
 
-    \section{Sampling from \ComputationActivationNetworks{} as Quantum Circuits}
+    \section{Preparation of Distributions}
 
-    \tnreason{} provides tensor network representations of knowledge bases and exponential families following a Computation Activation architecture.
-    Here are some ideas to utilize quantum circuits for sampling \ComputationActivationNetworks{}.
-
-    \begin{figure}
-        \begin{center}
-            \input{./tikz_pics/ca_circuit.tex}
-        \end{center}
-        \caption{
-            Quantum Circuit to reproduce a \ComputationActivationNetwork{} (with elementary activation) by rejection sampling.
-            We measure the distributed qubits $\shortcatvariables$ and the ancilla qubits $\avariableof{[\seldim]}$ and reject all samples, where an ancilla qubit is measured as $0$.
-        }
-    \end{figure}
-
-
-    We can produce Q-samples for ancilla augmented \ComputationActivationNetworks{}  using basis circuit encodings of the computation cores and ancilla encodings of the activation cores.
+    We investigate, how the above circuit encoding schemes can be applied in the preparation of states, which computational basis measurements are samples from specific distributions.
 
     \subsection{Generic Q-samples}
 
@@ -405,7 +401,8 @@
         \end{align*}
     \end{definition}
 
-    In \cite{low_quantum_2014} the \activationCircuit{} is called q-sample.
+    %% Low Paper
+    In \cite{low_quantum_2014} the Q-sample has been introduced.
     It prepares a scheme to realize property 1 (purity) + 2 (q-sampling) of a qpdf, but fails to realize property 3 (q-stochasticity).
     The q-sample can be prepared for Bayesian Networks, where each child qubit is prepared densely by C-NOTs conditioning on parent qubits.
 
@@ -430,28 +427,20 @@
         \end{align*}
     \end{lemma}
 
+    \subsection{Ancilla Augmentation}
+
     %% NEEDED ALREADY HERE?
     For more flexible sampling schemes of \ComputationActivationNetworks{} we need to introduce ancilla qubits.
 
     \begin{definition}[Ancilla Augmented Distribution]
         Let $\probwith$ be a probability distribution over variables $\shortcatvariables$.
-        Another joint distribution of $\shortcatvariables$ and ancilla variables $\avariables$ is called an ancilla augmented distribution, if
+        Another joint distribution $\secprobtensor$ of $\shortcatvariables$ and ancilla variables $\avariables$ is called an ancilla augmented distribution, if
         \begin{align*}
-            \condprobof{\shortcatvariables}{\avariables=\onesat{[\seldim]}} = \probwith \, .
+            \secprobat{\shortcatvariables|\avariables=\onesat{[\seldim]}} = \probwith \, .
         \end{align*}
     \end{definition}
 
     Sampling from the distribution can be done by rejection sampling on the ancilla augmented distribution, measuring all variables and rejecting all samples where an ancilla variable is $0$.
-
-%    \begin{definition}[Augmented \activationCircuit{}]
-%        \label{def:augmentedQsample}
-%        Let there be a probability distribution $\probtensor:\atomstates\rightarrow\rr$ and qubit variables $\shortcatvariables$ and ancilla qubit variables $\avariables$.
-%        We call a quantum state $\qstateofat{\probtensor}{\shortcatvariables,\avariables}$ an augmented \activationCircuit{}, if
-%        \begin{align*}
-%            |\qstateofat{\probtensor}{\shortcatvariables,\avariables=\onesat{[\seldim]}}|^2 = \probat{\shortcatvariables}
-%        \end{align*}
-%%        \red{Problematic: This contraction does not match the computational basis measurement!}
-%    \end{definition}
 
     %% Usage through rejection sampling
     Given an augmented Q-sample of a distribution, we can prepare samples from the distribution by rejection sampling, measuring all variables $\shortcatvariables$ and $\avariables$ and rejecting all samples where an ancilla qubit is measured as $0$.
@@ -460,47 +449,40 @@
     When sampling from probability distributions, we can use these samples to estimate probabilistic queries.
     Building on such particle-based inference schemes, we can perform various inference schemes for \ComputationActivationNetworks{}, such as backward inference and message passing schemes.
 
-    \subsection{Preparation of Ancilla Qubits}
+    %% Main point: Construction by activation circuits
+    Given a distribution $\probat{\shortcatvariables}$ we add an ancilla variable $\avariable$ and define the augmented distribution (see \figref{fig:ancillaAugmentation})
+    \begin{align*}
+        \secprobat{\avariable,\shortcatvariables} =
+        \frac{1}{\prod_{\catenumeratorin}\catdimof{\catenumerator}}
+        \sum_{\shortcatindicesin} \onehotmapofat{\shortcatindices}{\shortcatvariables}
+        \otimes \Big(
+        \probat{\shortcatindices} \cdot \tbasisat{\avariable} + (1- \probat{\shortcatindices}) \cdot \fbasisat{\avariable}
+        \Big) \, .
+    \end{align*}
+    Then we have
+    \begin{align*}
+        \secprobat{\shortcatvariables|\avariable=1} = \probat{\shortcatvariables} \, .
+    \end{align*}
 
-    \red{Using the ancilla encoding of activation cores!}
+    \begin{figure}
+        \begin{center}
+            \input{./tikz_pics/ancilla_augmentation.tex}
+        \end{center}
+        \caption{
+            Ancilla augmentation of a distribution $\probwith$.
+            a) Augmented distribution $\secprobat{\avariable,\shortcatvariables}$ with the property that $\probwith = \secprobat{\shortcatvariables|\avariable=1}$.
+            b) Preparation of the augmented distribution by the \activationCircuit{} of $\probwith$.
+        }\label{fig:ancillaAugmentation}
+    \end{figure}
 
-    We introduce a ancilla qubit, which stores in its coefficient to the first state the probability of the configuration (this is the ancilla encoding!).
-    When we have a probability tensor, this can be prepared, since all values are in $[0,1]$.
-    For the rejection sampling, only the quotients of the values are important, we can therefore scale the value by a scalar such that the mode is $1$.
-    The value qubit is initialized by the zeroth one hot encoding ($\ket{0}$) and rotated by a controlled rotation gate, which is controlled by the variable qubits.
-
-    To prepare a distribution with sufficient statistics, we prepare the statistic qubits by a \computationCircuit{} and do controlled rotations on the value qubit controlled by the statistic qubits.
-
-    Maximum entropy distribution under moment constraints are a special case of distributions with sufficient statistics.
-    In many cases (precisely by mean parameters on the interior of cube faces), they have a factored representation by the features.
-    It is unclear, how to exploit this factored representation in the preparation of the controlled value rotations.
-
-    \textbf{Open Question:} How to exploit the factored representation of maximum entropy distributions in the preparation of the value qubit?
-    - By a collection of ancilla qubits on each statistic, and doing amplitude amplification on the state of all qubits 1.
-
-    \subsection{Polynomial Sparsity}
-
-    \red{This is exactly the decomposition of boolean polynomials into monomials (which can include 1-x terms)!
-    Decompositions is called into terms (products of x or (1-x) factors), and minterms if all variables appear.}
-
-    Each monomial can be prepared by a multiple-controlled NOT gate, where the control qubits are the affected variables and the target qubit is the value qubit.
-    When we sum monomials wrt modulus 2 calculus, then the preparation is a sequence of such circuits.
-    In such way, we can prepare the \computationCircuit{} to any propositional formula.
-    This encoding strategy exploits a modified (by mod2 calculus) polynomial sparsity.
-
-    \subsection{Decomposition Sparsity}
-
-    When having a syntactical decomposition of a propositional formula, we can iteratively apply the \computationCircuit{} decomposition theorem and prepare each connective by a circuit.
-    We can decompose any propositional formula into logical connectives and prepare to each a modulus 2 circuit implementation.
-    This works, when the target qubit of one connective is used as a value qubit of another.
-
-    \subsection{Quantum Rejection Sampling}
+    \subsection{Amplitude Amplification}
 
     Note, that the variable qubits are uniformly distributed when only the computation circuit is applied.
-    When sampling the probability distribution, we need the value qubit to be in state $1$ in order for the sample to be valid.
+    When sampling the probability distribution, we need the aniclla qubits to be in state $1$ in order for the sample to be valid.
     Any other states will have to be rejected.
 
-    Classically, this can be simulated in the same way: Just draw the variables from uniform, calculate the value qubit by a logical circuit inference and accept with probability by the computed value.
+    Classically, this can be simulated in the same way:
+    Just draw the variables from uniform, calculate the value qubit by a logical circuit inference and accept with probability by the computed value.
 
     For this procedure to be more effective (and in particular not having an efficient classical pendant), we need amplitude amplification on the value qubit.
     This can provide a square root speedup in the complexity compared with classical rejection sampling.
@@ -509,7 +491,40 @@
     - Cannot be the case, when the encoding is determined by the activation tensor alone: Needs to use the computated statistic as well.
 
 
-    \section{Sampling from proposal distributions}
+    \subsection{Sampling from \ComputationActivationNetworks{} as Quantum Circuits}
+
+    \red{So far: Sample from \HybridLogicNetworks{}, would need qudits for for more general \ComputationActivationNetworks{}.}
+
+    \tnreason{} provides tensor network representations of knowledge bases and exponential families following a Computation Activation architecture.
+    Here are some ideas to utilize quantum circuits for sampling from \ComputationActivationNetworks{}.
+    We can produce Q-samples for ancilla augmented \ComputationActivationNetworks{}  using \computationCircuits{} and \activationCircuits{}:
+    \begin{itemize}
+        \item For each (sub-) statistic, prepare a qubit by \ComputationCircuits{}
+        \item Based on the computed qubits, prepare ancilla qubits by \ActivationCircuits{} to the activation cores.
+    \end{itemize}
+
+    \begin{figure}
+        \begin{center}
+            \input{./tikz_pics/ca_circuit.tex}
+        \end{center}
+        \caption{
+            Quantum Circuit to reproduce a \ComputationActivationNetwork{} (with elementary activation) by rejection sampling.
+            We measure the distributed qubits $\shortcatvariables$ and the ancilla qubits $\avariableof{[\seldim]}$ and reject all samples, where an ancilla qubit is measured as $0$.
+        }\label{fig:caCircuit}
+    \end{figure}
+
+
+    \section{Implementation}
+
+    The introduced quantum circuit preparation schemes have been implemented in the python package \qcreason{}, which consists in three layers:
+    \begin{center}
+        \input{./tikz_pics/qcreason_architecture.tex}
+    \end{center}
+
+    \appendix
+
+
+    \section{Extension: Sampling from proposal distributions}
 
     We can prepare basis circuit encodings to selection augmented formulas, in this way introducing formula selecting networks.
 
@@ -529,16 +544,6 @@
     and thus prefers formulas, which have a large empirical mean, but a small current mean.
 
     \textbf{Open Question:} Since the distribution is "similar" to $\expof{\datameanat{\indexedselvariable}-\currentmeanat{\indexedselvariable})}$ (terms appear in Taylor of first order), can we tune the distribution with an inverse temperature parameter $\beta$?
-
-
-    \section{Implementation}
-
-    The introduced quantum circuit preparation schemes have been implemented in the python package \qcreason{}, which consists in three layers:
-    \begin{center}
-        \input{./tikz_pics/qcreason_architecture.tex}
-    \end{center}
-
-    \appendix
 
 
     \section{Comparing tensor networks and quantum circuits}
