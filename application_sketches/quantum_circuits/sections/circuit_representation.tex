@@ -1,0 +1,92 @@
+\section{Quantum Computation Basics}
+
+\subsection{State Encoding Schemes}
+
+Basis Encoding in Quantum Computation refers to the representation of classical $n$ bit strings by $n$ qubit basis states, and is called one-hot encoding in \tnreason{}.
+The Basis Encoding scheme in \tnreason{} goes beyond this scheme and also encodes subsets by sums of one-hot encodings to the members of the set.
+In this way, relations and functions are represented by boolean tensors and contraction of them is refered as \BasisCalculus{}.
+
+Amplitude Encoding in Quantum Computation refers to the storage of complex numbers in the amplitudes of quantum states.
+The pendant in \tnreason{} is the Coordinate Encoding scheme, where real numbers are stored in the coordinates of real-valued tensors.
+Compared to Amplitude Encoding, Coordinate Encoding does not have the normalization constraint of quantum states.
+The Amplitude Encoding of the square root of a probability distribution is sometimes called q-sample.
+
+\subsection{Controlled Single Qubit Gates}
+
+We define the rotation gate around the Y-axis by an angle $\alpha$ as
+\begin{align*}
+    \yrotationofat{\alpha}{\avariableof{\insymbol},\avariableof{\outsymbol}} \coloneqq
+    \begin{bmatrix}
+        \cosof{\frac{\alpha}{2}} & -\sinof{\frac{\alpha}{2}} \\
+        \sinof{\frac{\alpha}{2}} & \cosof{\frac{\alpha}{2}}
+    \end{bmatrix}
+\end{align*}
+
+Further we define the Pauli-X:
+\begin{align*}
+    \paulixat{\avariableof{\insymbol},\avariableof{\outsymbol}} \coloneqq
+    \begin{bmatrix}
+        0 & 1 \\
+        1 & 0
+    \end{bmatrix}
+\end{align*}
+
+%% Control notation
+Controlled single qubit gates are defined using control qubits, where the gate is applied to the target qubit if the control qubits are in a specific state and the identity is applied otherwise.
+In the tensor network diagrams, we do not distinguish between incoming and outgoing control qubit variables, since the control acts as a Dirac tensor.
+Thus, controlled unitary with target qubit $\catvariableof{t}$ and control qubits $\catvariableof{c}$ are represented by tensors
+\begin{align*}
+    \contunitaryat{\catvariableof{t,\insymbol},\catvariableof{t,\outsymbol},\catvariableof{c}}
+\end{align*}
+where for each state $\catindexof{c}$ to the control variables we have that
+\begin{align*}
+    \contunitaryat{\catvariableof{t,\insymbol},\catvariableof{t,\outsymbol},\indexedcatvariableof{c}}
+\end{align*}
+is a unitary matrix acting on the leg space of the target variable.
+
+\subsection{Measurement and Phases}
+
+The computational basis measurement of the qubits $\catvariableof{\variableset}$ of a Quantum State $\qstatewith$ is equal to drawing samples from a distribution
+\begin{align*}
+    \probat{\catvariableof{\variableset}} = \contractionof{
+        \qstatewith, \comconqstatewith
+    }{\catvariableof{\variableset}} \, .
+\end{align*}
+Here $\comconqstatewith$ is the complex conjugate of $\qstatewith$.
+When $\qstate$ is prepared by a quantum circuit acting on a initial state, the complex conjugate is the hermitean conjugate of the circuit acting on the complex conjgate of the initial state.
+
+%% Add drawing!
+We abbreviate these contractions by extending the contraction diagrams with measurement symbols (see \figref{fig:measurementSketch}).
+\begin{figure}
+    \begin{center}
+        \input{tikz_pics/measurement_sketch.tikz}
+    \end{center}
+    \caption{Computational Basis Measurement of a quantum state $\qstate$.
+    The measurement symbols on the left side indicate the measured qubits and the first equation is understood as a definition.
+    In the second equation we sketch, that the measurement distribution is equal to the contraction of the square absolute transform of $\qstate$ to the measured variables.
+    }\label{fig:measurementSketch}
+\end{figure}
+
+%% Phase-Absolut decomposition
+Each complex-valued tensor $\qstatewith$ has a decomposition into a phase tensor $\phasecorewith$ and an absolute tensor $\absof{\qstate}[\shortcatvariables]$ defined by
+\begin{align*}
+    \qstatewith = \contractionof{\expof{i\cdot\phasecorewith}, \absof{\qstate}[\shortcatvariables]}{\shortcatvariables}\, .
+\end{align*}
+
+The measurement distribution is depends only on $\absof{\phi}$, that is
+\begin{align*}
+    \probwith = \absof{\qstate}^2[\shortcatvariables] \, .
+\end{align*}
+
+Note, that when only a subset of variables is measured, the distribution is the contraction of the absolute square transform (these operations do not commute)
+\begin{align*}
+    \probat{\catvariableof{\variableset}} = \contractionof{\absof{\qstate}^2[\shortcatvariables]}{\catvariableof{\variableset}} \, .
+\end{align*}
+
+%% Phasecore vanishing as gauging
+When we are interested in the preparation of quantum states with a specific computational basis measurement distribution, we can restrict to states with vanishing phase cores, that is
+\begin{align*}
+    \qstatewith
+    = \contractionof{\expof{i\cdot\zerosat{\shortcatvariables}}, \absof{\qstate}[\shortcatvariables]}{\shortcatvariables}
+    = \absof{\qstate}[\shortcatvariables]  \, .
+\end{align*}
