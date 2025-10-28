@@ -90,3 +90,94 @@ When we are interested in the preparation of quantum states with a specific comp
     = \contractionof{\expof{i\cdot\zerosat{\shortcatvariables}}, \absof{\qstate}[\shortcatvariables]}{\shortcatvariables}
     = \absof{\qstate}[\shortcatvariables]  \, .
 \end{align*}
+
+
+\subsection{Graph-Controlled circuits}
+
+
+
+\begin{definition}[Graph-Controlled Circuit]
+    Let $\graph=(\nodes,\edges)$ be a directed acyclic hypergraph, where each hyperedge has exactly one outgoing node and all nodes appear exactly once as outgoing nodes of an hyperedge.
+    Then a by $\graph$ controlled circuit is a decoration of the edges $\edge=(\innodes,\{\node\})\in\edges$ by controlled unitaries
+    \begin{align*}
+        \contunitaryofat{\edge}{\catvariableof{\node,\insymbol},\catvariableof{\node,\outsymbol},\catvariableof{\innodes,\outsymbol}} \, .
+    \end{align*}
+\end{definition}
+
+\begin{theorem}\label{the:graphControlledPreparesBN}
+    Let $\graph$ be a directed acyclic graph.
+    The measurement distributions of the by $\graph$ controlled circuits acting on disentangled initial states are equal to the Bayesian Networks on $\graph$.
+\end{theorem}
+
+\begin{lemma}
+    Any Bayesian network on a directed acyclic graph $\graph$ can be prepared by a $\graph$-controlled circuit with activation circuits of the conditional probability tensors.
+\end{lemma}
+\begin{proof}
+    Let $\probwith$ be a Bayesian network on the graph $\graph$.
+    Enumerate the nodes $\nodes$ of the $\graph$ by $[\atomorder]$, such that for each $\catenumeratorin$ we have $\parentsof{\catenumerator}\subset[\catenumerator]$.
+    Then define a $\graph$-controlled circuit, by choosing for each $\catenumeratorin$ controlled unitaries which satisfy
+    \begin{align*}
+        \contunitaryofat{\catenumerator}{\catvariableof{\catenumerator,\insymbol}=0,\catvariableof{\node,\outsymbol},\catvariableof{\parentsof{\catenumerator},\outsymbol}}
+        =\sqrt{\condprobof{\catvariableof{\catenumerator}}{\catvariableof{\parentsof{\catenumerator}}}} \, .
+    \end{align*}
+    Here we specified only the action of the controlled unitary on the basis vector $\onehotmapofat{0}{\catvariableof{\catenumerator}}$, the action on $\onehotmapofat{1}{\catvariableof{\catenumerator}}$ can be chosen by an arbitrary orthogonal unit vector. % Maybe link here the activation circuit scheme, which is already used?
+    Any such defined $\graph$-controlled circuit acting on the initial state $\bigotimes_{\catenumeratorin}\onehotmapofat{0}{\catvariableof{\catenumerator}}$ prepares a quantum state $\qstatewith$ with measurement distribution
+    \begin{align*}
+        \absof{\qstate}^2\left[\shortcatvariables\right] \, .
+    \end{align*}
+    Given arbitrary $\shortcatindicesin$ we have
+        \begin{align*}
+        \absof{\qstate}^2\left[\indexedshortcatvariables\right]
+            = \prod_{\catenumeratorin} \condprobof{\indexedcatvariableof{\catenumerator}}{\indexedcatvariableof{\parentsof{\catenumerator}}}
+            = \probat{\indexedshortcatvariables} \, .
+    \end{align*}
+    Here we used in the last equation, that $\probwith$ is a Bayesian network.
+    Since the equivalence holds for any coordinate, this establishes the equivalence of the measurement distribution of $\qstatewith$ and $\probwith$.
+\end{proof}
+
+
+\begin{lemma}
+    Let $(\graph,\contunitary)$ be a $\graph$-controlled circuit acting on a disentangled initial state and $\probat{\nodevariables}$ the corresponding measurement distribution.
+    Then we have for each $\node\in\nodes$ the conditional independence
+    \begin{align*}
+        \condindependent{\catvariableof{\node}}{\catvariableof{\nondescendantsof{\node}}}{\catvariableof{\parentsof{\node}}} \, .
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    We choose to a given $\node\in\nodes$ an enumeration $[\catorder]$ of the nodes, such that for each $\catenumeratorin$ we have $\parentsof{\catenumerator}\subset[\catenumerator]$ and for the enumerator $\seccatenumerator$ of $\node$ we further have $\nondescendantsof{\seccatenumerator}\subset[\seccatenumerator]$.
+    Let $\probwith$ be the measurement distribution of the $\graph$-controlled circuit acting on a disentangled initial state $\bigotimes_{\catenumeratorin}\qstateofat{\catenumerator}{\catvariableof{\catenumerator}}$ and choose arbitrary $\catindexof{[\catenumerator]}$.
+    We then have
+    \begin{align*}
+        \probat{\catvariableof{\seccatenumerator},\indexedcatvariableof{[\catenumerator]}}
+        &= \contractionof{\left(\bigcup_{\catenumeratorin}\{\contunitaryof{\catenumerator},\contunitaryof{\catenumerator,\dagger},\qstateof{\catenumerator},\qstateof{\catenumerator,*}\right)\}
+        \cup \left(\bigcup_{\catenumerator\in[\seccatenumerator]} \onehotmapofat{\catindexof{\catenumerator}}{\catvariableof{\catenumerator,\outsymbol}}\right)
+        }{
+            \catvariableof{\seccatenumerator}
+        } \\
+        &= \contractionof{\bigcup_{\catenumerator\in[\seccatenumerator]}\{\contunitaryof{\catenumerator},\contunitaryof{\catenumerator,\dagger},\qstateof{\catenumerator},\qstateof{\catenumerator,*},\onehotmapofat{\catindexof{\catenumerator}}{\catvariableof{\catenumerator,\outsymbol}}\}}{
+            \catvariableof{\seccatenumerator}
+        } \\
+        & = \absof{\contractionof{\contunitaryofat{\seccatenumerator}{\catvariableof{\seccatenumerator,\insymbol},\catvariableof{\seccatenumerator,\outsymbol}},\indexedcatvariableof{\parentsof{\seccatenumerator},\outsymbol}}{\catvariableof{\seccatenumerator,\outsymbol}}}^2 \\
+        & \quad \quad \cdot \prod_{\catenumerator\in[\seccatenumerator]}
+        \left(\contraction{\qstateofat{\catenumerator}{\catvariableof{\catenumerator,\insymbol}},\contunitaryofat{\catenumerator}{\catvariableof{\catenumerator,\insymbol},\catvariableof{\catenumerator,\outsymbol},\indexedcatvariableof{\parentsof{\catenumerator},\outsymbol}}}\right)^2
+        %\contraction{\qstateof{\catenumerator,*},\onehotmapofat{\catindexof{\catenumerator}}{\catvariableof{\catenumerator}}}{} \, .
+    \end{align*}
+    Here we used in the second equation the unitarity of the controlled unitaries to $\catenumerator\notin[\seccatenumerator]$.
+    Since the indices $\catindexof{[\seccatenumerator]/\parentsof{\seccatenumerator}} = \catindexof{\nondescendantsof{\seccatenumerator}}$ appear only in the constant term, we conclude
+    \begin{align*}
+        \condprobat{\catvariableof{\seccatenumerator}}{\catvariableof{[\catenumerator]}} = \condprobat{\catvariableof{\seccatenumerator}}{\catvariableof{\parentsof{\seccatenumerator}}} \otimes \onesat{\catvariableof{\nondescendantsof{\seccatenumerator}}}\, ,
+    \end{align*}
+    which establishes the conditional independence $\condindependent{\catvariableof{\node}}{\catvariableof{\nondescendantsof{\node}}}{\catvariableof{\parentsof{\node}}}$.
+\end{proof}
+
+\begin{proof}[Proof of \theref{the:graphControlledPreparesBN}]
+    The theorem follows directly from the two lemmas, using that Bayesian Networks are characterized by the conditional independence of each variable to its non-descendants given its parents.
+\end{proof}
+
+
+Another question is, whether each quantum state, which measurement distribution is a Bayesian Network can be prepared by a $\graph$-controlled circuit.
+This is not the case, since the phase tensor of a by $\graph$-controlled circuit has a decomposition
+\begin{align*}
+    \phasecoreat{\shortcatvariables} = \sum_{\catenumeratorin} \phasecoreofat{\catenumerator}{\catvariableof{\catenumerator},\catvariableof{\parentsof{\catenumerator}}} \, ,
+\end{align*}
+where the phase cores $\phasecoreof{\catenumerator}$ can be read of the controlled unitaries.
