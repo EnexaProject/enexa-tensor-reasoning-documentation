@@ -23,11 +23,36 @@
 
     From this we have
     \begin{align*}
-        \formulaof{0} \models \formulaof{1}
+        &\bencodingofat{(\formulaof{0},\formulaof{1})}{\headvariableof{0}=0,\headvariableof{1}=0,\catvariableof{0},\catvariableof{1}} =
+        \begin{bmatrix}
+            0 & 0 \\
+            1 & 0
+        \end{bmatrix} \quad, \quad
+        \bencodingofat{(\formulaof{0},\formulaof{1})}{\headvariableof{0}=0,\headvariableof{1}=1,\catvariableof{0},\catvariableof{1}} =
+        \begin{bmatrix}
+            1 & 1 \\
+            0 & 0
+        \end{bmatrix} \quad, \quad \\
+        &\bencodingofat{(\formulaof{0},\formulaof{1})}{\headvariableof{0}=1,\headvariableof{1}=0,\catvariableof{0},\catvariableof{1}} =
+        \begin{bmatrix}
+            0 & 0 \\
+            0 & 0
+        \end{bmatrix} \quad \text{and} \quad
+        \bencodingofat{(\formulaof{0},\formulaof{1})}{\headvariableof{0}=1,\headvariableof{1}=1,\catvariableof{0},\catvariableof{1}} =
+        \begin{bmatrix}
+            0 & 0 \\
+            0 & 1
+        \end{bmatrix} \, .
     \end{align*}
-    and therefore $\lnot\formulaof{0}\land\formulaof{1}$ is unsatisfiable.
-    The other combinations $\lnot\formulaof{0}\land\lnot\formulaof{1}, \, \formulaof{0}\land\lnot\formulaof{1}$ and $\formulaof{0}\land\formulaof{1}$ are all satisfiable.
-    The mean polytope is the convex hull
+
+    Since the only vanishing slice of $\bencodingof{\formulaset}$ with respect to the head variables is that to $\headindexof{0,1} = (1,0)$, the vertices of the mean polytope are the vectors to the other head indices.
+    The mean polytope is the convex hull of these vertices
+    %\begin{align*}
+    %    \formulaof{0} \models \formulaof{1}
+    %\end{align*}
+    %and therefore $\lnot\formulaof{0}\land\formulaof{1}$ is unsatisfiable.
+    %The other combinations $\lnot\formulaof{0}\land\lnot\formulaof{1}, \, \formulaof{0}\land\lnot\formulaof{1}$ and $\formulaof{0}\land\formulaof{1}$ are all satisfiable.
+    %The mean polytope is thus the convex hull
     \begin{align*}
         \meansetof{(\formulaof{0},\formulaof{1})} =
         \convhullof{\begin{bmatrix}
@@ -41,89 +66,81 @@
             \end{bmatrix}} \, .
     \end{align*}
 
-    This polytope has a non cube-like face (sketched blue in \figref{fig:nonelHlnstatMaxent}).
-    Any mean parameter $\meanparam$ on the interior of that face has a maximum entropy distribution by
+    This polytope has a non cube-like face (sketched blue in \figref{fig:nonelHlnstatMaxent}), which is the convex hull of the vertices $[0 \, 0]^T, \, [1 \, 1]^T$.
+    This face is parametrized by the ($\cpformat$-rank 2) hard activation core
     \begin{align*}
-        \frac{1}{1+\expof{\canparamat{\selvariable=0}+\canparamat{\selvariable=1}}}
+        \kcoreofat{(0,0),(1,1)}{\headvariableof{0},\headvariableof{1}} =
+        \onehotmapofat{(0,0)}{\headvariableof{0},\headvariableof{1}} + \onehotmapofat{(1,1)}{\headvariableof{0},\headvariableof{1}} =
         \begin{bmatrix}
-            0 & 0 \\
-            1 & \expof{\canparamat{\selvariable=0}+\canparamat{\selvariable=1}} \\
+            1 & 0 \\
+            0 & 1
+        \end{bmatrix}
+    \end{align*}
+    and has the face measure
+    \begin{align*}
+        \contractionof{\kcoreofat{(0,0),(1,1)}{\headvariableof{0},\headvariableof{1}}
+            ,\bencodingofat{\formulaset}{\headvariableof{0},\headvariableof{1},\catvariableof{0},\catvariableof{1}}}{\catvariableof{0},\catvariableof{1}}
+        =   \begin{bmatrix}
+                0 & 0 \\
+                1 & 1
         \end{bmatrix} \, .
     \end{align*}
+    Any mean parameter $\meanparam$ on the interior of that face can be parametrized by a scalar $\lambda\in(0,1)$
+    \begin{align*}
+        \meanparamofat{\lambda}{\selvariable} = \begin{bmatrix}
+                                                    \lambda & \lambda
+        \end{bmatrix}^T \, .
+    \end{align*}
+    With the canonical parameters $\canparamat{\selvariable}\in\rr^2$ of the maximum entropy distributions on this face by
+    \begin{align*}
+        \probat{\catvariableof{0},\catvariableof{1}} =
+        \frac{1}{1+\expof{\canparamat{\selvariable=0}+\canparamat{\selvariable=1}}}
+        \begin{bmatrix}
+            0 & 0                                                               \\
+            1 & \expof{\canparamat{\selvariable=0}+\canparamat{\selvariable=1}} \\
+        \end{bmatrix} \,
+    \end{align*}
+    we get the correspondence by the sigmoid
+    \begin{align*}
+        \lambda = \frac{1}{1+\expof{-(\canparamat{\selvariable=0}+\canparamat{\selvariable=1})}} \, .
+    \end{align*}
 
+    Note, that the hard activation core $\kcoreofat{(0,0),(1,1)}{\headvariableof{0},\headvariableof{1}}$ to the blue face is the only non-elementary activation core.
+    While the vertices have always elementary cores, the further non-vertex faces have elementary activation cores
+    \begin{align*}
+        &\kcoreofat{(0,0),(1,0),(1,1)}{\headvariableof{0},\headvariableof{1}}
+        = \begin{bmatrix}
+              1 & 1 \\
+              1 & 1
+        \end{bmatrix}
+        = \onesat{\headvariableof{0}} \otimes \onesat{\headvariableof{1}}
+        \quad, \quad
+        \kcoreofat{(0,0),(1,0)}{\headvariableof{0},\headvariableof{1}}
+        = \begin{bmatrix}
+              1 & 0 \\
+              1 & 0
+        \end{bmatrix}
+        = \onesat{\headvariableof{0}} \otimes \onehotmapofat{0}{\headvariableof{1}}
+        \quad, \quad \\
+        &\kcoreofat{(1,0),(1,1)}{\headvariableof{0},\headvariableof{1}}
+        = \begin{bmatrix}
+              1 & 1 \\
+              0 & 0
+        \end{bmatrix}
+        = \onehotmapofat{0}{\headvariableof{0}} \otimes \onesat{\headvariableof{1}}   \, .
+    \end{align*}
+    The maximum entropy distributions to mean parameters on the interior of all other faces than the blue face are represented by \ComputationActivationNetwork{}s with only elementary activation cores.
 
     \begin{figure}
         \begin{center}
-            \begin{tikzpicture}[scale=0.35]
-                \node[anchor=east] at (0,0) {$\begin{bmatrix}
-                                                  0 \\ 0
-                \end{bmatrix}$};
-                \node[anchor=west] at (5,0) {$\begin{bmatrix}
-                                                  1 \\ 0
-                \end{bmatrix}$};
-                \node[anchor=west] at (5,5) {$\begin{bmatrix}
-                                                  1 \\ 1
-                \end{bmatrix}$};
-                \node[anchor=east] at (0,5) {$\begin{bmatrix}
-                                                  0 \\ 1
-                \end{bmatrix}$};
-
-                \drawvectormark{0}{0}
-                \drawvectormark{0}{5}
-                \drawvectormark{5}{0}
-                \drawvectormark{5}{5}
-
-                \draw[thick] (5,5) -- (5,0) -- (0,0);
-                \draw[dashed] (0,0) -- (0,5) -- (5,5);
-                \draw[\concolor, thick] (0,0) -- (5,5);
-
-                \drawvectormark{3}{3}
-                \node[anchor=east] at (3,3) {$\meanparam$};
-
-                \begin{scope}
-                    [shift={(20,2)}]
-                    \draw[\concolor] (4,3) to[bend right=20] (2,5);
-                    \draw[\concolor] (0,3) to[bend left=20] (2,5);
-                    \draw[fill,\concolor] (2,5) circle (\dotsize);
-
-                    \draw[\concolor] (-1,1) rectangle (1,3);
-                    \node[anchor=center,\concolor] (text) at (0,2) {\corelabelsize $\hardactsymbolof{0}$};
-
-                    \draw[\concolor] (3,1) rectangle (5,3);
-                    \node[anchor=center,\concolor] (text) at (4,2) {\corelabelsize $\hardactsymbolof{1}$};
-
-                    \draw[->-] (0,-1)--(0,0);
-                    \node[right] (text) at (0,0) {\colorlabelsize $\headvariableof{0}$};
-                    \draw[\concolor] (0,0)--(0,1);
-                    \drawvariabledot{0}{0}
-
-                    \draw[\probcolor] (0,0) -- (-2,0);
-                    \draw[\probcolor] (-2,1) rectangle (-4,-1);
-                    \node[anchor=center,\probcolor] (text) at (-3,0) {\corelabelsize $\softactsymbolof{0,\canparam}$};
-
-                    \draw[->-] (4,-1)--(4,0);
-                    \node[left] (text) at (4,0) {\colorlabelsize $\headvariableof{1}$};
-                    \draw[\concolor] (4,0)--(4,1);
-                    \drawvariabledot{4}{0}
-
-                    \draw[\probcolor] (4,0) -- (6,0);
-                    \draw[\probcolor] (6,1) rectangle (8,-1);
-                    \node[anchor=center,\probcolor] (text) at (7,0) {\corelabelsize $\softactsymbolof{1,\canparam}$};
-
-                    \draw (-1,-1) rectangle (5,-3);
-                    \node[anchor=center] (text) at (2,-2) {\corelabelsize $\bencodingof{\hlnstat}$};
-                    \draw[-<-] (0,-3)--(0,-5) node[midway,left] {\colorlabelsize $\catvariableof{0}$};
-
-                    \draw[-<-] (4,-3)--(4,-5) node[midway,right] {\colorlabelsize $\catvariableof{1}$};
-
-                \end{scope}
-
-            \end{tikzpicture}
+            \input{./tikz_pics/nonel_hlnstat_maxent.tikz}
         \end{center}
         \caption{
-            Mean polytope of the statistic $\formulaset=(\catvariableof{0} \land \catvariableof{1}, \catvariableof{0} \Rightarrow \catvariableof{1})$ (thick), as a subset of the cube $[0,1]^2$ (dashed).
+            a) Mean polytope of the statistic $\formulaset=(\catvariableof{0} \land \catvariableof{1}, \catvariableof{0} \Rightarrow \catvariableof{1})$ (thick), as a subset of the cube $[0,1]^2$ (dashed).
             The blue line is the face of the polytope, which is not cube like, that is not an intersection of the polytope with the faces of the polytope.
-            We further mark a mean parameter $\meanparam = [0.8 \,  0.8]^T$ which is on the interior of that face.}\label{fig:nonelHlnstatMaxent}
+            We further define for $\lambda\in(0,1)$ a mean parameter $\meanparamofat{\lambda}{\selvariable} = [\lambda \,  \lambda]^T$ which is on the interior of the blue face.
+            b) Corresponding \ComputationActivationNetwork{} being the maximum entropy distribution reproducing $\meanparamofat{\lambda}{\selvariable}$, when $\lambda$ is the sigmoid of $\canparamat{\selvariable=0}+\canparamat{\selvariable=1}$.
+        }\label{fig:nonelHlnstatMaxent}
     \end{figure}
 
 
