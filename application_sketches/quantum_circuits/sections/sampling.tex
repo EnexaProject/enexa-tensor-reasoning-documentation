@@ -125,10 +125,43 @@ We can produce Q-samples for ancilla augmented \ComputationActivationNetworks{} 
     }\label{fig:caCircuit}
 \end{figure}
 
+\subsection{Acceptance Probability by $\infty$ Renyi Divergence}
 
-\section{Implementation}
+In more generality we draw samples from a generic proposal distribution $\mathbb{Q}$, which support needs to include the support of the target distribution $\probtensor$.
+We draw a sample $\shortcatindices$ from $\mathbb{Q}$ and accept it with the probability
+\begin{align*}
+    \frac{\probat{\indexedshortcatvariables}}{\mathbb{Q}\left[\indexedshortcatvariables\right]}
+    \cdot \left(\max_{\shortcatindicesin}\frac{\probat{\indexedshortcatvariables}}{\mathbb{Q}\left[\indexedshortcatvariables\right]}
+    \right)^{-1}
+\end{align*}
 
-The introduced quantum circuit preparation schemes have been implemented in the python package \qcreason{}, which consists in three layers:
-\begin{center}
-    \input{./tikz_pics/qcreason_architecture.tex}
-\end{center}
+The acceptance probability is the $\infty$ Renyi Divergence between the proposal distribution (typically uniform) and the target distribution.
+The $\infty$ Renyi Divergence is
+\begin{align*}
+    D_{\infty}\left[\probtensor||\mathbb{Q}\right]
+    = \lnof{\max_{\shortcatindicesin}
+        \frac{\probat{\indexedshortcatvariables}}{\mathbb{Q}\left[\indexedshortcatvariables\right]}
+    } \, .
+\end{align*}
+
+Then we have the acceptance probability
+\begin{align*}
+    \secprobat{\avariable=1}
+    &= \mathbb{E}_{\shortcatindices\sim\mathbb{Q}}\left[\frac{\probat{\indexedshortcatvariables}}{\mathbb{Q}\left[\indexedshortcatvariables\right]} \cdot \left(\max_{\shortcatindicesin}
+                                                                                                                                                              \frac{\probat{\indexedshortcatvariables}}{\mathbb{Q}\left[\indexedshortcatvariables\right]}
+    \right)^{-1}
+    \right] \\
+    &= \mathbb{E}_{\shortcatindices\sim\mathbb{Q}}\left[\frac{\probat{\indexedshortcatvariables}}{\mathbb{Q}\left[\indexedshortcatvariables\right]} \right] \cdot \left(\max_{\shortcatindicesin}
+                                                                                                                                                                      \frac{\probat{\indexedshortcatvariables}}{\mathbb{Q}\left[\indexedshortcatvariables\right]}
+    \right)^{-1} \\
+    & = \left(\max_{\shortcatindicesin}
+            \frac{\probat{\indexedshortcatvariables}}{\mathbb{Q}\left[\indexedshortcatvariables\right]}
+    \right)^{-1}  \\
+    & = \expof{-D_{\infty}\left[\probtensor||\mathbb{Q}\right]} \, .
+\end{align*}
+
+\textbf{Extension:}
+We could increase the acceptance probability, when we sample from a propsal distribution $\mathbb{Q}$ with smaller $\infty$ Renyi divergence to $\probtensor$.
+When sampling with Quantum Circuits, this could be implemented by a state preparation for the distributed variables, before the \ComputationActivationCircuit{} is applied.
+It would be interesting to train variational quantum circuits for this task.
+However, when we want to apply the same scheme as above, one needs to encode $\mathbb{Q}$ into the ancilla preparing rotations, so $\mathbb{Q}$ would need to be an elementary \ComputationActivationNetwork{} as well.
