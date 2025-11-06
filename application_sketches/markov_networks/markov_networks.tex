@@ -1,0 +1,141 @@
+\documentclass[aps,onecolumn,nofootinbib,pra]{article}
+
+\usepackage{../../article_compilation/spec_files/arxiv}
+\usepackage{amsmath,amsfonts,amssymb,amsthm,bbm,graphicx,enumerate,times}
+\usepackage{mathtools}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{hyperref}
+\hypersetup{
+    breaklinks,
+    colorlinks,
+    linkcolor=gray,
+    citecolor=gray,
+    urlcolor=gray,
+    pdftitle={},
+    pdfauthor={Alex Goessmann}
+}
+
+
+
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{comment}
+\usepackage{csquotes}
+
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{etoolbox}
+\usepackage{braket}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{bbm}
+\usepackage{bm}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{lipsum}
+
+\newtheorem{remark}{Remark}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+
+\input{../../macros/organization_macros.tex}
+\input{../../macros/general_macros.tex}
+\input{../../macros/tc_macros.tex}
+\input{../../macros/tikz_macros.tex}
+
+\pretolerance=500
+\tolerance=100
+\emergencystretch=10pt
+
+% Bibliography
+\DeclareUnicodeCharacter{FB01}{fi}
+\usepackage[round]{natbib}
+\usepackage{wasysym}
+\usepackage{adjustbox}
+
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+\begin{document}
+    \title{Markov Networks}
+
+    \maketitle
+    \date{\today}
+
+    \begin{abstract}
+        We investigate families of Markov Networks as examples of \HybridLogicNetworks{}.
+    \end{abstract}
+
+    In general, we have the equivalence:
+    \begin{itemize}
+        \item There are non cube-like faces in the mean polytope to the family of \HybridLogicNetworks{}
+        \item There are realizable mean parameters, which are not realizable by any member \HybridLogicNetwork{}
+    \end{itemize}
+
+
+    \section{Minimal connected hypergraps}
+
+    In the case of minimal connected hypergraphs, as we show in the following, all realizable mean parameters can be realized by a Markov Network.
+
+    % Procedure
+    Define a root hyperedge in the hypergraph and direct the hypergraph from the root to the edges.
+    At the root hyperedge we define the activation core by the mean parameter.
+
+    For all other hyperedges $\edge$, we define activation cores $\actcoreofat{\edge}{\catvariableof{\edge}}$ as follows depending on the mean parameter of $\edge$ and of the hyperedge $\secedge$ sharing the incoming variables (which is an edge sharing $\innodes$ with $\edge$).
+    For each $\catindexof{\edge}$ if $\contractionof{\meanparamofat{\secedge}{\catvariableof{\secedge}}}{\indexedcatvariableof{\innodes}}=0$ then we define
+    \begin{align*}
+        \actcoreofat{\edge}{\indexedcatvariableof{\edge}} = \frac{1}{\prod_{\node\in\edge/\{\innodes\}}\catdimof{\node}} \, .
+    \end{align*}
+    If this is not the case, then
+    \begin{align*}
+        \actcoreofat{\edge}{\indexedcatvariableof{\edge}}
+        = \frac{\meanparamofat{\edge}{\indexedcatvariableof{\edge}}}{\contractionof{\meanparamofat{\secedge}{\catvariableof{\secedge}}}{\catvariableof{\innodes}}} \, .
+    \end{align*}
+    By definition, $\actcoreof{\edge}$ is directed with $\innodes$ incoming and $\edge/\{\innodes\}$ outgoing, since for any $\catindexof{\innodes}$
+    \begin{align*}
+        \sum_{\catindexof{\edge/\{\innodes\}}} \frac{\meanparamofat{\edge}{\indexedcatvariableof{\edge}}}{\contractionof{\meanparamofat{\secedge}{\catvariableof{\secedge}}}{\catvariableof{\innodes}}}
+        = \frac{\contractionof{\meanparamof{\edge}}{\indexedcatvariableof{\innodes}}}{\contractionof{\meanparamof{\secedge}}{\indexedcatvariableof{\innodes}}} = 1
+    \end{align*}
+    where we used the local consistency property of the hyperedge mean parameters.
+    Note that at the leafs the activation cores are trivial.
+
+
+    \begin{lemma}
+        The contraction of the above constructed activation cores is a Markov Network reproducing the mean parameters, and therefore the maximum entropy distribution reproducing the mean parameters.
+    \end{lemma}
+    \begin{proof}
+        By directionality of the cores, we show that the marginal distribution at any hyperedge is the contraction of the activation cores of the directed ancestors of that hyperedge.
+        One can show with induction that this contraction is
+        When leaving the
+    \end{proof}
+
+    As a consequence we have the following theorem.
+
+    \begin{theorem}
+        Let $\graph$ be a minimal connected hypergraph.
+        Then $\meansetof{\sstatof{\graph}}$ is cube-like and all maximum entropy distributions with respect to the statistic $\sstatof{\graph}$ are Markov Networks over $\graph$.
+    \end{theorem}
+    \begin{proof}
+        Since we can construct to each mean parameter a Markov Network, which is a \HybridLogicNetwork{}, any mean parameter lies on the relative interior of a cube-like face.
+        Any \HybridLogicNetwork{} is furthermore a maximum entropy distribution.
+    \end{proof}
+
+    \section{Loopy hypergraphs}
+
+    \textbf{Main question:} Does the failure to characterize the mean polytope correspond with the existence of non-realizable mean parameters?
+
+    When loops exist in the hypergraph, we have:
+    \begin{itemize}
+        \item The existence of mean parameters in the local consistency polytope, which are not in the mean polytope, i.e. not realizable by any distribution.
+        \item When loops exist there exist distributions, which are not positive, satisfy all conditional independences suggested by the hypergraph, but are not representable by maximum entropy distributions.
+    \end{itemize}
+
+
+\end{document}

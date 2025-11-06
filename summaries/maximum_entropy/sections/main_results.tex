@@ -1,0 +1,139 @@
+\section{Main results: Tensor network representation of maximum entropy distributions}
+
+Given the mean polytope discussion we now characterize the tensor network representation of maximum entropy distributions.
+
+\subsection{Main result}
+
+\begin{theorem}[Generic characterization of Maximum Entropy Solutions]
+    Let $\sstat$ be a statistic and $\basemeasure$ a base measure.
+    For any $\meanparamwith$ the maximum entropy problem has a feasible distribution, if and only if $\meanparamwith\in\genmeanset$.
+    In case $\meanparamwith\in\genmeanset$ there is a unique face $\genfaceset$ such that $\meanparam$ is in the effective interior of $\genfaceset$.
+    Then the solution of the maximum entropy problem is the member
+    \begin{align*}
+        \expdistof{(\sstat,\backwardmapwrtof{\sstat,\genfacemeasure}{\meanparam},\genfacemeasure)}
+    \end{align*}
+    of the exponential family $\expfamilyof{\sstat,\genfacemeasure}$, where $\genfacemeasure$ is the .
+    If $\basemeasure$ is an elementary \ComputationActivationNetwork{}, then $\expdistof{(\sstat,\backwardmapwrtof{\sstat,\genfacemeasure}{\meanparam},\genfacemeasure)}$ is a \ComputationActivationNetwork{} with respect to the CP graph of rank $\cprankof{\genfaceset}$.
+\end{theorem}
+\begin{proof}
+    \textbf{Feasibility Claim:}
+    If and only if $\meanparamwith\in\genmeanset$ then there is by definition a by $\basemeasure$ representable $\probwith$ reproducing $\meanparamwith$.
+    Thus if and only if $\meanparamwith\in\genmeanset$ there is a feasible distribution for the maximum entropy problem. \\
+
+    \textbf{Characterization Claim:}
+    We use the following argumentation to show the second claim:
+    \begin{itemize}
+        \item By \lemref{lem:effectiveInteriorPolytopePartition} for any $\meanparam$ we find a unique face $\genfaceset$.
+        \item By \lemref{lem:faceMeasureRepCondition} all feasible distributions are representable by the with the face measure refined base measure.
+        The maximum entropy solution is thus the same as for the $(\sstat,\meanparam,\contractionof{\basemeasure,\genfacemeasure}{\shortcatvariables})$ instance, which we characterize in the following.
+        \item By \lemref{lem:faceAsRefinedPolytope} the face $\genfaceset$ coincides with the polytope $\meansetof{\sstat,\contractionof{\basemeasure,\genfacemeasure}{\shortcatvariables}}$ and in particular $\meanparam$ is in the effective interior of that polytope.
+        \item We can now apply \theref{the:maxEntropyInterior} and get a characterization of the maximum entropy solution as a member of the exponential family.
+    \end{itemize}
+
+    \textbf{Representation Claim:}
+    By \theref{the:faceMeasureCharacterization} we can represent the face measure as a $\cpformat$ \ComputationActivationNetwork{}.
+    Since both the $\basemeasure$ (by assumption) and the soft activation (always) is elementary, they do not change the $\cpformat$ rank when contracting to the face activating tensor of minimal rank.
+\end{proof}
+
+
+\subsection{Maximum entropy on the interior}
+
+A classical result states, that the maximum entropy distribution is in the exponential family $\expfamilyof{\sstat,\basemeasure}$.
+
+\begin{theorem} % TODO: Use the effective interior partition of the mean polytope
+    \label{the:maxEntropyInterior}
+    %If the only face $\genfacesetof{\facecondset}$ of $\genmeanset$ with $\meanparam\in\genfacesetof{\facecondset}$ is $\genmeanset$ itself
+    If and only if $\genmean$ is in the effective interior of $\genmeanset$, then the unique solution of the maximum entropy problem is the distribution
+    \begin{align*}
+        \expdistofat{\sstat,\genmean,\basemeasure}{\shortcatvariables}\in\expfamilyof{\sstat,\basemeasure}
+    \end{align*}
+    with $\contractionof{\expdistofat{\sstat,\genmean,\basemeasure}{\shortcatvariables},\sencsstatwith}{\selvariable}=\genmeanat{\selvariable}$.
+\end{theorem}
+\begin{proof}
+    By The~3.3 in [Wainwright and Jordan, 2008], since by assumption
+    \begin{align*}
+        \meanparamwith \in \sbinteriorof{\genmeanset}  \, ,
+    \end{align*}
+    there is a canonical parameter $\canparam$ with
+    \begin{align*}
+        \contractionof{\expdistofat{\sstat,\canparam,\basemeasure}{\shortcatvariables},\sencsstatwith}{\selvariable}=\meanparamat{\selvariable} \, .
+    \end{align*}
+
+    For any other feasible distribution $\secprobat{\shortcatvariables}$ we also have $\contractionof{\secprobat{\shortcatvariables},\sencsstatwith}{\selvariable}=\meanparamat{\selvariable}$ and thus
+    \begin{align*}
+        \centropyof{\secprobtensor}{\expdistof{(\sstat,\canparam,\basemeasure)}}
+        &= -\contraction{\secprobtensor,\lnof{\expdistofat{(\sstat,\canparam,\basemeasure)}{\shortcatvariables}}} \\
+        &= -\contraction{\secprobtensor,\contractionof{\sencsstatwith,\canparamwith}{\shortcatvariables}} + \cumfunctionof{\canparam} \\
+        &= - \contraction{\canparam,\meanparam} + \cumfunctionof{\canparam} \\
+        &= \sentropyof{\expdistof{(\sstat,\canparam,\basemeasure)}} \, .
+    \end{align*}
+    With the Gibbs inequality we have if $\secprobtensor\neq\expdistof{(\sstat,\canparam,\basemeasure)}$
+    \begin{align*}
+        \sentropyof{\expdistof{(\sstat,\estcanparam,\basemeasure)}} - \sentropyof{\secprobtensor}
+        = \centropyof{\secprobtensor}{\expdistof{(\sstat,\estcanparam,\basemeasure)}} - \sentropyof{\secprobtensor} > 0 \, .
+    \end{align*}
+    Therefore, if $\secprobtensor$ does not coincide with$\expdistof{(\sstat,\estcanparam,\basemeasure)}$, it is not a maximum entropy distribution.
+\end{proof}
+
+Exponential families are in $\elrealizabledistsof{\sstat}$, if and only if $\normalizationof{\basemeasure}{\shortcatvariables}\in\elrealizabledistsof{\sstat}$.
+If $\normalizationof{\basemeasure}{\shortcatvariables}\in\elrealizabledistsof{\sstat}$ and $\meanparamwith \in \sbinteriorof{\genmeanset} $ we therefore have a sparse representation of the maximum entropy distribution with elementary activation tensors.
+
+\subsection{Mean parameter on faces}
+
+We always find a unique face of the polytope with the mean parameter being in the interior (see \lemref{lem:effectiveInteriorPolytopePartition}).
+Any distribution reproducing the mean parameter is realizable with respect to the face measure of that face (see \lemref{}).
+We conclude that the maximum entropy distribution of $\genmeanwith$ with respect to $\sstat,\basemeasure$ is also the maximum entropy distribution
+
+\begin{theorem}
+    \label{the:tnRepresentationMaxEntropy}
+    Given $\sstat$ and $\meanparamwith\in\genmeanset$, let $\facecondset$ be the smallest face of $\genmeanset$ such that
+    \begin{align*}
+        \meanparamat{\selvariable} \in \genfaceset \, .
+    \end{align*}
+    Then the corresponding maximum entropy distribution is in $\realizabledistsof{\sstat,\graph,\basemeasure}$ if and only if the face measure (see \defref{def:faceMeasure})
+    \begin{align*}
+        \kcoreofat{\facecondset}{\headvariables}
+        = \sum_{\meanparam\in\genfacesetof{\facecondset}\cap\imageof{\sstatencoding}} \onehotmapofat{\meanparam}{\headvariables}
+    \end{align*}
+    is in $\tnsetof{\graph}$.
+\end{theorem}
+\begin{proof}
+    By \theref{the:maxEntropyFace} the maximum entropy distribution is an element of the exponential family with by the face measure refined base measure $\secbasemeasure$.
+    Let $\canparamwith$ be a canonical parameter such that
+    \begin{align*}
+        \contractionof{\sencsstatwith,\probofat{\sstat,\canparam,\secbasemeasure}{\shortcatvariables}}{\selvariable} = \meanparamwith \, ,
+    \end{align*}
+    that is $\probofat{\sstat,\canparam,\secbasemeasure}{\shortcatvariables}$ is the maximum entropy distribution.
+    We apply \theref{the:faceMeasureCharacterization} to represent the face measure by
+    \begin{align*}
+        \basemeasureofat{\sstat,\facecondset}{\shortcatvariables} =
+        \contractionof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\kcoreofat{\facecondset}{\headvariables}}{\shortcatvariables}
+    \end{align*}
+    Then for the tensor
+    \begin{align*}
+        \hypercoreat{\headvariables}
+        = \contractionof{
+            \{\softactlegwith\wcols\selindexin\}
+            \cup\{\kcoreofat{\facecondset}{\headvariables}\}}{\headvariables}
+    \end{align*}
+    we have
+    \begin{align*}
+        \probofat{\sstat,\canparam,\secbasemeasure}{\shortcatvariables}
+        = \normalizationof{
+            \bencodingofat{\sstat}{\headvariables,\shortcatvariables}, \hypercoreat{\headvariables}, \basemeasurewith
+        }{\shortcatvariables} \, .
+    \end{align*}
+    Thus, the maximum entropy distribution is in $\realizabledistsof{\sstat,\graph,\basemeasure}$, if $\hypercore$ admits a tensor network decomposition with respect to $\graph$.
+    Since the hard activation cores are elementary, this is the case when $\kcoreof{\facecondset}$ admits a tensor network decomposition with respect to $\graph$.
+\end{proof}
+
+\begin{figure}[t]
+    \begin{center}
+        \input{../../PartI/tikz_pics/probability_reasoning/max_entropy_actcore}
+    \end{center}
+    \caption{
+        Tensor network decomposition of maximum entropy distributions to the constraint $\meanparamat{\selvariable}=\contractionof{\probtensor,\sencsstat}{\selvariable}$.
+        Blue: Constraint activation cores $\hardactsymbolof{\selindex}$ in a $\cpformat$ decomposition, representing the face measure to the minimal face, such that $\meanparam\in\genfacesetof{\facecondset}$.
+        Red: Probabilistic activation cores $\softactlegwith$ in an elementary decomposition, where each leg core is a scaled exponentials evaluated on the enumerated image $\imageof{\sstatcoordinateof{\selindex}}$.
+    }\label{fig:maxEntropyActcore}
+\end{figure}
