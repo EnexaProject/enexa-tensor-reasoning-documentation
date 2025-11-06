@@ -78,6 +78,7 @@
         Chapter~8 contains the discussion on maximum entropy distributions in case of boolean statistics.
     \end{abstract}
 
+    \tableofcontents
 
     \section{Contents}
 
@@ -147,9 +148,7 @@
     This shows that any maximum entropy distribution is in $\realizabledistsof{\sstat,\maxgraph}$, where $\maxgraph$ is the maximal hypergraph $\maxgraph=([\seldim],\{[\seldim]\})$.
     We search for sparse representations of the corresponding activation tensors and investigate in which cases the maximum entropy distribution is also in $\realizabledistsof{\sstat,\graph}$ for sparser hypergraphs $\graph$.
 
-
-    \section{Preparation}
-
+    %% OUTLOOK
     To prepare for the presentation of our main results we introduce
     \begin{itemize}
         \item \ComputationActivationNetworks{}: A tensor network architecture, which will be used to represent maximum entropy distributions
@@ -157,59 +156,9 @@
     \end{itemize}
     We will then show, that dependent on the position of the mean parameter in the mean polytope, we can characterize the corresponding maximum entropy distribution by a \ComputationActivationNetwork{}.
 
-    \subsection{\ComputationActivationNetworks{}}
+    \input{./sections/tensor_notation.tex}
 
-    Given a statistic $\sstat:\facstates\rightarrow\selstates$ we build its basis encoding tensor
-    \begin{align*}
-        \sstatccwith = \sum_{\shortcatindicesin} \onehotmapofat{\sstat(\shortcatindices)}{\headvariables} \otimes \onehotmapofat{\shortcatindices}{\shortcatvariables} \, .
-    \end{align*}
-    A computation network is any representation of $\sstatccwith$ as a tensor network.
-    These can be constructed in the case statistics being a composition of connective functions.
-
-    An activation tensor is $\hypercoreat{\headvariables}$ and the Computation Activation Network of $\sstat$ and $\hypercore$ the tensor
-    \begin{align*}
-        \probwith = \normalizationof{\sstatccwith,\hypercoreat{\headvariables}}{\shortcatvariables} \, .
-    \end{align*}
-
-    We are interested in decomposition formats of $\hypercoreat{\headvariables}$, where we use sets of tensor networks $\tnsetof{\graph}$ on a hypergraph $\graph$.
-    The family of by $\sstat$ and a $\graph$ computable distributions are
-    \begin{align*}
-        \realizabledistsof{\sstat,\graph}
-        = \left\{ \normalizationof{\bencodingofat{\sstat}{\sstatcatof{[\seldim]},\shortcatvariables},\hypercoreat{\headvariableof{\nodes}}
-        }{\shortcatvariables}
-        \wcols \hypercoreat{\headvariableof{\nodes}} \in \tnsetof{\graph} \right\} \, .
-    \end{align*}
-
-    \subsection{The mean polytope}
-
-    The mean polytope is the set of mean parameters to any distribution.
-    We define it
-    \begin{align*}
-        \genmeanset
-        = \left\{\contractionof{\probtensor,\sencsstat,\basemeasure}{\selvariable}\wcols\probwith\in\bmrealprobof{\basemeasure} \right\} \, ,
-    \end{align*}
-    where we denote by $\bmrealprobof{\basemeasure}$ the set of all probability distributions representable with respect to $\basemeasure$.
-
-    \begin{center}
-        \input{../../PartI/tikz_pics/probability_reasoning/meanset_sketch_generic.tex}
-    \end{center}
-
-    %\subsection{Convex hull and faces}
-
-    The mean polytope is the convex hull
-    \begin{align*}
-        \genmeanset
-        = \convhullof{\sencsstatat{\indexedshortcatvariables,\selvariable}\wcols\shortcatindices\in\facstates\ncond\basemeasureat{\indexedshortcatvariables}=1} \, .
-    \end{align*}
-    It is thus a convex polytope, inherited by the convex polytope of distributions (the standard simplex).
-    We can characterize the maximum entropy distribution based on the position of the mean parameter in the mean polytope.
-    To be more precise, any polytope decomposes into effective interiors of its faces and we characterize the maximum entropy distribution depending on the face to the mean parameter.
-
-    To be included:
-    \begin{itemize}
-        \item Faces of the mean polytope are itself mean polytopes with respect to refined base measures.
-        \item Existence of vectors in the image of the statistic encoding corresponds with satisfiability of the corresponding formula.
-    \end{itemize}
+    \input{./sections/mean_polytope.tex}
 
 
     \section{Tensor network representation of maximum entropy distributions}
@@ -319,22 +268,7 @@
     \end{figure}
 
 
-    \section{Characterization for boolean statistics}
-
-    For boolean statistics $\hlnstat:\facstates\rightarrow\bigtimes_{\selindexin}[2]$ the mean polytope is a subset of the cube $[0,1]^\seldim$.
-    In this case, any boolean vector in $\meansetof{\hlnstat,\basemeasure}$ is a vertex.
-    It follows, that any distribution reproducing a mean parameter $\meanparamwith$ on the effective interior of $\meansetof{\hlnstat,\basemeasure}$ is positive with respect to $\basemeasure$.
-
-    We apply the exponential distribution characterization of the maximum entropy distribution and get that the maximum entropy distribution is in $\elrealizabledistsof{\sstat}$, if and only if the face measure is in $\elrealizabledistsof{\sstat}$.
-    This is exactly the case, when the face is an intersection of the mean polytope with a face of the cupe $[0,1]^\seldim$.
-
-    The mean parameters, which can be realized by a distribution in $\elrealizabledistsof{\hlnstat}$ are those, which are on the effective interior of the intersection of the mean polytope with a face of the cube.
-
-
-    \subsection{Example}
-
-    \input{examples/nonel_hlnstat_maxent.tex}
-
+\input{./sections/boolean_statistics.tex}
 
 
 \end{document}
