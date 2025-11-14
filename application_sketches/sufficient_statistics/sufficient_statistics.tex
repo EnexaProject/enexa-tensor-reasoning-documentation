@@ -13,8 +13,150 @@
 
     \maketitle
     \date{\today}
+    \tableofcontents
 
-%    \tableofcontents
+
+    \section{Foundations}
+
+    \subsection{Information Theory [Cover, Thomas - Section 2.10]}
+
+    Consider two variables $Z$ and $X$ with a joint distribution $\probtensorof{Z,X}$, and a function $T$ on the states of $X$.
+    We augment this joint distribution by a variable $\headvariableof{T}$, which is the head variable to the function $T$
+    \begin{align*}
+        \probat{Z,X,\headvariableof{T}} = \contractionof{\probat{Z,X},\bencodingofat{T}{\headvariableof{T},X}}{Z,X,\headvariableof{T}}
+    \end{align*}
+    Then we have
+    \begin{align*}
+        \condindependent{\headvariableof{T}}{Z}{X}
+    \end{align*}
+    since
+    \begin{align*}
+        \condprobof{\headvariableof{T}}{Z,X} = \bencodingofat{T}{\headvariableof{T},X} \otimes \onesat{Z} \, .
+    \end{align*}
+    Thus, the variables are a Markov Chain $Z\rightarrow X\rightarrow Y$.
+
+    \begin{definition}
+        We call $T$ sufficient statistic of $Z$, if and only if
+        \begin{align*}
+            I(Z;X) = I(Z;T(X)) \, .
+        \end{align*}
+    \end{definition}
+
+    \begin{lemma}\label{lem:doubleDetSstat}
+        If there is a function $Q$ such that
+        \begin{align*}
+            \probat{Z,X} = \contractionof{\probat{X},\bencodingofat{Q}{Z,X}}{Z,X} \, ,
+        \end{align*}
+        and $T$ is sufficient for $Z$, then there is a function $R$ such that
+        \begin{align*}
+            Q = R \circ T \, .
+        \end{align*}
+    \end{lemma}
+    \begin{proof}
+%    (See proof of Theorem 2.19 in the Report)
+        Since $Z$ has a deterministic dependence on X we have $\sentropyof{Z|X} = 0$ and by the sufficient statistic assumption (using that $I(X;\headvariableof{T}) = H(\headvariableof{T})-H(X|\headvariableof{T})$) we have
+        \begin{align*}
+            \sentropyof{Z|\headvariableof{T}} = \sentropyof{Z|X} = 0 \, .
+        \end{align*}
+        Now, $\sentropyof{Z|\headvariableof{T}}$ is equal to the existence of a function $R$ mapping the states of $Y$ to $Z$, such that for any state $y$
+        \begin{align*}
+            \condprobat{Z}{\headvariableof{T}=y} = \onehotmapofat{R(y)}{Z} \, .
+        \end{align*}
+        Since $Y$ itself is computable by $X$ with the function $T$, and $Z$ with $Q$, we have
+        \begin{align*}
+            Q = R \circ T \, . & \qedhere
+        \end{align*}
+    \end{proof}
+
+    This lemma is applied when characterizing sufficient statistics for $Z = \probat{X}$.
+
+    \subsection{Mathematical Statistic [Hogg - Chapter 2]}
+
+    In mathematical statistic, sufficient statistics are used to characterize parameter estimation problems, i.e. where $Z$ is a parameter variable $\Theta$ of a parametrized family.
+    The joint distribution of $\Theta$ and $X$ is constructed by drawing the parameter variable $\Theta$ first with outcome $\theta$ and then drawing $X$ from $\probof{\theta}$.
+
+    \subsection{Equivalent definitions of sufficient statistics}
+
+    \begin{theorem}[Factorization Theorem of Fisher and Neyman]\label{the:factorizationFisherNeyman}
+        Let $\probtensor$ be a joint distribution of variables $Z,X$ with values $\mathrm{val}(Z), \,\mathrm{val}(X)$ and let $T(X)$ be a statistic.
+        The following are equivalent:
+        \begin{itemize}
+            \item[i)] The Data Processing Inequality holds straight, i.e.
+            \begin{align*}
+                I(Z;X) = I(Z;\headvariableof{T}) \, .
+            \end{align*}
+            \item[ii)] $Z\rightarrow \headvariableof{T}\rightarrow X$ is a Markov Chain, i.e.
+            \begin{align*}
+                \condindependent{Z}{X}{\headvariableof{T}}
+            \end{align*}
+            \item[iii)] There are functions $g : \imageof{T} \times \mathrm{val}(Z) \rightarrow \rr$ and $h: \mathrm{val}(X)\rightarrow\rr$ such that for any $(x,z)\in\mathrm{val}(Z)\times \mathrm{val}(X)$
+            \begin{align*}
+                \probat{Z=z,X=x} = g(T(x),z) \cdot h(x) \, .
+            \end{align*}
+        \end{itemize}
+    \end{theorem}
+    \begin{proof}
+        $i) \Leftrightarrow ii)$:
+        We have always
+        \begin{align*}
+            I(Z;X) = I(Z;X,\headvariableof{T}) = I(Z;\headvariableof{T}) + I(Z;X|\headvariableof{T})
+        \end{align*}
+        and thus if and only if $i)$ holds
+        \begin{align*}
+            I(Z;X|\headvariableof{T}) = 0 \, .
+        \end{align*}
+        Using the KL-divergence characterization of the mutual information, this is equal to
+        \begin{align*}
+            \condprobat{Z,X}{\headvariableof{T}} = \contractionof{\condprobat{Z}{\headvariableof{T}},\condprobat{X}{\headvariableof{T}} }{Z,X,\headvariableof{T}} \, .
+        \end{align*}
+        This is equivalent to the conditional independence statement $ii)$. \\
+
+        $ii) \Rightarrow iii)$:
+        For all $z\in\mathrm{val}(Z)$ and $x\in\mathrm{val}(X)$ we have
+        \begin{align*}
+            \condprobat{Z=z}{X=x}
+            &= \condprobat{Z=z}{X=x,\headvariableof{T}=T(x)} \\
+            &= \condprobat{Z=z}{\headvariableof{T}=T(x)}
+        \end{align*}
+        Here we used that $\headvariableof{T}$ has a deterministic dependence on $X$ and $ii)$.
+        There is thus a function $g$ such that for all $z\in\mathrm{val}(Z)$ and $x\in\mathrm{val}(X)$ 
+        \begin{align*}
+            g(T(x),z) = \condprobat{Z=z}{X=x} \, .
+        \end{align*}
+        We further define a function $h(x)=\probat{X=x}$ and get 
+        \begin{align*}
+            \probat{Z=z,X=x} 
+            &= \probat{X=x} \cdot \condprobat{Z=z}{X=x} \\
+            &= g(T(x),z) \cdot h(x) \, .
+        \end{align*}
+
+        $iii) \Rightarrow ii)$:
+       Using $iii)$ we have for all supported $(x,z)\in\mathrm{val}(Z)\times \mathrm{val}(X)$
+        \begin{align*}
+            \condprobat{Z=z}{X=x}
+            &= \frac{\probat{Z=z,X=x}}{\probat{X=x}} \\
+            &= \frac{g(T(x),z) \cdot h(x) }{\int g(T(x),z) \cdot h(x) \, dz} \\
+            &= \frac{g(T(x),z)}{\int g(T(x),z)  \, dz} \\
+            &= \frac{
+                \left(\int_{\tilde{x}:T(x)=T(\tilde{x})} \, h(x) \, dx \right) \cdot g(T(x),z)
+            }{
+                \left(\int_{\{\tilde{x}:T(x)=T(\tilde{x})\}} \, h(x) \, dx \right) \cdot \int g(T(x),z)  \, dz
+            } \\
+            &= \frac{\probat{Z=z,\headvariableof{T}=T(x)}}{\probat{\headvariableof{T}=T(x)}} \\
+            &= \condprobat{Z=z}{\headvariableof{T}=T(x)}
+        \end{align*}
+
+        We have at almost all $y\in\mathrm{val}(\headvariableof{T})$, $z\in\mathrm{val}(Z)$ and $x\in\mathrm{val}(X)$ that $y=T(x)$ and
+        \begin{align*}
+            \condprobat{Z=z}{X=x,\headvariableof{T}=y}
+            = \condprobat{Z=z}{X=x}
+        \end{align*}
+        and with the above at thus at almost all such pairs
+        \begin{align*}
+            \condprobat{Z=z}{X=x,\headvariableof{T}=y} = \condprobat{Z=z}{\headvariableof{T}=y} \, .
+        \end{align*}
+        This is equivalent to $ii)$.
+    \end{proof}
 
     \section{Sufficient Statistic for Parametrized Families}
 
@@ -24,7 +166,7 @@
     \begin{align*}
         \secprobat{\Theta=\theta} \, .
     \end{align*}
-    
+
     \begin{definition}[Sufficient statistics for Parameters]
         Let $\{\probofat{\theta}{\shortcatvariables}\wcols\theta\in\Gamma\}$ be a family of probability distributions and
         \begin{align*}
@@ -37,7 +179,7 @@
         \end{align*}
     \end{definition}
 
-
+    We can characterize \ComputationActivationNetworks{} with arbitrary base measures based on sufficient statistics.
 
     \begin{theorem}[Characterization of \ComputationActivationNetworks{}]
         Let $\{\probofat{\theta}{\shortcatvariables}\wcols\theta\in\Gamma\}$ be a family of probability distributions with a sufficient statistic $\sstat$.
@@ -57,18 +199,19 @@
         \end{align*}
     \end{theorem}
     \begin{proof}
-        By the factorization theorem of mathematical statistics (see [Hogg - The. 2.7.1]) we have that $\sstat$ is a sufficient statistic if and only if there are real-valued functions $k_1$ on $\left(\bigtimes_{\selindexin}[\seldimof{\selindex}]\right)\times \Gamma$ and $k_2$ on $\facstates$ such that
-        \begin{align}\label{eq:conFactorizationSufStat}
+        By the Fisher-Neyman Factorization \theref{the:factorizationFisherNeyman} we have that $\sstat$ is a sufficient statistic if and only if there are real-valued functions $g$ on $\left(\bigtimes_{\selindexin}[\seldimof{\selindex}]\right)\times \Gamma$ and $h$ on $\facstates$ such that
+        \begin{align}
+            \label{eq:conFactorizationSufStat}
             \probofat{\theta}{\indexedshortcatvariables}
-            = k_1(\sstatof{\shortcatindices},\Gamma) \cdot k_2(\shortcatindices) \, .
+            = g(\sstatat{\shortcatindices},\Gamma) \cdot h(\shortcatindices) \, .
         \end{align}
-        We define a base measure by the coordinate encoding of $k_2$ by
+        We define a base measure by the coordinate encoding of $h$ by
         \begin{align*}
-            \basemeasureat{\shortcatvariables} = \sum_{\shortcatindicesin} k_2(\shortcatindices) \onehotmapofat{\shortcatindices}{\shortcatvariables}
+            \basemeasureat{\shortcatvariables} = \sum_{\shortcatindicesin} h(\shortcatindices) \onehotmapofat{\shortcatindices}{\shortcatvariables}
         \end{align*}
         and for each $\theta\in\Gamma$ an activation tensor
         \begin{align*}
-            \acttensorofat{\theta}{\headvariables} = \sum_{\shortheadindices} k_1(\shortheadindices,\theta) \onehotmapofat{\shortheadindices}{\headvariables} \, .
+            \acttensorofat{\theta}{\headvariables} = \sum_{\shortheadindices} g(\shortheadindices,\theta) \onehotmapofat{\shortheadindices}{\headvariables} \, .
         \end{align*}
         With this we have for any $\theta\in\Gamma$
         \begin{align*}
@@ -77,8 +220,8 @@
         and thus for any $\shortcatindicesin$ applying basis calculus
         \begin{align*}
             \normalizationof{h(\Gamma)[\headvariables],\bencsstatwith,\basemeasurewith}{\indexedshortcatvariables}
-            &= h(\Gamma)[\headvariables=\sstatof{\shortcatindices}] \cdot \basemeasureat{\indexedshortcatvariables} \\
-            &= k_1(\sstatof{\shortcatindices},\Gamma) \cdot k_2(\shortcatindices) \\
+            &= h(\Gamma)[\headvariables=\sstatat{\shortcatindices}] \cdot \basemeasureat{\indexedshortcatvariables} \\
+            &= g(\sstatat{\shortcatindices},\Gamma) \cdot h(\shortcatindices) \\
             &= \probofat{\theta}{\indexedshortcatvariables}
             \, .
         \end{align*}
@@ -91,18 +234,19 @@
             \subset \realizabledistsof{\sstat,\maxgraph,\basemeasure} \, .
         \end{align*}
         By this inclusion we find for any $\theta\in\Gamma$ an activation core $\actcoreofat{\theta}{\headvariables}$.
-        We then construct functions $k_1$ and $k_2$ by
+        We then construct functions $g$ and $h$ by
         \begin{align*}
-            k_1(\shortheadindices,\Gamma) = \actcoreofat{\theta}{\indexedheadvariableof{[\seldim]}}
+            g(\shortheadindices,\Gamma) = \actcoreofat{\theta}{\indexedheadvariableof{[\seldim]}}
             \andspace
-            k_2(\shortcatindices) = \basemeasureat{\indexedshortcatvariables}
+            h(\shortcatindices) = \basemeasureat{\indexedshortcatvariables}
         \end{align*}
         and notice that the equivalent condition \eqref{eq:conFactorizationSufStat} to $\sstat$ being a sufficient statistic is satisfied.
     \end{proof}
-    
+
+
     \section{Sufficient Statistic for the Probability}
-    
-        % Compare with report version
+
+    % Compare with report version
     We here consider sufficient statistics for the parameter of a parametrized family, while in the report we considered sufficient statistics for the probability mass as a random variable.
     In both cases this results from the information theoretic viewpoint, that a function $T$ of $X$ is a sufficient statistic for a variable $Z$, if
     \begin{align*}
@@ -121,7 +265,21 @@
             \probwith \in \realizabledistsof{\sstat,\maxgraph,\trivbm} \, .
         \end{align*}
     \end{theorem}
+    \begin{proof}
+        By \lemref{lem:doubleDetSstat} we have a function $R$ such that for all $\shortcatindicesin$
+        \begin{align*}
+            \probat{\indexedshortcatvariables} = (R \circ \sstat)(\shortcatindices) \, .
+        \end{align*}
+        By basis calculus it follows that
+        \begin{align*}
+            \probwith = \contractionof{R(\indexinterpretationof{\sstat}[\headvariables]),\bencsstatwith}{\shortcatvariables}
+        \end{align*}
+        and thus
+        \begin{align*}
+            \probwith \in \realizabledistsof{\sstat,\maxgraph,\trivbm} \, . & \qedhere
+        \end{align*}
+    \end{proof}
 
     Note that by this theorem w can restrict ourselves to the \ComputationActivationNetworks{} with trivial base measure for the characterization of distributions with a probability sufficient statistic.
-    
+
 \end{document}
