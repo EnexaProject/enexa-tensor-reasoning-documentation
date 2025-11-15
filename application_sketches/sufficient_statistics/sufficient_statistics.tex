@@ -20,7 +20,7 @@
 
     \subsection{Information Theory [Cover, Thomas - Section 2.10]}
 
-    Consider two variables $Z$ and $X$ with a joint distribution $\probtensorof{Z,X}$, and a function $T$ on the states of $X$.
+    Consider two variables $Z$ and $X$ with a joint distribution $\probat{Z,X}$, and a function $T$ on the states of $X$.
     We augment this joint distribution by a variable $\headvariableof{T}$, which is the head variable to the function $T$
     \begin{align*}
         \probat{Z,X,\headvariableof{T}} = \contractionof{\probat{Z,X},\bencodingofat{T}{\headvariableof{T},X}}{Z,X,\headvariableof{T}}
@@ -42,7 +42,8 @@
         \end{align*}
     \end{definition}
 
-    \begin{lemma}\label{lem:doubleDetSstat}
+    \begin{lemma}
+        \label{lem:doubleDetSstat}
         If there is a function $Q$ such that
         \begin{align*}
             \probat{Z,X} = \contractionof{\probat{X},\bencodingofat{Q}{Z,X}}{Z,X} \, ,
@@ -75,9 +76,15 @@
     In mathematical statistic, sufficient statistics are used to characterize parameter estimation problems, i.e. where $Z$ is a parameter variable $\Theta$ of a parametrized family.
     The joint distribution of $\Theta$ and $X$ is constructed by drawing the parameter variable $\Theta$ first with outcome $\theta$ and then drawing $X$ from $\probof{\theta}$.
 
-    \subsection{Equivalent definitions of sufficient statistics}
 
-    \begin{theorem}[Factorization Theorem of Fisher and Neyman]\label{the:factorizationFisherNeyman}
+    \section{The Computation Mechanism of Tensor Network Decompositions}
+
+    Sufficient statistics imply tensor network decompositions of joint distributions using basis encodings of them.
+    The basis encoding of the sufficient statistics computes the sufficient statistic in the basis calculus scheme.
+    We thus call this decomposition mechanism the computation mechanism.
+
+    \begin{theorem}[Factorization Theorem of Fisher and Neyman]
+        \label{the:factorizationFisherNeyman}
         Let $\probtensor$ be a joint distribution of variables $Z,X$ with values $\mathrm{val}(Z), \,\mathrm{val}(X)$ and let $T(X)$ be a statistic.
         The following are equivalent:
         \begin{itemize}
@@ -119,19 +126,19 @@
             &= \condprobat{Z=z}{\headvariableof{T}=T(x)}
         \end{align*}
         Here we used that $\headvariableof{T}$ has a deterministic dependence on $X$ and $ii)$.
-        There is thus a function $g$ such that for all $z\in\mathrm{val}(Z)$ and $x\in\mathrm{val}(X)$ 
+        There is thus a function $g$ such that for all $z\in\mathrm{val}(Z)$ and $x\in\mathrm{val}(X)$
         \begin{align*}
             g(T(x),z) = \condprobat{Z=z}{X=x} \, .
         \end{align*}
-        We further define a function $h(x)=\probat{X=x}$ and get 
+        We further define a function $h(x)=\probat{X=x}$ and get
         \begin{align*}
-            \probat{Z=z,X=x} 
+            \probat{Z=z,X=x}
             &= \probat{X=x} \cdot \condprobat{Z=z}{X=x} \\
             &= g(T(x),z) \cdot h(x) \, .
         \end{align*}
 
         $iii) \Rightarrow ii)$:
-       Using $iii)$ we have for all supported $(x,z)\in\mathrm{val}(Z)\times \mathrm{val}(X)$
+        Using $iii)$ we have for all supported $(x,z)\in\mathrm{val}(Z)\times \mathrm{val}(X)$
         \begin{align*}
             \condprobat{Z=z}{X=x}
             &= \frac{\probat{Z=z,X=x}}{\probat{X=x}} \\
@@ -157,6 +164,17 @@
         \end{align*}
         This is equivalent to $ii)$.
     \end{proof}
+
+    \theref{the:factorizationFisherNeyman} thus states, that whenever a sufficient statistic $T$ of $X$ exists for a variable $Z$, then the joint distribution of $X$ and $Z$ decomposes as sketched in \figref{fig:comDecSufStat}.
+
+    \begin{figure}[t]
+        \begin{center}
+            \input{./tikz_pics/computation_decomposition.tikz}
+        \end{center}
+        \caption{Sketch of the computation decomposition of a joint distribution of $X,Z$ given a sufficient statistic $T$.
+        This decomposition follows from the Fisher-Neyman factorization \theref{the:factorizationFisherNeyman}.}\label{fig:comDecSufStat}
+    \end{figure}
+
 
     \section{Sufficient Statistic for Parametrized Families}
 
@@ -281,5 +299,22 @@
     \end{proof}
 
     Note that by this theorem w can restrict ourselves to the \ComputationActivationNetworks{} with trivial base measure for the characterization of distributions with a probability sufficient statistic.
+
+
+    \section{Minimal sufficient statistics}
+
+    Minimal sufficient statistics are defined by existences of functions from any sufficient statistics.
+
+    \begin{definition}
+        A sufficient statistic $T$ of $Z$ is minimal, if and only if for any sufficient statistic $U$ of $Z$ there is a function $R$ such that $T=R\circ U$.
+    \end{definition}
+
+    Note that by construction, we can choose the same base measure $h$ when factorizing with respect to different sufficient statistics.
+    The activation cores $g^{(U)}$ to an arbitrary sufficient statistic $U$ can thus be further decomposed by the basis encoding of $R$ and an activation core $g^{(T)}$ to a minimal sufficient statistic as
+    \begin{align*}
+        g^{(U)}[\headvariableof{U},Z] = \contractionof{\bencodingofat{R}{\headvariableof{T},\headvariableof{U}},g^{(T)}[\headvariableof{T},Z]}{\headvariableof{U},Z} \, .
+    \end{align*}
+
+    Minimal sufficient statistics thus provide the best embedding into a \ComputationActivationNetworks{}, by decomposing the activation tensor into refining \ComputationActivationNetwork{}.
 
 \end{document}
