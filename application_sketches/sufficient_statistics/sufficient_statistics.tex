@@ -320,6 +320,8 @@
 
     \section{Indicator Statistic HLN to families with sufficient statistics}
 
+    \subsection{Indicator Statistics}
+
     \begin{definition} % Compare with report
         Given a statistic $\sstat$ we call the $\left(\prod_{\selindexin}\seldimof{\selindex}\right)$-dimensional statistic $I(\sstat)$ defined by selection variables $\selvariableof{\selindex}$ and slices
         \begin{align*}
@@ -329,22 +331,76 @@
         the indicator statistic to $\sstat$.
     \end{definition}
 
-    \begin{lemma}
-        To any family with sufficient statistic $\sstat$ we have a finite sufficient statistic for arbitrary large samples by the indicator statistic of $\sstat$.
-    \end{lemma}
+    We call this the indicator statistic, since each feature indexed by $\secselindex_{[\seldim]}$ is the indicator $\onesofat{\sstat=\secselindex_{[\seldim]}}{\shortcatvariables}$.
+    We now show two technical lemmata, which will result in an embedding theorem of any maximal graph family of \ComputationActivationNetworks{} into the family of \HybridLogicNetworks{} with the indicator statistic.
 
     \begin{lemma}
+        \label{lem:sencToIndBenc}
+        For any statistic $\sstat$ the selection encoding of the indicator statistics coincides with the basis encoding of $\sstat$, i.e.
+        \begin{align*}
+            \contractionof{
+                \sencodingofat{I(\sstat)}{\shortcatvariables,\selvariableof{[\seldim]}},\identityat{\selvariableof{[\seldim]},\headvariables}
+            }{\shortcatvariables,\headvariables}
+            = \bencsstatwith \, .
+        \end{align*}
+    \end{lemma}
+
+
+    \begin{lemma}
+        \label{lem:parStatSencToBenc}
+        If $\sstat$ is a partition statistic (i.e. its features sum to the trivial feature $\onesat{\shortcatvariables}$), then for any $\hypercoreat{\selvariable}$
+        \begin{align*}
+            \contractionof{\sencsstatwith,\hypercoreat{\selvariable}}{\shortcatvariables}
+            = \contractionof{\bencsstatwith \cup \{\actcoreofat{\selindex}{\headvariableof{\selindex}} \wcols \selindexin\}}{\shortcatvariables}
+        \end{align*}
+        where for $\selindexin$
+        \begin{align*}
+            \actcoreofat{\selindex}{\headvariableof{\selindex}}
+            = \begin{bmatrix}
+                  \hypercoreat{\selvariable=\selindex} \\
+                  1
+            \end{bmatrix} \, .
+        \end{align*}
+    \end{lemma}
+
+    \begin{theorem}
         Any family of \ComputationActivationNetworks{} can be embedded into a family of \HybridLogicNetworks{} with respect to the indicator statistic of $\sstat$.
-    \end{lemma}
+        In particular we have for any non-negative base measure
+        \begin{align*}
+            \realizabledistsof{\sstat,\maxgraph,\basemeasure} =
+            \realizabledistsof{I(\sstat),\elgraph,\basemeasure} \, .
+        \end{align*}
+    \end{theorem}
+    \begin{proof}
+        To show $\realizabledistsof{\sstat,\maxgraph,\basemeasure} \subset \realizabledistsof{I(\sstat),\elgraph,\basemeasure}$ let $\acttensorat{\headvariables}$ be an arbitrary tensor.
+        Using \lemref{lem:sencToIndBenc} and then \lemref{lem:parStatSencToBenc} on the indicator statistic we get
+        \begin{align*}
+            \contractionof{\acttensorat{\headvariables},\bencsstatwith}{\shortcatvariables}
+            &= \contractionof{\acttensorat{\headvariables},\sencodingofat{I(\sstat)}{\shortcatvariables,\selvariableof{[\seldim]}},\identityat{\selvariableof{[\seldim]},\headvariables}}{\shortcatvariables}\\
+            &= \contractionof{
+                \actcoreat{\headvariableof{\bigtimes_{\selindexin}[\seldimof{\selindex}]}},\bencodingofat{I(\sstat)}{\actcoreat{\headvariableof{\bigtimes_{\selindexin}[\seldimof{\selindex}]}},\shortcatvariables}
+            }{\shortcatvariables}
+        \end{align*}
+        where by $\actcoreat{\headvariableof{\bigtimes_{\selindexin}[\seldimof{\selindex}]}}$ we denote the elementary activation tensor constructed in \lemref{lem:parStatSencToBenc}.
 
-    As a consequence we get together with the Neyman-Fisher factorization theorem:
+        Conversely, to show $\realizabledistsof{I(\sstat),\elgraph,\basemeasure}\subset\realizabledistsof{\sstat,\maxgraph,\basemeasure}$ and let $\probtensor$ be an arbitrary elementary activation core to an element in $\realizabledistsof{I(\sstat),\elgraph,\basemeasure}$.
+        Since $I(\sstat)$ is a partition statistic, we can choose an elementary parametrizing tensor $\actcoreat{\headvariableof{\bigtimes_{\selindexin}[\seldimof{\selindex}]}}$ such that the first coordinate of the leg vectors does not vanish.
+        By multiplication with a scalar, we can choose an elementary parametrizing tensor of $\probtensor$ where all first coordinates are $1$.
+        Now we can apply \lemref{lem:parStatSencToBenc} and \lemref{lem:sencToIndBenc} to get a corresponding parametrization in $\realizabledistsof{\sstat,\maxgraph,\basemeasure}$.
+    \end{proof}
+
+    As a consequence of this lemma we get together with the Neyman-Fisher factorization theorem:
 
     \begin{theorem}
         Given any family of distributions with a sufficient statistic $\sstat$.
         Then there is a base measure $\basemeasure$ such that the family is a subset of the \HybridLogicNetworks{} with statistic $I(\sstat)$ and the base measure $\basemeasure$.
     \end{theorem}
+    \begin{proof}
+        By Neyman-Fisher factorization get a representation of the family by \ComputationActivationNetworks{}.
+        Then the above theorem embeds this family into \HybridLogicNetworks{} to the indicator statistic.
+    \end{proof}
 
-%    We formulate this
+    \subsection{Average Indicator Statistic}
 
     We use the convention $1\cdot \lnof{0}=-\infty$ and $0\cdot\lnof{0}=0$.
 
@@ -362,14 +418,14 @@
         We then have for the likelihood for arbitrary $\theta$
         \begin{align*}
             \frac{1}{n} \cdot \lnof{\prod_{i\in[n]}\probofat{\theta}{\shortcatvariables=\catindexof{[\catorder],i}}} =
-            \contraction{\lnof{\actcoreofat{\theta}{\headvariables}},\bencsstatwith,\empdistribution}
+            \contraction{\lnof{\actcoreofat{\theta}{\headvariables}},\bencsstatwith,\empdistributionwith}
             + \frac{1}{n} \cdot \sum_{i\in[n]} \lnof{\basemeasureat{\shortcatvariables=\catindexof{[\catorder],i}}} \, .
         \end{align*}
 
         Now we notice that for any $\headindexof{[\seldim]}$ we have
         \begin{align*}
             \frac{1}{n} I(\sstat)[\shortcatvariables=\catindexof{[\catorder],i},\selvariableof{[\seldim]}=\headindexof{[\seldim]}]
-            = \contractionof{\bencsstatwith,\empdistribution}{\headvariables=\headindexof{[\seldim]}} \, .
+            = \contractionof{\bencsstatwith,\empdistributionwith}{\headvariables=\headindexof{[\seldim]}} \, .
         \end{align*}
 
         The likelihood thus depends on the data only on the average of the indicator statistic.
@@ -384,5 +440,13 @@
         \item Use \HybridLogicNetworks{} of indicator statistics instead of exponential families.
     \end{itemize}
 
+    \subsection{Investigation Directions}
+
+    \begin{itemize}
+        \item In which cases is the average indicator statistic minimal?
+        Hypothesis: If and only if the affine hull of the activation cores (chosen on the span of the one-hot encoded statistic image) is the span of the one-hot encoded statistic image.
+        \item Is there a relation with partition statistic HLN being cube-like?
+        \item Since HLNs these CANets are exactly maximum entropy distributions. Can we provide closed form activation tensors to max-entropy distributions?
+    \end{itemize}
 
 \end{document}
