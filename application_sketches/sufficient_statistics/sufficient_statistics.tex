@@ -334,14 +334,55 @@
     \end{lemma}
 
     \begin{lemma}
-        Any family of \ComputationActivationNetworks{} can be embedded into a family of \HybridLogicNetworks{} with respect to the indicator statistic of $\sstat$
+        Any family of \ComputationActivationNetworks{} can be embedded into a family of \HybridLogicNetworks{} with respect to the indicator statistic of $\sstat$.
     \end{lemma}
 
     As a consequence we get together with the Neyman-Fisher factorization theorem:
 
     \begin{theorem}
         Given any family of distributions with a sufficient statistic $\sstat$.
-        Then there is a base measure $\basemeasure$ such that
+        Then there is a base measure $\basemeasure$ such that the family is a subset of the \HybridLogicNetworks{} with statistic $I(\sstat)$ and the base measure $\basemeasure$.
     \end{theorem}
+
+%    We formulate this
+
+    We use the convention $1\cdot \lnof{0}=-\infty$ and $0\cdot\lnof{0}=0$.
+
+    \begin{theorem}
+        Given any by $\theta\in\Theta$ parametrized family of distributions with a sufficient statistic $\sstat$.
+        Then the average of $I(\sstat)$ is sufficient for samples of arbitrary size.
+    \end{theorem}
+    \begin{proof}
+        We use the representation of the family by \ComputationActivationNetworks{} with respect to $\sstat$ and a (possibly non-Boolean) base measure $\basemeasure$.
+        In this parametrization, we choose for $\theta\in\Theta$ an activation tensor $\actcoreofat{\theta}{\headvariables}$ such that
+        \begin{align*} % ! HERE NORMALIZED ACTIVATION
+            \probofat{\theta}{\shortcatvariables} = \contractionof{\actcoreofat{\theta}{\headvariables},\bencsstatwith}{\shortcatvariables} \, .
+        \end{align*}
+        Let $\catvariableof{[\catorder]\times[n]}$ be a sample of length $n$.
+        We then have for the likelihood for arbitrary $\theta$
+        \begin{align*}
+            \frac{1}{n} \cdot \lnof{\prod_{i\in[n]}\probofat{\theta}{\shortcatvariables=\catindexof{[\catorder],i}}} =
+            \contraction{\lnof{\actcoreofat{\theta}{\headvariables}},\bencsstatwith,\empdistribution}
+            + \frac{1}{n} \cdot \sum_{i\in[n]} \lnof{\basemeasureat{\shortcatvariables=\catindexof{[\catorder],i}}} \, .
+        \end{align*}
+
+        Now we notice that for any $\headindexof{[\seldim]}$ we have
+        \begin{align*}
+            \frac{1}{n} I(\sstat)[\shortcatvariables=\catindexof{[\catorder],i},\selvariableof{[\seldim]}=\headindexof{[\seldim]}]
+            = \contractionof{\bencsstatwith,\empdistribution}{\headvariables=\headindexof{[\seldim]}} \, .
+        \end{align*}
+
+        The likelihood thus depends on the data only on the average of the indicator statistic.
+        The latter is thus a sufficient statistic for samples of arbitrary size.
+    \end{proof}
+
+    Let us strengthen that the average of the indicator statistic is of finite dimension $2^{\seldim}$.
+    Comparison with Pitman-Koopman-Darmois:
+    \begin{itemize}
+        \item State the existence of a finite dimensional sufficient statistic.
+        \item Do not need to assume constant support in the parametrized family.
+        \item Use \HybridLogicNetworks{} of indicator statistics instead of exponential families.
+    \end{itemize}
+
 
 \end{document}
