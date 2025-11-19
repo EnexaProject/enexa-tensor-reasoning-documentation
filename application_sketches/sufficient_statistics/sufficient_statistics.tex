@@ -318,7 +318,82 @@
     Minimal sufficient statistics thus provide the best embedding into a \ComputationActivationNetworks{}, by decomposing the activation tensor into refining \ComputationActivationNetwork{}.
 
 
-    \section{Indicator Statistic HLN to families with sufficient statistics}
+    \section{Sufficient Statistics of Datasets}
+
+    We now investigate sufficient statistics for random datasets, which are collections of $\catorder\cdot\datanum$ categorical variables $\catvariableof{[\catorder]\times[\datanum]}$.
+    We first draw a model selection variable $\Theta$ from random and then, given the outcome $\theta$, draw independently for $\datindexin$
+    \begin{align*}
+        \catvariableof{[\catorder],\datindex} \sim \probofat{\theta}{\shortcatvariables} \, .
+    \end{align*}
+    Given a sufficient statistic $\sstat$ for $\Theta$ with respect to a single sample (i.e. size $\datanum=1$), we investigate the construction of sufficient statistics for arbitrary $\datanum$.
+    The average statistic to $\sstat$ is a function
+    \begin{align*}
+        \sstat^{\datanum} \defcols \bigtimes_{\datindexin}\bigtimes_{\catenumeratorin} [\catdimof{\catenumerator}] \rightarrow
+        \bigtimes_{\selindexin} \rr^{\seldimof{\selindex}}
+    \end{align*}
+    defined for any dataset $\catindexof{[\catorder]\times[\datanum]}$ by
+    \begin{align*}
+        \sstat^{\datanum}\left(\catindexof{[\catorder]\times[\datanum]}\right) =
+        \bigtimes_{\selindexin} \left(\frac{1}{\datanum}\sum_{\datindexin} \bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables=\catindexof{[\catorder],\datindex}}\right) \, .
+    \end{align*}
+
+%    \begin{align*}
+%        \sencodingofat{\sstat^{\datanum}}{\indexedcatvariableof{[\catorder]\times[\datanum]},\selvariable}
+%        = \frac{1}{\datanum} \sum_{\datindexin} \sencodingof{\sstat}{\shortcatvariables=\catindexof{[\catorder],\datindex},\selvariable} \, .
+%    \end{align*}
+
+    We present two key results:
+    \begin{itemize}
+        \item If in addition to $\sstat$ being a sufficient statistic for single samples the activation tensors in a representation of the family in \ComputationActivationNetworks{} are all elementary, then the average statistic is sufficient for $\Theta$ and arbitrary $\datanum$.
+        \item For any parametrized family with $\sstat$ being sufficient for $\Theta$ for $\datanum=1$ the average statistic of the indicator statistic $I(\sstat)$ is sufficient for $\Theta$ and arbitrary $\datanum$.
+    \end{itemize}
+
+    \subsection{Elementary Activation}
+
+    \begin{theorem}
+        Let $\sstat$ be a sufficient statistic for $\datanum=1$ and the activation tensors in a representation of the family by \ComputationActivationNetworks{} are all elementary, that is
+        \begin{align*}
+            \{\probofat{\theta}{\shortcatvariables}\wcols\theta\in\Theta\} \subset \realizabledistsof{\sstat,\elgraph,\basemeasure}
+        \end{align*}
+        for a non-negative tensor $\basemeasure$.
+        Then the $\left(\sum_{\selindexin}\seldimof{\selindex}\right)$-dimensional average statistic
+        \begin{align*}
+            \sstat^{\datanum}\left(\catindexof{[\catorder]\times[\datanum]}\right) =
+            \bigtimes_{\selindexin} \left(\frac{1}{\datanum}\sum_{\datindexin} \bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables=\catindexof{[\catorder],\datindex}}\right)
+        \end{align*}
+        is sufficient for $\Theta$ and arbitrary $\datanum$.
+    \end{theorem}
+    \begin{proof}
+        This follows from the likelihood expression using
+        \begin{align*}
+            \datameanat{\selvariable} = \sencodingofat{\sstat^{\datanum}}{\indexedcatvariableof{[\catorder]\times[\datanum]},\selvariable} \, ,
+        \end{align*}
+        which we derive in the following.
+
+        By assumption there is a non-negative base measure $\basemeasurewith$, to any $\theta\in\Theta$ we find for $\selindexin$ leg vectors $\actcoreofat{\selindex,\theta}{\headvariableof{\selindex}}$ such that
+        \begin{align*}
+            \probofat{\theta}{\shortcatvariables}
+            = \contractionof{\{\bencsstatwith,\basemeasurewith\}\cup\{\actcoreofat{\selindex,\theta}{\headvariableof{\selindex}}\wcols\selindexin\}}{\shortcatvariables} \, .
+        \end{align*}
+
+        Using the elementary activation tensor, we have for the likelihood
+        \begin{align*}
+            \frac{1}{\datanum}\lnof{\prod_{\datindexin}\probofat{\theta}{\indexedcatvariableof{[\catorder],\datindex}}}
+            = \frac{1}{\datanum}\sum_{\datindexin}\sum_{\selindexin} \lnof{\actcoreofat{\selindex,\theta}{\headvariableof{\selindex}=\sstatcoordinateofat{\selindex}{\catindexof{[\catorder],\datindex}}}}
+            + \frac{1}{\datanum}\sum_{\datindexin} \lnof{\basemeasureat{\shortcatvariables=\catindexof{[\catorder],\datindex}}} \, .
+        \end{align*}
+        We notice, that the second sum does not depend on $\theta$, so it suffices to express the first sum by the average statistic.
+        \begin{align*}
+            \frac{1}{\datanum}\sum_{\datindexin}\sum_{\selindexin} \lnof{\actcoreofat{\selindex,\theta}{\headvariableof{\selindex}=\sstatcoordinateofat{\selindex}{\catindexof{[\catorder],\datindex}}}}
+            = \sum_{\selindexin}
+            \contraction{
+            \sstat^{\datanum}\left(\catindexof{[\catorder]\times[\datanum]}\right)_{\selindex}\left[\headvariableof{\seldim}\right],\lnof{\actcoreofat{\selindex,\theta}{\headvariableof{\selindex}}}
+            } \, .
+        \end{align*}
+        Here by $\sstat^{\datanum}(\cdot)_{\selindex}[\headvariableof{\selindex}]$ we denote the $[\seldimof{\selindex}]$-dimensional vector in the $\selindex$-th position of the cartesian product defining $\sstat^{\datanum}$.
+        We thus have shown that the likelihood of a dataset factorizes into a function $g$ of $\sstat^{\datanum}$ and $\theta$ and a function $h$ of the dataset itself.
+        By the Neyman-Fisher factorization theorem, $\sstat^{\datanum}$ is thus a sufficient statistic for $\theta$.
+    \end{proof}
 
     \subsection{Indicator Statistics}
 
@@ -400,7 +475,7 @@
         Then the above theorem embeds this family into \HybridLogicNetworks{} to the indicator statistic.
     \end{proof}
 
-    \subsection{Average Indicator Statistic}
+    \subsection{Sufficient Average Indicator Statistic}
 
     We use the convention $1\cdot \lnof{0}=-\infty$ and $0\cdot\lnof{0}=0$.
 
@@ -440,13 +515,24 @@
         \item Use \HybridLogicNetworks{} of indicator statistics instead of exponential families.
     \end{itemize}
 
-    \subsection{Investigation Directions}
+    \subsection{Comments}
 
     \begin{itemize}
         \item In which cases is the average indicator statistic minimal?
         Hypothesis: If and only if the affine hull of the activation cores (chosen on the span of the one-hot encoded statistic image) is the span of the one-hot encoded statistic image.
-        \item Is there a relation with partition statistic HLN being cube-like?
-        \item Since HLNs these CANets are exactly maximum entropy distributions. Can we provide closed form activation tensors to max-entropy distributions?
+        However, for boolean $\sstat$ and elementary activation tensors, there is a smaller statistic by $\sstat$.
+        But the elementary activation tensors span the whole tensor space, contradicting the hypothesis.
+        \item Is there a relation with indicator statistic being cube-like?
+        Actually
+        \item Since HLNs these CANets are maximum entropy distributions with respect to indicator statistics.
+        Using that we have an indicator statistic and therefore $\contraction{\datamean}=1$ we have an optimal activation tensor
+        \begin{align*}
+            \acttensorat{\selvariableof{[\seldim]}}
+            = \contractionof{
+                \left(\contractionof{\bencsstatwith,\basemeasurewith}{\shortcatvariables}\right)^{-1},\datameanat{\selvariableof{[\seldim]}}
+            }{\selvariableof{[\seldim]}}
+        \end{align*}
+        Actually this is well-defined also in some situations, where the likelihood score is for all activation tensors $\infty$ (more precise, when a datapoint is not in the base measure support, but its statistic coincides with the statistic of a supported state).
     \end{itemize}
 
 \end{document}
