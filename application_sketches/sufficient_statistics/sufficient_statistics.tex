@@ -18,7 +18,7 @@
 
     \section{Foundations}
 
-    \subsection{Information Theory [Cover, Thomas - Section 2.10]}
+    \subsection{Information Theory (see Section 2.10 in \cite{cover_elements_2006})}
 
     Consider two variables $Z$ and $X$ with a joint distribution $\probat{Z,X}$, and a function $T$ on the states of $X$.
     We augment this joint distribution by a variable $\headvariableof{T}$, which is the head variable to the function $T$
@@ -71,7 +71,7 @@
 
     This lemma is applied when characterizing sufficient statistics for $Z = \probat{X}$.
 
-    \subsection{Mathematical Statistic [Hogg - Chapter 2]}
+    \subsection{Mathematical Statistic (see Chapter 6 in \cite{casella_statistical_2001})}
 
     In mathematical statistic, sufficient statistics are used to characterize parameter estimation problems, i.e. where $Z$ is a parameter variable $\Theta$ of a parametrized family.
     The joint distribution of $\Theta$ and $X$ is constructed by drawing the parameter variable $\Theta$ first with outcome $\theta$ and then drawing $X$ from $\probof{\theta}$.
@@ -387,7 +387,7 @@
             \frac{1}{\datanum}\sum_{\datindexin}\sum_{\selindexin} \lnof{\actcoreofat{\selindex,\theta}{\headvariableof{\selindex}=\sstatcoordinateofat{\selindex}{\catindexof{[\catorder],\datindex}}}}
             = \sum_{\selindexin}
             \contraction{
-            \sstat^{\datanum}\left(\catindexof{[\catorder]\times[\datanum]}\right)_{\selindex}\left[\headvariableof{\seldim}\right],\lnof{\actcoreofat{\selindex,\theta}{\headvariableof{\selindex}}}
+                \sstat^{\datanum}\left(\catindexof{[\catorder]\times[\datanum]}\right)_{\selindex}\left[\headvariableof{\seldim}\right],\lnof{\actcoreofat{\selindex,\theta}{\headvariableof{\selindex}}}
             } \, .
         \end{align*}
         Here by $\sstat^{\datanum}(\cdot)_{\selindex}[\headvariableof{\selindex}]$ we denote the $[\seldimof{\selindex}]$-dimensional vector in the $\selindex$-th position of the cartesian product defining $\sstat^{\datanum}$.
@@ -492,14 +492,14 @@
         Let $\catvariableof{[\catorder]\times[n]}$ be a sample of length $n$.
         We then have for the likelihood for arbitrary $\theta$
         \begin{align*}
-            \frac{1}{n} \cdot \lnof{\prod_{i\in[n]}\probofat{\theta}{\shortcatvariables=\catindexof{[\catorder],i}}} =
+            \frac{1}{\datanum} \cdot \lnof{\prod_{\datindexin}\probofat{\theta}{\shortcatvariables=\catindexof{[\catorder],i}}} =
             \contraction{\lnof{\actcoreofat{\theta}{\headvariables}},\bencsstatwith,\empdistributionwith}
-            + \frac{1}{n} \cdot \sum_{i\in[n]} \lnof{\basemeasureat{\shortcatvariables=\catindexof{[\catorder],i}}} \, .
+            + \frac{1}{\datanum} \cdot \sum_{\datindexin} \lnof{\basemeasureat{\shortcatvariables=\catindexof{[\catorder],i}}} \, .
         \end{align*}
 
         Now we notice that for any $\headindexof{[\seldim]}$ we have
         \begin{align*}
-            \frac{1}{n} I(\sstat)[\shortcatvariables=\catindexof{[\catorder],i},\selvariableof{[\seldim]}=\headindexof{[\seldim]}]
+            \frac{1}{\datanum} I(\sstat)[\shortcatvariables=\catindexof{[\catorder],i},\selvariableof{[\seldim]}=\headindexof{[\seldim]}]
             = \contractionof{\bencsstatwith,\empdistributionwith}{\headvariables=\headindexof{[\seldim]}} \, .
         \end{align*}
 
@@ -510,12 +510,84 @@
     Let us strengthen that the average of the indicator statistic is of finite dimension $2^{\seldim}$.
     Comparison with Pitman-Koopman-Darmois:
     \begin{itemize}
-        \item State the existence of a finite dimensional sufficient statistic.
+        \item State the existence of a finite dimensional sufficient statistic, for arbitrary data sizes $\datanum$.
         \item Do not need to assume constant support in the parametrized family.
         \item Use \HybridLogicNetworks{} of indicator statistics instead of exponential families.
     \end{itemize}
 
-    \subsection{Comments}
+
+    \section{Minimal Sufficient Statistics}
+
+    \begin{definition}[Def. 6.2.11 in \cite{casella_statistical_2001}]
+        A sufficient statistic $\sstat$ is called minimal, if for any other sufficient statistic $T$ there is a function $R$ such that
+        \begin{align*}
+            \sstat = R \circ T \, .
+        \end{align*}
+    \end{definition}
+
+    \begin{theorem}[Thm. 6.2.13 in \cite{casella_statistical_2001}]
+        A sufficient statistic $\sstat$ is minimal, if and only if
+        \begin{align*}
+            \forall_{x,y} : \left( \frac{\probofat{\theta}{\shortcatvariables=x}}{\probofat{\theta}{\shortcatvariables=y}} \quad  \text{constant among $\theta\in\Theta$} \Leftrightarrow \sstat(x) = \sstat(y) \right)
+        \end{align*}
+    \end{theorem}
+
+
+    \begin{definition}
+        Let $\Gamma$ be a set of tensors in $\bigotimes_{\selindexin}\rr^{\seldimof{\catenumerator}}$.
+        We say it is coordinate expressive, if for any two $\shortheadindices,\secheadindexof{[\seldim]}$ we find two $\actcoreofat{1}{\headvariables},\actcoreofat{2}{\headvariables}\in\Gamma$ with
+        \begin{align*}
+            \frac{\actcoreofat{1}{\headvariables=\shortheadindices}}{\actcoreofat{1}{\headvariables=\secheadindexof{[\seldim]}}} \neq
+            \frac{\actcoreofat{2}{\headvariables=\shortheadindices}}{\actcoreofat{2}{\headvariables=\secheadindexof{[\seldim]}}} \, .
+        \end{align*}
+        Here we allow for division by $0$, where we define $\frac{0}{0}=0$ and $\frac{\lambda}{0}=sign(\lambda)\cdot\infty$ for $\lambda\neq 0$.
+    \end{definition}
+
+    \begin{theorem}
+        If there is a parametrization of a family of distributions in $\realizabledistsof{\sstat,\maxgraph,\basemeasure}$ with activation tensors $\Gamma$, which are coordinate expressive, then $\sstat$ is minimal.
+    \end{theorem}
+    \begin{proof}
+        We show that the condition by the above cited Thm. 6.2.13 in \cite{casella_statistical_2001} is satisfied.
+        Since $\sstat$ is a sufficient statistic by assumption, for any $x,y$ with $\sstat(x) = \sstat(y)$ we have $ \frac{\probofat{\theta}{\shortcatvariables=x}}{\probofat{\theta}{\shortcatvariables=y}}$ constant among $\theta$.
+        Conversely, let $x,y$ be such that $ \frac{\probofat{\theta}{\shortcatvariables=x}}{\probofat{\theta}{\shortcatvariables=y}}$ does not depend on $\theta$.
+        Since $\Gamma$ is coordinate expressive, it follows that $\sstat(x) = \sstat(y)$, since otherwise the quotient would differ for the distributions parametrized by corresponding $\actcoreofat{1}{\headvariables},\actcoreofat{2}{\headvariables}$.
+        Thus, the condition of Thm. 6.2.13 in \cite{casella_statistical_2001} is satisfied and $\sstat$ is minimal.
+    \end{proof}
+
+
+    \begin{example}
+        \label{exa:singleFormulaMinimalSstat}
+        Let us consider the set of distributions
+        \begin{align*}
+            \convhullof{\exformulaat{\shortcatvariables|\varnothing},\lnot\exformulaat{\shortcatvariables|\varnothing}}
+        \end{align*}
+        If $\exformula$ and $\lnot\exformula$ are satisfiable, then $\exformula$ (respectively $\lnot \exformula$) is a minimal sufficient statistic.
+        This can be shown, since the activation tensors
+        \begin{align*}
+            \Gamma = \left\{
+                         \begin{bmatrix}
+                             \frac{\mu}{\contraction{\exformula}} \\
+                             \frac{1-\mu}{\contraction{\lnot\exformula}}
+                         \end{bmatrix}
+                         \wcols \mu\in[0,1] \right\}
+        \end{align*}
+        parametrize this family of distributions in $\realizabledistsof{\exformula,\maxgraph,\trivbm}$ (respectively $\realizabledistsof{\lnot\exformula,\maxgraph,\trivbm}$ when exchanging the coordinates of the activation vectors) and $\Gamma$ is coordinate expressive.
+    \end{example}
+
+
+    \begin{example} %% CHECK WHETHER SOMETHING IS WRONG!
+        More generally, for any family $\realizabledistsof{\sstat,\graph,\trivbm}$ the function $\sstat$ is a minimal sufficient statistic, since any contain to each basis tensor a parallel tensor, and this set is coordinate expressive.
+    \end{example}
+
+    \begin{remark}
+        The minimality does for exponential families not coincide with the minimality defined in \cite{wainwright_graphical_2008}.
+        For example in \exaref{exa:singleFormulaMinimalSstat} the minimality is conserved, when choosing the two-dimensional statistic $(\exformula,\lnot\exformula)$.
+        This can be shown, since $(\exformula,\lnot\exformula)$ is expressible by a function of the minimal statistic $\exformula$ (i.e. $R(y)=(y,1-y)$).
+        Since $\exformula+\lnot\exformula=\ones$, this statistic would not be minimal in the definition of \cite{wainwright_graphical_2008}.
+    \end{remark}
+
+
+    \section{Comments}
 
     \begin{itemize}
         \item In which cases is the average indicator statistic minimal?
@@ -523,7 +595,7 @@
         However, for boolean $\sstat$ and elementary activation tensors, there is a smaller statistic by $\sstat$.
         But the elementary activation tensors span the whole tensor space, contradicting the hypothesis.
         \item Is there a relation with indicator statistic being cube-like?
-        Actually
+        Actually cube-likeness is required for full expressivity.
         \item Since HLNs these CANets are maximum entropy distributions with respect to indicator statistics.
         Using that we have an indicator statistic and therefore $\contraction{\datamean}=1$ we have an optimal activation tensor
         \begin{align*}
@@ -532,7 +604,12 @@
                 \left(\contractionof{\bencsstatwith,\basemeasurewith}{\shortcatvariables}\right)^{-1},\datameanat{\selvariableof{[\seldim]}}
             }{\selvariableof{[\seldim]}}
         \end{align*}
-        Actually this is well-defined also in some situations, where the likelihood score is for all activation tensors $\infty$ (more precise, when a datapoint is not in the base measure support, but its statistic coincides with the statistic of a supported state).
+        Actually this is well-defined also in some situations, where the likelihood score is for all activation tensors $\infty$ (more precisely, when a datapoint is not in the base measure support, but its statistic coincides with the statistic of a supported state).
+        \item Investigate minimality of sufficient statistic as a criterion for inductive reasoning.
+        That is choose the statistic $\sstat$ which is minimal for a family of distributions.
     \end{itemize}
+
+    \bibliographystyle{plainnat}
+    \bibliography{../../references.bib}
 
 \end{document}
