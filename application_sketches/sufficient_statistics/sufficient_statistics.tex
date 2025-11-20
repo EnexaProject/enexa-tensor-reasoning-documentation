@@ -586,6 +586,45 @@
         Since $\exformula+\lnot\exformula=\ones$, this statistic would not be minimal in the definition of \cite{wainwright_graphical_2008}.
     \end{remark}
 
+    \section{Point Estimation}
+
+    We here derive a Tensor Network contraction representing a Rao-Blackwellized estimator to an arbitrary estimator $W$.
+
+    For any $\catindex$ we have
+    \begin{align*}
+        \sum_{\tilde{\catindex} \wcols \sstat(\tilde{\catindex})=\sstat(\catindex)} \onehotmapofat{\tilde{\catindex}}{\catvariable}
+        = \contractionof{\bencodingofat{\sstat}{\headvariableof{\sstat},\tilde{\catvariable}},\bencodingofat{\sstat}{\headvariableof{\sstat},\catvariable}}{\tilde{\catvariable},\catvariable=\catindex}
+    \end{align*}
+
+    Given a \ComputationActivationNetwork{} Representation of a parametrized family with sufficient statistic $\sstat$ (i.e. activation tensors $\acttensorofat{\theta}{\headvariableof{\sstat}}$ for any $\theta$ and a base measure $\basemeasurewith$), we have for any $\theta$
+    \begin{align*}
+        \probofat{\theta}{\headvariableof{\sstat}=\sstatat{\catindex}}
+        = \acttensorofat{\theta}{\headvariableof{\sstat}=\sstatat{\catindex}} \cdot \contractionof{\basemeasureat{\tilde{\catvariable}},\bencodingofat{\sstat}{\headvariableof{\sstat},\tilde{\catvariable}},\bencodingofat{\sstat}{\headvariableof{\sstat},\catvariable}}{\indexedcatvariable} \, .
+    \end{align*}
+
+
+    For any estimator $W$ the Rao-Blackwellized estimator is thus for an arbitrary $\theta$ with
+    \begin{align*}
+        \tilde{W}[\indexedcatvariable]
+        = \contraction{W[\tilde{\catvariable}],\condprobwrtof{\theta}{\tilde{\catvariable}}{\headvariableof{\sstat}=\sstat(\catindex)}}
+        = \contractionof{W[\tilde{\catvariable}],\condprobwrtof{\theta}{\tilde{\catvariable}}{\headvariableof{\sstat}},\bencodingofat{\sstat}{\headvariableof{\sstat},\catvariable}}{\indexedcatvariable}
+    \end{align*}
+
+    We use that for any $\theta$ with positive activation tensor
+    \begin{align*}
+        \condprobwrtof{\theta}{\tilde{\catvariable}}{\headvariableof{\sstat}}
+        = \normalizationofwrt{\basemeasureat{\tilde{\catvariable}},\bencodingofat{\sstat}{\headvariableof{\sstat},\tilde{\catvariable}}}{\tilde{\catvariable}}{\headvariableof{\sstat}}
+    \end{align*}
+    and get for the Rao-Blackwellized estimator
+    \begin{align*}
+        \tilde{W}[\catvariable]
+        &= \contractionof{W[\tilde{\catvariable}],\normalizationofwrt{\basemeasureat{\tilde{\catvariable}},\bencodingofat{\sstat}{\headvariableof{\sstat},\tilde{\catvariable}}}{\tilde{\catvariable}}{\headvariableof{\sstat}},\bencodingofat{\sstat}{\headvariableof{\sstat},\catvariable}}{\catvariable} \\
+        &= \frac{
+        \contractionof{W[\tilde{\catvariable}],\basemeasureat{\tilde{\catvariable}},\bencodingofat{\sstat}{\headvariableof{\sstat},\tilde{\catvariable}},\bencodingofat{\sstat}{\headvariableof{\sstat},\catvariable}}{\catvariable}
+        }{
+        \contractionof{\basemeasureat{\tilde{\catvariable}},\bencodingofat{\sstat}{\headvariableof{\sstat},\tilde{\catvariable}},\bencodingofat{\sstat}{\headvariableof{\sstat},\catvariable}}{\catvariable} \, .
+        }
+    \end{align*}
 
     \section{Comments}
 
