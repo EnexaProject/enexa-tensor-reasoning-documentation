@@ -301,21 +301,6 @@
     Note that by this theorem w can restrict ourselves to the \ComputationActivationNetworks{} with trivial base measure for the characterization of distributions with a probability sufficient statistic.
 
 
-    \section{Minimal sufficient statistics}
-
-    Minimal sufficient statistics are defined by existences of functions from any sufficient statistics.
-
-    \begin{definition}
-        A sufficient statistic $T$ of $Z$ is minimal, if and only if for any sufficient statistic $U$ of $Z$ there is a function $R$ such that $T=R\circ U$.
-    \end{definition}
-
-    Note that by construction, we can choose the same base measure $h$ when factorizing with respect to different sufficient statistics.
-    The activation cores $g^{(U)}$ to an arbitrary sufficient statistic $U$ can thus be further decomposed by the basis encoding of $R$ and an activation core $g^{(T)}$ to a minimal sufficient statistic as
-    \begin{align*}
-        g^{(U)}[\headvariableof{U},Z] = \contractionof{\bencodingofat{R}{\headvariableof{T},\headvariableof{U}},g^{(T)}[\headvariableof{T},Z]}{\headvariableof{U},Z} \, .
-    \end{align*}
-
-    Minimal sufficient statistics thus provide the best embedding into a \ComputationActivationNetworks{}, by decomposing the activation tensor into refining \ComputationActivationNetwork{}.
 
 
     \section{Sufficient Statistics of Datasets}
@@ -518,12 +503,23 @@
 
     \section{Minimal Sufficient Statistics}
 
+    Minimal sufficient statistics are defined by existences of functions from any sufficient statistics.
+
     \begin{definition}[Def. 6.2.11 in \cite{casella_statistical_2001}]
         A sufficient statistic $\sstat$ is called minimal, if for any other sufficient statistic $T$ there is a function $R$ such that
         \begin{align*}
             \sstat = R \circ T \, .
         \end{align*}
     \end{definition}
+
+    % Interpretation: Sparsification of the activation tensor
+    Note that by construction, we can choose the same base measure $h$ when factorizing with respect to different sufficient statistics.
+    The activation cores $g^{(U)}$ to an arbitrary sufficient statistic $U$ can thus be further decomposed by the basis encoding of $R$ and an activation core $g^{(T)}$ to a minimal sufficient statistic as
+    \begin{align*}
+        g^{(U)}[\headvariableof{U},Z] = \contractionof{\bencodingofat{R}{\headvariableof{T},\headvariableof{U}},g^{(T)}[\headvariableof{T},Z]}{\headvariableof{U},Z} \, .
+    \end{align*}
+
+    Minimal sufficient statistics thus provide the best embedding into a \ComputationActivationNetworks{}, by decomposing the activation tensor into refining \ComputationActivationNetwork{}.
 
     \begin{theorem}[Thm. 6.2.13 in \cite{casella_statistical_2001}]
         A sufficient statistic $\sstat$ is minimal, if and only if
@@ -532,7 +528,6 @@
         \end{align*}
     \end{theorem}
 
-
     \begin{definition}
         Let $\Gamma$ be a set of tensors in $\bigotimes_{\selindexin}\rr^{\seldimof{\catenumerator}}$.
         We say it is coordinate expressive, if for any two $\shortheadindices,\secheadindexof{[\seldim]}$ we find two $\actcoreofat{1}{\headvariables},\actcoreofat{2}{\headvariables}\in\Gamma$ with
@@ -540,10 +535,10 @@
             \frac{\actcoreofat{1}{\headvariables=\shortheadindices}}{\actcoreofat{1}{\headvariables=\secheadindexof{[\seldim]}}} \neq
             \frac{\actcoreofat{2}{\headvariables=\shortheadindices}}{\actcoreofat{2}{\headvariables=\secheadindexof{[\seldim]}}} \, .
         \end{align*}
-        Here we allow for division by $0$, where we define $\frac{0}{0}=0$ and $\frac{\lambda}{0}=sign(\lambda)\cdot\infty$ for $\lambda\neq 0$.
+        Here we allow for division by $0$, where we define $\frac{0}{0}=1$ and $\frac{\lambda}{0}=sign(\lambda)\cdot\infty$ for $\lambda\neq 0$. % CHECK, whether this convention works!
     \end{definition}
 
-    \begin{theorem}
+    \begin{theorem}\label{the:coordinateExpressiveFollowsMinimal}
         If there is a parametrization of a family of distributions in $\realizabledistsof{\sstat,\maxgraph,\basemeasure}$ with activation tensors $\Gamma$, which are coordinate expressive, then $\sstat$ is minimal.
     \end{theorem}
     \begin{proof}
@@ -555,7 +550,7 @@
     \end{proof}
 
 
-    \begin{example}
+    \begin{example}[Logical Formula as Statistic]
         \label{exa:singleFormulaMinimalSstat}
         Let us consider the set of distributions
         \begin{align*}
@@ -575,16 +570,44 @@
     \end{example}
 
 
-    \begin{example} %% CHECK WHETHER SOMETHING IS WRONG!
+    \begin{example}[Statistic of \ComputationActivationNetworks{} is always minimal]
         More generally, for any family $\realizabledistsof{\sstat,\graph,\trivbm}$ the function $\sstat$ is a minimal sufficient statistic, since any contain to each basis tensor a parallel tensor, and this set is coordinate expressive.
     \end{example}
 
-    \begin{remark}
+    \begin{example}[Non-minimal Sufficient Statistic]
+        To provide an example of a non-minimal statistic take \exaref{exa:singleFormulaMinimalSstat} with the minimal sufficient statistic $\exformula$.
+        Let $\secexformula$ be another formula, which is neither entailed nor contradicted by $\exformula$.
+        It follows, that there is no map $R$ s.t. $\secexformula=R\circ\exformula$.
+        Consider now the sufficient statistic for the family $\realizabledistsof{\exformula,\maxgraph,\trivbm}$ by $\hlnstat=(\exformula,\secexformula)$.
+        One can easily see that this is a sufficient statistic by parametrizing the family with
+        \begin{align*}
+            \tilde{\Gamma} = \left\{ \acttensorat{\headvariableof{0}} \otimes \onesat{\headvariableof{1}}
+                         \wcols \acttensorat{\headvariableof{0}} \in \Gamma \right\} \, .
+        \end{align*}
+        Consistent with \theref{the:coordinateExpressiveFollowsMinimal} we notice, that $\tilde{\Gamma}$ fails to be coordinate expressive, since for all activation tensors the quotient of the coordinates $\headindexof{[2]}=(0,0)$ and $\headindexof{[2]}=(0,1)$ is $1$ (using $\frac{0}{0}=1$). % WATCH OUT WITH 0/0 = 1!
+    \end{example}
+
+
+    \begin{remark}[Comparison with minimality of statistics in exponential families]
         The minimality does for exponential families not coincide with the minimality defined in \cite{wainwright_graphical_2008}.
         For example in \exaref{exa:singleFormulaMinimalSstat} the minimality is conserved, when choosing the two-dimensional statistic $(\exformula,\lnot\exformula)$.
         This can be shown, since $(\exformula,\lnot\exformula)$ is expressible by a function of the minimal statistic $\exformula$ (i.e. $R(y)=(y,1-y)$).
         Since $\exformula+\lnot\exformula=\ones$, this statistic would not be minimal in the definition of \cite{wainwright_graphical_2008}.
     \end{remark}
+
+
+    Observations of minimality given datasets:
+    \begin{itemize}
+        \item For $\datanum=1$, the indicator statistic $I(\sstat)$ is a minimal sufficient statistic, when $\sstat$ is a minimal sufficient statistic.
+        Proof:
+        This follows from $I(\sstat)(\catindex)$ being the one-hot encoding of $\sstat(\catindex)$.
+        For any sufficient statistic, since $\sstat$ is a function of that statistic, also $I(\sstat)$ is a function of that statistic.
+        \item For $\datanum>1$ and elementary activation tensors, $\sstat^{\datanum}$ is a minimal sufficient statistic if $\sstat$ is minimal for $\datanum=1$.
+        Also $I(\sstat)^{\datanum}$ is a sufficient statistic, but not minimal.
+        \item For $\datanum>1$ and non-elementary activation tensors, $\sstat^{\datanum}$ is (in general) not a sufficient statistic if $\sstat$ is minimal for $\datanum=1$.
+        Also $I(\sstat)^{\datanum}$ is a sufficient statistic and in most cases minimal.
+    \end{itemize}
+
 
     \section{Point Estimation}
 
@@ -599,7 +622,8 @@
     Given a \ComputationActivationNetwork{} Representation of a parametrized family with sufficient statistic $\sstat$ (i.e. activation tensors $\acttensorofat{\theta}{\headvariableof{\sstat}}$ for any $\theta$ and a base measure $\basemeasurewith$), we have for any $\theta$
     \begin{align*}
         \probofat{\theta}{\headvariableof{\sstat}=\sstatat{\catindex}}
-        = \acttensorofat{\theta}{\headvariableof{\sstat}=\sstatat{\catindex}} \cdot \contractionof{\basemeasureat{\tilde{\catvariable}},\bencodingofat{\sstat}{\headvariableof{\sstat},\tilde{\catvariable}},\bencodingofat{\sstat}{\headvariableof{\sstat},\catvariable}}{\indexedcatvariable} \, .
+        = \acttensorofat{\theta}{\headvariableof{\sstat}=\sstatat{\catindex}} \cdot
+        \contractionof{\basemeasureat{\tilde{\catvariable}},\bencodingofat{\sstat}{\headvariableof{\sstat},\tilde{\catvariable}},\bencodingofat{\sstat}{\headvariableof{\sstat},\catvariable}}{\indexedcatvariable} \, .
     \end{align*}
 
 
@@ -626,6 +650,12 @@
         }
     \end{align*}
 
+    Further:
+    \begin{itemize}
+        \item The Rao-Blackwellized estimator coincides with the estimator, if and only if $W$ depends on $\catvariable$ only through $\sstat$.
+        That is, if and only if $W$ is itself a \ComputationActivationNetwork{} with statistic $\sstat$ and trivial base measure.
+    \end{itemize}
+
     \section{Comments}
 
     \begin{itemize}
@@ -646,6 +676,8 @@
         Actually this is well-defined also in some situations, where the likelihood score is for all activation tensors $\infty$ (more precisely, when a datapoint is not in the base measure support, but its statistic coincides with the statistic of a supported state).
         \item Investigate minimality of sufficient statistic as a criterion for inductive reasoning.
         That is choose the statistic $\sstat$ which is minimal for a family of distributions.
+        \item Is the statistic $\sstat^{\datanum}$ is sufficient for all maximum entropy distributions, i.e. also for those with non-elementary activation (non cube-like faces)?
+        This should be the case, since the likelihood can be expressed using only $\datamean$.
     \end{itemize}
 
     \bibliographystyle{plainnat}
