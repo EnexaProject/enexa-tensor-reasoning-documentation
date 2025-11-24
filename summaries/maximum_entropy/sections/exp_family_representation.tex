@@ -1,0 +1,112 @@
+\section{Tensor Network Representation of Exponential Families}
+
+We now introduce an architecture of tensor networks, namely \ComputationActivationNetworks{}, and show that exponential families can be represented by them.
+
+\subsection{\ComputationActivationNetworks{}}
+
+Given a statistic $\sstat:\facstates\rightarrow\selstates$ we build its basis encoding tensor
+\begin{align*}
+    \sstatccwith = \sum_{\shortcatindicesin} \onehotmapofat{\sstat(\shortcatindices)}{\headvariables} \otimes \onehotmapofat{\shortcatindices}{\shortcatvariables} \, .
+\end{align*}
+A computation network is any representation of $\sstatccwith$ as a tensor network.
+These can be constructed in the case statistics being a composition of connective functions.
+
+An activation tensor is $\hypercoreat{\headvariables}$ and the \ComputationActivationNetwork{} of $\sstat$ and $\hypercore$ the tensor
+\begin{align*}
+    \probwith = \normalizationof{\sstatccwith,\hypercoreat{\headvariables}}{\shortcatvariables} \, .
+\end{align*}
+
+We are interested in decomposition formats of $\hypercoreat{\headvariables}$, where we use sets of tensor networks $\tnsetof{\graph}$ on a hypergraph $\graph$.
+
+\begin{definition}
+    The family of by $\sstat$ and a $\graph$ computable distributions are
+    \begin{align*}
+        \realizabledistsof{\sstat,\graph,\basemeasure}
+        = \left\{
+              \frac{\contractionof{\hypercoreat{\headvariables},\bencsstatwith}{\shortcatvariables}}{\contraction{\hypercoreat{\headvariables},\bencsstatwith,\basemeasurewith}}
+              \wcols \hypercoreat{\headvariables} \in \tnsetof{\graph} \right\} \, .
+    \end{align*}
+\end{definition}
+
+%\subsection{CP decompositions}
+%We here introduce the CP decomposition of tensors and the restriction to bas+.
+%This will be used to represent face measures as computation activation networks.
+
+\subsection{Exponential Families}
+
+\begin{definition}[Exponential Family]
+    \label{def:expFamily}
+    Given a statistic function
+    \begin{align*}
+        \sstat \defcols \facstates \rightarrow \parspace
+    \end{align*}
+    and a base measure
+    \begin{align*}
+        \basemeasure \defcols \facstates \rightarrow \rr^+
+    \end{align*}
+    with $\contraction{\basemeasure}\neq0$, the set $\expfamily=\{\expdist\wcols\canparamwithin\}\subset\bmrealprobof{\basemeasure}$ of probability distributions
+    \begin{align*}
+        \expdistat{\shortcatvariables}
+        = \frac{
+            \expof{\contractionof{\sencsstatat{\shortcatvariables,\selvariable},\canparamwith}{\shortcatvariables}}
+        }{
+            \contraction{\expof{\contractionof{\sencsstatat{\shortcatvariables,\selvariable},\canparamwith}{\shortcatvariables}},\basemeasurewith}
+        }
+    \end{align*}
+    is called the exponential family to $\sstat$.
+\end{definition}
+
+To present a tensor network representation, we introduce image interpretation maps
+\begin{align*}
+    \indexinterpretationof{\selindex} \defcols
+    [\cardof{\imageof{\sstatcoordinateof{\selindex}}}] \rightarrow \imageof{\sstatcoordinateof{\selindex}} \, ,
+\end{align*}
+which enumerate the possible values of each feature.
+We treat these maps as tensors with in a variable $\headvariableof{\selindex}$ with values in $[\cardof{\imageof{\sstatcoordinateof{\selindex}}}]$.
+
+\begin{theorem}[Exponential Families are in \ComputationActivationNetworks{}]
+    \label{the:expFamilyTensorRep}
+    Given any base measure $\basemeasure$ and a sufficient statistic $\sstat$ we enumerate for each coordinate $\selindexin$ the image $\imageof{\sstatcoordinateof{\selindex}}$ by a variable $\headvariableof{\selindex}$ taking values in $[\cardof{\imageof{\sstatcoordinateof{\selindex}}}]$, given an interpretation map
+    \begin{align*}
+        \indexinterpretationof{\selindex} \defcols
+        [\cardof{\imageof{\sstatcoordinateof{\selindex}}}] \rightarrow \imageof{\sstatcoordinateof{\selindex}} \, .
+    \end{align*}
+    For any canonical parameter vector $\canparamwithin$ we build the activation cores $\softactlegwith$ for each coordinate $\headindexof{\selindex}\in[\cardof{\imageof{\sstatcoordinateof{\selindex}}}]$ by
+    \begin{align*}
+        \softactleg\left[\indexedheadvariableof{\selindex}\right]
+        = \expof{\canparamat{\indexedselvariable} \cdot \indexinterpretationofat{\selindex}{\headindexof{\selindex}} } \,
+    \end{align*}
+    and have (see \figref{fig:expdistUnaryRealizable})
+    \begin{align*}
+        \expdistat{\shortcatvariables}
+        = \frac{
+            \contractionof{\{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables} \wcols \selindexin\}\cup\{\softactlegwith \wcols \selindexin\}}{\shortcatvariables}
+        }{
+            \contraction{\{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables} \wcols \selindexin\}\cup\{\softactlegwith \wcols \selindexin\}\cup\{\basemeasurewith\}}
+        } \, .
+    \end{align*}
+\end{theorem}
+\begin{proof} %% SHORTENED THE PROOF IN THE REPORT
+    For each $\shortcatindicesin$ we have
+    \begin{align*}
+        &\contractionof{\{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables} \wcols \selindexin\}\cup\{\softactlegwith \wcols \selindexin\}}{\indexedshortcatvariables} \\
+        &\quad = \prod_{\selindexin} \contraction{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\indexedshortcatvariables},\softactlegwith} \\
+        &\quad = \prod_{\selindexin} \expof{\canparamat{\indexedselvariable}\cdot\indexinterpretationofat{\selindex}{\sstatcoordinateofat{\selindex}{\shortcatindices}}} \\
+        &\quad = \expof{\sum_{\selindexin}\canparamat{\indexedselvariable}\cdot\indexinterpretationofat{\selindex}{\sstatcoordinateofat{\selindex}{\shortcatindices}}} \\
+        &\quad = \expof{\contractionof{\sencsstatat{\shortcatvariables,\selvariable},\canparamwith}{\indexedshortcatvariables}} \, .
+    \end{align*}
+    Therefore we have
+    \begin{align*}
+        \contractionof{\{\bencodingofat{\sstatcoordinateof{\selindex}}{\headvariableof{\selindex},\shortcatvariables} \wcols \selindexin\}\cup\{\softactlegwith \wcols \selindexin\}}{\shortcatvariables}
+        = \expof{\contractionof{\sencsstatat{\shortcatvariables,\selvariable},\canparamwith}{\shortcatvariables}} \, .
+    \end{align*}
+    The claim follows, since this implies that also the contraction of both sides with $\basemeasurewith$ is equivalent.
+\end{proof}
+
+\begin{figure}[t]
+    \begin{center}
+        \input{./tikz_pics/expdist_unary_realizable.tex}
+    \end{center}
+    \caption{Representation of a member in an exponential family by a \ComputationActivationNetwork{} with elementary activation.
+    Since the right hand side is not normalized both sides are equal up to a constant.}\label{fig:expdistUnaryRealizable}
+\end{figure}

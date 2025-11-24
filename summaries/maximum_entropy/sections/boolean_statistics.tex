@@ -3,30 +3,88 @@
 \red{We here study the face CP ranks in case of boolean statistics.
 We further show that any elementary \ComputationActivationNetwork{} to boolean statistics is a maximum entropy distribution.}
 
-For boolean statistics $\hlnstat:\facstates\rightarrow\bigtimes_{\selindexin}[2]$ the mean polytope is a subset of the cube $[0,1]^\seldim$.
+For boolean statistics $\hlnstat:\facstates\rightarrow\bigtimes_{\selindexin}[2]$ the mean polytope is a subset of the cube $\fullparcube$.
 In this case, any boolean vector in $\meansetof{\hlnstat,\basemeasure}$ is a vertex.
 It follows, that any distribution reproducing a mean parameter $\meanparamwith$ on the relative interior of $\meansetof{\hlnstat,\basemeasure}$ is positive with respect to $\basemeasure$.
 
 We apply the exponential distribution characterization of the maximum entropy distribution and get that the maximum entropy distribution is in $\elrealizabledistsof{\sstat}$, if and only if the face measure is in $\elrealizabledistsof{\sstat}$.
-This is exactly the case, when the face is an intersection of the mean polytope with a face of the cupe $[0,1]^\seldim$.
+This is exactly the case, when the face is an intersection of the mean polytope with a face of the cupe $\fullparcube$.
 
 \subsection{Set of maximum entropy distributions}
 
+\begin{example}[Hypercube]
+    \label{exa:hypercube}
+    In cases where $\shortcatvariables$ are boolean and we have $\selindexin$ features
+    \begin{align*}
+        \formulaofat{\selindex}{\indexedshortcatvariables} = \catindexof{\selindex}
+    \end{align*}
+    the mean polytope is the hypercube
+    \begin{align*}
+        \meansetof{\{\formulaof{\selindex}\wcols\selindexin\},\trivbm} = \fullparcube \, .
+    \end{align*}
+    Its faces can be enumerated by choosing a subset $\variableset\subset[\seldim]$ and indices $\headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]$ and represented by the cartesian products
+    \begin{align*}
+        \facesetofspec{(\variableset,\headindexof{\variableset})}{}%{\{\formulaof{\selindex}\wcols\selindexin\},\trivbm}
+        = \bigtimes_{\selindexin} \mathcal{I}_{l}
+    \end{align*}
+    where
+    \begin{align*}
+        \mathcal{I}_{l}
+        = \begin{cases}
+        [0,1]
+              & \ifspace \selindex\notin\variableset \\
+              \{\headindexof{\selindex}\}& \ifspace \selindex\in\variableset
+        \end{cases} \, .
+    \end{align*}
+    Each of these faces can be represented with respect to the elementary graph $\elgraph$, namely by the tensor product of leg vectors
+    \begin{align*}
+        \actcoreofat{\selindex}{\headvariableof{\selindex}}
+        = \begin{cases}
+              \onesat{\headvariableof{\selindex}} & \ifspace \selindex\notin\variableset \\
+              \onehotmapofat{\headindexof{\selindex}}{\headvariableof{\selindex}}& \ifspace \selindex\in\variableset
+        \end{cases} \, .
+    \end{align*}
+    \red{This will later be interpreted by propositional logics as the example of atomic formulas.}
+\end{example}
+
+\begin{definition}
+    We say a polytope $\meansetof{\hlnstat,\basemeasure}$ is cube-like, if for any face $\hlnfaceset$ we find a face of the hypercube parametrized by $(\variableset,\headindexof{\variableset})$ (see \exaref{exa:hypercube}), such that
+    \begin{align*}
+        \hlnfaceset = \meansetof{\hlnstat,\basemeasure} \cap \facesetofspec{(\variableset,\headindexof{\variableset})}{}\, .%{\{\formulaof{\selindex}\wcols\selindexin\},\trivbm} \, .
+    \end{align*}
+\end{definition}
+
 \begin{theorem}
-    Any distribution in $\elrealizabledistsof{\hlnstat}$ is a maximum entropy distribution.
-    Any maximum entropy distribution is realized by $\elrealizabledistsof{\hlnstat}$ if and only if the mean parameter is on an relative interior of a cube-like face.
+    Any distribution in $\realizabledistsof{\hlnstat,\elgraph,\basemeasure}$ is a maximum entropy distribution with respect to $(\hlnstat,\meanparam,\basemeasure)$ where $\meanparam$ is its mean parameter.
+    Any maximum entropy distribution is realized by $\realizabledistsof{\hlnstat,\elgraph,\basemeasure}$ if and only if the mean parameter is in the relative interior of a cube-like face.
 \end{theorem}
 \begin{proof}
     First claim by decomposing any elementary tensor into exponential and hard activation core.
     Second claim by characterization of elementary faces by cube-likeness.
 \end{proof}
 
-The mean parameters, which can be realized by a distribution in $\elrealizabledistsof{\hlnstat}$ are those, which are on the relative interior of the intersection of the mean polytope with a face of the cube.
+%The mean parameters, which can be realized by a distribution in $\elrealizabledistsof{\hlnstat}$ are those, which are on the relative interior of the intersection of the mean polytope with a face of the cube.
 
+We can now use the same notation as applied for hypercubes to classify the faces of a cube-like polytope.
 
+\subsection{Interpretation by propositional formulas}
 
-\subsection{Example}
+We can understand each feature as a propositonal formula and the variables $\shortcatvariables$ as atoms (possibly after a binarization).
 
-\red{Add examples: Partition Statistics - Simplices, (Logically) Independent formulas - Hypercubes}
+Each vertex of the cube, which is not a vertex of the polytope corresponds with the unsatisfiability of a formula
+\begin{align*}
+    \bigwedge_{\selindexin} \lnot^{1-\meanparamat{\indexedselvariable}} \formulaofat{\selindex}{\shortcatvariables}
+\end{align*}
+which is equal with any of the entailment statements for $\variableset\subset[\seldim]$ % Can extend to any partition!
+\begin{align*}
+    \left(\bigwedge_{\selindex\in\variableset} \lnot^{1-\meanparamat{\indexedselvariable}} \formulaofat{\selindex}{\shortcatvariables} \right)
+    \models \left(\bigwedge_{\selindex\in\variableset}\lnot^{\meanparamat{\indexedselvariable}} \formulaofat{\selindex}{\shortcatvariables} \right) \, .
+\end{align*}
+
+Along this interpretation we can easily construct examples of statistics, which polytopes are not cube-like.
 
 \input{examples/nonel_hlnstat_maxent.tex}
+
+\input{examples/atomic_formulas.tex}
+
+\input{examples/minterm_formulas.tex}
