@@ -18,7 +18,7 @@ A classical result states, that the maximum entropy distribution is in the expon
     with $\contractionof{\expdistofat{\sstat,\genmean,\basemeasure}{\shortcatvariables},\sencsstatwith}{\selvariable}=\genmeanat{\selvariable}$.
 \end{theorem}
 \begin{proof}
-    By The~3.3 in \cite{wainwright_graphical_2008}, since by assumption
+    By \lemref{lem:interiorRepExpFamily}
     \begin{align*}
         \meanparamwith \in \sbinteriorof{\genmeanset}  \, ,
     \end{align*}
@@ -61,9 +61,11 @@ Our main result generalizes the maximum entropy characterization of \theref{the:
         \expdistof{(\sstat,\backwardmapwrtof{\sstat,\genfacemeasure}{\meanparam},\genfacemeasure)}
     \end{align*}
     of the exponential family $\expfamilyof{\sstat,\genfacemeasure}$, where $\genfacemeasure$ is the face measure (see \defref{def:faceMeasure}).
-    If for a hypergraph $\graph$ the face is representable with respect to $\graph$ (see \defref{def:faceRepresentability}), then the maximum entropy distribution is in $\realizabledistsof{\sstat,\graph,\basemeasure}$.
+    If for a hypergraph $\graph$, which nodes appear all in at least one edge, the face is representable with respect to $\graph$ (see \defref{def:faceRepresentability}), then the maximum entropy distribution is in $\realizabledistsof{\sstat,\graph,\basemeasure}$.
     %$\genfacemeasure\in\$ is an elementary \ComputationActivationNetwork{}, then $\expdistof{(\sstat,\backwardmapwrtof{\sstat,\genfacemeasure}{\meanparam},\genfacemeasure)}$ is a \ComputationActivationNetwork{} with respect to the CP graph of rank $\cprankof{\genfaceset}$.
 \end{theorem}
+
+Note, that while we use refined base measures $\genfacemeasure$ to characterize the maximum entropy distribution, \theref{the:MAINgenMaxEntChar} states a representation with respect to the original base measure $\basemeasure$.
 
 To prepare for the proof of this theorem we first show in an auxiliary lemma that we can reduce the set of feasible distributions in \probref{prob:maxEntropy}.
 
@@ -95,7 +97,6 @@ To prepare for the proof of this theorem we first show in an auxiliary lemma tha
         \sentropyofwrt{\probwith}{\basemeasure} = \sentropyofwrt{\probwith}{\genfacemeasure}
     \end{align*}
     and arrive together with the above equivalence at the claim.
-%    The maximum entropy solution is thus the same as for the $(\sstat,\meanparam,\contractionof{\basemeasure,\genfacemeasure}{\shortcatvariables})$ instance, which we characterize in the following.
 \end{proof}
 
 
@@ -108,16 +109,27 @@ To prepare for the proof of this theorem we first show in an auxiliary lemma tha
     We use the following argumentation to show the second claim:
     \begin{itemize}
         \item By \lemref{lem:relativeInteriorPolytopePartition} for any $\meanparam$ we find a unique face $\genfaceset$.
-        \item By \lemref{lem:maxEntReduction} we can reduce the maximum entropy problem $\mathrm{P}_{\sstat,\meanparam,\genfacemeasure}$ to the base measure $\genfacemeasure$.
-        \item By \lemref{lem:faceAsRefinedPolytope} the face $\genfaceset$ coincides with the polytope $\meansetof{\sstat,\contractionof{\basemeasure,\genfacemeasure}{\shortcatvariables}}$ and in particular $\meanparam$ is in the relative interior of that polytope.
+        \item By \lemref{lem:maxEntReduction} we can reduce the maximum entropy problem \probref{prob:maxEntropy} to $\mathrm{P}_{\sstat,\meanparam,\genfacemeasure}$ to the base measure $\genfacemeasure$.
+        \item By \lemref{lem:faceAsRefinedPolytope} the face $\genfaceset$ coincides with the polytope $\meansetof{\sstat,\genfacemeasure}$ and in particular $\meanparam$ is in the relative interior of that polytope.
         \item We can now apply \theref{the:maxEntropyInterior} and get a characterization of the maximum entropy solution as a member of the exponential family.
     \end{itemize}
 
-    \textbf{Representation Claim:}
-%    By \theref{the:faceMeasureCharacterization} we can represent the face measure as a $\cpformat$ \ComputationActivationNetwork{}.
-    By \defref{def:faceRepresentability} we find a tensor network on $\graph$ representing the face measure.
-    We contract the activation vectors of the exponential family on this tensor network (see \figref{fig:maxEntropyActcore}) and get an activation tensor network on $\graph$ representing the maximum entropy distribution.
-    %Since both the $\basemeasure$ (by assumption) and the soft activation (always) is elementary, they do not change the $\cpformat$ rank when contracting to the face activating tensor of minimal rank.
+    \textbf{Representation Claim:} % ! WE DO A CHANGE OF BASE MEASURE HERE
+    By \defref{def:faceRepresentability} we find a tensor network $\extnet$ on $\graph$ representing the face measure, that is
+    \begin{align*}
+        \genfacemeasurewith = \contractionof{\{\extnet\}\cup\{\bencsstatwith,\basemeasurewith\}}{\shortcatvariables} \, .
+    \end{align*}
+    We now contract the activation vectors of the exponential family on this tensor network (see \figref{fig:maxEntropyActcore}).
+    To this end we choose a hyperedge $\edge(\selindex)$ to each node $\selindexin$, which is possible by assumption, and define a tensor network $\tilde{\tnet}^{\graph}$ by core tensors
+    \begin{align*}
+        \sechypercoreofat{\edge}{\headvariableof{\edge}} = \contractionof{\{\hypercoreofat{\edge}{\headvariableof{\edge}}\}\cup\{\softactlegat{\headvariableof{\selindex}}\wcols\edge=\edge(\selindex)\}}{\edgevariables} \, .
+    \end{align*}
+    Now we have that
+    \begin{align*}
+        \contractionof{\{\tilde{\tnet}^{\graph}\}\cup\{\bencsstatwith,\basemeasurewith\}}{\shortcatvariables}
+        = \contractionof{\softacttensorat{\headvariables},\bencsstatwith,\genfacemeasurewith}{\shortcatvariables}
+    \end{align*}
+    Thus, the activation tensor network $\tilde{\tnet}^{\graph}$ represents the maximum entropy distribution $\probof{\sstat,\meanparam,\basemeasure}$ in the family $\realizabledistsof{\sstat,\graph,\basemeasure}$ of \ComputationActivationNetworks{}.
 \end{proof}
 
 
@@ -182,3 +194,13 @@ To prepare for the proof of this theorem we first show in an auxiliary lemma tha
         Red: Probabilistic activation cores $\softactlegwith$ in an elementary decomposition, where each leg core is a scaled exponentials evaluated on the enumerated image $\imageof{\sstatcoordinateof{\selindex}}$.
     }\label{fig:maxEntropyActcore}
 \end{figure}
+
+\subsection{Family of maximum entropy distributions}
+
+The family of maximum entropy distributions is the set
+\begin{align*}
+    \{\probof{\sstat,\meanparam,\basemeasure} \wcols \meanparam\in\genmeanset\ncond \probof{\sstat,\meanparam,\basemeasure} \quad\text{is a solution of }\quad \probref{prob:maxEntropy}\} \, .
+\end{align*}
+
+By \theref{the:expFamilyTensorRep} this is the union of exponential families to each face measure.
+Note that these families are disjoint, since each member of an exponential family has support by the support of the face measure.
