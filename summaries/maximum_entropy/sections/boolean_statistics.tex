@@ -88,3 +88,67 @@ Along this interpretation we can easily construct examples of statistics, which 
 \input{examples/atomic_formulas.tex}
 
 \input{examples/minterm_formulas.tex}
+
+\subsection{Construction of \HybridLogicNetworks{}}
+
+We now show constructively, that any convex polytope with boolean vertices in $\parspace$ (a so called 0-1 polytope, see \cite{ziegler_lectures_2000}) is the mean polytope of a family of \HybridLogicNetworks{}.
+
+\begin{theorem}
+    Let $\meanset$ an arbitrary polytope with boolean vertices in $\parspace$.
+    Then we construct propositional formulas on atoms $\catvariableof{[\seldim]}$ by
+    \begin{align*}
+        \formulaofat{0}{\catvariableof{0}} =
+        \begin{cases}
+            \top & \ifspace \restrictionofto{\meanset}{\rr^1\times 0_{\seldim-1}} = \{1\} \\
+            \bot & \ifspace \restrictionofto{\meanset}{\rr^1 \times 0_{\seldim-1}} = \{0\} \\
+            \catvariableof{0} & \ifspace \restrictionofto{\meanset}{\rr^1 \times 0_{\seldim-1}} = [0,1]
+        \end{cases}
+    \end{align*}
+    and iteratively for $\selindexin$ with $\selindex\geq1$ by
+    \begin{align*}
+        \formulaofat{\selindex}{\catvariableof{[\selindex+1]}} =
+        \bigwedge_{v[\selvariable] \in \restrictionofto{\meanset}{\rr^\selindex\times 0_{\seldim-\selindex}}\cap \{0,1\}^{\seldim}}
+        \left(\left(\bigwedge_{\secselindex\in[\selindex+1]} \lnot^{1-v[\indexedselvariable]} \formulaofat{\selindex}{\catvariableof{[\selindex]}}\right) \Rightarrow
+        \begin{cases}
+            \top & \ifspace \restrictionofto{\meanset}{v\times\rr^{1} \times 0_{\seldim-\selindex-1}} = \{1\} \\
+            \bot & \ifspace \restrictionofto{\meanset}{v\times\rr^{1} \times 0_{\seldim-\selindex-1}} = \{0\} \\
+            \catvariableof{\selindex} & \ifspace \restrictionofto{\meanset}{v\times\rr^{1} \times 0_{\seldim-\selindex-1}} = \{0,1\} \\
+        \end{cases}
+        \right).
+    \end{align*}
+    Here we denote by $\restrictionofto{\meanset}{V}$ the projections of the vertices in $\meanset$ onto the subspaces $V$, and by $0_{\seldim}$ the zero vector in $\rr^{\seldim}$.
+\end{theorem}
+\begin{proof}
+    We show per induction, that for any $\selindexin$ the family of \HybridLogicNetworks{} with the statistic $\formulaof{[\selindex+1]}$ by the first $\selindex+1$ formulas has the mean polytope
+    \begin{align}\label{eq:HLNindConTBS}
+        \meansetof{\formulaof{[\selindex+1]},\trivbm} = \restrictionofto{\meanset}{\rr^\selindex\times 0_{\seldim-\selindex}} \, .
+    \end{align}
+
+    $\selindex=0$: The polytope $\restrictionofto{\meanset}{\rr^\selindex\times 0_{\seldim-\selindex}}=\{1\}$ (respectively $\restrictionofto{\meanset}{\rr^\selindex\times 0_{\seldim-\selindex}}=\{0\}$) is reproduced by $\formulaof{0}$ being a tautology (respectively a contradiction).
+    In the case $\restrictionofto{\meanset}{\rr^\selindex\times 0_{\seldim-\selindex}}=[0,1]$ the polytope is reproduced by the any formula, which is neither a tautology nor a contradiction, and the atomic formula $\catvariableof{0}$ is an example of such an contingency.
+    Since the projection of a 0-1 polytope onto the first coordinates is itself a 0-1 polytope, these are the only possible cases and we conclude that in all
+    \begin{align*}
+        \meansetof{\formulaof{[\selindex+1]},\trivbm} = \restrictionofto{\meanset}{\rr^\selindex\times 0_{\seldim-\selindex}} \, .
+    \end{align*}
+
+    $\selindex\rightarrow\selindex+1$: Let us assume, that \eqref{eq:HLNindConTBS} holds for a $\selindexin$.
+    Then for any $\shortcatindicesin$ there is exactly one $v[\selvariable] \in \restrictionofto{\meanset}{\rr^\selindex\times 0_{\seldim-\selindex}}$ such that $\shortcatindices$ is a model of
+    \begin{align*}
+        \formulaof{\selindex,v}\coloneqq
+        \bigwedge_{\secselindex\in[\selindex+1]} \lnot^{1-v[\indexedselvariable]} \formulaofat{\selindex}{\catvariableof{[\selindex]}} \, .
+    \end{align*}
+    This holds, since by the mutual contradiction of these formulas at most one can have $\shortcatindices$ as a model.
+    Further, if none would have $\shortcatindices$ as a model, then the to $\shortcatindices$ corresponding vector of satisfactions $(\formulaofat{\selindex}{\indexedshortcatvariables})_{\selindex\in[\selindex]}$ is not in $\restrictionofto{\meanset}{\rr^\selindex\times 0_{\seldim-\selindex}}$, which can not be the case.
+    Now, the implications to all $\tilde{v}$ except for $v$ are for the models $\shortcatindices$ of $\formulaof{\selindex,v}$ satisfied, and the satisfaction of $\formulaof{\selindex}$ thus only depends on the head of the implication to $v$.
+    It follows, that the vertices of $\meansetof{\formulaof{[\selindex+2]},\trivbm}$ sharing the first $\selindex$ coordinates with $v$ are determined by the head of the implication at $v$.
+    With the same arguments as in the case $\selindex=0$ we now notice, that in the three cases we construct vertex sets $v\times\{1\},\, v\times\{1\}$ or $v\times\{0,1\}$ if and only if they appear in the polytope $\restrictionofto{\meanset}{\rr^{\selindex+1}\times 0_{\seldim-\selindex-1}}$.
+    This establishes for each vertex $v$ of $\meansetof{\formulaof{[\selindex+1]},\trivbm}$ that
+    \begin{align*}
+        \restrictionofto{\left(\meansetof{\formulaof{[\selindex+2]},\trivbm}\right)}{v\times\rr\times0_{\seldim-\selindex-1}}
+        = \restrictionofto{\left(\restrictionofto{\meanset}{\rr^\selindex\times 0_{\seldim-\selindex}}\right)}{v\times\rr\times0_{\seldim-\selindex-1}} \, .
+    \end{align*}
+    Since for any vertex in $\meanset$ we find a unique vertex in $\meansetof{\formulaof{[\selindex+1]},\trivbm}$ sharing the first $\selindex$ coordinates, we have that \eqref{eq:HLNindConTBS} holds for $\selindex+1$.
+
+    By induction the equation \eqref{eq:HLNindConTBS} holds for arbitrary $\selindexin$.
+    For $\selindex=\seldim-1$ the equation is the claim.
+\end{proof}
