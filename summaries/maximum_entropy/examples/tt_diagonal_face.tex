@@ -1,0 +1,133 @@
+\begin{example}[$\ttformat$ representation of diagonal faces]
+    \label{exa:tt_diagonal_face}
+    Consider the vertex set
+    \begin{align*}
+        \imset \coloneqq \{0,1\}^{\seldim} / \imelementat{\selvariable}
+    \end{align*}
+    convex polytope.
+    We are interested in the face $\facesymbolof{\triangleleft,1}$ with the normal $\frac{1}{2} (2\imelementwith - \onesat{\selvariable})$.
+    Its vertices are the $\seldim$ elements of $\{0,1\}^{\seldim}$, which differ from $\imelementwith$ in exactly one coordinate (i.e. those with Hamming distance of $1$ from $\imelementat{\selvariable}$).
+    We denote these vertices by $\imelementof{\selindex}$ for $\selindexin$, which coordinates to $\secselindex\in[\seldim]$ are
+    \begin{align*}
+        \imelementofat{\selindex}{\selvariable=\secselindex}
+        = \begin{cases}
+              \imelementat{\selvariable=\secselindex} & \ifspace \secselindex\neq\selindex \\
+              1-\imelementat{\selvariable=\secselindex} & \ifspace \secselindex=\selindex
+        \end{cases} \, .
+    \end{align*}
+
+    We now represent their sum in an $\ttformat$ with hidden ranks $r_0=\ldots=r_{\seldim-2}=2$.
+    The boolean hidden variables are denoted be $\decvariableof{[\seldim-1]}$ and can be interpreted as indicators, whether the coordinate flip has happened in $[\selindex]$ coordinates.
+    We now construct a $\ttformat$ cores for $\selindex=0$ by
+    \begin{align*}
+        \hypercoreofat{0}{\headvariableof{0},\decvariableof{0}}
+        = \onehotmapofat{\imelementat{\selvariable=0}}{\headvariableof{0}} \otimes \fbasisat{\decvariableof{0}}
+        + \onehotmapofat{1-\imelementat{\selvariable=0}}{\headvariableof{0}} \otimes \tbasisat{\decvariableof{0}}
+    \end{align*}
+    further for $\selindex\notin\{0,\seldim-1\}$ the cores
+    \begin{align*}
+        \hypercoreofat{\selindex}{\decvariableof{\selindex-1},\headvariableof{\selindex},\decvariableof{\selindex}}
+        = \, & \fbasisat{\decvariableof{\selindex-1}} \otimes \onehotmapofat{1-\imelementat{\indexedselvariable}}{\headvariableof{\selindex}} \otimes \tbasisat{\decvariableof{\selindex}}
+        + \fbasisat{\decvariableof{\selindex-1}} \otimes \onehotmapofat{\imelementat{\indexedselvariable}}{\headvariableof{\selindex}} \otimes \fbasisat{\decvariableof{\selindex}} \\
+        &+ \tbasisat{\decvariableof{\selindex-1}} \otimes \onehotmapofat{\imelementat{\indexedselvariable}}{\headvariableof{\selindex}} \otimes \tbasisat{\decvariableof{\selindex}}
+    \end{align*}
+    and for $\selindex=\seldim-1$
+    \begin{align*}
+        \hypercoreofat{\seldim-1}{\decvariableof{\seldim-1},\headvariableof{\seldim-1}}
+        = \fbasisat{\decvariableof{\seldim-1}} \otimes \onehotmapofat{1-\imelementat{\selvariable=\seldim-1}}{\headvariableof{\seldim-1}}
+        + \tbasisat{\decvariableof{\seldim-1}} \otimes \onehotmapofat{\imelementat{\selvariable=\seldim-1}}{\headvariableof{\seldim-1}} \, .
+    \end{align*}
+    For this tensor network in the $\ttformat$ format we have
+    \begin{align*}
+        \sum_{\selindexin} \onehotmapofat{\imelementof{\selindex}}{\headvariables}
+        = \contractionof{\{\hypercoreofat{0}{\headvariableof{0},\decvariableof{0}},\hypercoreofat{\seldim-1}{\decvariableof{\seldim-1},\headvariableof{\seldim-1}}\}\cup\{\hypercoreofat{\selindex}{\decvariableof{\selindex-1},\headvariableof{\selindex},\decvariableof{\selindex}}\wcols\selindex\notin\{0,\seldim-1\}\}}{\headvariables} \, .
+    \end{align*}
+    The $\ttformat$ multirank of $2$ is furthermore minimal, since each matrification based on a partition of $[\seldim]$ into non-empty sets has a matrix rank of $2$.
+    With respect to such partitions also the tensor $\onehotmapofat{\imelement}{\headvariables}+\left(\sum_{\selindexin}\onehotmapofat{\imelementof{\selindex}}{\headvariables}\right)$ has matrix ranks of $2$.
+    Since these are the only two activation tensors for the face $\facesymbolof{\triangleleft,1}$.
+\end{example}
+
+\begin{example}[Generalization of \exaref{exa:tt_diagonal_face} to larger $\ttformat$ ranks]
+    \label{exa:gen_tt_diagonal_face}
+    %% Extension to larger Hadamard distances
+    We now generalize the construction of \exaref{exa:tt_diagonal_face} by using the Hadamard distance $d(\cdot,\cdot)$ in $\{0,1\}^{\seldim}$, which counts the number of coordinates two vertices differ in.
+    For $s\in\{1,\ldots,\seldim-1\}$ we define for a fixed $\imelementwith\in\{0,1\}^{\seldim}$ a polytope as the convex hull
+    \begin{align*}
+        \{\tilde{\imelement}[\selvariable] \wcols d(\tilde{\imelement},\imelement)\geq s\}  \, .
+    \end{align*}
+    The face to the normal $\frac{1}{2} (2\imelementwith - \onesat{\selvariable})$ is the convex hull
+    \begin{align*}
+        \facesymbolof{\triangleleft,s}\coloneqq \convhullof{
+            \{\tilde{\imelement}[\selvariable] \wcols d(\tilde{\imelement},\imelement) = s\}
+        }
+    \end{align*}
+    containing $\binom{\seldim}{s}$ vertices.
+    We label these vertices by subsets $\variableset\subset[\seldim]$ of cardinality $s$ and define for $\selindexin$
+    \begin{align*}
+        \imelementofat{\variableset}{\indexedselvariable} =
+        \begin{cases}
+            \imelementat{\selindexin} & \ifspace \selindex\notin\variableset \\
+            1-\imelementat{\selindexin} & \ifspace \selindex\notin\variableset
+        \end{cases}
+    \end{align*}
+    We now construct a $\ttformat$ with hidden variables $\decvariableof{\selindex}$ and ranks $r_{\selindex} = \min (\selindex+1,\seldim-\selindex+1, s+1)$ to represent the sum of their one-hot encodings.
+    To this end, let there be $\ttformat$ cores for $\selindex=0$ by
+    \begin{align*}
+        \hypercoreofat{0}{\headvariableof{0},\decvariableof{0}}
+        = \onehotmapofat{\imelementat{\selvariable=0}}{\headvariableof{0}} \otimes \fbasisat{\decvariableof{0}}
+        + \onehotmapofat{1-\imelementat{\selvariable=0}}{\headvariableof{0}} \otimes \tbasisat{\decvariableof{0}}
+    \end{align*}
+    further for $\selindex\notin\{0,\seldim-1\}$ the cores
+    \begin{align*}
+        \hypercoreofat{\selindex}{\decvariableof{\selindex-1},\headvariableof{\selindex},\decvariableof{\selindex}}
+        = \sum_{\selindex\in\{\max(s-\seldim+\selindex,0),\ldots,\max(\selindex,s)\}}
+        \onehotmapofat{\selindex}{\decvariableof{\selindex}}
+        \otimes \left(\onehotmapofat{\imelementat{\indexedselvariable}}{\headvariableof{\selindex}} \otimes \onehotmapofat{\selindex}{\decvariableof{\selindex+1}}
+                    + \onehotmapofat{1-\imelementat{\indexedselvariable}}{\headvariableof{\selindex}} \otimes \onehotmapofat{\selindex+1}{\decvariableof{\selindex+1}}
+        \right)
+    \end{align*}
+    and for $\selindex=\seldim-1$
+    \begin{align*}
+        \hypercoreofat{\seldim-1}{\decvariableof{\seldim-1},\headvariableof{\seldim-1}}
+        = \fbasisat{\decvariableof{\seldim-1}} \otimes \onehotmapofat{1-\imelementat{\selvariable=\seldim-1}}{\headvariableof{\seldim-1}}
+        + \tbasisat{\decvariableof{\seldim-1}} \otimes \onehotmapofat{\imelementat{\selvariable=\seldim-1}}{\headvariableof{\seldim-1}} \, .
+    \end{align*}
+    Based on the interpretation, that the hidden variables $\decvariableof{\selindex}$ count the Hamming distance of the vectors $\restrictionofto{\imelementwith}{\rr^{\selindex}\times 0_{\seldim-\selindex}}$ and the respective $\restrictionofto{\imelementofat{\variableset}{\selvariable}}{\rr^{\selindex}\times 0_{\seldim-\selindex}}$ one can show that
+    \begin{align*}
+        \sum_{\variableset\subset[\seldim] \wcols \cardof{\variableset}=s} \onehotmapofat{\imelementof{\variableset}}{\headvariables}
+        = \contractionof{\{\hypercoreofat{0}{\headvariableof{0},\decvariableof{0}},\hypercoreofat{\seldim-1}{\decvariableof{\seldim-1},\headvariableof{\seldim-1}}\}\cup\{\hypercoreofat{\selindex}{\decvariableof{\selindex-1},\headvariableof{\selindex},\decvariableof{\selindex}}\wcols\selindex\notin\{0,\seldim-1\}\}}{\headvariables} \, .
+    \end{align*}
+\end{example}
+
+\begin{example}[Generalization of \exaref{exa:gen_tt_diagonal_face} to arbitrary $\htformat$ formats]
+    Instead of aligning the Hamming count variables linearly, one can find a representation of the activation tensor
+    \begin{align*}
+        \sum_{\variableset\subset[\seldim] \wcols \cardof{\variableset}=s} \onehotmapofat{\imelementof{\variableset}}{\headvariables}
+    \end{align*}
+    in an arbitrary tree hypergraph format, which hidden ranks are bounded by the number of leafs in the subtree and $s+1$.
+
+    At any leaf of the tree we define a $2x2$ matrix
+    \begin{align*}
+        \hypercoreofat{\selindex}{\headvariableof{\selindex},\decvariableof{\selindex}}
+        = \onehotmapofat{\imelementat{\indexedselvariable}}{\headvariableof{\selindex}} \otimes \fbasisat{\decvariableof{\selindex}}
+        + \onehotmapofat{1-\imelementat{\indexedselvariable}}{\headvariableof{\selindex}} \otimes \tbasisat{\decvariableof{\selindex}} \, .
+    \end{align*}
+    At each intermediate non-root hyperedge we choose an outgoing counting variable $\decvariableof{\outgoingnodes}$ with dimension by $\decdimof{\outgoingnodes}=\min(\sum_{\node\in\incomingnodes}\decdimof{\incomingnodes},s+1)$ and define a tensor with the slices
+    \begin{align*}
+        \hypercoreofat{\edge}{\indexeddecvariableof{\edge},\decvariableof{\incomingnodes}}
+        = \bencodingofat{+}{\headvariableof{+}=\decindexof{\outgoingnodes},\decvariableof{\incomingnodes}} \, .
+    \end{align*}
+    We further build at the root hyperedge $\edge$ a tensor
+    \begin{align*}
+        \hypercoreofat{\edge}{\decvariableof{\edge}}
+        = \sum_{\decindex \wcols \contraction{\decindex}=s}
+        \onehotmapofat{\decindexof{\edge}}{\decvariableof{\edge}} \, .
+    \end{align*}
+    Using the counting variable interpretation one can now show that
+    \begin{align*}
+        \sum_{\variableset\subset[\seldim] \wcols \cardof{\variableset}=s} \onehotmapofat{\imelementof{\variableset}}{\headvariables}
+        =\contractionof{
+        \{\hypercoreofat{\edge}{\decvariableof{\edge}} \wcols \edgein \} \cup \{\hypercoreofat{\selindex}{\headvariableof{\selindex},\decvariableof{\selindex}} \wcols \nodein\}
+        }{\headvariables}
+    \end{align*}
+\end{example}
