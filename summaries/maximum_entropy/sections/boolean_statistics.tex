@@ -10,7 +10,9 @@ It follows, that any distribution reproducing a mean parameter $\meanparamwith$ 
 We apply the exponential distribution characterization of the maximum entropy distribution and get that the maximum entropy distribution is in $\elrealizabledistsof{\sstat}$, if and only if the face measure is in $\elrealizabledistsof{\sstat}$.
 This is exactly the case, when the face is an intersection of the mean polytope with a face of the cupe $\fullparcube$.
 
-\subsection{Set of maximum entropy distributions}
+\subsection{Characterization of elementary representable faces}
+
+We first show in the following example, that all faces of a hypercube are representable by elementary activation tensors.
 
 \begin{example}[Hypercube]
     \label{exa:hypercube}
@@ -22,15 +24,15 @@ This is exactly the case, when the face is an intersection of the mean polytope 
     \begin{align*}
         \meansetof{\{\formulaof{\selindex}\wcols\selindexin\},\trivbm} = \fullparcube \, .
     \end{align*}
-    Its face lattice $\facelatticeof{\fullparcube}$ can be enumerated by choosing a subset $\variableset\subset[\seldim]$ and indices $\headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]$ and represented by the cartesian products
+    The non-empty faces in the face lattice $\facelatticeof{\fullparcube}$ can be enumerated by subsets $\variableset\subset[\seldim]$ and indices $\headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]$ and represented by the cartesian products
     \begin{align*}
         % \facesetofspec{(\variableset,\headindexof{\variableset})}{} %{\{\formulaof{\selindex}\wcols\selindexin\},\trivbm}
         \facesymbolof{(\variableset,\headindexof{\variableset})}
-        = \bigtimes_{\selindexin} \mathcal{I}_{l}
+        = \bigtimes_{\selindexin} \mathcal{I}^{l,(\variableset,\headindexof{\variableset})}
     \end{align*}
     where
     \begin{align*}
-        \mathcal{I}_{l}
+        \mathcal{I}^{l,(\variableset,\headindexof{\variableset})}
         = \begin{cases}
         [0,1]
               & \ifspace \selindex\notin\variableset \\
@@ -39,21 +41,99 @@ This is exactly the case, when the face is an intersection of the mean polytope 
     \end{align*}
     Each of these faces can be represented with respect to the elementary graph $\elgraph$, namely by the tensor product of leg vectors
     \begin{align*}
-        \actcoreofat{\selindex}{\headvariableof{\selindex}}
+        %\actcoreofat{\selindex}{\headvariableof{\selindex}}
+        \hardactlegwith
         = \begin{cases}
               \onesat{\headvariableof{\selindex}} & \ifspace \selindex\notin\variableset \\
               \onehotmapofat{\headindexof{\selindex}}{\headvariableof{\selindex}}& \ifspace \selindex\in\variableset
         \end{cases} \, .
     \end{align*}
-    \red{This will later be interpreted by propositional logics as the example of atomic formulas.}
+    %\red{This will later be interpreted by propositional logics as the example of atomic formulas.}
 \end{example}
 
 \begin{definition}
-    We say a polytope $\meansetof{\hlnstat,\basemeasure}$ is cube-like, if for any face $\hlnfaceset$ we find a face of the hypercube parametrized by $(\variableset,\headindexof{\variableset})$ (see \exaref{exa:hypercube}), such that
+    \label{def:cubeLike}
+    We say that a face $\facesymbol$ of $\hlnmeanset$ is cube-like, if it is empty or there is $\variableset\subset[\seldim]$ and $\headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]$ such that
     \begin{align*}
-        \facesymbol = \meansetof{\hlnstat,\basemeasure} \cap \facesymbolof{(\variableset,\headindexof{\variableset})}\, .%{\{\formulaof{\selindex}\wcols\selindexin\},\trivbm} \, .
+        \facesymbol = \meansetof{\hlnstat,\basemeasure} \cap \facesymbolof{(\variableset,\headindexof{\variableset})} \, .
     \end{align*}
+    We further say that a polytope $\hlnmeanset$ is cube-like, if all faces $\facesymbol\in\facelatticeof{\hlnmeanset}$ are cube-like.
+    %We say a polytope $\meansetof{\hlnstat,\basemeasure}$ is cube-like, if for any face $\hlnfaceset$ we find a face of the hypercube parametrized by $(\variableset,\headindexof{\variableset})$ (see \exaref{exa:hypercube}), such that
+    %\begin{align*}
+    %    \facesymbol = \meansetof{\hlnstat,\basemeasure} \cap \facesymbolof{(\variableset,\headindexof{\variableset})}\, .%{\{\formulaof{\selindex}\wcols\selindexin\},\trivbm} \, .
+    %\end{align*}
 \end{definition}
+
+\begin{theorem}
+    \label{the:faceMeasureHardLogicNetworks}
+    Let $\hlnstat$ be a boolean statistic, $\basemeasure$ a base measure and $\facesymbol$ be a face of $\hlnmeanset$.
+    Then the following are equivalent:
+    \begin{itemize}
+        \item[(i)] $\facesymbol$ is cube-like (see \defref{def:cubeLike}).
+        \item[(ii)] $\facesymbol$ is representable by an elementary tensor (see \defref{def:faceRepresentability}).
+%        \item[(i)] There is a face $\facesymbolof{(\variableset,\headindexof{\variableset})}$ of the hypercube $\fullparcube$ such that
+%        \begin{align*}
+%            \facesymbol=\hlnmeanset\cap\facesymbolof{(\variableset,\headindexof{\variableset})}
+%        \end{align*}
+        %\item[(ii)] There is a \HardLogicNetwork{} which coincides with the normalized face measure $\normalizationof{\basemeasureof{\formulaset,\facecondset}}{\shortcatvariables}$.
+        % \item[(ii)] The normalized face measure $\normalizationof{\basemeasureof{\formulaset,\facecondset}}{\shortcatvariables}$ is in $\realizabledistsof{\sstat,\elgraph,\basemeasure}$.
+    \end{itemize}
+\end{theorem}
+\begin{proof}
+    If the face is empty, i.e. $\facesymbol=\varnothing$, it is by definition cube-like and has $\zerosat{\headvariables}$ as an elementary activation tensor.
+    We therefore assume in the following $\facesymbol\neq\varnothing$.
+
+    (i)$\Rightarrow$(ii):
+    Let us assume that $\facesymbol$ is cube-like, that is there is $\variableset\subset[\seldim]$ and $\headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]$ such that $\facesymbol = \meansetof{\hlnstat,\basemeasure} \cap \facesymbolof{(\variableset,\headindexof{\variableset})}$.
+    We use that $\facesymbol,\meansetof{\hlnstat,\basemeasure}$ and $\facesymbolof{(\variableset,\headindexof{\variableset})}$ are the convex hulls of the cube vertex sets $\imsetof{\hlnstat,\meanset}{\facesymbol}$, $\imsetof{\hlnstat,\meanset}{}$ and
+    \begin{align}\label{eq:cubeFaceVertices}
+        \imsetof{}{(\variableset,\headindexof{\variableset})} = \{\imelementwith \wcols \forall \selindex\in\variableset \imelementat{\indexedselvariable}=\headindexof{\variableset}\} \, ,
+    \end{align}
+    which implies that
+    \begin{align*}
+        \imsetof{\hlnstat,\meanset}{\facesymbol} = \imsetof{}{(\variableset,\headindexof{\variableset})} \cap \imsetof{\hlnstat,\meanset}{} \, .
+    \end{align*}
+    Thus, we can choose $\arbset=\imsetof{\hlnstat,\meanset}{\facesymbol}$ for the representation of the face $\facesymbol$ (see \defref{def:faceRepresentability}) and further have that
+    \begin{align*}
+        \sum_{\imelementwith\in\imsetof{}{(\variableset,\headindexof{\variableset})}}
+        = \bigotimes_{\selindexin} \hardactlegwith \, .
+    \end{align*}
+    We have thus found an elementary activation tensor for the face $\facesymbol$.
+
+    (ii)$\rightarrow$(i)
+    Conversely, let $\acttensorwith$ be an elementary activation tensor of the face $\facesymbol$ in $\hlnmeanset$.
+    Since $\acttensorwith$ is the sum of different one-hot encodings it is boolean and we find an elementary decomposition $\acttensorwith=\bigotimes_{\selindexin}\acttensorlegwith$ such that the leg vectors $\acttensorwith$ are boolean.
+    Since $\facesymbol\neq\varnothing$ we further have for $\selindexin$ that $\acttensorlegwith\neq\zerosat{\headvariableof{\selindex}}$, and thus $\acttensorlegwith\in \{\fbasisat{\headvariableof{\selindex}},\tbasisat{\headvariableof{\selindex}},\onesat{\headvariableof{\selindex}}\}$
+    We construct a set $\variableset\subset[\seldim]$
+    \begin{align*}
+        \variableset = \left\{\selindex \wcols {\acttensorlegwith}\neq\onesat{\headvariableof{\selindex}}\right\}
+    \end{align*}
+    and a tuple
+    \begin{align*}
+        \headindexof{\selindex}
+        = \begin{cases}
+              1 & \ifspace {\acttensorlegwith}=\onehotmapofat{1}{\headvariableof{\selindex}} \\
+              0 & \ifspace {\acttensorlegwith}=\onehotmapofat{0}{\headvariableof{\selindex}}
+        \end{cases} \, .
+    \end{align*}
+    By construction ${\acttensorlegwith} = \hardactlegwith$ (see \exaref{exa:hypercube}) follows for all $\selindexin$ and therefore $\acttensorwith=\hardacttensorwith$.
+    We therefore have for the set \eqref{eq:cubeFaceVertices}
+    \begin{align*}
+        \acttensorwith = \sum_{\imelement\in\imsetof{}{\variableset,\headindexof{\variableset}}} \onehotmapofat{\imelement}{\headvariables}
+    \end{align*}
+    and since $\acttensorwith$ is an activation tensor for $\facesymbol$, that 
+    \begin{align*}
+        \imsetof{\hlnstat,\meanset}{\facesymbol}
+        = \imsetof{}{\variableset,\headindexof{\variableset}}\cap\imsetof{\hlnstat,\meanset}{} \, .
+    \end{align*}
+    Taking convex hulls on both sides, this is equivalent to
+    \begin{align*}
+        \facesymbol = \facesymbolof{(\variableset,\headindexof{\variableset})} \cap \meansetof{\hlnstat,\basemeasure} \, .
+    \end{align*}
+    We conclude that $\facesymbol$ is cube-like.
+\end{proof}
+
+\subsection{Set of maximum entropy distributions}
 
 \begin{theorem}
     Any distribution in $\realizabledistsof{\hlnstat,\elgraph,\basemeasure}$ is a maximum entropy distribution with respect to $(\hlnstat,\meanparam,\basemeasure)$ where $\meanparam$ is its mean parameter.
@@ -112,18 +192,19 @@ We now constructively show, that any convex polytope with boolean vertices in $\
         \formulaofat{\selindex}{\catvariableof{[\selindex+1]}} =
         \bigwedge_{v[\selvariable] \in \restrictionofto{\meanset}{\rr^\selindex\times 0_{\seldim-\selindex}}\cap \{0,1\}^{\seldim}}
         \left(\left(\bigwedge_{\secselindex\in[\selindex+1]} \lnot^{1-v[\indexedselvariable]} \formulaofat{\selindex}{\catvariableof{[\selindex]}}\right) \Rightarrow
-        \begin{cases}
-            \top & \ifspace \restrictionofto{\meanset}{v\times\rr^{1} \times 0_{\seldim-\selindex-1}} = \{1\} \\
-            \bot & \ifspace \restrictionofto{\meanset}{v\times\rr^{1} \times 0_{\seldim-\selindex-1}} = \{0\} \\
-            \catvariableof{\selindex} & \ifspace \restrictionofto{\meanset}{v\times\rr^{1} \times 0_{\seldim-\selindex-1}} = \{0,1\} \\
-        \end{cases}
+            \begin{cases}
+                \top & \ifspace \restrictionofto{\meanset}{v\times\rr^{1} \times 0_{\seldim-\selindex-1}} = \{1\} \\
+                \bot & \ifspace \restrictionofto{\meanset}{v\times\rr^{1} \times 0_{\seldim-\selindex-1}} = \{0\} \\
+                \catvariableof{\selindex} & \ifspace \restrictionofto{\meanset}{v\times\rr^{1} \times 0_{\seldim-\selindex-1}} = \{0,1\} \\
+            \end{cases}
         \right).
     \end{align*}
     Here we denote by $\restrictionofto{\meanset}{V}$ the projections of the vertices in $\meanset$ onto the subspaces $V$, and by $0_{\seldim}$ the zero vector in $\rr^{\seldim}$.
 \end{theorem}
 \begin{proof}
     We show per induction, that for any $\selindexin$ the family of \HybridLogicNetworks{} with the statistic $\formulaof{[\selindex+1]}$ by the first $\selindex+1$ formulas has the mean polytope
-    \begin{align}\label{eq:HLNindConTBS}
+    \begin{align}
+        \label{eq:HLNindConTBS}
         \meansetof{\formulaof{[\selindex+1]},\trivbm} = \restrictionofto{\meanset}{\rr^\selindex\times 0_{\seldim-\selindex}} \, .
     \end{align}
 
