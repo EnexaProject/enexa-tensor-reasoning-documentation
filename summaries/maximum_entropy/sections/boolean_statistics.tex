@@ -14,42 +14,9 @@ This is exactly the case, when the face is an intersection of the mean polytope 
 
 We first show in the following example, that all faces of a hypercube are representable by elementary activation tensors.
 
-\begin{example}[Hypercube]
-    \label{exa:hypercube}
-    In cases where $\shortcatvariables$ are boolean and we have $\selindexin$ features
-    \begin{align*}
-        \formulaofat{\selindex}{\indexedshortcatvariables} = \catindexof{\selindex}
-    \end{align*}
-    the mean polytope is the hypercube
-    \begin{align*}
-        \meansetof{\{\formulaof{\selindex}\wcols\selindexin\},\trivbm} = \fullparcube \, .
-    \end{align*}
-    The non-empty faces in the face lattice $\facelatticeof{\fullparcube}$ can be enumerated by subsets $\variableset\subset[\seldim]$ and indices $\headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]$ and represented by the cartesian products
-    \begin{align*}
-        % \facesetofspec{(\variableset,\headindexof{\variableset})}{} %{\{\formulaof{\selindex}\wcols\selindexin\},\trivbm}
-        \facesymbolof{(\variableset,\headindexof{\variableset})}
-        = \bigtimes_{\selindexin} \mathcal{I}^{l,(\variableset,\headindexof{\variableset})}
-    \end{align*}
-    where
-    \begin{align*}
-        \mathcal{I}^{l,(\variableset,\headindexof{\variableset})}
-        = \begin{cases}
-        [0,1]
-              & \ifspace \selindex\notin\variableset \\
-              \{\headindexof{\selindex}\}& \ifspace \selindex\in\variableset
-        \end{cases} \, .
-    \end{align*}
-    Each of these faces can be represented with respect to the elementary graph $\elgraph$, namely by the tensor product of leg vectors
-    \begin{align*}
-        %\actcoreofat{\selindex}{\headvariableof{\selindex}}
-        \hardactlegwith
-        = \begin{cases}
-              \onesat{\headvariableof{\selindex}} & \ifspace \selindex\notin\variableset \\
-              \onehotmapofat{\headindexof{\selindex}}{\headvariableof{\selindex}}& \ifspace \selindex\in\variableset
-        \end{cases} \, .
-    \end{align*}
-    %\red{This will later be interpreted by propositional logics as the example of atomic formulas.}
-\end{example}
+\input{examples/hypercube_faces}
+
+Orienting on \exaref{exa:hypercubeFaces} we define cube-likeness of faces and polytopes.
 
 \begin{definition}
     \label{def:cubeLike}
@@ -58,11 +25,9 @@ We first show in the following example, that all faces of a hypercube are repres
         \facesymbol = \meansetof{\hlnstat,\basemeasure} \cap \facesymbolof{(\variableset,\headindexof{\variableset})} \, .
     \end{align*}
     We further say that a polytope $\hlnmeanset$ is cube-like, if all faces $\facesymbol\in\facelatticeof{\hlnmeanset}$ are cube-like.
-    %We say a polytope $\meansetof{\hlnstat,\basemeasure}$ is cube-like, if for any face $\hlnfaceset$ we find a face of the hypercube parametrized by $(\variableset,\headindexof{\variableset})$ (see \exaref{exa:hypercube}), such that
-    %\begin{align*}
-    %    \facesymbol = \meansetof{\hlnstat,\basemeasure} \cap \facesymbolof{(\variableset,\headindexof{\variableset})}\, .%{\{\formulaof{\selindex}\wcols\selindexin\},\trivbm} \, .
-    %\end{align*}
 \end{definition}
+
+We now show that a face is cube-like if and only if it is representable by an elementary tensor.
 
 \begin{theorem}
     \label{the:faceMeasureHardLogicNetworks}
@@ -71,13 +36,7 @@ We first show in the following example, that all faces of a hypercube are repres
     \begin{itemize}
         \item[(i)] $\facesymbol$ is cube-like (see \defref{def:cubeLike}).
         \item[(ii)] $\facesymbol$ is representable by an elementary tensor (see \defref{def:faceRepresentability}).
-%        \item[(i)] There is a face $\facesymbolof{(\variableset,\headindexof{\variableset})}$ of the hypercube $\fullparcube$ such that
-%        \begin{align*}
-%            \facesymbol=\hlnmeanset\cap\facesymbolof{(\variableset,\headindexof{\variableset})}
-%        \end{align*}
-        %\item[(ii)] There is a \HardLogicNetwork{} which coincides with the normalized face measure $\normalizationof{\basemeasureof{\formulaset,\facecondset}}{\shortcatvariables}$.
-        % \item[(ii)] The normalized face measure $\normalizationof{\basemeasureof{\formulaset,\facecondset}}{\shortcatvariables}$ is in $\realizabledistsof{\sstat,\elgraph,\basemeasure}$.
-    \end{itemize}
+   \end{itemize}
 \end{theorem}
 \begin{proof}
     If the face is empty, i.e. $\facesymbol=\varnothing$, it is by definition cube-like and has $\zerosat{\headvariables}$ as an elementary activation tensor.
@@ -116,7 +75,7 @@ We first show in the following example, that all faces of a hypercube are repres
               0 & \ifspace {\acttensorlegwith}=\onehotmapofat{0}{\headvariableof{\selindex}}
         \end{cases} \, .
     \end{align*}
-    By construction ${\acttensorlegwith} = \hardactlegwith$ (see \exaref{exa:hypercube}) follows for all $\selindexin$ and therefore $\acttensorwith=\hardacttensorwith$.
+    By construction ${\acttensorlegwith} = \hardactlegwith$ (see \exaref{exa:hypercubeFaces}) follows for all $\selindexin$ and therefore $\acttensorwith=\hardacttensorwith$.
     We therefore have for the set \eqref{eq:cubeFaceVertices}
     \begin{align*}
         \acttensorwith = \sum_{\imelement\in\imsetof{}{\variableset,\headindexof{\variableset}}} \onehotmapofat{\imelement}{\headvariables}
@@ -133,6 +92,10 @@ We first show in the following example, that all faces of a hypercube are repres
     We conclude that $\facesymbol$ is cube-like.
 \end{proof}
 
+Let us now give with the standard simplices a class of convex polytopes, which are not hypercubes, but cube-like.
+
+\input{examples/simplex_faces}
+
 \subsection{Set of maximum entropy distributions}
 
 \begin{theorem}
@@ -144,13 +107,11 @@ We first show in the following example, that all faces of a hypercube are repres
     Second claim by characterization of elementary faces by cube-likeness.
 \end{proof}
 
-%The mean parameters, which can be realized by a distribution in $\elrealizabledistsof{\hlnstat}$ are those, which are on the relative interior of the intersection of the mean polytope with a face of the cube.
-
 We can now use the same notation as applied for hypercubes to classify the faces of a cube-like polytope.
 
 \subsection{Interpretation by propositional formulas}
 
-We can understand each feature as a propositonal formula and the variables $\shortcatvariables$ as atoms (possibly after a binarization).
+We can understand each feature as a propositional formula and the variables $\shortcatvariables$ as atoms (possibly after a binarization).
 
 Each vertex of the cube, which is not a vertex of the polytope corresponds with the unsatisfiability of a formula
 \begin{align*}
