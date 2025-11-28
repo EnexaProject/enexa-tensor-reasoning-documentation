@@ -65,9 +65,10 @@ To this end, we define the one-hot encoding of a state, which is a bijection bet
     \label{def:onehotenc}
     Given an atomic system described by the categorical variable $\catvariable$, we define for each $\catindex\in[\catdim]$ the basis vector $\onehotmapofat{\catindex}{\catvariable}$ by the coordinates
     \begin{align}
-        \onehotmapofat{\catindex}{\catvariable=\tilde{\catindex}} = \begin{cases}
-                                                                        1 & \ifspace \catindex=\tilde{\catindex} \\
-                                                                        0 & \text{else} \, .
+        \onehotmapofat{\catindex}{\catvariable=\tilde{\catindex}}
+        = \begin{cases}
+              1 & \ifspace \catindex=\tilde{\catindex} \\
+              0 & \text{else} \, .
         \end{cases}
     \end{align}
     The \emph{one-hot encoding of states} $\catindex\in[\catdim]$ of the atomic system described by the categorical variable $\catvariable$ is the map
@@ -195,7 +196,7 @@ To ease notation, we will often omit the set notation by brackets $\{\cdot\}$ an
 
 %We explain normalization of tensors along specific legs here by an example and define it properly in~\ref{}.
 %This normalization corresponds to conditional probabilities, if the considered tensor $\hypercore$ describes an unnormalized probability distribution over its states.
-%For a tensor $\hypercoreat{X_{[2]}} \in \mathbb{R}^{m_0}\otimes\mathbb{R}^{m_1}$ and any $\secexrandindin$ we depict the slice $\hypercoreat{X_0|X_1=x_1}\in\mathbb{R}^{m_0}$ and $\hypercoreat{X_0|X_1}\in\mathbb{R}^{m_0}\otimes\mathbb{R}^{m_1}$ defined by a normalization operation as
+%For a tensor $\hypercoreat{X_{[2]}} \in \mathbb{R}^{m_0}\otimes\mathbb{R}^{m_1}$ and any $\secexrandindin$ we depict the slice $\hypercoreat{\catvariableof{0}|X_1=x_1}\in\mathbb{R}^{m_0}$ and $\hypercoreat{\catvariableof{0}|X_1}\in\mathbb{R}^{m_0}\otimes\mathbb{R}^{m_1}$ defined by a normalization operation as
 %\begin{center}
 %    \input{../tikz_pics/probability_representation/conditional_probability.tex}
 %\end{center}
@@ -206,44 +207,45 @@ To ease notation, we will often omit the set notation by brackets $\{\cdot\}$ an
 %% Directionality
 Directionality represents constraints on the structure of tensors, namely that the sum over outgoing trivializes the tensor.
 
-\begin{definition}\label{def:directedTensor}
-	A Tensor
-	\begin{align*}
-		\hypercoreat{\nodevariables} \in\bigotimes_{\nodein}\rr^{\catdimof{\node}}
-	\end{align*}
-	is said to be directed with incoming variables $\innodes$ and outgoing variables $\outnodes$, where $\nodes=\innodes\dot{\cup}\outnodes$, when
-	\begin{align*}
-		\contractionof{\hypercore}{\catvariableof{\innodes}} =  \onesat{\catvariableof{\innodes}}
-	\end{align*}
-	where $\onesat{\catvariableof{\innodes}}$ denoted the trivial tensor in  $\bigotimes_{\node\in\innodes}\rr^{\catdimof{\node}}$ which coordinates are all $1$.
+\begin{definition}
+    \label{def:directedTensor}
+    A Tensor
+    \begin{align*}
+        \hypercoreat{\nodevariables} \in\bigotimes_{\nodein}\rr^{\catdimof{\node}}
+    \end{align*}
+    is said to be directed with incoming variables $\innodes$ and outgoing variables $\outnodes$, where $\nodes=\innodes\dot{\cup}\outnodes$, when
+    \begin{align*}
+        \contractionof{\hypercore}{\catvariableof{\innodes}} =  \onesat{\catvariableof{\innodes}}
+    \end{align*}
+    where $\onesat{\catvariableof{\innodes}}$ denoted the trivial tensor in  $\bigotimes_{\node\in\innodes}\rr^{\catdimof{\node}}$ which coordinates are all $1$.
 \end{definition}
 
 By the normalization operation, tensors are turned into directed tensors.
 
-\begin{definition}\label{def:normalization}
-	A tensor $\hypercoreat{\nodevariables}$ is said to be normalizable on $\innodes\subset\nodes$, if for any $\catindexof{\innodes}\in\nodestatesof{\innodes}$ we have
-	\begin{align*}
-		 \contraction{\hypercoreat{\nodevariables},\onehotmapofat{\catindexof{\innodes}}{\catvariableof{\innodes}}} > 0 \, .
-	\end{align*}
-	The normalization of an on $\innodes\subset\nodes$ normalizable tensor is the tensor
-	\begin{align*}
-		\normalizationofwrt{\hypercoreat{\nodevariables}}{\catvariableof{\outnodes}}{\catvariableof{\innodes}} =
-		\sum_{\catindexof{\innodes}\in\nodestatesof{\innodes}}
-		\onehotmapofat{\catindexof{\innodes}}{\catvariableof{\innodes}} \otimes \frac{
-		\contractionof{\hypercoreat{\nodevariables},\onehotmapofat{\catindexof{\innodes}}{\catvariableof{\innodes}}}{\catvariableof{\outnodes}}
-		}{
-		\contraction{\hypercoreat{\nodevariables},\onehotmapofat{\catindexof{\innodes}}{\catvariableof{\innodes}}}
-		}
-	\end{align*}
-	where $\outnodes = \nodes/\innodes$.
+\begin{definition}
+    \label{def:normalization}
+    A tensor $\hypercoreat{\nodevariables}$ is said to be normalizable on $\innodes\subset\nodes$, if for any $\catindexof{\innodes}\in\nodestatesof{\innodes}$ we have
+    \begin{align*}
+        \contraction{\hypercoreat{\nodevariables},\onehotmapofat{\catindexof{\innodes}}{\catvariableof{\innodes}}} > 0 \, .
+    \end{align*}
+    The normalization of an on $\innodes\subset\nodes$ normalizable tensor is the tensor
+    \begin{align*}
+        \normalizationofwrt{\hypercoreat{\nodevariables}}{\catvariableof{\outnodes}}{\catvariableof{\innodes}} =
+        \sum_{\catindexof{\innodes}\in\nodestatesof{\innodes}}
+        \onehotmapofat{\catindexof{\innodes}}{\catvariableof{\innodes}} \otimes \frac{
+            \contractionof{\hypercoreat{\nodevariables},\onehotmapofat{\catindexof{\innodes}}{\catvariableof{\innodes}}}{\catvariableof{\outnodes}}
+        }{
+            \contraction{\hypercoreat{\nodevariables},\onehotmapofat{\catindexof{\innodes}}{\catvariableof{\innodes}}}
+        }
+    \end{align*}
+    where $\outnodes = \nodes/\innodes$.
 \end{definition}
 
 %% Diagrammatic notation
 In our graphical tensor notation, we depict directed tensors by directed hyperedges (a), which are decorated by directed tensors (b), for example:
-	\begin{center}
-		\input{../tikz_pics/notation_basic_concepts/directed_core.tex}
-	\end{center}
-
+\begin{center}
+    \input{../tikz_pics/notation_basic_concepts/directed_core.tex}
+\end{center}
 
 \subsection{Function encoding and \ComputationActivationNetworks{}}
 
@@ -282,7 +284,6 @@ The entries of the basis encoding are defined by
     \end{cases}
 \end{align*}
 %\janina{Put basis encoding of propositional formula as in logic section as an example here? Hmm did not define them yet}
-
 
 
 %\janina{The definition includes conditional tensors. not introduced yet. Also no word about probability distributions yet.}

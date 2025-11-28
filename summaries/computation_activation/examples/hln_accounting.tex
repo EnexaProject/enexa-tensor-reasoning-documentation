@@ -1,0 +1,99 @@
+\begin{example}{\HybridLogicNetwork{} for Accounting Logic}
+
+    Let us consider a system of three variables $A1$ Account 1 is booked, $A2$ Account 2 is booked, $F$ a feature on an invoice.
+    We respect two rules
+    \begin{itemize}
+        \item \textcolor{\concolor}{Exactly one account must be booked.}
+        \item \textcolor{\probcolor}{If feature $\mathrm{F}$ is present on the invoice, the account $\mathrm{A1}$ is typically booked.}
+    \end{itemize}
+    We formalize this with the statistic
+    \begin{align*}
+        \hlnstat = (\catvariableof{A1} \oplus \catvariableof{A2}, \catvariableof{F}\Rightarrow \catvariableof{A1})\, .
+    \end{align*}
+    While the first formula is a hard feature, the second is soft since prone to exceptions.
+    We parameterize the first output of the statistic with the hard parameters by setting the set of indices to be initialized with hard logic $A = \{0\}$ and the corresponding initialization $y_0 = 1$ meaning, that the first output of the statistic has to be true for the input to have positive probability.
+% \begin{align*}
+%     \variableset = \{0\} \quad, \quad \headindexof{\variableset} = 1.
+% \end{align*}
+    Then "hard logic activation tensor", should be indifferent to the second part of the statistic, and only impose rules on the first part, leading to
+    \begin{align*}
+        \textcolor{\concolor}{\kappa^{(A,y_A)}[Y_0,Y_1]} =
+        \onehotmapofat{\headindexof{0}}{\headvariableof{0}} \otimes
+        \onesat{\headvariableof{1}}
+        =\begin{bmatrix}
+             0 \\
+             1
+        \end{bmatrix} \otimes \begin{bmatrix}
+                                  1\\1
+        \end{bmatrix}.
+    \end{align*}
+    Since the first feature is hard, the "soft logic activation tensor" should be invariant under the first coordinate of the canonical parameter and we set $\canparamat{\selvariable=0}=0$. We choose the soft parameters as $\theta[L] = [0,\theta[L=1]]^\intercal$ to achieve
+    \begin{align*}
+        \textcolor{\probcolor}{\alpha^\theta[Y_0,Y_1]} &= \alpha^{0,0}\left[Y_0\right]\otimes \alpha^{1,\theta[L=1]}\left[Y_1\right] = \begin{bmatrix}
+                                                                                                                                           1\\1
+        \end{bmatrix}\otimes \begin{bmatrix}
+                                 1\\ \expof{\canparamat{\selvariable=1}}
+        \end{bmatrix}.
+        % \\
+        % \canparamat{\selvariable} 
+        % &= \begin{bmatrix}
+        %     0 \\
+        %     \canparamat{\selvariable=1}
+        % \end{bmatrix} \, .
+    \end{align*}
+    The activation tensor of the hybrid network then has the from
+    \begin{align*}
+        \paracttensor[{\headvariableof{0},\headvariableof{1}}]
+        = \begin{bmatrix}
+              0 \\ 1
+        \end{bmatrix}
+        \otimes
+        \begin{bmatrix}
+            1 \\ \expof{\canparamat{\selvariable=1}}
+        \end{bmatrix}.
+    \end{align*}
+
+    We get a tensor network representation of the \HybridLogicNetwork{} representing the toy accounting example, before normalization to a distribution
+    \begin{center}
+        \input{../tikz_pics/hybrid_network_representation/hybrid_accounting_example.tex}
+    \end{center}
+    % (see \figref{fig:hlnAccountingExample}) 
+    The resulting \HybridLogicNetwork{} is a tensor $\probofat{\hlnstat,\hybridparam}{\catvariableof{A1},\catvariableof{A2},\catvariableof{F}}$ of order $3$. With $Y_{F\Rightarrow A_1}=1$ for $F=0$ and any $A_1$ it has the coordinates
+    \begin{align*}
+        &\probofat{\hlnstat,\hybridparam}{\catvariableof{A1},\catvariableof{A2},\catvariableof{F}=0}\\
+        &= \left\langle \beta^{\oplus}[Y_{A_1\oplus A_2},X_{A_2},X_{A_1}]\otimes \begin{bmatrix}
+                                                                                     0&0\\1&1
+        \end{bmatrix}[Y_{F\Rightarrow A_1},X_{A_1}], \begin{bmatrix}
+                                                         0\\1
+        \end{bmatrix}[Y_{A_1\oplus A_2}]\otimes \begin{bmatrix}
+                                                    1\\\exp[\theta[L=1]]
+        \end{bmatrix}[Y_{F\Rightarrow A_1}]\right\rangle
+    \end{align*}
+    where contraction along the $Y$-variables leads to
+    \begin{align*}
+        \probofat{\hlnstat,\hybridparam}{\catvariableof{A1},\catvariableof{A2},\catvariableof{F}=0}
+        &=\beta^{\oplus}[Y_{A_1\oplus A_2}=1,X_{A_2},X_{A_1}]\otimes \begin{bmatrix}
+                                                                         \exp[\theta[L=1]]\\\exp[\theta[L=1]]
+        \end{bmatrix}[X_{A_1}] \\
+        &=
+        \frac{1}{Z} \begin{bmatrix}
+                        0 & \exp[\canparamat{L=1}] \\
+                        \exp[\canparamat{L=1}] & 0
+        \end{bmatrix}
+    \end{align*}
+    for the normalization constant $Z= 1+3 \cdot \expof{\canparamat{L=1}}$ and
+    \begin{align*}
+        \probofat{\hlnstat,\hybridparam}{\catvariableof{A1},\catvariableof{A2},\catvariableof{F}=1}
+        =
+        \frac{1}{Z} \begin{bmatrix}
+                        0 & 1 \\
+                        \exp[\canparamat{L=1}] & 0
+        \end{bmatrix} \, .
+    \end{align*}
+
+% \begin{figure}[h!]
+%     \caption{Tensor network representation of the \HybridLogicNetwork{} representing the toy accounting example, before normalization to a distribution.}
+%     \label{fig:hlnAccountingExample}
+% \end{figure}
+
+\end{example}

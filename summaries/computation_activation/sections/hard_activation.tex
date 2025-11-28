@@ -4,19 +4,20 @@ A tensor-based representation of propositional logic is developed by encoding bo
 
 Here propositional logic is based on propositional formulas. Define
 \begin{itemize}
-    \item a \emph{propositional formula} as a boolean-valued tensor 
+    \item a \emph{propositional formula} as a boolean-valued tensor
     \begin{align*}
         \formulaat{\shortcatvariables} \defcols \atomstates \rightarrow \ozset \subset \rr \, ,
     \end{align*}
-    \item a \emph{model} of a propositional formula as a state $\shortcatindices \in \atomstates$, which fulfills 
-        $% \begin{align*}
-        \formulaat{\indexedshortcatvariables}=1 \, ,
+    \item a \emph{model} of a propositional formula as a state $\shortcatindices \in \atomstates$, which fulfills
+    $% \begin{align*}
+    \formulaat{\indexedshortcatvariables}=1 \, ,
     $% \end{align*}
     where we associate $\text{True}\leftrightarrow 1$ and $\text{False}\leftrightarrow 0$,
     \item and the propositional formula to be \emph{satisfiable}, if there is a model.
 \end{itemize}
 
-\begin{example}\label{ex:propform}
+\begin{example}
+    \label{ex:propform}
     The propositional formula defined for $d=3$ and $x_{[3]} = (x_1,x_2,x_3)\in \atomstates = \{0,1\}\times \{0,1\} \times \{0,1\}$ by
     \begin{align*}
         \formulaat{\shortcatvariables = x_{[3]}} = x_1 \wedge (x_2 \vee x_3)
@@ -42,7 +43,7 @@ To be able to express different kinds of connectives and finally any proposition
 %     \end{pmatrix}\eqqcolon \fbasisat{Y}.
 % \end{align*}
 % This is the one-hot encoding of boolean states 
-as defined in Definition~\ref{def:onehotenc}. 
+as defined in Definition~\ref{def:onehotenc}.
 
 % \begin{definition}
 
@@ -81,14 +82,17 @@ This decomposition corresponds to the CP decomposition of a tensor.
 
 \paragraph{Basis encoding}
 Propositional formulas $\formula$ can be expressed in terms of a tensor describing the mapping and its negation by
-\begin{align}\label{eq:basisencboolean}
-    \bencodingofat{\formula}{\formulavar = y,\shortcatvariables = x_{[d]}} = \begin{cases}
-        1, & \formulaat{\shortcatvariables = x_{[d]}} = y\\
-        0, & \text{else}
+\begin{align}
+    \label{eq:basisencboolean}
+    \bencodingofat{\formula}{\formulavar = y,\shortcatvariables = x_{[d]}}
+    = \begin{cases}
+          1, & \formulaat{\shortcatvariables = x_{[d]}} = y\\
+          0, & \text{else}
     \end{cases}.
 \end{align}
 This basis encoding $\bencodingofat{\formula}{\formulavar,\shortcatvariables} \in \{0,1\}^{2\times 2^d}$ then has the form
-\begin{align}\label{eq:basisencnegsum}
+\begin{align}
+    \label{eq:basisencnegsum}
     \bencodingofat{\formula}{\formulavar,\shortcatvariables} = \formulaat{\shortcatvariables} \otimes \tbasisat{\formulavar} + \lnot\formulaat{\shortcatvariables} \otimes \fbasisat{\formulavar}.
 \end{align}
 Then the propositional formula and its negation can be represented by that tensor by
@@ -110,70 +114,82 @@ As in \cite[Section 4.2.2]{goessmann2025}, in graphical notation the basis encod
 \end{center}
 
 \begin{example}
-     For the formula $\formulaat{X_{[1]} = x_1} = \lnot x_1$, i.e. $\formulaat{X_{[1]}} = (1, 0)^T$, we have with \eqref{eq:basisencboolean}
-     \begin{center}
-     \begin{tikzpicture}
-         \node at (0,0) {$
-         \bencodingofat{\formula}{\formulavar,X_{[1]}} = \begin{pmatrix}
-             0 &1\\
-             1 & 0
-         \end{pmatrix}$};
-         \draw[<-] (2,0.2)--(2.5,0.2);
-         \node at (3.1,0.2) {$\formulavar=0$};
-         \draw[<-] (2,-0.2)--(2.5,-0.2);
-         \node at (3.1,-0.2) {$\formulavar=1$};
-         \draw[<-] (1,-0.5)--(1,-1);
-         \node at (0.5,-1.2) {$X_1=0$};
-         \draw[<-] (1.4,-0.5)--(1.4,-1);
-         \node at (1.9,-1.2) {$X_1=1$};
-     \end{tikzpicture}
-     \end{center}
-     with~\eqref{eq:basisencnegsum} we have
-     \begin{align*}
-         \bencodingofat{\formula}{\formulavar,X_{[1]}} = \begin{pmatrix}1\\0\end{pmatrix} \otimes \begin{pmatrix}0\\1\end{pmatrix} + \begin{pmatrix}0\\1\end{pmatrix} \otimes \begin{pmatrix}1\\0\end{pmatrix}
-         = \begin{pmatrix}0 &1\\0 &0\end{pmatrix} + \begin{pmatrix}0 & 0\\1 &0\end{pmatrix}
-         = \begin{pmatrix}
-                 0 &1\\
-                 1 & 0
-             \end{pmatrix}
-     \end{align*} 
+    For the formula $\formulaat{X_{[1]} = x_1} = \lnot x_1$, i.e. $\formulaat{X_{[1]}} = (1, 0)^T$, we have with \eqref{eq:basisencboolean}
+    \begin{center}
+        \begin{tikzpicture}
+            \node at (0,0) {$
+            \bencodingofat{\formula}{\formulavar,X_{[1]}} = \begin{pmatrix}
+                                                                0 &1\\
+                                                                1 & 0
+            \end{pmatrix}$};
+            \draw[<-] (2,0.2)--(2.5,0.2);
+            \node at (3.1,0.2) {$\formulavar=0$};
+            \draw[<-] (2,-0.2)--(2.5,-0.2);
+            \node at (3.1,-0.2) {$\formulavar=1$};
+            \draw[<-] (1,-0.5)--(1,-1);
+            \node at (0.5,-1.2) {$X_1=0$};
+            \draw[<-] (1.4,-0.5)--(1.4,-1);
+            \node at (1.9,-1.2) {$X_1=1$};
+        \end{tikzpicture}
+    \end{center}
+    with~\eqref{eq:basisencnegsum} we have
+    \begin{align*}
+        \bencodingofat{\formula}{\formulavar,X_{[1]}} = \begin{pmatrix}
+                                                            1\\0
+        \end{pmatrix} \otimes \begin{pmatrix}
+                                  0\\1
+        \end{pmatrix} + \begin{pmatrix}
+                            0\\1
+        \end{pmatrix} \otimes \begin{pmatrix}
+                                  1\\0
+        \end{pmatrix}
+        = \begin{pmatrix}
+              0 &1\\0 &0
+        \end{pmatrix} + \begin{pmatrix}
+                            0 & 0\\1 &0
+        \end{pmatrix}
+        = \begin{pmatrix}
+              0 &1\\
+              1 & 0
+        \end{pmatrix}
+    \end{align*}
     and in graphical notation we get
     \begin{center}
-     \begin{tikzpicture}[scale=0.35, thick] % , baseline = -3.5pt
-    
-        \draw[->-] (1.75,-1)--(1.75,1) node[midway,right] {\colorlabelsize $\formulavar$};
-        \draw (1,-1) rectangle (3,-3);
-        \node[anchor=center] (text) at (2,-2) {\corelabelsize $\bencodingof{\exformula}$};
-        \draw[-<-] (1.75,-3)--(1.75,-5) node[midway,left] {\colorlabelsize $\catvariableof{0}$};
+        \begin{tikzpicture}[scale=0.35, thick] % , baseline = -3.5pt
 
-        \node[anchor=center] (text) at (5.5,-2) {${=}$};
-    \begin{scope}
-        [shift={(10,-0.5)}]
+            \draw[->-] (1.75,-1)--(1.75,1) node[midway,right] {\colorlabelsize $\formulavar$};
+            \draw (1,-1) rectangle (3,-3);
+            \node[anchor=center] (text) at (2,-2) {\corelabelsize $\bencodingof{\exformula}$};
+            \draw[-<-] (1.75,-3)--(1.75,-5) node[midway,left] {\colorlabelsize $\catvariableof{0}$};
 
-        \draw (-2,1) rectangle (4,-1);
-        \node[anchor=center] (text) at (1,0) {\corelabelsize $\onehotmapof{1}$};
-        \draw[->-] (1,1)--(1,3) node[midway,right] {\colorlabelsize $\formulavar$};
+            \node[anchor=center] (text) at (5.5,-2) {${=}$};
+            \begin{scope}
+            [shift={(10,-0.5)}]
 
-        \draw (0,-2) rectangle (2,-4);
-        \node[anchor=center] (text) at (1,-3) {\corelabelsize $\onehotmapof{0}$};
-        \draw[->-] (1,-4)--(1,-6) node[midway,right] {\colorlabelsize $\catvariableof{0}$};
+                \draw (-2,1) rectangle (4,-1);
+                \node[anchor=center] (text) at (1,0) {\corelabelsize $\onehotmapof{1}$};
+                \draw[->-] (1,1)--(1,3) node[midway,right] {\colorlabelsize $\formulavar$};
 
-    \end{scope}
-    \node[anchor=center] (text) at (16,-2) {${+}$};
-    \begin{scope}
-        [shift={(21,-0.5)}]
+                \draw (0,-2) rectangle (2,-4);
+                \node[anchor=center] (text) at (1,-3) {\corelabelsize $\onehotmapof{0}$};
+                \draw[->-] (1,-4)--(1,-6) node[midway,right] {\colorlabelsize $\catvariableof{0}$};
 
-        \draw (-2,1) rectangle (4,-1);
-        \node[anchor=center] (text) at (1,0) {\corelabelsize $\onehotmapof{0}$};
-        \draw[->-] (1,1)--(1,3) node[midway,right] {\colorlabelsize $\formulavar$};
+            \end{scope}
+            \node[anchor=center] (text) at (16,-2) {${+}$};
+            \begin{scope}
+            [shift={(21,-0.5)}]
 
-        \draw (0,-2) rectangle (2,-4);
-        \node[anchor=center] (text) at (1,-3) {\corelabelsize $\onehotmapof{1}$};
-        \draw[->-] (1,-4)--(1,-6) node[midway,right] {\colorlabelsize $\catvariableof{0}$};
+                \draw (-2,1) rectangle (4,-1);
+                \node[anchor=center] (text) at (1,0) {\corelabelsize $\onehotmapof{0}$};
+                \draw[->-] (1,1)--(1,3) node[midway,right] {\colorlabelsize $\formulavar$};
 
-    \end{scope}
-    
-    \end{tikzpicture}
+                \draw (0,-2) rectangle (2,-4);
+                \node[anchor=center] (text) at (1,-3) {\corelabelsize $\onehotmapof{1}$};
+                \draw[->-] (1,-4)--(1,-6) node[midway,right] {\colorlabelsize $\catvariableof{0}$};
+
+            \end{scope}
+
+        \end{tikzpicture}
     \end{center}
 \end{example}
 
@@ -186,9 +202,10 @@ If the propositional formula allows for a decomposition into smaller proposition
 \begin{definition}
     Define an $r$-ary connective as a function $\circ: \times_{\ell\in[r]} [2] \to [2]$.
 \end{definition}
-\begin{example}\label{ex:sat_network}
-    As in~\cite[Example  4.9]{goessmann2025} the following connectives are of interest.
-\begin{itemize}
+\begin{example}
+    \label{ex:sat_network}
+    As in~\cite[Example 4.9]{goessmann2025} the following connectives are of interest.
+    \begin{itemize}
         \item negation $\notucon: [2]\rightarrow [2]$ by the vector
         \begin{align*}
             \notucon[\exformulavar] = \begin{bmatrix}
@@ -256,7 +273,6 @@ The figure can be found in~\cite[Figure 4.2 b)]{goessmann2025}, where hyperedges
     \end{center}
 \end{example}
 
-
 \subsection{Contractions to decide entailment}
 As in~\cite[Definition 5.1]{goessmann2025}, we define the entailment of two propositional formulas as follows.
 \begin{definition}[Entailment of propositional formulas]
@@ -267,17 +283,13 @@ As in~\cite[Definition 5.1]{goessmann2025}, we define the entailment of two prop
     \end{align*}
     If $\kb\models\lnot\exformula$ holds, we say that $\kb$ contradicts $\exformula$.
 \end{definition}
-This property of interest, since $\kb$ can be chosen as a knowledge base, which can be interpreted in different ways: as the support of probability distributions, 
+This property of interest, since $\kb$ can be chosen as a knowledge base, which can be interpreted in different ways: as the support of probability distributions,
 
 This is the central operation of "logical inference", i.e. deduce true statements from known statements.
 One can in some cases understand this as "making the knowledge base more accessible": Adding deduced statements to a knowledge base does not change the knowledge base as a tensor, but one can interpret it in an easier way.
 
 
-
-
-
-
-% \begin{example}{Sudoku rules} In case we aim to solve a Sudoku, the initial board and Sudoku rules can be written in terms of a propositional formula $\kb$. 
+% \begin{example}{Sudoku rules} In case we aim to solve a Sudoku, the initial board and Sudoku rules can be written in terms of a propositional formula $\kb$.
 % To encode the Sudoku each a cell in row $\ell$ and column $k$ for $\ell,k=1,\dots,9$ can be represented by a variable r$\ell$c$k=1,\dots,9$. 
 % Each Sudoku rule, e.g. that no number can be repeated in a row, can then be represented in a tensor network by a tensor connecting all variables in one row of size $9^9$.
 % Technically the tensor-network contracts to the one-hot encoded unique solution, but neither is this obvious for a human seeing the initial board nor can the contraction be performed with reasonable demand. 
@@ -291,31 +303,7 @@ One can in some cases understand this as "making the knowledge base more accessi
 % \end{example}
 
 
-\begin{example}{\alex{Attempt to match the above Sudoku example with our notation of boolean variables and the entailment formalism}}
-    We index the rows and the columns by tuples $(r0,r1)$ and $(co,c1)$, where $r0,r1,c0,c1\in[3]$. The first index indicates the block and the second counts the row or column inside that block.
-    For each $r0,r1,c0,c1\in[3]$ and $n\in[9]$ we then define an atomic variable $\catvariableof{r0,r1,c0,c1,n}\in\{0,1\}$ indicating whether in the row $(r0,r1)$ and column $(co,c1)$ the number $n$ is written.
-    The Sudoku rules then amount to the formula
-    \begin{align*}
-        \kb = &\left( \bigwedge_{r0,r1,c0,c1\in[3]} \left( \bigoplus_{n\in[9]} \catvariableof{r0,r1,c0,c1,n} \right) \right) \land
-        \left( \bigwedge_{r0,r1\in[3], n\in[9]} \left( \bigoplus_{c0,c1\in[3]} \catvariableof{r0,r1,c0,c1,n} \right) \right) \land \\
-        &\left( \bigwedge_{c0,c1\in[3], n\in[9]} \left( \bigoplus_{c0,c1\in[3]} \catvariableof{r0,r1,c0,c1,n} \right) \right) \land
-        \left( \bigwedge_{r0,c0\in[3], n\in[9]} \left( \bigoplus_{r1,c1\in[3]} \catvariableof{r0,r1,c0,c1,n} \right) \right) \, ,
-    \end{align*}
-    where $\bigoplus$ is the $9$-ary exclusive or connective (that is $1$ if and only if exactly one of the arguments is $1$).
-    The four outer brackets in $\kb$ mark the constraints, that at each position exactly one number is assigned, further that in each row each number is assigned once, and similar for the columns and the squares of the board. 
-    When solving a specific Sudoku instance, one typically knows from an initial board assignment $E$ a collection of atomic variables, which hold, and needs to find further atomic variables, which are entailed.
-    This means, we need to decide for each $(r_0,r_1,c_0,c_1,n)\notin E$ whether the Sudoku rules and the initial board imply that the atomic variable $\catvariableof{r0,r1,c0,c1,n}$ (i.e. assignment to the board) is true
-    \begin{align*}
-        \left(\kb \land \bigwedge_{(r_0,r_1,c_0,c_1,n)\in E} \catvariableof{r0,r1,c0,c1,n} \right) \models \catvariableof{r0,r1,c0,c1,n}
-    \end{align*}
-    or false
-    \begin{align}\label{eq:sudokukb}
-        \left(\kb \land \bigwedge_{(r_0,r_1,c_0,c_1,n)\in E} \catvariableof{r0,r1,c0,c1,n} \right) \models \lnot\catvariableof{r0,r1,c0,c1,n} \, .
-    \end{align}
-    In other words, for each assignment to the board, that fulfills the Sudoku rules and the initial board, do we write the number $n$ in row $(r0,r1)$ and column $(c0,c1)$?
-    If and only if the Sudoku has a unique solution given the initial board assignment $E$, exactly one of these entailment statements holds for each $(r_0,r_1,c_0,c_1,n)\notin E$.
-    Deciding which is equivalent to solving of the Sudoku.
-\end{example}
+\input{../examples/sudoku.tex}
 
 In the tensor network representation, these entailments can be decided by contracting the whole representing tensor with the statement, that needs to be checked.
 
@@ -332,7 +320,10 @@ Since contracting the whole tensor is often infeasible and for instance for the 
 Here a local contraction describes the calculation of contractions along few closely connected legs in the tensor network. Now, if the local contraction of any legs leads to a zero-tensor in the network decomposition, the whole contraction amounts to zero, and the knowledge base entails $f$.
 
 \begin{example}{Sudoku continued}
-For the Sudoku example, a local contraction of the left- and right-hand-side of~\eqref{eq:sudokukb} means that only direct connections via the basic Sudoku rules and the known board are checked. If the local contraction amounts to zero, the direct Sudoku rules already imply, that $X_{r0,r1,c0,c1,n}$ must be true/is the only possible choice. In most cases the local contraction will not lead to $0$. Then no statement can be made.
+    For the Sudoku example, a local contraction of the left- and right-hand-side of~\eqref{eq:sudokukb} means that only direct connections via the basic Sudoku rules and the known board are checked.
+    If the local contraction amounts to zero, the direct Sudoku rules already imply, that $X_{r0,r1,c0,c1,n}$ must be true/is the only possible choice.
+    In most cases the local contraction will not lead to $0$.
+    Then no statement can be made.
 \end{example}
 
 % By~\cite[Theorem 5.2]{goessmann2025} the following statements hold:
@@ -342,12 +333,9 @@ For the Sudoku example, a local contraction of the left- and right-hand-side of~
 % \end{align*}
 % Additionally, a tensor can be defined, which can encode entailment and contradiction properties simultaneously, see~\cite[Theorem 5.3]{goessmann2025}.
 
-
-
-
 \subsection{Representation of Knowledge Bases}
 
-When having multiple formulas: Represent with multiple $\tbasis$ activation cores~\cite[Theorem 14.36]{goessmann2025}. 
+When having multiple formulas: Represent with multiple $\tbasis$ activation cores~\cite[Theorem 14.36]{goessmann2025}.
 
 \begin{align*}
     \contractionof{\tbasisat{\headvariable},\bencodingofat{\land}{\headvariable,\shortcatvariables}}{\shortcatvariables}

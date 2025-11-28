@@ -1,0 +1,25 @@
+\begin{example}[Sudoku Game]%{\alex{Attempt to match the above Sudoku example with our notation of boolean variables and the entailment formalism}}
+    We index the rows and the columns by tuples $(r0,r1)$ and $(co,c1)$, where $r0,r1,c0,c1\in[3]$. The first index indicates the block and the second counts the row or column inside that block.
+    For each $r0,r1,c0,c1\in[3]$ and $n\in[9]$ we then define an atomic variable $\catvariableof{r0,r1,c0,c1,n}\in\{0,1\}$ indicating whether in the row $(r0,r1)$ and column $(co,c1)$ the number $n$ is written.
+    The Sudoku rules then amount to the formula
+    \begin{align*}
+        \kb = &\left( \bigwedge_{r0,r1,c0,c1\in[3]} \left( \bigoplus^{1}_{n\in[9]} \catvariableof{r0,r1,c0,c1,n} \right) \right) \land
+        \left( \bigwedge_{r0,r1\in[3], n\in[9]} \left( \bigoplus^{1}_{c0,c1\in[3]} \catvariableof{r0,r1,c0,c1,n} \right) \right) \land \\
+        &\left( \bigwedge_{c0,c1\in[3], n\in[9]} \left( \bigoplus^{1}_{c0,c1\in[3]} \catvariableof{r0,r1,c0,c1,n} \right) \right) \land
+        \left( \bigwedge_{r0,c0\in[3], n\in[9]} \left( \bigoplus^{1}_{r1,c1\in[3]} \catvariableof{r0,r1,c0,c1,n} \right) \right) \, ,
+    \end{align*}
+    where $\bigoplus^{1}$ is the $9$-ary exclusive or connective (that is $1$ if and only if exactly one of the arguments is $1$).
+    The four outer brackets in $\kb$ mark the constraints, that at each position exactly one number is assigned, further that in each row each number is assigned once, and similar for the columns and the squares of the board.
+    When solving a specific Sudoku instance, one typically knows from an initial board assignment $E$ a collection of atomic variables, which hold, and needs to find further atomic variables, which are entailed.
+    This means, we need to decide for each $(r_0,r_1,c_0,c_1,n)\notin E$ whether the Sudoku rules and the initial board imply that the atomic variable $\catvariableof{r0,r1,c0,c1,n}$ (i.e. assignment to the board) is true
+    \begin{align*}
+        \left(\kb \land \bigwedge_{(r_0,r_1,c_0,c_1,n)\in E} \catvariableof{r0,r1,c0,c1,n} \right) \models \catvariableof{r0,r1,c0,c1,n}
+    \end{align*}
+    or false
+    \begin{align}\label{eq:sudokukb}
+        \left(\kb \land \bigwedge_{(r_0,r_1,c_0,c_1,n)\in E} \catvariableof{r0,r1,c0,c1,n} \right) \models \lnot\catvariableof{r0,r1,c0,c1,n} \, .
+    \end{align}
+    In other words, for each assignment to the board, that fulfills the Sudoku rules and the initial board, do we write the number $n$ in row $(r0,r1)$ and column $(c0,c1)$?
+    If and only if the Sudoku has a unique solution given the initial board assignment $E$, exactly one of these entailment statements holds for each $(r_0,r_1,c_0,c_1,n)\notin E$.
+    Deciding which is equivalent to solving of the Sudoku.
+\end{example}

@@ -1,13 +1,10 @@
-\section{Probabilistic representation: Exponential Families through soft activation}\label{sec:prob_rep}
+\section{Decomposition of Probability Distributions}\label{sec:prob_rep}
 
-We begin with defining tensors representing the probabilistic side of the desired structure unifying probabilistic and logical reasoning.
-%\janina{Give some references to purely probabilistic tensor networks?}
-
+We here investigate tensor network decomposition mechanisms of probability distributions.
 After introducing probability distributions as tensors we derive tensor network decompositions based on conditional independencies (applying the Hammersley-Clifford theorem \cite{clifford_markov_1971}) to motivate graphical models.
+Further we present the \ComputationMechanism{}, in which the Fisher-Neyman Factorization Theorem is used to decompose distributions in the presence of sufficient statistics.
 
 
-It is known that probabilistic graphical models are dual to tensor networks \cite{robeva_duality_2019,glasser_expressive_2019}.
-By our hypergraph based definition of tensor networks, markov networks are equivalent to tensor networks of positive tensors.
 
 \subsection{Basic concepts}
 
@@ -21,25 +18,20 @@ Distributions $\probtensor$ over a discrete state space can be represented by te
         \probwith \defcols \facstates \rightarrow \rr
     \end{align*}
     which is non-negative, that is for any $\shortcatindicesin$ it holds
-    % \begin{align*}
-    $
-    \probat{\indexedshortcatvariables} \geq 0 \, ,
-    $
-    % \end{align*}
+    \begin{align*}
+        \probat{\indexedshortcatvariables} \geq 0 \, ,
+    \end{align*}
     and which is normalized, that is
-    % \begin{align*}
-    $
-%        \sum_{\shortcatindicesin}\probat{\indexedshortcatvariables}=
-    \contraction{\probat{\shortcatvariables}} = 1 \, .
-    $
-    % \end{align*}
+    \begin{align*}
+        \contraction{\probat{\shortcatvariables}} = 1 \, .
+    \end{align*}
 \end{definition}
 
 \begin{example}{Coin toss}
-    Consider two coin tosses \(X_0,X_1\in\{0,1\}\) (1=heads). With $p \in [0,1]$ being the probability of heads. Then the probability for each toss and the joint probability have the form
+    Consider two coin tosses \(\catvariableof{0},X_1\in\{0,1\}\) (1=heads). With $p \in [0,1]$ being the probability of heads. Then the probability for each toss and the joint probability have the form
     \begin{align*}
-        \mathbb{P}[X_0] = \begin{bmatrix}
-                              \mathbb{P}[X_0=0]\\\mathbb{P}[X_1=1]
+        \mathbb{P}[\catvariableof{0}] = \begin{bmatrix}
+                                            \mathbb{P}[\catvariableof{0}=0]\\\mathbb{P}[X_1=1]
         \end{bmatrix} = \begin{bmatrix}
                             1-p\\p
         \end{bmatrix}, \qquad
@@ -85,8 +77,11 @@ To find efficient representation schemes of probability distributions by tensor 
 % \alex{Its important to note, that the chain rule for itself does not provide a more efficient representation of the distribution (since it is a generic decomposition). 
 % To achieve efficient tensor network decomposition, one needs to combine that with conditional independence assumptions (as in the Markov Chain case), such that conditioned variables in the conditional probability distributions can be dropped.}
 
-
 \subsection{The \IndependenceMechanism{}: Graphical Model Factorization}
+
+Markov Networks on hypergraphs $\graph$ are exactly those \CompActNets{}, which are computable with respect to the identity and the graph $\graph$.
+We here show how the sets of Markov Networks can be characterized by conditional independence assumptions.
+
 %\subsection{Example of graphical models, reference to "the independence mechanism" (Hammersley-Clifford theorem)}
 
 %\alex{We can present graphical models and independences as decomposition schemes of activation tensors.
@@ -101,39 +96,34 @@ To find efficient representation schemes of probability distributions by tensor 
 %
 %\maxf{okay, I think we checked all points here now. Maybe add examples?}
 
+%% Needed?
+
 Recall \defref{def:realizableStatDistributions}.
-Given a statistic $S : \times_{k\in[d]} [m_k] \to \mathbb{R}^p$ and a hypergraph $G=(V,E)$ on the image coordinates $Y[p]$, the by $S$ computable and by $G$ activated family of distributions has the form
-\[
-    P[X[d]]
-    \in \Lambda_{S,G}
-    =
-    \bigl\langle \beta_S[Y[p],X[d]],\,\xi[Y[p]]\bigr\rangle_{[X[d]\mid\emptyset]}.
-\]
+Given a statistic $\sstat:\facstates \to \parspace$ and a hypergraph $\graph=(\nodes,\edges)$ on the image coordinates $\headvariables$, any by $\sstat$ computable and by $\graph$ activated \CompActNets{} has the form
+\begin{align*}
+    \probwith =  \normalizationof{\acttensorwith,\bencsstatwith}{\shortcatvariables}
+\end{align*}
+where $\acttensorwith$ is an arbitrary non-negative tensor.
 For graphical models we take the \emph{identity statistic}
 \[
-    S_{\mathrm{id}}\bigl(x[d]\bigr)
-    = x[d],
+    \identity\big(\shortcatindices\big)
+    = \shortcatindices,
 \]
-so that the image coordinates coincide with the variables, $Y[p]=X[d]$, and there are no non-trivial computation cores.
-The associated basis encoding is just the identity tensor between $Y[d]$ and $X[d]$,
-\[
-    \beta_{S_{\mathrm{id}}}\bigl[Y[d]=y[d],\,X[d]=x[d]\bigr]
-    =
-    \mathbf{1}_{\{y[d]=x[d]\}},
-\]
+so that the image coordinates coincide with the variables and there are no non-trivial computation cores.
+The associated basis encoding is just the identity tensor
+\begin{align*}
+    \bencodingofat{\identity}{\headvariableof{[\catorder]},\shortcatvariables} = \identityat{\shortcatvariables,\headvariableof{[\catorder]}} \, .
+\end{align*}
 and therefore, for any activation tensor $\xi[Y[d]]$ we obtain
 \begin{align*}
-    P[X[d]]
-    &=
-    \bigl\langle
-    \beta_{S_{\mathrm{id}}}[Y[d],X[d]],
-    \,\xi[Y[d]]
-    \bigr\rangle_{[X[d]\mid\emptyset]}\\
-    &=
-    \xi[X[d]].
+    \probwith
+    &= \normalizationof{\acttensorwith,\bencodingofat{\identity}{\headvariableof{[\catorder]},\shortcatvariables}}{\shortcatvariables}
+    & = \normalizationof{\acttensorat{\shortcatvariables}}{\shortcatvariables}
 \end{align*}
 In other words, in the graphical–model case the activation tensor coincides with the joint distribution tensor.
 In this setting, structural properties of the distribution such as (conditional) independences can be read off as algebraic factorization patterns of the activation (and hence joint) tensor.
+
+%% Independence
 
 Independence leads to severe sparsifications of conditional probabilities and is therefore the key assumption to gain sparse decompositions of probability distributions.
 Before showing such decomposition schemes, we first provide a coordinatewise definition of independent variables.
@@ -142,39 +132,42 @@ Before showing such decomposition schemes, we first provide a coordinatewise def
     \label{def:independence}
     We say that $\exrandom$ is independent of $\secexrandom$ with respect to a distribution $\probat{\exrandom,\secexrandom}$, if for any values $\exrandindin$ and $\secexrandindin$ the distribution satisfies
     \begin{align*}
-        \probat{\indexedexrandom,\indexedsecexrandom}
-        = \margprobat{\indexedexrandom}\cdot\margprobat{\indexedsecexrandom} \, .
+        \probat{\exrandom,\secexrandom} = \probat{\exrandom} \otimes \probat{\secexrandom} \, ,
     \end{align*}
+%    where $\probat{\exrandom}$ and $\probat{\secexrandom}$ are the marginal prob
+%
+%    \begin{align*}
+%        \probat{\indexedexrandom,\indexedsecexrandom}
+%        = \margprobat{\indexedexrandom}\cdot\margprobat{\indexedsecexrandom} \, .
+%    \end{align*}
     In this case we denote $\independent{\exrandom}{\secexrandom}$.
 \end{definition}
 
-This can be transferred to a contraction equation of tensor networks:
+%This can be transferred to a contraction equation of tensor networks:
+%
+%
+%\begin{theorem}[Independence Criterion as a Contraction Equation]
+%    \label{the:independenceProductCriterion}
+%    The variable $\exrandom$ is independent from $\secexrandom$ with respect to a probability distribution $\probat{\exrandom,\secexrandom}$, if and only if
+%    \begin{align*}
+%        \probat{\exrandom,\secexrandom}
+%        = \contractionof{\contractionof{\probat{\exrandom,\secexrandom}}{\exrandom},\contractionof{\probat{\exrandom,\secexrandom}}{\secexrandom}}{\exrandom,\secexrandom} \, .
+%    \end{align*}
+%\end{theorem}
+%The proof of this theorem can be found in \cite[Theorem 2.12]{goessmann2025}.
 
-
-\begin{theorem}[Independence Criterion as a Contraction Equation]
-    \label{the:independenceProductCriterion}
-    The variable $\exrandom$ is independent from $\secexrandom$ with respect to a probability distribution $\probat{\exrandom,\secexrandom}$, if and only if
-    \begin{align*}
-        \probat{\exrandom,\secexrandom}
-        = \contractionof{\contractionof{\probat{\exrandom,\secexrandom}}{\exrandom},\contractionof{\probat{\exrandom,\secexrandom}}{\secexrandom}}{\exrandom,\secexrandom} \, .
-    \end{align*}
-\end{theorem}
-
-The proof of this theorem can be found in \cite[Theorem 2.12]{goessmann2025}.
-
-
-In the graphical–model CAN with identity statistic, the joint distribution $\mathbb{P}[X_0,X_1]$ is represented by the activation tensor $\xi[X_0,X_1]$.
-By \theref{the:independenceProductCriterion}, independence of $X_0$ and $X_1$ is equivalent to the factorization
-\[
-    \mathbb{P}[X_0,X_1] = \mathbb{P}[X_0]\,\mathbb{P}[X_1],
-\]
-which in activation form reads
-\[
-    \xi[X_0,X_1] = \xi[X_0]\otimes \xi[X_1].
-\]
-Thus, independence appears directly as a tensor–product decomposition of the activation (and hence joint) tensor into two unary activation cores, already implying a substantial reduction in degrees of freedom.
-
-Two jointly distributed variables are by ~\ref{the:independenceProductCriterion} independent, if and only if their joint distribution $\probat{\exrandom,\secexrandom}$ is the tensor product of marginal probabilities.
+%In the graphical–model \CompActNets with identity statistic, the joint distribution $\probat{\catvariableof{0},\catvariableof{1}}$ is represented by the activation tensor $\xi[\catvariableof{0},X_1]$.
+%By \theref{the:independenceProductCriterion}, independence of $\catvariableof{0}$ and $X_1$ is equivalent to the factorization
+%\begin{align*}
+%   \probat{\catvariableof{0},\catvariableof{1}}
+%   = \probat{\catvariableof{0}} \otimes \proabat{\catvariableof{1}} \, .
+%\end{align*}
+%which in activation form reads
+%\[
+%    \xi[\catvariableof{0},X_1] = \xi[\catvariableof{0}]\otimes \xi[X_1].
+%\]
+Thus, independence appears directly as a tensor–product decomposition of probability distribution. %the activation (and hence joint) tensor into two unary activation cores, already implying a substantial reduction in degrees of freedom.
+%Two jointly distributed variables are by \theref{the:independenceProductCriterion} independent, if and only if their joint distribution $\probat{\exrandom,\secexrandom}$ is the tensor product of marginal probabilities.
 Using tensor network diagrams we depict this property by
 \begin{center}
     \input{../tikz_pics/probability_representation/independent_decomposition}
@@ -194,10 +187,16 @@ We introduce conditional independence as independence of variables with respect 
     Given a joint distribution of variables $\exrandom$, $\secexrandom$ and $\thirdexrandom$, such that $\margprobat{\thirdexrandom}$ is positive.
     We say that $\exrandom$ is independent of $\secexrandom$ conditioned on $\thirdexrandom$ if for any states $\exrandindin,\secexrandindin$ and $\thirdexrandindin$
     \begin{align*}
-        \condprobof{\indexedexrandom,\indexedsecexrandom}{\indexedthirdexrandom}
-        = \condprobof{\indexedexrandom}{\indexedthirdexrandom}
-        \cdot \condprobof{\indexedsecexrandom}{\indexedthirdexrandom}   \, .
+        \condprobof{\exrandom,\secexrandom}{\thirdexrandom}
+        = \contractionof{
+            \condprobof{\exrandom}{\thirdexrandom},\condprobof{\secexrandom}{\thirdexrandom}
+        }{\exrandom,\secexrandom,\thirdexrandom} \, .
     \end{align*}
+%    \begin{align*}
+%        \condprobof{\indexedexrandom,\indexedsecexrandom}{\indexedthirdexrandom}
+%        = \condprobof{\indexedexrandom}{\indexedthirdexrandom}
+%        \cdot \condprobof{\indexedsecexrandom}{\indexedthirdexrandom}   \, .
+%    \end{align*}
     In this case we denote $\condindependent{\exrandom}{\secexrandom}{\thirdexrandom}$.
 \end{definition}
 
@@ -209,17 +208,17 @@ We further find a decomposition criterion for conditional independence.
 Since conditional independence can be regarded as a property of conditional probabilities, this decomposition criterion also involves conditional probabilities.
 
 
-\begin{theorem}[Conditional Independence as a Contraction Equation]
-    \label{the:condIndependenceProductCriterion}
-    Given a distribution $\probtensor$ of variables $\exrandom$, $\secexrandom$ and $\thirdexrandom$, the variable $\exrandom$ is independent of $\secexrandom$ conditioned on $\thirdexrandom$, if and only if the equation
-    \begin{align*}
-        \condprobof{\exrandom,\secexrandom}{\thirdexrandom}
-        = \contractionof{
-            \condprobof{\exrandom}{\thirdexrandom},\condprobof{\secexrandom}{\thirdexrandom}
-        }{\exrandom,\secexrandom,\thirdexrandom}
-    \end{align*}
-    holds.
-\end{theorem}
+%\begin{theorem}[Conditional Independence as a Contraction Equation]
+%    \label{the:condIndependenceProductCriterion}
+%    Given a distribution $\probtensor$ of variables $\exrandom$, $\secexrandom$ and $\thirdexrandom$, the variable $\exrandom$ is independent of $\secexrandom$ conditioned on $\thirdexrandom$, if and only if the equation
+%    \begin{align*}
+%        \condprobof{\exrandom,\secexrandom}{\thirdexrandom}
+%        = \contractionof{
+%            \condprobof{\exrandom}{\thirdexrandom},\condprobof{\secexrandom}{\thirdexrandom}
+%        }{\exrandom,\secexrandom,\thirdexrandom}
+%    \end{align*}
+%    holds.
+%\end{theorem}
 
 We can further exploit conditional independence to ﬁnd tensor network decompositions of probabilities, as we show as the next corollary.
 
@@ -242,21 +241,23 @@ We can further exploit conditional independence to ﬁnd tensor network decompos
     \label{fig:condIndependenceDecomposition}
 \end{figure}
 
-
-By \theref{the:condIndependenceProductCriterion} and \corref{cor:secCriterionCondIndepencence}, the conditional independence $X_0 \perp X_1 \mid X_2$ is equivalent to the factorization
-\[
-    \mathbb{P}[X_0,X_1,X_2]
-    =
-    \bigl\langle
-    \mathbb{P}[X_0\mid X_2],\,\mathbb{P}[X_1\mid X_2],\,\mathbb{P}[X_2]
-    \bigr\rangle[X_0,X_1,X_2],
-\]
-which is precisely the three–node graphical model with edges $(X_0,X_2)$ and $(X_1,X_2)$ depicted in \figref{fig:condIndependenceDecomposition}.
-In the graphical–model CAN with identity statistic, the joint activation tensor $\xi[X_0,X_1,X_2]$ thus decomposes into three smaller cores: a unary core on $X_2$ and two binary cores on $(X_0,X_2)$ and $(X_1,X_2)$.
+%%% Repetition!
+%By \theref{the:condIndependenceProductCriterion} and \corref{cor:secCriterionCondIndepencence}, the conditional independence $\catvariableof{0} \perp X_1 \mid X_2$ is equivalent to the factorization
+%\[
+%    \mathbb{P}[\catvariableof{0},X_1,X_2]
+%    =
+%    \bigl\langle
+%    \mathbb{P}[\catvariableof{0}\mid X_2],\,\mathbb{P}[X_1\mid X_2],\,\mathbb{P}[X_2]
+%    \bigr\rangle[\catvariableof{0},X_1,X_2],
+%\]
+%which is precisely the three–node graphical model with edges $(\catvariableof{0},X_1)$ and $(X_1,X_2)$ depicted in \figref{fig:condIndependenceDecomposition}.
+%In the graphical–model CAN with identity statistic, the joint activation tensor $\xi[\catvariableof{0},X_1,X_2]$ thus decomposes into three smaller cores: a unary core on $X_2$ and two binary cores on $(\catvariableof{0},X_2)$ and $(X_1,X_2)$.
 This conditional–independence pattern is the basic local building block that is generalized in Markov networks, which we define in the following.
 
-
-We define them based on hypergraphs, to establish a direct connection with tensor network decorating the hypergraph.
+% Place this below
+It is known that probabilistic graphical models are dual to tensor networks \cite{robeva_duality_2019,glasser_expressive_2019}.
+%By our hypergraph based definition of tensor networks, markov networks are equivalent to tensor networks of positive tensors.
+We define graphical models based on hypergraphs, to establish a direct connection with tensor network decorating the hypergraph.
 In a more canonical way, Markov Networks are instead defined by graphs, where instead of the edges the cliques are decorated by factor tensors (see for example \cite{koller_probabilistic_2009}).
 
 \begin{definition}[Markov Network]
@@ -277,32 +278,30 @@ In a more canonical way, Markov Networks are instead defined by graphs, where in
     the partition function of the tensor network $\tnetof{\graph}$.
 \end{definition}
 
-
-We can interpret the factors $\tau_e[X_e]$ as activation cores placed on the cliques $e$ of the graph.
+We can interpret the factors $\hypercorewith$ as activation cores placed on the hyperedges $\edge$ of the graph.
 The global activation tensor (and hence the joint distribution) is obtained by contracting this activation network and normalizing by its partition function.
 
-We call $\mathbb{P}_G[\cdot]$ \emph{positive} if $\mathbb{P}_G[x_V] > 0$ for all configurations $x_V$.
+We call $\probwith$ \emph{positive} if $\probat{\indexedshortcatvariables}> 0$ for all states $\shortcatindices$.
 The marginalization of a Markov Network to $\tnetof{\graph}$ on subsets of variables $\catvariableof{\secnodes}$ is
 \begin{align*}
     \probofat{\graph}{\catvariableof{\secnodes}}
     = \normalizationof{\tnetof{\graph}}{\catvariableof{\secnodes}} \, .
 \end{align*}
-This can be derived from a commutativity of contractions, which established an equivalence of contractions with sequences of consecutive contractions.
 
-\begin{theorem}[Commutativity of Contractions]
-    \label{the:splittingContractions}
-    Let $\tnetof{\graph}$ be a tensor network on a hypergraph $\graph=(\nodes,\edges)$.
-    Let us now split the $\graph$ into two graphs $\graph_1=(\nodesone,\edges_1)$ and $\graph_2=(\nodestwo,\edges_2)$, such that $\edges_1\dot{\cup}\edges_2=\edges$, $\nodesone\cup\nodestwo=\nodes$ and all nodes in $\nodestwo$ are contained in an hyperedge of $\edges_2$.
-    We then have for any $\secnodes\subset\nodes$
-    \begin{align*}
-        \contractionof{\tnetof{\graph}}{\catvariableof{\secnodes}}
-        = \contractionof{
-            \tnetofat{\graph_1}{\catvariableof{\nodesone}}
-            \cup \{\contractionof{\tnetof{\graph_2}}{\catvariableof{\nodestwo\cap(\nodesone\cup\secnodes)}}\}
-        }{\catvariableof{\secnodes}}   \, .
-    \end{align*}
-\end{theorem}
-
+%This can be derived from a commutativity of contractions, which established an equivalence of contractions with sequences of consecutive contractions.
+%\begin{theorem}[Commutativity of Contractions] % NEEDED?
+%    \label{the:splittingContractions}
+%    Let $\tnetof{\graph}$ be a tensor network on a hypergraph $\graph=(\nodes,\edges)$.
+%    Let us now split the $\graph$ into two graphs $\graph_1=(\nodesone,\edges_1)$ and $\graph_2=(\nodestwo,\edges_2)$, such that $\edges_1\dot{\cup}\edges_2=\edges$, $\nodesone\cup\nodestwo=\nodes$ and all nodes in $\nodestwo$ are contained in an hyperedge of $\edges_2$.
+%    We then have for any $\secnodes\subset\nodes$
+%    \begin{align*}
+%        \contractionof{\tnetof{\graph}}{\catvariableof{\secnodes}}
+%        = \contractionof{
+%            \tnetofat{\graph_1}{\catvariableof{\nodesone}}
+%            \cup \{\contractionof{\tnetof{\graph_2}}{\catvariableof{\nodestwo\cap(\nodesone\cup\secnodes)}}\}
+%        }{\catvariableof{\secnodes}}   \, .
+%    \end{align*}
+%\end{theorem}
 
 Further, the distribution of $\catvariableof{\secnodes}$ conditioned on $\catvariableof{\thirdnodes}$, where $\secnodes,\thirdnodes$ are disjoint subsets of $\nodes$, is
 \begin{align*}
@@ -329,12 +328,15 @@ This property of clique-capturing established a correspondence of hyperedges wit
 Let us now show a characterization of Markov Networks in terms of conditional independencies.
 
 % Characterization
-\begin{theorem}[Hammersley-Clifford]
-    \label{the:condIndMN}
+\begin{theorem}[Hammersley-Clifford Factorization Theorem]
+    \label{the:factorizationHammersleyClifford}
     Given a clique-capturing hypergraph $\graph$, the set of positive Markov Networks on the hypergraph coincides with the set of positive probability distributions, such that for each disjoint subsets of variables $\nodesa$, $\nodesb$, $\nodesc$ we have $\catvariableof{\nodesa}$ is independent of $\catvariableof{\nodesb}$ conditioned on $\catvariableof{\nodesc}$, when $\nodesc$ separates $\nodesa$ and $\nodesb$ in the hypergraph. % called d-separation
 \end{theorem}
 
-Equivalently, \theref{the:condIndMN} states that for any strictly positive joint distribution $\mathbb{P}[X_V]$ whose conditional independencies are exactly those encoded by a clique–capturing hypergraph $G=(V,E)$, there exist non–negative activation cores $\tau_e[X_e]$ such that
+\input{../examples/coin_toss_hc.tex}
+
+
+Equivalently, \theref{the:factorizationHammersleyClifford} states that for any strictly positive joint distribution $\mathbb{P}[X_V]$ whose conditional independencies are exactly those encoded by a clique–capturing hypergraph $G=(V,E)$, there exist non–negative activation cores $\tau_e[X_e]$ such that
 \[
     P[X_V]
     =
@@ -345,137 +347,59 @@ for a suitable normalizing constant $Z>0$.
 Thus, the conditional–independence structure of $\mathbb{P}$ determines a global tensor–network decomposition of its activation (and hence joint) tensor.
 We refer to this correspondence between independence structure and tensor–network factorization as the \emph{independence mechanism}, in analogy to the computation mechanism provided by sufficient statistics in Section 3.1.
 
-
 \subsection{The \ComputationMechanism{}: Factorization in presense of Sufficient Statistics}
 %\subsection{Sufficient statistics leading to tensor network decompositions ("the computation mechanism")}
 
-A sufficient statistic is defined as a tensor, for which $\shortcatvariables$ and $\probat{\shortcatvariables}$ ar conditionally independent, when conditioned onto the tensor.
-\begin{definition}[Sufficient Statistics]
-    \label{def:sufficientStatistics}
-    Let $\shortcatvariables$ be a list of by $\probat{\shortcatvariables}$ jointly distributed random variables and $\sstatat{\shortcatvariables,\selvariable}$ be a tensor.
-    We say that $\sstat$ is a sufficient statistic for $\probtensor$, if for all $\headindex$ in the image of $\sstat$ we have
+\begin{definition}
+    Let $\probat{\catvariable,\thirdcatvariable}$ be a joint distribution of the $\catdim$-dimensional variable $\catvariable$ and the $\thirdcatdim$-dimensional variable $\thirdcatvariable$ and let
     \begin{align*}
-        \condprobof{\indexedshortcatvariables}{\sstatat{\shortcatindices}=\headindex} =
-        \begin{cases}
-            \frac{1}{\cardof{\{\shortcatindices \wcols \sstatat{\shortcatindices}=\headindex\}}} & \ifspace \sstat(\shortcatindices)=\headindex \\
-            0 & \text{else}
-        \end{cases} \, .
+        \sstat \defcols [\catdim] \rightarrow [\headdim]
     \end{align*}
+    be a statistic.
+    We are interested in the distribution $\probat{\catvariable,\thirdcatvariable,\headvariableof{\sstat}}=\contractionof{\probat{\catvariable,\thirdcatvariable},\bencodingofat{\sstat}{\headvariableof{\sstat},\catvariable}}{\catvariable,\thirdcatvariable,\headvariableof{\sstat}}$.
+    We say that $\sstat$ is a sufficient statistic for $\thirdcatvariable$ if and only if $\catvariable$ is independent of $\thirdcatvariable$ conditioned on $\headvariableof{\sstat}$.
 \end{definition}
 
-%% Explanation
-When knowing the value $\sstat{\shortcatindices}$ of the sufficient statistic at a given index $\shortcatindices$, we also know the probability $\probat{\indexedshortcatvariables}$.
+Note that the independence is true if and only if
+\begin{align*}
+    \condprobat{\catvariable}{\thirdcatvariable,\headvariableof{\sstat}}
+    =   \condprobat{\catvariable}{\headvariableof{\sstat}} \otimes \onesat{\thirdcatvariable} \, .
+\end{align*}
 
-\input{../examples/coin_toss_experiment.tex}
+\input{../examples/sufstat_probability}
 
-\begin{theorem}
-    \label{the:sufficientStatisticActCoreExistence}
-    The tensor $\sstatat{\shortcatvariables,\selvariable}$ is a sufficient statistic, i.e. $\shortcatvariables$ is independent of $\probat{\shortcatvariables}$ conditioned on $\sstatat{\shortcatvariables,\selvariable}$ if and only if there is a tensor $\acttensorwith$ with
+\exaref{exa:sufStatProb} hints at a connection between sufficient statistics and decompositions into \CompActNets{}.
+More generally, such decompositions are provided by the Fisher-Neyman Factorization Theorem.
+
+\begin{theorem}[Fisher-Neyman Factorization Theorem]
+    \label{the:factorizationFisherNeyman}
+    Let $\probtensor$ be a joint distribution of variables $Z,X$ with values $\mathrm{val}(Z), \,\mathrm{val}(X)$ and let $T(X)$ be a statistic.
+    Then $\sstat$ is a sufficient statistic for $\thirdcatvariable$ if and only if there are tensors $\basemeasureat{\catvariable}$ and $\acttensorat{\headvariableof{\sstat},\thirdcatvariable}$ such that
     \begin{align*}
-        \probat{\shortcatvariables}
-        = \contractionof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\acttensorwith}{\shortcatvariables} \, .
+        \probat{\catvariable,\thirdcatvariable}
+        = \contractionof{
+            \acttensorat{\headvariableof{\sstat},\thirdcatvariable}\bencodingofat{\sstat}{\headvariableof{\sstat},\catvariable},\basemeasureat{\catvariable}
+        }{\catvariable,\thirdcatvariable} \, .
     \end{align*}
 \end{theorem}
-The tensors in a decomposition of $\acttensorwith$ are called \emph{activation cores}. The tensors in a decomposition of $\bencodingofat{\sstat}{\headvariables,\shortcatvariables}$ are called \emph{computation cores}.
 
+The Fisher-Neyman Theorem is the fundamental motivation for the \CompActNets{} Architecture:
+\begin{itemize}
+    \item The tensors in a decomposition of $\acttensorwith$ are called \emph{activation cores}.
+    \item The tensors in a decomposition of $\bencodingofat{\sstat}{\headvariables,\shortcatvariables}$ are called \emph{computation cores}.
+\end{itemize}
 
-\begin{example}{Unfair and dependent coin toss — Factorization as a \ComputationActivationNetwork{}}
-    Let \(X_1,X_2\in\{0,1\}\) and define the statistic \(S(X_1,X_2)=X_1+X_2\in\{0,1,2\}\).
-    The \emph{basis (computation) core} for this statistic is
-    \[
-        \beta_S[y,x_1,x_2]\;=\;\mathbf{1}\{\,y=x_1+x_2\,\},\qquad y\in\{0,1,2\}.
-    \]
-    For $p \in (0,1)$, define a \emph{unary activation} (a vector) \(\xi[Y]\) with components \(\xi[0]=(1-p)^2,\ \xi[1]=(1-p)p,\ \xi[2]=p^2\).
-    The joint distribution factors as
-    \[
-        \mathbb{P}[X_1,X_2]\;=\;\frac{1}{Z}\,\big\langle \beta_S[Y,X_1,X_2],\,\xi[Y]\big\rangle_{Y}
-    \]
-    with
-    \begin{align*}
-        Z&\coloneqq\big\langle\,\big\langle \beta_S[Y,X_1,X_2],\,\xi[Y]\big\rangle_Y\,\big\rangle_{[\varnothing]}\\
-        &=\sum_{y=0}^{2}\xi[y]\sum_{x_1=0}^1\sum_{x_2=0}^1\beta_S[y,x_1,x_2] = 1\xi[0] + 2\xi[1] + 1\xi[2]\\
-        &= (1-p)^2+2(1-p)p+p^2 = (p+ (1-p))^2 = 1
-    \end{align*}
-    Equivalently, in coordinates,
-    \[
-        \mathbb{P}[x_1,x_2]
-        \;=\;\frac{1}{Z}\sum_{y=0}^{2}\beta_S[y,x_1,x_2]\;\xi[y]
-        \;=\;\xi\!\big(S(x_1,x_2)\big).
-    \]
-
-% \medskip
-% \noindent\emph{Numerics for \(\xi=[1,1,1]\).}
-    Since \(S(0,0)=0\), \(S(0,1)=S(1,0)=1\), and \(S(1,1)=2\),
-% the unnormalized probabilities are
-% \[
-% \mathbb{P}^\star[0,0]=1,\quad \mathbb{P}^\star[0,1]=1,\quad \mathbb{P}^\star[1,0]=1,\quad \mathbb{P}^\star[1,1]=1,
-% \]
-% hence \(Z=\sum \mathbb{P}^\star=4\) and
-% \[
-% \mathbb{P}=
-% \begin{array}{c|cc}
-%  & X_2=0 & X_2=1\\\hline
-% X_1=0 & 1/4 & 1/4\\
-% X_1=1 & 1/4 & 1/4
-% \end{array}
-% \]
-    the induced law of the statistic is
-    \[
-        \mathbb{P}[S=0]=(1-p)^2,\qquad \mathbb{P}[S=1]=2p(1-p),\qquad \mathbb{P}[S=2]=p^2,
-    \]
-    reflecting that there is only one configuration for $y \in \{0,2\}$ and 2 configurations for $ y=1$.
-\end{example}
-
-
-% Using the \ComputationActivationNetwork{} notation, we have \(\mathbb{P}\in \Lambda_{S,G_{EL}}\) in Example~3.C:
-
-
-% \noindent\fbox{%
-% \parbox{\linewidth}{%
-% \textbf{Example 3.C (Coin toss experiment — Part III: Computation–Activation Network).}\par
-% With \(S(X_1,X_2)=X_1+X_2\), the joint distribution can be written as a \emph{Computation–Activation Network (CAN)}:
-% \[
-% \mathbb{P}[X_1,X_2]
-% \;=\;\frac{1}{Z}\,\big\langle \beta_S[Y,X_1,X_2],\,\xi[Y]\big\rangle_{Y},
-% \qquad
-% Z\;:=\;\big\langle\,\big\langle \beta_S[Y,X_1,X_2],\,\xi[Y]\big\rangle_{Y}\,\big\rangle_{[\varnothing]}.
-% \]
-% Coordinate form:
-% \[
-% \mathbb{P}(x_1,x_2)\;=\;\frac{1}{Z}\sum_{y}\beta_S[y,x_1,x_2]\;\xi[y]
-% \;=\;\frac{1}{Z}\,\xi\!\big(S(x_1,x_2)\big),\quad x_1,x_2\in\{0,1\}.
-% \]
-% Here the activation graph is the \emph{elementary} \(G_{\mathrm{EL}}\) \janina{Where is this defined?} \maxf{added a sentence before the example, we can turn it into a proper definition if we reuse this term, but I think its not that important for now. }\janina{I meant the \(G_{\mathrm{EL}}\). If it is already defined somewhere, we could reference it. Otherwise, we could define it before the example.} (unary activation on \(Y\)), so \(\mathbb{P}\in\Lambda_{S,G_{\mathrm{EL}}}\).
-
-% \medskip
-% \noindent\emph{Concrete choice (dependence).}
-% For \(\xi[0]=1,\ \xi[1]=2,\ \xi[2]=3\) one obtains the unnormalized values
-% \(
-% \mathbb{P}^\star[0,0]=1,\ \mathbb{P}^\star[0,1]=2,\ \mathbb{P}^\star[1,0]=2,\ \mathbb{P}^\star[1,1]=3,
-% \)
-% so \(Z=8\) and
-% \[
-% \mathbb{P}=
-% \begin{array}{c|cc}
-%  & X_2=0 & X_2=1\\\hline
-% X_1=0 & 1/8 & 2/8\\
-% X_1=1 & 2/8 & 3/8
-% \end{array}
-% \quad\text{with}\quad
-% \mathbb{P}[X_1=1]=\mathbb{P}[X_2=1]=\tfrac58.
-% \]
-% Note \(\mathbb{P}[X_1=1,X_2=1]=\tfrac{3}{8}\neq(\tfrac{5}{8})^2\): the variables are \emph{not} independent. This illustrates how the \emph{activation} controls correlations while the \emph{computation} (the sufficient statistic) remains fixed.
-% \alex{The above is a distribution with the head count as sufficient statistic, but not in the corresponding exponential family (since not independent coin tosses).
-% An exponential family member would be constructed with activation vectors with components \(\xi[0]=1,\ \xi[1]=\text{exp}(\theta),\ \xi[2]=\text{exp}(2\theta)\). 
-% } \maxf{should we define $\xi$ like that? Maybe thats a good connection to motivate exponential families?}
-% }%
-% }
+\input{../examples/coin_toss_ft}
 
 \subsection{Exponential families in case of elementary activation tensors}
 
-\alex{Further motivation: The Pitman-Koopman-Darmois theorem, stating that finite sufficient statistics (for the likelihood of a sequence of independent data) are only possible in exponential families, given that the support is constant.}
 
+%\alex{Further motivation: The Pitman-Koopman-Darmois theorem, stating that finite sufficient statistics (for the likelihood of a sequence of independent data) are only possible in exponential families, given that the support is constant.}
+
+% Universal properties
+A classical theorem by Pitman-Koopman-Darmois (see \cite{pitman_sufficient_1936}) states, that whenever a family with constant support and a finite sufficient statistic for arbitrary large data sets is in an exponential family.
 We now restrict the activation cores to specific elementary tensors, which correspond with further assumptions on the dependence of $\probtensor$ and $\sstat$ made by exponential families.
+For a discussion of further universal properties of exponential families, such that the existence of priors and entropy maximizers, see \cite{murphy_probabilistic_2022}.
 
 \begin{definition}[Exponential Family]
     \alex{from \theref{the:expFamilyTensorRep}}
@@ -502,129 +426,7 @@ We now restrict the activation cores to specific elementary tensors, which corre
     the exponential family with respect to the statistic $\sstat$ and the base measure $\basemeasure$.
 \end{definition}
 
-
-
-\begin{example}{\alex{Joint distributions of two Booleans, sufficient statistic by head count (coin toss interpretation) and exponential family in case of independence}}
-    In general, joint distribution of two Boolean variables $X_1,X_2$ are 2x2 matrices of non-negative coordinates summing to 1:
-    \[
-        \mathbb{P}[X_1,X_2] = \begin{bmatrix}
-                                  p_{0,0} & p_{0,1} \\
-                                  p_{1,0} & p_{1,1}
-        \end{bmatrix}
-    \]
-    In the following example, we will assume at different points that $X_1,X_2$ have a sufficient statistic, are independent and they have positive distributions.
-    By the normalization constraint, $p_{1,1}$ is determined from $p_{0,0},p_{0,1}$ and $p_{1,0}$, which leaves us with three free parameters.
-    \[
-        \mathbb{P}[X_1,X_2] = \begin{bmatrix}
-                                  p_{0,0} & p_{0,1} \\
-                                  p_{1,0} & 1-(p_{0,0}+p_{0,1}+p_{1,0})
-        \end{bmatrix}
-    \]
-
-    Let us now restrict to those distributions, which have the sum $X_1+X_2$ as a sufficient statistic.
-    They need to satisfy $p_{0,1}=p_{1,0}$ (since in that cases the statistic is 1 and the definition of sufficiency is that the distribution conditioned on the statistic is uniform), leaving us with two free parameters.
-    \[
-        \mathbb{P}[X_1,X_2] = \begin{bmatrix}
-                                  p_{0,0} & p_{0,1} \\
-                                  p_{0,1} & 1-p_{0,0}-2p_{0,1}
-        \end{bmatrix}
-    \]
-    This symmetry also implies, that the distributions are identically distributed with $\mathbb{I}_2 = (1,1)^\intercal$:
-    \[
-        \probat{X_1}
-        = \left\langle \probat{X_1,X_2}, \mathbb{I}[X_2] \right\rangle[X_1] = \probat{X_1,X_2}\mathbb{I}_2 = \probat{X_2,X_1} \mathbb{I}_2 = \left\langle \probat{X_1,X_2}, \mathbb{I}[X_1] \right\rangle[X_2]
-        =\probat{X_2}.
-    \]
-
-    Restricting further to those, where $X_1$ and $X_2$ are independent and the distribution is everywhere supported, brings us to the rank one formulation of the distribution
-    \[
-        \probat{X_1,X_2} = \begin{bmatrix}
-                               \probat{X_1=0}\probat{X_2=0} & \probat{X_1=0}\probat{X_2=1}\\
-                               \probat{X_1=1}\probat{X_2=0} & \probat{X_1=1}\probat{X_2=1}
-        \end{bmatrix} = \probat{X_1}\probat{X_2}^\intercal= \probat{X_1}\probat{X_1}^\intercal.
-    \]
-    In terms of an exponential family with the head count as a sufficient statistic, we parametrize the distribution by the canonical parameter $\canparam\in\rr$ as
-    \[
-        \probat{X_1}
-        =\frac{1}{1+\expof{\canparam}}
-        \begin{bmatrix}
-            1 \\
-            \expof{\canparam}
-        \end{bmatrix}
-    \]
-    Note, that with this parametrization the probabilities for head and tail automatically have the form $p, (1-p)$.
-    \[
-        % \frac{1}{1+2\cdot\expof{\canparam}+\expof{2\canparam}}
-        %     \begin{bmatrix}
-        %         1 & \expof{\canparam} \\
-        %         \expof{\canparam} & \expof{2\canparam}
-        %     \end{bmatrix}
-        % =
-        \probat{X_1,X_2} = \frac{1}{(1+\expof{\canparam})^2} \begin{bmatrix}
-                                                                 1 \\
-                                                                 \expof{\canparam}
-        \end{bmatrix}
-        \begin{bmatrix}
-            1 &  \expof{\canparam}
-        \end{bmatrix}
-    \]
-    % Furthermore, from the decomposition on the right side we see that $X_1$ and $X_2$ are independent.
-    % Conversely, if $X_1$ and $X_2$ are independent and the distribution has the head count as sufficient statistic, $X_1$ and $X_2$ need to also be identical distributed (otherwise we would have $p_{0,1}\neq p_{1,0}$).
-    % Using that the support is maximal, we find a $\canparam\in\rr$ such that 
-
-
-    % and their joint distribution is the member of the exponential family to this parameter $\canparam$.
-
-    %% SEE EXAMPLE 5.5 in [Lehmann Casella - Theory of Point Estimation]
-    We can interpret this distribution as two independent coin tosses with outcome $X_1$ and $X_2$ and head probability
-    \begin{align*}
-        \probat{X_1=1} = \probat{X_2=1} = \frac{\expof{\canparam}}{1+\expof{\canparam}}
-    \end{align*}
-    which is the sigmoid of $\canparam$ and inverted by the logit
-    \begin{align*}
-        \canparam = \lnof{\frac{\probat{X_1=1}}{1-\probat{X_1=1}}} \, .
-    \end{align*}
-    Consistent with the above parametrization, we have a uniform distribution of $X_1$ and $X_2$ in the fair coin toss case $\probat{X_1=1}=0.5$, where $\canparam=0$.
-
-    As a \ComputationActivationNetwork{} we can represent any distribution $\probat{X_1,X_2}$ with the head count $+$ as sufficient statistic by
-    \begin{align*}
-        \probat{X_1,X_2} &= \normalizationof{\bencodingofat{+}{\headvariable,X_1,X_2},\acttensorat{\headvariable}}{X_1,X_2},
-    \end{align*}
-    such that
-    \begin{align*}
-        \probat{X_1=x_1,X_2=x_2} &= \frac1Z\contractionof{\bencodingofat{+}{\headvariable,X_1,X_2},\acttensorat{\headvariable}}{X_1=x_1,X_2=x_2}\\
-        &=\frac{1}{Z}\sum_{y=0}^{2}\beta^+[Y = y,X_1 = x_1,X_2 = x_2]\;\xi[y]
-        =\frac{1}{Z}\,\xi\!\big[ Y = x_1+x_2\big],
-    \end{align*}
-    where the normalization constant $Z$ cancels out any multiplicative constant $\lambda\in\mathbb{R}\backslash\{0\}$ in $\xi$ and the equation above implies
-    \begin{align*}
-        \acttensorat{\headvariable} =
-        \begin{bmatrix}
-            p_{0,0} \lambda \\
-            p_{0,1} \lambda \\
-            p_{1,1} \lambda
-        \end{bmatrix} \, .
-    \end{align*}
-    We choose $\lambda=1/p_{0,0} = (1+\exp[\theta])^2$ in the following.
-    Among these distribution, the exponential family with the head count statistic is then parametrized by activation tensors
-    \begin{align*}
-        \acttensorat{\headvariable} = \begin{bmatrix}
-                                          1\\
-                                          p_{0,1}/p_{0,0}\\
-                                          p_{1,1}/p_{0,0}
-        \end{bmatrix}
-        =
-        \begin{bmatrix}
-            1 \\
-            \expof{\canparam} \\
-            \expof{2\canparam}
-        \end{bmatrix} \, ,
-    \end{align*}
-    since $p_{0,1} = \probat{X_1=0}\cdot\probat{X_1=1} = (1+\exp[\theta])^{-1}\cdot\exp[\theta](1+\exp[\theta])^{-1}$ and $p_{1,1} = (\exp[\theta](1+\exp[\theta])^{-1})^2$.
-\end{example}
-
-
-
+\input{../examples/two_boolean_cascade}
 
 \subsection{Contractions to compute marginal probabilities}
 
@@ -633,7 +435,7 @@ Conditional probabilities are marginal proabilities of the distribution with add
 With this formalism we can answer queries like "What is the probability of booking this account when having observed this feature on the invoice?".
 }
 
-Having described how independence structures induce sparse tensor–network factorizations of the activation (and hence joint) tensor via the Hammersley-Clifford theorem (\theref{the:condIndMN}) in the previous section, we now turn to inference.
+Having described how independence structures induce sparse tensor–network factorizations of the activation (and hence joint) tensor via the Hammersley-Clifford theorem (\theref{the:factorizationHammersleyClifford}) in the previous section, we now turn to inference.
 In this section we explain how standard inference queries, namely marginals and conditional probabilities, are realized as tensor contractions of the resulting decomposed network.
 
 In the graphical–model CAN with identity statistic, the joint distribution is represented by the activation tensor $\xi[X_V] = \mathbb{P}[X_V]$ on the variable set $V$.

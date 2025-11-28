@@ -1,0 +1,97 @@
+\begin{example}[Order Statistic for Boolean Variables: Coin toss interpretation]\label{exa:coinToss}
+    Let there be $\catorder$ boolean variables $\shortcatvariables$ and a family $\{\probofat{\theta}{\shortcatvariables}\wcols\theta\in\Theta\}$ of distributions.
+    The order statistic assigns to each tuple $\shortcatindices$ the ordered tuple, which effectively counts the number of $1$ coordinates in the tuple $\shortcatindices$, that is the statistic
+    \begin{align*}
+        \sstatof{+} \defcols \facstates \rightarrow [\seldim] \quad, \quad \sstatof{+}(\shortcatindices) = \cardof{\{\catenumerator \wcols \catindexof{\catenumerator}=1\}} \, .
+    \end{align*}
+    When the order statistic is sufficient, the detailed order of the outcomes in uninformative about the member $\theta\in\Theta$ from which the random variables have been drawn.
+    Let us now investigate those families for which $\sstatof{+}$ is a sufficient statistic.
+    By the Fisher-Neyman Factorization Theorem \theref{the:factorizationFisherNeyman} $\sstatof{+}$ is a sufficient statistic if and only if there are tensors $\basemeasurewith$ and $\acttensorat{\headvariableof{+},\Theta}$ such that for each $\theta\in\Theta$
+    \begin{align*}
+        \probofat{\theta}{\shortcatvariables}
+        = \contractionof{
+            \acttensorofat{\theta}{\headvariableof{+}},\bencodingofat{\sstatof{+}}{\headvariableof{+},\shortcatvariables},\basemeasurewith}{\shortcatvariables} \, .
+    \end{align*}
+
+    The family of distributions, such that the variables $\shortcatvariables$ are i.i.d. with respect to each (see \exaref{exa:ctHc}) are the special case, where $\basemeasurewith=\onesat{\shortcatvariables}$ and the family is labeled by $\theta\in[0,1]$ such that for $\theta\in(0,1)$ and $\catenumerator\in[\catorder+1]$
+    \begin{align*}
+        \acttensorofat{\theta}{\headvariableof{+}=\catenumerator}
+        = \theta^{\catorder-\catenumerator} \cdot \theta^{\catenumerator} \, ,
+    \end{align*}
+    and for $\theta\in\{0,1\}$
+    \begin{align*}
+        \acttensorofat{\theta}{\headvariableof{+}}  = \begin{cases}
+                                                          \onehotmapofat{0}{\headvariableof{+}} & \ifspace \theta=0 \\
+                                                          \onehotmapofat{\catorder}{\headvariableof{+}} & \ifspace \theta=1
+        \end{cases}\, .
+    \end{align*}
+    The marginal distribution $\probofat{\theta}{\headvariableof{+}}$ is then the binominal distribution $B(\catorder,\theta)$.
+
+%    We further notce, that
+%    \begin{align*}
+%        \contractionof{}{}
+%    \end{align*}
+%    If the base measure $\basemeasurewith$ itself is elementary, we have a coin toss family, if the order statistic is sufficient for the probability.
+%
+%
+%    For the case $\catorder=2$:
+%    Consider two coin tosses \(\catvariableof{0},\catvariableof{1}\in\{0,1\}\) (1=heads). With $p \in [0,1]$ being the probability of heads. Define the statistic
+%    \[
+%        S(X_1,X_2)=X_1+X_2\in\{0,1,2\}.
+%    \]
+%    Intuitively, \(S\) forgets order and keeps only the \emph{number of heads}. The conditional law of the sequence given \(S\) is uniform over all sequences with that many heads:
+%    \[
+%        \mathbb{P}\!\big((X_1,X_2)=(x_1,x_2)\mid S=k\big)=\frac{1}{\binom{2}{k}}
+%        \quad\text{whenever }x_1+x_2=k.
+%    \]
+%    Thus, knowing \(S\) renders the detailed order uninformative about the distribution—this matches the idea of a \emph{sufficient statistic}.
+%
+%%\end{example}
+%%\begin{example}{}
+%
+%    % Unfair and dependent coin toss — Factorization as a \ComputationActivationNetwork{}
+%    Let \(X_1,X_2\in\{0,1\}\) and define the statistic \(S(X_1,X_2)=X_1+X_2\in\{0,1,2\}\).
+%    The \emph{basis (computation) core} for this statistic is
+%    \[
+%        \beta_S[y,x_1,x_2]\;=\;\mathbf{1}\{\,y=x_1+x_2\,\},\qquad y\in\{0,1,2\}.
+%    \]
+%    For $p \in (0,1)$, define a \emph{unary activation} (a vector) \(\xi[Y]\) with components \(\xi[0]=(1-p)^2,\ \xi[1]=(1-p)p,\ \xi[2]=p^2\).
+%    The joint distribution factors as
+%    \[
+%        \mathbb{P}[X_1,X_2]\;=\;\frac{1}{Z}\,\big\langle \beta_S[Y,X_1,X_2],\,\xi[Y]\big\rangle_{Y}
+%    \]
+%    with
+%    \begin{align*}
+%        Z&\coloneqq\big\langle\,\big\langle \beta_S[Y,X_1,X_2],\,\xi[Y]\big\rangle_Y\,\big\rangle_{[\varnothing]}\\
+%        &=\sum_{y=0}^{2}\xi[y]\sum_{x_1=0}^1\sum_{x_2=0}^1\beta_S[y,x_1,x_2] = 1\xi[0] + 2\xi[1] + 1\xi[2]\\
+%        &= (1-p)^2+2(1-p)p+p^2 = (p+ (1-p))^2 = 1
+%    \end{align*}
+%    Equivalently, in coordinates,
+%    \[
+%        \mathbb{P}[x_1,x_2]
+%        \;=\;\frac{1}{Z}\sum_{y=0}^{2}\beta_S[y,x_1,x_2]\;\xi[y]
+%        \;=\;\xi\!\big(S(x_1,x_2)\big).
+%    \]
+%
+%% \medskip
+%% \noindent\emph{Numerics for \(\xi=[1,1,1]\).}
+%    Since \(S(0,0)=0\), \(S(0,1)=S(1,0)=1\), and \(S(1,1)=2\),
+%% the unnormalized probabilities are
+%% \[
+%% \mathbb{P}^\star[0,0]=1,\quad \mathbb{P}^\star[0,1]=1,\quad \mathbb{P}^\star[1,0]=1,\quad \mathbb{P}^\star[1,1]=1,
+%% \]
+%% hence \(Z=\sum \mathbb{P}^\star=4\) and
+%% \[
+%% \mathbb{P}=
+%% \begin{array}{c|cc}
+%%  & X_2=0 & X_2=1\\\hline
+%% X_1=0 & 1/4 & 1/4\\
+%% X_1=1 & 1/4 & 1/4
+%% \end{array}
+%% \]
+%    the induced law of the statistic is
+%    \[
+%        \mathbb{P}[S=0]=(1-p)^2,\qquad \mathbb{P}[S=1]=2p(1-p),\qquad \mathbb{P}[S=2]=p^2,
+%    \]
+%    reflecting that there is only one configuration for $y \in \{0,2\}$ and 2 configurations for $ y=1$.
+\end{example}

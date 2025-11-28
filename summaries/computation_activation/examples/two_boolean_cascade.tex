@@ -1,0 +1,125 @@
+\begin{example}[Joint distributions of two booleans]
+%{\alex{Joint distributions of two Booleans, sufficient statistic by head count (coin toss interpretation) and exponential family in case of independence}}
+    In general, joint distribution of two Boolean variables $\catvariableof{0},\catvariableof{1}$ are 2x2 matrices of non-negative coordinates summing to 1:
+    \[
+        \probat{\catvariableof{[2]}}= \begin{bmatrix}
+                                  p_{0,0} & p_{0,1} \\
+                                  p_{1,0} & p_{1,1}
+        \end{bmatrix}
+    \]
+    In the following example, we will assume at different points that $\catvariableof{0},\catvariableof{1}$ have a sufficient statistic, are independent and they have positive distributions.
+    By the normalization constraint, $p_{1,1}$ is determined from $p_{0,0},p_{0,1}$ and $p_{1,0}$, which leaves us with three free parameters.
+    \[
+        \probat{\catvariableof{[2]}}= \begin{bmatrix}
+                                  p_{0,0} & p_{0,1} \\
+                                  p_{1,0} & 1-(p_{0,0}+p_{0,1}+p_{1,0})
+        \end{bmatrix}
+    \]
+
+    Let us now restrict to those distributions, which have the sum $\catvariableof{0}+\catvariableof{1}$ as a sufficient statistic.
+    They need to satisfy $p_{0,1}=p_{1,0}$ (since in that cases the statistic is 1 and the definition of sufficiency is that the distribution conditioned on the statistic is uniform), leaving us with two free parameters.
+    \[
+        \probat{\catvariableof{[2]}}= \begin{bmatrix}
+                                  p_{0,0} & p_{0,1} \\
+                                  p_{0,1} & 1-p_{0,0}-2p_{0,1}
+        \end{bmatrix}
+    \]
+    This symmetry also implies, that the distributions are identically distributed, i.e. for any $\catindex\in\{0,1\}$ we have % with $\mathbb{I}_2 = (1,1)^\intercal$:
+    \begin{align*}
+        \probat{\catvariableof{0}=\catindex}
+        = \contractionof{\probat{\catvariableof{0},\catvariableof{1}}}{\catvariableof{0}=\catindex}
+        = \contractionof{\probat{\catvariableof{1},\catvariableof{0}}}{\catvariableof{1}=\catindex}
+        = \probat{\catvariableof{1}=\catindex} \, .
+    \end{align*}
+%    \[
+%        \probat{\catvariableof{0}}
+%        = \left\langle \probat{\catvariableof{0},\catvariableof{1}}, \mathbb{I}[\catvariableof{1}] \right\rangle[\catvariableof{0}] = \probat{\catvariableof{0},\catvariableof{1}}\mathbb{I}_2 = \probat{\catvariableof{1},\catvariableof{0}} \mathbb{I}_2 = \left\langle \probat{\catvariableof{0},\catvariableof{1}}, \mathbb{I}[\catvariableof{0}] \right\rangle[\catvariableof{1}]
+%        =\probat{\catvariableof{1}}.
+%    \]
+
+    Restricting further to those, where $\catvariableof{0}$ and $\catvariableof{1}$ are independent and the distribution is everywhere supported, brings us to the rank one formulation of the distribution
+    \[
+        \probat{\catvariableof{0},\catvariableof{1}} = \begin{bmatrix}
+                               \probat{\catvariableof{0}=0}\probat{\catvariableof{1}=0} & \probat{\catvariableof{0}=0}\probat{\catvariableof{1}=1}\\
+                               \probat{\catvariableof{0}=1}\probat{\catvariableof{1}=0} & \probat{\catvariableof{0}=1}\probat{\catvariableof{1}=1}
+        \end{bmatrix} = \probat{\catvariableof{0}} \otimes \probat{\catvariableof{1}} %= \probat{\catvariableof{0}}\probat{\catvariableof{0}}^\intercal.
+    \]
+    In terms of an exponential family with the head count as a sufficient statistic, we parametrize the distribution by the canonical parameter $\canparam\in\rr$ as
+    \[
+        \probat{\catvariableof{0}}
+        =\frac{1}{1+\expof{\canparam}}
+        \begin{bmatrix}
+            1 \\
+            \expof{\canparam}
+        \end{bmatrix}
+    \]
+    Note, that with this parametrization the probabilities for head and tail automatically have the form $p, (1-p)$.
+    \[
+        % \frac{1}{1+2\cdot\expof{\canparam}+\expof{2\canparam}}
+        %     \begin{bmatrix}
+        %         1 & \expof{\canparam} \\
+        %         \expof{\canparam} & \expof{2\canparam}
+        %     \end{bmatrix}
+        % =
+        \probat{\catvariableof{0},\catvariableof{1}} = \frac{1}{(1+\expof{\canparam})^2} \begin{bmatrix}
+                                                                 1 \\
+                                                                 \expof{\canparam}
+        \end{bmatrix}
+        \begin{bmatrix}
+            1 &  \expof{\canparam}
+        \end{bmatrix}
+    \]
+    % Furthermore, from the decomposition on the right side we see that $\catvariableof{0}$ and $\catvariableof{1}$ are independent.
+    % Conversely, if $\catvariableof{0}$ and $\catvariableof{1}$ are independent and the distribution has the head count as sufficient statistic, $\catvariableof{0}$ and $\catvariableof{1}$ need to also be identical distributed (otherwise we would have $p_{0,1}\neq p_{1,0}$).
+    % Using that the support is maximal, we find a $\canparam\in\rr$ such that 
+
+
+    % and their joint distribution is the member of the exponential family to this parameter $\canparam$.
+
+    %% SEE EXAMPLE 5.5 in [Lehmann Casella - Theory of Point Estimation]
+    We can interpret this distribution as two independent coin tosses with outcome $\catvariableof{0}$ and $\catvariableof{1}$ and head probability
+    \begin{align*}
+        \probat{\catvariableof{0}=1} = \probat{\catvariableof{1}=1} = \frac{\expof{\canparam}}{1+\expof{\canparam}}
+    \end{align*}
+    which is the sigmoid of $\canparam$ and inverted by the logit
+    \begin{align*}
+        \canparam = \lnof{\frac{\probat{\catvariableof{0}=1}}{1-\probat{\catvariableof{0}=1}}} \, .
+    \end{align*}
+    Consistent with the above parametrization, we have a uniform distribution of $\catvariableof{0}$ and $\catvariableof{1}$ in the fair coin toss case $\probat{\catvariableof{0}=1}=0.5$, where $\canparam=0$.
+
+    As a \ComputationActivationNetwork{} we can represent any distribution $\probat{\catvariableof{0},\catvariableof{1}}$ with the head count $+$ as sufficient statistic by
+    \begin{align*}
+        \probat{\catvariableof{0},\catvariableof{1}} &= \normalizationof{\bencodingofat{+}{\headvariable,\catvariableof{0},\catvariableof{1}},\acttensorat{\headvariable}}{\catvariableof{0},\catvariableof{1}},
+    \end{align*}
+    such that
+    \begin{align*}
+        \probat{\catvariableof{0}=\catvariableof{0},\catvariableof{1}=\catvariableof{1}} &= \frac1Z\contractionof{\bencodingofat{+}{\headvariable,\catvariableof{0},\catvariableof{1}},\acttensorat{\headvariable}}{\catvariableof{0}=\catvariableof{0},\catvariableof{1}=\catvariableof{1}}\\
+        &=\frac{1}{Z}\sum_{y=0}^{2}\beta^+[Y = y,\catvariableof{0} = \catvariableof{0},\catvariableof{1} = \catvariableof{1}]\;\xi[y]
+        =\frac{1}{Z}\,\xi\!\big[ Y = \catvariableof{0}+\catvariableof{1}\big],
+    \end{align*}
+    where the normalization constant $Z$ cancels out any multiplicative constant $\lambda\in\mathbb{R}\backslash\{0\}$ in $\xi$ and the equation above implies
+    \begin{align*}
+        \acttensorat{\headvariable} = \lambda \cdot
+        \begin{bmatrix}
+            p_{0,0} \\
+            p_{0,1} \\
+            p_{1,1}
+        \end{bmatrix} \, .
+    \end{align*}
+    We choose $\lambda=1/p_{0,0} = (1+\exp[\theta])^2$ in the following.
+    Among these distribution, the exponential family with the head count statistic is then parametrized by activation tensors
+    \begin{align*}
+        \acttensorat{\headvariable} = \begin{bmatrix}
+                                          1\\
+                                          p_{0,1}/p_{0,0}\\
+                                          p_{1,1}/p_{0,0}
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+            1 \\
+            \expof{\canparam} \\
+            \expof{2\canparam}
+        \end{bmatrix} \, ,
+    \end{align*}
+    since $p_{0,1} = \probat{\catvariableof{0}=0}\cdot\probat{\catvariableof{0}=1} = (1+\exp[\theta])^{-1}\cdot\exp[\theta](1+\exp[\theta])^{-1}$ and $p_{1,1} = (\exp[\theta](1+\exp[\theta])^{-1})^2$.
+\end{example}
