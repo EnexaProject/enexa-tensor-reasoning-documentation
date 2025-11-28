@@ -1,0 +1,307 @@
+\section{Notation and Basic Concepts}\label{sec:notation}
+
+We first, introduce the basic architecture and later show how the probabilistic and logical framework are covered.
+This is done in multiple steps.
+First, the considered variables and tensors are explained. Followed by the explanation of tensor calculations, mainly tensor products and contractions.
+Finally, the main architecture, the \emph{\ComputationActivationNetwork{}}, is defined.
+
+%\subsection{Categorical Variables and Representations}
+%\label{sec:categorical-variables-and-representations}
+%
+%We will investigate systems, which are described by a set of properties, each called categorical variables.
+%
+%\begin{definition}
+%    \label{def:atomic-factored-representation}
+%    An \emph{atomic representation} of a system is described by a \emph{categorical variables} $\catvariable$ taking values $\catindex$ in a finite set
+%    \[  [\catdim]\coloneqq \{0,\ldots, \catdim-1\} \]
+%    of cardinality $\catdim$. The values $x\in[m]$ are called the \emph{states} of the variable. A \emph{factored representation} of a system is a set of categorical variables $\catvariableof{\atomenumerator}$, where $\atomenumeratorin$, taking values in $[\catdimof{\atomenumerator}]$.
+%\end{definition}
+%We abbreviate lists $\catvariables$ of categorical variables by $\shortcatvariables$.
+%Furthermore, we will always notate categorical variables by large literals and indices by small literals, possible with other letters such as $\catvariable,\selvariable,\indvariable,\datvariable$ and corresponding values $\catindex,\selindex,\indindex,\datindex$.
+
+\subsection{Tensors}
+\label{sec:tensors}
+
+Tensors are multiway arrays and a generalization of vectors and matrices to higher orders.
+We will first provide a formal definition as real maps from index sets enumerating the coordinates of vectors, matrices and larger order tensors.
+
+\begin{definition}[Tensor]
+    \label{def:tensor}
+    For $\atomenumeratorin$, let $\catdimof{\atomenumerator}\in\nn$ and let $\catvariableof{\atomenumerator}$ be categorical variables with values in $[\catdimof{\atomenumerator}]$.
+    A tensor $\hypercoreat{\catvariables}$ of order $\catorder$ and with leg dimensions $\catdimof{0},\dots,\catdimof{\atomorder-1}$ is defined through its coordinates
+    \begin{align*}
+        \hypercoreat{\indexedcatvariableof{0},\ldots,\indexedcatvariableof{\catorder-1}} \in \rr
+    \end{align*}
+    for index tuples
+    \begin{align*}
+        \catindexof{0},\ldots,\catindexof{\catorder-1} \in \facstates \, .
+    \end{align*}
+    Tensors $\hypercoreat{\catvariables}$, also denoted by $\hypercoreat{\shortcatvariables}$, are elements of the tensor space
+    \begin{align*}
+        \bigotimes_{\atomenumeratorin} \rr^{\catdimof{\atomenumerator}} \,,
+    \end{align*}
+    which is a linear space, enriched with the operations of coordinate wise summation and scalar multiplication. We call a tensor $\hypercoreat{\shortcatvariables}$ boolean, when $\imageof{\hypercore}\subset[2]$, i.e. all coordinates are either $0$ or $1$.
+\end{definition}
+
+This notation of tensors opposed to its notation through ordered indices as common in tensor calculus, facilitates writing down contractions along individual legs and other operations.
+Occasionally, when the categorical variables of a tensor are clear from the context, we will omit the notation of the variables. %further abbreviate $\hypercoreat{\catvariables}$ by $\hypercore$.
+
+\begin{example}[Trivial Tensor]
+    \label{exa:trivialTensor}
+    The trivial tensor
+    \begin{align*}
+        \onesat{\shortcatvariables} \in \facspace
+    \end{align*}
+    is defined by all coordinates being $1$, that is for all $\catindices\in\facstates$
+    \begin{align*}
+        \onesat{\indexedshortcatvariables} = 1 \, .
+    \end{align*}
+\end{example}
+
+We are now ready to provide the link between tensors and states of systems with factored representations.
+To this end, we define the one-hot encoding of a state, which is a bijection between the states and the basis elements of a tensor space.
+
+\begin{definition}[One-hot encodings to Atomic Representations]
+    \label{def:onehotenc}
+    Given an atomic system described by the categorical variable $\catvariable$, we define for each $\catindex\in[\catdim]$ the basis vector $\onehotmapofat{\catindex}{\catvariable}$ by the coordinates
+    \begin{align}
+        \onehotmapofat{\catindex}{\catvariable=\tilde{\catindex}} = \begin{cases}
+                                                                        1 & \ifspace \catindex=\tilde{\catindex} \\
+                                                                        0 & \text{else} \, .
+        \end{cases}
+    \end{align}
+    The \emph{one-hot encoding of states} $\catindex\in[\catdim]$ of the atomic system described by the categorical variable $\catvariable$ is the map
+    $ \onehotmap: [\catdim] \rightarrow \rr^\catdim $
+    which maps $\catindex \in [\catdim]$ to the basis vectors $\onehotmapofat{\catindex}{\catvariable}$.
+\end{definition}
+
+The basis vectors $\onehotmapofat{\catindex}{\catvariable}$ are tensors of order $1$ and leg dimension $\catdim$ of the structure
+\begin{align}
+    \onehotmapofat{\catindex}{\catvariable} = \begin{bmatrix}
+                                                  0 & \cdots & 0 & 1 & 0 & \cdots & 0
+    \end{bmatrix}^T \, ,
+\end{align}
+where the $1$ is at the $\catindex$th coordinate of the vector.
+
+\subsection{Contractions and Tensor Networks}
+Contractions are the central manipulation operation on sets of tensors.
+To introduce them, a graphical illustration of sets of tensors is explained, which we also call tensor networks.
+
+\subsubsection{Graphical Illustration}
+
+% Diagrammatic representation in factor graphs
+We will use the standard visualization %by factor graphs as a diagrammatic illustration of sets 
+of tensors, where they are represented by blocks with lines depicting the axes of the tensor blocks and each axis is assigned with a categorical variable $\catvariableof{\atomenumerator}$,  or sometimes their index or dimension. %, see \figref{fig:tensors}.
+
+% \begin{figure}[h]
+\begin{center}
+    \input{../tikz_pics/notation_basic_concepts/hypercore}
+\end{center}
+% 	\caption{Depiction of Tensors: Highlighting the tensor by a blockwise notation with axes denoted by open legs represented by the variables $\catvariableof{\atomenumerator}$.
+% 	}\label{fig:tensors}
+% \end{figure}
+
+This depiction scheme has been established in the literature as wiring diagrams (see \cite{landsberg_tensors_2011} and dates back at least to the work \cite{penrose_spinors_1987}.
+Along this line, we represent vectors %and their generalization to tensors 
+by blocks with one leg. % representing its indices.
+The basis vectors being one-hot encodings of states are in this scheme represented by
+\begin{center}
+    \input{../tikz_pics/notation_basic_concepts/one_hot_atomic}
+\end{center}
+%where $\tilde{\catindex}$ is an indexed represented by an open leg.
+Assigning $\catindex$ to the categorial variable $X$ will retrieve the $\catindex$th coordinate (with value $1$), whereas all other assignments will retrieve the coordinate values $0$.
+Drawing on the interpretation of tensors by hyperedges we can continue with the definition of tensor networks.
+\begin{definition}[Tensor Network]
+    \label{def:tensorNetwork}
+    Let $\graph=(\nodes,\edges)$ be a hypergraph with nodes decorated by categorical variables $\catvariableof{\node}$ with dimensions
+    $ \catdimof{\node} \in \nn $
+    and hyperedges $\edge\in\edges$ decorated by core tensors
+    \[ \hypercoreofat{\edge}{\catvariableof{\edge}} \in \bigotimes_{\node\in\edge}\rr^{\catdimof{\node}} \, , \]
+    where we denote by $\catvariableof{\edge}$ the set of categorical variables $\catvariableof{\node}$ with $\node\in\edge$.
+    Then we call the set
+    \[ \tnetofat{\graph}{\catvariableof{\nodes}} = \{\hypercoreofat{\edge}{\catvariableof{\edge}}  \wcols \edge\in\edges\} \]
+    the Tensor Network of the decorated hypergraph $\graph$.
+    The set of tensor networks on $\graph$, such that all tensors have non-negative coordinates, is denoted by $\tnsetof{\graph}$.
+\end{definition}
+
+%\janina{Example graph and definition}
+
+\input{../examples/tt_format.tex}
+
+\input{../examples/cp_format.tex}
+
+\subsubsection{Tensor Product}
+Let us now exploit the developed graphical representations to define contractions of tensor networks.
+The simplest contraction is the tensor product, which maps a pair of two tensors with distinct variables onto a third tensor and has an interpretation by coordinate wise products.
+Such a contraction corresponds with a tensor network of two tensors with disjoint variables.
+
+\begin{definition}[Tensor Product]
+    \label{def:tensorProduct}
+    Let there be two tensors
+    \begin{align*}
+        \hypercoreat{\shortcatvariables} \in \facspace  \andspace \sechypercoreat{\secshortcatvariables} \in \secfacspace
+    \end{align*}
+    with different categorical variables assigned to its axes.
+    Then their tensor product is the map
+    \begin{align*}
+        \contractionof{\hypercoreat{\shortcatvariables},\sechypercoreat{\secshortcatvariables}}{\shortcatvariables,\secshortcatvariables}
+        \in \left(\facspace\right) \otimes \left(\secfacspace \right)
+        %:  \left(\facstates\right) \times \left(\secfacstates\right) \rightarrow \rr
+    \end{align*}
+    defined coordinatewise for tuples of $\catindices\in\facstates$ and $\seccatindices\in\secfacstates$ as
+    \begin{align*}
+        & \contractionof{\hypercoreat{\shortcatvariables},\sechypercoreat{\secshortcatvariables}}{\indexedcatvariables,\indexedseccatvariables} \\
+        &\quad\quad :=  \hypercoreat{\indexedcatvariables}\cdot \sechypercoreat{\indexedseccatvariables} \, .
+    \end{align*}
+\end{definition}
+
+%\janina{The subsection title also says contraction. After defining contraction, we could also define normalization and conditional probability tensors. This should be here, since the arrows are needed in the next subsections.}
+
+\subsection{Generic Contractions}
+
+
+Contractions of Tensor Networks $\extnet$ are operations to retrieve single tensors by summing products of tensors in a network over common indices.
+We will define contractions formally by specifying just the indices not to be summed over.
+
+When some of the variables are not appearing as leg variables, we define the contraction as being a tensor product with the trivial tensor $\ones$ carrying the legs of the missing variables.
+
+\begin{definition}
+    \label{def:contraction}
+    Let $\tnetof{\graph}$ be a tensor network on a decorated hypergraph $\graph=(\nodes,\edges)$.
+    For any subset $\secnodes\subset\nodes$ we define the contraction to be the tensor (for an example see \figref{fig:contraction})
+    \begin{align}
+        \contractionof{\tnetof{\graph}}{\secnodevariables} \in \bigotimes_{\node\in\secnodes} \rr^{\catdimof{\node}}
+    \end{align}
+    defined coordinatewise by the sum
+    \begin{align}
+        \contractionof{\tnetof{\graph}}{\indexedcatvariableof{\secnodes}} =
+        \sum_{\catindexof{\nodes/\secnodes} \in\,\nodestatesof{\nodes/\secnodes}}
+        \left( \prod_{\edge\in\edges}\hypercoreofat{\edge}{\indexedcatvariableof{\edge}} \right) \, .
+    \end{align}
+    We call $\secnodevariables$ the open variables of the contraction.
+\end{definition}
+
+To ease notation, we will often omit the set notation by brackets $\{\cdot\}$ and specify the tensors to be contracted with the delimiter "," (see e.g. \exaref{exa:matrixProduct}).
+
+\begin{figure}
+    \begin{center}
+        \input{../tikz_pics/notation_basic_concepts/contraction.tex}
+    \end{center}
+    \caption{
+        Example of a tensor network contraction of all but the variables $\catvariableof{1},\catvariableof{3}$.
+        Contraction of variables can always be depicted by closing the open legs with trivial tensors $\ones$ performing index sums.
+    }\label{fig:contraction}
+\end{figure}
+
+%We explain normalization of tensors along specific legs here by an example and define it properly in~\ref{}.
+%This normalization corresponds to conditional probabilities, if the considered tensor $\hypercore$ describes an unnormalized probability distribution over its states.
+%For a tensor $\hypercoreat{X_{[2]}} \in \mathbb{R}^{m_0}\otimes\mathbb{R}^{m_1}$ and any $\secexrandindin$ we depict the slice $\hypercoreat{X_0|X_1=x_1}\in\mathbb{R}^{m_0}$ and $\hypercoreat{X_0|X_1}\in\mathbb{R}^{m_0}\otimes\mathbb{R}^{m_1}$ defined by a normalization operation as
+%\begin{center}
+%    \input{../tikz_pics/probability_representation/conditional_probability.tex}
+%\end{center}
+%This way any entrywise positive tensor can be normalized to form a probability distribution by conditioning on the empty set $\emptyset$.
+
+\subsection{Directed Tensors and Normalizations}
+
+%% Directionality
+Directionality represents constraints on the structure of tensors, namely that the sum over outgoing trivializes the tensor.
+
+\begin{definition}\label{def:directedTensor}
+	A Tensor
+	\begin{align*}
+		\hypercoreat{\nodevariables} \in\bigotimes_{\nodein}\rr^{\catdimof{\node}}
+	\end{align*}
+	is said to be directed with incoming variables $\innodes$ and outgoing variables $\outnodes$, where $\nodes=\innodes\dot{\cup}\outnodes$, when
+	\begin{align*}
+		\contractionof{\hypercore}{\catvariableof{\innodes}} =  \onesat{\catvariableof{\innodes}}
+	\end{align*}
+	where $\onesat{\catvariableof{\innodes}}$ denoted the trivial tensor in  $\bigotimes_{\node\in\innodes}\rr^{\catdimof{\node}}$ which coordinates are all $1$.
+\end{definition}
+
+By the normalization operation, tensors are turned into directed tensors.
+
+\begin{definition}\label{def:normalization}
+	A tensor $\hypercoreat{\nodevariables}$ is said to be normalizable on $\innodes\subset\nodes$, if for any $\catindexof{\innodes}\in\nodestatesof{\innodes}$ we have
+	\begin{align*}
+		 \contraction{\hypercoreat{\nodevariables},\onehotmapofat{\catindexof{\innodes}}{\catvariableof{\innodes}}} > 0 \, .
+	\end{align*}
+	The normalization of an on $\innodes\subset\nodes$ normalizable tensor is the tensor
+	\begin{align*}
+		\normalizationofwrt{\hypercoreat{\nodevariables}}{\catvariableof{\outnodes}}{\catvariableof{\innodes}} =
+		\sum_{\catindexof{\innodes}\in\nodestatesof{\innodes}}
+		\onehotmapofat{\catindexof{\innodes}}{\catvariableof{\innodes}} \otimes \frac{
+		\contractionof{\hypercoreat{\nodevariables},\onehotmapofat{\catindexof{\innodes}}{\catvariableof{\innodes}}}{\catvariableof{\outnodes}}
+		}{
+		\contraction{\hypercoreat{\nodevariables},\onehotmapofat{\catindexof{\innodes}}{\catvariableof{\innodes}}}
+		}
+	\end{align*}
+	where $\outnodes = \nodes/\innodes$.
+\end{definition}
+
+%% Diagrammatic notation
+In our graphical tensor notation, we depict directed tensors by directed hyperedges (a), which are decorated by directed tensors (b), for example:
+	\begin{center}
+		\input{../tikz_pics/notation_basic_concepts/directed_core.tex}
+	\end{center}
+
+
+\subsection{Function encoding and \ComputationActivationNetworks{}}
+
+Let us now encode functions between the state sets of systems in factored representation.
+
+\begin{definition}[Basis encoding of maps between state sets]
+    \label{def:functionRepresentation}
+    Let there be two systems with factored representations by variables $\shortcatvariables$ and $\headvariables$, and a map
+    \begin{align*}
+        \statesetfunction\defcols\facstates \rightarrow  \headstates
+    \end{align*}
+    between these state sets.
+    Then the basis encoding of $\statesetfunction$ is a tensor
+    \begin{align*}
+        \bencodingofat{\statesetfunction}{\headvariables,\shortcatvariables}
+        \in \left(\secfacspace\right) \otimes \left(\facspace\right)
+    \end{align*}
+    defined by
+    \begin{align*}
+        & \bencodingofat{\statesetfunction}{\headvariables,\shortcatvariables}
+        \quad = \sum_{\catindices\in\facstates}
+        \onehotmapofat{\statesetfunctionev{\shortcatindices}}{\headvariables} \otimes  \onehotmapofat{\shortcatindices}{\shortcatvariables} \, .
+    \end{align*}
+\end{definition}
+Basis encodings are directed tensors (see~\cite[Theorem 14.10]{goessmann2025}) and are thus depicted as decorations of directed edges in hypergraphs: \janina{Explain the arrows. Haven't introduced directed graphs yet.}
+\begin{center}
+    \input{../tikz_pics/notation_basic_concepts/bencoding}
+\end{center}
+
+The entries of the basis encoding are defined by
+\begin{align*}
+    \bencodingofat{\statesetfunction}{\headvariables=y_{[p]},\shortcatvariables=x_{[d]}}
+    = \begin{cases}
+          1 & \ifspace q(x_{[d]})=y_{[p]}\\
+          0 & \text{else}
+    \end{cases}
+\end{align*}
+%\janina{Put basis encoding of propositional formula as in logic section as an example here? Hmm did not define them yet}
+
+
+
+%\janina{The definition includes conditional tensors. not introduced yet. Also no word about probability distributions yet.}
+
+
+Based on these concepts the main architecture can be defined.
+
+\begin{definition}[\ComputationActivationNetwork{} (\CompActNets{})]
+    \label{def:realizableStatDistributions}
+    Given a statistic $\sstat : \facstates \rightarrow \parspace$, and a hypergraph $\graph=(\nodes,\edges)$ with nodes $[\seldim]\subset\nodes$ containing the image coordinates of $\sstat$, we define the by $\sstat$ computable and by $\graph$ activated family of distributions by
+    \begin{align*}
+        \realizabledistsof{\sstat,\graph}
+        = \left\{ \normalizationof{\bencodingofat{\sstat}{\headvariables,\shortcatvariables},\contractionof{\acttensor}{\headvariables} %\} \cup \{\hypercoreofat{\edge}{\sstatcatof{\edge}} \wcols \edgein \}
+        }{\shortcatvariables}
+              \wcols \acttensorat{\headvariableof{\nodes}} \in \tnsetof{\graph} \right\} \, .
+    \end{align*}
+    We refer to any member $\probat{\shortcatvariables}\in\realizabledistsof{\sstat,\graph}$ as a \ComputationActivationNetwork{}.
+\end{definition}
+To represent a \ComputationActivationNetwork{} two tensor networks are needed: $\beta^{\mathcal S}$ to represent the basis encoding of the sufficient statistic (also called \emph{computation network}) and $\xi$ to represent the tensor to contract with (also called \emph{activation network}).
+
+% We write \(G_{EL}=([p],\{\{\ell\}:\ell\in[p]\})\) for the hypergraph of singleton edges and call it elementary activation graph. 
+% An activation tensor on \(G_{EL}\) factorizes into a product of unary cores over \(Y_0,\dots,Y_{p-1}\).

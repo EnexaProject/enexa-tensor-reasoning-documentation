@@ -1,0 +1,154 @@
+\section{Implementation}\label{sec:code}
+
+The architecture can be conveniently implemented with the python package \tnreason{}. 
+Multiple examples including graph-coloring, sat problems, Sudoku, and temporal clue are available\footnote{\url{https://github.com/EnexaProject/enexa-tensor-reasoning/tree/version1}}.
+To emphasize the intuitive implementation of CANs, a code snippet for the implementation of a CAN for the sat problem $f[X_a=a,X_b=b,X_c=c]=(a \lor b) \land \lnot c$ described in example~\ref{ex:sat_network} is explained. This propositional formula is encoded by a dictionary of variables encoded by nested lists, that need to all be fulfilled.
+% \begin{minted}{python}
+%      clauseList = [{"a": 1, "b": 1}, {"c": 0}]
+% \end{minted}
+\begin{minted}{python}
+expressionsDict = {"f0" :  ["and", ["or", "a", "b"], ["not", "c"]]}
+\end{minted}
+After importing the package by
+\begin{minted}{python}
+from tnreason import representation, application, engine
+\end{minted}
+the CAN can then be build by defining all cores. Activation cores then have suffices \mintinline{python}{_aC} and computation cores are denoted with suffices \mintinline{python}{_cC} by
+\begin{minted}{python}
+cores = application.create_cores_to_expressionsDict(expressionsDict)
+computationCores = {key: value for key, value in cores.items() 
+                                                         if key.endswith("_cC")}
+\end{minted}
+The generated \mintinline{python}{computationCores} is a dictionary with the following keys and tensors of given shapes as expected in example~\ref{ex:sat_network}.
+\begin{minted}{python}
+'f0_aC', [2]
+'(and_(or_a_b)_(not_c))_cC', [2, 2, 2]
+'(or_a_b)_cC', [2, 2, 2]
+'(not_c)_cC', [2, 2]
+\end{minted}
+Based on this dictionary, the \ComputationActivationNetwork{} can be build by setting the activation network for the single output feature (the output of $f$) to a vector acting on the output of the basis encoding of $f$. Here a \mintinline{python}{SingleHybridFeature} is used, which allows for hard or sift activations. Then the value for the desired output of the feature is set to \mintinline{python}{True}.
+\begin{minted}{python}
+caNet = representation.ComputationActivationNetwork(
+    computationCoreDict=computationCores,
+    featureDict={"f0" : representation.SingleHybridFeature(
+                                    featureColor="(and_(or_a_b)_(not_c))_cV")},
+    canParamDict={"f0" : True}
+    )
+\end{minted}
+
+As in example~\ref{ex:sat_network}, the CAN then has the following form.
+%\input{../tikz_pics/implementation/can_decomp}
+
+The other representation in example~\ref{ex:sat_network} can also be implemented. Both architectures can be found the linked notebook\footnote{\url{https://colab.research.google.com/drive/14knFuMJHI683DAmUgJ-G10MQFueoXR6q\#scrollTo=vrOYBViZhX2S}}. Note that more efficient representations of this network are possible and the one described here is mainly for pedagogic purposes.  Furthermore the right implementation of the formula can be checked by contractions.
+\begin{minted}{python}
+allCores = caNet.create_cores()
+formula = engine.contract(coreDict = allCores, 
+                          openColors=["a_dV","b_dV", "c_dV"])
+assert formula[{"a_dV": 1, "b_dV" : 1, "c_dV" : 0}] == 1
+assert formula[{"a_dV": 1, "b_dV" : 1, "c_dV" : 1}] == 0
+\end{minted}
+The notebook also shows how the network can be normalized to represent a uniform probability distribution over all models of the formula.
+\begin{minted}{python}
+distribution = engine.normalize(coreDict = allCores, 
+                                outColors = ["a_dV","b_dV", "c_dV"], 
+                                inColors = [])
+assert distribution[{"a_dV": 1, "b_dV" : 1, "c_dV" : 0}] == 1/3
+assert distribution[{"a_dV": 1, "b_dV" : 1, "c_dV" : 1}] == 0
+\end{minted}
+
+% \newpage
+% \begin{minted}{python}
+% def get_clauseList_as_CANetwork(clauseList, evidenceDict=dict()):
+%     """
+%     Prepares the SAT instance as a Computation-Activation Network
+%     """
+    
+%     # The computation network encodes all individual statistics of interest. 
+%     # For SAT, they are individual formulas connected by $\lhat$ (Section 3.4).
+%     # Here, they are $\lnot a \lor b$ and $c$. (The names are irrelevant.)
+%     compDict = {
+%         "clauseCore_" + str(i): create_clause_core(clauseDict) 
+%         for i, clauseDict in enumerate(clauseList)
+%     }
+    
+%     # The atomic variables are all $0/1$ variables in the formula. 
+%     # Here, they are $a,b,c$.
+%     atomVariables = list({key for clause in clauseList for key in clause.keys()})
+    
+%     # The a feature dictionary collects all variables in the network.
+%     # Here, only $0/1$-vectors build by HardPartitionFeature are considered.
+%     featDict = {
+%         # One entry for each variable interesting for the solution $X_a,X_b,X_c$
+%         **{"atomFeature_" + atomKey: 
+%             representation.HardPartitionFeature(
+%                 featureColors=[atomKey], 
+%                 affectedComputationCores={})
+%                 for atomKey in atomVariables},
+%         # One entry for each "hidden" variable not part of the solution 
+%         # $Y_{a\lor b}$ and $Y_c$
+%         **{"clauseFeature_" + str(i): 
+%             representation.PassiveFeature(
+%                 featureColors=list(clauseDict.keys()), 
+%                 affectedComputationCores={
+%                 "clauseCore_" + str(i)}, shape=[])
+%            for i, clauseDict in enumerate(clauseList)},
+%     }
+%     # The variables, that are already known, are collected in a dictionary. 
+%     # In Sudoku, this would be the initial board.
+%     ParDict = {evidenceKey: 
+%         representation.create_basis_core(
+%             name=evidenceKey, shape=[2],
+%             colors=[evidenceKey],
+%             numberTuple=[evidenceDict[evidenceKey]])
+%         for evidenceKey in evidenceDict
+%     }
+%     return representation.ComputationActivationNetwork(
+%         featureDict=featDict,
+%         computationCoreDict=compDict,
+%         canParamDict=ParDict
+%     )
+% \end{minted}
+% \janina{How is the activation network added?}
+% \begin{minted}{python}
+% expressionsDict = {„formula1“: [„or“,“a“,“b“], „formula2“: [„not“,“c“]}
+% featureDict = {„formula1“: SingleHybridFeature(featureColors=[„(or_a_b)“])}
+% canParamDict = {„formula1“ : True}
+% \end{minted}
+
+
+
+% \begin{minted}{python}
+% def generate_CANetwork(graph, colorNum, coreType, allowedColorDict={}):
+%     compDict = {
+%         nodeColor0 + "_" + nodeColor1: 
+%         get_color_constraint_core(
+%             nodeColor0, 
+%             nodeColor1, 
+%             colorNum, 
+%             coreType
+%             )
+%         for nodeColor0, nodeColor1 in graph.edges
+%         }
+%     featDict = {
+%         **{nodeColor:
+%             representation.HardPartitionFeature(
+%                 featureColors=[nodeColor], 
+%                 shape=[colorNum]
+%                 )
+%             for nodeColor in graph.nodes
+%             },
+%         **{nodeColor0 + "_" + nodeColor1:
+%             representation.PassiveFeature(
+%                 featureColors=[],
+%                 shape=[],
+%                 affectedComputationCores=[nodeColor0 + "_" + nodeColor1]
+%                 )
+%             for nodeColor0, nodeColor1 in graph.edges
+%             }
+%         }
+%     return representation.ComputationActivationNetwork(
+%         computationCoreDict=compDict,
+%         featureDict=featDict,
+%         canParamDict=allowedColorDict,
+%         )
+% \end{minted}
