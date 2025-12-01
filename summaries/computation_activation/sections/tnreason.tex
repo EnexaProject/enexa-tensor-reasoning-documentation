@@ -2,7 +2,7 @@
 
 The architecture can be conveniently implemented with the python package \tnreason{}. 
 Multiple examples including graph-coloring, sat problems, Sudoku, and temporal clue are available\footnote{\url{https://github.com/EnexaProject/enexa-tensor-reasoning/tree/version1}}.
-To emphasize the intuitive implementation of CANs, a code snippet for the implementation of a CAN for the sat problem $f[X_a=a,X_b=b,X_c=c]=(a \lor b) \land \lnot c$ described in example~\ref{ex:sat_network} is explained. This propositional formula is encoded by a dictionary of variables encoded by nested lists, that need to all be fulfilled.
+To emphasize the intuitive implementation of CANs, a code snippet for the implementation of a CAN for the sat problem $f[X_a=a,X_b=b,X_c=c]=(a \lor b) \land \lnot c$ described in example~\ref{exa:bencodingNegCon} is explained. This propositional formula is encoded by a dictionary of variables encoded by nested lists, that need to all be fulfilled.
 % \begin{minted}{python}
 %      clauseList = [{"a": 1, "b": 1}, {"c": 0}]
 % \end{minted}
@@ -19,7 +19,7 @@ cores = application.create_cores_to_expressionsDict(expressionsDict)
 computationCores = {key: value for key, value in cores.items() 
                                                          if key.endswith("_cC")}
 \end{minted}
-The generated \mintinline{python}{computationCores} is a dictionary with the following keys and tensors of given shapes as expected in example~\ref{ex:sat_network}.
+The generated \mintinline{python}{computationCores} is a dictionary with the following keys and tensors of given shapes as expected in example~\ref{exa:bencodingNegCon}.
 \begin{minted}{python}
 'f0_aC', [2]
 '(and_(or_a_b)_(not_c))_cC', [2, 2, 2]
@@ -36,10 +36,10 @@ caNet = representation.ComputationActivationNetwork(
     )
 \end{minted}
 
-As in example~\ref{ex:sat_network}, the CAN then has the following form.
+As in example~\ref{exa:bencodingNegCon}, the CAN then has the following form.
 %\input{../tikz_pics/implementation/can_decomp}
 
-The other representation in example~\ref{ex:sat_network} can also be implemented. Both architectures can be found the linked notebook\footnote{\url{https://colab.research.google.com/drive/14knFuMJHI683DAmUgJ-G10MQFueoXR6q\#scrollTo=vrOYBViZhX2S}}. Note that more efficient representations of this network are possible and the one described here is mainly for pedagogic purposes.  Furthermore the right implementation of the formula can be checked by contractions.
+The other representation in example~\ref{exa:bencodingNegCon} can also be implemented. Both architectures can be found the linked notebook\footnote{\url{https://colab.research.google.com/drive/14knFuMJHI683DAmUgJ-G10MQFueoXR6q\#scrollTo=vrOYBViZhX2S}}. Note that more efficient representations of this network are possible and the one described here is mainly for pedagogic purposes.  Furthermore the right implementation of the formula can be checked by contractions.
 \begin{minted}{python}
 allCores = caNet.create_cores()
 formula = engine.contract(coreDict = allCores, 
