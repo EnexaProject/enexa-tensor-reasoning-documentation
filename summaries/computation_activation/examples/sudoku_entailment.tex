@@ -1,24 +1,24 @@
-\begin{example}[$n^2 x n^2$ Sudoku]\label{exa:sudokuEntailment}%{\alex{Attempt to match the above Sudoku example with our notation of boolean variables and the entailment formalism}}
+\begin{example}[$n^2\,x\,n^2$ Sudoku]\label{exa:sudokuEntailment}%{\alex{Attempt to match the above Sudoku example with our notation of boolean variables and the entailment formalism}}
     We index the rows and the columns by tuples $(r0,r1)$ and $(co,c1)$, where $r0,r1,c0,c1\in[n]$. The first index indicates the block and the second counts the row or column inside that block.
     For each $r0,r1,c0,c1\in[n]$ and $i\in[n^2]$ we then define an atomic variable $\catvariableof{r0,r1,c0,c1,i}\in\{0,1\}$ indicating whether in the row $(r0,r1)$ and column $(co,c1)$ the number $i$ is written.
     The Sudoku rules then amount to the formula
     \begin{align*}
-        \kb = &\left( \bigwedge_{r0,r1,c0,c1\in[n]} \left( \bigoplus^{1}_{i\in[n^2]} \catvariableof{r0,r1,c0,c1,i} \right) \right) \land
-        \left( \bigwedge_{r0,r1\in[n], i\in[n^2]} \left( \bigoplus^{1}_{c0,c1\in[n]} \catvariableof{r0,r1,c0,c1,i} \right) \right) \land \\
-        &\left( \bigwedge_{c0,c1\in[n], i\in[n^2]} \left( \bigoplus^{1}_{c0,c1\in[n]} \catvariableof{r0,r1,c0,c1,i} \right) \right) \land
-        \left( \bigwedge_{r0,c0\in[n], i\in[n^2]} \left( \bigoplus^{1}_{r1,c1\in[n]} \catvariableof{r0,r1,c0,c1,i} \right) \right) \, ,
+        \kb^{n}  \coloneqq &\left( \bigwedge_{r0,r1,c0,c1\in[n]} \left( \woneoplus_{i\in[n^2]} \catvariableof{r0,r1,c0,c1,i} \right) \right) \land
+        \left( \bigwedge_{r0,r1\in[n], i\in[n^2]} \left( \woneoplus_{c0,c1\in[n]} \catvariableof{r0,r1,c0,c1,i} \right) \right) \land \\
+        &\left( \bigwedge_{c0,c1\in[n], i\in[n^2]} \left( \woneoplus_{c0,c1\in[n]} \catvariableof{r0,r1,c0,c1,i} \right) \right) \land
+        \left( \bigwedge_{r0,c0\in[n], i\in[n^2]} \left( \woneoplus_{r1,c1\in[n]} \catvariableof{r0,r1,c0,c1,i} \right) \right) \, ,
     \end{align*}
-    where $\bigoplus^{1}$ is the $n^2$-ary exclusive or connective (that is $1$ if and only if exactly one of the arguments is $1$).
+    where $\woneoplus$ is the $n^2$-ary exclusive or connective (that is $1$ if and only if exactly one of the arguments is $1$).
     The four outer brackets in $\kb$ mark the constraints, that at each position exactly one number is assigned, further that in each row each number is assigned once, and similar for the columns and the squares of the board.
     When solving a specific Sudoku instance, one typically knows from an initial board assignment $E$ a collection of atomic variables, which hold, and needs to find further atomic variables, which are entailed.
     This means, we need to decide for each $(r_0,r_1,c_0,c_1,i)\notin E$ whether the Sudoku rules and the initial board imply that the atomic variable $\catvariableof{r0,r1,c0,c1,i}$ (i.e. assignment to the board) is true
     \begin{align*}
-        \left(\kb \land \bigwedge_{(r_0,r_1,c_0,c_1,i)\in E} \catvariableof{r0,r1,c0,c1,i} \right) \models \catvariableof{r0,r1,c0,c1,i}
+        \kb^{n} \land \left(\bigwedge_{(r_0,r_1,c_0,c_1,i)\in E} \catvariableof{r0,r1,c0,c1,i} \right) \models \catvariableof{r0,r1,c0,c1,i}
     \end{align*}
     or false
     \begin{align}
         \label{eq:sudokukb}
-        \left(\kb \land \bigwedge_{(r_0,r_1,c_0,c_1,i)\in E} \catvariableof{r0,r1,c0,c1,i} \right) \models \lnot\catvariableof{r0,r1,c0,c1,i} \, .
+        \kb \land \left(\bigwedge_{(r_0,r_1,c_0,c_1,i)\in E} \catvariableof{r0,r1,c0,c1,i} \right) \models \lnot\catvariableof{r0,r1,c0,c1,i} \, .
     \end{align}
     In other words, for each assignment to the board, that fulfills the Sudoku rules and the initial board, do we write the number $n$ in row $(r0,r1)$ and column $(c0,c1)$?
     If and only if the Sudoku has a unique solution given the initial board assignment $E$, exactly one of these entailment statements holds for each $(r_0,r_1,c_0,c_1,i)\notin E$.
@@ -26,9 +26,9 @@
 
     For example, let $n=2$ and
     \begin{align*}
-        E = \{(0,0,0,0,0),(0,0,1,0,2),(0,0,1,1,1), %first row
-         (0,1,0,1,1), %second row
-        (1,0,1,0,3), %third row
+        E = \{&(0,0,0,0,0),(0,0,1,0,2),(0,0,1,1,1), %first row
+         (0,1,0,1,1), \\ %second row
+        &(1,0,1,0,3), %third row
         (1,1,0,0,3),(1,1,0,1,2) %fourth row
         \} \, .
     \end{align*}

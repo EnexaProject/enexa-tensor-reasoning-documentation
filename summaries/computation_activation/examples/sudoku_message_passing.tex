@@ -1,16 +1,15 @@
-\begin{example}[Constraint Propoagation for a $2^2x2^2$ Sudoku]
+\begin{example}[Constraint Propoagation for a $2^2\,x\,2^2$ Sudoku]
     We iteratively solve a Sudoku puzzle (see \exaref{exa:sudokuEntailment}) by determining a possible value based on neighboring cells, rows and squares (using \theref{the:monotonicityPL}) and adding to our knowledge (using \theref{the:addingEntailed}).
-
-    For example, consider the following $r=2$ Sudoku puzzle, where a first entailment step uses only the knowldege of the \textcolor{\concolor}{blue} cells to determine the value $3$ in the first square:
+    For example, consider the following $r=2$ Sudoku puzzle, where a first entailment step uses only the knowledge of the rules and the \textcolor{\concolor}{blue} cells to determine the value $3$ in the first square:
     \begin{center}
         \begin{tikzpicture}
             \node[anchor=center, draw,inner sep=0pt] (1) at (0,0) {
                 \begin{tabular}{|c|c||c|c|}
                     \hline
-                    \textcolor{\concolor}{1} &                          & \textcolor{\concolor}{3} & 2 \\ \hline
+                    1 &                          & \textcolor{\concolor}{3} & 2 \\ \hline
                     & \textcolor{\concolor}{2} &                          &   \\ \hline\hline
                     &                          & 4                        &   \\ \hline
-                    4                        & 3                        &                          &   \\ \hline
+                    4 & 3                        &                          &   \\ \hline
                 \end{tabular}
             };
 
@@ -33,13 +32,34 @@
                     \hline
                     1 & 4 & 3 & 2 \\ \hline
                     3 & 2 & 1 & 4 \\ \hline\hline
-                    2 & 1 & 4 & 3  \\ \hline
-                    4 & 3 & 2 & 1  \\ \hline
+                    2 & 1 & 4 & 3 \\ \hline
+                    4 & 3 & 2 & 1 \\ \hline
                 \end{tabular}
             };
 
         \end{tikzpicture}
     \end{center}
 
+    To illustrate the first reasoning step we make the following preliminary entailment steps applying \theref{the:monotonicityPL}:
+    \begin{itemize}
+        \item From $\textcolor{\concolor}{\catvariableof{0,1,0,1,1}}$ (i.e. the $2$ in the cell $(0,1,0,1)$) and the Sudoku rule that at the cell $(0,1,0,1)$ exactly one number is assigned, we get
+        \begin{align*}
+            \left( \woneoplus_{i\in[n^2]} \catvariableof{0,1,0,1,i} \right) \land \textcolor{\concolor}{\catvariableof{0,1,0,1,1}} \models \lnot\catvariableof{0,1,0,1,2} \, ,
+        \end{align*}
+        That is, that the number $3$ is not in the cell $(0,1,0,1)$.
+        \item From $\textcolor{\concolor}{\catvariableof{0,0,1,0,2}}$ (i.e. the $3$ in the cell $(0,0,1,0)$) and the Sudoku rule that at the row $(0,0)$ exactly one number is assigned, we get
+        \begin{align*}
+            \left( \woneoplus_{c0,c1\in[n]} \catvariableof{0,0,c0,c1,2} \right) \land \textcolor{\concolor}{\catvariableof{0,0,1,0,2}} \models \lnot\catvariableof{0,0,0,0,2}\land \lnot\catvariableof{0,0,0,1,2} \, ,
+        \end{align*}
+        That is, that the number $3$ is neither in the cell $(0,0,0,0)$ not in $(0,0,0,1)$.
+    \end{itemize}
+    We add these formulas to our knowledge base (justified by \theref{the:addingEntailed}) and use the rule, that $3$ appears exactly once in the first square
+    \begin{align*}
+        &\left( \woneoplus_{r1,c1\in[n]} \catvariableof{0,r1,0,c1,2} \right)
+        \land (\lnot\catvariableof{0,1,0,1,2})
+        \land (\lnot\catvariableof{0,0,0,0,2}\land \lnot\catvariableof{0,0,0,1,2})
+        \models \catvariableof{0,1,0,0,2} \, .
+    \end{align*}
+    That is, we conclude that the number $3$ must be in the cell $(0,1,0,0)$, which information is also included in the updated knowledge base for further reasoning steps.
 
 \end{example}

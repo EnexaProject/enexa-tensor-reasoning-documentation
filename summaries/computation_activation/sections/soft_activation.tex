@@ -4,8 +4,6 @@ We here investigate tensor network decomposition mechanisms of probability distr
 After introducing probability distributions as tensors we derive tensor network decompositions based on conditional independencies (applying the Hammersley-Clifford theorem \cite{clifford_markov_1971}) to motivate graphical models.
 Further we present the \ComputationMechanism{}, in which the Fisher-Neyman Factorization Theorem is used to decompose distributions in the presence of sufficient statistics.
 
-
-
 \subsection{Basic concepts}
 
 Distributions $\probtensor$ over a discrete state space can be represented by tensors, where each entry corresponds to the probability of a corresponding state. The joint probability distribution for a set of categorical variables as in definition~\ref{def:atomic-factored-representation} is defined here.
@@ -427,50 +425,61 @@ For a discussion of further universal properties of exponential families, such t
     the exponential family with respect to the statistic $\sstat$ and the base measure $\basemeasure$.
 \end{definition}
 
+\begin{figure}
+    \begin{center}
+        \input{../tikz_pics/expdist_elementary}
+    \end{center}
+    \caption{\alex{Missing base measure in the diagram! - Find convention.}
+    Tensor Network diagram of a member of an exponential family before normalization as an \CompActNet{} with elementary activation, that is an element in $\cansof{\sstat,\elgraph,\basemeasure}$.}\label{fig:expdistElementary}
+\end{figure}
+
 \input{../examples/two_boolean_cascade}
 
-\subsection{Contractions to compute marginal probabilities}
+\subsection{Reasoning based on contractions}
+
+
 
 \alex{The most central inference operation on probability distributions is the computation of marginals, which is just the contraction leaving only the marginalized variable open.
 Conditional probabilities are marginal proabilities of the distribution with added boolean tensors marking the evidence (e.g. one-hot encodings to states of some variables).
 With this formalism we can answer queries like "What is the probability of booking this account when having observed this feature on the invoice?".
 }
 
-Having described how independence structures induce sparse tensor–network factorizations of the activation (and hence joint) tensor via the Hammersley-Clifford theorem (\theref{the:factorizationHammersleyClifford}) in the previous section, we now turn to inference.
-In this section we explain how standard inference queries, namely marginals and conditional probabilities, are realized as tensor contractions of the resulting decomposed network.
-
-In the graphical–model CAN with identity statistic, the joint distribution is represented by the activation tensor $\xi[X_V] = \mathbb{P}[X_V]$ on the variable set $V$.
-For any subset $A \subseteq V$, the marginal distribution on $X_A$ is obtained by contracting all non–query legs with trivial tensors $I[X_v]$:
-\[
-    \mathbb{P}[X_A]
-    =
-    \bigl\langle
-    \mathbb{P}[X_V],
-    \{ I[X_v] : v \in V \setminus A \}
-    \bigr\rangle[X_A].
-\]
-In words, we close all legs corresponding to variables outside $A$ with identity tensors and read off the resulting tensor on the remaining open legs $X_A$.
-In the Markov/activation network representation of Section~3.3, computing a marginal thus corresponds to closing all non–query nodes and edges and evaluating the resulting contracted network on the query variables.
-
-We can interpret conditionals as normalized evidence slices. Let $A,C \subseteq V$ and fix evidence $X_C = x_C$.
-Using the one–hot encodings $\epsilon_{x_c}[X_c]$ from \defref{def:onehotenc}, we define the unnormalized slice
-\begin{equation*}
-    \mathbb{\tilde{P}}[X_A \mid X_C = x_C]:=
-    \bigl\langle
-    \mathbb{P}[X_V],
-    \{\epsilon_{x_c}[X_c] : c \in C\},
-    \{ I[X_v] : v \in V \setminus (A \cup C) \}
-    \bigr\rangle[X_A].
-\end{equation*}
-The corresponding conditional distribution is obtained by normalization,
-\begin{equation}
-    \mathbb{P}[X_A \mid X_C = x_C] = \frac{\mathbb{\tilde{P}}[X_A \mid X_C = x_C]}{\mathbb{\tilde{P}}[X_A \mid X_C = x_C][\emptyset]}
-    = \frac{\mathbb{\tilde{P}}[X_A \mid X_C = x_C]}
-    {\displaystyle \sum_{x_A} \mathbb{\tilde{P}}[X_A = x_A \mid X_C = x_C]}.
-\end{equation}
-
-
-Thus conditional probabilities are obtained by contracting the activation/joint tensor with one–hot evidence tensors and renormalizing the resulting slice.
-In a Computation–Activation Network, inference with evidence therefore corresponds to contracting the activation network with one–hot tensors encoding observed variables and reading out the resulting activation on the query legs.
-
-\maxf{Accounting example here?}
+%% BAD NOTATION
+%Having described how independence structures induce sparse tensor–network factorizations of the activation (and hence joint) tensor via the Hammersley-Clifford theorem (\theref{the:factorizationHammersleyClifford}) in the previous section, we now turn to inference.
+%In this section we explain how standard inference queries, namely marginals and conditional probabilities, are realized as tensor contractions of the resulting decomposed network.
+%
+%In the graphical–model CAN with identity statistic, the joint distribution is represented by the activation tensor $\xi[X_V] = \mathbb{P}[X_V]$ on the variable set $V$.
+%For any subset $A \subseteq V$, the marginal distribution on $X_A$ is obtained by contracting all non–query legs with trivial tensors $I[X_v]$:
+%\[
+%    \mathbb{P}[X_A]
+%    =
+%    \bigl\langle
+%    \mathbb{P}[X_V],
+%    \{ I[X_v] : v \in V \setminus A \}
+%    \bigr\rangle[X_A].
+%\]
+%In words, we close all legs corresponding to variables outside $A$ with identity tensors and read off the resulting tensor on the remaining open legs $X_A$.
+%In the Markov/activation network representation of Section~3.3, computing a marginal thus corresponds to closing all non–query nodes and edges and evaluating the resulting contracted network on the query variables.
+%
+%We can interpret conditionals as normalized evidence slices. Let $A,C \subseteq V$ and fix evidence $X_C = x_C$.
+%Using the one–hot encodings $\epsilon_{x_c}[X_c]$ from \defref{def:onehotenc}, we define the unnormalized slice
+%\begin{equation*}
+%    \mathbb{\tilde{P}}[X_A \mid X_C = x_C]:=
+%    \bigl\langle
+%    \mathbb{P}[X_V],
+%    \{\epsilon_{x_c}[X_c] : c \in C\},
+%    \{ I[X_v] : v \in V \setminus (A \cup C) \}
+%    \bigr\rangle[X_A].
+%\end{equation*}
+%The corresponding conditional distribution is obtained by normalization,
+%\begin{equation}
+%    \mathbb{P}[X_A \mid X_C = x_C] = \frac{\mathbb{\tilde{P}}[X_A \mid X_C = x_C]}{\mathbb{\tilde{P}}[X_A \mid X_C = x_C][\emptyset]}
+%    = \frac{\mathbb{\tilde{P}}[X_A \mid X_C = x_C]}
+%    {\displaystyle \sum_{x_A} \mathbb{\tilde{P}}[X_A = x_A \mid X_C = x_C]}.
+%\end{equation}
+%
+%
+%Thus conditional probabilities are obtained by contracting the activation/joint tensor with one–hot evidence tensors and renormalizing the resulting slice.
+%In a Computation–Activation Network, inference with evidence therefore corresponds to contracting the activation network with one–hot tensors encoding observed variables and reading out the resulting activation on the query legs.
+%
+%\maxf{Accounting example here?}

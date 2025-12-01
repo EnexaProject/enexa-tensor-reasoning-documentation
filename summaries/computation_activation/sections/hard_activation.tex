@@ -4,32 +4,33 @@ A tensor-based representation of propositional logic is developed by encoding bo
 
 \subsection{Propositional Semantics by Boolean Tensors}
 
-We define
-\begin{itemize}
-    \item a \emph{propositional formula} as a boolean-valued tensor
-    \begin{align*}
-        \formulaat{\shortcatvariables} \defcols \atomstates \rightarrow \ozset \subset \rr \, ,
-    \end{align*}
-    \item a \emph{model} of a propositional formula as a state $\shortcatindices \in \atomstates$, which fulfills
-    $% \begin{align*}
-    \formulaat{\indexedshortcatvariables}=1 \, ,
-    $% \end{align*}
-    where we associate $\text{True}\leftrightarrow 1$ and $\text{False}\leftrightarrow 0$,
-    \item and the propositional formula to be \emph{satisfiable}, if there is a model.
-\end{itemize}
+%We define
+%\begin{itemize}
+%    \item a \emph{propositional formula} as a boolean-valued tensor
+%    \begin{align*}
+%        \formulaat{\shortcatvariables} \defcols \atomstates \rightarrow \ozset \subset \rr \, ,
+%    \end{align*}
+%    \item a \emph{model} of a propositional formula as a state $\shortcatindices \in \atomstates$, which fulfills
+%    $% \begin{align*}
+%    \formulaat{\indexedshortcatvariables}=1 \, ,
+%    $% \end{align*}
+%    where we associate $\text{True}\leftrightarrow 1$ and $\text{False}\leftrightarrow 0$,
+%    \item and the propositional formula to be \emph{satisfiable}, if there is a model.
+%\end{itemize}
 
-% \begin{definition}
-%     \label{def:formulas}
-%     A \emph{propositional formula} $\formulaat{\shortcatvariables}$ depending on $\atomorder$ atoms $\catvariableof{\atomenumerator}$ is a boolean-valued tensor
-%     \begin{align*}
-%         \formulaat{\shortcatvariables} \defcols \atomstates \rightarrow \ozset \subset \rr \, .
-%     \end{align*}
-%     We call a state $\shortcatindices \in \atomstates$ a \emph{model} of a propositional formula $\formula$, if
-%     \begin{align*}
-%         \formulaat{\indexedshortcatvariables}=1 \, .
-%     \end{align*}
-%     If there is a model to a propositional formula, we say the formula is \emph{satisfiable}.
-% \end{definition}
+ \begin{definition}
+     \label{def:formulas}
+     A \emph{propositional formula} $\formulaat{\shortcatvariables}$ depending on $\atomorder$ atoms $\catvariableof{\atomenumerator}$ is a boolean-valued tensor
+     \begin{align*}
+         \formulaat{\shortcatvariables} \defcols \atomstates \rightarrow \ozset \subset \rr \, .
+     \end{align*}
+     We call a state $\shortcatindices \in \atomstates$ a \emph{model} of a propositional formula $\formula$, if
+     \begin{align*}
+         \formulaat{\indexedshortcatvariables}=1 \, ,
+     \end{align*}
+     where we associate $\text{True}\leftrightarrow 1$ and $\text{False}\leftrightarrow 0$.
+     If there is a model to a propositional formula, we say the formula is \emph{satisfiable}.
+ \end{definition}
 
 \input{../examples/prop_formula_coordinatewise.tex}
 
@@ -73,8 +74,8 @@ This basis encoding $\bencodingofat{\formula}{\headvariableof{\formula},\shortca
 \begin{align}
     \label{eq:basisencnegsum}
     \bencodingofat{\formula}{\headvariableof{\formula},\shortcatvariables}
-    = \formulaat{\shortcatvariables} \otimes \tbasisat{\headvariableof{\formula}}
-    + \lnot\formulaat{\shortcatvariables} \otimes \fbasisat{\headvariableof{\formula}} \, .
+    = \tbasisat{\headvariableof{\formula}} \otimes \formulaat{\shortcatvariables}
+    + \fbasisat{\headvariableof{\formula}} \otimes \lnot\formulaat{\shortcatvariables} \, .
 \end{align}
 In our graphical notation this property is visualized by
 \begin{center}
@@ -187,7 +188,7 @@ This allows to define entailment between two propositional formulas as follows.
 \end{definition}
 
 % Relation to classical definition of entailment
-Classically (see e.g. \cite{russell_artificial_2021}), one defined entailment in propositional logics, based on the unsatisfiability of $\kb\land\lnot\exformula$.
+Classically (see e.g. \cite{russell_artificial_2021}) entailment in propositional logics is defined as the the unsatisfiability of $\kb\land\lnot\exformula$.
 This is equivalent to \defref{def:logicalEntailment}, since $\contraction{\kb,\lnot\exformula}=0$ is equivalent to $\contraction{\kb \land (\lnot\exformula)}=0$, which is the unsatisfiability of $\kb\land\lnot\exformula$.
 
 Entailment is the central operation of "logical inference", i.e. deduce true statements from known statements.
@@ -206,14 +207,12 @@ To show efficient repesentations we will use the following identities.
 
 \begin{lemma}[Computation Network Symmetries]
     \label{lem:comNetSymmetries}
-    We have
+    We have for the $\catorder$-ary $\land$-connective (where $\catorder\in\nn$) and the unary $\lnot$-connective that
     \begin{align*}
         \contractionof{\tbasisat{\headvariable},\bencodingofat{\land}{\headvariable,\shortcatvariables}}{\shortcatvariables}
         =
         \bigotimes_{\catenumeratorin} \tbasisat{\catvariableof{\catenumerator}}
-    \end{align*}
-    and
-    \begin{align*}
+        \andspace
         \contractionof{\tbasisat{\headvariable},\bencodingofat{\lnot}{\headvariable,\catvariable}}{\catvariable}
         =
         \fbasisat{\catvariable} \, .
@@ -307,9 +306,9 @@ Such inference methods are nown e.g. as Constraint Propagation.
 
 \input{../examples/sudoku_message_passing.tex}
 
-\begin{example}{Sudoku continued}
-    For the Sudoku example, a local contraction of the left- and right-hand-side of~\eqref{eq:sudokukb} means that only direct connections via the basic Sudoku rules and the known board are checked.
-    If the local contraction amounts to zero, the direct Sudoku rules already imply, that $X_{r0,r1,c0,c1,n}$ must be true/is the only possible choice.
-    In most cases the local contraction will not lead to $0$.
-    Then no statement can be made.
-\end{example}
+%\begin{example}{Sudoku continued}
+%    For the Sudoku example, a local contraction of the left- and right-hand-side of~\eqref{eq:sudokukb} means that only direct connections via the basic Sudoku rules and the known board are checked.
+%    If the local contraction amounts to zero, the direct Sudoku rules already imply, that $X_{r0,r1,c0,c1,n}$ must be true/is the only possible choice.
+%    In most cases the local contraction will not lead to $0$.
+%    Then no statement can be made.
+%\end{example}
