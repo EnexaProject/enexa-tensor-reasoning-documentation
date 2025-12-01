@@ -2,7 +2,9 @@
 
 A tensor-based representation of propositional logic is developed by encoding boolean variables into vectors, defining formulas as boolean tensors, and showing how logical connectives and normal forms can be expressed as tensor contractions.
 
-Here propositional logic is based on propositional formulas. Define
+\subsection{Propositional Semantics by Boolean Tensors}
+
+We define
 \begin{itemize}
     \item a \emph{propositional formula} as a boolean-valued tensor
     \begin{align*}
@@ -16,37 +18,7 @@ Here propositional logic is based on propositional formulas. Define
     \item and the propositional formula to be \emph{satisfiable}, if there is a model.
 \end{itemize}
 
-\begin{example}
-    \label{ex:propform}
-    The propositional formula defined for $d=3$ and $x_{[3]} = (x_1,x_2,x_3)\in \atomstates = \{0,1\}\times \{0,1\} \times \{0,1\}$ by
-    \begin{align*}
-        \formulaat{\shortcatvariables = x_{[3]}} = x_1 \wedge (x_2 \vee x_3)
-    \end{align*}
-    is satisfiable, since $\formulaat{\shortcatvariables = (1,1,1)} = 1$, $\formulaat{\shortcatvariables = (1,0,1)} = 1$, and $\formulaat{\shortcatvariables = (1,1,0)} = 1$ and therefore $x=(1,1,1)$, $x=(1,0,1)$, and $x=(1,1,0)$ are models of $\formulaat{\shortcatvariables}$.
-\end{example}
-
-Representing booleans by elements in $\{0,1\}$ leads to the problem, that negation is an affine transformation and can not be represented by multilinear tensors~\cite[Section 4.1.1]{goessmann2025}. Therefore, instead of using this \emph{coordinate calculus} an approach based on \emph{basis calculus} is employed, which is explained in this section.
-
-This representation of propositional formulas with respect to basis encoding also leads to \ComputationActivationNetworks{}, which were also used to describe probability distributions in the last section. In this way the soft and hard logic can be combined in one framework.
-
-\subsection{Propositional Semantics by Boolean Tensors}
-
-To be able to express different kinds of connectives and finally any propositional formula by multi-linear tensors, booleans are encoded by one-hot encodings %vectors as
-% \begin{align*}
-%     \text{True}\mapsto 
-%     1 \mapsto \begin{pmatrix}
-%         0\\1
-%     \end{pmatrix}\eqqcolon \tbasisat{Y},\\
-%     \text{False}\mapsto 
-%     0 \mapsto \begin{pmatrix}
-%         1\\0
-%     \end{pmatrix}\eqqcolon \fbasisat{Y}.
-% \end{align*}
-% This is the one-hot encoding of boolean states 
-as defined in Definition~\ref{def:onehotenc}.
-
 % \begin{definition}
-
 %     \label{def:formulas}
 %     A \emph{propositional formula} $\formulaat{\shortcatvariables}$ depending on $\atomorder$ atoms $\catvariableof{\atomenumerator}$ is a boolean-valued tensor
 %     \begin{align*}
@@ -59,7 +31,16 @@ as defined in Definition~\ref{def:onehotenc}.
 %     If there is a model to a propositional formula, we say the formula is \emph{satisfiable}.
 % \end{definition}
 
-There are different ways to represent propositional formulas based on tensor decompositions and basis encoding representation tensors.
+\input{../examples/prop_formula_coordinatewise.tex}
+
+%\begin{example}
+%    \label{ex:propform}
+%    The propositional formula defined for $d=3$ and $x_{[3]} = (\catvariableof{0},\catvariableof{1},\catvariableof{2})\in \atomstates = \{0,1\}\times \{0,1\} \times \{0,1\}$ by
+%    \begin{align*}
+%        \formulaat{\shortcatvariables = x_{[3]}} = \catvariableof{0} \wedge (\catvariableof{1} \vee \catvariableof{2})
+%    \end{align*}
+%    is satisfiable, since $\formulaat{\shortcatvariables = (1,1,1)} = 1$, $\formulaat{\shortcatvariables = (1,0,1)} = 1$, and $\formulaat{\shortcatvariables = (1,1,0)} = 1$ and therefore $x=(1,1,1)$, $x=(1,0,1)$, and $x=(1,1,0)$ are models of $\formulaat{\shortcatvariables}$.
+%\end{example}
 
 \paragraph{CP decomposition}
 Since the tensor $\formulaat{\shortcatvariables}$ is equal to one at index $x_{[d]}$ if and only if $x_{[d]}$ is a model of $\formula$, i.e. fulfills the formula, A propositional formula can be written as the sum over the one-hot encodings of its models.
@@ -67,137 +48,161 @@ Since the tensor $\formulaat{\shortcatvariables}$ is equal to one at index $x_{[
     \input{../tikz_pics/logic_representation/formula_direct.tex}
 \end{center}
 This decomposition corresponds to the CP decomposition of a tensor.
-\begin{example}
-    For the formula described in Example~\ref{ex:propform}, we have
-    \begin{align*}
-        \formulaat{X_{[3]}} &= \left(\tbasisat{X_1} \otimes \tbasisat{X_2} \otimes \tbasisat{X_3}\right) + (\tbasisat{X_1} \otimes \fbasisat{X_2} \otimes \tbasisat{X_3}) + (\tbasisat{X_1} \otimes \tbasisat{X_2} \otimes \fbasisat{X_3}),
-    \end{align*}
-    where $\tbasisat{Y} = (0,1)^T$ and $\fbasisat{Y} = (1,0)^T$. Then for the model $x_{[3]} = (1,0,1)$ it holds
-    \begin{align*}
-        \formulaat{X_{[3]}=x_{[3]}} = &\left(\tbasisat{X_1=1} \otimes \tbasisat{X_2=0} \otimes \tbasisat{X_3=1}\right) + (\tbasisat{X_1=1} \otimes \fbasisat{X_2=0} \otimes \tbasisat{X_3=1}) \\
-        &+ (\tbasisat{X_1=1} \otimes \tbasisat{X_2=0} \otimes \fbasisat{X_3=1})\\
-        = & 1\cdot 0 \cdot 1 + 1\cdot 1 \cdot 1 + 1 \cdot 0 \cdot 0 = 1.
-    \end{align*}
-\end{example}
+
+\input{../examples/prop_formula_basCP.tex}
+
+\paragraph{Model counts by contraction}
+Each coordiante of the propositional formula is either a $1$ or $0$ encoding if the indexed state is a model of the formula or not.
+In this way, the contraction $\contraction{\formula}$ counts the number of models of the propositional formula $\formula$.
+One can therefore decide the satisfiability of a formula by checking if $\contraction{\formula}>0$.
 
 \paragraph{Basis encoding}
+Representing booleans by elements in $\{0,1\}$ leads to the problem, that negation is an affine transformation and can not be represented by multilinear tensors~\cite[Section 4.1.1]{goessmann2025}.
+Therefore, instead of using this \emph{coordinate calculus} an approach based on \emph{basis calculus} is employed, which is explained in this section.
+To be able to express different kinds of connectives and finally any propositional formula by multi-linear tensors, booleans are encoded by one-hot encodings as defined in \defref{def:onehotenc}.
 Propositional formulas $\formula$ can be expressed in terms of a tensor describing the mapping and its negation by
 \begin{align}
     \label{eq:basisencboolean}
-    \bencodingofat{\formula}{\formulavar = y,\shortcatvariables = x_{[d]}}
+    \bencodingofat{\formula}{\indexedheadvariableof{\formula},\indexedshortcatvariables}
     = \begin{cases}
-          1, & \formulaat{\shortcatvariables = x_{[d]}} = y\\
-          0, & \text{else}
+          1 & \ifspace \formulaat{\indexedshortcatvariables} = \headindexof{\formula}\\
+          0 & \text{else}
     \end{cases}.
 \end{align}
-This basis encoding $\bencodingofat{\formula}{\formulavar,\shortcatvariables} \in \{0,1\}^{2\times 2^d}$ then has the form
+This basis encoding $\bencodingofat{\formula}{\headvariableof{\formula},\shortcatvariables} \in \{0,1\}^{2\times 2^d}$ then has the form
 \begin{align}
     \label{eq:basisencnegsum}
-    \bencodingofat{\formula}{\formulavar,\shortcatvariables} = \formulaat{\shortcatvariables} \otimes \tbasisat{\formulavar} + \lnot\formulaat{\shortcatvariables} \otimes \fbasisat{\formulavar}.
+    \bencodingofat{\formula}{\headvariableof{\formula},\shortcatvariables}
+    = \formulaat{\shortcatvariables} \otimes \tbasisat{\headvariableof{\formula}}
+    + \lnot\formulaat{\shortcatvariables} \otimes \fbasisat{\headvariableof{\formula}} \, .
 \end{align}
-Then the propositional formula and its negation can be represented by that tensor by
-\begin{align*}
-    \formulaat{\shortcatvariables}
-    = \contractionof{\bencodingofat{\formula}{\formulavar,\shortcatvariables},\tbasisat{\formulavar}}{\shortcatvariables}
-\end{align*}
-and
-\begin{align*}
-    \lnot\formulaat{\shortcatvariables}
-    = \contractionof{\bencodingofat{\formula}{\formulavar,\shortcatvariables},\fbasisat{\formulavar}}{\shortcatvariables} \, .
-\end{align*}
-% which are \ComputationActivationNetworks{} to the statistic $\{\formula\}$ and the hard activation tensor $\tbasisat{\formulavar}$, respectively $\fbasisat{\formulavar}$.
-
-
-%As in \cite[Section 4.2.2]{goessmann2025},
-In our graphical notation the basis encoding has the following form.
+In our graphical notation this property is visualized by
 \begin{center}
     \input{../tikz_pics/logic_representation/formula_bencoding.tex}
 \end{center}
-We further provide a more detailled example in coordinate sensitive notation in the foolowing.
-
+We further provide a more detailed example in coordinate sensitive notation in the following.
 \input{../examples/bencoding_neg_con.tex}
+
+\paragraph{Interpretation as \CompActNets{}}
+The propositional formula and its negation can be represented by that tensor by
+\begin{align*}
+    \formulaat{\shortcatvariables}
+    = \contractionof{\tbasisat{\headvariableof{\formula}},\bencodingofat{\formula}{\headvariableof{\formula},\shortcatvariables}}{\shortcatvariables}
+    \andspace
+    \lnot\formulaat{\shortcatvariables}
+    = \contractionof{\fbasisat{\headvariableof{\formula}},\bencodingofat{\formula}{\headvariableof{\formula},\shortcatvariables}}{\shortcatvariables} \, .
+\end{align*}
+Both $\formula$ and $\lnot\formula$ are thus \ComputationActivationNetworks{} to the statistic $\{\formula\}$ and the hard activation tensor $\tbasisat{\headvariableof{\formula}}$, respectively $\fbasisat{\headvariableof{\formula}}$.
+This representation of propositional formulas with respect to basis encoding thus leads to \ComputationActivationNetworks{}, which were also used to describe probability distributions in the last section.
+In this way the soft and hard logic can be combined in one framework.
+
 
 %\input{../examples/old_bencoding_coordinate_visualization.tex}
 
-\paragraph{Tensor network decomposition}
-If the propositional formula allows for a decomposition into smaller propositional formulas, the representation can be reduced by employing a tensor network structure as described in the next subsection.
+\subsection{Decomposition of Propositional Formulas}
 
-\paragraph{Model counts} At each index the propositional formula either carry a $1$ or $0$ encoding if the indexed value is true or false. This implies, that contracting the tensor with trivial $1$-tensors applied to each open leg leaving only one leg open results in a vector counting the number of models of the formula for each possible index of the open leg. Furthermore, contracting the whole tensor yields the number of models of the given formula. This is consistent with a probabalistic interpretation disscussed in later.
+We now show, that the propositional formula allows for a decomposition into connective formulas, its basis encoding decomposes into the basis encodings of the connective formulas.
 
-\subsection{Propositional Syntax leading to Tensor-Network Decompositions}
+\begin{lemma}\label{lem:formulaDecomp}
+    Let $\formulaat{\shortcatvariables}$ be a composition of a $\seldim$-ary connective formula $\exconnective$ and propositional formulas $\formulaofat{\selindex}{\shortcatvariables}$, where $\selindexin$, i.e. for $\shortcatindices\in\atomstates$ we have
+    \begin{align*}
+        \formulaat{\indexedshortcatvariables}
+        = \exconnective\left(\formulaofat{0}{\indexedshortcatvariables}, \dots, \formulaofat{\seldim-1}{\indexedshortcatvariables}\right) \, .
+    \end{align*}
+    Then we have
+    \begin{align*}
+        \bencodingofat{\formula}{\headvariableof{\formula},\shortcatvariables}
+        = \contractionof{
+        \{\bencodingofat{\exconnective}{\headvariableof{\formula},\headvariableof{[\seldim]}}\}
+            \cup \{\bencodingofat{\formulaof{\selindex}}{\headvariableof{\selindex},\shortcatvariables} \wcols \selindexin\}
+        }{\headvariableof{\formula},\shortcatvariables} \, .
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    This can be shown on each index $\shortcatindices$.
+\end{proof}
+
+For the composition of two propositional formulas $\formulaat{\shortcatvariables}$ and $\secexformula\left[\shortcatvariables\right]$ the composition by some binary connective is pictured by:
+\begin{center}
+    \input{../tikz_pics/logic_representation/unary_binary_composition}
+\end{center}
+
+Let us now define a more generic syntactical decomposition of propositional formulas.
 
 \begin{definition}
-    Define an $r$-ary connective as a function $\circ: \times_{\ell\in[r]} [2] \to [2]$.
+    \label{def:formulaDecomposition}
+    A syntactical hypergraph is a directed acyclic hypergraph $\graph=(\nodes,\edges)$ such that
+    \begin{itemize}
+        \item each hyperedge $\edge=(\incomingnodes,\outgoingnodes)$ has exactly one outgoing node, i.e. $\cardof{\outgoingnodes}=1$
+        \item each node $\nodein$ carries a boolean variable $\headvariableof{\node}$ and appears at most once as the outgoing node of a hyperedge % well-definedness
+        \item each hyperedge $(\incomingnodes,\{\node\})$ with $\incomingnodes\neq\varnothing$ is decorated by a propositional formula
+        \begin{align*}
+            \connectiveofat{\node}{\headvariableof{\incomingnodes}} \defcols \bigtimes_{\node\in\incomingnodes} [2] \rightarrow [2]
+        \end{align*}
+        \item the node not appearing as an outgoing node are labeled by $[\atomorder]$
+    \end{itemize}
+    We say that the syntactical hypergraph is single-rooted, if exactly one node $\secnode$ does not appear as an incoming node of a hyperedge.
+    In this case this unique node is called the root node. % head node
+    We assign atomic formulas to the nodes $[\atomorder]$ and recursively assign to each further node $\node$ a node formula % connective $\connectiveofat{\node}{\headvariableof{\incomingnodes}}$.
+    \begin{align*}
+        \formulaofat{\node}{\indexedshortcatvariables}
+        = \connectiveofat{\node}{[\formulaofat{\thirdnode}{\indexedshortcatvariables}\wcols\thirdnode\in\incomingnodes]} \quad \forall\shortcatindicesin\, ,
+    \end{align*}
+    where $\incomingnodes$ are the incoming nodes in the unique hyperedge with outgoing nodes $\{\node\}$.
+    We call the formula $\exformulaat{\shortcatvariables}\coloneqq\formulaofat{\secnode}{\shortcatvariables}$ to the root note $\secnode$ the syntactical composition of $\graph$ and $\graph$ is a syntactical decomposition of $\exformula$.
 \end{definition}
 
+\begin{theorem}
+    \label{the:formulaDecompositionRep}
+    For any syntactical hypergraph $\graph$ with composition $\exformula$ we have
+    \begin{align*}
+        \exformulaat{\shortcatvariables}
+        = \breakablecontractionof{
+            &\left\{
+                 \bencodingofat{\connectiveof{\node}}{\headvariableof{\node},\headvariableof{\incomingnodes}} \wcols (\incomingnodes,\{\node\})\in\edges
+            \right\} \cup \\
+            & \{\identityat{\headvariableof{\atomenumerator},\catvariableof{\atomenumerator}} \wcols \atomenumeratorin\}
+            \cup \{\tbasisat{\headvariableof{\secnode}}\}
+        }{\shortcatvariables} \, .
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    One can show this theorem by induction over the node formulas of the syntactical hypergraph, from the leafs to the root and iteratively applying \lemref{lem:formulaDecomp}.
+\end{proof}
 
-
-
-If $\formulaat{\shortcatvariables}$ is defined as the $r$-ary composition of propositional formulas $\formula_\ell, \ell\in [r]$, i.e.
-\begin{align*}
-    \formulaat{\shortcatvariables = x_{[d]}} = \circ\left( \formula_0\left[\shortcatvariables=x_{[d]}\right], \dots, \formula_{r-1}\left[\shortcatvariables=x_{[d]}\right]\right),
-\end{align*}
-then the basis encoding can be written as the contraction of the basis encoding of the $r$-ary composition and the basis encodings of the individual propositional formulas $f_\ell, \ell\in[r]$. For the composition of two propositional formulas $\formulaat{\shortcatvariables}$ and $h\left[\shortcatvariables\right]$ the composition by some binary connective is pictured below.
-\begin{center}
-    \input{../tikz_pics/logic_representation/unary_binarry_composition}
-\end{center}
-The figure can be found in~\cite[Figure 4.2 b)]{goessmann2025}, where hyperedges made up by more than two nodes represent the unaltered connection between nodes.
+Thus we have a tensor network representation of any propositional formula based on its syntactical decomposition, where the hypergraph of the syntactical decomposition equals the hypergraph of the representing tensor network.
 
 \subsection{Contractions to decide entailment}
 
-As in~\cite[Definition 5.1]{goessmann2025}, we define the entailment of two propositional formulas as follows.
+We have already seen that the contraction of a propositional formula counts its models.
+This allows to define entailment between two propositional formulas as follows.
+
 \begin{definition}[Entailment of propositional formulas]
     \label{def:logicalEntailment}
     Given two propositional formulas $\kb$ and $\exformula$ we say that $\kb$ entails $\exformula$, denoted by $\kb\models\exformula$, if any model of $\kb$ is also a model of $\exformula$, that is
     \begin{align*}
-        \uniquantwrtof{\shortatomindicesin}{\imppremhead{\kbat{\indexedshortcatvariables}=1}{\formulaat{\indexedshortcatvariables}=1}} \, .
+        \contraction{\kb,\lnot\exformula}=0 \, .
     \end{align*}
     If $\kb\models\lnot\exformula$ holds, we say that $\kb$ contradicts $\exformula$.
 \end{definition}
-This property of interest, since $\kb$ can be chosen as a knowledge base, which can be interpreted in different ways: as the support of probability distributions,
 
-This is the central operation of "logical inference", i.e. deduce true statements from known statements.
-One can in some cases understand this as "making the knowledge base more accessible": Adding deduced statements to a knowledge base does not change the knowledge base as a tensor, but one can interpret it in an easier way.
+% Relation to classical definition of entailment
+Classically (see e.g. \cite{russell_artificial_2021}), one defined entailment in propositional logics, based on the unsatisfiability of $\kb\land\lnot\exformula$.
+This is equivalent to \defref{def:logicalEntailment}, since $\contraction{\kb,\lnot\exformula}=0$ is equivalent to $\contraction{\kb \land (\lnot\exformula)}=0$, which is the unsatisfiability of $\kb\land\lnot\exformula$.
 
-
-% \begin{example}{Sudoku rules} In case we aim to solve a Sudoku, the initial board and Sudoku rules can be written in terms of a propositional formula $\kb$.
-% To encode the Sudoku each a cell in row $\ell$ and column $k$ for $\ell,k=1,\dots,9$ can be represented by a variable r$\ell$c$k=1,\dots,9$. 
-% Each Sudoku rule, e.g. that no number can be repeated in a row, can then be represented in a tensor network by a tensor connecting all variables in one row of size $9^9$.
-% Technically the tensor-network contracts to the one-hot encoded unique solution, but neither is this obvious for a human seeing the initial board nor can the contraction be performed with reasonable demand. 
-% Therefore, small entailment steps are done iteratively by finding and adding entailed (atomic) formulas concerning single coordinates of the solution.
-% Entailments of the form
-% \begin{align*}
-%     \kb \models r3c5 = 7
-% \end{align*}
-% need to be decided, which would answer the question “Given all Sudoku rules and the initial clues, is it logically necessary that the cell in row 3, col 5 must be 7?”. Since the contraction of the whole network is infeasible, the hope is to be able to decide this by just contracting locally, e.g. checking with the initial board, if the $7$ could be somewhere else in the box in the upper box row and middle box column.
-% One uses thereby the "monotonousity of entailment", i.e. when entailment holds on efficiently contractable subsets of the knowledge base then also on the full knowledge base.
-% \end{example}
-
-
-
-
+Entailment is the central operation of "logical inference", i.e. deduce true statements from known statements.
 In the tensor network representation, these entailments can be decided by contracting the whole representing tensor with the statement, that needs to be checked.
 
-% \alex{Maybe we use directly a contraction based definition of entailment (Theorem 5.2 in the report):}
-
-\begin{theorem}[{Entailment in propositional logic~\cite[Theorem 5.2]{goessmann2025}}]
-    For two propositional formulas $\kb$, $\exformula$ we have
-    \begin{align*}
-        \kb\models\exformula \iff \contraction{\kb,\lnot\exformula}=0 \, .
-    \end{align*}
-\end{theorem}
-
-\input{../examples/sudoku.tex}
+\input{../examples/sudoku_entailment}
 
 \subsection{Efficient Representation of Knowledge Bases}
 
-When having multiple formulas: Represent with multiple $\tbasis$ activation cores~\cite[Theorem 14.36]{goessmann2025}.
-
-We now investigate the representaion of knowledge bases, which are conjunctions
+We now investigate the representation of knowledge bases, which are conjunctions
 \begin{align*}
     \kbwith
-    = \bigwedge_{\selindexin} \formulaofat{\catvariableof{\selindex}}{\shortcatvariables}
+    = \bigwedge_{\selindexin} \formulaofat{\selindex}{\shortcatvariables} \, .
 \end{align*}
+To show efficient repesentations we will use the following identities.
 
 \begin{lemma}[Computation Network Symmetries]
     \label{lem:comNetSymmetries}
@@ -221,9 +226,10 @@ We now investigate the representaion of knowledge bases, which are conjunctions
 We use this to decompose knowledge bases into their individual formulas as follows.
 
 \begin{theorem}
+    For any knowledge base $\kbwith = \bigwedge_{\selindexin} \formulaofat{\selindex}{\shortcatvariables}$ it holds that
     \begin{align*}
         \kbwith
-        = \contractionof{\{\formulaofat{\catvariableof{\selindex}}{\shortcatvariables} \wcols \selindexin\}}{\shortcatvariables}
+        = \contractionof{\{\formulaofat{\selindex}{\shortcatvariables} \wcols \selindexin\}}{\shortcatvariables} \, .
     \end{align*}
 \end{theorem}
 \begin{proof}
@@ -234,19 +240,12 @@ We use this to decompose knowledge bases into their individual formulas as follo
             \cup \{\bencodingofat{\formulaof{\selindex}}{\headvariableof{\selindex},\shortcatvariables}\wcols \selindexin\}}{\shortcatvariables} \\
         &= \contractionof{
             \bigcup_{\selindexin} \{\tbasisat{\headvariableof{\selindex}},\bencodingofat{\formulaof{\selindex}}{\headvariableof{\selindex},\shortcatvariables}\wcols \selindexin\}}{\shortcatvariables} \\
-        &= \contractionof{\{\formulaofat{\catvariableof{\selindex}}{\shortcatvariables} \wcols \selindexin\}}{\shortcatvariables} \, .
+        &= \contractionof{\{\formulaofat{\selindex}{\shortcatvariables} \wcols \selindexin\}}{\shortcatvariables} \, .
     \end{align*}
 \end{proof}
 
+\input{../examples/prop_formula_kb_head_sym}
 
-
-\begin{example}
-    \alex{(see the notebook: \url{https://colab.research.google.com/drive/1p2wp61fFMu0otnfFhKoNsLiCNfWpuEsn?usp=sharing})}
-    For the example described in~\cite[Figure 4.2]{goessmann2025} with the propositional formula $\formulaat{X_{[3]} = (a,b,c)}={(a \land b) \lor \lnot c}$, we can write the formula in terms of a \ComputationActivationNetwork{} with activation tensor $\tbasis$ and computation network decomposed by the basis encodings. First, it is written with one activation vector. Second, we see that it can also be interpreted with multiple features.
-    \begin{center}
-        \input{../tikz_pics/logic_representation/old_decomposition_example}
-    \end{center}
-\end{example}
 
 % BAD NOTATION!
 %Noting that for example for $x_a=x_b=\epsilon_1=[0,1]^\intercal$
@@ -262,14 +261,14 @@ We use this to decompose knowledge bases into their individual formulas as follo
 Since contracting the whole tensor is often infeasible and for instance for the Sudoku example would correspond to solving the whole problem, local contractions can be considered to decide in some cases.
 Here a local contraction describes the calculation of contractions along few closely connected legs in the tensor network. Now, if the local contraction of any legs leads to a zero-tensor in the network decomposition, the whole contraction amounts to zero, and the knowledge base entails $f$.
 
-\begin{theorem}[Monotonocity of Propositional Logics]
+\begin{theorem}[Monotonocity of Propositional Logics]\label{the:monotonicityPL}
     If $\seckb\subset\kb$ and $\seckb\models\formula$ then also $\kb\models\formula$.
 \end{theorem}
 \begin{proof}
     Since $\seckb\models\formula$ it holds that $\contraction{\seckb,\lnot\formula}=0$ and thus  $\contractionof{\seckb,\lnot\formula}{\shortcatvariables}=\zerosat{\shortcatvariables}$.
     Denoting by $\kb/\seckb$ the conjunctions of formulas in $\kb$ not in $\seckb$, we have
     \begin{align*}
-        \contraction{\kbwith,\lnot\formulawith}%{\shortcatvariables}
+        \contraction{\kbwith,\lnot\formulawith}
         &= \contraction{\kb/\seckb[\shortcatvariables],\seckb,\lnot\formulawith} \\
         &= \contraction{\kb/\seckb[\shortcatvariables],\contractionof{\seckb[\shortcatvariables],\lnot\formula[\shortcatvariables]}{\shortcatvariables}} \\
         &= \contraction{\kb/\seckb[\shortcatvariables],\zerosat{\shortcatvariables}} \\
@@ -282,16 +281,31 @@ This is sound by the above theorem, but not complete, since it can happen that n
 
 We can futhermore add entailed formulas to the knowledge base without the latter, as we show next.
 
-\begin{theorem}
+\begin{theorem}[Invariance of adding Entailed Formulas]\label{the:addingEntailed}
     If $\kb\models\formula$ then
     \begin{align*}
         \kbwith
         = \contractionof{\kb,\formula}{\shortcatvariables} \, .
     \end{align*}
 \end{theorem}
+\begin{proof}
+    We use that $\formula[\shortcatvariables]+\lnot\formula[\shortcatvariables]=\onesat{\shortcatvariables}$ and thus
+    \begin{align*}
+        \kbwith
+        &= \contractionof{\kb[\shortcatvariables],(\formula[\shortcatvariables]+\lnot\formula[\shortcatvariables])}{\shortcatvariables} \\
+        &= \contractionof{\kb[\shortcatvariables],\formula[\shortcatvariables]}{\shortcatvariables}  + \contractionof{\kb[\shortcatvariables],\lnot\formula[\shortcatvariables]}{\shortcatvariables}  \\
+        &= \contractionof{\kb[\shortcatvariables],\formula[\shortcatvariables]}{\shortcatvariables} \, .
+    \end{align*}
+\end{proof}
 
-This motivates an message-passing approach to
+
+One can understand this theorem as "making the knowledge base more accessible":
+Adding deduced statements to a knowledge base does not change the knowledge base as a tensor, but one can interpret it in an easier way.
+
+This motivates an message-passing approach to decide entailment by iteratively adding entailed formulas to the knowledge base and checking entailment on smaller parts of the knowledge base.
 Such inference methods are nown e.g. as Constraint Propagation.
+
+\input{../examples/sudoku_message_passing.tex}
 
 \begin{example}{Sudoku continued}
     For the Sudoku example, a local contraction of the left- and right-hand-side of~\eqref{eq:sudokukb} means that only direct connections via the basic Sudoku rules and the known board are checked.
@@ -299,10 +313,3 @@ Such inference methods are nown e.g. as Constraint Propagation.
     In most cases the local contraction will not lead to $0$.
     Then no statement can be made.
 \end{example}
-
-% By~\cite[Theorem 5.2]{goessmann2025} the following statements hold:
-% \begin{align*}
-%     \kb \text{ entails } \exformula \text{ i.e. } \kb\models\exformula &\iff \contraction{\kb,\lnot\exformula} = 0 \text{ and }\\
-%     \kb \text{ contradicts } \exformula \text{ i.e. } \kb\models\lnot\exformula &\iff \contraction{\kb,\exformula} = 0.
-% \end{align*}
-% Additionally, a tensor can be defined, which can encode entailment and contradiction properties simultaneously, see~\cite[Theorem 5.3]{goessmann2025}.
