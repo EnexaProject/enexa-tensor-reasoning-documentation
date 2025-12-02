@@ -1,14 +1,15 @@
 \section{\HybridLogicNetworks{}}\label{sec:hyb_rep}
 
-Let us now
+Let us now exploit the common formulation of logical formulas and probabilistic models in \CompActNets{} to define hybrid models, which combine both aspects.
+We call \CompActNets{} in the special case of boolean statistics $\sstat$ \HybridLogicNetworks{}.
 
 \subsection{Parametrization}
 
 We now investigate hybrid logical and probabilistic models, which we want to call \HybridLogicNetworks{} (HLNs).
 
-\begin{definition}[\HybridLogicNetwork{}]
+\begin{definition}[\HybridLogicNetwork{} (HLN)]
     \label{def:hybridLogicNetwork}
-    Given a boolean statistic $\hlnstat$ we call any element of $\elrealizabledistsof{\hlnstat}$ a \HybridLogicNetwork{} (HLN).
+    Given a boolean statistic $\hlnstat$ we call any element of $\elrealizabledistsof{\hlnstat}$ a \HybridLogicNetwork{}.
     The extended canonical parameter set to $\hlnstat$ is the set
     \begin{align*}
         \hybridparamset\coloneqq
@@ -25,6 +26,7 @@ We now investigate hybrid logical and probabilistic models, which we want to cal
     \end{align*}
 \end{definition}
 
+%% Parametrization explanation
 We notice that the parametrization by $\hybridparamset$ is one-to-one for any non-vanishing elementary activation tensor up to a scalar factor.
 Given an arbitrary elementary activation tensor $\bigotimes_{\selindexin}\acttensorlegwith$, we can always find a corresponding tuple in $\hybridparamset$ by choosing\footnote{Here $\nonzeroof{\cdot}$ is the indicator of non-zero entries acting coordinatewise.}
 \begin{align*}
@@ -54,11 +56,12 @@ Then we have by construction that there is $\lambda>0$ with
 
 Let us demonstrate the utility of \HybridLogicNetworks{} with an example from accounting.
 
-\input{../examples/hln_accounting}
+\input{../examples/hln_accounting_rep}
 
 \subsection{Parameter Estimation in \HybridLogicNetworks{}}
 
-Let us now briefly discuss how \HybridLogicNetworks{} can be trained on data, based on likelihood maximization.
+%% Likelihood maximation
+Let us now briefly discuss how \HybridLogicNetworks{} can be trained on data based on likelihood maximization.
 Given a dataset $\dataset$ consisting of $\datanum$ independent and identically distributed samples from an unknown distribution, we want to find a \HybridLogicNetwork{} $\hlnwith$ that maximizes the data likelihood
 \begin{align*}
     \lossof{\hybridparam} \coloneqq -\frac{1}{\datanum} \sum_{\decindexin} \lnof{\probofat{\hlnparameters}{\shortcatvariables=\shortcatindices^{\datindex}}}
@@ -82,7 +85,7 @@ Since $\hardparam$ influences only the second term the best hard parameters can 
 \begin{align*}
     \hardlegset = \{\selindex \wcols \datameanat{\indexedselvariable}\in\ozset\} \andspace \headindexof{\selindex} = \datameanat{\indexedselvariable} \, .
 \end{align*}
-We further optimize the coordinates $\selindex\in[\seldim]/\hardlegset$ of $\canparamwithin$ alterantingly by the coordiante descent steps
+We further optimize the coordinates $\selindex\in[\seldim]/\hardlegset$ of $\canparamwithin$ alternatingly by the coordinate descent steps
 \begin{align*}
     \difofwrt{\lossof{\hybridparam}}{\canparamat{\indexedselvariable}} = 0
     \Leftrightarrow
@@ -97,16 +100,15 @@ where
     \hypercoreat{\headvariableof{\selindex}}
     = \contractionof{\{\bencodingof{\enumformula} \wcols \selindexin\}
         \cup\{\softactsymbolof{\secselindex,\canparam} \wcols \secselindex\in[\seldim]\ncond\secselindex\neq\selindex\}
-        \cup\{\basemeasure\}}{\headvariableof{\selindex}}
+        \cup\{\basemeasure\}}{\headvariableof{\selindex}} \, .
 \end{align*}
-Let us summarize the procedure in Algorithm~\ref{alg:AMM_HLN}.
+Based on an interpretation of the coordinate descent steps as matching steps for the mean parameters or moments to $\formulaof{\selindex}$, we call this method alternating moment matching for \HybridLogicNetworks{} and provide pseudocode for it it in \algoref{alg:AMM_HLN}.
 %% Forward inference in inner loop
 We notice, that during the coordinate descent steps the computation of the marginal probability of the variable $\headvariableof{\selindex}$ with respect to the current network parameters is required.
-This is the computational bottleneck of the algorithm for 
-% CITE CAMEL AND STUF
+This is the computational bottleneck of the algorithm and can be approached by various approximate inference methods, e.g., variational inference (see for example the CAMEL method \cite{ganapathi_constrained_2008}).
 
 \begin{algorithm}[hbt!]
-    \caption{Alternating Moment Matching for \HybridLogicNetwork{}s}\label{alg:AMM_HLN}
+    \caption{Alternating Moment Matching for \HybridLogicNetworks{}}\label{alg:AMM_HLN}
     \begin{algorithmic}
         \Require Mean parameter $\datameanwith$
         \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\hlnsetof{\formulaset}$
@@ -141,6 +143,8 @@ This is the computational bottleneck of the algorithm for
 
 It can be shown, that the algorithm converges if and only if there is a \HybridLogicNetwork{} matching the empirical moments of the data.
 For more details we refer to~\cite[Chapter~9]{goessmann2025}.
+
+\input{../examples/hln_accounting_amm}
 
 \subsection{Entailment by \HybridLogicNetworks{}}
 
