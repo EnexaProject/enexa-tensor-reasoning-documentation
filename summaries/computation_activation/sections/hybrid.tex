@@ -1,78 +1,10 @@
 \section{\HybridLogicNetworks{}}\label{sec:hyb_rep}
-% from \charef{cha:networkRepresentation} (Chapter 8: Hybrid logic representation):
-% \begin{itemize}
-%     \item Unification of both frameworks by allowing for arbitrary elementary activation tensors
-%     \item Entailment decision by hard parts (Theorem 8.12)
-%     \item Optional: Mean parameter polytope, hard parameters by corresponding face measures
-%     \item Optional: Extension by $\cpformat$ activation tensors
-% \end{itemize}
 
-% from \charef{cha:networkReasoning} (Chapter 9: Hybrid logic inference):
-% \begin{itemize}
-%     \item Optional (since a learning method): Alternating Moment Matching for maximum likelihood estimation
-%     \item Optional: Structure learning
-% \end{itemize}
+Let us now
 
-Logical and probabilistic reasoning can be unified in a single tensor-network architecture called a Hybrid Logic Network (HLN).
+\subsection{Parametrization}
 
-In Markov logic networks, each state gets assigned a real-valued probability based on the basis encoding of a boolean statistic as a computation network and assigned probabilities of these features in terms of a positive elementary activation network.
-
-\begin{definition}[\MarkovLogicNetwork]
-    \label{def:mln} A
-    \MarkovLogicNetworks{} is an element of and exponential family $\mlnexpfamily$ with sufficient statistic defined coordinatewise by propositional formulas $f_\ell$
-    \begin{align*}
-        \hlnstat \defcols\atomstates \rightarrow \bigtimes_{\selindexin}[2] \subset \rr^{p}, \quad \shortcatindices \mapsto (f_\ell[\shortcatvariables=\shortcatindices])_{\ell\in[d]}.
-    \end{align*}
-\end{definition}
-That means, they have the form
-\begin{align*}
-    \mathbb{P}^{(\mathcal{F},\theta,\mathbb{I})}[{\shortcatvariables}]
-    %&= \normalizationof{ \{\bencodingofat{f_{\selindex}}{\headvariableof{\selindex},\shortcatvariables} \wcols \selindexin\}\cup\{\softactlegwith \wcols \selindexin\}}{\shortcatvariables} \, \\
-    &= \normalizationof{\hlnstatccwith,\alpha^\theta[Y_{[d]}]}{\shortcatvariables}
-\end{align*}
-with $\alpha^\theta[Y_{[d]}]=\bigotimes_{\selindexin} \alpha^{\ell,\theta}[Y_\ell]$ with
-\begin{align*}
-    \softactleg\left[\indexedheadvariableof{\selindex}\right]
-    &= \expof{\canparamat{\indexedselvariable} \cdot \indexinterpretationofat{\selindex}{\headindexof{\selindex}} }
-\end{align*}
-% \begin{align*}
-%     \mathbb{P}^{(\mathcal{F},\theta,\mathbb{I})}[{\shortcatvariables}]
-%     = \normalizationof{\expof{\contractionof{\sigma^{\mathcal{F}}[{\shortcatvariables,\selvariable}],\canparamwith}{\shortcatvariables}},\mathbb{I}}{\shortcatvariables},
-% \end{align*}
-where $\theta[L]\in\mathbb{R}^{p}$, $I$ is an interpretation map.
-The architecture is visualized in Figure~\ref{fig:mlnFactor}.
-\begin{figure}[t]
-    \begin{center}
-        \input{../tikz_pics/hybrid_network_representation/factor.tex}
-    \end{center}
-    \caption{Factor of a \MarkovLogicNetwork{} to a formula $\enumformula$, represented as the contraction of a computation core $\enumformulacc$ and an activation core $\softactleg$.
-    While the computation core $\enumformulacc$ prepares based on basis calculus a categorical variable representing the value of the statistic formula $\enumformula$ dependent on assignments to the distributed variables, the activation core multiplies an exponential weight to coordinates satisfying the formula.
-    }
-    \label{fig:mlnFactor}
-\end{figure}
-
-In Hard Logic Networks, on the other hand, states only get assigned true or false values $0/1$.
-Basis encodings of propositional formulas can be interpreted as a CAN, where the basis encodings build the computation network and the boolean elementary activation network decides, which outcomes of the statistic are possible/ get assigned a true value.
-
-\begin{definition}[\HardLogicNetwork{}]
-    \label{def:hardLogicNetwork}
-    Given a boolean statistic $\hlnstat:\bigtimes_{k\in[d]}[2]\to [2]^p$, a subset $\hardlegset\subset[\seldim]$ and a tuple $\headindexof{\hardlegset}\in\bigtimes_{\selindex\in\hardlegset}[2]$ the \HardLogicNetwork{} is the distribution
-    \begin{align*}
-        \probofat{\hlnstat,\hardparam}{\shortcatvariables}
-        = \normalizationof{\hlnstatccwith,\hardacttensorwith}{\shortcatvariables}
-    \end{align*}
-    where $\hardacttensorwith=\bigotimes_{\selindexin}\hardactlegwith$ and for $\selindexin$
-    \begin{align*}
-        \hardactlegwith =
-        \begin{cases}
-            \onehotmapofat{\headindexof{\selindex}}{\headvariableof{\selindex}} & \ifspace \selindex\in\hardlegset  \\
-            \onesat{\headvariableof{\selindex}} & \ifspace \selindex\notin\hardlegset \\
-        \end{cases} \, ,
-    \end{align*}
-    provided that the normalization exists.
-\end{definition}
-Note that this distribution is uniform on its support.
-Combining the \HardLogicNetwork{} and the \MarkovLogicNetwork{} leads to the representation of a probability density only over states, that fulfill an imposed hard logic, where the elementary activation tensors are allowed to take binary or real values.
+We now investigate hybrid logical and probabilistic models, which we want to call \HybridLogicNetworks{} (HLNs).
 
 \begin{definition}[\HybridLogicNetwork{}]
     \label{def:hybridLogicNetwork}
@@ -80,7 +12,7 @@ Combining the \HardLogicNetwork{} and the \MarkovLogicNetwork{} leads to the rep
     The extended canonical parameter set to $\hlnstat$ is the set
     \begin{align*}
         \hybridparamset\coloneqq
-        \{\hardparam)\wcols \variableset\subset[\seldim]\ncond \headindexof{\variableset}\in\bigtimes_{\selindex\in\variableset}[2]\} \times \parspace \, .
+        \{\hardparam\wcols \hardlegset\subset[\seldim]\ncond \headindexof{\hardlegset}\in\bigtimes_{\selindex\in\hardlegset}[2]\} \times \parspace \, .
     \end{align*}
     To each \HybridLogicNetwork{} $\hlnwith$ we find a tuple $\hybridparam$ consistent of a subset $\hardlegset\subset[\seldim]$, a tuple $\headindexof{\hardlegset}\in\bigtimes_{\selindex\in\hardlegset}[2]$ and $\canparamwithin$ such that
     \begin{align*}
@@ -93,30 +25,151 @@ Combining the \HardLogicNetwork{} and the \MarkovLogicNetwork{} leads to the rep
     \end{align*}
 \end{definition}
 
-The architecture is demonstrated on an example in accounting logic.
+We notice that the parametrization by $\hybridparamset$ is one-to-one for any non-vanishing elementary activation tensor up to a scalar factor.
+Given an arbitrary elementary activation tensor $\bigotimes_{\selindexin}\acttensorlegwith$, we can always find a corresponding tuple in $\hybridparamset$ by choosing\footnote{Here $\nonzeroof{\cdot}$ is the indicator of non-zero entries acting coordinatewise.}
+\begin{align*}
+    \hardlegset = \{\selindex \wcols \nonzeroof{\acttensorlegwith}\neq\onesat{\headvariableof{\selindex}}\} \, ,
+\end{align*}
+further for all $\selindex\in\hardlegset$
+\begin{align*}
+    \headindexof{\selindex}
+    = \begin{cases}
+          0 & \ifspace \nonzeroof{\acttensorlegwith} = \onehotmapofat{0}{\headvariableof{\selindex}} \\
+          1 & \ifspace \nonzeroof{\acttensorlegwith} = \onehotmapofat{1}{\headvariableof{\selindex}} \,
+    \end{cases}
+\end{align*}
+and a parameter vector $\canparamwithin$ defined for all $\selindexin$ as
+\begin{align*}
+    \canparamat{\indexedselvariable} =
+    \begin{cases}
+        0 & \ifspace \selindex\in\hardlegset \\
+        \lnof{\frac{\acttensorlegat{\headvariableof{\selindex}=1}}{\acttensorlegat{\headvariableof{\selindex}=1}}} & \ifspace \selindex\notin\hardlegset \, .
+    \end{cases}
+\end{align*}
+Then we have by construction that there is $\lambda>0$ with
+\begin{align*}
+    \bigotimes_{\selindexin}\acttensorlegwith
+    = \lambda \cdot \paracttensorwith \, .
+\end{align*}
+
+Let us demonstrate the utility of \HybridLogicNetworks{} with an example from accounting.
 
 \input{../examples/hln_accounting}
 
-Also entailment can be checked for \HybridLogicNetwork{}. Assuming a positive probability of all models of the integrated \HardLogicNetwork{}, the entailment can be checked only considering the \HardLogicNetwork{}. Here a query is a formula to retrieve information from a given network.
+\subsection{Parameter Estimation in \HybridLogicNetworks{}}
 
+Let us now briefly discuss how \HybridLogicNetworks{} can be trained on data, based on likelihood maximization.
+Given a dataset $\dataset$ consisting of $\datanum$ independent and identically distributed samples from an unknown distribution, we want to find a \HybridLogicNetwork{} $\hlnwith$ that maximizes the data likelihood
+\begin{align*}
+    \lossof{\hybridparam} \coloneqq -\frac{1}{\datanum} \sum_{\decindexin} \lnof{\probofat{\hlnparameters}{\shortcatvariables=\shortcatindices^{\datindex}}}
+    \, .
+\end{align*}
+We notice that this is $\infty$ if and only if there is a data point $\decindexin$ with
+\begin{align*}
+    \hlnformulaat{\shortcatvariables=\shortcatindices^{\datindex}}=0 \, .
+\end{align*}
+If this is not the case, we can rewrite the loss using the empirical mean vector $\datameanwith\in\parspace$, which is defined for $\selindexin$ as
+\begin{align*}
+    \datameanat{\indexedselvariable}
+    = \frac{1}{\datanum} \sum_{\decindexin} \formulaofat{\selindex}{\shortcatvariables=\shortcatindices^{\datindex}} \, ,
+\end{align*}
+by
+\begin{align*}
+    \lossof{\hybridparam} =
+    \contraction{\datameanwith,\canparamwith} - \lnof{\contraction{\paracttensorwith,\bencsstatwith}} \, .
+\end{align*}
+Since $\hardparam$ influences only the second term the best hard parameters can be found by
+\begin{align*}
+    \hardlegset = \{\selindex \wcols \datameanat{\indexedselvariable}\in\ozset\} \andspace \headindexof{\selindex} = \datameanat{\indexedselvariable} \, .
+\end{align*}
+We further optimize the coordinates $\selindex\in[\seldim]/\hardlegset$ of $\canparamwithin$ alterantingly by the coordiante descent steps
+\begin{align*}
+    \difofwrt{\lossof{\hybridparam}}{\canparamat{\indexedselvariable}} = 0
+    \Leftrightarrow
+    \canparamat{\indexedselvariable}
+    = \lnof{
+        \frac{\meanparamat{\indexedselvariable}}{(1-\meanparamat{\indexedselvariable})}
+        \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
+    } \, .
+\end{align*}
+where
+\begin{align*}
+    \hypercoreat{\headvariableof{\selindex}}
+    = \contractionof{\{\bencodingof{\enumformula} \wcols \selindexin\}
+        \cup\{\softactsymbolof{\secselindex,\canparam} \wcols \secselindex\in[\seldim]\ncond\secselindex\neq\selindex\}
+        \cup\{\basemeasure\}}{\headvariableof{\selindex}}
+\end{align*}
+Let us summarize the procedure in Algorithm~\ref{alg:AMM_HLN}.
+%% Forward inference in inner loop
+We notice, that during the coordinate descent steps the computation of the marginal probability of the variable $\headvariableof{\selindex}$ with respect to the current network parameters is required.
+This is the computational bottleneck of the algorithm for 
+% CITE CAMEL AND STUF
 
+\begin{algorithm}[hbt!]
+    \caption{Alternating Moment Matching for \HybridLogicNetwork{}s}\label{alg:AMM_HLN}
+    \begin{algorithmic}
+        \Require Mean parameter $\datameanwith$
+        \Ensure Canonical parameter $\canparamwith$, such that $\expdist$ is the (approximative) moment projection of $\empdistribution$ onto $\hlnsetof{\formulaset}$
+        \iosepline
+        \State Set
+        \begin{align*}
+            \hardlegset = \Big\{ \selindex \wcols \selindexin \ncond \meanparamat{\indexedselvariable}\in\{0,1\} \Big\}
+        \end{align*}
+        and a tuple $\headindexof{\hardlegset}$ with $\headindexof{\selindex}=\meanparamat{\indexedselvariable}$ for $\selindex\in\hardlegset$.
+        \State Set $\canparamwith=\zerosat{\selvariable}$
+        \While{Convergence criterion is not met}
+            \ForAll{$\selindex\in[\seldim]/\hardlegset$}
+                \State Compute
+                \begin{align*}
+                    \hypercoreat{\headvariableof{\selindex}}
+                    = \contractionof{\{\bencodingof{\enumformula} \wcols \selindexin\}
+                        \cup\{\softactsymbolof{\secselindex,\canparam} \wcols \secselindex\in[\seldim]\ncond\secselindex\neq\selindex\}
+                        \cup\{\basemeasure\}}{\headvariableof{\selindex}}
+                \end{align*}
+                \State Set
+                \begin{align*}
+                    \canparamat{\indexedselvariable} = \lnof{
+                        \frac{\meanparamat{\indexedselvariable}}{(1-\meanparamat{\indexedselvariable})}
+                        \cdot \frac{\hypercoreat{\headvariableof{\selindex}=0}}{\hypercoreat{\headvariableof{\selindex}=1}}
+                    }
+                \end{align*}
+            \EndFor
+        \EndWhile
+        \State \Return $(\hardlegset,\headindexof{\hardlegset},\canparamwith)$
+    \end{algorithmic}
+\end{algorithm}
+
+It can be shown, that the algorithm converges if and only if there is a \HybridLogicNetwork{} matching the empirical moments of the data.
+For more details we refer to~\cite[Chapter~9]{goessmann2025}.
+
+\subsection{Entailment by \HybridLogicNetworks{}}
+
+Also entailment can be checked for \HybridLogicNetwork{}.
+Assuming a positive probability of all models of the integrated \HardLogicNetwork{}, the entailment can be checked only considering the \HardLogicNetwork{}.
+Here a query is a formula to retrieve information from a given network.
 
 \begin{theorem}[{~\cite[Theorem 8.12]{goessmann2025}}]
-    Let $\mathbb{P}^{\mathcal{F},(A,y_A,\theta)} [\catvariableof{[d]}]$ be a \HybridLogicNetwork{}. Given a query formula $g$, we have that $\mathbb{P}^{\mathcal{F},(A,y_A,\theta)}[\catvariableof{[d]}]\models~g$ if and only if
+    \alex{Unclear: Would need to add probabilistic entailment..}
+    Let $\probofat{\hlnparameters}{\shortcatvariables}$ be a \HybridLogicNetwork{}.
+    Given a query formula $g$, we have that $\probofat{\hlnparameters}{\shortcatvariables}\models~g$ if and only if
     \begin{align*}
-        f^{\mathcal{F},(A,y_A)}\models g,
+        \hlnformula \models g,
     \end{align*}
-    where the tuple $(A,y_A)$ denote the hard logic part of the network and
+    where %the tuple $(A,y_A)$ denote the hard logic part of the network and
     \begin{align*}
-        \hlnformula[\catvariableof{[d]}] =
+        \hlnformulawith =
         \left(\bigwedge_{\selindex\in\hardlegset\wcols\headindexof{\selindex}=1} \enumformulaat{\shortcatvariables}\right)
         \land
         \left(\bigwedge_{\selindex\in\hardlegset\wcols\headindexof{\selindex}=0} \lnot\enumformulaat{\shortcatvariables}\right).
     \end{align*}
 \end{theorem}
+\begin{proof}
+    \alex{Could be done based on support.}
+\end{proof}
 
 \begin{example}{Entailment for Accounting Logic}
-    To check entailment of the query formula defined by
+    \alex{Bad example: Minterms are only entailed by themselves.}
+    To check entailment of the query formula defined by the minterm
     \begin{align*}
         g[X_{A_1}=0,X_{A_2}=1,X_F=1] = 1
     \end{align*}
@@ -131,10 +184,12 @@ Also entailment can be checked for \HybridLogicNetwork{}. Assuming a positive pr
         &= \sum_{\substack{x_{A_1},x_{A_2},x_{F} \in \{0,1\}\\ (x_{A_1},x_{A_2},x_{F})\neq (0,1,1)}} \hspace{-2ex}\hlnformula[X_{A_1}=x_{A_1},X_{A_2}=x_{A_2},X_F=x_f] \\
         &\geq \hlnformula[X_{A_1}=1,X_{A_2}=0,X_F=0] > 0.
     \end{align*}
-    Therefore, $\mathbb{P}^{\mathcal{F},(A,y_A,\theta)}[\catvariableof{[d]}]$ does not entail $g$. In this case, this is due to the fact, that $g$ only assumes one model, despite the formula having multiple models.
+    Therefore, $\mathbb{P}^{\mathcal{F},(A,y_A,\theta)}[\catvariableof{[d]}]$ does not entail $g$.
+    In this case, this is due to the fact, that $g$ only assumes one model, despite the formula having multiple models.
     Doing the same calculations for
     \begin{align*}
         \tilde g[X_{A_1}=1,X_{A_2}=1,X_F=1] = 0
     \end{align*}
-    and equal to $1$ everywhere else leads to the constraction being equal to zero. Therefore, $\mathbb{P}^{\mathcal{F},(A,y_A,\theta)}[\catvariableof{[d]}]$ does entail $\tilde g$.
+    and equal to $1$ everywhere else leads to the constraction being equal to zero.
+    Therefore, $\mathbb{P}^{\mathcal{F},(A,y_A,\theta)}[\catvariableof{[d]}]$ does entail $\tilde g$.
 \end{example}
