@@ -1,0 +1,260 @@
+\section{Sound Propagation}\label{sec:supportContractionEquations}
+
+\red{Sound in the sense that entailment decisions made during the propagation are always true.}
+
+Instead of the exact calculation of a contraction, let us now investigate schemes to sparsify the tensors before a contraction.
+To this end, we first show underlying properties of contractions enabling these schemes.
+
+
+\subsection{Monotonicity of Tensor Contraction}
+
+To state the next theorem we use the nonzero function $\nonzerofunction: \rr \rightarrow [2]$ by $\nonzeroof{x}=1$ if $x\neq0$ and $\nonzeroof{x}=0$ else.
+Applied coordinatewise on tensors it marks the nonzero coordinates by $1$.
+
+We show that adding boolean tensor cores to an contraction orders the results by the partial ordering introduced in \defref{def:partialOrder}.
+
+\begin{theorem}[Monotonicity of Tensor Contractions]
+    \label{the:monotonicityBinaryContractions}
+    Let $\extnet, \secextnet$ be tensor network of non-negative tensors and $\catvariableof{\secnodes}$ an arbitrary set of random variables. %, and $\tilde{\theta}$ another binary tensor.
+    Then we have
+    \begin{align*}
+        \nonzeroof{\contractionof{\extnet\cup\secextnet}{\catvariableof{\secnodes}}} \prec
+        \nonzeroof{\contractionof{\extnet}{\catvariableof{\secnodes}}} \, .
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    It suffices to show that for any $\catindexof{\secnodes}$ with
+    \[ \nonzeroof{\contractionof{\extnet\cup\secextnet}{\indexedcatvariableof{\secnodes}}}=1 \]
+    we also have
+    \[ \nonzeroof{\contractionof{\extnet}{\indexedcatvariableof{\secnodes}}}=1 \, . \]
+    For any $\catindexof{\secnodes}$ satisfying the first equation we find an extension $\catindexof{\nodes}$ to all variables of the tensor networks such that
+    \[ \contractionof{\extnet\cup\secextnet}{\indexedcatvariableof{\nodes}} > 0 \]
+    and it follows that
+    \[ \contractionof{\extnet}{\indexedcatvariableof{\nodes}} > 0 \andspace  \contractionof{\secextnet}{\indexedcatvariableof{\nodes}} > 0  \, . \]
+    But this already implies, that
+    \begin{align*}
+        \nonzeroof{\contractionof{\extnet}{\indexedcatvariableof{\secnodes}}}=1 \, . & \qedhere
+    \end{align*}
+\end{proof}
+
+\subsection{Invariance of Adding Subcontractions}
+
+%We now show \theref{the:booleanContractionInvariance} of \charef{cha:logicalReasoning}.
+Let us now state an equivalence of the contraction, when we add the result of the same contraction.
+This property was used in the proof of \theref{the:soundnessKnowledgePropagation}.
+
+\begin{theorem}[Invariance under adding subcontractions]
+    \label{the:invarianceAddingSubcontractions}
+    Let $\extnet$ be a tensor network of non-negative tensors with variables $\catvariableof{\nodes}$ and let $\secextnet$ be a subset.
+    Then we have for any subset $\catvariableof{\secnodes}$ of $\catvariableof{\nodes}$
+    \[ \contractionof{\extnet \cup\{
+        \nonzeroof{
+            \contractionof{\secextnet}{\catvariableof{\secnodes}}
+        }
+        \}}{\catvariableof{\nodes}}
+    = \contractionof{\extnet}{\catvariableof{\nodes}}
+    \, . \]
+\end{theorem}
+\begin{proof}
+    For any $\catindexof{\nodes}$ with
+    \[ \contractionof{\extnet}{\indexedcatvariableof{\nodes}} = 0 \]
+    we also have
+    \[ \contractionof{\extnet \cup\{
+        \nonzeroof{
+            \contractionof{\secextnet}{\catvariableof{\secnodes}}
+        }
+        \}}{\indexedcatvariableof{\nodes}} = 0 \, . \]
+    For any $\catindexof{\nodes}$ with
+    \[ \contractionof{\extnet}{\indexedcatvariableof{\nodes}} \neq 0 \]
+    we have for the reduction $\catindexof{\secnodes}$ of the index $\catindexof{\nodes}$ that
+    \[  \contractionof{\secextnet}{\indexedcatvariableof{\secnodes}} \neq 0 \]
+    and thus
+    \begin{align*}
+        \contractionof{\extnet \cup\{
+            \nonzeroof{
+                \contractionof{\secextnet}{\catvariableof{\secnodes}}
+            }
+            \}}{\indexedcatvariableof{\nodes}}
+        &= \contractionof{\extnet}{\indexedcatvariableof{\nodes}} \cdot \nonzeroof{
+            \contractionof{\secextnet}{\catvariableof{\secnodes}}
+        }[\indexedcatvariableof{\secnodes}] \\
+        &= \contractionof{\extnet}{\indexedcatvariableof{\nodes}} \, . \qedhere
+    \end{align*}
+%	When the subcore transformed by $\nonzeroof{\cdot}$ contains a zero slice, then this
+%	 zero slice is also appearing in the rest contraction.
+%	Multiplying a zero slice with zero does not affect the contraction, neither does multiplication with one on any slice.
+\end{proof}
+
+
+\begin{remark}
+    Similar statements hold, when dropping the non-negativity assumption on the, but demanding that all variables are left open.
+\end{remark}
+
+
+\section{Complete Unit Clause Propagation (UCP)}
+
+\red{Investigate three conditions, where constraint propagation is also complete.}
+
+Unit clauses are assignments to single variables.
+They are propagated between clusters of formulas
+
+UCP is Knowledge Propagation (see Algorithm~1 in the report) in case of
+\begin{itemize}
+    \item Domain edges by single variable nodes, i.e.
+    \begin{align*}
+        \domainedges = \big\{\{\node\}\wcols\nodein\big\}
+    \end{align*}
+    \item Initial queue by those edges containing single nodes
+    \begin{align*}
+        \graphqueue = \big\{\{\node\}\wcols \{\node\}\in\edges\big\}
+    \end{align*}
+\end{itemize}
+After termination of the Knowledge Propagation Algorithm we return $"UNSAT"$, if any knowledge core vanishes.
+In that case we have an unsatisfiable CSP.
+If no knowledge core vanishes, we define $\variableset$ as the subset of variables with nontrivial knowledge cores and output $\catindex_{\variableset}$ where for $\node\in\variableset$
+%    extract from the nontrivial Knowledge cores (labeled by $\variableset$) an assignment
+\begin{align*}
+    \catindex_{\node} = \invonehotmapof{\kcoreat{\{\node\}}} \, .
+\end{align*}
+
+We always have, that UCP is sound (since KP is sound).
+
+\begin{definition}
+    We say that UCP is complete for a CSP, if it outputs $"UNSAT"$ or for no node $\node\in\variableset$ we have that at all solutions of the CSP have the same index at $\node$.
+\end{definition}
+
+\subsection{Forward Chaining for Horn-SAT}
+
+\begin{definition}[Definite Horn-SAT]
+    Let $\extnetasset$ be a CSP.
+    We say it is a definite Horn-SAT problem, if each $\hypercoreof{\edge}$ is a clause, which has exactly one positive literal.
+\end{definition}
+
+Forward chaining is a linear time and complete satisfiability checker on Horn Logic (a subset of Propositional Logic where each clause has at most one positive literal).
+\begin{itemize}
+    \item Messages passed are the one-hot encodings of assignment to single variables (unit clauses).
+    \item Clusters are the Horn clauses, which receive messages for their negative literals.
+    A Cluster sends a nontrivial message to a variable, if the variable is the only unassigned literal in the clause and the clause has not been satisfied yet.
+\end{itemize}
+
+\begin{lemma}
+    Let $\extnet=\extnetasset$ be a Definite Horn-SAT problem, then UCP does never output $"UNSAT"$.
+    Let further $\catindexof{\variableset}$ be the output of UCP.
+    Then $\catindexof{\node}=1$ for each $\node\in\variableset$ and
+    \begin{align*}
+        1_{\variableset} \times 0_{\nodes/\variableset} \quad \text{and} \quad 1_{\variableset} \times 1_{\nodes/\variableset}
+    \end{align*}
+    are solutions of $\extnet$.
+\end{lemma}
+\begin{proof}
+    First of all, when all knowledge cores are trivial, vanishing or $\tbasis$, then the nonzero transformation of any contraction is trivial, vanishing or $\tbasis$.
+    Thus, since this assumption is met at the start all knowledge cores remain such during the algorithm.
+
+    At the termination of UCP we simplify the definite clauses by erasing the literals in $\variableset$.
+    This erasure results either in empty clauses or in definite clauses with at least $2$ literals, since otherwise the algorithm would not have terminated.
+    Since at least one positive and one negative literal remain, these are satisfied if all atoms are $1$ and if all atoms are $0$.
+\end{proof}
+
+
+\begin{theorem}
+    UCP for Definite Horn-SAT is complete.
+\end{theorem}
+\begin{proof}
+    From the above lemma we know that the remaining variables are in at least one solution $0$ and in at least one $1$.
+    Thus they are neither entailed nor contradicted.
+\end{proof}
+
+\subsection{UCP for 2-SAT}
+
+\begin{definition}[2-SAT]
+    Let $\extnetasset$ be a CSP.
+    We say it is an 2-SAT problem, if each $\hypercoreof{\edge}$ has order at most 2 and is a clause.
+\end{definition}
+
+%Each $\hypercoreof{\edge}$ in a 2-SAT problem is by definition a clause of at most two literals.
+
+2-SAT is in P and can be solved by the message passing algorithm Unit Clause Propagation (UCP).
+\begin{itemize}
+    \item At each connected component of the problems factor graph, choose on variable an do the message passing scheme below with initialization by the variable on $0$ and on $1$.
+    \item Messages passed are the one-hot encodings of assignment to single variables (unit clauses).
+    \item Any clause that receives a message has only a single literal left and either gets directly trivial (if the message coincides with the literal) or assigns the remaining variable and passes further.
+\end{itemize}
+
+\begin{lemma}
+    Let $\extnetasset$ be a 2-SAT instance.
+    Given the outputs $\catindex_c^{s_c}$, $s_c\in [n_c]$ and $n_c\in\{0,1,2\}$ of UCP for each connected component $c \subset \nodes$ we have
+    \begin{align*}
+        \contractionof{\extnetasset}{\nodevariables}
+        = \bigotimes_{c} \left( \sum_{s_c\in[n_c]} \onehotmapofat{\catindex_c^{s_c}}{\catvariableof{c}}\right) \, .
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    For each component $c$ of $\graph$ we choose a start variable and choose a value $x_\node \in [2]$.
+    We then have
+    \begin{align*}
+        \contractionof{\tnetof{c}\cup\{\onehotmapofat{x_\node}{\catvariableof{\node}}\}}{\catvariableof{c}}
+        = \begin{cases}
+              \zerosat{\catvariableof{c}} & \text{if UCP returns "UNSAT"} \\
+              \onehotmapofat{\catindex_c^{s_c}}{\catvariableof{c}} & \text{if UCP returns $\catindex_c^{s_c}$}
+        \end{cases} \, .
+    \end{align*}
+\end{proof}
+
+We use UCP for entailment/contradiction decision by checking whether for each $\atomenumerator\in c$ $x_\atomenumerator^{s_c}$ is constant.
+Exception: When one component is not sat, the whole 2-SAT instance is unsatisfiable and all entailment and contradiction properties hold.
+
+\begin{theorem}
+    UCP for 2-SAT is complete.
+\end{theorem}
+\begin{proof}
+    We assume that 2-SAT at hand is satisfiable.
+    Exactly when $x_\node^{s_c}$ is constant for $s_c\in[n_c]$ we can write, using the above Lemma
+    \begin{align*}
+        \contractionof{\extnetasset}{\nodevariables}
+        = \onehotmapofat{x_\atomenumerator^{s_c}}{\catvariableof{\atomenumerator}} \otimes
+        \contractionof{\extnetasset}{\catvariableof{\nodes/\{\node\}}} \, .
+    \end{align*}
+    In case of $x_\node^{s_c}=1$ this is an equivalent criterion for entailment (respectively contradiction in case of $x_\node^{s_c}=0$).
+\end{proof}
+
+\subsection{UCP for Tree-SAT}
+
+\begin{definition}[Tree-SAT]
+    Let $\extnetasset$ be a CSP.
+    We say it is an Tree-SAT problem, if the factor graph is minimal connected.
+\end{definition}
+
+Note that we do not demand the constraint cores to be clauses in the Tree-SAT definition.
+
+We modify UCP slightly:
+If any constraint tensor is decomposed into a tensor product of a basis vector of one variable and an arbitrary rest tensor, the constraint tensor is added to the queue at initialization.
+
+\begin{theorem}
+    The modified UCP for Tree-SAT is complete.
+\end{theorem}
+\begin{proof}
+    Since the message-passing provides exact contractions and the messages in UCP communicate the support.
+\end{proof}
+
+
+\section{Outlook}
+
+\subsection{With backtracking: DPLL for generic SAT}
+
+DPLL combines backtracking search with unit clause propagation (UCP).
+A form of message passing is applied to reduce the clauses given the current partial assignment:
+When guessed an assignment to a variable, the variable is removed from all clauses, either making the clause trivial (coinciding assignment) or smaller.
+If only one literal remains in a clause, the variable would be assigned accordingly (unit propagation).
+This can be directly done in the intermediate message passing scheme, or understood as the next backtracking step ("Find-Unit-Clause" in Figure 7.17 in \cite{russell_artificial_2021}).
+
+
+\subsection{With randomization: WalkSAT}
+
+WalkSAT is a stochastic local search algorithm for SAT.
+It starts with a random assignment and iteratively flips variables to reduce the number of unsatisfied clauses.
+This can be understood as a (modified) Gibbs sampling algorithm, where the number of unsatisfied clauses is the energy function to be minimized.
+The modifications are:
+\begin{itemize}
+    \item Selection of variable to be resampled: Typically chosen by looking at unsatisfied clauses and picking a variable that minimizes the number of newly unsatisfied clauses (whereas in Gibbs sampling one follows a fixed variable order).
+    \item Marginal probability: Typically fixed by a mixing parameter, whereas in Gibbs sampling would be sensitive to the energy differences.
+\end{itemize}

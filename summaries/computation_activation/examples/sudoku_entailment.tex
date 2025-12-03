@@ -11,29 +11,29 @@
     \end{align*}
     where $\woneoplus$ is the $n^2$-ary exclusive or connective (that is $1$ if and only if exactly one of the arguments is $1$).
     The four outer brackets in $\kb$ mark the constraints, that at each position exactly one number is assigned, further that in each row each number is assigned once, and similar for the columns and the squares of the board.
-    When solving a specific Sudoku instance, one typically knows from an initial board assignment $E$ a collection of atomic variables, which hold, and needs to find further atomic variables, which are entailed.
-    This means, we need to decide for each $(r_0,r_1,c_0,c_1,i)\notin E$ whether the Sudoku rules and the initial board imply that the atomic variable $\catvariableof{r0,r1,c0,c1,i}$ (i.e. assignment to the board) is true
+    When solving a specific Sudoku instance, one typically knows from an initial board assignment $E^{\mathrm{start}}$ a collection of atomic variables, which hold, and needs to find further atomic variables, which are entailed.
+    This means, we need to decide for each $(r_0,r_1,c_0,c_1,i)\notin E^{\mathrm{start}}$ whether the Sudoku rules and the initial board imply that the atomic variable $\catvariableof{r0,r1,c0,c1,i}$ (i.e. assignment to the board) is true
     \begin{align*}
-        \kb^{n} \land \left(\bigwedge_{(r_0,r_1,c_0,c_1,i)\in E} \catvariableof{r0,r1,c0,c1,i} \right) \models \catvariableof{r0,r1,c0,c1,i}
+        \kb^{n} \land \left(\bigwedge_{(r_0,r_1,c_0,c_1,i)\in E^{\mathrm{start}}} \catvariableof{r0,r1,c0,c1,i} \right) \models \catvariableof{r0,r1,c0,c1,i}
     \end{align*}
     or false
     \begin{align}
         \label{eq:sudokukb}
-        \kb \land \left(\bigwedge_{(r_0,r_1,c_0,c_1,i)\in E} \catvariableof{r0,r1,c0,c1,i} \right) \models \lnot\catvariableof{r0,r1,c0,c1,i} \, .
+        \kb \land \left(\bigwedge_{(r_0,r_1,c_0,c_1,i)\in E^{\mathrm{start}}} \catvariableof{r0,r1,c0,c1,i} \right) \models \lnot\catvariableof{r0,r1,c0,c1,i} \, .
     \end{align}
     In other words, for each assignment to the board, that fulfills the Sudoku rules and the initial board, do we write the number $n$ in row $(r0,r1)$ and column $(c0,c1)$?
-    If and only if the Sudoku has a unique solution given the initial board assignment $E$, exactly one of these entailment statements holds for each $(r_0,r_1,c_0,c_1,i)\notin E$.
+    If and only if the Sudoku has a unique solution given the initial board assignment $E^{\mathrm{start}}$, exactly one of these entailment statements holds for each $(r_0,r_1,c_0,c_1,i)\notin E^{\mathrm{start}}$.
     Deciding which is equivalent to solving of the Sudoku.
 
     For example, let $n=2$ and
     \begin{align*}
-        E = \{&(0,0,0,0,0),(0,0,1,0,2),(0,0,1,1,1), %first row
+        E^{\mathrm{start}} = \{&(0,0,0,0,0),(0,0,1,0,2),(0,0,1,1,1), %first row
         (0,1,0,1,1), \\ %second row
         &(1,0,1,0,3), %third row
         (1,1,0,0,3),(1,1,0,1,2) %fourth row
         \} \, .
     \end{align*}
-    We visualize this evidence by writing $i+1$ in a grid cell $(r0,r1,c0,c1)$ to indicate that $(r0,r1,c0,c1,i)\in E$:
+    We visualize this evidence by writing $i+1$ in a grid cell $(r0,r1,c0,c1)$ to indicate that $(r0,r1,c0,c1,i)\in E^{\mathrm{start}}$:
     \begin{center}
         \begin{sudoku4x4}
             \matrix[sudokumatrix] (M) at (0,0) {

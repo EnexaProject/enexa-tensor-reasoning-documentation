@@ -1,0 +1,246 @@
+
+\section{Exact Contractions}
+
+%\red{This is the junction tree algorithm!}
+
+We apply \theref{the:splittingContractions} to split a contraction into subcontractions, which are consecutively performed.
+
+% Message Passing
+Contractions can be performed partially, and the result passed to the rest of the network as a message.
+
+\subsection{Construction of Cluster Graphs}
+
+Let us first introduce with the cluster graph a mechanism to coarse grain the hypergraph capturing a tensor network.
+
+% Cluster Graphs
+\begin{definition}[Cluster Graph]
+	Given a tensor network $\extnet$ a cluster partition is a partition of the tensor network into $n$ clusters, by a function
+		\[ \alpha : \edges \rightarrow [n] \, . \]
+	The clusters are with tensors decorated edge sets $\enc = \{\edge \wcols \alpha(\edge) = i\}$ with variables $\nodes_i = \bigcup_{\edge \in \enc} \edge$.
+
+	We say, that the cluster graph satisfies the running intersection property, when for any clusters $C_i$ and $C_j$ and any $\node\in\nodes_i\cup\nodes_j$ there is a path between $C_i$ and $C_j$ with $\node\in\nodes_k$ for any cluster $C_k$ along the path.
+	%The clusters form a graph where edges between $\enc$ and $C_j$ exist, when the node sets $\nodes_i$ and $\nodes_j$ are not disjoint.
+	%In this case, we define separation sets $S_{i,j}=\enc\cup C_j$
+\end{definition}
+
+Given a cluster graph to a tensor network, we can execute any global contraction by a contraction of local contraction to each cluster.
+
+\begin{theorem}\label{the:contractionClusterSplit}
+	Given a tensor network $\extnet$ and a cluster graph.
+	We then define for each cluster the node set
+	\begin{align*}
+		\tilde{\nodes}_i = \bigcup_{j\neq i} \nodes_j
+	\end{align*}
+	and have
+		\[ \contractionof{\extnet}{\catvariableof{\secnodes}} =
+		\contractionof{
+			\{ \contractionof{\tnetof{\enc}}{\catvariableof{\nodes_i \cap (\tilde{\nodes}_i\cup\secnodes)}}  : i \in [n]\}
+		}{\catvariableof{\secnodes}}  \, . \]
+\end{theorem}
+\begin{proof}
+	By \theref{the:splittingContractions} applied for each cluster seen as a subgraph.
+\end{proof}
+
+
+
+\subsection{Message Passing to calculate Contractions}
+
+% Cluster Graphs
+Having a hypergraph $\graph$, we iteratively apply \theref{the:splittingContractions} and call the $\graph_2$ a cluster.
+When iterating until $\graph$ is empty, we get a cluster graph, where all tensors are assigned to a cluster.
+
+% Cluster Trees -> Clique Trees in Koller Book
+When the cluster are a polytree, that is a union of disjoint trees, we define messages between neighbored clusters $\enc$ and $\secenc$ with $\secenc\prec\enc$ by the contractions
+\begin{align*}
+	\mesfromtoat{\secclusterenumerator}{\clusterenumerator}{\catvariableof{\nodesof{\clusterenumerator}\cap\nodesof{\secclusterenumerator}}}
+	= \contractionof{\{
+	\mesfromtoat{\thirdclusterenumerator}{\secclusterenumerator}{\catvariableof{\nodesof{\thirdclusterenumerator}\cap\nodesof{\secclusterenumerator}}}
+	\wcols \thirdenc\prec\secenc\} \cup \tnetof{\secenc}}{\catvariableof{\nodesof{\clusterenumerator}\cap\nodesof{\secclusterenumerator}}} \, .
+\end{align*}
+
+
+
+We note, that the messages are well defined by these recursive equations, exactly when the cluster graph is a polytree.
+%Since messages are recursively defined, we need the tree structure to ensure well-definedness.
+
+% Tree advantage
+When the cluster graph is a tree, we can choose a root cluster and order the clusters by the topological order $\prec$.
+
+
+\begin{lemma}\label{lem:clusterContractionMessage}
+	When the cluster graph is a tree satisfying the running intersection property, we have for neighbored clusters $\enc$ and $\secenc$ with $\secenc\prec\enc$
+	\begin{align*}
+		\mesfromtoat{\clusterenumerator}{\tilde{\clusterenumerator}}{\catvariableof{\nodesof{\clusterenumerator}\cap\nodesof{\tilde{\clusterenumerator}}}}
+		= \contractionof{\{\tnetof{\secenc}\,:\,\secenc\prec\enc\}}{\catvariableof{\nodesof{\clusterenumerator}\cap\nodesof{\tilde{\clusterenumerator}}}}   \, .
+	\end{align*}
+\end{lemma}
+\begin{proof}
+	By induction over the cardinality $n$ of the preceding clusters.
+	\textbf{$n=1$}: For a single preceding cluster the statement holds trivial, since the preceding cluster is the cluster itself.
+
+	\textbf{$n\rightarrow n+1$}: Let us now assume, that the statement holds for up to $n$ preceding clusters, and let there be $n+1$ preceding clusters.
+	We build another cluster graph for the cores different from $\enc$, by assigning each cluster $\thirdenc$ to the neighbor $\secenc$ where $\secclusterenumerator\in\neighborsof{\clusterenumerator}$, for which
+	\begin{align*}
+		\thirdenc\prec\secenc \, .
+	\end{align*}
+	We use \theref{the:contractionClusterSplit} on this constructed cluster graph and get
+	\begin{align*}
+		\contractionof{\{\tnetofat{\clusterof{\thirdclusterenumerator}}{\nodevariablesof{\thirdclusterenumerator}} \wcols \thirdclusterenumerator\neq\clusterenumerator\}}{\nodevariablesof{\clusterenumerator}}
+		= \contractionof{
+			\Big\{ \contractionof{
+				\{\tnetofat{\clusterof{\thirdclusterenumerator}}{\nodevariablesof{\thirdclusterenumerator}} \wcols \thirdclusterenumerator\prec\secclusterenumerator\}
+			}{\catvariableof{\secnodesof{\secclusterenumerator}}}
+			\wcols \secclusterenumerator\in\neighborsof{\clusterenumerator} \Big\}
+			}{\nodevariablesof{\clusterenumerator}}
+	\end{align*}
+	Here by $\secnodesof{\secclusterenumerator}$ we denote the intersection of
+	\begin{align*}
+		\secnodesof{\secclusterenumerator} = \left(\bigcup_{\thirdclusterenumerator\prec\secclusterenumerator} \nodesof{\thirdclusterenumerator}\right) \cap \left(\bigcup_{\thirdclusterenumerator\nprec\secclusterenumerator} \nodesof{\thirdclusterenumerator}\right)
+	\end{align*}
+	By the running intersection property, we have $\nodesof{\secclusterenumerator}\cap\nodesof{\clusterenumerator}=\secnodesof{\secclusterenumerator}$.
+
+	We further have for any $\secclusterenumerator\in\neighborsof{\clusterenumerator}$ that
+	\begin{align*}
+		\cardof{\{\thirdclusterenumerator\prec\secclusterenumerator\}} \leq n \, .
+	\end{align*}
+	We can therefore apply the assumption of the induction and get
+	\begin{align*}
+ 		\contractionof{\{\tnetofat{\clusterof{\thirdclusterenumerator}}{\nodevariablesof{\thirdclusterenumerator}} \wcols \thirdclusterenumerator\prec\secclusterenumerator\}
+			}{\catvariableof{\secnodesof{\secclusterenumerator}}}
+		= \mesfromtoat{\secclusterenumerator}{\clusterenumerator}{\catvariableof{\nodesof{\secclusterenumerator}\cap\nodesof{\clusterenumerator}}}
+	\end{align*}
+
+	With the above, we arrive at
+	\begin{align*}
+		\mesfromtoat{\clusterenumerator}{\tilde{\clusterenumerator}}{\catvariableof{\nodesof{\clusterenumerator}\cap\nodesof{\tilde{\clusterenumerator}}}}
+		= \contractionof{\{\tnetof{\secenc}\,:\,\secenc\prec\enc\}}{\catvariableof{\nodesof{\clusterenumerator}\cap\nodesof{\tilde{\clusterenumerator}}}}   \, . & \qedhere
+	\end{align*}
+%	\begin{align*}
+%		\contractionof{\extnet}{\catvariableof{\nodesof{\clusterenumerator}}} =
+%		\contractionof{\bigcup_{\secclusterenumerator\in\neighborsof{\clusterenumerator}}
+%		\{\contractionof{\tnetof{\clusterof{\thirdclusterenumerator}}}{\catvariableof{\nodesof{\thirdclusterenumerator}\cap\nodesof{\secclusterenumerator}}} \wcols \thirdenc\prec\secenc \}
+%		\cup \{\tnetof{\enc}\}}{\catvariableof{\nodes_i}} \, .
+%	\end{align*}
+%	Now, we use the assumption of the induction to get
+%	\begin{align*}
+%		\contractionof{
+%			\{\contractionof{\tnetof{\clusterof{\thirdclusterenumerator}}}{\catvariableof{\nodesof{\thirdclusterenumerator} \cap (\tilde{\nodes}_i\cup\secnodes)}}   \wcols \cluster_l \prec \cluster_j \}
+%		}{\catvariableof{\nodesof{\thirdclusterenumerator}\cap\nodesof{\secclusterenumerator}}}
+%		= \mesfromtoat{\thirdclusterenumerator}{\clusterenumerator}{\catvariableof{\nodesof{\thirdclusterenumerator}\cap\nodesof{\secclusterenumerator}}}
+%	\end{align*}
+%	Note that we used the running intersection property ensuring that whenever a variable of the cluster appears in a previous cluster, the variable is passed in the message.
+\end{proof}
+
+
+\begin{theorem}
+	When the cluster graph is a tree satisfying the running intersection property, then we have for each cluster $\enc$ with neighbors $\neighborsof{\clusterenumerator}$
+%	Then for each clique we have the conditional probability of its variables being the contraction of the messages with the cliques cores, that is
+	\begin{align}
+		\contractionof{\extnet}{\catvariableof{\nodes_i}} =
+		\contractionof{\{ \mesfromtoat{\secclusterenumerator}{\clusterenumerator}{\catvariableof{\nodesof{\clusterenumerator}\cap\nodesof{\secclusterenumerator}}}  \wcols j \in N(i) \} \cup \{\tnetof{\enc}\}}{\catvariableof{\nodes_i}} \, .
+	\end{align}
+\end{theorem}
+\begin{proof}
+	We use the topological order $\prec$ of the clusters by the tree, when choosing a root by cluster $\enc$.
+
+	The claim then follows from \theref{the:contractionClusterSplit} and \lemref{lem:clusterContractionMessage}.
+%
+%	Thus, we find to each cluster $\cluster_l$ exactly one neighboring cluster $j\in N(i)$ with $\cluster_l \prec \cluster_j$.
+%	We use \theref{the:contractionClusterSplit} and reorder the contractions as
+%	\begin{align*}
+%		\contractionof{\extnet}{\catvariableof{\nodes_i}} =
+%		\contractionof{\bigcup_{j\in N(i)}
+%		\{\contractionof{\tnetof{\cluster_l}}{\catvariableof{\nodes_l \cap (\tilde{\nodes}_i\cup\secnodes)}}   \wcols \cluster_l \prec \cluster_j \}
+%		\cup \{\tnetof{\enc}\}}{\catvariableof{\nodes_i}} \, .
+%	\end{align*}
+%	By \lemref{lem:clusterContractionMessage}, the contractions to the clusters preceeding $\cluster_l$ are exactly the messages sent to the root cluster.
+%	Therefore we have
+%	\begin{align}
+%		\contractionof{\extnet}{\catvariableof{\nodes_i}} =
+%		\contractionof{\{ \upmes{\secclusterenumerator}{\clusterenumerator}  \wcols j \in N(i) \} \cup \{\tnetof{\enc}\}}{\catvariableof{\nodes_i}} \, .
+%	\end{align}
+
+%	We then show by	induction, that any message
+%	\begin{align*}
+%		\upmes{\secclusterenumerator}{\clusterenumerator}
+%		= \contractionof{
+%			\{ \tnetof{\cluster} \wcols \cluster \prec \clusterof{\secclusterenumerator} \}
+%		}{\catvariableof{\nodes_\secclusterenumerator \cup \nodes_{\clusterenumerator}}}
+%	\end{align*}
+%	To this end, use \theref{the:contractionClusterSplit}.
+%	Having established the induction, we use this result for the messages and get the claim.
+%	By \theref{the:splittingContractions} we split into contractions of the clusters up and down of the respective neighbors and apply the above lemma.
+\end{proof}
+
+
+% Downward messages
+While we have defined message passing along the topological order of a graph, we can also define messages against the topological order, that is
+\begin{align*}
+	\downmes{i}{j}  = \contractionof{\{\downmes{\tilde{j}}{i} \wcols  \enc \prec  \thirdenc\} \cup \tnetof{\enc}}{\catvariableof{\nodes_i\cap \nodes_j}} \,
+\end{align*}
+To this end, we can get a similar statement for nodes, which are not the rotes of the cluster tree.
+The constractions at each cluster can then be computed batchwise, based on message passed along a topological order and against.
+
+%
+These message passing schemes can be derived from Lagrangian parameters given a local consistency polytope \cite{wainwright_graphical_2008}.
+
+
+
+\subsection{Variable Elimination Cluster Graphs}
+
+
+\begin{remark}[Construction of Cluster Graphs by Variable Elimination]
+	% Build a cluster graph
+	Following an elimination order of the colors, mark those tensors containing the colors, which have not been marked before, as the cluster.
+	% Extension to clique tree
+	A clique tree can be constructed by these cluster, when iterating through the clusters and either connect them to previous disconnected clusters or leave the current cluster disconnected.
+	Add the disconnected clusters with the current cluster in case there are overlaps of their open colors.
+	If the disconnected cluster added has more open colors,
+\end{remark}
+
+
+\subsection{Bethe Cluster Graphs}
+
+
+\begin{figure}[t]
+\begin{center}
+	\input{tikz_pics/data_example.tex}
+\end{center}
+\caption{Example of a Bethe Cluster Graph.
+	a) Example of a Tensor Network $\tnetof{\graph}$, which represents the by $\lambda$ averaged evaluation of the formula $(a\land b)\lor c$ on data $\datamap$.
+	b) Corresponding Bethe Cluster Hypergraph, which dual is bipartite by the sets $\Delta$ and $\tilde{\edges}$.
+	}
+\label{fig:betheDataExample}
+\end{figure}
+
+By adding delta tensors to each node $\node\in\nodes$ and defining its leg variables by $\node^{\edge}$ for $\edge\in\edges$.
+We mark each such delta tensor by a cluster in $\Delta^{\graph}$, as defined in the following (see also \figref{fig:betheDataExample}).
+
+\begin{definition}
+	Given a tensor network $\tnetof{\graph}$ on a decorated hypergraph $\graph$, we define the Bethe Cluster Hypergraph $\secgraph$ as
+	$(\secnodes, \secedges \cup \Delta^{\graph})$ where we have
+	\begin{itemize}
+		\item Recolored Edges $\secedges = \{\tilde{\edge} \wcols \edge\in \edges\}$ where $\tilde{\edge} = \{\node^{\edge} \wcols \node\in\edge\}$, which decoration tensor has same coordinates as $\hypercoreof{\edge}$
+		\item Nodes $\secnodes = \bigcup_{\edge\in\edges}\tilde{\edge}$ %$\secnodes = \bigcup_{\edge\in\edges}\{\node^{\edge} \wcols \node\in\edge \}$
+		\item Delta Edges $\Delta^{\graph} =  \big\{ \{\node^{\edge} \wcols \edge\ni\node \} \wcols \node\in\nodes \big\} $, each of which decorated by a delta tensor $\delta^{\{\node^{\edge} \wcols \edge\ni\node \}}$
+	\end{itemize}
+\end{definition}
+
+By \lemref{lem:deltification} this construction does not change contractions.
+
+% Dual graph
+The dual is bipartite, since any variable appears exactly in one cluster in $\secedges$ and in one cluster of $\Delta^{\graph}$.
+This further makes the dual of the Bethe Cluster Hypergraph a proper graph (i.e. edges consistent of node pairs).
+
+
+
+
+
+%\subsection{Computational Complexity}
+%
+%%\red{Tree-width here: By building a cluster tree to any partition, simply by including variables for the running intersection property.
+%%The maximum number of variables at a cluster is the tree-width and provides a complexity bound for the local contractions.}
+%
+%Naive execution of $\contractionof{\tnetof{\graph}}{\secnodes}$: $\prod_{\node\in\nodes} \catdimof{\node}$ many products are built and summed up.
+%When splitting contractions into local subcontractions, the product can be turned into sums with tremendous decrease in complexity.
+%
