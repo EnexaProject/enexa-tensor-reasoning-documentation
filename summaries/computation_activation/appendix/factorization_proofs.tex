@@ -1,0 +1,294 @@
+\section{Proof of the Factorization Theorems}\label{sec:proofFactorizationTheorems}
+
+Let us now provide proofs for the factorization theorems stated in \secref{sec:prob_rep}.
+These proofs are classically known (see e.g. \cite{koller_probabilistic_2009} for Hammersley-Clifford and \cite{casella_statistical_2001} for Fisher-Neyman).
+We here provide them in our tensor networks notation and for hypergraphs for completeness. % Since typically HC is shown on graphs.
+
+\subsection{Hammersley-Clifford}
+
+%Let us now proof the Hammersley-Clifford theorem formulated in \charef{cha:probRepresentation} as \theref{the:condIndMN}.
+Different to the original statement (see \cite{clifford_markov_1971}), we here proof the analogous statement for hypergraphs, where we have to demand the property of clique-capturing defined in \defref{def:ccHypergraph}.
+We start with showing the following Lemmata to be exploited in the proof.
+
+\begin{lemma}
+    \label{the:contractionFactorization}
+    Let $\hypercoreat{\catvariableof{\nodes}}$ be a positive tensor and $\seccatindexof{\nodes}$ an arbitrary index.
+    Then we have
+    \begin{align*}
+        \hypercoreat{\catvariableof{\nodes}}
+        = \contractionof{
+            \big(\contractionof{\hypercore}{\catvariableof{\nodes/\thirdnodes},\catvariableof{\thirdnodes}=\seccatindexof{\thirdnodes}}\big)^{(-1)^{\cardof{\secnodes}-\cardof{\thirdnodes}}} \wcols \thirdnodes \subset \secnodes \subset \nodes
+        }{\catvariableof{\nodes}} \, ,
+    \end{align*}
+    where the exponentiation is performed coordinatewise and positivity of $\hypercore$ ensures the well-definedness.
+\end{lemma}
+\begin{proof}
+    It suffices to show, that for an arbitrary index $\catindexof{\nodes}$ be an arbitrary index we have
+    \begin{align*}
+        \hypercoreat{\indexedcatvariableof{\nodes}}
+        = \prod_{\secnodes\subset\nodes} \prod_{\thirdnodes\subset\secnodes}
+        \big(\contractionof{\hypercore}{\indexedcatvariableof{\nodes/\thirdnodes}, \catvariableof{\thirdnodes} = \seccatindexof{\thirdnodes}}\big)^{(-1)^{\cardof{\secnodes}-\cardof{\thirdnodes}}} \, .
+    \end{align*}
+    We do this by applying a logarithm on the right hand side and grouping the terms by $\thirdnodes$ as
+    \begin{align*}
+        %\lnof{\hypercoreat{\indexedcatvariableof{\nodes}}}
+        & \lnof{\prod_{\secnodes\subset\nodes} \prod_{\thirdnodes\subset\secnodes}
+            \contractionof{\hypercore}{\indexedcatvariableof{\nodes/\thirdnodes}, \catvariableof{\thirdnodes} = \seccatindexof{\thirdnodes}}\big)^{(-1)^{\cardof{\secnodes}-\cardof{\thirdnodes}}}} \\
+        & = \sum_{\thirdnodes\subset\nodes} \lnof{\contractionof{\hypercore}{\indexedcatvariableof{\nodes/\thirdnodes}, \catvariableof{\thirdnodes} = \seccatindexof{\thirdnodes}}}
+        \left( \sum_{\secnodes\subset\nodes \wcols \thirdnodes\subset \secnodes} (-1)^{\cardof{\secnodes}-\cardof{\thirdnodes}} \right) \\
+        & =  \sum_{\thirdnodes\subset\nodes} \lnof{\contractionof{\hypercore}{\indexedcatvariableof{\nodes/\thirdnodes}, \catvariableof{\thirdnodes} = \seccatindexof{\thirdnodes}}}
+        \left( \sum_{i \in [\cardof{\nodes}-\cardof{\thirdnodes}]}  (-1)^{i}  \binom{\cardof{\nodes}-\cardof{\thirdnodes}}{i}  \right)
+    \end{align*}
+    Now, by the generic binomial theorem we have that for $n\in\nn, n \neq 0$
+    \[ 0 = (1-1)^n = \sum_{i \in [n]}  (-1)^{i}  \binom{n}{i}   \, . \]
+    Therefore, the summands for $\thirdnodes\neq\nodes$ vanish and we have
+    \begin{align*}
+        & \lnof{ \prod_{\secnodes\subset\nodes} \prod_{\thirdnodes\subset\secnodes}
+            \big(\contractionof{\hypercore}{\indexedcatvariableof{\nodes/\thirdnodes}, \catvariableof{\thirdnodes} = \seccatindexof{\thirdnodes}}\big)^{(-1)^{\cardof{\secnodes}-\cardof{\thirdnodes}}} } \\
+        & = \lnof{\hypercoreat{\indexedcatvariableof{\nodes}}}
+        \left( \sum_{i \in [0]}  (-1)^{i}  \binom{0}{i}  \right) \\
+        & = \lnof{\hypercoreat{\indexedcatvariableof{\nodes}}} \, .
+    \end{align*}
+    Applying the exponential function on both sides establishes the claim.
+\end{proof}
+
+\begin{lemma}
+    \label{lem:independentContractionFactorization}
+    Let $\hypercore$ be a positive tensor, $\secnodes\subset\nodes$ and arbitrary subset and $\catindexof{\secnodes}$ an arbitrary index.
+    When there are $\nodea,\nodeb \in\secnodes$, such that
+    \begin{align*}
+        \normalizationofwrt{\hypercore}{\catvariableof{\nodea},\catvariableof{\nodeb}}{\catvariableof{\nodes/\{\nodea,\nodeb\}}}
+        = \contractionof{
+            \normalizationofwrt{\hypercore}{\catvariableof{\nodea}}{\catvariableof{\nodes/\{\nodea,\nodeb\}}},
+            \normalizationofwrt{\hypercore}{\catvariableof{\nodeb}}{\catvariableof{\nodes/\{\nodea,\nodeb\}}}
+        }{\catvariableof{\secnodes}}
+    \end{align*}
+    then
+    \begin{align*}
+        \prod_{\thirdnodes\subset\secnodes}
+        \left(\contractionof{\hypercore}{\indexedcatvariableof{\nodes/\thirdnodes},\catvariableof{\thirdnodes}=\seccatindexof{\thirdnodes}}\right)^{(-1)^{\cardof{\secnodes}-\cardof{\thirdnodes}}} = 1 \, .
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    We abbreviate
+    \begin{align*}
+        Z_{\thirdnodes}
+        = \contractionof{\hypercore}{\indexedcatvariableof{\nodes/\thirdnodes},\catvariableof{\thirdnodes}=\seccatindexof{\thirdnodes}} \, .
+    \end{align*}
+    By reorganizing the sum over $\thirdnodes\subset\secnodes$ into  $\thirdnodes\subset\secnodes/\nodea\cup\nodeb$ we have
+    \begin{align}
+        \label{eq:indContFacProof}
+        \prod_{\thirdnodes\subset\secnodes}
+        \left(
+            Z_{\thirdnodes}
+        \right)^{(-1)^{\cardof{\secnodes}-\cardof{\thirdnodes}}} =
+        \prod_{\thirdnodes\subset\secnodes/\{\nodea,\nodeb\}}
+        \left(
+            \frac{
+                Z_{\thirdnodes} \cdot Z_{\thirdnodes\cup\{\nodea,\nodeb\}}
+            }{
+                Z_{\thirdnodes\cup\{\nodea\}} \cdot Z_{\thirdnodes\cup\{\nodeb\}}
+            }
+        \right)^{(-1)^{\cardof{\secnodes}-\cardof{\thirdnodes}}} \, .
+    \end{align}
+    From the independence assumption it follows that for any index $\catindex$
+    \begin{align*}
+        & \normalizationofwrt{\hypercore}{
+            \indexedcatvariableof{\nodea}
+        }{\indexedcatvariableof{\nodes/\thirdnodes\cup\{\nodea,\nodeb\}},\catvariableof{\thirdnodes}=\seccatindexof{\thirdnodes},  \indexedcatvariableof{\nodeb} }
+        \\
+        & \quad =
+        \normalizationofwrt{\hypercore}{
+            \indexedcatvariableof{\nodea}
+        }{\indexedcatvariableof{\nodes/\thirdnodes\cup\{\nodea,\nodeb\}}, \catvariableof{\thirdnodes}=\seccatindexof{\thirdnodes}} \\
+        & \quad  =
+        \normalizationofwrt{\hypercore}{
+            \indexedcatvariableof{\nodea}
+        }{\indexedcatvariableof{\nodes/\thirdnodes\cup\{\nodea,\nodeb\}},\catvariableof{\thirdnodes}=\seccatindexof{\thirdnodes},  \catvariableof{\nodeb} = \seccatindexof{\nodeb}}
+    \end{align*}
+    Applying this in each squares bracket term of \eqref{eq:indContFacProof} we get
+    \begin{align*}
+        \frac{
+            Z_{\thirdnodes}
+        }{
+            Z_{\thirdnodes\cup\{\nodea\}}
+        }
+        & =
+        \frac{
+            \normalizationofwrt{\hypercore}{
+                \indexedcatvariableof{\nodea}
+            }{\indexedcatvariableof{\nodes/\thirdnodes\cup\{\nodea,\nodeb\}}, \catvariableof{\thirdnodes}=\seccatindexof{\thirdnodes}, \indexedcatvariableof{\nodeb} }
+        }{
+            \normalizationofwrt{\hypercore}{
+                \catvariableof{\nodea} =\seccatindexof{\nodea}
+            }{\indexedcatvariableof{\nodes/\thirdnodes\cup\{\nodea,\nodeb\}} , \catvariableof{\thirdnodes}=\seccatindexof{\thirdnodes}, \indexedcatvariableof{\nodeb}}
+        } \\
+        & =
+        \frac{
+            \normalizationofwrt{\hypercore}{
+                \indexedcatvariableof{\nodea}
+            }{\indexedcatvariableof{\nodes/\thirdnodes\cup\{\nodea,\nodeb\}}, \catvariableof{\thirdnodes}=\seccatindexof{\thirdnodes}, \catvariableof{\nodeb} = \seccatindexof{\nodeb}}
+        }{
+            \normalizationofwrt{\hypercore}{
+                \catvariableof{\nodea} =\seccatindexof{\nodea}
+            }{\indexedcatvariableof{\nodes/\thirdnodes\cup\{\nodea,\nodeb\}}, \catvariableof{\thirdnodes}=\seccatindexof{\thirdnodes},\catvariableof{\nodeb} = \seccatindexof{\nodeb}}
+        } \\
+        & =
+        \frac{
+            Z_{\thirdnodes\cup\{\nodeb\}}
+        }{
+            Z_{\thirdnodes\cup\{\nodea,\nodeb\}}
+        } \, .
+    \end{align*}
+    Thus, each factor in \eqref{eq:indContFacProof} is trivial, which establishes the claim.
+\end{proof}
+
+We are finally ready to prove the Hammersley-Clifford \theref{the:factorizationHammersleyClifford} based on the Lemmata above.
+
+%\begin{theorem}[\theref{the:condIndMN}]
+%	Let $\probat{\catvariableof{\nodes}}$ be a probability distribution and $\graph$ a clique-capturing hypergraph, such that for $\nodea$, $\nodeb$, $\nodesc$ we have that $\catvariableof{\nodea}$ is independent of $\catvariableof{\nodeb}$ conditioned on $\catvariableof{\nodesc}$, when $\nodesc$ separates $\nodea$ and $\nodeb$ in the hypergraph.
+%	Then there is a Markov Network on $\graph$, which distribution is equal to $\probat{\catvariableof{\nodes}}$.
+%\end{theorem}
+\begin{proof}[Proof of \theref{the:factorizationHammersleyClifford}]
+    By \lemref{the:contractionFactorization} we have for any index $\catindexof{\nodes}$
+    \begin{align*}
+        \probat{\indexedcatvariableof{\nodes}} =
+        \prod_{\secnodes\subset\nodes} \prod_{\thirdnodes\subset\secnodes}
+        \left(
+            \probat{\indexedcatvariableof{\thirdnodes},\catvariableof{\nodes/\thirdnodes}=\seccatindexof{\nodes/\thirdnodes}}
+        %	\contractionof{\extnet\cup\{\onehotmapof{\catindexof{\nodes/\thirdnodes}}\}}{\catvariableof{\thirdnodes}}
+        \right)^{(-1)^{\cardof{\secnodes}-\cardof{\thirdnodes}}} \, .
+    \end{align*}
+    Using the assumption of \theref{the:factorizationHammersleyClifford} we find for any subset $\secnodes\subset\nodes$, which is not contained in a hyperedge, $\nodea,\nodeb \in\secnodes$ such that $\catvariableof{\nodea}$ is independendent on $\catvariableof{\nodeb}$ conditioned on $\catvariableof{\secnodes/\{\nodea,\nodeb\}}$.
+    If no such nodes $\nodea,\nodeb \in\secnodes$ exists, $\secnodes$ would be contained in a hyperedge, since the hypergraph is assumed to be clique-capturing.
+    By \lemref{lem:independentContractionFactorization} we then have
+    \begin{align*}
+        \prod_{\thirdnodes\subset\secnodes}
+        \left(
+            \probat{\indexedcatvariableof{\thirdnodes},\catvariableof{\nodes/\thirdnodes}=\seccatindexof{\nodes/\thirdnodes}}
+        \right)^{(-1)^{\cardof{\secnodes}-\cardof{\thirdnodes}}} = 1 \, .
+    \end{align*}
+    We label by a function
+    \begin{align*}
+        \alpha: \{\secnodes : \exists\edge\in\edges: \secnodes \subset \edge \} \rightarrow \edges
+    \end{align*}
+    the remaining node subsets by a hyperedge containing the subset.
+    We build the tensor
+    \begin{align*}
+        \hypercoreofat{\edge}{\catvariableof{\edge}} = \prod_{\secnodes \wcols \alpha(\secnodes) = \edge} \prod_{\thirdnodes\subset\secnodes}
+        \left(
+            \probat{\indexedcatvariableof{\thirdnodes},\catvariableof{\nodes/\thirdnodes}=\seccatindexof{\nodes/\thirdnodes}}
+        \right)^{(-1)^{\cardof{\secnodes}-\cardof{\thirdnodes}}} \, .
+    \end{align*}
+    and get, that
+    \begin{align*}
+        \probat{\catvariableof{\nodes}} & = \contractionof{\extnetasset}{\catvariableof{\nodes}} \\
+        & = \normalizationof{\extnetasset}{\catvariableof{\node}} \, .
+    \end{align*}
+    We have thus constructed a Markov Network with trivial partition function, which contraction coincides with the probability distribution.
+\end{proof}
+
+\subsection{Fisher-Neyman}
+
+Since sufficient statistics are sometimes introduced based on the data processing inequality (see e.g. \cite{cover_elements_2006}), we also show that also that definition is equivalent to the factorization of the family.
+
+\begin{theorem}[Factorization Theorem of Fisher and Neyman]
+    \label{the:generalFactorizationFisherNeyman}
+    Let $\probtensor$ be a joint distribution of variables $\thirdcatvariable,\catvariable$ with values $\valof{\thirdcatvariable}, \,\valof{\catvariable}$ and let $\sstatat{\catindex}$ be a statistic.
+    The following are equivalent:
+    \begin{itemize}
+        \item[i)] The Data Processing Inequality holds straight, i.e.
+        \begin{align*}
+            \mutinfof{\thirdcatvariable}{\catvariable}
+            = \mutinfof{\thirdcatvariable}{\headvariableof{\sstat}}
+%            I(Z;X) = I(\thirdcatvariable;\headvariableof{\sstat}) \, .
+        \end{align*}
+        \item[ii)] $\thirdcatvariable\rightarrow\headvariableof{\sstat}\rightarrow\catvariable$ is a Markov Chain, i.e.
+        \begin{align*}
+            \condindependent{\thirdcatvariable}{\catvariable}{\headvariableof{\sstat}}
+        \end{align*}
+        \item[iii)]
+        There are tensors $\acttensorat{\headvariableof{\sstat},\thirdcatvariable}$ and $\basemeasureat{\catvariable}$ such that
+        %\item There are functions $g : \imageof{T} \times \valof{\thirdcatvariable} \rightarrow \rr$ and $h: \valof{\catvariable}\rightarrow\rr$ such that for any $(x,z)\in\valof{\thirdcatvariable}\times \valof{\catvariable}$
+        \begin{align*}
+            \probat{\indexedthirdcatvariable,\indexedcatvariable}
+            = \acttensorat{\headvariableof{\sstat}=\sstatat{\catindex},\indexedthirdcatvariable} \cdot \basemeasureat{\indexedcatvariable} \, .
+        \end{align*}
+    \end{itemize}
+\end{theorem}
+\begin{proof}
+    $i) \Leftrightarrow ii)$:
+    We have always
+    \begin{align*} %% SOMETHING WRONG ?
+        \mutinfof{\thirdcatvariable}{\catvariable}
+        = \mutinfof{\thirdcatvariable}{(\catvariable,\headvariableof{\sstat})}
+        = \mutinfof{\thirdcatvariable}{\headvariableof{\sstat}} + \condmutinfof{\thirdcatvariable}{\catvariable}{\headvariableof{\sstat}}  %I(Z;X|\headvariableof{\sstat})
+    \end{align*}
+    and thus if and only if $i)$ holds
+    \begin{align*}
+        \condmutinfof{\thirdcatvariable}{\catvariable}{\headvariableof{\sstat}} = 0 \, .
+    \end{align*}
+    Using the KL-divergence characterization of the mutual information, this is equal to % Details needed?
+    \begin{align*}
+        \condprobat{\thirdcatvariable,\catvariable}{\headvariableof{\sstat}}
+        = \contractionof{\condprobat{\thirdcatvariable}{\headvariableof{\sstat}},\condprobat{\catvariable}{\headvariableof{\sstat}} }{\thirdcatvariable,\catvariable,\headvariableof{\sstat}} \, .
+    \end{align*}
+    This is equivalent to the conditional independence statement $ii)$. \\
+
+    $ii) \Rightarrow iii)$:
+    Let us assume $ii)$.
+    For almost all $\thirdcatindex\in\valof{\thirdcatvariable}$ and $\catindex\in\valof{\catvariable}$ we then have
+    \begin{align*}
+        \condprobat{\indexedthirdcatvariable}{\indexedcatvariable}
+        &= \condprobat{\indexedthirdcatvariable}{\indexedcatvariable,\headvariableof{\sstat}=\sstatat{\catindex}} \\
+        &= \condprobat{\indexedthirdcatvariable}{\headvariableof{\sstat}=\sstatat{\catindex}}
+    \end{align*}
+    Here we used that $\headvariableof{\sstat}$ has a deterministic dependence on $\catvariable$.
+    There is thus a tensor $\acttensor$ such that for all $\thirdcatindex\in\valof{\thirdcatvariable}$ and $\catindex\in\valof{\catvariable}$
+    \begin{align*}
+        \acttensorat{\headvariableof{\sstat}=\sstatat{\catindex},\indexedthirdcatvariable} = \condprobat{\indexedthirdcatvariable}{\indexedcatvariable} \, .
+    \end{align*}
+    We further define a tensor $\basemeasureat{\catvariable}=\probat{\catvariable}$ and get
+    \begin{align*}
+        \probat{\indexedthirdcatvariable,\indexedcatvariable}
+        &= \probat{\indexedcatvariable} \cdot \condprobat{\indexedthirdcatvariable}{\indexedcatvariable} \\
+        &= \acttensorat{\headvariableof{\sstat}=\sstatat{\catindex},\indexedthirdcatvariable} \cdot \basemeasureat{\indexedcatvariable} \, .
+    \end{align*}
+
+    $iii) \Rightarrow ii)$:
+%    Using $iii)$ we have for all supported $(\catindex,\thirdcatindex)\in\valof{\thirdcatvariable}\times \valof{\catvariable}$
+%    \begin{align*}
+%        \condprobat{\indexedthirdcatvariable}{\indexedcatvariable}
+%        &= \frac{\probat{\indexedthirdcatvariable,\indexedcatvariable}}{\probat{\indexedcatvariable}} \\
+%        &= \frac{\acttensorat{\headvariableof{\sstat}=\sstatat{\catindex},\indexedthirdcatvariable} \cdot \basemeasureat{\indexedcatvariable} }{\int \acttensorat{\headvariableof{\sstat}=\sstatat{\catindex},\indexedthirdcatvariable} \cdot \basemeasureat{\indexedcatvariable} \, dz} \\
+%        &= \frac{\acttensorat{\headvariableof{\sstat}=\sstatat{\catindex},\indexedthirdcatvariable}}{\int \acttensorat{\headvariableof{\sstat}=\sstatat{\catindex},\indexedthirdcatvariable}  \, dz} \\
+%        &= \frac{
+%            \left(\int_{\tilde{\catindex}:\sstatat{\catindex}=\sstatat{\tilde{\catindex}}} \, \basemeasureat{\indexedcatvariable} \, dx \right) \cdot \acttensorat{\headvariableof{\sstat}=\sstatat{\catindex},\indexedthirdcatvariable}
+%        }{
+%            \left(\int_{\{\tilde{\catindex}:\sstatat{\catindex}=\sstatat{\tilde{\catindex}}\}} \, \basemeasureat{\indexedcatvariable} \, dx \right) \cdot \int \acttensorat{\headvariableof{\sstat}=\sstatat{\catindex},\indexedthirdcatvariable}  \, dz
+%        } \\
+%        &= \frac{\probat{\indexedthirdcatvariable,\headvariableof{\sstat}=\sstatat{\catindex}}}{\probat{\headvariableof{\sstat}=\sstatat{\catindex}}} \\
+%        &= \condprobat{\indexedthirdcatvariable}{\headvariableof{\sstat}=\sstatat{\catindex}}
+%    \end{align*}
+    When assuming $iii)$ we have for all $(\catindex,\thirdcatindex)\in\valof{\thirdcatvariable}\times \valof{\catvariable}$
+    \begin{align*}
+        \condprobat{\indexedthirdcatvariable}{\indexedcatvariable}
+        &= \normalizationofwrt{\acttensorat{\headvariableof{\sstat},\thirdcatvariable},\bencodingofat{\sstat}{\headvariableof{\sstat},\catvariable},\basemeasureat{\catvariable}}{\indexedthirdcatvariable}{\indexedcatvariable} \\
+        &= \normalizationof{\acttensorat{\headvariableof{\sstat},\thirdcatvariable},\bencodingofat{\sstat}{\headvariableof{\sstat},\indexedcatvariable},\basemeasureat{\indexedcatvariable}}{\indexedthirdcatvariable} \\
+        &= \normalizationof{\acttensorat{\headvariableof{\sstat},\thirdcatvariable},\onehotmapofat{\sstatat{\catindex}}{\headvariableof{\sstat}}}{\indexedthirdcatvariable} \\
+        &= \condprobat{\indexedthirdcatvariable}{\headvariableof{\sstat}=\sstatat{\catindex}} \, .
+    \end{align*}
+    We further have at almost all $\headindexof{\sstat}\in\valof{\headvariableof{\sstat}}$, $\thirdcatindex\in\valof{\thirdcatvariable}$ and $\catindex\in\valof{\catvariable}$ that $\headindexof{\sstat}=\sstatat{\catindex}$ and
+    \begin{align*}
+        \condprobat{\indexedthirdcatvariable}{\indexedcatvariable,\indexedheadvariableof{\sstat}}
+        = \condprobat{\indexedthirdcatvariable}{\indexedcatvariable}
+    \end{align*}
+    and with the above at thus at almost all such pairs
+    \begin{align*}
+        \condprobat{\indexedthirdcatvariable}{\indexedcatvariable,\indexedheadvariableof{\sstat}}
+        = \condprobat{\indexedthirdcatvariable}{\indexedheadvariableof{\sstat}} \, .
+    \end{align*}
+    This is equivalent to $ii)$.
+\end{proof}
+
+\theref{the:factorizationFisherNeyman} follows from \theref{the:generalFactorizationFisherNeyman} by the equivalence of $ii)$ and $iii)$.
