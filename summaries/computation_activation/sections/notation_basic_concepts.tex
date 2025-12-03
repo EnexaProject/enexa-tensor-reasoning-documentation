@@ -78,11 +78,12 @@ To this end, we define the one-hot encoding of a state, which is a bijection bet
 
 The basis vectors $\onehotmapofat{\catindex}{\catvariable}$ are tensors of order $1$ and leg dimension $\catdim$ of the structure
 \begin{align}
-    \onehotmapofat{\catindex}{\catvariable} = \begin{bmatrix}
-                                                  0 & \cdots & 0 & 1 & 0 & \cdots & 0
+    \onehotmapofat{\catindex}{\catvariable}
+    = \begin{bmatrix}
+          0 & \cdots & 0 & 1 & 0 & \cdots & 0
     \end{bmatrix}^T \, ,
 \end{align}
-where the $1$ is at the $\catindex$th coordinate of the vector.
+where the $1$ is at the $\catindex$-th coordinate of the vector.
 
 \subsection{Contractions and Tensor Networks}
 Contractions are the central manipulation operation on sets of tensors.
@@ -189,8 +190,7 @@ To ease notation, we will often omit the set notation by brackets $\{\cdot\}$ an
         \input{../tikz_pics/notation_basic_concepts/contraction.tex}
     \end{center}
     \caption{
-        Example of a tensor network contraction of all but the variables $\catvariableof{1},\catvariableof{3}$.
-        Contraction of variables can always be depicted by closing the open legs with trivial tensors $\ones$ performing index sums.
+        Graphical depiction of a tensor network contraction with the open variables $\catvariableof{1},\catvariableof{3}$.
     }\label{fig:contraction}
 \end{figure}
 
@@ -249,6 +249,8 @@ In our graphical tensor notation, we depict directed tensors by directed hypered
 
 \subsection{Function encoding and \ComputationActivationNetworks{}}
 
+\alex{Might need to discuss image enumerating maps!}
+
 Let us now encode functions between the state sets of systems in factored representation.
 
 \begin{definition}[Basis encoding of maps between state sets]
@@ -270,24 +272,19 @@ Let us now encode functions between the state sets of systems in factored repres
         \onehotmapofat{\statesetfunctionev{\shortcatindices}}{\headvariables} \otimes  \onehotmapofat{\shortcatindices}{\shortcatvariables} \, .
     \end{align*}
 \end{definition}
-Basis encodings are directed tensors (see~\cite[Theorem 14.10]{goessmann2025}) and are thus depicted as decorations of directed edges in hypergraphs: \janina{Explain the arrows. Haven't introduced directed graphs yet.}
+Basis encodings are directed tensors (see~\cite[Theorem 14.10]{goessmann2025}) and are thus depicted as decorations of directed edges in hypergraphs:
 \begin{center}
     \input{../tikz_pics/notation_basic_concepts/bencoding}
 \end{center}
 
 The entries of the basis encoding are defined by
 \begin{align*}
-    \bencodingofat{\statesetfunction}{\headvariables=y_{[p]},\shortcatvariables=x_{[d]}}
+    \bencodingofat{\statesetfunction}{\headvariables=\headindexof{[\seldim]},\indexedshortcatvariables}
     = \begin{cases}
-          1 & \ifspace q(x_{[d]})=y_{[p]}\\
+          1 & \ifspace \statesetfunctionev{\shortcatindices}=\shortheadindices \\
           0 & \text{else}
     \end{cases}
 \end{align*}
-%\janina{Put basis encoding of propositional formula as in logic section as an example here? Hmm did not define them yet}
-
-
-%\janina{The definition includes conditional tensors. not introduced yet. Also no word about probability distributions yet.}
-
 
 Based on these concepts the main architecture can be defined.
 
