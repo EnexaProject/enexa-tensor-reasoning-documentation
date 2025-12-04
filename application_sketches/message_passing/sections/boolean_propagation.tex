@@ -1,17 +1,36 @@
-\section{Sound Propagation}\label{sec:supportContractionEquations}
+\section{Boolean Propagation}\label{sec:booleanPropagation}
 
 \red{Sound in the sense that entailment decisions made during the propagation are always true.}
 
 Instead of the exact calculation of a contraction, let us now investigate schemes to sparsify the tensors before a contraction.
 To this end, we first show underlying properties of contractions enabling these schemes.
 
+To state the next theorem we use the nonzero function $\nonzerofunction: \rr \rightarrow [2]$ by $\nonzeroof{x}=1$ if $x\neq0$ and $\nonzeroof{x}=0$ else.
+Applied coordinatewise on tensors $\hypercorewith$ it marks the nonzero coordinates by $1$.
+The resulting boolean tensor is denoted by $\nonzeroof{\hypercorewith}$.
+
+Further, we use the partial order $\prec$ of boolean tensors, which is defined by
+\begin{align*}
+    \hypercoreat{\shortcatvariables} \prec \sechypercoreat{\shortcatvariables}
+    \quad \Leftrightarrow \quad
+    \uniquantwrtof{\shortcatindicesin}{\hypercoreat{\indexedshortcatvariables}\leq\sechypercoreat{\indexedshortcatvariables} }
+\end{align*}
+%We use the coordinatewise nonzero indicator $\nonzeroof{\cdot}$, which returns a boolean tensor indicating which coordinates of $\hypercorewith$ vanish.
+
+\begin{theorem}
+    \label{the:mpGuaranteeBoolean}
+    For any implementation of \algoref{alg:contractionPropagation} we have at any stage of the algorithm for any message channel $(\sedge,\redge)$
+    \begin{align*}
+        \nonzeroof{\contractionof{\extnetwith}{\catvariableof{\sedge\cap\redge}}}
+        \prec\nonzeroof{\messagewith} \, .
+    \end{align*}
+\end{theorem}
+
+To show this theorem we in the following proof the monotonicity of tensor contractions and the invariance of adding supports of subcontractions.
 
 \subsection{Monotonicity of Tensor Contraction}
 
-To state the next theorem we use the nonzero function $\nonzerofunction: \rr \rightarrow [2]$ by $\nonzeroof{x}=1$ if $x\neq0$ and $\nonzeroof{x}=0$ else.
-Applied coordinatewise on tensors it marks the nonzero coordinates by $1$.
-
-We show that adding boolean tensor cores to an contraction orders the results by the partial ordering introduced in \defref{def:partialOrder}.
+We show that adding boolean tensor cores to a contraction orders the results by the partial ordering introduced in \defref{def:partialOrder}.
 
 \begin{theorem}[Monotonicity of Tensor Contractions]
     \label{the:monotonicityBinaryContractions}
@@ -37,6 +56,43 @@ We show that adding boolean tensor cores to an contraction orders the results by
     \end{align*}
 \end{proof}
 
+
+\begin{lemma}
+    \label{lem:monotonocityPreservedUnderContractions}
+    Let $\extnet$ and $\secextnet$ be non-negative tensor networks on the same hypergraph, and let us assume that for all $\edgein$
+    \begin{align*}
+        \nonzeroof{\hypercoreofat{\edge}{\catvariableof{\edge}}}
+        \prec \nonzeroof{\sechypercoreofat{\edge}{\catvariableof{\edge}}} \, .
+    \end{align*}
+    Then we have for any subset $\secnodes$ %! If for smaller subsets need to demand non-negativity!
+    \begin{align*}
+        \nonzeroof{\contractionof{\extnet}{\catvariableof{\secnodes}}}
+        \prec \nonzeroof{\contractionof{\secextnet}{\catvariableof{\secnodes}}} \, .
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    It is sufficient to show that for all $\seccatindexof{\secnodes}\in\bigtimes_{\node\in\secnodes}[\catdimof{\node}]$ we have
+    \begin{align*}
+        \left(\nonzeroof{\contractionof{\extnet}{\catvariableof{\secnodes}=\seccatindexof{\secnodes}}}=1\right)
+        \Rightarrow
+        \left(\nonzeroof{\contractionof{\secextnet}{\catvariableof{\secnodes}=\seccatindexof{\secnodes}}}=1\right) \, .
+    \end{align*}
+    If and only if for there is an index $\catindexof{\nodes}$ with $\restrictionofto{\catindexof{\nodes}}{\secnodes}=\seccatindexof{\secnodes}$ with
+    \begin{align*}
+        \uniquantwrtof{\edgein}{
+            \hypercoreofat{\edge}{\indexedcatvariableof{\edge}}=1
+        }
+    \end{align*}
+    then $\nonzeroof{\contractionof{\extnet}{\catvariableof{\secnodes}=\seccatindexof{\secnodes}}}=1$.
+    Note, that by assumption we have for this index also
+    \begin{align*}
+        \uniquantwrtof{\edgein}{
+            \sechypercoreofat{\edge}{\indexedcatvariableof{\edge}}=1
+        }
+    \end{align*}
+    and thus $\nonzeroof{\contractionof{\secextnet}{\catvariableof{\secnodes}=\seccatindexof{\secnodes}}}=1$.
+\end{proof}
+
 \subsection{Invariance of Adding Subcontractions}
 
 %We now show \theref{the:booleanContractionInvariance} of \charef{cha:logicalReasoning}.
@@ -47,13 +103,15 @@ This property was used in the proof of \theref{the:soundnessKnowledgePropagation
     \label{the:invarianceAddingSubcontractions}
     Let $\extnet$ be a tensor network of non-negative tensors with variables $\catvariableof{\nodes}$ and let $\secextnet$ be a subset.
     Then we have for any subset $\catvariableof{\secnodes}$ of $\catvariableof{\nodes}$
-    \[ \contractionof{\extnet \cup\{
-        \nonzeroof{
-            \contractionof{\secextnet}{\catvariableof{\secnodes}}
-        }
-        \}}{\catvariableof{\nodes}}
-    = \contractionof{\extnet}{\catvariableof{\nodes}}
-    \, . \]
+    \begin{align*}
+        \contractionof{\extnet \cup\left\{
+            \nonzeroof{
+                \contractionof{\secextnet}{\catvariableof{\secnodes}}
+            }
+            \right\}}{\catvariableof{\nodes}}
+        = \contractionof{\extnet}{\catvariableof{\nodes}}
+        \, .
+    \end{align*}
 \end{theorem}
 \begin{proof}
     For any $\catindexof{\nodes}$ with
@@ -85,18 +143,82 @@ This property was used in the proof of \theref{the:soundnessKnowledgePropagation
 %	Multiplying a zero slice with zero does not affect the contraction, neither does multiplication with one on any slice.
 \end{proof}
 
+\subsection{Consequences for boolean Contraction Propagation}
 
-\begin{remark}
-    Similar statements hold, when dropping the non-negativity assumption on the, but demanding that all variables are left open.
-\end{remark}
+\begin{lemma}
+    \label{lem:messageMonotonicity}
+    In any implementation of \algoref{alg:contractionPropagation} and at any iteration of the $\mathrm{While}$ loop, we have the old message $\mesfromtowith{\secsedge}{\redge}$ and the updated message $\updatedmesfromtowith{\secsedge}{\redge}$ obey
+    \begin{align*}
+        \mesfromtowith{\secsedge}{\redge} \prec \updatedmesfromtowith{\secsedge}{\redge} \, .
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    By induction over the iterations of the $\mathrm{While}$ loop, and using monotonicity of contractions. % Would help to state this for
+\end{proof}
+
+We are now ready to show the above guarantee on the soundness of message passing.
+
+\begin{proof}[Proof of \theref{the:mpGuaranteeBoolean}]
+    We first show via induction on the message updates that at any stage of \algoref{alg:contractionPropagation} we have
+    \begin{align}
+        \label{eq:contractionWithMessageSupport}
+        \contraction{\tnetofat{\graph}{\nodevariables}}{\nodevariables}
+        = \contractionof{\tnetofat{\graph}{\nodevariables} \cup \{\nonzeroof{\messagewith} \wcols (\sedge,\redge) \in \dirovgraph\}}{\nodevariables} \, .
+    \end{align}
+    Since the messages are initialized by trivial tensors, this is true after the initialization of \algoref{alg:contractionPropagation}.
+    Now we assume that this equation holds at an arbitrary state of the algorithm at the start of the $\mathrm{While}$ loop, and let $(\sedge,\redge)$ be the channel chosen by the scheduler.
+    Then we choose
+    \begin{align*}
+        \secextnet = \{\hypercoreofat{\sedge}{\redge} \}
+        \cup \{\mesfromtowith{\secsedge}{\sedge} \wcols (\secsedge,\sedge) \in \dirovgraph \ncond \secsedge\neq\redge\}
+    \end{align*}
+    and apply \theref{the:invarianceAddingSubcontractions} to get
+    \begin{align*}
+        \contraction{\tnetofat{\graph}{\nodevariables}}{\nodevariables}
+        &=\contractionof{\tnetofat{\graph}{\nodevariables} \cup \{\nonzeroof{\mesfromtowith{\thirdsedge}{\secsedge}} \wcols (\thirdsedge,\secsedge) \in \dirovgraph\}}{\nodevariables} \\
+        &= \contractionof{\tnetofat{\graph}{\nodevariables} \cup \{\nonzeroof{\mesfromtowith{\thirdsedge}{\secsedge}} \wcols (\thirdsedge,\secsedge) \in \dirovgraph\}
+            \cup \{\nonzeroof{
+                \contractionof{
+                    \secextnet
+                }{\catvariableof{\sedge\cap\redge}}
+            }\}
+        }{\nodevariables} \\
+%    \end{align*}
+%    We notice that the inner contraction is just the support of the updated message
+%    \begin{align*}
+%        \contraction{\tnetofat{\graph}{\nodevariables}}{\nodevariables}
+        &= \breakablecontractionof{\tnetofat{\graph}{\nodevariables}
+        \cup \{\nonzeroof{\mesfromtowith{\thirdsedge}{\secsedge}} \wcols (\thirdsedge,\secsedge)  \in \dirovgraph \ncond (\thirdsedge,\secsedge)\neq(\sedge,\redge) \} \\
+        & \quad\quad\quad\quad \cup \{\nonzeroof{\mesfromtowith{\sedge}{\redge}},\nonzeroof{\updatedmesfromtowith{\sedge}{\redge}}\}
+        }{\nodevariables} \\
+        & = \breakablecontractionof{\tnetofat{\graph}{\nodevariables}
+        \cup \{\nonzeroof{\mesfromtowith{\thirdsedge}{\secsedge}} \wcols (\thirdsedge,\secsedge)  \in \dirovgraph \ncond (\thirdsedge,\secsedge)\neq(\sedge,\redge) \} \\
+        & \quad\quad\quad\quad \cup \{\nonzeroof{\updatedmesfromtowith{\sedge}{\redge}}\}
+        }{\nodevariables} \, .
+    \end{align*}
+    Here we used that by \lemref{lem:messageMonotonicity} we have
+    \begin{align*}
+        \contractionof{\nonzeroof{\mesfromtowith{\sedge}{\redge}},\nonzeroof{\updatedmesfromtowith{\sedge}{\redge}}}{\catvariableof{\sedge\cap\redge}}
+        = \nonzeroof{\updatedmesfromtowith{\sedge}{\redge}} \, .
+    \end{align*}
+    We therefore have by induction \eqref{eq:contractionWithMessageSupport} during the algorithm.
+
+    The claim now follows from \theref{the:monotonicityBinaryContractions}, since
+    \begin{align*}
+        &\nonzeroof{\contractionof{\tnetofat{\graph}{\nodevariables} \cup \{\nonzeroof{\messagewith} \wcols (\sedge,\redge) \in \dirovgraph\}}{\catvariableof{\sedge\cap\redge}}} \\
+        &\quad\quad \prec \nonzeroof{\nonzeroof{\messagewith}} = \nonzeroof{\messagewith} \, . &\qedhere
+    \end{align*}
+\end{proof}
 
 
 \section{Complete Unit Clause Propagation (UCP)}
 
-\red{Investigate three conditions, where constraint propagation is also complete.}
+\red{Investigate here three conditions, where constraint propagation is also complete. (tree condition holds more general!)}
 
 Unit clauses are assignments to single variables.
 They are propagated between clusters of formulas
+
+UCP is \algoref{alg:contractionPropagation} is case of bethe hypergraphs (having bipartite overlap graphs with nodes to previous hyperedges and variable nodes).
 
 UCP is Knowledge Propagation (see Algorithm~1 in the report) in case of
 \begin{itemize}
@@ -246,7 +368,6 @@ A form of message passing is applied to reduce the clauses given the current par
 When guessed an assignment to a variable, the variable is removed from all clauses, either making the clause trivial (coinciding assignment) or smaller.
 If only one literal remains in a clause, the variable would be assigned accordingly (unit propagation).
 This can be directly done in the intermediate message passing scheme, or understood as the next backtracking step ("Find-Unit-Clause" in Figure 7.17 in \cite{russell_artificial_2021}).
-
 
 \subsection{With randomization: WalkSAT}
 

@@ -52,14 +52,18 @@ The scheduler $\scheduler$ maintains a subset of $\dirovedges$ of messages to be
 Once the set of messages to be sent is empty, the algorithm terminates.
 The scheduler can have different implementation, in which he possibly uses the graph and the history of the messages to decide on initializations and updates.
 
-Tree-based implementation (e.g. loop-free BP):
+\textbf{Tree-based implementation}: (guarantee by \theref{the:mpGuaranteeTree}) (e.g. loop-free BP):
 \begin{itemize}
     \item Start: All leaves sending messages to their neighbors in the overlap graph.
     \item Update: Each direction only once loaded on $\scheduler$, namely when at $\redge$ all but these messages are received.
 \end{itemize}
 Notice, that in the tree-based implementation the algorithm terminates after $2\cdot \cardof{\ovedges}$ passed messages.
 
-Constraint-propagation implementation:
+
+\textbf{Directed implementation}: (guarantee by \theref{the:mpGuaranteeBasis}, see \secref{sec:basisPropagation})
+One side of the tree-based implementation: Sent messages only in direction of the acyclic graph.
+
+\textbf{Constraint-propagation implementation} (guarantee by \theref{the:mpGuaranteeBoolean} see \secref{sec:booleanPropagation}) % ! The guarantee works for arbitrary schemes
 \begin{itemize}
     \item Start: All directions.
     \item Update: When the support of a message to $\redge$ changed all directions $(\redge,\secsedge)$
@@ -75,6 +79,7 @@ many times onto $\scheduler$, the algorithm therefore terminates after at most
 \end{align*}
 iterations.
 
+
 Loopy BP: Need Convergence criteria, or limits on the numbers of messages.
 
 \subsection{Analysis in the tree-based implementation}
@@ -82,10 +87,9 @@ Loopy BP: Need Convergence criteria, or limits on the numbers of messages.
 We denote for each pair $(\sedge,\redge)$ the subset $\preedgeset\subset\edges$ as the subset of edges $\edgein$, for which each path to $\redge$ passes through $\sedge$.
 Note, that by construction $\sedge\in\preedgeset$.
 
-\begin{theorem}
+\begin{theorem}\label{the:mpGuaranteeTree}
     For any tensor network on a tree hypergraph, \algoref{alg:contractionPropagation} terminates in the tree-based implementation and returns final messages
     \begin{align*}
-%        \mesfromtoat{\sedge}{\redge}{\catvariableof{\sedge\cap \redge}}
         \messagewith
         = \contractionof{\{\edgehypercorewith\wcols\edge\in\preedgeset\}}{\catvariableof{\sedge\cap\redge}}
     \end{align*}

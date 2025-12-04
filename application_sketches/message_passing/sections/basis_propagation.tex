@@ -1,8 +1,23 @@
-\section{Basis Propagation}
+\section{Basis Propagation}\label{sec:basisPropagation}
 
-Message Passing of directed and boolean message by basis encoding of functions can be interpreted as function evaluation.
-Each subfunction evaluation is passed in its one-hot encoding.
+\begin{theorem}\label{the:mpGuaranteeBasis}
+    Given a directed acyclic hypergraph and a tensor network of directed boolean tensors respecting the hypergraph.
+    Then the final messages of \algoref{alg:contractionPropagation} in the directed implementation are exact.
+\end{theorem}
+\begin{proof}
+    Just show inductively that the messages are one-hot encodings of the function evaluation.
+\end{proof}
 
+%% Basis calculus interpretation
+We have an interpretation of the messages by one-hot encodings of function evaluation at each node.
+The basis vectors at the leafs (i.e. edges with no incoming nodes) are understood as one-hot encodings of inputs.
+Passing a message $\onehotmapof{i}$ in direction thus gives the message $\onehotmapof{\exfunction(i)}$.
+
+%% Acyclicity
+Note, that the assumptions of \theref{the:mpGuaranteeBasis} are met, whenever the graph is directed and acyclic.
+We do not need acyclicity of the underlying undirected graph.
+
+%% Needed? -> just basis calculus. SVD Perspective
 This is because any basis encoding of a function, the decomposition
 \begin{align*}
 	\bencodingof{\exfunction} = \sum_{y \in\imageof{\exfunction}} ( \sum_{i: \exfunction(i)=y}\onehotmapof{i} )  \otimes \onehotmapof{y}
@@ -10,19 +25,19 @@ This is because any basis encoding of a function, the decomposition
 is a SVD of the matrification of $\bencodingof{\exfunction}$ with respect to incoming and outgoing legs.
 
 
-Passing a message $\onehotmapof{i}$ in direction thus gives the message $\onehotmapof{\exfunction(i)}$.
-
-Note, that this is exact, whenever the graph is directed and acyclic.
-We do not need acyclicity of the underlying undirected graph.
-\red{Make a theorem!}
-
-\red{
+% Tensor Parallelism outlook
+\red{Interpretation as dataset evaluation.}
+Let the only non-basis vectors be the incoming ones, e.g. by a dataset (i.e. averaging by $\onesat{\decvariable}$).
+Message Passing of directed and boolean message by basis encoding of functions can be interpreted as function evaluation.
+Each subfunction evaluation is passed in its one-hot encoding.
 Distinguish:
 \begin{itemize}
     \item Single inference: Basis propagation
     \item Batchwise inference: "Tensor Parallelism", but in the most interesting cases not exact.
+    If the graph is minimally connected, we are guaranteed that the averages are exact.
+    Also we can apply boolean theory to have sound messages: If in a message a state is not supported, this state cannot be reached by any data point
 \end{itemize}
-}
+
 
 %After having established a one-to-one connection between the directed and binary tensors with the encoding of functions, we now interpret contractions as evaluations of the respective functions.
 %Applying this insight iteratively on composed functions we show the following theorem.
