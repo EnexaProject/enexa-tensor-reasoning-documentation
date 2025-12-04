@@ -1,58 +1,132 @@
 \section{Contraction Propagation}
 
 
-\red{Redo without cluster graphs:}
-\begin{itemize}
-    \item Use hypergraphs and coarse graining of those
-\end{itemize}
+%\red{Redo without cluster graphs:}
+%\begin{itemize}
+%    \item Use hypergraphs and coarse graining of those
+%\end{itemize}
 Generic algorithm:
 \begin{itemize}
     \item Variable are the hypergraph and the scheduler
     \item Fixed are the trivial initial messages, the message system by overlaping edges, variables by edge intersections, computation of message by contraction
 \end{itemize}
 
-
-
 \begin{definition}
-    Given a hypergraph $\graph=(\nodes,\edges)$ the overlap graph $G^{overlap}$ consists of $\edges$ as nodes and an edges
+    Given a hypergraph $\graph=(\nodes,\edges)$ the overlap graph $\ovgraph$ consists of $\edges$ as nodes and an edges
     \begin{align*}
-        E^{overlap} = \big\{\{e_0,e_1\}\wcols e_0,e_1\in \edges\ncond e_0\cap e_1\neq \varnothing \big\} \, .
+        \ovedges = \big\{\{\sedge,\redge\}\wcols \sedge,\redge\in\edges \ncond \sedge\neq\edge \ncond \sedge\cap \redge\neq \varnothing \big\} \, .
     \end{align*}
-    We say that $\graph$ is a tree-hypergraph, if $G^{overlap}$ is a tree.
+    We say that $\graph$ is a tree-hypergraph, if $\ovgraph$ is a tree.
 \end{definition}
 
+Messages are sent between overlapping edges, i.e. along the edges of $\ovgraph$.
+We further distinguish between messages $\sedge\rightarrow\redge$ and $\redge\rightarrow\sedge$ and build the directed overlap graph
+\begin{align*}
+    \dirovgraph = \left(\edges,\dirovedges\right) = \left(\edges,\bigcup_{\{\sedge,\redge\}\in\ovedges}\{(\sedge,\redge),(\redge,\sedge)\}\right) \, .
+\end{align*}.
+
 \begin{algorithm}[hbt!]
-    \caption{Generic Contraction Propagation}
+    \caption{Generic Contraction Propagation}\label{alg:contractionPropagation}
     \begin{algorithmic}
         \Require Hypergraph $\graph$
-        \Ensure Scheduler $S$
+        \Ensure Scheduler $\scheduler$
         \iosepline
-        \State Initialize $S$ given $\graph$
+        \State Initialize $\scheduler$ (differs in implementation)
         \State Initialize messages
-        \While{$S$ not empty}
-            \State Take a $(e_0,e_1)$ pair from $S$
+        \While{$\scheduler$ not empty}
+            \State Take a $(\sedge,\redge)$ pair from $\scheduler$
             \State Update the message
             \begin{align*}
-                \mesfromto{e_0}{e_1}[\catvariableof{e_0\cap e_1}]
-                = \contractionof{\{\hypercoreofat{e_0}{\catvariableof{e_0}}\}
-                    \cup \{\mesfromto{e_2}{e_0}[\catvariableof{e_2\cap e_0}] \wcols e_2\cap e_0\neq \varnothing \ncond e_2\neq e_1\}}{\catvariableof{e_0\cap e_1}}
+                \messagewith
+                = \contractionof{\{\hypercoreofat{\sedge}{\catvariableof{\sedge}}\}
+                    \cup \{\mesfromtoat{\secsedge}{\sedge}{\catvariableof{\secsedge\cap\sedge}} \wcols (\secsedge,\sedge)\in\dirovedges \ncond \secsedge\neq \redge\}
+                }{\catvariableof{\sedge\cap \redge}}
             \end{align*}
-            \State Update $S$ based on the old messages and the new message
+            \State Update $\scheduler$ (differs in implementation)
         \EndWhile
         \State \Return Messages
     \end{algorithmic}
 \end{algorithm}
 
-The scheduler $S$ can have different implementation:
+The scheduler $\scheduler$ maintains a subset of $\dirovedges$ of messages to be sent, which updated (possibly without change) after each message.
+Once the set of messages to be sent is empty, the algorithm terminates.
+The scheduler can have different implementation, in which he possibly uses the graph and the history of the messages to decide on initializations and updates.
+
 Tree-based implementation (e.g. loop-free BP):
 \begin{itemize}
     \item Start: All leaves sending messages to their neighbors in the overlap graph.
-    \item Update: Each direction only once loaded on $S$, namely when at $e_1$ all but these messages are received.
+    \item Update: Each direction only once loaded on $\scheduler$, namely when at $\redge$ all but these messages are received.
 \end{itemize}
+Notice, that in the tree-based implementation the algorithm terminates after $2\cdot \cardof{\ovedges}$ passed messages.
+
 Constraint-propagation implementation:
 \begin{itemize}
     \item Start: All directions.
-    \item Update: When the support of a message to $e_1$ changed all directions $(e_1,e_2)$
+    \item Update: When the support of a message to $\redge$ changed all directions $(\redge,\secsedge)$
     \item Efficiency increase: Replace messages by their support, need only those with nontrivial support in the contraction.
 \end{itemize}
+In the constraint-propagation implementation each direction $(\sedge,\redge)$ is loaded at most
+\begin{align*}
+    \sum_{(\secsedge,\sedge)\in\dirovgraph} \left(\prod_{\node\in\secsedge\cap\sedge}\catdimof{\node}\right)
+\end{align*}
+many times onto $\scheduler$, the algorithm therefore terminates after at most
+\begin{align*}
+    \sum_{(\sedge,\redge)\in\dirovgraph}\sum_{(\secsedge,\sedge)\in\dirovgraph} \left(\prod_{\node\in\secsedge\cap\sedge}\catdimof{\node}\right)
+\end{align*}
+iterations.
+
 Loopy BP: Need Convergence criteria, or limits on the numbers of messages.
+
+\subsection{Analysis in the tree-based implementation}
+
+We denote for each pair $(\sedge,\redge)$ the subset $\preedgeset\subset\edges$ as the subset of edges $\edgein$, for which each path to $\redge$ passes through $\sedge$.
+Note, that by construction $\sedge\in\preedgeset$.
+
+\begin{theorem}
+    For any tensor network on a tree hypergraph, \algoref{alg:contractionPropagation} terminates in the tree-based implementation and returns final messages
+    \begin{align*}
+%        \mesfromtoat{\sedge}{\redge}{\catvariableof{\sedge\cap \redge}}
+        \messagewith
+        = \contractionof{\{\edgehypercorewith\wcols\edge\in\preedgeset\}}{\catvariableof{\sedge\cap\redge}}
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    We show this property by induction over the edge sets $\preedgeset$ to pairs $(\sedge,\redge)\in\dirovedges$, such that $\cardof{\preedgeset}\leq n$.
+    Notice, that since always $\sedge\in\preedgeset$ we have $n\geq1$.
+
+    $n=1$: In this case we have $\preedgeset=\{\sedge\}$ and $\sedge$ is a leaf of the tree-hypergraph $\graph$.
+    The claimed message property holds thus by definition.
+
+    $n\rightarrow n+1$: Let us assume, that the message obeys the claimed property for edge sets with cardinality up to $n$.
+    If there is no edge set with cardinality $n+1$, the property holds also for those with cardinality up to $n+1$.
+    If there is an edge set $\preedgeset$ with size $n+1$, we have
+    \begin{align*}
+        \preedgeset = \{\sedge\} \cup \left(\bigcup_{\secsedge \in\dirovedges} \preedgesetwrt{\secsedge}{\sedge}\right) \, .
+    \end{align*}
+    The message $\mesfromto{\sedge}{\redge}$ is sent, once all messages $\mesfromto{\secsedge}{\sedge}$ to $(\secsedge,\sedge)\in\dirovedges\{(\redge,\sedge)\}$ arrived.
+    By definition we have
+    \begin{align*}
+        \mesfromtowith{\sedge}{\redge}%{\catvariableof{\sedge\cap \redge}}
+        = \contractionof{\{\hypercoreofat{\sedge}{\catvariableof{\sedge}}\}
+            \cup \{\mesfromtowith{\secsedge}{\sedge} \wcols (\secsedge,\sedge) \in\dirovedges \ncond \secsedge \neq \redge \}
+        }{\catvariableof{\sedge\cap \redge}}
+    \end{align*}
+    Now we use the induction assumption on $\preedgesetwrt{\secsedge}{\sedge}$ (since its cardinality is at most $n$) and get
+    \begin{align*}
+        \mesfromtoat{\sedge}{\redge}{\catvariableof{\sedge\cap \redge}}
+        &= \contractionof{
+            \{\hypercoreofat{\sedge}{\catvariableof{\sedge}}\} \cup
+            \left(\bigcup_{(\secsedge,\sedge)\in\dirovedges \ncond \secsedge\neq \redge}
+                \contractionof{\{\hypercoreofat{\thirdsedge}{\catvariableof{\thirdsedge}} \wcols  \thirdsedge \in \preedgesetwrt{\secsedge}{\sedge}\}}{\catvariableof{\secsedge\cap \sedge}} \right)
+        }{\catvariableof{\sedge\cap \redge}} \\
+        &= \contractionof{
+            \{\hypercoreofat{\sedge}{\catvariableof{\sedge}}\} \cup
+            \left(\bigcup_{(\secsedge,\sedge)\in\dirovedges \ncond \secsedge\neq \redge} \{\hypercoreofat{\thirdsedge}{\catvariableof{\thirdsedge}} \wcols  \thirdsedge \in \preedgesetwrt{\secsedge}{\sedge}\} \right)
+        }{\catvariableof{\sedge\cap \redge}} \\
+        &= \contractionof{\{\edgehypercorewith\wcols\edge\in\preedgeset\}}{\catvariableof{\sedge\cap\redge}}
+    \end{align*}
+    Here we used the commutation of contraction property in the second equation, which is justified by the assumed tree property of the hypergraph.
+    Thus, the message property holds also for any edge sets of size $n+1$.
+
+    By induction, the claimed message property therefore holds for all final messages.
+\end{proof}
