@@ -1,0 +1,102 @@
+\section{Graph Manipulation}
+
+The graph $\graph$ can result from manipulations: e.g. Bethe-Clustering ("deltafication").
+
+Construction of coarse grained tree hypergraphs, by the junction tree algorithm
+\begin{itemize}
+    \item Amounts to triangulation of underlying "extended graph" (i.e. node pairs contained in hypergraphs)
+    \item Use the cliques of the triangulated graph as hyperedges (guaranteed to be a tree, a so called "clique tree").
+\end{itemize}
+
+\subsection{Factor graphs}
+
+%\begin{definition}
+%    The factor graph to a hypergraph $\graph=(\nodes,\edges)$ is $G^{factor}=()$
+%\end{definition}
+
+\begin{definition}
+    Given a tensor network $\tnetof{\graph}$ on a decorated hypergraph $\graph$, we define the bethe hypergraph $\secgraph$ as
+    $(\secnodes, \secedges \cup \Delta^{\graph})$ where we have
+    \begin{itemize}
+        \item Recolored Edges $\secedges = \{\tilde{\edge} \wcols \edge\in \edges\}$ where $\tilde{\edge} = \{\node^{\edge} \wcols \node\in\edge\}$, which decoration tensor has same coordinates as $\hypercoreof{\edge}$
+        \item Nodes $\secnodes = \nodes \cup (\bigcup_{\edge\in\edges}\tilde{\edge})$ %$\secnodes = \bigcup_{\edge\in\edges}\{\node^{\edge} \wcols \node\in\edge \}$
+        \item Delta Edges $\Delta^{\graph} =  \big\{ \{\node\} \cup \{\node^{\edge} \wcols \edge\ni\node \}\wcols \node\in\nodes \big\} $, each of which decorated by a delta tensor $\delta^{\{\node^{\edge} \wcols \edge\ni\node \}}$
+    \end{itemize}
+\end{definition}
+
+We effectively copy each node $\node$ by $\node^{\edge}$.
+Let us now show, that when assigning dirac delta tensors the contraction reproduces the original contraction.
+
+\begin{lemma}[Bethe Invariance]
+    Given a tensor network $\extnetwith$ on a hypergraph $\graph$.
+    We define a tensor network on its bethe hypergraph $\secgraph$ by the tensors for $\edge\in\edges$
+    \begin{align*}
+        \sechypercoreofat{\tilde{\edge}}{\catvariableof{\tilde{\edge}}}
+        = \contractionof{\hypercoreofat{\edge}{\catvariableof{\edge}},\identityat{\catvariableof{\edge},\catvariableof{\tilde{\edge}}}}{\catvariableof{\tilde{\edge}}}
+    \end{align*}
+    and the tensors for $\tilde{\edge}\in\Delta^{\graph}$
+    \begin{align*}
+        \sechypercoreofat{\tilde{\edge}}{\catvariableof{\tilde{\edge}},\catvariableof{\node}}
+        = \identityat{\catvariableof{\tilde{\edge}},\catvariableof{\node}} \, .
+    \end{align*}
+    Then we have
+    \begin{align*}
+        \extnetwith =
+        \contractionof{\{\sechypercoreofat{\tilde{\edge}}{\catvariableof{\tilde{\edge}}} \wcols \tilde{\edge}\in\secedges \cup \Delta^{\graph}\}}{\nodevariables}
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    By invariance of adding dirac deltas.
+\end{proof}
+
+Equal constructions:
+\begin{itemize}
+    \item BP on factor graphs in \cite{mezard_information_2009}
+    \item Bethe Cluster graphs in \cite{koller_probabilistic_2009}
+\end{itemize}
+
+\begin{figure}[t]
+    \begin{center}
+        \input{tikz_pics/data_example.tex}
+    \end{center}
+    \caption{Example of a Bethe Cluster Graph.
+    a) Example of a Tensor Network $\tnetof{\graph}$, which represents the by $\lambda$ averaged evaluation of the formula $(a\land b)\lor c$ on data $\datamap$.
+    b) Corresponding Bethe Cluster Hypergraph, which dual is bipartite by the sets $\Delta$ and $\tilde{\edges}$.
+    }
+    \label{fig:betheDataExample}
+\end{figure}
+
+By adding delta tensors to each node $\node\in\nodes$ and defining its leg variables by $\node^{\edge}$ for $\edge\in\edges$.
+We mark each such delta tensor by a cluster in $\Delta^{\graph}$, as defined in the following (see also \figref{fig:betheDataExample}).
+
+
+By \lemref{lem:deltification} this construction does not change contractions.
+
+% Dual graph
+The dual is bipartite, since any variable appears exactly in one cluster in $\secedges$ and in one cluster of $\Delta^{\graph}$.
+This further makes the dual of the Bethe Cluster Hypergraph a proper graph (i.e. edges consistent of node pairs).
+
+\subsection{Coarse graining}
+
+\begin{definition}
+    Let $\graph=(\nodes,\edges)$ and $\secgraph=(\node,\secedges)$ be two hypergraphs sharing their node set and $c: \edges \rightarrow \secedges$ a map.
+    We say that $c$ is a coarse graining map and $\secgraph$, if for all $\edgein$
+    \begin{align*}
+        \edge \subset c(\edge) \, .
+    \end{align*}
+\end{definition}
+
+In the literature such coarse graining procedures appear as Cluster Graphs.
+
+
+
+\subsection{Variable Elimination}
+
+Based on disjoint subsets of $\nodes$ we can construct a coarse graining procedure of the bethe hypergraph:
+Construct iteratively $\secedges$ by iterating through the node subsets and
+\begin{itemize}
+    \item Add those $\edge\in\edges$ which have not been assigned before and contain variables in the subset.
+    \item Choose the new edge by the union of the old one with the assigned edges in $\edges$ and dropping those nodes, which are not appearing in the rest of $\edges$ any more.
+    \item Return the intersection of the new edge with the rest of $\edges$ back to $\edges$.
+\end{itemize}
+By construction this gives

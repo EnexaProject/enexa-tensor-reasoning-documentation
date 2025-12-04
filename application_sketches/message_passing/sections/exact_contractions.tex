@@ -1,25 +1,6 @@
 
 \section{Exact Contractions}
 
-\red{Redo without cluster graphs:}
-\begin{itemize}
-    \item Use hypergraphs and coarse graining of those
-\end{itemize}
-Generic algorithm:
-\begin{itemize}
-    \item Variable are the hypergraph and the scheduler
-    \item Fixed are the trivial initial messages, the message system by overlaping edges, variables by edge intersections, computation of message by contraction
-\end{itemize}
-Construction of coarse grained tree hypergraphs, by the junction tree algorithm
-\begin{itemize}
-    \item Amounts to triangulation of underlying "extended graph" (i.e. node pairs contained in hypergraphs)
-    \item Use the cliques of the triangulated graph as hyperedges (guaranteed to be a tree, a so called "clique tree").
-\end{itemize}
-Equal constructions:
-\begin{itemize}
-    \item BP on factor graphs in \cite{mezard_information_2009}
-    \item Bethe Cluster graphs in \cite{koller_probabilistic_2009}
-\end{itemize}
 
 
 %\red{This is the junction tree algorithm!}
@@ -29,6 +10,9 @@ We apply \theref{the:splittingContractions} to split a contraction into subcontr
 % Message Passing
 Contractions can be performed partially, and the result passed to the rest of the network as a message.
 
+
+
+%%
 \subsection{Construction of Cluster Graphs}
 
 Let us first introduce with the cluster graph a mechanism to coarse grain the hypergraph capturing a tensor network.
@@ -206,55 +190,21 @@ The constractions at each cluster can then be computed batchwise, based on messa
 These message passing schemes can be derived from Lagrangian parameters given a local consistency polytope \cite{wainwright_graphical_2008}.
 
 
-
-\subsection{Variable Elimination Cluster Graphs}
-
-
-\begin{remark}[Construction of Cluster Graphs by Variable Elimination]
-	% Build a cluster graph
-	Following an elimination order of the colors, mark those tensors containing the colors, which have not been marked before, as the cluster.
-	% Extension to clique tree
-	A clique tree can be constructed by these cluster, when iterating through the clusters and either connect them to previous disconnected clusters or leave the current cluster disconnected.
-	Add the disconnected clusters with the current cluster in case there are overlaps of their open colors.
-	If the disconnected cluster added has more open colors,
-\end{remark}
-
-
-\subsection{Bethe Cluster Graphs}
+%
+%\subsection{Variable Elimination Cluster Graphs}
+%
+%
+%\begin{remark}[Construction of Cluster Graphs by Variable Elimination]
+%	% Build a cluster graph
+%	Following an elimination order of the colors, mark those tensors containing the colors, which have not been marked before, as the cluster.
+%	% Extension to clique tree
+%	A clique tree can be constructed by these cluster, when iterating through the clusters and either connect them to previous disconnected clusters or leave the current cluster disconnected.
+%	Add the disconnected clusters with the current cluster in case there are overlaps of their open colors.
+%	If the disconnected cluster added has more open colors,
+%\end{remark}
 
 
-\begin{figure}[t]
-\begin{center}
-	\input{tikz_pics/data_example.tex}
-\end{center}
-\caption{Example of a Bethe Cluster Graph.
-	a) Example of a Tensor Network $\tnetof{\graph}$, which represents the by $\lambda$ averaged evaluation of the formula $(a\land b)\lor c$ on data $\datamap$.
-	b) Corresponding Bethe Cluster Hypergraph, which dual is bipartite by the sets $\Delta$ and $\tilde{\edges}$.
-	}
-\label{fig:betheDataExample}
-\end{figure}
-
-By adding delta tensors to each node $\node\in\nodes$ and defining its leg variables by $\node^{\edge}$ for $\edge\in\edges$.
-We mark each such delta tensor by a cluster in $\Delta^{\graph}$, as defined in the following (see also \figref{fig:betheDataExample}).
-
-\begin{definition}
-	Given a tensor network $\tnetof{\graph}$ on a decorated hypergraph $\graph$, we define the Bethe Cluster Hypergraph $\secgraph$ as
-	$(\secnodes, \secedges \cup \Delta^{\graph})$ where we have
-	\begin{itemize}
-		\item Recolored Edges $\secedges = \{\tilde{\edge} \wcols \edge\in \edges\}$ where $\tilde{\edge} = \{\node^{\edge} \wcols \node\in\edge\}$, which decoration tensor has same coordinates as $\hypercoreof{\edge}$
-		\item Nodes $\secnodes = \bigcup_{\edge\in\edges}\tilde{\edge}$ %$\secnodes = \bigcup_{\edge\in\edges}\{\node^{\edge} \wcols \node\in\edge \}$
-		\item Delta Edges $\Delta^{\graph} =  \big\{ \{\node^{\edge} \wcols \edge\ni\node \} \wcols \node\in\nodes \big\} $, each of which decorated by a delta tensor $\delta^{\{\node^{\edge} \wcols \edge\ni\node \}}$
-	\end{itemize}
-\end{definition}
-
-By \lemref{lem:deltification} this construction does not change contractions.
-
-% Dual graph
-The dual is bipartite, since any variable appears exactly in one cluster in $\secedges$ and in one cluster of $\Delta^{\graph}$.
-This further makes the dual of the Bethe Cluster Hypergraph a proper graph (i.e. edges consistent of node pairs).
-
-
-
+%\subsection{Bethe Cluster Graphs}
 
 
 %\subsection{Computational Complexity}

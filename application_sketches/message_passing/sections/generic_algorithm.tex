@@ -1,0 +1,58 @@
+\section{Contraction Propagation}
+
+
+\red{Redo without cluster graphs:}
+\begin{itemize}
+    \item Use hypergraphs and coarse graining of those
+\end{itemize}
+Generic algorithm:
+\begin{itemize}
+    \item Variable are the hypergraph and the scheduler
+    \item Fixed are the trivial initial messages, the message system by overlaping edges, variables by edge intersections, computation of message by contraction
+\end{itemize}
+
+
+
+\begin{definition}
+    Given a hypergraph $\graph=(\nodes,\edges)$ the overlap graph $G^{overlap}$ consists of $\edges$ as nodes and an edges
+    \begin{align*}
+        E^{overlap} = \big\{\{e_0,e_1\}\wcols e_0,e_1\in \edges\ncond e_0\cap e_1\neq \varnothing \big\} \, .
+    \end{align*}
+    We say that $\graph$ is a tree-hypergraph, if $G^{overlap}$ is a tree.
+\end{definition}
+
+\begin{algorithm}[hbt!]
+    \caption{Generic Contraction Propagation}
+    \begin{algorithmic}
+        \Require Hypergraph $\graph$
+        \Ensure Scheduler $S$
+        \iosepline
+        \State Initialize $S$ given $\graph$
+        \State Initialize messages
+        \While{$S$ not empty}
+            \State Take a $(e_0,e_1)$ pair from $S$
+            \State Update the message
+            \begin{align*}
+                \mesfromto{e_0}{e_1}[\catvariableof{e_0\cap e_1}]
+                = \contractionof{\{\hypercoreofat{e_0}{\catvariableof{e_0}}\}
+                    \cup \{\mesfromto{e_2}{e_0}[\catvariableof{e_2\cap e_0}] \wcols e_2\cap e_0\neq \varnothing \ncond e_2\neq e_1\}}{\catvariableof{e_0\cap e_1}}
+            \end{align*}
+            \State Update $S$ based on the old messages and the new message
+        \EndWhile
+        \State \Return Messages
+    \end{algorithmic}
+\end{algorithm}
+
+The scheduler $S$ can have different implementation:
+Tree-based implementation (e.g. loop-free BP):
+\begin{itemize}
+    \item Start: All leaves sending messages to their neighbors in the overlap graph.
+    \item Update: Each direction only once loaded on $S$, namely when at $e_1$ all but these messages are received.
+\end{itemize}
+Constraint-propagation implementation:
+\begin{itemize}
+    \item Start: All directions.
+    \item Update: When the support of a message to $e_1$ changed all directions $(e_1,e_2)$
+    \item Efficiency increase: Replace messages by their support, need only those with nontrivial support in the contraction.
+\end{itemize}
+Loopy BP: Need Convergence criteria, or limits on the numbers of messages.
