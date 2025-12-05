@@ -2,10 +2,11 @@
 
 The graph $\graph$ can result from manipulations: e.g. Bethe-Clustering ("deltafication").
 
-Construction of coarse grained tree hypergraphs, by the junction tree algorithm
+
+We have two manipulation strategies, which we show to preserve contractions:
 \begin{itemize}
-    \item Amounts to triangulation of underlying "extended graph" (i.e. node pairs contained in hypergraphs)
-    \item Use the cliques of the triangulated graph as hyperedges (guaranteed to be a tree, a so called "clique tree").
+    \item Bethe construction of factor graphs
+    \item Coarse graining
 \end{itemize}
 
 \subsection{Factor graphs}
@@ -66,7 +67,7 @@ Equal constructions:
 
 \begin{figure}[t]
     \begin{center}
-        \input{tikz_pics/data_example.tex}
+        \input{tikz_pics/bethe_hypergraph_example}
     \end{center}
     \caption{Example of a Bethe Cluster Graph.
     a) Example of a Tensor Network $\tnetof{\graph}$, which represents the by $\lambda$ averaged evaluation of the formula $(a\land b)\lor c$ on data $\datamap$.
@@ -74,10 +75,6 @@ Equal constructions:
     }
     \label{fig:betheDataExample}
 \end{figure}
-
-
-
-
 
 \subsection{Coarse graining}
 
@@ -87,11 +84,45 @@ Equal constructions:
     \begin{align*}
         \edge \subset c(\edge) \, .
     \end{align*}
+    For any tensor network $\graphtnetwith$ on $\graph$ we further define a coarse grained tensor network $\sectnetofat{\secgraph}{\nodevariables}$ on $\secgraph$ with hypercores to $\secedge\in\secedges$ by
+    \begin{align*}
+        \sechypercoreofat{\secedge}{\catvariableof{\secedge}}
+        = \contractionof{\{\edgehypercorewith\wcols\secedge=c(\edge)\}}{\catvariableof{\secedge}} \, .
+    \end{align*}
 \end{definition}
 
 In the literature such coarse graining procedures appear as Cluster Graphs.
 
-\subsection{Variable Elimination}
+We notice that coarse graining of tensor networks preserves their contractions, since
+\begin{align*}
+    \graphtnetwith
+    &= \contractionof{\{\edgehypercorewith\wcols\edgein\}}{\nodevariables} \\
+    &= \contractionof{\bigcup_{\secedge\in\secedges}\{\edgehypercorewith\wcols c(\edge)=\secedge\}}{\nodevariables} \\
+    &= \contractionof{\{\contractionof{\{\edgehypercorewith\wcols c(\edge)=\secedge\}}{\edgevariables}\wcols\secedge\in\secedges\}}{\nodevariables} \\
+    &= \contractionof{\{\sechypercoreofat{\secedge}{\catvariableof{\secedge}}\wcols\secedge\in\secedges\}}{\nodevariables} \\
+    &= \sectnetofat{\secgraph}{\nodevariables} \, .
+\end{align*}
+
+\subsection{Coarse graining to Tree Hypergraphs}
+
+Construction of coarse grained tree hypergraphs, by the junction tree algorithm
+\begin{itemize}
+    \item Amounts to triangulation of underlying "extended graph" (i.e. node pairs contained in hypergraphs)
+    \item Use the cliques of the triangulated graph as hyperedges (guaranteed to be a tree, a so called "clique tree").
+\end{itemize}
+
+\subsubsection{Junction Tree Algorithm}
+
+Classically the junction tree algorithm is formulated on the extended graph (we define extended graphs here by two nodes adjacent if and only if they are contained in a hypergraph) \cite{lauritzen_local_1988}, where one exploits that a graph has a junction tree if and only if it is triangulated \cite{lauritzen_graphical_1996}.
+The junction tree algorithm therefore constructs a triangulation of the graph by adding edges (also called chordal graph \cite{koller_probabilistic_2009}), and gets a tree-hypergraph by its cliques.
+Note that finding a minimal triangulation is $\mathrm{NP}$-hard.
+
+% Formulation on hypergraphs
+We can equally formulate the junction tree algorithm on hypergraphs.
+Equivalent to searching for a triangulation of an extended graph, we here search for a coarse grained hypergraph, which is a tree.
+Then the cliques of the triangulated graphs correspond with the hyperedges of the coarse grained hypergraph.
+
+\subsubsection{Variable Elimination}
 
 Based on disjoint subsets of $\nodes$ we can construct a coarse graining procedure of a hypergraph:
 Construct iteratively $\secedges$ by iterating through the node subsets and
