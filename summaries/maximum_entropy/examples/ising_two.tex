@@ -1,0 +1,76 @@
+\begin{example}[Ising model on $2$ nodes]
+    % See Example~3.6 in \cite{wainwright_graphical_2008}
+    Consider two boolean variables $\catvariableof{0},\catvariableof{1}$ and the Ising statistic by three propositional formulas
+    \begin{align*}
+        \formulaofat{0}{\catvariableof{[2]}} = \catvariableof{0} \quad , \quad
+        \formulaofat{1}{\catvariableof{[2]}} = \catvariableof{1} \andspace
+        \formulaofat{2}{\catvariableof{[2]}} = \catvariableof{0}\land\catvariableof{1} \, .
+    \end{align*}
+    In the Ising interpretation, the boolean variables represent interacting spins at two locations.
+    Their value is then measured by the first two formulas and their interaction by the third.
+
+    The vertices of the mean polytope to this statistic are
+    \begin{align*}
+        \hlnstatat{\catindexof{0},\catindexof{1}} = [\formulaofat{0}{\indexedcatvariableof{[2]}},\formulaofat{1}{\indexedcatvariableof{[2]}},\formulaofat{2}{\indexedcatvariableof{[2]}}]^T =
+        \begin{cases}
+        [0,0,0]
+            ^T & \ifspace (\catindexof{0},\catindexof{1}) = (0,0) \\
+            [0,1,0]^T & \ifspace (\catindexof{0},\catindexof{1}) = (0,1) \\
+            [1,0,0]^T & \ifspace (\catindexof{0},\catindexof{1}) = (1,0) \\
+            [1,1,1]^T & \ifspace (\catindexof{0},\catindexof{1}) = (1,1)
+        \end{cases}
+    \end{align*}
+    and the mean polytope is the convex hull of these, sketched as:
+    \begin{center}
+        \tdplotsetmaincoords{55}{20} % Set the viewpoint: (theta, phi)
+
+        \begin{tikzpicture}[tdplot_main_coords, scale=2,
+            mainline/.style={thick},
+            invisibleline/.style={dashed, gray}
+        ]
+
+            % Define the 4 vertices
+            \coordinate (A) at (0, 0, 0);
+            \coordinate (B) at (0, 1, 0);
+            \coordinate (C) at (1, 0, 0);
+            \coordinate (D) at (1, 1, 1);
+
+            % Draw the faces with some opacity (optional, requires more complex sorting for correct rendering)
+            \fill[cyan!20, opacity=0.6] (A) -- (B) -- (C) -- cycle;
+            % \fill[cyan!20, opacity=0.6] (A) -- (B) -- (D) -- cycle;
+            % \fill[cyan!20, opacity=0.6] (A) -- (C) -- (D) -- cycle;
+            % \fill[cyan!20, opacity=0.6] (B) -- (C) -- (D) -- cycle;
+
+            % Draw visible edges (adjust based on your chosen viewpoint)
+            \draw[mainline] (B) -- (C) -- (D) -- cycle; % Front face BCD
+            \draw[mainline] (A) -- (B);
+            \draw[mainline] (A) -- (C);
+            \draw[mainline] (A) -- (D);
+
+            % Draw the hidden edge (adjust based on your chosen viewpoint)
+            % In this view, edge BC is visible, but the edge connecting the back vertex to D is also potentially visible.
+            % The edge BC is visible, the edge connecting A to C and B is also visible.
+            % A is behind for this viewpoint, so the edges connected to A are back edges
+            \draw[invisibleline] (A) -- (B);
+            \draw[invisibleline] (A) -- (C);
+            \draw[invisibleline] (A) -- (D);
+
+
+            % Draw vertices as nodes and label them
+            \foreach \point/\label/\pos in {A/000/below left, B/010/below right, C/100/above left, D/111/above} {
+                \draw[fill=black] (\point) circle (1pt) node[\pos] {$\label$};
+            }
+
+            % Add coordinate system axes for context
+            \draw[->, gray] (0,0,0) -- (1.2,0,0) node[right] {$\meanparamat{\selvariable=0}$};
+            \draw[->, gray] (0,0,0) -- (0,1.2,0) node[above] {$\meanparamat{\selvariable=1}$};
+            \draw[->, gray] (0,0,0) -- (0,0,1.2) node[above] {$\meanparamat{\selvariable=2}$};
+
+        \end{tikzpicture}
+    \end{center}
+
+    We notice, that the convex hull of any three out of the four vertices builds a facet.
+    The only cube-like facet of these four is the convex hull of $\{[0,0,0]^T,[1,0,0]^T,[0,1,0]\}$ (sketched in cyan in the above plot) to which we have the parametrization by $(\hardlegset,\headindexof{\hardlegset})=(\{2\},0)$.
+
+    As a consequence, there are maximum entropy distributions of mean parameters in the Ising statistics, which do not have a representation by an elementary \CompActNet{} in the Ising statistic.
+\end{example}

@@ -1,0 +1,68 @@
+\begin{example}[Crossword Polytopes]
+    % See Example~3.9 in \cite{wainwright_graphical_2008}
+    Consider the crossword polytope with the vertices
+    \begin{align*}
+        \{\headindexof{[3]} \wcols \sum_{\catenumerator\in[3]} \headindexof{\catenumerator}=0 \}
+    \end{align*}
+    We interpret the vertices by the strings of length $3$, which parity vanishes.
+    Such constrained are common in the construction of codewords using parity-check codes (see \cite{gallager_low-density_1963}).
+    \begin{center}
+        \tdplotsetmaincoords{55}{30} % Set the viewpoint: (theta, phi)
+
+        \begin{tikzpicture}[tdplot_main_coords, scale=2,
+            mainline/.style={thick},
+            invisibleline/.style={dashed, gray}
+        ]
+
+            % Define the 4 vertices
+            \coordinate (A) at (0, 0, 0);
+            \coordinate (B) at (0, 1, 1);
+            \coordinate (C) at (1, 0, 1);
+            \coordinate (D) at (1, 1, 0);
+
+            % Draw the faces with some opacity (optional, requires more complex sorting for correct rendering)
+            %\fill[cyan!20, opacity=0.6] (A) -- (B) -- (C) -- cycle;
+            % \fill[cyan!20, opacity=0.6] (A) -- (B) -- (D) -- cycle;
+            % \fill[cyan!20, opacity=0.6] (A) -- (C) -- (D) -- cycle;
+            % \fill[cyan!20, opacity=0.6] (B) -- (C) -- (D) -- cycle;
+
+            % Draw visible edges (adjust based on your chosen viewpoint)
+            \draw[mainline] (B) -- (C) -- (D) -- cycle; % Front face BCD
+            \draw[mainline] (A) -- (B);
+            \draw[mainline] (A) -- (C);
+            \draw[mainline] (A) -- (D);
+
+            % Draw the hidden edge (adjust based on your chosen viewpoint)
+            % In this view, edge BC is visible, but the edge connecting the back vertex to D is also potentially visible.
+            % The edge BC is visible, the edge connecting A to C and B is also visible.
+            % A is behind for this viewpoint, so the edges connected to A are back edges
+            \draw[invisibleline] (A) -- (B);
+            \draw[invisibleline] (A) -- (C);
+            \draw[invisibleline] (A) -- (D);
+
+
+            % Draw vertices as nodes and label them
+            \foreach \point/\label/\pos in {A/000/below left, B/011/below right, C/101/above left, D/110/above} {
+                \draw[fill=black] (\point) circle (1pt) node[\pos] {$\label$};
+            }
+
+            % Add coordinate system axes for context
+            \draw[->, gray] (0,0,0) -- (1.2,0,0) node[right] {$\meanparamat{\selvariable=0}$};
+            \draw[->, gray] (0,0,0) -- (0,1.2,0) node[above] {$\meanparamat{\selvariable=1}$};
+            \draw[->, gray] (0,0,0) -- (0,0,1.2) node[above] {$\meanparamat{\selvariable=2}$};
+
+        \end{tikzpicture}
+    \end{center}
+
+    All facets are non-cube-like, whereas all other faces are cube-like (the edges are labeled by the $6$ facets of $[0,1]^3$).
+
+    %% Hamming distance characterization and TT characterization
+    Each facet is characterized by the Hamming distance of exactly $1$ to a single of the $4$ cube vertices, which are not codewords (see Example~3.9 in \cite{wainwright_graphical_2008}).
+    We can construct $\ttformat$ activation tensors with rank $2$, which are calculating in the hidden ranks the Hamming distance to these vertex.
+    Each core tensor in that format adds the contribution of a mode to the Hamming distance.
+
+    %% LDPC in more generality: Cycle Polytopes
+    In more generality, Low-Density-Parity-Checking Codes (see \cite{gallager_low-density_1963}) construct codewords by a collection of parity constraints on subsets of variables.
+    Such polytopes are also known as cycle polytopes, and studied e.g. in \cite{grotschel_geometric_1993}.
+
+\end{example}

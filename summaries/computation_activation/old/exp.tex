@@ -1,48 +1,52 @@
-\documentclass{article}
+\documentclass[standalone]{article}
 \usepackage{tikz}
-\usepackage{animate}
-\usepackage{float} % Recommended for robust figure placement
+\usepackage{tikz-3dplot}
+\usetikzlibrary{calc}
 
 \begin{document}
+\tdplotsetmaincoords{70}{110} % Set the viewpoint: (theta, phi)
 
-\begin{figure}[H]
-    \centering
-    \begin{animateinline}[controls, loop, poster=first]{1}
+\begin{tikzpicture}[tdplot_main_coords, scale=2,
+    mainline/.style={thick},
+    invisibleline/.style={dashed, gray}
+]
 
-        % Everything below this line is part of a single animation frame/page
+    % Define the 4 vertices
+    \coordinate (A) at (0, 0, 0);
+    \coordinate (B) at (2, 0, 0);
+    \coordinate (C) at (1, 2, 0);
+    \coordinate (D) at (1, 1, 3);
 
-        \begin{tikzpicture} % <-- \currentanimframe is defined *inside* here
-            \useasboundingbox (0,0) rectangle (25, 4);
+    % Draw the faces with some opacity (optional, requires more complex sorting for correct rendering)
+    % \fill[cyan!20, opacity=0.6] (A) -- (B) -- (C) -- cycle;
+    % \fill[cyan!20, opacity=0.6] (A) -- (B) -- (D) -- cycle;
+    % \fill[cyan!20, opacity=0.6] (A) -- (C) -- (D) -- cycle;
+    % \fill[cyan!20, opacity=0.6] (B) -- (C) -- (D) -- cycle;
 
-            % This conditional checks the frame number set by 'animate'
-            \ifnum\currentanimframe=0
-                \begin{scope}[shift={(0,0)}]
-                    \draw[blue, thick] (0,0) rectangle (4,2);
-                    \node at (2,1) {Sketch 1 (Frame 0)};
-                \end{scope}
-            \fi
+    % Draw visible edges (adjust based on your chosen viewpoint)
+    \draw[mainline] (B) -- (C) -- (D) -- cycle; % Front face BCD
+    \draw[mainline] (A) -- (B);
+    \draw[mainline] (A) -- (C);
+    \draw[mainline] (A) -- (D);
 
-            \ifnum\currentanimframe=1
-                \begin{scope}[shift={(10,0)}]
-                    \draw[red, thick] (0,0) rectangle (4,2);
-                    \node at (2,1) {Sketch 2 (Frame 1)};
-                \end{scope}
-            \fi
+    % Draw the hidden edge (adjust based on your chosen viewpoint)
+    % In this view, edge BC is visible, but the edge connecting the back vertex to D is also potentially visible.
+    % The edge BC is visible, the edge connecting A to C and B is also visible.
+    % A is behind for this viewpoint, so the edges connected to A are back edges
+    \draw[invisibleline] (A) -- (B); % Redrawing to ensure dashed style for this view.
+    \draw[invisibleline] (A) -- (C);
+    \draw[invisibleline] (A) -- (D);
 
-            \ifnum\currentanimframe=2
-                \begin{scope}[shift={(20,0)}]
-                    \draw[green, thick] (0,0) rectangle (4,2);
-                    \node at (2,1) {Sketch 3 (Frame 2)};
-                \end{scope}
-            \fi
-        \end{tikzpicture}
 
-        \newframe
-        \newframe
-        % No newframe after the very last frame
+    % Draw vertices as nodes and label them
+    \foreach \point/\label/\pos in {A/A/below left, B/B/below right, C/C/above left, D/D/above} {
+        \draw[fill=black] (\point) circle (1pt) node[\pos] {$\label$};
+    }
 
-    \end{animateinline}
-    \caption{Interactive sequence.}
-\end{figure}
+    % Add coordinate system axes for context
+    \draw[->, gray] (0,0,0) -- (3,0,0) node[right] {$x$};
+    \draw[->, gray] (0,0,0) -- (0,3,0) node[above] {$y$};
+    \draw[->, gray] (0,0,0) -- (0,0,3) node[above] {$z$};
 
+\end{tikzpicture}
 \end{document}
